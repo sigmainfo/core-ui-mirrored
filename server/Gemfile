@@ -39,9 +39,11 @@ gem "jquery-rails"
 
 group :development do
   gem "thin"
+  gem "konacha"
 end
 
 group :test, :development do
-  gem "konacha"
   gem "capybara-webkit"
+  gem "spinach-rails"
+  gem "rspec-rails", require: false
 end
