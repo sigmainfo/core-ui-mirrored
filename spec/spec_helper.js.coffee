@@ -1,1 +1,3 @@
-console.log "spec_helper"
+#= require sinon
+#= require sinon-chai
+#= require chai-jquery
