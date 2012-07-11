@@ -66,10 +66,13 @@ module CoreUi
     config.assets.version = '1.0'
 
     # Add project directories to assets path
-    if Rails.env.test? or Rails.env.development?
-      project_dirs = %w|config app spec lib vendor|.map { |dir| config.root.join "..", dir }
-      asset_dirs = config.root.join("..", "assets").children
-      config.assets.paths += project_dirs + asset_dirs
+    project_dirs = %w|config app lib vendor|.map { |dir| config.root.join "..", dir }
+    asset_dirs = config.root.join("..", "assets").children
+    config.assets.paths += project_dirs + asset_dirs
+
+    # HAML assets
+    if defined? ::HamlCoffeeAssets
+      config.hamlcoffee.namespace = 'window.HAML'
     end
   end
 end
