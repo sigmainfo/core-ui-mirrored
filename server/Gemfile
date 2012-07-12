@@ -42,8 +42,11 @@ group :development do
   gem "konacha"
 end
 
+group :test do
+  gem "spinach-rails"
+end
+
 group :test, :development do
   gem "capybara-webkit"
-  gem "spinach-rails"
   gem "rspec-rails", require: false
 end

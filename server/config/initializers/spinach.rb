@@ -1,2 +1,2 @@
-Spinach.config.features_path = "../features"
-Spinach.config.config_path = "../config/spinach.yml"
+Spinach.config.features_path = Rails.root.join "..", "features"
+Spinach.config.config_path   = Rails.root.join "..", "config", "spinach.yml"
