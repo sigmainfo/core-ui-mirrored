@@ -24,6 +24,12 @@ namespace :deploy do
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
   end
+  
+  desc 'Build static HTML for index'
+  task :build_html do
+    run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} deploy:build_html"
+  end
 end
 
 after "deploy:restart", "deploy:cleanup"
+after "deploy:assets:precompile", "deploy:build_html"
