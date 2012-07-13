@@ -4,12 +4,10 @@ task :spinach => "spinach:run"
 namespace :spinach do
   task :env do
     ENV["RAILS_ENV"] = "test"
-    require "spinach"
-    require Rails.root.join "config", "initializers", "spinach"
   end
 
   def features_path
-    @features_path ||= Rails.root.join "..", "features"
+    @features_path ||= Rails.root.join "features"
   end
 
   def run_spinach(*args)
