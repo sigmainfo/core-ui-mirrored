@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.join("..", "..", "server", "config", "environment"), File.dirname(__FILE__))
+require File.expand_path(File.join("..", "..", "config", "environment"), File.dirname(__FILE__))
 
 require "rspec"
 require "net/http"

@@ -17,6 +17,15 @@ end
 
 module CoreUi
   class Application < Rails::Application
+    # Adjust paths to map project structure
+    paths["app"] << "server"
+    paths["app"].delete "app"
+
+    %w|controllers helpers models mailers views|.each do |dir|
+      paths["app/#{dir}"] << "server/#{dir}"
+      paths["app/#{dir}"].delete "app/#{dir}"
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -38,7 +47,6 @@ module CoreUi
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-    config.i18n.load_path += Dir[config.root.join("..", "config", "locales", "*.yml").to_s]
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
@@ -67,11 +75,13 @@ module CoreUi
     config.assets.version = '1.0'
 
     # Add project directories to assets paths
-    project_dirs = %w|config app lib|.map { |dir| config.root.join "..", dir }
-    asset_dirs   = config.root.join("..", "assets").children.select { |c| c.directory? }
-    vendor_dirs  = config.root.join("..", "vendor").children.select { |c| c.directory? }
+    # project_dirs = %w|config app lib|.map { |dir| config.root.join "..", dir }
+    # asset_dirs   = config.root.join("..", "assets").children.select { |c| c.directory? }
+    # vendor_dirs  = config.root.join("..", "vendor").children.select { |c| c.directory? }
 
-    config.assets.paths += project_dirs + asset_dirs + vendor_dirs
+    # config.assets.paths += project_dirs + asset_dirs + vendor_dirs
+    application_paths = config.root.join("app").children.select { |c| c.directory? and not c.to_s =~ /assets$/ }
+    config.assets.paths += application_paths
 
     # HAML assets
     if defined? ::HamlCoffeeAssets
