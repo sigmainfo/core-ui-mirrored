@@ -5,8 +5,7 @@ Feature: User logs into the repository
   I want to log in
 
   Background:
-    Given my name is "William Blake"
-    And my login is "Nobody" with password "se7en"
+    Given my name is "William Blake" with login "Nobody" and password "se7en!"
     And I am logged out
 
   Scenario: successful login

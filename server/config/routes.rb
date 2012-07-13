@@ -1,4 +1,15 @@
 CoreUi::Application.routes.draw do
+
+  namespace :api do
+    namespace :auth do
+      resource :users, only: [:create, :show] do
+        collection do
+          get "purge"
+        end
+      end
+    end
+  end 
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

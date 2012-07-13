@@ -8,8 +8,12 @@ namespace :spinach do
     require Rails.root.join "config", "initializers", "spinach"
   end
 
+  def features_path
+    @features_path ||= Rails.root.join "..", "features"
+  end
+
   def run_spinach(*args)
-    sh "spinach " << args.join(" ")
+    sh "spinach --features_path #{features_path} " << args.join(" ")
   end
 
   task :run => :env do

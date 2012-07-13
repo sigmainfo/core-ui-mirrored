@@ -13,3 +13,5 @@
 # Ignore all logfiles and tempfiles.
 /server/log/*.log
 /server/tmp
+
+*chromedriver.log

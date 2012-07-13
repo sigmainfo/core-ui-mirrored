@@ -1,6 +1,14 @@
 class UserLogsIntoTheRepository < Spinach::FeatureSteps
+  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
+    CoreClient::Auth.create_user "William Blake", "Nobody", "se7en!"
+  end
+
+  And 'I am logged out' do
+    click_on "Log out"
+  end
+
   When 'I visit the home page' do
-    pending 'step not implemented'
+    visit root_path
   end
 
   Then 'I should see the login form' do
@@ -48,18 +56,6 @@ class UserLogsIntoTheRepository < Spinach::FeatureSteps
   end
 
   But 'I should see an alert with "Service not available"' do
-    pending 'step not implemented'
-  end
-
-  Given 'my name is "William Blake"' do
-    pending 'step not implemented'
-  end
-
-  And 'my login is "Nobody" with password "se7en"' do
-    pending 'step not implemented'
-  end
-
-  And 'I am logged out' do
     pending 'step not implemented'
   end
 end
