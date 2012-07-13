@@ -1,4 +1,4 @@
-class UserLogsIntoTheRepository < Spinach::FeatureSteps
+class UserSignsIn < Spinach::FeatureSteps
   Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
     CoreClient::Auth.create_user "William Blake", "Nobody", "se7en!"
   end

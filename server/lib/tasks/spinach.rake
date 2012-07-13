@@ -13,7 +13,7 @@ namespace :spinach do
   end
 
   def run_spinach(*args)
-    sh "spinach --features_path #{features_path} " << args.join(" ")
+    sh "spinach --features_path #{features_path} --tags ~@skip " << args.join(" ")
   end
 
   task :run => :env do
