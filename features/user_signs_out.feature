@@ -8,7 +8,7 @@ Feature: User signs out
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
     And I am logged in
     When I click to open the footer
-    And cklick on "Log out"
+    And click on "Log out"
     Then I should not be within the application
     But should see the login form
     And should see a notice "Successfully logged out"

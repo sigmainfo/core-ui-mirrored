@@ -1,12 +1,17 @@
 CoreUi::Application.routes.draw do
 
+  get "sessions/create"
+
   namespace :api do
     namespace :auth do
+      
       resource :users, only: [:create, :show] do
         collection do
           get "purge"
         end
       end
+      
+      post "login" => "sessions#create"
     end
   end 
 

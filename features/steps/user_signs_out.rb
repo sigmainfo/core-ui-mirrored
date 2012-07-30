@@ -1,11 +1,5 @@
 class UserSignsOut < Spinach::FeatureSteps
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
-    pending 'step not implemented'
-  end
-
-  And 'I am logged in' do
-    pending 'step not implemented'
-  end
+  include AuthSteps
 
   When 'I click to open the footer' do
     pending 'step not implemented'

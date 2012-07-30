@@ -1,1 +1,5 @@
 <div id="app"></div>
+<script type="text/javascript">
+  CoreClient.Auth.root_url = "<%=j CoreClient.config[:auth_root] %>";
+  CoreClient.Graph.root_url = "<%=j CoreClient.config[:graph_root] %>";
+</script>
