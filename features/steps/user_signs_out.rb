@@ -2,10 +2,10 @@ class UserSignsOut < Spinach::FeatureSteps
   include AuthSteps
 
   When 'I click to open the footer' do
-    pending 'step not implemented'
+    find(".footer .toggle").click
   end
 
-  And 'cklick on "Log out"' do
+  And 'click on "Log out"' do
     pending 'step not implemented'
   end
 

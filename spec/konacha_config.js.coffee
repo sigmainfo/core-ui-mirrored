@@ -5,7 +5,7 @@
 # ignore the following globals during leak detection
 # Konacha.mochaOptions.globals = ["HAML"]
 # 
-# # or, ignore all leaks
+# or, ignore all leaks
 # Konacha.mochaOptions.ignoreLeaks = false
 # 
 # # set slow test timeout in ms

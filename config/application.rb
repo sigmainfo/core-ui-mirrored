@@ -74,18 +74,13 @@ module CoreUi
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    # Add project directories to assets paths
-    # project_dirs = %w|config app lib|.map { |dir| config.root.join "..", dir }
-    # asset_dirs   = config.root.join("..", "assets").children.select { |c| c.directory? }
-    # vendor_dirs  = config.root.join("..", "vendor").children.select { |c| c.directory? }
-
-    # config.assets.paths += project_dirs + asset_dirs + vendor_dirs
-    application_paths = config.root.join("app").children.select { |c| c.directory? and not c.to_s =~ /assets$/ }
-    config.assets.paths += application_paths
+    # Add project directory to assets paths
+    config.assets.paths << "app"
+    config.assets.paths << "app/config"
 
     # HAML assets
     if defined? ::HamlCoffeeAssets
-      config.hamlcoffee.namespace = 'window.HAML'
+      config.hamlcoffee.namespace = "window.Coreon.Templates"
     end
   end
 end
