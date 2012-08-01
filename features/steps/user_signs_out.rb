@@ -6,7 +6,7 @@ class UserSignsOut < Spinach::FeatureSteps
   end
 
   And 'click on "Log out"' do
-    pending 'step not implemented'
+    click_on "Log out"
   end
 
   Then 'I should not be within the application' do
