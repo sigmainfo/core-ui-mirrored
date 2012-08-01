@@ -1,0 +1,31 @@
+@import 'compass/css3';
+@import '_config';
+
+#coreon-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  @include single-box-shadow(rgba(0,0,0,0.2), 0, -1px, 1px, false);
+  padding-bottom: 20px;
+  
+  .toggle {
+    @include single-box-shadow(rgba(0,0,0,0.2), 0px, -1px, 1px, false);
+    @include border-top-right-radius(4px);
+    position: relative;
+    bottom: 36px;
+    display: block;
+    width: 102px;
+    height: 36px;
+    background:white image-url("layout/coreon.png") no-repeat 4px -196px;
+    text-indent: -2000px;
+    overflow: hidden;
+    @include retina-logos;
+  }
+  
+  #coreon-account {
+    margin-left: 140px;
+    position: relative;
+    top: -16px;
+  }
+}

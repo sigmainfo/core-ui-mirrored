@@ -1,0 +1,48 @@
+@import 'compass/css3';
+@import '_config';
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font: 81% 'DroidSans', Trebuchet MS, Lucida;
+  line-height: 1.5em;
+  color: $text-color;
+  background:image-url("layout/bg.jpg");
+  margin:0;
+}
+
+h1, h2, h3, h4 {
+  font-weight: normal;
+}
+
+h3 {
+  font: 1.6em Palatino;
+}
+
+a {
+  color: $bluecolor;
+  text-decoration: none;
+  &:hover {
+    color: $hover-color;
+  };
+  &:active, &:visited, &:focus { 
+    outline: none;
+    }
+}
+
+#main {
+  position: relative;
+  min-width: 900px;
+}
+#tools {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+
+

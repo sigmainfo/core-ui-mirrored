@@ -1,0 +1,48 @@
+$text-color: #3f3b2c;
+$bluecolor: #3da2e6;
+$darkerbluecolor: #6cb1d3;
+$hover-color: lighten($bluecolor, 10%);
+$browncolor: #554f3c;
+$greencolor: #717a53;
+$greycolor: #e0e7e1;
+$petrol: #5498b0;
+
+@mixin retina-logos {
+  background-image: image-url('layout/coreon.png');
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/coreon@2x.png');
+      @include background-size(415px 800px);
+  }
+}
+
+@mixin retina-icons {
+  background-image: image-url('layout/icons.png');
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/icons@2x.png');
+      @include background-size(100px 100px);
+  } 
+}
+
+@mixin retina-flash-icons {
+  background-image: image-url('layout/flash-icons.png');
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/flash-icons@2x.png');
+      @include background-size(30px 230px);
+  } 
+}
+
+@mixin retina-separator {
+  background-image: image-url('layout/separator.png');
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/separator@2x.png');
+      @include background-size(4px 8px);
+  } 
+}
+
+@mixin retina-stripes-blue {
+  background-image: image-url('layout/stripes-blue.png');
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/stripes-blue@2x.png');
+      @include background-size(4px 8px);
+  } 
+}
