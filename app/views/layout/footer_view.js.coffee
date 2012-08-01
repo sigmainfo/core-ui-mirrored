@@ -7,7 +7,14 @@ class Coreon.Views.Layout.FooterView extends Backbone.View
 
   template: Coreon.Templates["layout/footer"]
 
+  events:
+    "click .toggle": "toggle"
+
   render: ->
     @$el.html @template()
-    @$el.append (new Coreon.Views.Account.ShowView).render().$el
+    @$el.append (new Coreon.Views.Account.ShowView).render().$el.hide()
+    @
+
+  toggle: ->
+    @$el.children(":not(.toggle)").slideToggle()
     @

@@ -1,1 +1,2 @@
-%a{href: "#"}= I18n.t "account.logout"
+%p
+  %a{href: "#"}= I18n.t "account.logout"
