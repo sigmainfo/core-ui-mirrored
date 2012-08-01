@@ -9,7 +9,7 @@ describe "Coreon.Views.Layout.ApplicationView", ->
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
-
+    
   context "#render", ->
 
     it "allows chaining", ->
@@ -17,7 +17,7 @@ describe "Coreon.Views.Layout.ApplicationView", ->
 
     it "appends footer", ->
       @view.render()
-      @view.$el.should.have "#coreon-account"
+      @view.$el.should.have "#coreon-footer"
 
     it "clears content before rendering", ->
       $("#konacha").append $("<div>", id: "foo")

@@ -1,1 +1,1 @@
-%h5.toggle coreon
+%a= I18n.t "account.logout"

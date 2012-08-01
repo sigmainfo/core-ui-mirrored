@@ -14,11 +14,11 @@ describe "Coreon.Application", ->
     it "uses #app by default", ->
       $("#konacha").append $("<div>", id: "app")
       @app.init()
-      $("#app").should.have "#coreon-account"
+      $("#app").should.have "#coreon-footer"
 
     it "uses specified container", ->
       @app.init el: "#konacha"
-      $("#konacha").should.have "#coreon-account"
+      $("#konacha").should.have "#coreon-footer"
 
 
             

@@ -3,7 +3,6 @@
 
 class Coreon.Views.Account.ShowView extends Backbone.View
   id: "coreon-account"
-  className: "footer"
 
   template: Coreon.Templates["account/show"]
 

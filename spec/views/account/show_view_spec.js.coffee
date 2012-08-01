@@ -11,13 +11,12 @@ describe "Coreon.Views.Account.ShowView", ->
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-account"
-    @view.$el.should.have.attr("class").match /footer/
     
   context "#render", ->
 
     it "allows chaining", ->
       @view.render().should.equal @view
-
-    it "renders toggle", ->
+    
+    it "renders logout link", ->
       @view.render()
-      @view.$el.should.have ".toggle"
+      @view.$el.should.have "a:contains(#{I18n.t 'account.logout'})"
