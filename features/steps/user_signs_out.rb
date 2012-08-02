@@ -9,12 +9,8 @@ class UserSignsOut < Spinach::FeatureSteps
     click_on "Log out"
   end
 
-  Then 'I should not be within the application' do
-    pending 'step not implemented'
-  end
-
-  But 'should see the login form' do
-    pending 'step not implemented'
+  Then 'I should be on the login page' do
+    current_path.should == "/account/login"
   end
 
   And 'should see a notice "Successfully logged out"' do

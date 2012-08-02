@@ -23,3 +23,25 @@ describe "Coreon.Views.Layout.ApplicationView", ->
       $("#konacha").append $("<div>", id: "foo")
       @view.render()
       @view.$el.should.not.have "#foo"
+
+  context "navigating history", ->
+
+    beforeEach ->
+      Backbone.history = new Backbone.History
+      sinon.spy Backbone.history, "navigate"
+      @link = $("<a>", href: "/foo/bar/baz").html "Foo Bar Baz"
+      @view.$el.append @link
+      @event = new jQuery.Event "click"
+      sinon.spy @event, "preventDefault"
+
+    it "delegates navigation to history when clicking a relative link", ->
+      @link.attr "href", "/this/is/within/the/app"
+      @link.trigger @event
+      Backbone.history.navigate.should.have.been.calledWith "/this/is/within/the/app"
+      @event.preventDefault.should.have.been.called
+
+    it "triggers default action for other links", ->
+      @link.attr "href", "http://go/somewhere/else"
+      @link.trigger @event
+      Backbone.history.navigate.should.not.have.been.called
+      @event.preventDefault.should.not.have.been.called

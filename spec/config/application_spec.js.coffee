@@ -19,6 +19,15 @@ describe "Coreon.Application", ->
     it "uses specified container", ->
       @app.init el: "#konacha"
       $("#konacha").should.have "#coreon-footer"
+    
+    it "creates routers", ->
+      sinon.spy Coreon.Routers, "AccountRouter"
+      @app.init()
+      Coreon.Routers.AccountRouter.should.have.been.calledOnce
+      Coreon.Routers.AccountRouter.restore()
 
-
-            
+    it "starts history", ->
+      sinon.spy Backbone.history, "start"
+      @app.init()
+      Backbone.history.start.should.have.been.calledWith pushState: true
+      Backbone.history.start.restore()

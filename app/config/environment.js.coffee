@@ -11,3 +11,5 @@ window.Coreon        ?= {}
 Coreon.Views         ?= {}
 Coreon.Views.Account ?= {}
 Coreon.Views.Layout  ?= {}
+
+Coreon.Routers       ?= {}
