@@ -8,8 +8,14 @@
 
 window.Coreon        ?= {}
 
+Coreon.Models        ?= {}
+
 Coreon.Views         ?= {}
 Coreon.Views.Account ?= {}
 Coreon.Views.Layout  ?= {}
 
+Coreon.Helpers       ?= {}
+
 Coreon.Routers       ?= {}
+
+HAML.globals = -> Coreon.Helpers

@@ -11,7 +11,8 @@ CoreUi::Application.routes.draw do
         end
       end
       
-      post "login" => "sessions#create"
+      post   "login" => "sessions#create"
+      delete "login/:auth_token" => "sessions#destroy"
     end
   end 
 

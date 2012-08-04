@@ -19,4 +19,8 @@ class Api::Auth::SessionsController < ApplicationController
   rescue Mongoid::Errors::DocumentNotFound, Api::Auth::NotAuthenticated
     render json: { error: "Invalid login or password" }, status: 404
   end
+
+  def destroy
+    raise "not implemented"
+  end
 end

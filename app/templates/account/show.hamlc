@@ -1,2 +1,1 @@
-%p
-  %a{href: "/account/logout"}= I18n.t "account.logout"
+%p!= @link_to I18n.t("account.logout"), "account/logout"

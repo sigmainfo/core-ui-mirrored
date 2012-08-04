@@ -37,7 +37,7 @@ describe "Coreon.Views.Layout.ApplicationView", ->
     it "delegates navigation to history when clicking a relative link", ->
       @link.attr "href", "/this/is/within/the/app"
       @link.trigger @event
-      Backbone.history.navigate.should.have.been.calledWith "/this/is/within/the/app"
+      Backbone.history.navigate.should.have.been.calledWith "/this/is/within/the/app", trigger: true
       @event.preventDefault.should.have.been.called
 
     it "triggers default action for other links", ->

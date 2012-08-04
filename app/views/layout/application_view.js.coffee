@@ -3,16 +3,13 @@
 
 class Coreon.Views.Layout.ApplicationView extends Backbone.View
 
-  events: "click a": "navigate"
+  events: "click a[href^='/']": "navigate"
 
   render: ->
     @$el.empty()
     @$el.append (new Coreon.Views.Layout.FooterView).render().$el
     @
 
-  navigate: (event)->
-    location = $(event.target).attr "href"
-    if location.indexOf("/") == 0
-      Backbone.history.navigate location, trigger: true
-      event.preventDefault()
-
+  navigate: (event) ->
+    Backbone.history.navigate $(event.target).attr("href"), trigger: true
+    event.preventDefault()

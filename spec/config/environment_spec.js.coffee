@@ -17,10 +17,17 @@ describe "config/environment", ->
   it "prepares namespaces", ->
     Coreon.should.exist
 
+    Coreon.Models.should.exist
+
     Coreon.Views.should.exist
     Coreon.Views.Layout.should.exist
     Coreon.Views.Account.should.exist
 
+    Coreon.Helpers.should.exist
+
     Coreon.Routers.should.exist
+
+  it "makes helpers available to template context", ->
+    HAML.globals().should.equal Coreon.Helpers
 
 

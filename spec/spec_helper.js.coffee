@@ -3,5 +3,4 @@
 #= require sinon-chai
 #= require chai-jquery
 
-beforeEach ->
-  Backbone.history?.stop()
+jQuery.fx.off = true

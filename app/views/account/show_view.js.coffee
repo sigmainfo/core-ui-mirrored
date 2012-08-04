@@ -1,4 +1,5 @@
 #= require environment
+#= require helpers/link_to
 #= require templates/account/show
 
 class Coreon.Views.Account.ShowView extends Backbone.View
