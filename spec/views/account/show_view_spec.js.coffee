@@ -19,5 +19,4 @@ describe "Coreon.Views.Account.ShowView", ->
     
     it "renders logout link", ->
       @view.render()
-      @view.$el.should.have "a:contains(#{I18n.t 'account.logout'})"
-      @view.$("a").should.have.attr "href", "/account/logout"
+      @view.$el.should.have "a[href='/account/logout']:contains(#{I18n.t 'account.logout'})"

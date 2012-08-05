@@ -7,6 +7,7 @@ describe "Coreon.Application", ->
     @app = new Coreon.Application
 
   afterEach ->
+    Coreon.application = null
     Backbone.history?.stop()
 
   describe "#init", ->
@@ -49,6 +50,10 @@ describe "Coreon.Application", ->
 
     context "Account", ->
 
+      it "creates model", ->
+        @app.init()
+        @app.account.should.be.an.instanceOf Coreon.Models.Account
+        
       it "creates router", ->
         sinon.spy Coreon.Routers, "AccountRouter"
         @app.init()
