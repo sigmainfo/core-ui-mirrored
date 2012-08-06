@@ -13,10 +13,14 @@ class Coreon.Application
   init: (options = {}) ->
     @options = _.defaults options, @constructor.defaults
 
-    (new Coreon.Views.Layout.ApplicationView el: @options.el).render()
-
     @notifications = new Coreon.Models.Notifications
     @account       = new Coreon.Models.Account
+
+    @view = new Coreon.Views.Layout.ApplicationView
+      el: @options.el
+      model: @
+
+    @view.render()
 
     new Coreon.Routers.AccountRouter
 

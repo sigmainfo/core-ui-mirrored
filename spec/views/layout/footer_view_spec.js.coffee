@@ -11,6 +11,8 @@ describe "Coreon.Views.Layout.FooterView", ->
 
   beforeEach ->
     @view = new Coreon.Views.Layout.FooterView
+      model:
+        account: "Account"
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -33,7 +35,14 @@ describe "Coreon.Views.Layout.FooterView", ->
       @view.$el.should.have "#coreon-account"
       @view.$("#coreon-account").should.not.be ":empty"
 
-  context "toggle", -> 
+    it "passes model to account view", ->
+      sinon.spy Coreon.Views.Account, "ShowView"
+      @view.model = account: "Account"
+      @view.render()
+      Coreon.Views.Account.ShowView.should.have.been.calledWith model: "Account"
+      Coreon.Views.Account.ShowView.restore()
+
+  context "#toggle", -> 
 
     beforeEach ->
       @view.render().$el.appendTo $("#konacha")

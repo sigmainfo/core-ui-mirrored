@@ -12,7 +12,7 @@ class Coreon.Views.Layout.FooterView extends Backbone.View
 
   render: ->
     @$el.html @template()
-    @$el.append (new Coreon.Views.Account.ShowView).render().$el.hide()
+    @$el.append (new Coreon.Views.Account.ShowView model: @model.account).render().$el.hide()
     @
 
   toggle: ->

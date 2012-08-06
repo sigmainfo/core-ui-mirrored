@@ -12,12 +12,23 @@ describe "Coreon.Views.Layout.ApplicationView", ->
     
   context "#render", ->
 
+    beforeEach ->
+      @view.model = account: "Account"
+
     it "allows chaining", ->
       @view.render().should.equal @view
 
     it "appends footer", ->
       @view.render()
       @view.$el.should.have "#coreon-footer"
+
+    it "passes model to footer", ->
+      sinon.spy Coreon.Views.Layout, "FooterView"
+      @view.model = account: "Account"
+      @view.render()
+      Coreon.Views.Layout.FooterView.should.have.been.calledWith model: @view.model
+      Coreon.Views.Layout.FooterView.restore()
+      
 
     it "clears content before rendering", ->
       $("#konacha").append $("<div>", id: "foo")

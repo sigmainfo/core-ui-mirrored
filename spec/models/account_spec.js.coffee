@@ -18,3 +18,12 @@ describe "Coreon.Models.Account", ->
       stub.returns false
       @account.idle().should.be.true
       stub.restore()
+
+  context "#logoout", ->
+
+    it "delegates logout to CoreClient", ->
+      sinon.spy CoreClient.Auth, "authenticate"
+      @account.logout()
+      CoreClient.Auth.authenticate.should.have.been.calledWith false
+      CoreClient.Auth.authenticate.restore()
+

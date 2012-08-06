@@ -31,4 +31,7 @@ describe "Coreon.Helpers.link_to", ->
     link = $ Coreon.Helpers.link_to "Foo Bar Baz", "foo/bar/baz"
     link.should.have.attr "href", "/foo/bar/baz"
 
-
+  it "accepts attributes hash", ->
+    link = $ Coreon.Helpers.link_to "Foo", "foo", "class": "foo", "bar": true
+    link.should.have.attr "class", "foo"
+    link.should.have.attr "bar"

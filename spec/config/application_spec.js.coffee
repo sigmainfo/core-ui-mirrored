@@ -30,7 +30,7 @@ describe "Coreon.Application", ->
       Backbone.history.start.should.have.been.calledWith pushState: true, root: "/repo/"
       Backbone.history.start.restore()
 
-    context "layout", ->
+    context ".view", ->
 
       it "uses #app by default", ->
         $("#konacha").append $("<div>", id: "app")
@@ -40,6 +40,14 @@ describe "Coreon.Application", ->
       it "uses specified container", ->
         @app.init el: "#konacha"
         $("#konacha").should.have "#coreon-footer"
+
+      it "creates view instance", ->
+        @app.init()
+        @app.view.should.be.an.instanceOf Coreon.Views.Layout.ApplicationView
+
+      it "connects view to model", ->
+        @app.init()
+        @app.view.model.should.equal @app
     
 
     context "Notifications", ->

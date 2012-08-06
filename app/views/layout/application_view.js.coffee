@@ -7,7 +7,7 @@ class Coreon.Views.Layout.ApplicationView extends Backbone.View
 
   render: ->
     @$el.empty()
-    @$el.append (new Coreon.Views.Layout.FooterView).render().$el
+    @$el.append (new Coreon.Views.Layout.FooterView model: @model).render().$el
     @
 
   navigate: (event) ->

@@ -1,8 +1,8 @@
 #= require environment
-#= require templates/helpers/link_to
 
-Coreon.Helpers.link_to = (label, href) ->
+Coreon.Helpers.link_to = (label, href, attributes = {}) ->
   href ?= label
   root = Coreon.application?.options.root or "/"
   href = root + href unless href.match /^[a-z]+:\/\//
-  Coreon.Templates["helpers/link_to"] label: label, href: href
+  attributes.href = href
+  $("<div>").append($("<a>", attributes).html(label)).html()
