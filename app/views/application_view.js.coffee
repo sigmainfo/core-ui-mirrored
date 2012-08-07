@@ -1,13 +1,13 @@
 #= require environment
-#= require views/layout/footer_view
+#= require views/footer_view
 
-class Coreon.Views.Layout.ApplicationView extends Backbone.View
+class Coreon.Views.ApplicationView extends Backbone.View
 
   events: "click a[href^='/']": "navigate"
 
   render: ->
     @$el.empty()
-    @$el.append (new Coreon.Views.Layout.FooterView model: @model).render().$el
+    @$el.append (new Coreon.Views.FooterView model: @model).render().$el
     @
 
   navigate: (event) ->

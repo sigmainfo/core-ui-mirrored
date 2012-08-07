@@ -9,14 +9,12 @@
 window.Coreon              ?= {}
 
 Coreon.Models              ?= {}
+Coreon.Collections         ?= {}
+Coreon.Helpers             ?= {}
+Coreon.Routers             ?= {}
 
 Coreon.Views               ?= {}
 Coreon.Views.Layout        ?= {}
-Coreon.Views.Account       ?= {}
-Coreon.Views.Notifications ?= {}
 
-Coreon.Helpers             ?= {}
-
-Coreon.Routers             ?= {}
 
 HAML.globals = -> Coreon.Helpers

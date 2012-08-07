@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/layout/footer_view
+#= require views/footer_view
 
-describe "Coreon.Views.Layout.FooterView", ->
+describe "Coreon.Views.FooterView", ->
   
   before ->
     jQuery.fx.off = true
@@ -10,7 +10,7 @@ describe "Coreon.Views.Layout.FooterView", ->
     jQuery.fx.off = false
 
   beforeEach ->
-    @view = new Coreon.Views.Layout.FooterView
+    @view = new Coreon.Views.FooterView
       model:
         account: "Account"
 
@@ -36,11 +36,11 @@ describe "Coreon.Views.Layout.FooterView", ->
       @view.$("#coreon-account").should.not.be ":empty"
 
     it "passes model to account view", ->
-      sinon.spy Coreon.Views.Account, "ShowView"
+      sinon.spy Coreon.Views, "AccountView"
       @view.model = account: "Account"
       @view.render()
-      Coreon.Views.Account.ShowView.should.have.been.calledWith model: "Account"
-      Coreon.Views.Account.ShowView.restore()
+      Coreon.Views.AccountView.should.have.been.calledWith model: "Account"
+      Coreon.Views.AccountView.restore()
 
   context "#toggle", -> 
 

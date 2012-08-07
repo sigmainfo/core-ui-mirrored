@@ -1,10 +1,10 @@
 #= require spec_helper
-#= require views/layout/application_view
+#= require views/application_view
 
-describe "Coreon.Views.Layout.ApplicationView", ->
+describe "Coreon.Views.ApplicationView", ->
 
   beforeEach ->
-    @view = new Coreon.Views.Layout.ApplicationView
+    @view = new Coreon.Views.ApplicationView
       el: "#konacha"
 
   it "is a Backbone view", ->
@@ -30,11 +30,11 @@ describe "Coreon.Views.Layout.ApplicationView", ->
         @view.$el.should.have "#coreon-footer"
 
       it "passes model to view", ->
-        sinon.spy Coreon.Views.Layout, "FooterView"
+        sinon.spy Coreon.Views, "FooterView"
         @view.model = account: "Account"
         @view.render()
-        Coreon.Views.Layout.FooterView.should.have.been.calledWith model: @view.model
-        Coreon.Views.Layout.FooterView.restore()
+        Coreon.Views.FooterView.should.have.been.calledWith model: @view.model
+        Coreon.Views.FooterView.restore()
 
     describe "tools", ->
       

@@ -1,10 +1,10 @@
 #= require environment
-#= require models/notifications
+#= require collections/notifications
 
-describe "Coreon.Models.Notifications", ->
+describe "Coreon.Collections.Notifications", ->
   
   beforeEach ->
-    @notifications = new Coreon.Models.Notifications
+    @notifications = new Coreon.Collections.Notifications
 
   it "is a Backbone collection", ->
     @notifications.should.be.an.instanceOf Backbone.Collection

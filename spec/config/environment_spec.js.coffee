@@ -18,15 +18,13 @@ describe "config/environment", ->
     Coreon.should.exist
 
     Coreon.Models.should.exist
+    Coreon.Collections.should.exist
+    Coreon.Helpers.should.exist
+    Coreon.Routers.should.exist
 
     Coreon.Views.should.exist
     Coreon.Views.Layout.should.exist
-    Coreon.Views.Account.should.exist
-    Coreon.Views.Notifications.should.exist
 
-    Coreon.Helpers.should.exist
-
-    Coreon.Routers.should.exist
 
   it "makes helpers available to template context", ->
     HAML.globals().should.equal Coreon.Helpers

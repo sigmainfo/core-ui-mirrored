@@ -1,6 +1,6 @@
 #= require environment
-#= require views/layout/application_view
-#= require models/notifications
+#= require views/application_view
+#= require collections/notifications
 #= require models/account
 #= require routers/account_router
 
@@ -13,10 +13,10 @@ class Coreon.Application
   init: (options = {}) ->
     @options = _.defaults options, @constructor.defaults
 
-    @notifications = new Coreon.Models.Notifications
+    @notifications = new Coreon.Collections.Notifications
     @account       = new Coreon.Models.Account
 
-    @view = new Coreon.Views.Layout.ApplicationView
+    @view = new Coreon.Views.ApplicationView
       el: @options.el
       model: @
 

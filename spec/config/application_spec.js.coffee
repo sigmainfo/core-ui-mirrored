@@ -43,7 +43,7 @@ describe "Coreon.Application", ->
 
       it "creates view instance", ->
         @app.init()
-        @app.view.should.be.an.instanceOf Coreon.Views.Layout.ApplicationView
+        @app.view.should.be.an.instanceOf Coreon.Views.ApplicationView
 
       it "connects view to model", ->
         @app.init()
@@ -54,7 +54,7 @@ describe "Coreon.Application", ->
 
       it "creates collection", ->
         @app.init()
-        @app.notifications.should.be.an.instanceOf Coreon.Models.Notifications
+        @app.notifications.should.be.an.instanceOf Coreon.Collections.Notifications
 
     context "Account", ->
 

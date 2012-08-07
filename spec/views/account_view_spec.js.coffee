@@ -1,10 +1,10 @@
 #= require spec_helper
-#= require views/account/show_view
+#= require views/account_view
 
-describe "Coreon.Views.Account.ShowView", ->
+describe "Coreon.Views.AccountView", ->
   
   beforeEach ->
-    @view = new Coreon.Views.Account.ShowView
+    @view = new Coreon.Views.AccountView
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -27,7 +27,7 @@ describe "Coreon.Views.Account.ShowView", ->
 
     beforeEach ->
       Backbone.history = new Backbone.History
-      @view = new Coreon.Views.Account.ShowView
+      @view = new Coreon.Views.AccountView
         model:
           logout: -> true
       @event = new jQuery.Event "click"

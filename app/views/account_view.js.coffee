@@ -1,11 +1,11 @@
 #= require environment
 #= require helpers/link_to
-#= require templates/account/show
+#= require templates/account
 
-class Coreon.Views.Account.ShowView extends Backbone.View
+class Coreon.Views.AccountView extends Backbone.View
   id: "coreon-account"
 
-  template: Coreon.Templates["account/show"]
+  template: Coreon.Templates["account"]
 
   events:
     "click a.logout": "logout"
