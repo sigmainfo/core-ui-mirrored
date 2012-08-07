@@ -4,3 +4,8 @@
 en:
   account:
     logout: "Log out"
+  notification:
+    label:
+      notice: "Notice:"
+    actions:
+      hide: "Hide"

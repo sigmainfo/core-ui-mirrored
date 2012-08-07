@@ -10,7 +10,7 @@ describe "Coreon.Application", ->
     Coreon.application = null
     Backbone.history?.stop()
 
-  describe "#init", ->
+  context "#init", ->
     
     it "allows chaining", ->
       @app.init().should.equal @app
@@ -67,3 +67,21 @@ describe "Coreon.Application", ->
         @app.init()
         Coreon.Routers.AccountRouter.should.have.been.calledOnce
         Coreon.Routers.AccountRouter.restore()    
+
+    context "#notify", ->
+
+      beforeEach ->
+        @app.init()
+
+      it "creates notification with provided message", ->
+        @app.notify "Who pays the rent on time."
+        @app.notifications.at(0).get("message").should.equal "Who pays the rent on time."
+
+      it "returns notification instance", ->
+        @app.notify("Who pays the rent on time.").should.equal @app.notifications.at(0)
+
+      it "creates new notifications on top of stack", ->
+        @app.notify "Yeah, a landlord's dream: a paralyzed tenant with no tongue."
+        @app.notify "Who pays the rent on time."
+        @app.notifications.at(0).get("message").should.equal "Who pays the rent on time."
+

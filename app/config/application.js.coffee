@@ -29,3 +29,7 @@ class Coreon.Application
       root: @options.root
 
     Coreon.application = @
+
+  notify: (message = "") ->
+    @notifications.unshift message: message
+    @notifications.at(0)
