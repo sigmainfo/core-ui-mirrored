@@ -6,16 +6,17 @@
 #= require i18n/translations
 #= require core_client
 
-window.Coreon        ?= {}
+window.Coreon              ?= {}
 
-Coreon.Models        ?= {}
+Coreon.Models              ?= {}
 
-Coreon.Views         ?= {}
-Coreon.Views.Account ?= {}
-Coreon.Views.Layout  ?= {}
+Coreon.Views               ?= {}
+Coreon.Views.Layout        ?= {}
+Coreon.Views.Account       ?= {}
+Coreon.Views.Notifications ?= {}
 
-Coreon.Helpers       ?= {}
+Coreon.Helpers             ?= {}
 
-Coreon.Routers       ?= {}
+Coreon.Routers             ?= {}
 
 HAML.globals = -> Coreon.Helpers

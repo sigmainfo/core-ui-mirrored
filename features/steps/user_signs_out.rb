@@ -14,6 +14,6 @@ class UserSignsOut < Spinach::FeatureSteps
   end
 
   And 'should see a notice "Successfully logged out"' do
-    pending 'step not implemented'
+    find("#coreon-status .notice").should have_text "Successfully logged out"
   end
 end
