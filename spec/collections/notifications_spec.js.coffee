@@ -11,3 +11,6 @@ describe "Coreon.Collections.Notifications", ->
 
   it "defines model class", ->
     @notifications.model.should.equal Coreon.Models.Notification 
+
+  it "creates virtual urls", ->
+    @notifications.url.should.equal "notifications"

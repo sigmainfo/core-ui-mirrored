@@ -1,4 +1,3 @@
-@wip
 Feature: User signs out
   In order to secure the access to the repository
   As a user closing a session

@@ -9,3 +9,7 @@ en:
       notice: "Notice:"
     actions:
       hide: "Hide"
+
+  notifications:
+    account:
+      logout: "Successfully logged out"

@@ -3,3 +3,4 @@
 
 class Coreon.Collections.Notifications extends Backbone.Collection
   model: Coreon.Models.Notification
+  url: "notifications"

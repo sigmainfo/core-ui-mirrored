@@ -11,17 +11,17 @@ class Coreon.Views.NotificationView extends Backbone.View
     "click a.hide": "hide"
   
   initialize: ->
-    @model.on "change:hidden", @onChangeHidden
+    @model.on "change:hidden", @onChangeHidden, @
 
   render: ->
-    @$el.html @template message: @model.get("message"), url: @model.url
+    @$el.html @template message: @model.get("message"), url: @model.url()
     @$el.hide() if @model.get "hidden"
     @
   
   hide: (event) ->
-    @model.hide() 
     event.preventDefault()
     event.stopPropagation()
+    @model.set "hidden", true 
 
-  onChangeHidden: =>
+  onChangeHidden: ->
     if @model.get "hidden" then @$el.hide() else @$el.show()

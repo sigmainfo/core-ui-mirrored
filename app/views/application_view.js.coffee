@@ -1,4 +1,5 @@
 #= require environment
+#= require views/tools_view
 #= require views/footer_view
 
 class Coreon.Views.ApplicationView extends Backbone.View
@@ -7,6 +8,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   render: ->
     @$el.empty()
+    @$el.append (new Coreon.Views.ToolsView model: @model).render().$el
     @$el.append (new Coreon.Views.FooterView model: @model).render().$el
     @
 

@@ -1,11 +1,12 @@
 #= require spec_helper
+#= require models/notification
 #= require views/notification_view
 
 describe "Coreon.Views.NotificationView", ->
   
   beforeEach ->
     @view = new Coreon.Views.NotificationView
-      model: new Backbone.Model
+      model: new Coreon.Models.Notification
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -22,7 +23,7 @@ describe "Coreon.Views.NotificationView", ->
       
     it "renders hide button", ->
       @view.model.id = "123"
-      @view.model.url = "notifications/123"
+      @view.model.url = -> "notifications/123"
       @view.render()
       @view.$el.should.have "span.actions a.hide"
       @view.$("a.hide").should.have.text I18n.t "notification.actions.hide"
@@ -57,9 +58,8 @@ describe "Coreon.Views.NotificationView", ->
       @view.hide.should.have.been.calledOnce
 
     it "changes model state", ->
-      sinon.spy @view.model, "hide"
       @view.hide @event
-      @view.model.hide.should.have.been.calledOnce
+      @view.model.get("hidden").should.equal true
 
     it "cancels event propagation and default action", ->
       sinon.spy @event, "preventDefault"
@@ -71,7 +71,6 @@ describe "Coreon.Views.NotificationView", ->
   context "#onChangeHidden", ->
 
     beforeEach ->
-      @event = new jQuery.Event "change:hidden"
       $("#konacha").append @view.$el
 
     it "is triggered by change of model state", ->
@@ -85,6 +84,6 @@ describe "Coreon.Views.NotificationView", ->
       @view.$el.should.be.hidden
 
     it "reveals view when not hidden", ->
-      @view.$el.hide()
+      @view.model.set "hidden", true
       @view.model.set "hidden", false
       @view.$el.should.be.visible

@@ -68,6 +68,12 @@ describe "Coreon.Application", ->
         Coreon.Routers.AccountRouter.should.have.been.calledOnce
         Coreon.Routers.AccountRouter.restore()    
 
+      it "creates notification on logout", ->
+        @app.init()
+        @app.account.logout()
+        @app.notifications.length.should.equal 1
+        @app.notifications.at(0).get("message").should.equal I18n.t "notifications.account.logout"
+
     context "#notify", ->
 
       beforeEach ->

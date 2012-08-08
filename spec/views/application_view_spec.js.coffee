@@ -6,14 +6,13 @@ describe "Coreon.Views.ApplicationView", ->
   beforeEach ->
     @view = new Coreon.Views.ApplicationView
       el: "#konacha"
-
+      model:
+        notifications: new Backbone.Collection
+        account: "Account"
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
     
   context "#render", ->
-
-    beforeEach ->
-      @view.model = account: "Account"
 
     it "allows chaining", ->
       @view.render().should.equal @view
@@ -31,16 +30,21 @@ describe "Coreon.Views.ApplicationView", ->
 
       it "passes model to view", ->
         sinon.spy Coreon.Views, "FooterView"
-        @view.model = account: "Account"
         @view.render()
         Coreon.Views.FooterView.should.have.been.calledWith model: @view.model
         Coreon.Views.FooterView.restore()
 
     describe "tools", ->
       
-      xit "appends element", ->
+      it "appends element", ->
         @view.render()
         @view.$el.should.have "#coreon-tools"
+
+      it "passes model to view", ->
+        sinon.spy Coreon.Views, "ToolsView"
+        @view.render()
+        Coreon.Views.ToolsView.should.have.been.calledWith model: @view.model
+        Coreon.Views.ToolsView.restore()
 
   context "#navigate", ->
 

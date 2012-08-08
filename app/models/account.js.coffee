@@ -7,3 +7,4 @@ class Coreon.Models.Account extends Backbone.Model
 
   logout: ->
     CoreClient.Auth.authenticate false
+    @trigger "logout"
