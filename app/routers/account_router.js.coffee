@@ -6,4 +6,3 @@ class Coreon.Routers.AccountRouter extends Backbone.Router
     "account/login":  "login"
 
   login: () ->
-    console.log "logging in..."
