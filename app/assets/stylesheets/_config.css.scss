@@ -6,6 +6,8 @@ $browncolor: #554f3c;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
 $petrol: #5498b0;
+$error-color: #f25a5a;
+$notice-color: #6bc175;
 
 @mixin retina-logos {
   background-image: image-url('layout/coreon.png');
