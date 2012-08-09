@@ -6,16 +6,12 @@ namespace :spinach do
     ENV["RAILS_ENV"] = "test"
   end
 
-  def features_path
-    @features_path ||= Rails.root.join "features"
-  end
-
   def run_spinach(*args)
-    sh "spinach --features_path #{features_path} --tags ~@skip " << args.join(" ")
+    sh "spinach " << args.join(" ")
   end
 
   task :run => :env do
-    run_spinach "--tags ~@wip"
+    run_spinach "--tags ~@wip,~@skip"
   end
 
   task :generate => :env do
@@ -23,7 +19,7 @@ namespace :spinach do
   end
 
   task :wip => :env do
-    run_spinach "--tags @wip"
+    run_spinach "--tags @wip,~@skip"
   end
 
   task :all => :env do

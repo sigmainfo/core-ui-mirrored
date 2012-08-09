@@ -29,7 +29,16 @@ CoreUi::Application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  # allow AJAX requests to test server
+  config.middleware.use Rack::Cors do |requests|
+    requests.allow do |allow|
+      allow.origins 'localhost:4000', '127.0.0.1:4000'
+      allow.resource '*', 
+        headers: :any,
+        methods: [:get, :post, :put, :update, :delete]
+    end
+  end
 end

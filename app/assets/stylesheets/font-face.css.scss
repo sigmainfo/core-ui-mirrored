@@ -1,0 +1,13 @@
+
+
+@mixin gmah-font-face($family, $basename) {
+  @font-face {
+  	font-family: quote($family);
+  	src: font-url("#{$basename}.eot");
+  	src: local('☺'), font-url("#{$basename}.woff") format('woff'), font-url("#{$basename}.ttf") format('truetype'), font-url("#{$basename}.svg") format('svg');
+  	font-weight: normal;
+  	font-style: normal;
+  }
+}
+
+@include gmah-font-face('Droid_Sans', DroidSans-webfont);

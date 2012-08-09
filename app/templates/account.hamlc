@@ -1,0 +1,2 @@
+%p
+  != @link_to I18n.t("account.logout"), "account/logout", "class": "logout"

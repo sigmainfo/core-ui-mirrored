@@ -35,6 +35,9 @@ Spinach.hooks.before_scenario do
     end
     raise "Auth service not available"
   end
+
+  # disable jQuery animations
+  page.execute_script "jQuery.fx.off = true"
 end
 #
 # Spinach.config.save_and_open_page_on_failure = true
