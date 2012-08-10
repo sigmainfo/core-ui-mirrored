@@ -1,6 +1,7 @@
 #= require environment
 #= require views/tools_view
 #= require views/footer_view
+#= require views/login_view
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
@@ -9,13 +10,31 @@ class Coreon.Views.ApplicationView extends Backbone.View
   initialize: ->
     @tools  = new Coreon.Views.ToolsView model: @model
     @footer = new Coreon.Views.FooterView model: @model
+    @login  = new Coreon.Views.LoginView model: @model
+
+    @model.account.on "login", @loginHandler, @
+    @model.account.on "logout", @logoutHandler, @
+
+  destroy: ->
+    @model.account.off null, null, @
 
   render: ->
     @$el.empty()
     @$el.append @tools.render().$el
-    @$el.append @footer.render().$el unless @model.account.idle()
+    if @model.account.idle()
+      @logoutHandler()
+    else
+      @loginHandler()
     @
 
   navigate: (event) ->
     Backbone.history.navigate $(event.target).attr("href"), trigger: true
     event.preventDefault()
+
+  loginHandler: ->
+    @login.remove()
+    @$el.append @footer.render().$el
+
+  logoutHandler: ->
+    @footer.remove()
+    @$el.append @login.render().$el

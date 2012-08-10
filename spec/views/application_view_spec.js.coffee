@@ -9,6 +9,7 @@ describe "Coreon.Views.ApplicationView", ->
       model:
         notifications: new Backbone.Collection
         account:
+          on: -> true
           idle: -> false
 
   it "is a Backbone view", ->
@@ -17,13 +18,11 @@ describe "Coreon.Views.ApplicationView", ->
   describe "#initialize", ->
     
     it "creates footer subview", ->
-      @view.model = "Application"
       @view.initialize()
       @view.footer.should.be.an.instanceOf Coreon.Views.FooterView
       @view.footer.model.should.equal @view.model
 
     it "creates tools subview", ->
-      @view.model = "Application"
       @view.initialize()
       @view.tools.should.be.an.instanceOf Coreon.Views.ToolsView
       @view.tools.model.should.equal @view.model
@@ -41,7 +40,7 @@ describe "Coreon.Views.ApplicationView", ->
 
     describe "footer", ->
 
-      it "appends element when logged in", ->
+      it "appends element when already logged in", ->
         @view.model.account.idle = -> false
         @view.render()
         @view.$el.should.have "#coreon-footer"
@@ -50,6 +49,19 @@ describe "Coreon.Views.ApplicationView", ->
         @view.model.account.idle = -> true
         @view.render()
         @view.$el.should.not.have "#coreon-footer"
+
+    describe "login", ->
+
+      it "renders login form when idle", ->
+        @view.model.account.idle = -> true
+        @view.render()
+        @view.$el.should.have "#coreon-login"
+        @view.$("#coreon-login").should.have "input[type='submit']"
+
+      it "renders no login form when already logged in", ->
+        @view.model.account.idle = -> false
+        @view.render()
+        @view.$el.should.not.have "#coreon-login"
 
     it "appends tools element", ->
       @view.render()
@@ -76,3 +88,38 @@ describe "Coreon.Views.ApplicationView", ->
       @link.trigger @event
       Backbone.history.navigate.should.not.have.been.called
       @event.preventDefault.should.not.have.been.called
+
+  context "on login/logout", ->
+
+    beforeEach ->
+      @view.model.account = _.extend {}, Backbone.Events
+      @view.initialize()
+
+    context "login", ->
+
+      it "renders footer", ->
+        @view.model.account.trigger "login"
+        @view.$el.should.have "#coreon-footer"
+        @view.$("#coreon-footer").should.have ".logout"
+
+      it "removes login form", ->
+        @view.login.render().$el.appendTo @view.$el
+        @view.model.account.trigger "login"
+        @view.$el.should.not.have "#coreon-login"
+
+    context "logout", ->
+
+      it "renders login form", ->
+        @view.model.account.trigger "logout"
+        @view.$el.should.have "#coreon-login"
+        @view.$("#coreon-login").should.have "form.login"
+
+      it "removes footer", ->
+        @view.footer.render().$el.appendTo @view.$el
+        @view.model.account.trigger "logout"
+        @view.$el.should.not.have "#coreon-footer"
+
+    it "removes bindings on destroy", ->
+      sinon.spy @view.model.account, "off"
+      @view.destroy()
+      @view.model.account.off.should.have.been.calledWith null, null, @view 

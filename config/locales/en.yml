@@ -4,6 +4,8 @@
 en:
   account:
     logout: "Log out"
+    login:
+      submit: "Log in"
   notification:
     label:
       notice: "Notice:"

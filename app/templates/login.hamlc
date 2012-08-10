@@ -1,0 +1,2 @@
+%form.login
+  %input{type: "submit", name: "login", value: I18n.t "account.login.submit"}
