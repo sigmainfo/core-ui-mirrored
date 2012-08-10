@@ -39,7 +39,7 @@ describe "Coreon.Views.NotificationView", ->
       @view.render().should.equal @view
 
     it "hides el when hidden", ->
-      @view.model.set hidden: true
+      @view.model.set hidden: true, silent: true
       $("#konacha").append @view.$el
       @view.render()
       @view.$el.should.be.hidden
@@ -47,7 +47,6 @@ describe "Coreon.Views.NotificationView", ->
   context "#hide", ->
     
     beforeEach ->
-      @view.model.hide = ->
       @event = new jQuery.Event "click"
 
     it "is triggered by hide button", ->
@@ -71,7 +70,7 @@ describe "Coreon.Views.NotificationView", ->
   context "#onChangeHidden", ->
 
     beforeEach ->
-      $("#konacha").append @view.$el
+      $("#konacha").append @view.render().$el
 
     it "is triggered by change of model state", ->
       sinon.spy @view, "onChangeHidden"
@@ -80,10 +79,12 @@ describe "Coreon.Views.NotificationView", ->
       @view.onChangeHidden.should.have.been.calledOnce
 
     it "hides view when hidden", ->
+      sinon.spy @view.$el, "slideUp"
+      @view.model.set "hidden", false, silent: true
       @view.model.set "hidden", true
-      @view.$el.should.be.hidden
+      @view.$el.slideUp.should.have.been.calledWith "fast"
 
     it "reveals view when not hidden", ->
-      @view.model.set "hidden", true
+      @view.model.set "hidden", true, silent: true
       @view.model.set "hidden", false
       @view.$el.should.be.visible
