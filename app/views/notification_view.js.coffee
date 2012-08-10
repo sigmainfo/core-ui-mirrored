@@ -24,4 +24,4 @@ class Coreon.Views.NotificationView extends Backbone.View
     @model.set "hidden", true 
 
   onChangeHidden: ->
-    if @model.get "hidden" then @$el.hide() else @$el.show()
+    if @model.get "hidden" then @$el.slideUp("fast") else @$el.slideDown()

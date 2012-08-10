@@ -19,4 +19,6 @@ class Coreon.Views.NotificationsView extends Backbone.View
     @$el.empty()
 
   onAdd: (model) ->
+    model.set "hidden", true, silent: true
     @$el.prepend new Coreon.Views.NotificationView(model: model).render().$el
+    model.set "hidden", false
