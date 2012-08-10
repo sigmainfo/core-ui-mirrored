@@ -75,8 +75,8 @@ module CoreUi
     config.assets.version = '1.0'
 
     # Add project directory to assets paths
-    config.assets.paths << "app"
     config.assets.paths << "app/config"
+    config.assets.paths << "app"
 
     # HAML assets
     if defined? ::HamlCoffeeAssets

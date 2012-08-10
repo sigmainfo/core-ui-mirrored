@@ -30,6 +30,9 @@ gem "rack-cors", require: "rack/cors"
 group :development do
   gem "thin"
   gem "konacha"
+  gem 'pry'
+  gem 'capistrano'
+  gem 'capistrano-ext'
 end
 
 group :test do
