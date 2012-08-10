@@ -1,4 +1,4 @@
-@skip
+@wip
 Feature: User signs in
   In order to access the repository
   As a user that starts a session
@@ -10,7 +10,7 @@ Feature: User signs in
 
   Scenario: successful login
     When I visit the home page
-    Then I should see the login form
+    Then I should see the login screen
     When I fill in "Login" with "Nobody"
     And fill in "Password" with "se7en"
     And click on "Log in"

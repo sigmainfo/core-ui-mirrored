@@ -8,11 +8,28 @@ describe "Coreon.Views.ApplicationView", ->
       el: "#konacha"
       model:
         notifications: new Backbone.Collection
-        account: "Account"
+        account:
+          idle: -> false
+
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
+
+  describe "#initialize", ->
     
-  context "#render", ->
+    it "creates footer subview", ->
+      @view.model = "Application"
+      @view.initialize()
+      @view.footer.should.be.an.instanceOf Coreon.Views.FooterView
+      @view.footer.model.should.equal @view.model
+
+    it "creates tools subview", ->
+      @view.model = "Application"
+      @view.initialize()
+      @view.tools.should.be.an.instanceOf Coreon.Views.ToolsView
+      @view.tools.model.should.equal @view.model
+
+    
+  describe "#render", ->
 
     it "allows chaining", ->
       @view.render().should.equal @view
@@ -24,27 +41,19 @@ describe "Coreon.Views.ApplicationView", ->
 
     describe "footer", ->
 
-      it "appends element", ->
+      it "appends element when logged in", ->
+        @view.model.account.idle = -> false
         @view.render()
         @view.$el.should.have "#coreon-footer"
 
-      it "passes model to view", ->
-        sinon.spy Coreon.Views, "FooterView"
+      it "does not append element when not logged in", ->
+        @view.model.account.idle = -> true
         @view.render()
-        Coreon.Views.FooterView.should.have.been.calledWith model: @view.model
-        Coreon.Views.FooterView.restore()
+        @view.$el.should.not.have "#coreon-footer"
 
-    describe "tools", ->
-      
-      it "appends element", ->
-        @view.render()
-        @view.$el.should.have "#coreon-tools"
-
-      it "passes model to view", ->
-        sinon.spy Coreon.Views, "ToolsView"
-        @view.render()
-        Coreon.Views.ToolsView.should.have.been.calledWith model: @view.model
-        Coreon.Views.ToolsView.restore()
+    it "appends tools element", ->
+      @view.render()
+      @view.$el.should.have "#coreon-tools"
 
   context "#navigate", ->
 

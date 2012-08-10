@@ -29,6 +29,10 @@ class Coreon.Application
     Backbone.history.start
       pushState: true
       root: @options.root
+      silent: true
+
+    Backbone.history.navigate "account/login",
+      trigger: true
 
     Coreon.application = @
 

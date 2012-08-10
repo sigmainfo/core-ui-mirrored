@@ -12,6 +12,10 @@ describe "Coreon.Application", ->
 
   context "#init", ->
     
+    beforeEach ->
+      Backbone.history = new Backbone.History
+      sinon.stub Backbone.history, "navigate"
+
     it "allows chaining", ->
       @app.init().should.equal @app
 
@@ -24,22 +28,24 @@ describe "Coreon.Application", ->
       @app.options.root.should.equal "/"
 
     it "starts history", ->
-      Backbone.history = new Backbone.History
       sinon.spy Backbone.history, "start"
       @app.init root: "/repo/"
-      Backbone.history.start.should.have.been.calledWith pushState: true, root: "/repo/"
-      Backbone.history.start.restore()
+      Backbone.history.start.should.have.been.calledWith pushState: true, root: "/repo/", silent: true
+
+    it "shows login screen", ->
+      @app.init()
+      Backbone.history.navigate.should.have.been.calledWith "account/login", trigger: true
 
     context ".view", ->
 
       it "uses #app by default", ->
         $("#konacha").append $("<div>", id: "app")
         @app.init()
-        $("#app").should.have "#coreon-footer"
+        $("#app").should.have "#coreon-tools"
 
       it "uses specified container", ->
         @app.init el: "#konacha"
-        $("#konacha").should.have "#coreon-footer"
+        $("#konacha").should.have "#coreon-tools"
 
       it "creates view instance", ->
         @app.init()

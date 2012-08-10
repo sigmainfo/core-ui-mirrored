@@ -12,7 +12,12 @@ module AuthSteps
     CoreClient::Auth.create_user me[:name], me[:login], me[:password]
   end
 
-  And 'I am logged in' do
+  Given 'I am logged in' do
     page.execute_script "CoreClient.Auth.authenticate('#{me[:login]}', '#{me[:password]}');"
+    wait_until { page.evaluate_script "CoreClient.Auth.isAuthenticated()" }
+  end
+
+  Given 'I am logged out' do
+    page.execute_script "CoreClient.Auth.authenticate(false);"
   end
 end

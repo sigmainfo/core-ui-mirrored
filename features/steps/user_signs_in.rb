@@ -1,18 +1,13 @@
 class UserSignsIn < Spinach::FeatureSteps
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
-    CoreClient::Auth.create_user "William Blake", "Nobody", "se7en!"
-  end
+  include AuthSteps
 
-  And 'I am logged out' do
-    click_on "Log out"
-  end
 
   When 'I visit the home page' do
     visit root_path
   end
 
-  Then 'I should see the login form' do
-    pending 'step not implemented'
+  Then 'I should see the login screen' do
+    current_path.should == "/account/login"
   end
 
   When 'I fill in "Login" with "Nobody"' do
