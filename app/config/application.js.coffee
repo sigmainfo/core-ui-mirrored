@@ -2,7 +2,6 @@
 #= require views/application_view
 #= require collections/notifications
 #= require models/account
-#= require routers/account_router
 
 class Coreon.Application
 
@@ -24,15 +23,10 @@ class Coreon.Application
 
     @view.render()
 
-    new Coreon.Routers.AccountRouter
-
     Backbone.history.start
       pushState: true
       root: @options.root
       silent: true
-
-    Backbone.history.navigate "account/login",
-      trigger: true
 
     Coreon.application = @
 

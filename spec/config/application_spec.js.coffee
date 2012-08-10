@@ -32,10 +32,6 @@ describe "Coreon.Application", ->
       @app.init root: "/repo/"
       Backbone.history.start.should.have.been.calledWith pushState: true, root: "/repo/", silent: true
 
-    it "shows login screen", ->
-      @app.init()
-      Backbone.history.navigate.should.have.been.calledWith "account/login", trigger: true
-
     context ".view", ->
 
       it "uses #app by default", ->
@@ -68,12 +64,6 @@ describe "Coreon.Application", ->
         @app.init()
         @app.account.should.be.an.instanceOf Coreon.Models.Account
         
-      it "creates router", ->
-        sinon.spy Coreon.Routers, "AccountRouter"
-        @app.init()
-        Coreon.Routers.AccountRouter.should.have.been.calledOnce
-        Coreon.Routers.AccountRouter.restore()    
-
       it "creates notification on logout", ->
         @app.init()
         @app.account.logout()
