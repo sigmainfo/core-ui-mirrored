@@ -98,26 +98,35 @@ describe "Coreon.Views.ApplicationView", ->
     context "login", ->
 
       it "renders footer", ->
+        sinon.spy @view.footer, "delegateEvents"
         @view.model.account.trigger "login"
         @view.$el.should.have "#coreon-footer"
         @view.$("#coreon-footer").should.have ".logout"
+        @view.footer.delegateEvents.should.have.been.calledOnce
 
       it "removes login form", ->
+        sinon.spy @view.login, "undelegateEvents"
         @view.login.render().$el.appendTo @view.$el
         @view.model.account.trigger "login"
         @view.$el.should.not.have "#coreon-login"
+        @view.login.undelegateEvents.should.have.been.calledOnce
+
 
     context "logout", ->
 
       it "renders login form", ->
+        sinon.spy @view.login, "delegateEvents"
         @view.model.account.trigger "logout"
         @view.$el.should.have "#coreon-login"
         @view.$("#coreon-login").should.have "form.login"
+        @view.login.delegateEvents.should.have.been.calledOnce
 
       it "removes footer", ->
+        sinon.spy @view.footer, "undelegateEvents"
         @view.footer.render().$el.appendTo @view.$el
         @view.model.account.trigger "logout"
         @view.$el.should.not.have "#coreon-footer"
+        @view.footer.undelegateEvents.should.have.been.calledOnce
 
     it "removes bindings on destroy", ->
       sinon.spy @view.model.account, "off"

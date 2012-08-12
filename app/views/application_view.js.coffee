@@ -33,8 +33,13 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   loginHandler: ->
     @login.remove()
+
+    @login.undelegateEvents()
     @$el.append @footer.render().$el
+    @footer.delegateEvents()
 
   logoutHandler: ->
     @footer.remove()
+    @footer.undelegateEvents()
     @$el.append @login.render().$el
+    @login.delegateEvents()

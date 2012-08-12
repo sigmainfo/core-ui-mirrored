@@ -13,8 +13,9 @@ module AuthSteps
   end
 
   Given 'I am logged in' do
-    page.execute_script "CoreClient.Auth.authenticate('#{me[:login]}', '#{me[:password]}');"
+    page.execute_script "CoreClient.Auth.authenticate('#{me[:login]}', '#{me[:password]}')"
     wait_until { page.evaluate_script "CoreClient.Auth.isAuthenticated()" }
+    page.execute_script "Coreon.application.account.trigger('login')"
   end
 
   Given 'I am logged out' do

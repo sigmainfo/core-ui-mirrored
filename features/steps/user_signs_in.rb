@@ -7,11 +7,12 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   Then 'I should see the login screen' do
-    current_path.should == "/account/login"
+    page.should have_css("#coreon-login")
+    page.should have_no_css("#coreon-footer")
   end
 
   When 'I fill in "Login" with "Nobody"' do
-    pending 'step not implemented'
+    fill_in "Login", with: "Nobody"
   end
 
   And 'fill in "Password" with "se7en"' do
