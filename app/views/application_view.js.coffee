@@ -32,8 +32,8 @@ class Coreon.Views.ApplicationView extends Backbone.View
     event.preventDefault()
 
   loginHandler: ->
+    return if @model.account.idle()
     @login.remove()
-
     @login.undelegateEvents()
     @$el.append @footer.render().$el
     @footer.delegateEvents()

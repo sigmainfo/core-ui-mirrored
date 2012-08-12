@@ -92,7 +92,7 @@ describe "Coreon.Views.ApplicationView", ->
   context "on login/logout", ->
 
     beforeEach ->
-      @view.model.account = _.extend {}, Backbone.Events
+      @view.model.account = _.extend {idle: -> false}, Backbone.Events
       @view.initialize()
 
     context "login", ->
@@ -106,11 +106,18 @@ describe "Coreon.Views.ApplicationView", ->
 
       it "removes login form", ->
         sinon.spy @view.login, "undelegateEvents"
-        @view.login.render().$el.appendTo @view.$el
+        @view.login.render()
         @view.model.account.trigger "login"
         @view.$el.should.not.have "#coreon-login"
         @view.login.undelegateEvents.should.have.been.calledOnce
 
+      it "fails gracefully when idle", ->
+        @view.model.account.idle = -> true
+        @view.render()
+        @view.model.account.trigger "login"
+        @view.$el.should.have "#coreon-login"
+        @view.$el.should.not.have "#coreon-footer"
+        
 
     context "logout", ->
 
