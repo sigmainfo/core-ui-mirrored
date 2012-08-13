@@ -14,7 +14,7 @@ Feature: User signs in
     When I fill in "Login" with "Nobody"
     And fill in "Password" with "se7en"
     And click on "Log in"
-    Then I should see the application desktop
+    Then I should be within the application
     And I should see a notice "Logged in successfully as Wiliam Blake"
 
   Scenario: failing login

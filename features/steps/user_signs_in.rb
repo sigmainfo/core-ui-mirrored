@@ -16,15 +16,16 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   And 'fill in "Password" with "se7en"' do
-    pending 'step not implemented'
+    fill_in "Password", with: "se7en"
   end
 
   And 'click on "Log in"' do
-    pending 'step not implemented'
+    click_on "Log in"
   end
 
-  Then 'I should see the application desktop' do
-    pending 'step not implemented'
+  Then 'I should be within the application' do
+    page.should have_no_css("#coreon-login")
+    page.should have_css("#coreon-footer")
   end
 
   And 'I should see a notice "Logged in successfully as Wiliam Blake"' do
