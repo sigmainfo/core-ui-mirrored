@@ -33,7 +33,9 @@ class Coreon.Application
 
   notify: (message = "") ->
     @notifications.unshift message: message
-    @notifications.at(0)
+
+  alert: (message = "") ->
+    @notifications.unshift message: message, type: "error"
 
   onLogout: ->
     @notify I18n.t "notifications.account.logout"

@@ -77,7 +77,7 @@ describe "Coreon.Application", ->
         @app.notifications.length.should.equal 1
         @app.notifications.at(0).get("message").should.equal I18n.t "notifications.account.login", name: "Wiliam Blake"
 
-    context "#notify", ->
+    describe "#notify", ->
 
       beforeEach ->
         @app.init()
@@ -94,3 +94,20 @@ describe "Coreon.Application", ->
         @app.notify "Who pays the rent on time."
         @app.notifications.at(0).get("message").should.equal "Who pays the rent on time."
 
+    describe "#alert", ->
+
+      beforeEach ->
+        @app.init()
+      
+      it "creates notifications of type error", ->
+        @app.alert "Terrible is what it is."
+        @app.notifications.at(0).get("message").should.equal "Terrible is what it is."
+        @app.notifications.at(0).get("type").should.equal "error"
+
+      it "returns notification instance", ->
+        @app.alert("I am what I am.").should.equal @app.notifications.at(0)
+         
+      it "creates new notifications on top of stack", ->
+        @app.alert "Yeah, a landlord's dream: a paralyzed tenant with no tongue."
+        @app.alert "Who pays the rent on time."
+        @app.notifications.at(0).get("message").should.equal "Who pays the rent on time."
