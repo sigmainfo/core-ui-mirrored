@@ -27,6 +27,10 @@ describe "Coreon.Views.ApplicationView", ->
       @view.tools.should.be.an.instanceOf Coreon.Views.ToolsView
       @view.tools.model.should.equal @view.model
 
+    it "creates login subview", ->
+      @view.initialize()
+      @view.login.should.be.an.instanceOf Coreon.Views.LoginView
+      @view.login.model.should.equal @view.model.account
     
   describe "#render", ->
 

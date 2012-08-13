@@ -33,3 +33,25 @@ describe "Coreon.Models.Account", ->
       @account.logout()
       spy.should.have.been.calledOnce
 
+  context "#login", ->
+
+    beforeEach ->
+      @server = sinon.fakeServer.create()
+
+    afterEach ->
+      @server.restore()
+
+    it "delegates login to CoreClient", ->
+      sinon.spy CoreClient.Auth, "authenticate"
+      @account.login "nobody", "se7en"
+      CoreClient.Auth.authenticate.should.have.been.calledWith "nobody", "se7en"
+      CoreClient.Auth.authenticate.restore()
+
+    it "triggers event on success", ->
+      spy = sinon.spy()
+      @server.respondWith [201, {"Content-Type": "application/json"}, "{}"]
+      @account.on "login", spy
+      @account.login "nobody", "seven"
+      @server.respond()
+      spy.should.have.been.calledOnce
+

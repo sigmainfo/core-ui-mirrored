@@ -6,6 +6,14 @@ class Coreon.Views.LoginView extends Backbone.View
 
   template: Coreon.Templates["login"]
 
+  events:
+    "submit form": "submitHandler"
+
   render: ->
     @$el.html @template()
     @
+
+  submitHandler: (event) ->
+    event.preventDefault()
+    event.stopPropagation()
+    @model.authenticate @$("#coreon-login-login").val(), @$("#coreon-login-password").val()

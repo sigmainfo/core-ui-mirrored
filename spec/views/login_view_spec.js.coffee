@@ -39,3 +39,26 @@ describe "Coreon.Views.LoginView", ->
       @view.$el.should.have "input[id='coreon-login-password']"
       @view.$("input[id='coreon-login-password']").should.have.attr "type", "password"
       @view.$("input[id='coreon-login-password']").should.have.attr "name", "login[password]"
+
+  describe "on submit", ->
+    
+    beforeEach ->
+      @event = new jQuery.Event "submit"
+      @view.model = authenticate: -> true
+      @view.render().$el.appendTo "#konacha"
+
+    it "handles submit events exclusively", ->
+      sinon.spy @event, "preventDefault"
+      sinon.spy @event, "stopPropagation"
+      @view.$("form").trigger @event
+      @event.preventDefault.should.have.been.calledOnce
+      @event.stopPropagation.should.have.been.calledOnce
+
+    it "authenticates account", ->
+      sinon.spy @view.model, "authenticate"
+      @view.$("#coreon-login-login").val "nobody"
+      @view.$("#coreon-login-password").val "se7en"
+      @view.$("form").trigger @event
+      @view.model.authenticate.should.have.been.calledWith "nobody", "se7en"
+
+      

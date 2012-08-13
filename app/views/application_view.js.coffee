@@ -10,7 +10,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   initialize: ->
     @tools  = new Coreon.Views.ToolsView model: @model
     @footer = new Coreon.Views.FooterView model: @model
-    @login  = new Coreon.Views.LoginView model: @model
+    @login  = new Coreon.Views.LoginView model: @model.account
 
     @model.account.on "login", @loginHandler, @
     @model.account.on "logout", @logoutHandler, @
