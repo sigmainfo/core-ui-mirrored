@@ -15,8 +15,8 @@ class UserSignsIn < Spinach::FeatureSteps
     fill_in "Login", with: "Nobody"
   end
 
-  And 'fill in "Password" with "se7en"' do
-    fill_in "Password", with: "se7en"
+  And 'fill in "Password" with "se7en!"' do
+    fill_in "Password", with: "se7en!"
   end
 
   And 'click on "Log in"' do
@@ -28,24 +28,16 @@ class UserSignsIn < Spinach::FeatureSteps
     page.should have_css("#coreon-footer")
   end
 
-  And 'I should see a notice "Logged in successfully as Wiliam Blake"' do
-    pending 'step not implemented'
+  And 'I should see a notice "Successfully logged in as William Blake"' do
+    find("#coreon-status .notification").should have_content "Successfully logged in as William Blake"
   end
 
-  And 'fill in "Login" with "Nobody"' do
-    pending 'step not implemented'
+  And 'fill in "Password" with "ei8ht?"' do
+    fill_in "Password", with: "ei8ht?"
   end
 
-  And 'fill in "Password" with "ei8ht"' do
-    pending 'step not implemented'
-  end
-
-  Then 'I should not see the application desktop' do
-    pending 'step not implemented'
-  end
-
-  And 'should see an alert with "Invalid login or password"' do
-    pending 'step not implemented'
+  And 'should see an error "Invalid login or password"' do
+    find("#coreon-status .error").should have_content "Invalid login or password"
   end
 
   Given 'the authentication service is not available' do

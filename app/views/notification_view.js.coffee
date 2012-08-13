@@ -15,6 +15,7 @@ class Coreon.Views.NotificationView extends Backbone.View
 
   render: ->
     @$el.html @template message: @model.get("message"), url: @model.url()
+    @$el.addClass @model.get "type"
     @$el.hide() if @model.get "hidden"
     @
   

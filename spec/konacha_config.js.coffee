@@ -3,7 +3,7 @@
 Konacha.mochaOptions.ui = "bdd"
 
 # ignore the following globals during leak detection
-Konacha.mochaOptions.globals = ["jQuery*"]
+Konacha.mochaOptions.globals = ["jQuery*", "regex"]
 # 
 # or, ignore all leaks
 Konacha.mochaOptions.ignoreLeaks = false

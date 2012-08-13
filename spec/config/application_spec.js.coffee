@@ -66,9 +66,16 @@ describe "Coreon.Application", ->
         
       it "creates notification on logout", ->
         @app.init()
-        @app.account.logout()
+        @app.account.trigger "logout"
         @app.notifications.length.should.equal 1
         @app.notifications.at(0).get("message").should.equal I18n.t "notifications.account.logout"
+
+      it "creates notification on login", ->
+        @app.init()
+        @app.account.set "userName", "Wiliam Blake", silent: true
+        @app.account.trigger "login"
+        @app.notifications.length.should.equal 1
+        @app.notifications.at(0).get("message").should.equal I18n.t "notifications.account.login", name: "Wiliam Blake"
 
     context "#notify", ->
 

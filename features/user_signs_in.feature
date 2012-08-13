@@ -12,19 +12,18 @@ Feature: User signs in
     When I visit the home page
     Then I should see the login screen
     When I fill in "Login" with "Nobody"
-    And fill in "Password" with "se7en"
+    And fill in "Password" with "se7en!"
     And click on "Log in"
     Then I should be within the application
-    And I should see a notice "Logged in successfully as Wiliam Blake"
+    And I should see a notice "Successfully logged in as William Blake"
 
   Scenario: failing login
     When I visit the home page
-    And fill in "Login" with "Nobody"
-    And fill in "Password" with "ei8ht"
+    And I fill in "Login" with "Nobody"
+    And fill in "Password" with "ei8ht?"
     And click on "Log in"
-    Then I should not see the application desktop
-    But I should see the login form
-    And should see an alert with "Invalid login or password"
+    Then I should see the login screen
+    And should see an error "Invalid login or password"
 
   Scenario: service unavailable
     Given the authentication service is not available

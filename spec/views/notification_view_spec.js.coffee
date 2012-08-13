@@ -20,6 +20,11 @@ describe "Coreon.Views.NotificationView", ->
       @view.render()
       @view.$el.should.have "span.label"
       @view.$(".label").should.have.text I18n.t "notification.label.notice"
+
+    it "renders notification type", ->
+      @view.model.set "type", "error", silent: true
+      @view.render()
+      @view.$el.should.have.class "error"
       
     it "renders hide button", ->
       @view.model.id = "123"

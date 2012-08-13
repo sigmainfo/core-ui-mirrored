@@ -44,7 +44,7 @@ describe "Coreon.Views.LoginView", ->
     
     beforeEach ->
       @event = new jQuery.Event "submit"
-      @view.model = authenticate: -> true
+      @view.model = login: -> true
       @view.render().$el.appendTo "#konacha"
 
     it "handles submit events exclusively", ->
@@ -55,10 +55,10 @@ describe "Coreon.Views.LoginView", ->
       @event.stopPropagation.should.have.been.calledOnce
 
     it "authenticates account", ->
-      sinon.spy @view.model, "authenticate"
+      sinon.spy @view.model, "login"
       @view.$("#coreon-login-login").val "nobody"
       @view.$("#coreon-login-password").val "se7en"
       @view.$("form").trigger @event
-      @view.model.authenticate.should.have.been.calledWith "nobody", "se7en"
+      @view.model.login.should.have.been.calledWith "nobody", "se7en"
 
       

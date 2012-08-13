@@ -17,3 +17,4 @@ en:
   notifications:
     account:
       logout: "Successfully logged out"
+      login: "Successfully logged in as {{name}}"

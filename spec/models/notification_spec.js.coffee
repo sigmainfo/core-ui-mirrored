@@ -9,7 +9,9 @@ describe "Coreon.Models.Notification", ->
   it "is a Backbone model", ->
     @notification.should.be.an.instanceOf Backbone.Model
 
-  context "hidden:", ->
 
-    it "defaults to false", ->
-      @notification.get("hidden").should.be.false
+  it "defaults hidden to false", ->
+    @notification.get("hidden").should.be.false
+
+  it "defaults type to info", ->
+    @notification.get("type").should.equal "info"

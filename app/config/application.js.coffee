@@ -16,6 +16,7 @@ class Coreon.Application
     @account       = new Coreon.Models.Account
 
     @account.on "logout", @onLogout, @
+    @account.on "login", @onLogin, @
 
     @view = new Coreon.Views.ApplicationView
       el: @options.el
@@ -36,3 +37,6 @@ class Coreon.Application
 
   onLogout: ->
     @notify I18n.t "notifications.account.logout"
+
+  onLogin: ->
+    @notify I18n.t "notifications.account.login", name: @account.get "userName"
