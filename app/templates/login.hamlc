@@ -1,3 +1,4 @@
+%h1.logo coreon
 %form.login
   %label{for: "coreon-login-login"}= I18n.t "account.login.login"
   %input#coreon-login-login{type: "text", name: "login[login]"}
