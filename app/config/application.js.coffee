@@ -24,6 +24,8 @@ class Coreon.Application
 
     @view.render()
 
+    $(document).ajaxError @ajaxErrorHandler
+
     Backbone.history.start
       pushState: true
       root: @options.root
@@ -42,3 +44,16 @@ class Coreon.Application
 
   onLogin: ->
     @notify I18n.t "notifications.account.login", name: @account.get "userName"
+
+  ajaxErrorHandler: (event, jqXHR, ajaxSettings, thrownError) =>
+    if @isApiUrl ajaxSettings.url
+      data = JSON.parse jqXHR.responseText 
+      data.message ?= I18n.t "errors.generic"
+      if _.isString data.code
+        @alert I18n.t data.code, defaultValue: data.message
+      else
+        @alert data.message
+
+  isApiUrl: (url) ->
+    url.indexOf(CoreClient.Graph.root_url) > -1 or
+    url.indexOf(CoreClient.Auth.root_url) > -1

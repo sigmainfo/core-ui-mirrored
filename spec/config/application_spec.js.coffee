@@ -111,3 +111,80 @@ describe "Coreon.Application", ->
         @app.alert "Yeah, a landlord's dream: a paralyzed tenant with no tongue."
         @app.alert "Who pays the rent on time."
         @app.notifications.at(0).get("message").should.equal "Who pays the rent on time."
+
+  describe "Ajax", ->
+    
+    beforeEach ->
+      @server = sinon.fakeServer.create()
+      @app.init()
+    
+    afterEach ->
+      @server.restore()
+
+    context "on error", ->
+
+      beforeEach ->
+        CoreClient.Auth.root_url = "/api"
+        @server.respondWith [
+          400,
+          { "Content-Type": "application/json" },
+          JSON.stringify
+            message: "Could not parse JSON"
+            code: "errors.json.parse"
+        ]
+
+      it "displays I18n error message", ->
+        sinon.stub I18n, "t"
+        I18n.t.withArgs("errors.json.parse").returns "Try it again, Dude." 
+        jQuery.ajax "/api/can/be/anything"
+        @server.respond()
+        try
+          @app.notifications.length.should.equal 1
+          @app.notifications.at(0).get("type").should.equal "error"
+          @app.notifications.at(0).get("message").should.equal "Try it again, Dude."
+        finally
+          I18n.t.restore()
+
+      it "display provided error message as a fallback", -> 
+        jQuery.ajax "/api/can/be/anything"
+        @server.respond()
+        @app.notifications.at(0).get("message").should.equal "Could not parse JSON"
+
+      it "handles API errors only", ->
+        CoreClient.Auth.root_url = "/api/auth"
+        CoreClient.Graph.root_url = "/api/graph"
+        jQuery.ajax "/api/auth/login"
+        jQuery.ajax "/can/be/anything"
+        jQuery.ajax "/api/graph/foo/bar/baz"
+        @server.respond()
+        @app.notifications.length.should.equal 2
+
+      it "displays generic error when no message given", ->
+        sinon.stub I18n, "t", (scope, options) ->
+          switch scope
+            when "errors.generic" then "An error occured."
+            when "not.exist" then options.defaultValue
+        jQuery.ajax "/api/can/be/anything"
+        @server.respond [500, {},
+          JSON.stringify
+            code: "not.exist"
+        ]
+        try
+          @app.notifications.at(0).get("message").should.equal "An error occured."
+        finally
+          I18n.t.restore()
+      
+      it "displays generic error when response is invalid", ->
+        sinon.stub I18n, "t"
+        I18n.t.withArgs("errors.generic").returns "An error occured." 
+        jQuery.ajax "/api/can/be/anything"
+        @server.respond [500, {},
+          JSON.stringify
+            foo: "bar"
+        ]
+        try
+          @app.notifications.at(0).get("message").should.equal "An error occured."
+        finally
+          I18n.t.restore()
+
+

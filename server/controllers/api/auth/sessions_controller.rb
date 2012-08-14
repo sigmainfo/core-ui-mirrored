@@ -17,7 +17,7 @@ class Api::Auth::SessionsController < ApplicationController
       expires_at: "3012-07-13T17:59:22+00:00"
     }, status: 201
   rescue Mongoid::Errors::DocumentNotFound, Api::Auth::NotAuthenticated
-    render json: { error: "Invalid login or password" }, status: 404
+    render json: { message: "Could not log in", code: "errors.login.failed" }, status: 404
   end
 
   def destroy

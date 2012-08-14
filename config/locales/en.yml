@@ -10,11 +10,17 @@ en:
       submit: "Log in"
   notification:
     label:
-      notice: "Notice:"
+      info: "Info:"
+      error: "Error:"
     actions:
       hide: "Hide"
 
   notifications:
     account:
-      logout: "Successfully logged out"
-      login: "Successfully logged in as {{name}}"
+      logout: "Successfully logged out."
+      login: "Successfully logged in as {{name}}."
+
+  errors:
+    generic: "An error occured."
+    login:
+      failed: "Invalid login or password."

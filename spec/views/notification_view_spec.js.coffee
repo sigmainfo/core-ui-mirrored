@@ -19,12 +19,13 @@ describe "Coreon.Views.NotificationView", ->
     it "renders label", ->
       @view.render()
       @view.$el.should.have "span.label"
-      @view.$(".label").should.have.text I18n.t "notification.label.notice"
+      @view.$(".label").should.have.text I18n.t "notification.label.info"
 
     it "renders notification type", ->
       @view.model.set "type", "error", silent: true
       @view.render()
       @view.$el.should.have.class "error"
+      @view.$(".label").should.have.text I18n.t "notification.label.error"
       
     it "renders hide button", ->
       @view.model.id = "123"
@@ -32,7 +33,7 @@ describe "Coreon.Views.NotificationView", ->
       @view.render()
       @view.$el.should.have "span.actions a.hide"
       @view.$("a.hide").should.have.text I18n.t "notification.actions.hide"
-      @view.$("a.hide").should.have.attr "href", "/notifications/123/hide"
+      @view.$("a.hide").should.have.attr "href", "/notification/hide"
 
     it "renders message", ->
       @view.model.set message: "If you kill him, he will win."
