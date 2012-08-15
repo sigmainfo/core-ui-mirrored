@@ -8,6 +8,8 @@ en:
       login: "Login"
       password: "Password"
       submit: "Log in"
+    status: "Logged in as {{name}}"
+
   notification:
     label:
       info: "Info:"

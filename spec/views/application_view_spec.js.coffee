@@ -8,9 +8,11 @@ describe "Coreon.Views.ApplicationView", ->
       el: "#konacha"
       model:
         notifications: new Backbone.Collection
-        account:
-          on: -> true
-          idle: -> false
+        account: new Backbone.Model
+    @view.model.account.idle = -> false
+
+  afterEach ->
+    @view.destroy()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -94,10 +96,6 @@ describe "Coreon.Views.ApplicationView", ->
       @event.preventDefault.should.not.have.been.called
 
   context "on login/logout", ->
-
-    beforeEach ->
-      @view.model.account = _.extend {idle: -> false}, Backbone.Events
-      @view.initialize()
 
     context "login", ->
 

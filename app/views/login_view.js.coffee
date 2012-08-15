@@ -17,10 +17,8 @@ class Coreon.Views.LoginView extends Backbone.View
     @
 
   changeStateHandler: (event) ->
-    if @$("#coreon-login-login").val().length and @$("#coreon-login-password").val().length
-      @$("input[type='submit']").prop "disabled", false
-    else
-      @$("input[type='submit']").prop "disabled", true
+    valid = @$("#coreon-login-login").val().length and @$("#coreon-login-password").val().length
+    @$("input[type='submit']").prop "disabled", not valid
 
   submitHandler: (event) ->
     event.preventDefault()

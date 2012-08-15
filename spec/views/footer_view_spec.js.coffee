@@ -12,7 +12,7 @@ describe "Coreon.Views.FooterView", ->
   beforeEach ->
     @view = new Coreon.Views.FooterView
       model:
-        account: "Account"
+        account: new Backbone.Model
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -37,9 +37,8 @@ describe "Coreon.Views.FooterView", ->
 
     it "passes model to account view", ->
       sinon.spy Coreon.Views, "AccountView"
-      @view.model = account: "Account"
       @view.render()
-      Coreon.Views.AccountView.should.have.been.calledWith model: "Account"
+      Coreon.Views.AccountView.should.have.been.calledWith model: @view.model.account
       Coreon.Views.AccountView.restore()
 
   context "#toggle", -> 
