@@ -1,5 +1,6 @@
 #= require environment
 #= require views/notifications_view
+#= require views/search_view
 #= require templates/tools
 
 class Coreon.Views.ToolsView extends Backbone.View
@@ -10,4 +11,5 @@ class Coreon.Views.ToolsView extends Backbone.View
   render: ->
     @$el.html @template()
     @$("#coreon-status").append (new Coreon.Views.NotificationsView collection: @model.notifications).render().$el
+    @$("#coreon-widgets").append (new Coreon.Views.SearchView).render().$el
     @

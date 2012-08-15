@@ -5,7 +5,7 @@ describe "Coreon.Views.NotificationsView", ->
 
   beforeEach ->
     @view = new Coreon.Views.NotificationsView
-      collection: new Coreon.Collections.Notifications [
+      collection: new Backbone.Collection [
         { message: "The kid" },
         { message: "What?" }, 
         { message: "Did the kid see it?" }
