@@ -1,7 +1,6 @@
 class UserSignsIn < Spinach::FeatureSteps
   include AuthSteps
 
-
   When 'I visit the home page' do
     visit root_path
   end
@@ -29,7 +28,7 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   And 'I should see a notice "Successfully logged in as William Blake"' do
-    find("#coreon-status .notification").should have_content "Successfully logged in as William Blake"
+    find("#coreon-status .info").should have_content "Successfully logged in as William Blake"
   end
 
   And 'fill in "Password" with "ei8ht?"' do
@@ -41,10 +40,10 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   Given 'the authentication service is not available' do
-    pending 'step not implemented'
+    page.execute_script "CoreClient.Auth.root_url = 'http://this/goes/nowhere/'"
   end
 
-  But 'I should see an alert with "Service not available"' do
-    pending 'step not implemented'
+  But 'I should see an error "Service is currently unavailable"' do
+    find("#coreon-status .error").should have_content "Service is currently unavailable"
   end
 end

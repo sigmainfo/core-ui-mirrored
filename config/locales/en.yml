@@ -24,3 +24,5 @@ en:
     generic: "An error occured."
     login:
       failed: "Invalid login or password."
+    service:
+      unavailable: "Service is currently unavailable."

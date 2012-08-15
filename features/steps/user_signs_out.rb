@@ -14,7 +14,7 @@ class UserSignsOut < Spinach::FeatureSteps
   end
 
   And 'should see a notice "Successfully logged out"' do
-    find("#coreon-status .notification").should have_content "Successfully logged out"
+    find("#coreon-status .info").should have_content "Successfully logged out"
   end
 
   But 'should not see the footer' do

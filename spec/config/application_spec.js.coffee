@@ -187,4 +187,15 @@ describe "Coreon.Application", ->
         finally
           I18n.t.restore()
 
+      it "displays message when service not available", ->
+        sinon.stub I18n, "t"
+        I18n.t.withArgs("errors.service.unavailable").returns "Service currently unavailable." 
+        @app.ajaxErrorHandler("event", {readyState: 0}, {url: "/api/foo"}, "")
+        try
+          @app.notifications.at(0).get("message").should.equal "Service currently unavailable."
+        finally
+          I18n.t.restore()
+
+        
+
 

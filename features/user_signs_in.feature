@@ -1,4 +1,3 @@
-@wip
 Feature: User signs in
   In order to access the repository
   As a user that starts a session
@@ -26,10 +25,10 @@ Feature: User signs in
     And should see an error "Invalid login or password"
 
   Scenario: service unavailable
-    Given the authentication service is not available
-    When I visit the home page
-    And fill in "Login" with "Nobody"
-    And fill in "Password" with "se7en"
+    Given I visit the home page
+    And the authentication service is not available
+    When I fill in "Login" with "Nobody"
+    And fill in "Password" with "se7en!"
     And click on "Log in"
-    Then I should not see the application desktop
-    But I should see an alert with "Service not available"
+    Then I should see the login screen
+    But I should see an error "Service is currently unavailable"

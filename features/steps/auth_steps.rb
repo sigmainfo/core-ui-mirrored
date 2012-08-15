@@ -13,6 +13,7 @@ module AuthSteps
   end
 
   Given 'I am logged in' do
+    Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' unless me
     page.execute_script "CoreClient.Auth.authenticate('#{me[:login]}', '#{me[:password]}')"
     wait_until { page.evaluate_script "CoreClient.Auth.isAuthenticated()" }
     page.execute_script "Coreon.application.account.trigger('login')"
@@ -20,5 +21,6 @@ module AuthSteps
 
   Given 'I am logged out' do
     page.execute_script "CoreClient.Auth.authenticate(false);"
+    page.execute_script "Coreon.application.account.trigger('logout')"
   end
 end

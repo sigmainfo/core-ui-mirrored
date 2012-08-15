@@ -21,6 +21,6 @@ class Api::Auth::SessionsController < ApplicationController
   end
 
   def destroy
-    raise "not implemented"
+    render nothing: true, status: 204
   end
 end

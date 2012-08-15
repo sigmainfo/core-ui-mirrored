@@ -26,6 +26,7 @@ class Coreon.Application
 
     $(document).ajaxError @ajaxErrorHandler
 
+    Backbone.history ?= new Backbone.History
     Backbone.history.start
       pushState: true
       root: @options.root
@@ -47,12 +48,17 @@ class Coreon.Application
 
   ajaxErrorHandler: (event, jqXHR, ajaxSettings, thrownError) =>
     if @isApiUrl ajaxSettings.url
-      data = JSON.parse jqXHR.responseText 
-      data.message ?= I18n.t "errors.generic"
-      if _.isString data.code
-        @alert I18n.t data.code, defaultValue: data.message
+      if jqXHR.readyState is 0
+        @alert I18n.t "errors.service.unavailable"
       else
-        @alert data.message
+        try
+          data = JSON.parse jqXHR.responseText 
+          data.message ?= I18n.t "errors.generic"
+          if _.isString data.code
+            @alert I18n.t data.code, defaultValue: data.message
+          else
+            @alert data.message
+        catch e
 
   isApiUrl: (url) ->
     url.indexOf(CoreClient.Graph.root_url) > -1 or
