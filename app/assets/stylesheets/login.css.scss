@@ -40,9 +40,16 @@
       outline:0;
       font: 1.5em Palatino;
       color: $text-color;
-       &:hover {
-         color: $bluecolor;
-       };
+      
+      &:not(:disabled) {
+        &:hover {
+          color: $bluecolor;
+        };
+      }
+      
+       &:disabled {
+         @include opacity(0.5);
+       }
     }
 
     div.input {
