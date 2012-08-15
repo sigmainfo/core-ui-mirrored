@@ -54,29 +54,41 @@ describe "Coreon.Application", ->
 
     context "Notifications", ->
 
-      it "creates collection", ->
+      beforeEach ->
         @app.init()
+
+      it "creates collection", ->
         @app.notifications.should.be.an.instanceOf Coreon.Collections.Notifications
 
-    context "Account", ->
-
-      it "creates model", ->
-        @app.init()
-        @app.account.should.be.an.instanceOf Coreon.Models.Account
-        
       it "creates notification on logout", ->
-        @app.init()
         @app.account.trigger "logout"
         @app.notifications.length.should.equal 1
         @app.notifications.at(0).get("message").should.equal I18n.t "notifications.account.logout"
 
       it "creates notification on login", ->
-        @app.init()
         @app.account.set "userName", "Wiliam Blake", silent: true
         @app.account.trigger "login"
         @app.notifications.length.should.equal 1
         @app.notifications.at(0).get("message").should.equal I18n.t "notifications.account.login", name: "Wiliam Blake"
 
+      it "clears previous notifications on login", ->
+        @app.account.trigger "logout"
+        @app.account.trigger "login"
+        @app.notifications.length.should.equal 1
+
+      it "clears previous notifications on logout", ->
+        @app.account.trigger "login"
+        @app.account.trigger "logout"
+        @app.notifications.length.should.equal 1
+
+    context "Account", ->
+
+      beforeEach ->
+        @app.init()
+
+      it "creates model", ->
+        @app.account.should.be.an.instanceOf Coreon.Models.Account
+        
     describe "#notify", ->
 
       beforeEach ->

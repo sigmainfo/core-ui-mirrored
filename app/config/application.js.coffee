@@ -41,9 +41,11 @@ class Coreon.Application
     @notifications.unshift message: message, type: "error"
 
   onLogout: ->
+    @notifications.reset()
     @notify I18n.t "notifications.account.logout"
 
   onLogin: ->
+    @notifications.reset()
     @notify I18n.t "notifications.account.login", name: @account.get "userName"
 
   ajaxErrorHandler: (event, jqXHR, ajaxSettings, thrownError) =>
