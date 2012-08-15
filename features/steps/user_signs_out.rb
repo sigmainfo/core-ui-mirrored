@@ -9,11 +9,15 @@ class UserSignsOut < Spinach::FeatureSteps
     click_on "Log out"
   end
 
-  Then 'I should be on the login page' do
-    current_path.should == "/account/login"
+  Then 'I should see the login form' do
+    page.should have_css("#coreon-login")
   end
 
   And 'should see a notice "Successfully logged out"' do
-    find("#coreon-status .notification").should have_content "Successfully logged out"
+    find("#coreon-status .info").should have_content "Successfully logged out"
+  end
+
+  But 'should not see the footer' do
+    page.should have_no_css("#coreon-footer")
   end
 end

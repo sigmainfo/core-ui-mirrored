@@ -4,7 +4,7 @@
 describe "Coreon.Views.AccountView", ->
   
   beforeEach ->
-    @view = new Coreon.Views.AccountView
+    @view = new Coreon.Views.AccountView model: new Backbone.Model
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -17,6 +17,11 @@ describe "Coreon.Views.AccountView", ->
     it "allows chaining", ->
       @view.render().should.equal @view
     
+    it "renders login name", ->
+      @view.model.set "userName", "Big George"
+      @view.render()
+      @view.$el.should.contain I18n.t "account.status", name: "Big George"
+      
     it "renders logout link", ->
       @view.render()
       @view.$el.should.have "a.logout"
@@ -27,9 +32,7 @@ describe "Coreon.Views.AccountView", ->
 
     beforeEach ->
       Backbone.history = new Backbone.History
-      @view = new Coreon.Views.AccountView
-        model:
-          logout: -> true
+      @view.model.logout = -> true
       @event = new jQuery.Event "click"
 
     afterEach ->

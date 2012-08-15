@@ -11,7 +11,7 @@ class Coreon.Views.AccountView extends Backbone.View
     "click a.logout": "logout"
 
   render: ->
-    @$el.html @template()
+    @$el.html @template name: @model.get "userName"
     @
 
   logout: (event) ->

@@ -11,7 +11,7 @@ namespace :spinach do
   end
 
   task :run => :env do
-    run_spinach "--tags ~@wip,~@skip"
+    run_spinach "--tags ~@wip --tags ~@skip"
   end
 
   task :generate => :env do

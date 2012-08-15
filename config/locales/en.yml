@@ -4,12 +4,27 @@
 en:
   account:
     logout: "Log out"
+    login:
+      login: "Login"
+      password: "Password"
+      submit: "Log in"
+    status: "Logged in as {{name}}"
+
   notification:
     label:
-      notice: "Notice:"
+      info: "Info:"
+      error: "Error:"
     actions:
       hide: "Hide"
 
   notifications:
     account:
-      logout: "Successfully logged out"
+      logout: "Successfully logged out."
+      login: "Successfully logged in as {{name}}."
+
+  errors:
+    generic: "An error occured."
+    login:
+      failed: "Invalid login or password."
+    service:
+      unavailable: "Service is currently unavailable."

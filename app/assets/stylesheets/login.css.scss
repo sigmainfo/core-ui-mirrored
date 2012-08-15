@@ -1,0 +1,61 @@
+@import '_config';
+@import 'compass/css3';
+
+#coreon-login {
+  position: relative;
+  width: 900px;
+  margin: 30px auto;
+  
+  .logo {
+    display: block;
+    text-indent: -1000px;
+    overflow: hidden;
+    background:image-url("layout/coreon.png") no-repeat 30px 0;
+    @include retina-logos;
+    width: 240px;
+    height: 100px;
+    position: relative;
+    top: 160px;
+
+  }
+  
+  .login {
+    width: 520px;
+    padding-bottom: 50px;
+    position: absolute;
+    top: 99px;
+    left: 380px;
+    background:image-url("layout/separator.png") repeat-x bottom;
+    @include retina-separator;
+
+    input[type="submit"] {
+      position: relative;
+      left: 50px;
+      top: 2px;
+      height:30px;
+      padding-left:30px;
+      border: none;
+      background:image-url("layout/icons.png") no-repeat 0 3px;
+      @include retina-icons;
+      outline:0;
+      font: 1.5em Palatino;
+      color: $text-color;
+      
+      &:not(:disabled) {
+        &:hover {
+          color: $bluecolor;
+        };
+      }
+      
+       &:disabled {
+         @include opacity(0.5);
+       }
+    }
+
+    div.input {
+      padding-bottom: 36px;
+    }
+  }
+}
+
+

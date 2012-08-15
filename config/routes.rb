@@ -1,7 +1,5 @@
 CoreUi::Application.routes.draw do
 
-  get "sessions/create"
-
   namespace :api do
     namespace :auth do
       

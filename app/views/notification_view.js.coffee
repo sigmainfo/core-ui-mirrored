@@ -14,7 +14,9 @@ class Coreon.Views.NotificationView extends Backbone.View
     @model.on "change:hidden", @onChangeHidden, @
 
   render: ->
-    @$el.html @template message: @model.get("message"), url: @model.url()
+    type = @model.get "type"
+    @$el.html @template message: @model.get("message"), url: "notification/hide", label: I18n.t "notification.label.#{type}"
+    @$el.addClass type
     @$el.hide() if @model.get "hidden"
     @
   

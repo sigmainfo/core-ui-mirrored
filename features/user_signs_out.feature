@@ -8,5 +8,6 @@ Feature: User signs out
     And I am logged in
     When I click to open the footer
     And click on "Log out"
-    Then I should be on the login page
+    Then I should see the login form
     And should see a notice "Successfully logged out"
+    But should not see the footer

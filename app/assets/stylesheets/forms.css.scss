@@ -1,0 +1,30 @@
+@import 'compass/css3';
+@import '_config';
+
+
+button::-moz-focus-inner { 
+   padding: 0; 
+   border: none;
+ }
+ 
+input[type="email"], input[type="password"], input[type="text"], textarea {
+  @include box-sizing(border-box);
+   height:30px;
+   width: 260px;
+   padding:6px 8px;
+   border: none;
+   outline:0;
+   font: 1em'Droid_Sans', Trebuchet MS, Lucida;
+   color: $text-color;
+   @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 1px, 1px, 2px, false, inset);
+}
+
+label {
+  display: block;
+  color: $browncolor;
+  padding-bottom: 5px;
+  padding-top: 35px;
+  abbr {
+    border: none;
+  }
+}

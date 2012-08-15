@@ -1,61 +1,49 @@
 class UserSignsIn < Spinach::FeatureSteps
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
-    CoreClient::Auth.create_user "William Blake", "Nobody", "se7en!"
-  end
-
-  And 'I am logged out' do
-    click_on "Log out"
-  end
+  include AuthSteps
 
   When 'I visit the home page' do
     visit root_path
   end
 
-  Then 'I should see the login form' do
-    pending 'step not implemented'
+  Then 'I should see the login screen' do
+    page.should have_css("#coreon-login")
+    page.should have_no_css("#coreon-footer")
   end
 
   When 'I fill in "Login" with "Nobody"' do
-    pending 'step not implemented'
+    fill_in "Login", with: "Nobody"
   end
 
-  And 'fill in "Password" with "se7en"' do
-    pending 'step not implemented'
+  And 'fill in "Password" with "se7en!"' do
+    fill_in "Password", with: "se7en!"
   end
 
   And 'click on "Log in"' do
-    pending 'step not implemented'
+    click_on "Log in"
   end
 
-  Then 'I should see the application desktop' do
-    pending 'step not implemented'
+  Then 'I should be within the application' do
+    page.should have_no_css("#coreon-login")
+    page.should have_css("#coreon-footer")
   end
 
-  And 'I should see a notice "Logged in successfully as Wiliam Blake"' do
-    pending 'step not implemented'
+  And 'I should see a notice "Successfully logged in as William Blake"' do
+    find("#coreon-status .info").should have_content "Successfully logged in as William Blake"
   end
 
-  And 'fill in "Login" with "Nobody"' do
-    pending 'step not implemented'
+  And 'fill in "Password" with "ei8ht?"' do
+    fill_in "Password", with: "ei8ht?"
   end
 
-  And 'fill in "Password" with "ei8ht"' do
-    pending 'step not implemented'
-  end
-
-  Then 'I should not see the application desktop' do
-    pending 'step not implemented'
-  end
-
-  And 'should see an alert with "Invalid login or password"' do
-    pending 'step not implemented'
+  And 'should see an error "Invalid login or password"' do
+    find("#coreon-status .error").should have_content "Invalid login or password"
   end
 
   Given 'the authentication service is not available' do
-    pending 'step not implemented'
+    page.execute_script "CoreClient.Auth.root_url = 'http://this/goes/nowhere/'"
   end
 
-  But 'I should see an alert with "Service not available"' do
-    pending 'step not implemented'
+  But 'I should see an error "Service is currently unavailable"' do
+    find("#coreon-status .error").should have_content "Service is currently unavailable"
   end
 end
