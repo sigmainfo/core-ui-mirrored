@@ -7,9 +7,10 @@ class Coreon.Views.LoginView extends Backbone.View
   template: Coreon.Templates["login"]
 
   events:
-    "submit form"   : "submitHandler"
-    "keypress form" : "changeStateHandler"
-    "paste form"    : "changeStateHandler"
+    "submit form"  : "submitHandler"
+    "change input" : "changeStateHandler"
+    "keyup input"  : "changeStateHandler"
+    "paste input"  : "changeStateHandler"
 
   render: ->
     @$el.html @template()

@@ -43,7 +43,7 @@ describe "Coreon.Views.LoginView", ->
       @view.$("input[id='coreon-login-password']").should.have.attr "name", "login[password]"
       @view.$("input[id='coreon-login-password']").should.be ":required"
 
-  describe "on keypress", ->
+  describe "on keyup", ->
 
     beforeEach ->
       @view.render()
@@ -52,14 +52,14 @@ describe "Coreon.Views.LoginView", ->
       @view.$("input[type='submit']").prop "disabled", true
       @view.$("#coreon-login-login").val "foo"
       @view.$("#coreon-login-password").val "bar"
-      @view.$("#coreon-login-password").keypress()
+      @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.not.be.disabled
       
     it "disables submit button when login is empty", ->
       @view.$("input[type='submit']").prop "disabled", false
       @view.$("#coreon-login-login").val ""
       @view.$("#coreon-login-password").val "bar"
-      @view.$("#coreon-login-password").keypress()
+      @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.be.disabled
       
 
@@ -67,7 +67,7 @@ describe "Coreon.Views.LoginView", ->
       @view.$("input[type='submit']").prop "disabled", false
       @view.$("#coreon-login-login").val "foo"
       @view.$("#coreon-login-password").val ""
-      @view.$("#coreon-login-password").keypress()
+      @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.be.disabled
 
     it "updates state on paste", ->
