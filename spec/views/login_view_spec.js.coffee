@@ -23,6 +23,7 @@ describe "Coreon.Views.LoginView", ->
       @view.$("form").should.have "input[type='submit']"
       @view.$("input[type='submit']").should.have.attr "name", "login"
       @view.$("input[type='submit']").should.have.attr "value", I18n.t "account.login.submit"
+      @view.$("input[type='submit']").should.be.disabled
 
     it "renders input for login", ->
       @view.render()
@@ -31,6 +32,7 @@ describe "Coreon.Views.LoginView", ->
       @view.$el.should.have "input[id='coreon-login-login']"
       @view.$("input[id='coreon-login-login']").should.have.attr "type", "text"
       @view.$("input[id='coreon-login-login']").should.have.attr "name", "login[login]"
+      @view.$("input[id='coreon-login-login']").should.be ":required"
 
     it "renders input for password", ->
       @view.render()
@@ -39,6 +41,41 @@ describe "Coreon.Views.LoginView", ->
       @view.$el.should.have "input[id='coreon-login-password']"
       @view.$("input[id='coreon-login-password']").should.have.attr "type", "password"
       @view.$("input[id='coreon-login-password']").should.have.attr "name", "login[password]"
+      @view.$("input[id='coreon-login-password']").should.be ":required"
+
+  describe "on keypress", ->
+
+    beforeEach ->
+      @view.render()
+
+    it "enables submit button when inputs are not empty", ->
+      @view.$("input[type='submit']").prop "disabled", true
+      @view.$("#coreon-login-login").val "foo"
+      @view.$("#coreon-login-password").val "bar"
+      @view.$("#coreon-login-password").keypress()
+      @view.$("input[type='submit']").should.not.be.disabled
+      
+    it "disables submit button when login is empty", ->
+      @view.$("input[type='submit']").prop "disabled", false
+      @view.$("#coreon-login-login").val ""
+      @view.$("#coreon-login-password").val "bar"
+      @view.$("#coreon-login-password").keypress()
+      @view.$("input[type='submit']").should.be.disabled
+      
+
+    it "disables submit button when password is empty", ->
+      @view.$("input[type='submit']").prop "disabled", false
+      @view.$("#coreon-login-login").val "foo"
+      @view.$("#coreon-login-password").val ""
+      @view.$("#coreon-login-password").keypress()
+      @view.$("input[type='submit']").should.be.disabled
+
+    it "updates state on paste", ->
+      @view.$("input[type='submit']").prop "disabled", true
+      @view.$("#coreon-login-login").val "foo"
+      @view.$("#coreon-login-password").val "bar"
+      @view.$("#coreon-login-password").trigger "paste"
+      @view.$("input[type='submit']").should.not.be.disabled
 
   describe "on submit", ->
     
