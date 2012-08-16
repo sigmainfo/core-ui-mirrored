@@ -18,21 +18,21 @@ describe "Coreon.Views.ApplicationView", ->
     @view.should.be.an.instanceOf Backbone.View
 
   describe "#initialize", ->
+
+    it "creates login subview", ->
+      @view.login.should.be.an.instanceOf Coreon.Views.LoginView
+      @view.login.model.should.equal @view.model.account
     
     it "creates footer subview", ->
-      @view.initialize()
       @view.footer.should.be.an.instanceOf Coreon.Views.FooterView
       @view.footer.model.should.equal @view.model
 
-    it "creates tools subview", ->
-      @view.initialize()
-      @view.tools.should.be.an.instanceOf Coreon.Views.ToolsView
-      @view.tools.model.should.equal @view.model
+    it "creates notifications view", ->
+      @view.notifications.should.be.an.instanceOf Coreon.Views.NotificationsView
+      @view.notifications.collection.should.equal @view.model.notifications
 
-    it "creates login subview", ->
-      @view.initialize()
-      @view.login.should.be.an.instanceOf Coreon.Views.LoginView
-      @view.login.model.should.equal @view.model.account
+    it "creates widgets subview", ->
+      @view.widgets.should.be.an.instanceOf Coreon.Views.WidgetsView
     
   describe "#render", ->
 
@@ -43,6 +43,32 @@ describe "Coreon.Views.ApplicationView", ->
       $("#konacha").append $("<div>", id: "foo")
       @view.render()
       @view.$el.should.not.have "#foo"
+
+    describe "notifications", ->
+
+      it "renders containers", ->
+        @view.render()
+        @view.$el.should.have "#coreon-top"
+        @view.$el.should.have "#coreon-top #coreon-header" 
+
+      it "renders notifications", ->
+        @view.render()
+        @view.$("#coreon-header").should.have "#coreon-notifications"
+
+
+    describe "widgets", ->
+
+      it "renders widgets when already logged in", ->
+        @view.model.account.idle = -> false
+        @view.render()
+        @view.$el.should.have "#coreon-widgets"
+        @view.$("#coreon-widgets").should.have "#coreon-search"
+
+      it "does not append element when not logged in", ->
+        @view.model.account.idle = -> true
+        @view.render()
+        @view.$el.should.not.have "#coreon-widgets"
+
 
     describe "footer", ->
 
@@ -68,10 +94,6 @@ describe "Coreon.Views.ApplicationView", ->
         @view.model.account.idle = -> false
         @view.render()
         @view.$el.should.not.have "#coreon-login"
-
-    it "appends tools element", ->
-      @view.render()
-      @view.$el.should.have "#coreon-tools"
 
   context "#navigate", ->
 
@@ -106,6 +128,13 @@ describe "Coreon.Views.ApplicationView", ->
         @view.$("#coreon-footer").should.have ".logout"
         @view.footer.delegateEvents.should.have.been.calledOnce
 
+      it "renders widgets", ->
+        sinon.spy @view.widgets, "delegateEvents"
+        @view.model.account.trigger "login"
+        @view.$el.should.have "#coreon-widgets"
+        @view.$("#coreon-widgets").should.have "#coreon-search"
+        @view.widgets.delegateEvents.should.have.been.calledOnce
+
       it "removes login form", ->
         sinon.spy @view.login, "undelegateEvents"
         @view.login.render()
@@ -136,6 +165,13 @@ describe "Coreon.Views.ApplicationView", ->
         @view.model.account.trigger "logout"
         @view.$el.should.not.have "#coreon-footer"
         @view.footer.undelegateEvents.should.have.been.calledOnce
+
+      it "removes widgets", ->
+        sinon.spy @view.widgets, "undelegateEvents"
+        @view.widgets.render().$el.appendTo @view.$el
+        @view.model.account.trigger "logout"
+        @view.$el.should.not.have "#coreon-widgets"
+        @view.widgets.undelegateEvents.should.have.been.calledOnce
 
     it "removes bindings on destroy", ->
       sinon.spy @view.model.account, "off"

@@ -1,10 +1,10 @@
 #= require spec_helper
-#= require views/search_view
+#= require views/widgets/search_view
 
 describe "Coreon.Views.SearchView", ->
   
   beforeEach ->
-    @view = new Coreon.Views.SearchView
+    @view = new Coreon.Views.Widgets.SearchView
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View

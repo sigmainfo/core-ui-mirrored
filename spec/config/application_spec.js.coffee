@@ -37,11 +37,11 @@ describe "Coreon.Application", ->
       it "uses #app by default", ->
         $("#konacha").append $("<div>", id: "app")
         @app.init()
-        $("#app").should.have "#coreon-tools"
+        $("#app").should.have "#coreon-top"
 
       it "uses specified container", ->
         @app.init el: "#konacha"
-        $("#konacha").should.have "#coreon-tools"
+        $("#konacha").should.have "#coreon-top"
 
       it "creates view instance", ->
         @app.init()

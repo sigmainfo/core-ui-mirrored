@@ -1,5 +1,6 @@
 #= require environment
 #= require templates/notification
+#= require helpers/link_to
 
 class Coreon.Views.NotificationView extends Backbone.View
   tagName: "li"

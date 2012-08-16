@@ -16,6 +16,7 @@ describe "Coreon.Views.NotificationsView", ->
 
   it "creates list container", ->
     @view.$el.should.be "ul.notifications"
+    @view.$el.should.have.id "coreon-notifications"
 
   context "#render", ->
 

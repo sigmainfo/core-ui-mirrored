@@ -28,7 +28,7 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   And 'I should see a notice "Successfully logged in as William Blake"' do
-    find("#coreon-status .info").should have_content "Successfully logged in as William Blake"
+    find("#coreon-notifications .info").should have_content "Successfully logged in as William Blake"
   end
 
   And 'fill in "Password" with "ei8ht?"' do
@@ -36,7 +36,7 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   And 'should see an error "Invalid login or password"' do
-    find("#coreon-status .error").should have_content "Invalid login or password"
+    find("#coreon-notifications .error").should have_content "Invalid login or password"
   end
 
   Given 'the authentication service is not available' do
@@ -44,6 +44,6 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   But 'I should see an error "Service is currently unavailable"' do
-    find("#coreon-status .error").should have_content "Service is currently unavailable"
+    find("#coreon-notifications .error").should have_content "Service is currently unavailable"
   end
 end

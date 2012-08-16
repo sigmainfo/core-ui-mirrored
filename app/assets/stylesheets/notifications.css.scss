@@ -1,21 +1,8 @@
 @import 'compass/css3';
 @import '_config';
 
-#coreon-status {
-  @include box-sizing(border-box);
-  background:image-url("layout/top-bg.jpg");
-  padding:6px;
-  min-width: 900px;
-  width: 100%;
-  @include single-box-shadow(rgba(0,0,0,0.8), 0, -1px, 2px, false, inset);
-  
-  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/top-bg@2x.jpg');
-      @include background-size(199px 65px);
-  }
-}
+#coreon-notifications {
 
-.notifications {
   padding-left: 80px;
   list-style: none;
   

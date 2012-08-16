@@ -1,16 +1,21 @@
 #= require environment
-#= require views/tools_view
+#= require templates/application
+#= require views/notifications_view
+#= require views/widgets_view
 #= require views/footer_view
 #= require views/login_view
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
+  template: Coreon.Templates["application"]
+
   events: "click a[href^='/']": "navigate"
 
   initialize: ->
-    @tools  = new Coreon.Views.ToolsView model: @model
-    @footer = new Coreon.Views.FooterView model: @model
-    @login  = new Coreon.Views.LoginView model: @model.account
+    @notifications = new Coreon.Views.NotificationsView collection: @model.notifications
+    @widgets       = new Coreon.Views.WidgetsView
+    @footer        = new Coreon.Views.FooterView model: @model
+    @login         = new Coreon.Views.LoginView model: @model.account
 
     @model.account.on "login", @loginHandler, @
     @model.account.on "logout", @logoutHandler, @
@@ -19,12 +24,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @model.account.off null, null, @
 
   render: ->
-    @$el.empty()
-    @$el.append @tools.render().$el
-    if @model.account.idle()
-      @logoutHandler()
-    else
-      @loginHandler()
+    @$el.html @template()
+    @$("#coreon-header").append @notifications.render().$el
+    if @model.account.idle() then @renderLogin() else @renderApplication()
     @
 
   navigate: (event) ->
@@ -32,14 +34,24 @@ class Coreon.Views.ApplicationView extends Backbone.View
     event.preventDefault()
 
   loginHandler: ->
-    return if @model.account.idle()
-    @login.remove()
-    @login.undelegateEvents()
-    @$el.append @footer.render().$el
-    @footer.delegateEvents()
+    unless @model.account.idle()
+      @login.remove()
+      @login.undelegateEvents()
+      @renderApplication() 
+      @footer.delegateEvents()
+      @widgets.delegateEvents()
 
   logoutHandler: ->
+    @widgets.remove()
+    @widgets.undelegateEvents()
     @footer.remove()
     @footer.undelegateEvents()
-    @$el.append @login.render().$el
+    @renderLogin()
     @login.delegateEvents()
+
+  renderApplication: ->
+    @$el.append @widgets.render().$el
+    @$el.append @footer.render().$el
+
+  renderLogin: ->
+    @$el.append @login.render().$el

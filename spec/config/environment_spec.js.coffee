@@ -23,7 +23,7 @@ describe "config/environment", ->
     Coreon.Routers.should.exist
 
     Coreon.Views.should.exist
-    Coreon.Views.Layout.should.exist
+    Coreon.Views.Widgets.should.exist
 
 
   it "makes helpers available to template context", ->
