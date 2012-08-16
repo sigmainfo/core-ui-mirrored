@@ -16,23 +16,19 @@
 }
 
 .notifications {
+  padding-left: 80px;
+  list-style: none;
 
-  li {
-    color: $greycolor;
-    padding: 8px 50px;
-    
-  }
   .label {
     display: inline-block;
     overflow: hidden;
     text-indent: -2000px;
     width: 8px;
     height: 8px;
-    margin-right: 7px;
+    margin-right: 6px;
     margin-bottom: 1px;
     background-color: $notice-color;
     @include border-radius(4px);
-    @include single-box-shadow(rgba(0,0,0,0.4), 1px, 1px, 2px, false, inset);
     @include box-shadow(rgba(white, 0.2) 1px 1px 0px, rgba(black, 0.4) 1px 1px 1px inset);
     
   }
@@ -41,19 +37,28 @@
     background-color: $error-color;
   }
   
+  .message {
+    display: inline-block;
+    @include border-radius(4px);
+    @include box-shadow(rgba(white, 0.05) 1px 1px 0px, rgba(black, 0.1) 1px 1px 1px inset);
+    background-color: rgba(0,0,0,0.1);
+    color: $greycolor;
+    font-size: 0.92em;
+    padding: 1px 6px;
+    width: 550px;
+    margin: 2px;
+  }
+  
   .hide {
     display: inline-block;
     overflow: hidden;
     text-indent: -2000px;
     width: 14px;
     height: 14px;
-    margin-left: 12px;
     position: relative;
     top: 3px;
-    @include border-radius(7px);
-    @include single-box-shadow(rgba(0,0,0,0.4), 1px, 1px, 2px, false, inset);
-    @include box-shadow(rgba(white, 0.2) 1px 1px 0px, rgba(black, 0.4) 1px 1px 1px inset);
-    background: darken($browncolor, 6) image-url("layout/icons.png") no-repeat -50px 1px;
+    left: -24px;
+    background: image-url("layout/icons.png") no-repeat -50px 1px;
     @include retina-icons;
     @include opacity(0.5);
     
