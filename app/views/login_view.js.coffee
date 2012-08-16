@@ -11,6 +11,7 @@ class Coreon.Views.LoginView extends Backbone.View
     "change input" : "changeStateHandler"
     "keyup input"  : "changeStateHandler"
     "paste input"  : "changeStateHandler"
+    "cut input"    : "changeStateHandler"
 
   render: ->
     @$el.html @template()
