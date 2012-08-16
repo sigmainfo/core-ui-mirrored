@@ -4,7 +4,11 @@
 describe "Coreon.Views.SearchView", ->
   
   beforeEach ->
+    sinon.stub I18n, "t"
     @view = new Coreon.Views.Widgets.SearchView
+
+  afterEach ->
+    I18n.t.restore()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -26,4 +30,10 @@ describe "Coreon.Views.SearchView", ->
       @view.$el.should.have "input#coreon-search-query"
       @view.$("#coreon-search-query").should.have.attr "type", "text"
       @view.$("#coreon-search-query").should.have.attr "name", "search[query]"
-      
+
+    it "renders submit button", ->
+      I18n.t.withArgs("search.submit").returns "Search"  
+      @view.render()
+      @view.$("form").should.have 'input[type="submit"]'
+      @view.$('input[type="submit"]').val().should.equal "Search"
+        

@@ -8,7 +8,9 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   And 'I click the search button' do
-    pending 'step not implemented'
+    within "#coreon-search" do
+      find('input[type="submit"]').click
+    end
   end
 
   Then 'I should see a progress indicator' do

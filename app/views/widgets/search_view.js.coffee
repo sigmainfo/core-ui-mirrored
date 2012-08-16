@@ -7,5 +7,5 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
   template: Coreon.Templates["widgets/search"]
 
   render: ->
-    @$el.html @template()
+    @$el.html @template label: I18n.t "search.submit"
     @
