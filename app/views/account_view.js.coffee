@@ -18,4 +18,3 @@ class Coreon.Views.AccountView extends Backbone.View
     event.preventDefault()
     event.stopPropagation()
     @model.logout()
-    Backbone.history.navigate "account/login", trigger: true, replace: true

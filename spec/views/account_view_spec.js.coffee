@@ -57,9 +57,3 @@ describe "Coreon.Views.AccountView", ->
       sinon.spy @view.model, "logout"
       @view.logout @event
       @view.model.logout.should.have.been.calledOnce
-
-    it "navigates to login screen", ->
-      sinon.spy Backbone.history, "navigate"
-      @view.logout @event
-      Backbone.history.navigate.should.have.been.calledWith "account/login", trigger: true, replace: true
-      Backbone.history.navigate.restore()
