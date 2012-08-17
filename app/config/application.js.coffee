@@ -1,5 +1,6 @@
 #= require environment
 #= require views/application_view
+#= require collections/connections
 #= require collections/notifications
 #= require models/account
 
@@ -12,8 +13,9 @@ class Coreon.Application
   init: (options = {}) ->
     @options = _.defaults options, @constructor.defaults
 
-    @notifications = new Coreon.Collections.Notifications
     @account       = new Coreon.Models.Account
+    @notifications = new Coreon.Collections.Notifications
+    @connections   = new Coreon.Collections.Connections
 
     @account.on "logout", @onLogout, @
     @account.on "login", @onLogin, @

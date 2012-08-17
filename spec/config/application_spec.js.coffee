@@ -106,6 +106,12 @@ describe "Coreon.Application", ->
         @app.notify "Who pays the rent on time."
         @app.notifications.at(0).get("message").should.equal "Who pays the rent on time."
 
+
+    it "creates Connections collection", ->
+      @app.init()
+      @app.connections.should.be.an.instanceOf Coreon.Collections.Connections 
+      
+      
     describe "#alert", ->
 
       beforeEach ->

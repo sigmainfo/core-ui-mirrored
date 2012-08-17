@@ -1,1 +1,2 @@
-%h3.toggle Coreon
+.toggle
+  %h3 Coreon

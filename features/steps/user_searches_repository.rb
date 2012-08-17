@@ -13,8 +13,12 @@ class UserSearchesRepository < Spinach::FeatureSteps
     end
   end
 
+  Then 'I should see "/concepts/search?search%5Bquery%5D=poet" in the navigation bar' do
+    current_path.should == "/concepts/search?search%5Bquery%5D=poetfoo"
+  end
+
   Then 'I should see a progress indicator' do
-    pending 'step not implemented'
+    find("#coreon-progress-indicator")["class"].should == "busy"
   end
 
   Given 'the repository is not available' do

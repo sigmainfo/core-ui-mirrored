@@ -36,4 +36,31 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$("form").should.have 'input[type="submit"]'
       @view.$('input[type="submit"]').val().should.equal "Search"
-        
+
+  describe "#submitHandler", ->
+
+    beforeEach ->
+      Backbone.history = navigate: sinon.spy()
+      @event =
+        stopPropagation: sinon.spy()
+        preventDefault: sinon.spy()
+
+    it "triggers on submit", ->
+      sinon.spy @view, "submitHandler"
+      @view.delegateEvents()
+      @view.render()
+      @view.$("form").trigger "submit"
+      @view.submitHandler.should.have.been.calledOnce
+
+    it "prevents default and stops propagation", ->
+      @view.submitHandler @event
+      @event.stopPropagation.should.have.been.calledOnce
+      @event.preventDefault.should.have.been.calledOnce
+
+    it "navigates to search result", ->
+      @view.render()
+      @view.$('input[name="search[query]"]').val "foo"
+      @view.submitHandler @event
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search?search%5Bquery%5D=foo"
+
+      
