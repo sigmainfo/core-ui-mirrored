@@ -121,6 +121,9 @@ describe "Coreon.Views.ApplicationView", ->
 
     context "login", ->
 
+      beforeEach ->
+        @view.render()
+
       it "renders footer", ->
         sinon.spy @view.footer, "delegateEvents"
         @view.model.account.trigger "login"

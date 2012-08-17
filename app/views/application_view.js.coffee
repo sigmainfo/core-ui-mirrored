@@ -50,7 +50,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @login.delegateEvents()
 
   renderApplication: ->
-    @$el.append @widgets.render().$el
+    @$("#coreon-top").append @widgets.render().$el
     @$el.append @footer.render().$el
 
   renderLogin: ->
