@@ -27,8 +27,7 @@
     margin-right: 6px;
     margin-bottom: 1px;
     background-color: $notice-color;
-    @include border-radius(3.5px);
-    
+    @include border-radius(3.5px);  
   }
   
   .error .label {

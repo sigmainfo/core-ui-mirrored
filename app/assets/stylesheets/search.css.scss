@@ -1,0 +1,41 @@
+@import '_config';
+@import 'compass/css3';
+
+
+#coreon-search {
+  @include box-sizing(border-box);
+  padding: 11px 16px;
+  background-color: $darkerbluecolor;
+  @include box-shadow(rgba(black, 0.4) -2px 0px 5px, rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+  
+  label {
+    display: none;
+  }
+  
+  #coreon-search-query {
+    width: 82%;
+    height: 28px;
+    @include single-box-shadow($text-color, 1px, 1px, 2px, false, inset);
+    float: left;
+  }
+  
+  input[type="submit"] {
+    @include box-sizing(border-box);
+    height:29px;
+    width: 40px;
+    padding-left:30px;
+    border: none;
+    outline:0;
+    $bg-color: desaturate(darken($darkerbluecolor, 5%), 10%);
+    background:$bg-color image-url("layout/icons.png") no-repeat 0 -50px;
+    @include retina-icons;
+    text-indent: -2000px;
+    overflow: hidden;
+    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
+     &:hover {
+       background-color: $petrol;
+     };
+    
+  }
+  
+}
