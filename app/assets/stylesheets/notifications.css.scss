@@ -16,40 +16,41 @@
     padding: 1px 6px;
     width: 550px;
     margin: 3px;
-  }
-
-  .label {
-    display: inline-block;
-    overflow: hidden;
-    text-indent: -2000px;
-    width: 7px;
-    height: 7px;
-    margin-right: 6px;
-    margin-bottom: 1px;
-    background-color: $notice-color;
-    @include border-radius(3.5px);  
-  }
-  
-  .error .label {
-    background-color: $error-color;
-  }
-  
-  .hide {
-    display: inline-block;
-    overflow: hidden;
-    text-indent: -2000px;
-    width: 14px;
-    height: 14px;
-    float: right;
-    position: relative;
-    top: 3px;
-    background: image-url("layout/icons.png") no-repeat -50px 1px;
-    @include retina-icons;
-    @include opacity(0.5);
     
-    &:hover {
-      @include opacity(1);
-    };
+    .label {
+      display: inline-block;
+      overflow: hidden;
+      text-indent: -2000px;
+      width: 7px;
+      height: 7px;
+      margin-right: 6px;
+      margin-bottom: 1px;
+      background-color: $notice-color;
+      @include border-radius(3.5px);  
+    }
+
+    .error .label {
+      background-color: $error-color;
+    }
+
+    .hide {
+      display: inline-block;
+      overflow: hidden;
+      text-indent: -2000px;
+      width: 14px;
+      height: 14px;
+      float: right;
+      position: relative;
+      top: 3px;
+      background: image-url("layout/icons.png") no-repeat -50px 1px;
+      @include retina-icons;
+      @include opacity(0.5);
+
+      &:hover {
+        @include opacity(1);
+      };
+    }
+    
   }
   
 }

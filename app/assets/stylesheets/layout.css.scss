@@ -26,4 +26,6 @@
 #coreon-widgets {
   width: 320px;
   float: right;
+  @include box-shadow(rgba(black, 0.4) -2px 0px 5px);
+  
 }
