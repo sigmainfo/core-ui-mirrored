@@ -29,7 +29,7 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$el.should.have "input#coreon-search-query"
       @view.$("#coreon-search-query").should.have.attr "type", "text"
-      @view.$("#coreon-search-query").should.have.attr "name", "search[query]"
+      @view.$("#coreon-search-query").should.have.attr "name", "q"
 
     it "renders submit button", ->
       I18n.t.withArgs("search.submit").returns "Search"  
@@ -59,8 +59,8 @@ describe "Coreon.Views.SearchView", ->
 
     it "navigates to search result", ->
       @view.render()
-      @view.$('input[name="search[query]"]').val "foo"
+      @view.$('input[name="q"]').val "foo"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search?search%5Bquery%5D=foo"
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search?q=foo"
 
       

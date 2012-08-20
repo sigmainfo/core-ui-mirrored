@@ -11,7 +11,8 @@ Feature: User searches repository
   Scenario: trigger search
     When I enter "poet" in the search field
     And I click the search button
-    Then I should see "/concepts/search?search%5Bquery%5D=poet" in the navigation bar
+    Then I should be on the search concepts page
+    And I should see "poet" as the query string
     And I should see a progress indicator
 
   Scenario: service unavailable

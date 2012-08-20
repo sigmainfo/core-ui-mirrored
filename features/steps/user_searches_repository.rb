@@ -13,8 +13,13 @@ class UserSearchesRepository < Spinach::FeatureSteps
     end
   end
 
-  Then 'I should see "/concepts/search?search%5Bquery%5D=poet" in the navigation bar' do
-    current_path.should == "/concepts/search?search%5Bquery%5D=poetfoo"
+  Then 'I should be on the search concepts page' do
+    current_path.should == "/concepts/search"
+  end
+
+  And 'I should see "poet" as the query string' do
+    require 'uri'
+    URI.parse(current_url).query.should =~ /\bq=poet\b/
   end
 
   Then 'I should see a progress indicator' do

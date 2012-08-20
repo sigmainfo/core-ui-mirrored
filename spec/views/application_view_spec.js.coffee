@@ -9,6 +9,7 @@ describe "Coreon.Views.ApplicationView", ->
       model:
         notifications: new Backbone.Collection
         account: new Backbone.Model
+        connections: new Backbone.Collection
     @view.model.account.idle = -> false
 
   afterEach ->
