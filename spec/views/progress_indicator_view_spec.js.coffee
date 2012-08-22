@@ -66,7 +66,7 @@ describe "Coreon.Views.ProgressIndicatorView", ->
       @view.$el.sprite = sinon.spy()
       @view.start()
       @view.$el.sprite.should.have.been.calledWith
-        fps: 24
+        fps: 18
         no_of_frames: 36
       
   describe "#stop", ->
