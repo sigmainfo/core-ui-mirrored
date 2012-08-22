@@ -61,6 +61,13 @@ describe "Coreon.Views.ProgressIndicatorView", ->
       @view.initialize()
       @view.collection.trigger "add"
       @view.start.should.have.been.calledOnce
+
+    it "starts animation", ->
+      @view.$el.sprite = sinon.spy()
+      @view.start()
+      @view.$el.sprite.should.have.been.calledWith
+        fps: 24
+        no_of_frames: 36
       
   describe "#stop", ->
     
@@ -70,11 +77,17 @@ describe "Coreon.Views.ProgressIndicatorView", ->
       @view.busy.should.be.false
     
     it "marks view as being idle", ->
-      @view.$el.addClass "busy"
-      @view.$el.removeClass "idle"
+      @view.start()
       @view.stop()
       @view.$el.should.have.class "idle"
       @view.$el.should.not.have.class "busy"
+
+    it "stops animation", ->
+      @view.$el.spStop = sinon.spy()
+      @view.start()
+      @view.stop()
+      @view.$el.spStop.should.have.been.calledOnce
+      
 
   describe "#destroy", ->
 

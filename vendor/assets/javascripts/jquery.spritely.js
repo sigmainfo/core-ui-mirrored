@@ -73,7 +73,7 @@
                 $._spritely.instances[el_id]['remaining_frames'] = options.play_frames + 1;
             }
             if (options.type == 'sprite' && options.fps) {
-                var frames;
+                var frames, total;
                 var animate = function(el) {
                     var w = options.width, h = options.height;
                     if (!frames) {
