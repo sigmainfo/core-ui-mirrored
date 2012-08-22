@@ -5,9 +5,27 @@ $hover-color: lighten($bluecolor, 10%);
 $browncolor: #554f3c;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
-$petrol: #5498b0;
+/*$petrol: #5498b0;*/
 $error-color: #f25a5a;
 $notice-color: #6bc175;
+
+@mixin submit-button {
+  @include box-sizing(border-box);
+  height:29px;
+  width: 40px;
+  padding-left:30px;
+  border: none;
+  outline:0;
+  $bg-color: rgba(0,0,0, 0.1);
+  background: $bg-color image-url("layout/icons.png") no-repeat 0 -50px;
+  @include retina-icons;
+  text-indent: -2000px;
+  overflow: hidden;
+  @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
+  &:hover {
+     background-color: rgba(30,80,80, 0.3);
+  };
+}
 
 @mixin retina-logos {
   background-image: image-url('layout/coreon.png');
