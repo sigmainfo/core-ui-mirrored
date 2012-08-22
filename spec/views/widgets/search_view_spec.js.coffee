@@ -61,6 +61,6 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search?q=foo"
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search?q=foo", trigger: true
 
       

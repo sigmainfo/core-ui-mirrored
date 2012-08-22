@@ -4,6 +4,7 @@
 #= require hamlcoffee
 #= require i18n
 #= require i18n/translations
+#= require backbone.queryparams
 #= require core_client
 
 window.Coreon        ?= {}

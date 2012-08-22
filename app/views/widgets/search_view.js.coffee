@@ -14,7 +14,6 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
     @
 
   submitHandler: (event) ->
-    Backbone.history.navigate "concepts/search?#{@$('form').serialize()}"
     event.preventDefault()
     event.stopPropagation()
-
+    Backbone.history.navigate "concepts/search?#{@$('form').serialize()}", trigger: true

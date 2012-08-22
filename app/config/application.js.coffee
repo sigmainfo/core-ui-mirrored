@@ -1,7 +1,9 @@
 #= require environment
+#= require routers/concepts_router
 #= require views/application_view
 #= require collections/connections
 #= require collections/notifications
+#= require collections/concepts
 #= require models/account
 
 class Coreon.Application
@@ -16,6 +18,7 @@ class Coreon.Application
     @account       = new Coreon.Models.Account
     @notifications = new Coreon.Collections.Notifications
     @connections   = new Coreon.Collections.Connections
+    @concepts      = new Coreon.Collections.Concepts
 
     @account.on "logout", @onLogout, @
     @account.on "login", @onLogin, @
@@ -27,6 +30,8 @@ class Coreon.Application
     @view.render()
 
     $(document).ajaxError @ajaxErrorHandler
+    
+    @routers = concepts_router: new Coreon.Routers.ConceptsRouter @concepts    
 
     Backbone.history ?= new Backbone.History
     Backbone.history.start

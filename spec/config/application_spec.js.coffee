@@ -23,6 +23,8 @@ describe "Coreon.Application", ->
       @app.init()
       Coreon.application.should.equal @app
 
+
+
     it "defaults root to /", ->
       @app.init()
       @app.options.root.should.equal "/"
@@ -50,7 +52,19 @@ describe "Coreon.Application", ->
       it "connects view to model", ->
         @app.init()
         @app.view.model.should.equal @app
-    
+
+    context "Concepts", ->
+
+      beforeEach ->
+        @app.init()
+
+      it "creates concepts model", ->
+        @app.concepts.should.be.an.instanceof Coreon.Collections.Concepts
+
+      it "creates router", ->
+        @app.routers.concepts_router.should.be.an.instanceOf Coreon.Routers.ConceptsRouter
+        @app.routers.concepts_router.collection.should.equal @app.concepts
+
 
     context "Notifications", ->
 
