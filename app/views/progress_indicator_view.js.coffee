@@ -19,7 +19,7 @@ class Coreon.Views.ProgressIndicatorView extends Backbone.View
       @$el.removeClass "idle"
       @$el.addClass "busy"
       @$el.sprite
-        fps: 24
+        fps: 18
         no_of_frames: 36
 
   stop: ->
