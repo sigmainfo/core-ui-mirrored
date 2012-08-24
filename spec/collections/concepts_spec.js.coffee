@@ -31,6 +31,9 @@ describe "Coreon.Collections.Concepts", ->
 
   describe "#sync", ->
 
+    afterEach ->
+      delete Coreon.application
+
     it "delegates to connections.sync", ->
       Coreon.application =
         connections:

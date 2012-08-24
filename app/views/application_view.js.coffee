@@ -12,13 +12,13 @@ class Coreon.Views.ApplicationView extends Backbone.View
   events: "click a[href^='/']": "navigate"
 
   initialize: ->
-    @notifications = new Coreon.Views.NotificationsView collection: @model.notifications
+    @notifications = new Coreon.Views.NotificationsView collection: @model.account.notifications
     @widgets       = new Coreon.Views.WidgetsView
     @footer        = new Coreon.Views.FooterView model: @model
     @login         = new Coreon.Views.LoginView model: @model.account
 
-    @model.account.on "login", @loginHandler, @
-    @model.account.on "logout", @logoutHandler, @
+    @model.account.on "activated", @loginHandler, @
+    @model.account.on "deactivated", @logoutHandler, @
 
   destroy: ->
     @model.account.off null, null, @
@@ -26,7 +26,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   render: ->
     @$el.html @template()
     @$("#coreon-header").append @notifications.render().$el
-    if @model.account.idle() then @renderLogin() else @renderApplication()
+    if not @model.account.get("active") then @renderLogin() else @renderApplication()
     @
 
   navigate: (event) ->
@@ -34,7 +34,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     event.preventDefault()
 
   loginHandler: ->
-    unless @model.account.idle()
+    if @model.account.get("active")
       @login.remove()
       @login.undelegateEvents()
       @renderApplication() 

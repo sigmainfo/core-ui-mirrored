@@ -10,10 +10,11 @@ describe "Coreon.Views.FooterView", ->
     jQuery.fx.off = false
 
   beforeEach ->
+    account = new Backbone.Model
+    account.connections = new Backbone.Collection
     @view = new Coreon.Views.FooterView
       model:
-        account: new Backbone.Model
-        connections: new Backbone.Collection
+        account: account
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -60,7 +61,7 @@ describe "Coreon.Views.FooterView", ->
 
     it "creates view", ->
       @view.progress.should.be.an.instanceOf Coreon.Views.ProgressIndicatorView
-      @view.progress.collection.should.equal @view.model.connections
+      @view.progress.collection.should.equal @view.model.account.connections
 
     it "renders el", ->
       @view.progress.render = sinon.stub().returns @view.progress

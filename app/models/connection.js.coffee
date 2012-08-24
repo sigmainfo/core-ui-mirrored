@@ -1,0 +1,16 @@
+#= require environment
+
+class Coreon.Models.Connection extends Backbone.Model
+
+  initialize: ->
+    @get("xhr").fail @onFail
+  
+  onFail: (xhr, statusText, message)=>
+    if xhr.status == 0
+      @message I18n.t("errors.service.unavailable"), type: "error" 
+    else
+      error = code: "errors.generic"
+      if xhr?.responseText?.length > 1
+        response = JSON.parse(xhr.responseText)
+        _(error).extend _(response).pick "code", "message"
+      @message I18n.t(error.code, defaultValue: error.message), type: "error"

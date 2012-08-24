@@ -1,13 +1,13 @@
-<div id="app"></div>
+<div id="coreon-app"></div>
 <script type="text/javascript">
-  CoreClient.Auth.root_url = "<%=j CoreClient.config[:auth_root] %>";
-  CoreClient.Graph.root_url = "<%=j CoreClient.config[:graph_root] %>";
-  
-  Coreon.application = new Coreon.Application();
-
-  jQuery(function($) {
-    Coreon.application.init({
-      el: "#app"
+  (function() {
+    var app = new Coreon.Application({
+      el:   "#coreon-app",
+      app_root: "/",
+      auth_root: "<%=j CoreClient.config[:auth_root] %>",
+      graph_root: "<%=j CoreClient.config[:graph_root] %>"
     });
-  });
+
+    jQuery(function () { app.start(); });
+  })();
 </script>

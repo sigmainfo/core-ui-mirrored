@@ -11,14 +11,12 @@ describe "config/environment", ->
     I18n.translations.should.exist
     I18n.translations.en.date.day_names[0].should.equal "Sunday"
 
-  it "loads core-client lib", ->
-    CoreClient.should.exist 
-
   it "prepares namespaces", ->
     Coreon.should.exist
 
     Coreon.Models.should.exist
     Coreon.Collections.should.exist
+    Coreon.Modules.should.exist
     Coreon.Helpers.should.exist
     Coreon.Routers.should.exist
 
@@ -28,5 +26,3 @@ describe "config/environment", ->
 
   it "makes helpers available to template context", ->
     HAML.globals().should.equal Coreon.Helpers
-
-

@@ -12,7 +12,7 @@ class Coreon.Views.FooterView extends Backbone.View
     "click .toggle": "toggle"
 
   initialize: ->
-    @progress = new Coreon.Views.ProgressIndicatorView collection: @model.connections
+    @progress = new Coreon.Views.ProgressIndicatorView collection: @model.account.connections
 
   render: ->
     @$el.html @template()

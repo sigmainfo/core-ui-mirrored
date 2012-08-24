@@ -40,7 +40,7 @@ class UserSignsIn < Spinach::FeatureSteps
   end
 
   Given 'the authentication service is not available' do
-    page.execute_script "CoreClient.Auth.root_url = 'http://this/goes/nowhere/'"
+    page.execute_script "Coreon.application.account.set('auth_root', 'https://this.goes.nowhere/')"
   end
 
   But 'I should see an error "Service is currently unavailable"' do

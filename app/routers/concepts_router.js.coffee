@@ -1,4 +1,5 @@
 #= require environment
+#= require backbone.queryparams
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 

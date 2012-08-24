@@ -4,13 +4,13 @@
 describe "Coreon.Views.ApplicationView", ->
 
   beforeEach ->
+    account = new Backbone.Model
+    account.notifications = new Backbone.Collection
+    account.connections = new Backbone.Collection
+
     @view = new Coreon.Views.ApplicationView
       el: "#konacha"
-      model:
-        notifications: new Backbone.Collection
-        account: new Backbone.Model
-        connections: new Backbone.Collection
-    @view.model.account.idle = -> false
+      model: account: account
 
   afterEach ->
     @view.destroy()
@@ -30,7 +30,7 @@ describe "Coreon.Views.ApplicationView", ->
 
     it "creates notifications view", ->
       @view.notifications.should.be.an.instanceOf Coreon.Views.NotificationsView
-      @view.notifications.collection.should.equal @view.model.notifications
+      @view.notifications.collection.should.equal @view.model.account.notifications
 
     it "creates widgets subview", ->
       @view.widgets.should.be.an.instanceOf Coreon.Views.WidgetsView
@@ -60,13 +60,13 @@ describe "Coreon.Views.ApplicationView", ->
     describe "widgets", ->
 
       it "renders widgets when already logged in", ->
-        @view.model.account.idle = -> false
+        @view.model.account.set "active", true
         @view.render()
         @view.$el.should.have "#coreon-widgets"
         @view.$("#coreon-widgets").should.have "#coreon-search"
 
       it "does not append element when not logged in", ->
-        @view.model.account.idle = -> true
+        @view.model.account.set "active", false
         @view.render()
         @view.$el.should.not.have "#coreon-widgets"
 
@@ -74,25 +74,25 @@ describe "Coreon.Views.ApplicationView", ->
     describe "footer", ->
 
       it "appends element when already logged in", ->
-        @view.model.account.idle = -> false
+        @view.model.account.set "active", true
         @view.render()
         @view.$el.should.have "#coreon-footer"
 
       it "does not append element when not logged in", ->
-        @view.model.account.idle = -> true
+        @view.model.account.set "active", false
         @view.render()
         @view.$el.should.not.have "#coreon-footer"
 
     describe "login", ->
 
       it "renders login form when idle", ->
-        @view.model.account.idle = -> true
+        @view.model.account.set "active", false
         @view.render()
         @view.$el.should.have "#coreon-login"
         @view.$("#coreon-login").should.have "input[type='submit']"
 
       it "renders no login form when already logged in", ->
-        @view.model.account.idle = -> false
+        @view.model.account.set "active", true
         @view.render()
         @view.$el.should.not.have "#coreon-login"
 
@@ -124,17 +124,18 @@ describe "Coreon.Views.ApplicationView", ->
 
       beforeEach ->
         @view.render()
+        @view.model.account.set "active", true, silent: true
 
       it "renders footer", ->
         sinon.spy @view.footer, "delegateEvents"
-        @view.model.account.trigger "login"
+        @view.model.account.trigger "activated"
         @view.$el.should.have "#coreon-footer"
         @view.$("#coreon-footer").should.have ".logout"
         @view.footer.delegateEvents.should.have.been.calledOnce
 
       it "renders widgets", ->
         sinon.spy @view.widgets, "delegateEvents"
-        @view.model.account.trigger "login"
+        @view.model.account.trigger "activated"
         @view.$el.should.have "#coreon-widgets"
         @view.$("#coreon-widgets").should.have "#coreon-search"
         @view.widgets.delegateEvents.should.have.been.calledOnce
@@ -142,14 +143,14 @@ describe "Coreon.Views.ApplicationView", ->
       it "removes login form", ->
         sinon.spy @view.login, "undelegateEvents"
         @view.login.render()
-        @view.model.account.trigger "login"
+        @view.model.account.trigger "activated"
         @view.$el.should.not.have "#coreon-login"
         @view.login.undelegateEvents.should.have.been.calledOnce
 
       it "fails gracefully when idle", ->
-        @view.model.account.idle = -> true
+        @view.model.account.set "active", false, silent: true
         @view.render()
-        @view.model.account.trigger "login"
+        @view.model.account.trigger "activated"
         @view.$el.should.have "#coreon-login"
         @view.$el.should.not.have "#coreon-footer"
         
@@ -158,7 +159,7 @@ describe "Coreon.Views.ApplicationView", ->
 
       it "renders login form", ->
         sinon.spy @view.login, "delegateEvents"
-        @view.model.account.trigger "logout"
+        @view.model.account.trigger "deactivated"
         @view.$el.should.have "#coreon-login"
         @view.$("#coreon-login").should.have "form.login"
         @view.login.delegateEvents.should.have.been.calledOnce
@@ -166,14 +167,14 @@ describe "Coreon.Views.ApplicationView", ->
       it "removes footer", ->
         sinon.spy @view.footer, "undelegateEvents"
         @view.footer.render().$el.appendTo @view.$el
-        @view.model.account.trigger "logout"
+        @view.model.account.trigger "deactivated"
         @view.$el.should.not.have "#coreon-footer"
         @view.footer.undelegateEvents.should.have.been.calledOnce
 
       it "removes widgets", ->
         sinon.spy @view.widgets, "undelegateEvents"
         @view.widgets.render().$el.appendTo @view.$el
-        @view.model.account.trigger "logout"
+        @view.model.account.trigger "deactivated"
         @view.$el.should.not.have "#coreon-widgets"
         @view.widgets.undelegateEvents.should.have.been.calledOnce
 
