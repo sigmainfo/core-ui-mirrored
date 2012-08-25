@@ -6,11 +6,17 @@ describe "Coreon.Collections.Concepts", ->
   beforeEach ->
     @collection = new Coreon.Collections.Concepts
     Coreon.application =
-      connections:
-        sync: Backbone.sync
+      account:
+        connections:
+          sync: Backbone.sync
 
   it "is a Backbone collection", ->
     @collection.should.be.an.instanceOf Backbone.Collection
+    
+  it "generates url", ->
+    Coreon.application.account = get: sinon.stub();
+    Coreon.application.account.get.withArgs("graph_root").returns("https://api.coreon/graph/")
+    @collection.url().should.equal "https://api.coreon/graph/concepts"
 
   describe "#fetch", ->
 
@@ -23,7 +29,7 @@ describe "Coreon.Collections.Concepts", ->
       @xhr.restore()
 
     it "creates POST request on search url", ->
-      @collection.url = "https://graph/concepts"
+      @collection.url = -> "https://graph/concepts"
       @collection.fetch data: "q=dead+man"
       @request.method.should.equal "POST"
       @request.url.should.equal "https://graph/concepts/search"
@@ -36,7 +42,8 @@ describe "Coreon.Collections.Concepts", ->
 
     it "delegates to connections.sync", ->
       Coreon.application =
-        connections:
-          sync: sinon.spy()
+        account:
+          connections:
+            sync: sinon.spy()
       @collection.sync "update", "Model", data: "data"
-      Coreon.application.connections.sync.should.have.been.calledWith "update", "Model", data: "data"
+      Coreon.application.account.connections.sync.should.have.been.calledWith "update", "Model", data: "data"

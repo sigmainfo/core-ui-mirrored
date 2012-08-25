@@ -12,6 +12,12 @@ CoreUi::Application.routes.draw do
       post   "login" => "sessions#create"
       delete "login/:auth_token" => "sessions#destroy"
     end
+
+    namespace :graph do
+      resource :concepts do
+        post "search"
+      end
+    end
   end 
 
   # The priority is based upon order of creation:

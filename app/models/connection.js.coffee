@@ -11,6 +11,9 @@ class Coreon.Models.Connection extends Backbone.Model
     else
       error = code: "errors.generic"
       if xhr?.responseText?.length > 1
-        response = JSON.parse(xhr.responseText)
-        _(error).extend _(response).pick "code", "message"
+        try
+          response = JSON.parse(xhr.responseText)
+          _(error).extend _(response).pick "code", "message"
+        catch error
+          console?.log error.toString()
       @message I18n.t(error.code, defaultValue: error.message), type: "error"

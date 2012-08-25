@@ -27,10 +27,10 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Given 'the repository is not available' do
-    pending 'step not implemented'
+    page.execute_script "Coreon.application.account.set('graph_root', 'https://this.goes.nowhere/')"
   end
 
   Then 'I should see an error "Service is currently unavailable"' do
-    pending 'step not implemented'
+    find("#coreon-notifications .error").should have_content "Service is currently unavailable"
   end
 end
