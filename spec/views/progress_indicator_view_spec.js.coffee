@@ -4,8 +4,12 @@
 describe "Coreon.Views.ProgressIndicatorView", ->
 
   beforeEach ->
+    @time = sinon.useFakeTimers()
     @view = new Coreon.Views.ProgressIndicatorView
       collection: new Backbone.Collection
+
+  afterEach ->
+    @time.restore()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -50,10 +54,8 @@ describe "Coreon.Views.ProgressIndicatorView", ->
       @view.busy.should.be.true
 
     it "marks view as being busy", ->
-      @view.$el.addClass "idle"
       @view.$el.removeClass "busy"
       @view.start()
-      @view.$el.should.not.have.class "idle"
       @view.$el.should.have.class "busy"
 
     it "is triggerd on add", ->
@@ -63,31 +65,30 @@ describe "Coreon.Views.ProgressIndicatorView", ->
       @view.start.should.have.been.calledOnce
 
     it "starts animation", ->
-      @view.$el.sprite = sinon.spy()
       @view.start()
-      @view.$el.sprite.should.have.been.calledWith
-        fps: 18
-        no_of_frames: 36
+      @time.tick 4501
+      @view.animation.frame.should.equal 9
+      @view.$el.should.have.css "background-position", "-270px 0px"
       
   describe "#stop", ->
+
+    beforeEach ->
+      @view.start()
+      @time.tick 500
     
     it "changes status", ->
-      @view.busy = true
       @view.stop()
       @view.busy.should.be.false
     
     it "marks view as being idle", ->
-      @view.start()
       @view.stop()
-      @view.$el.should.have.class "idle"
       @view.$el.should.not.have.class "busy"
 
     it "stops animation", ->
-      @view.$el.spStop = sinon.spy()
-      @view.start()
       @view.stop()
-      @view.$el.spStop.should.have.been.calledOnce
-      
+      @time.tick 250
+      @view.animation.frame.should.equal 0
+      @view.$el.should.have.css "background-position", "0px 0px"
 
   describe "#destroy", ->
 

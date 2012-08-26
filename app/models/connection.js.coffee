@@ -3,7 +3,12 @@
 class Coreon.Models.Connection extends Backbone.Model
 
   initialize: ->
-    @get("xhr").fail @onFail
+    @get("xhr")
+      .fail(@onFail)
+      .always(@onComplete)
+
+  onComplete: =>
+    @destroy()
   
   onFail: (xhr, statusText, message)=>
     if xhr.status == 0

@@ -1,10 +1,23 @@
 #= require environment
-#= require jquery.spritely
 
 class Coreon.Views.ProgressIndicatorView extends Backbone.View
   id: "coreon-progress-indicator"
 
+  events:
+    "mouseover": "start"
+    "mouseout": "stop"
+
+  animation:
+    fps: 18
+    frames: 36
+    width: 30
+    frame: 0
+
   initialize: ->
+    @$el.css 
+      width: @animation.width
+      backgroundPosition: "0 0"
+
     @collection.on "reset", @render, @
     @collection.on "remove", @render, @
     @collection.on "add", @start, @
@@ -16,18 +29,21 @@ class Coreon.Views.ProgressIndicatorView extends Backbone.View
   start: ->
     unless @busy
       @busy = true
-      @$el.removeClass "idle"
       @$el.addClass "busy"
-      @$el.sprite
-        fps: 18
-        no_of_frames: 36
+      @animation.id = setInterval @next, 1000 / @animation.fps 
 
   stop: ->
     if @busy
       @busy = false
       @$el.removeClass "busy"
-      @$el.addClass "idle"
-      @$el.spStop()
+      clearInterval @animation.id
+      delete @animation.id
+      @animation.frame = 0
+      @$el.css "backgroundPosition", "0 0"
+
+  next: =>
+    @animation.frame = ++@animation.frame % @animation.frames
+    @$el.css "backgroundPosition", "-#{@animation.frame * @animation.width}px 0"
 
   destroy: (remove = false) ->
     @collection.off null, null, @

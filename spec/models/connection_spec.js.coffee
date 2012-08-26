@@ -15,6 +15,15 @@ describe "Coreon.Models.Connection", ->
   it "is a Backbone model", ->
     @connection.should.be.an.instanceof Backbone.Model
 
+  describe "on complete", ->
+
+    it "removes itself from collection when completed", ->
+      collection = new Backbone.Collection
+      collection.add @connection
+      @request.respond()
+      collection.length.should.equal 0
+     
+
   describe "on error", ->
 
     beforeEach ->

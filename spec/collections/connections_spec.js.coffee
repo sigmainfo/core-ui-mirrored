@@ -12,8 +12,14 @@ describe "Coreon.Collections.Connections", ->
   describe "#destroy", ->
 
     it "cancels all", ->
-      xhr1 = abort: sinon.spy(), fail: ->
-      xhr2 = abort: sinon.spy(), fail: ->
+      xhr1 =
+        abort: sinon.spy()
+        fail: -> xhr1
+        always: ->
+      xhr2 =
+        abort: sinon.spy()
+        fail: -> xhr2
+        always: ->
       @connections.add xhr: xhr1      
       @connections.add xhr: xhr2      
       @connections.destroy()
@@ -21,10 +27,12 @@ describe "Coreon.Collections.Connections", ->
       xhr2.abort.should.have.been.calledOnce
 
     it "resets collection", ->
+      xhr =
+        abort: sinon.spy()
+        fail: -> xhr
+        always: ->
       sinon.spy @connections, "reset"
-      @connections.add xhr:
-        abort: ->
-        fail: ->      
+      @connections.add xhr: xhr
       @connections.destroy()
       @connections.reset.should.have.been.calledOnce
       @connections.length.should.equal 0
@@ -38,7 +46,10 @@ describe "Coreon.Collections.Connections", ->
       Backbone.sync.restore()
 
     it "adds connection", ->
-      xhr = fail: ->
+      xhr =
+        abort: sinon.spy()
+        fail: -> xhr
+        always: ->
       Backbone.sync.returns xhr
       @connections.sync "read", "Model", data: "data"
       @connections.should.have.length 1
