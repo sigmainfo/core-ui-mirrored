@@ -3,10 +3,6 @@
 class Coreon.Views.ProgressIndicatorView extends Backbone.View
   id: "coreon-progress-indicator"
 
-  events:
-    "mouseover": "start"
-    "mouseout": "stop"
-
   animation:
     fps: 18
     frames: 36
