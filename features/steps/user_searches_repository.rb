@@ -33,4 +33,12 @@ class UserSearchesRepository < Spinach::FeatureSteps
   Then 'I should see an error "Service is currently unavailable"' do
     find("#coreon-notifications .error").should have_content "Service is currently unavailable"
   end
+
+  Given 'my auth token is not valid' do
+    page.execute_script "Coreon.application.account.set('auth_token', 'xxxxxxxxxxxx-0488d880-af3a-012f-5664-525400b5532a', {silent: true})"
+  end
+
+  Then 'I should see the password prompt' do
+    page.should have_css("#coreon-password-prompt")
+  end
 end
