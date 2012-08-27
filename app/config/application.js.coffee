@@ -19,6 +19,7 @@ class Coreon.Application
       graph_root : "/api/graph/"
     
     @account = new Coreon.Models.Account _(@options).pick "auth_root", "graph_root"
+    @account.fetch()
     @concepts = new Coreon.Collections.Concepts
 
 

@@ -30,18 +30,34 @@ class Coreon.Models.Account extends Backbone.Model
 
   onActivated: (data) =>
     @set "active", true
-    @set "name", data.user.name
+    @save
+      name: data.user.name
+      session: data.auth_token
     @trigger "activated"
     @notifications.reset()
     @message I18n.t("notifications.account.login", name: @get "name")
 
   deactivate: ->
     @set "active", false
-    @set "name", ""
+    @sync "delete", @
     @trigger "deactivated"
     @notifications.reset()
     @message I18n.t("notifications.account.logout") 
 
+  sync: (action, model, options)->
+    switch action
+      when "create", "update"
+        localStorage.setItem "session", @get("session")
+        localStorage.setItem "name", @get("name")
+      when "read"
+        @set "session", localStorage.getItem("session")
+        @set "name", localStorage.getItem("name")
+        @set "active", @has("session")
+      when "delete"
+        localStorage.removeItem "session"
+        localStorage.removeItem "name"
+
   destroy: ->
     @notifications.destroy()
     @connections.destroy()
+    @sync "delete", @

@@ -77,10 +77,18 @@ describe "Coreon.Models.Account", ->
       @account.onActivated @data
       @account.get("active").should.be.true
 
-    it "sets user name", ->
+    it "stores user name", ->
       @data.user.name = "William Blake"
       @account.onActivated @data
       @account.get("name").should.equal "William Blake"
+      localStorage.getItem("name").should.equal "William Blake"
+
+    it "sets auth token", ->
+      @account.on "sync", spy = sinon.spy()
+      @data.auth_token = "xxx-1234-abcd"
+      @account.onActivated @data
+      @account.get("session").should.equal "xxx-1234-abcd"
+      localStorage.getItem("session").should.equal "xxx-1234-abcd"
 
     it "triggers event", ->
       spy = sinon.spy()
@@ -116,6 +124,14 @@ describe "Coreon.Models.Account", ->
     it "resets name", ->
       @account.deactivate()
       @account.get("name").should.equal ""
+  
+    it "resets session", ->
+      @account.save
+          name: "Dead Man"
+          session: "1234abcd-xxxx"
+      @account.deactivate()
+      expect(localStorage.getItem "name").to.be.null
+      expect(localStorage.getItem "session").to.be.null
 
     it "triggers event", ->
       spy = sinon.spy()
@@ -133,6 +149,45 @@ describe "Coreon.Models.Account", ->
       @account.notifications.reset = sinon.spy()
       @account.deactivate()
       @account.notifications.reset.should.have.been.calledOnce
+
+  describe "#sync", ->
+    
+    describe "create, update", ->
+      
+      it "stores name and session", ->
+        @account.save
+          name: "Dead Man"
+          session: "1234abcd-xxxx"
+        @account.sync "create", @account
+        localStorage.getItem("name").should.equal "Dead Man"
+        localStorage.getItem("session").should.equal "1234abcd-xxxx"
+
+    describe "read", ->
+      
+      it "updates values from store", ->
+        localStorage.setItem "name", "Jim Jarmusch"
+        localStorage.setItem "session", "0987654321"
+        @account.fetch()
+        @account.get("name").should.equal "Jim Jarmusch"
+        @account.get("session").should.equal "0987654321"
+
+      it "syncs active state", ->
+        localStorage.setItem "session", "0987654321"
+        @account.fetch()
+        @account.get("active").should.be.true
+        localStorage.removeItem "session"
+        @account.fetch()
+        @account.get("active").should.be.false
+
+    describe "delete", ->
+
+      it "resets name and session", ->
+        @account.save
+          name: "Dead Man"
+          session: "1234abcd-xxxx"
+        @account.destroy()
+        expect(localStorage.getItem "name").to.be.null
+        expect(localStorage.getItem "session").to.be.null
 
   describe "#destroy", ->
     

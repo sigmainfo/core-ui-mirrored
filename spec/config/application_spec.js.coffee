@@ -41,6 +41,12 @@ describe "Coreon.Application", ->
       @app.account.get("auth_root").should.equal "/api/auth_root/"
       @app.account.get("graph_root").should.equal "/api/graph_root/"
 
+    it "fetches account", ->
+      localStorage.setItem "session", "my-auth-token"
+      @app.account.fetch = sinon.spy()
+      @app.initialize()
+      @app.account.get("session").should.equal "my-auth-token"
+
     it "creates concepts", ->
       @app.concepts.should.be.an.instanceof Coreon.Collections.Concepts
 
