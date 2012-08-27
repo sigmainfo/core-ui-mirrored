@@ -13,7 +13,7 @@ class Api::Auth::SessionsController < ApplicationController
         login: user.login,
         name: user.name
       },
-      auth_token: "#{user.id}bcddee5ba7e95460-0488d880-af3a-012f-5664-525400b5532a",
+      auth_token: "#{user.id}-bcddee5ba7e95460-0488d880-af3a-012f-5664-525400b5532a",
       expires_at: "3012-07-13T17:59:22+00:00"
     }, status: 201
   rescue Mongoid::Errors::DocumentNotFound, Api::Auth::NotAuthenticated
