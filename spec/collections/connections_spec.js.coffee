@@ -40,21 +40,31 @@ describe "Coreon.Collections.Connections", ->
   describe "#sync", ->
     
     beforeEach ->
+      Coreon.application = 
+        account:
+          get: (key) -> "123-my-auth-token-xxx" if key is "session"
+
+      @xhr =
+        abort: sinon.spy()
+        fail: => @xhr
+        always: ->
+
       sinon.stub Backbone, "sync"
+      Backbone.sync.returns @xhr
 
     afterEach ->
+      delete Coreon.application
       Backbone.sync.restore()
 
+    it "sets auth header", ->
+      @connections.sync "read", "model", data: "data" 
+      @connections.at(0).get("options").headers.should.have.property "X-Core-Session", "123-my-auth-token-xxx"
+
     it "adds connection", ->
-      xhr =
-        abort: sinon.spy()
-        fail: -> xhr
-        always: ->
-      Backbone.sync.returns xhr
-      @connections.sync "read", "Model", data: "data"
+      @connections.sync "read", "model", data: "data"
       @connections.should.have.length 1
-      @connections.at(0).get("xhr").should.equal xhr
-      @connections.at(0).get("options").should.eql data: "data"
-      @connections.at(0).get("model").should.equal "Model"
+      @connections.at(0).get("xhr").should.equal @xhr
+      @connections.at(0).get("options").should.have.property "data", "data"
+      @connections.at(0).get("model").should.equal "model"
       @connections.at(0).get("method").should.equal "read"
     
