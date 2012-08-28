@@ -64,6 +64,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   onUnauthorized: ->
     @prompt.render().$el.appendTo @$("#coreon-modal")
+    @$("#coreon-password-password").focus()
 
   onReactivated: ->
     @prompt.remove()

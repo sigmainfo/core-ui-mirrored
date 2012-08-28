@@ -7,6 +7,7 @@ class Coreon.Views.PasswordPromptView extends Backbone.View
 
   events:
     "submit form": "onSubmit"
+    "blur input#coreon-password-password": "onBlur"
 
   template: Coreon.Templates["password_prompt"]
 
@@ -18,3 +19,6 @@ class Coreon.Views.PasswordPromptView extends Backbone.View
     event.preventDefault()
     event.stopPropagation()
     @model.reactivate @$("#coreon-password-password").val()
+
+  onBlur: ->
+    @$("#coreon-password-password").focus()

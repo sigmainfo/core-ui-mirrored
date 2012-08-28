@@ -50,6 +50,7 @@ describe "Coreon.Views.PasswordPromptView", ->
       @view.$("input#coreon-password-password").should.have.attr "name", "login[password]"
       @view.$("input#coreon-password-password").should.be ":required"
 
+
     it "renders logout link", ->
       I18n.t.withArgs("account.logout").returns "Log out"
       @view.render() 
@@ -78,4 +79,3 @@ describe "Coreon.Views.PasswordPromptView", ->
       @view.$("#coreon-password-password").val "se7en"
       @view.$("form").trigger @event
       @view.model.reactivate.should.have.been.calledWith "se7en"
-
