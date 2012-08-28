@@ -21,7 +21,7 @@ describe "Coreon.Models.Account", ->
       @account.get("auth_root").should.equal "/api/auth/"
       @account.get("graph_root").should.equal "/api/graph/"
 
-    it "has no user name", ->
+    it "has no user name or login", ->
       @account.get("name").should.equal ""
       
   
@@ -41,6 +41,11 @@ describe "Coreon.Models.Account", ->
 
     afterEach ->
       @xhr.restore()
+
+    it "sets login on model", ->
+      @account.activate("Nobody", "se7en!")
+      @account.get("login").should.equal "Nobody"
+
 
     it "calls auth service with credentials", ->
       @account.set "auth_root", "https://api.coreon.com/auth/"
@@ -70,6 +75,7 @@ describe "Coreon.Models.Account", ->
       @data =
         user:
           name: ""
+
     afterEach ->
       I18n.t.restore()
 
@@ -77,14 +83,15 @@ describe "Coreon.Models.Account", ->
       @account.onActivated @data
       @account.get("active").should.be.true
 
-    it "stores user name", ->
+    it "stores user name and login", ->
       @data.user.name = "William Blake"
+      @account.set "login", "w.blake"
       @account.onActivated @data
       @account.get("name").should.equal "William Blake"
       localStorage.getItem("name").should.equal "William Blake"
+      localStorage.getItem("login").should.equal "w.blake"
 
     it "sets auth token", ->
-      @account.on "sync", spy = sinon.spy()
       @data.auth_token = "xxx-1234-abcd"
       @account.onActivated @data
       @account.get("session").should.equal "xxx-1234-abcd"
@@ -107,6 +114,53 @@ describe "Coreon.Models.Account", ->
       @account.notifications.reset = sinon.spy()
       @account.onActivated @data
       @account.notifications.reset.should.have.been.calledOnce
+
+  describe "#reactivate", ->
+    
+    beforeEach ->
+      @xhr = sinon.useFakeXMLHttpRequest()
+      @xhr.onCreate = (@request) =>
+
+    afterEach ->
+      @xhr.restore()
+
+    it "calls auth service with credentials", ->
+      @account.set
+        auth_root: "https://api.coreon.com/auth/"
+        login: "Nobody"
+      @account.reactivate "se7en!"
+      @request.url.should.equal "https://api.coreon.com/auth/login"
+      @request.method.should.equal "POST"
+      @request.requestHeaders["Accept"].should.contain "application/json"
+      @request.requestBody.should.equal "login=Nobody&password=se7en!"
+
+    it "adds connection for request", ->
+      @account.set "login", "Nobody"
+      @account.reactivate "se7en!"
+      @account.connections.length.should.equal 1
+      @account.connections.first().get("xhr").should.respondTo "abort"
+      @account.connections.first().get("model").should.equal @account
+      @account.connections.first().get("options").data.login.should.equal "Nobody"
+
+    it "triggers callback on success", ->
+      @account.onReactivated = sinon.spy()
+      @account.reactivate "se7en!"
+      @request.respond 200, {"Content-Type": "application/json"}, '{"message": "Logged in"}'
+      @account.onReactivated.should.have.been.calledOnce
+
+  describe "#onReactivated", ->
+    
+    it "updates session", ->
+      @data.auth_token = "newsession-1234-abcd"
+      @account.onReactivated @data
+      @account.get("session").should.equal "newsession-1234-abcd"
+      localStorage.getItem("session").should.equal "newsession-1234-abcd"
+
+    it "triggers event", ->
+      spy = sinon.spy()
+      @account.on "reactivated", spy
+      @account.onReactivated @data
+      spy.should.have.been.calledOnce
 
   describe "#deactivate", ->
 
@@ -154,21 +208,25 @@ describe "Coreon.Models.Account", ->
     
     describe "create, update", ->
       
-      it "stores name and session", ->
+      it "stores login, name and session", ->
         @account.save
+          login: "nobody"
           name: "Dead Man"
           session: "1234abcd-xxxx"
         @account.sync "create", @account
         localStorage.getItem("name").should.equal "Dead Man"
         localStorage.getItem("session").should.equal "1234abcd-xxxx"
+        localStorage.getItem("login").should.equal "nobody"
 
     describe "read", ->
       
       it "updates values from store", ->
         localStorage.setItem "name", "Jim Jarmusch"
+        localStorage.setItem "login", "nobody"
         localStorage.setItem "session", "0987654321"
         @account.fetch()
         @account.get("name").should.equal "Jim Jarmusch"
+        @account.get("login").should.equal "nobody"
         @account.get("session").should.equal "0987654321"
 
       it "syncs active state", ->
@@ -185,9 +243,11 @@ describe "Coreon.Models.Account", ->
         @account.save
           name: "Dead Man"
           session: "1234abcd-xxxx"
+          login: "w.blake"
         @account.destroy()
         expect(localStorage.getItem "name").to.be.null
         expect(localStorage.getItem "session").to.be.null
+        expect(localStorage.getItem "login").to.be.null
 
   describe "#onUnauthorized", ->
 
@@ -195,6 +255,7 @@ describe "Coreon.Models.Account", ->
       @account.save
         name: "Dead Man"
         session: "1234abcd-xxxx"
+        login: "deadman"
     
     it "is triggered by errors on connections", ->
       @account.onUnauthorized = sinon.spy()
@@ -223,3 +284,13 @@ describe "Coreon.Models.Account", ->
       @account.connections.destroy = sinon.spy()
       @account.destroy()
       @account.connections.destroy.should.have.been.calledOnce
+
+    it "clears storage", ->
+      @account.save
+        name: "Dead Man"
+        session: "1234abcd-xxxx"
+        login: "deadman"
+      @account.destroy()
+      expect(localStorage.getItem "name").to.be.null
+      expect(localStorage.getItem "session").to.be.null
+      expect(localStorage.getItem "login").to.be.null

@@ -17,18 +17,8 @@ class Coreon.Models.Account extends Backbone.Model
     @connections.on "error:403", @onUnauthorized
     
   activate: (login, password) ->
-    options =
-      url: @get("auth_root") + "login"
-      type: "POST"
-      dataType: "json"
-      data:
-        login: login
-        password: password
-
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options).done @onActivated
+    @set "login", login
+    @requestSession password, @onActivated
 
   onActivated: (data) =>
     @set "active", true
@@ -38,6 +28,29 @@ class Coreon.Models.Account extends Backbone.Model
     @trigger "activated"
     @notifications.reset()
     @message I18n.t("notifications.account.login", name: @get "name")
+
+  reactivate: (password) ->
+    @requestSession password, @onReactivated
+
+  onReactivated: (data) =>
+    @save session: data.auth_token
+    @trigger "reactivated"
+
+  requestSession: (password, done) ->
+    login = @get("login")
+    options =
+      url: @get("auth_root") + "login"
+      type: "POST"
+      dataType: "json"
+      data:
+        login: login
+        password: password
+    
+    @connections.add
+      model: @
+      options: options
+      xhr: $.ajax(options).done done
+
 
   onUnauthorized: =>
     @unset "session"
@@ -51,17 +64,15 @@ class Coreon.Models.Account extends Backbone.Model
     @message I18n.t("notifications.account.logout") 
 
   sync: (action, model, options)->
+    fields = ["session", "login", "name"]
     switch action
       when "create", "update"
-        localStorage.setItem "session", @get("session")
-        localStorage.setItem "name", @get("name")
+        localStorage.setItem field, @get(field) for field in fields
       when "read"
-        @set "session", localStorage.getItem("session")
-        @set "name", localStorage.getItem("name")
+        @set field, localStorage.getItem(field) for field in fields
         @set "active", @has("session")
       when "delete"
-        localStorage.removeItem "session"
-        localStorage.removeItem "name"
+        localStorage.removeItem field for field in fields
 
   destroy: ->
     @notifications.destroy()

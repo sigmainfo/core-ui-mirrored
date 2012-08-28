@@ -17,10 +17,12 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @widgets       = new Coreon.Views.WidgetsView
     @footer        = new Coreon.Views.FooterView model: @model
     @login         = new Coreon.Views.LoginView model: @model.account
+    @prompt        = new Coreon.Views.PasswordPromptView model: @model.account
 
     @model.account.on "activated", @loginHandler, @
     @model.account.on "deactivated", @logoutHandler, @
     @model.account.on "unauthorized", @onUnauthorized, @
+    @model.account.on "reactivated", @onReactivated, @
 
   destroy: ->
     @model.account.off null, null, @
@@ -59,8 +61,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @$el.append @login.render().$el
 
   onUnauthorized: ->
-    prompt = new Coreon.Views.PasswordPromptView
-      model: @model.account
-    prompt.render()
-    @$el.append prompt.$el
+    @$el.append @prompt.render().$el
 
+  onReactivated: ->
+    @prompt.remove()
