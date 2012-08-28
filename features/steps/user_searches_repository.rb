@@ -49,4 +49,8 @@ class UserSearchesRepository < Spinach::FeatureSteps
   And 'click on "Proceed"' do
     click_on "Proceed"
   end
+
+  When 'I enter "se7en!" for password' do
+    fill_in "Password", with: "se7en!"
+  end
 end

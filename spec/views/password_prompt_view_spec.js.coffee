@@ -19,6 +19,9 @@ describe "Coreon.Views.PasswordPromptView", ->
     
     afterEach ->
       I18n.t.restore()
+
+    it "can be chained", ->
+      @view.render().should.equal @view
     
     it "renders prompt", ->
      @view.render()
@@ -53,3 +56,26 @@ describe "Coreon.Views.PasswordPromptView", ->
       @view.$el.should.have "a.logout"
       @view.$("a.logout").should.have.attr "href", "/account/logout"
       @view.$("a.logout").should.have.text I18n.t "account.logout"
+
+  describe "on submit", ->
+    
+    beforeEach ->
+      @event = new jQuery.Event "submit"
+      @view.model = new Backbone.Model
+      @view.model.activate = sinon.spy()
+      @view.model.reactivate = sinon.spy()
+      @view.render().$el.appendTo "#konacha"
+
+    it "handles submit events exclusively", ->
+      sinon.spy @event, "preventDefault"
+      sinon.spy @event, "stopPropagation"
+      @view.$("form").trigger @event
+      @event.preventDefault.should.have.been.calledOnce
+      @event.stopPropagation.should.have.been.calledOnce
+
+    it "authenticates account", ->
+      @view.model.set "login", "nobody"
+      @view.$("#coreon-password-password").val "se7en"
+      @view.$("form").trigger @event
+      @view.model.reactivate.should.have.been.calledWith "se7en"
+

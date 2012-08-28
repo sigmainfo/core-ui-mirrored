@@ -35,6 +35,10 @@ describe "Coreon.Views.ApplicationView", ->
     it "creates widgets subview", ->
       @view.widgets.should.be.an.instanceOf Coreon.Views.WidgetsView
     
+    it "creates prompt", ->
+      @view.prompt.should.be.an.instanceOf Coreon.Views.PasswordPromptView
+      @view.prompt.model.should.equal @view.model.account
+    
   describe "#render", ->
 
     it "allows chaining", ->
@@ -196,7 +200,18 @@ describe "Coreon.Views.ApplicationView", ->
       @view.onUnauthorized()
       @view.$el.should.have "#coreon-password-prompt"
 
-    it "passes account to password prompt", ->
-      sinon.spy Coreon.Views, "PasswordPromptView"
+  describe "#onReactivated", ->
+
+    beforeEach ->
       @view.onUnauthorized()
-      Coreon.Views.PasswordPromptView.should.have.been.calledWith model: @view.model.account
+
+    it "is triggered by account", ->
+      @view.onReactivated = sinon.spy()
+      @view.initialize()
+      @view.model.account.trigger "reactivated"
+      @view.onReactivated.should.have.been.calledOnce
+
+    it "removes password prompt", ->
+      @view.onReactivated()
+      @view.$el.should.not.have "#coreon-password-prompt"
+      
