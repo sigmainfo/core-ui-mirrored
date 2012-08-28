@@ -41,4 +41,12 @@ class UserSearchesRepository < Spinach::FeatureSteps
   Then 'I should see the password prompt' do
     page.should have_css("#coreon-password-prompt")
   end
+
+  When 'I enter "ei8ht?" for password' do
+    fill_in "Password", with: "ei8ht?"
+  end
+
+  And 'click on "Proceed"' do
+    click_on "Proceed"
+  end
 end

@@ -118,67 +118,85 @@ describe "Coreon.Views.ApplicationView", ->
       Backbone.history.navigate.should.not.have.been.called
       @event.preventDefault.should.not.have.been.called
 
-  context "on login/logout", ->
+  context "on login", ->
 
-    context "login", ->
+    beforeEach ->
+      @view.render()
+      @view.model.account.set "active", true, silent: true
 
-      beforeEach ->
-        @view.render()
-        @view.model.account.set "active", true, silent: true
+    it "renders footer", ->
+      sinon.spy @view.footer, "delegateEvents"
+      @view.model.account.trigger "activated"
+      @view.$el.should.have "#coreon-footer"
+      @view.$("#coreon-footer").should.have ".logout"
+      @view.footer.delegateEvents.should.have.been.calledOnce
 
-      it "renders footer", ->
-        sinon.spy @view.footer, "delegateEvents"
-        @view.model.account.trigger "activated"
-        @view.$el.should.have "#coreon-footer"
-        @view.$("#coreon-footer").should.have ".logout"
-        @view.footer.delegateEvents.should.have.been.calledOnce
+    it "renders widgets", ->
+      sinon.spy @view.widgets, "delegateEvents"
+      @view.model.account.trigger "activated"
+      @view.$el.should.have "#coreon-widgets"
+      @view.$("#coreon-widgets").should.have "#coreon-search"
+      @view.widgets.delegateEvents.should.have.been.calledOnce
 
-      it "renders widgets", ->
-        sinon.spy @view.widgets, "delegateEvents"
-        @view.model.account.trigger "activated"
-        @view.$el.should.have "#coreon-widgets"
-        @view.$("#coreon-widgets").should.have "#coreon-search"
-        @view.widgets.delegateEvents.should.have.been.calledOnce
+    it "removes login form", ->
+      sinon.spy @view.login, "undelegateEvents"
+      @view.login.render()
+      @view.model.account.trigger "activated"
+      @view.$el.should.not.have "#coreon-login"
+      @view.login.undelegateEvents.should.have.been.calledOnce
 
-      it "removes login form", ->
-        sinon.spy @view.login, "undelegateEvents"
-        @view.login.render()
-        @view.model.account.trigger "activated"
-        @view.$el.should.not.have "#coreon-login"
-        @view.login.undelegateEvents.should.have.been.calledOnce
+    it "fails gracefully when idle", ->
+      @view.model.account.set "active", false, silent: true
+      @view.render()
+      @view.model.account.trigger "activated"
+      @view.$el.should.have "#coreon-login"
+      @view.$el.should.not.have "#coreon-footer"
+      
 
-      it "fails gracefully when idle", ->
-        @view.model.account.set "active", false, silent: true
-        @view.render()
-        @view.model.account.trigger "activated"
-        @view.$el.should.have "#coreon-login"
-        @view.$el.should.not.have "#coreon-footer"
-        
+  context "on logout", ->
 
-    context "logout", ->
+    it "renders login form", ->
+      sinon.spy @view.login, "delegateEvents"
+      @view.model.account.trigger "deactivated"
+      @view.$el.should.have "#coreon-login"
+      @view.$("#coreon-login").should.have "form.login"
+      @view.login.delegateEvents.should.have.been.calledOnce
 
-      it "renders login form", ->
-        sinon.spy @view.login, "delegateEvents"
-        @view.model.account.trigger "deactivated"
-        @view.$el.should.have "#coreon-login"
-        @view.$("#coreon-login").should.have "form.login"
-        @view.login.delegateEvents.should.have.been.calledOnce
+    it "removes footer", ->
+      sinon.spy @view.footer, "undelegateEvents"
+      @view.footer.render().$el.appendTo @view.$el
+      @view.model.account.trigger "deactivated"
+      @view.$el.should.not.have "#coreon-footer"
+      @view.footer.undelegateEvents.should.have.been.calledOnce
 
-      it "removes footer", ->
-        sinon.spy @view.footer, "undelegateEvents"
-        @view.footer.render().$el.appendTo @view.$el
-        @view.model.account.trigger "deactivated"
-        @view.$el.should.not.have "#coreon-footer"
-        @view.footer.undelegateEvents.should.have.been.calledOnce
+    it "removes widgets", ->
+      sinon.spy @view.widgets, "undelegateEvents"
+      @view.widgets.render().$el.appendTo @view.$el
+      @view.model.account.trigger "deactivated"
+      @view.$el.should.not.have "#coreon-widgets"
+      @view.widgets.undelegateEvents.should.have.been.calledOnce
 
-      it "removes widgets", ->
-        sinon.spy @view.widgets, "undelegateEvents"
-        @view.widgets.render().$el.appendTo @view.$el
-        @view.model.account.trigger "deactivated"
-        @view.$el.should.not.have "#coreon-widgets"
-        @view.widgets.undelegateEvents.should.have.been.calledOnce
-
+  describe "#destroy", ->
+    
     it "removes bindings on destroy", ->
       sinon.spy @view.model.account, "off"
       @view.destroy()
       @view.model.account.off.should.have.been.calledWith null, null, @view 
+
+
+  describe "#onUnauthorized", ->
+
+    it "is triggered by account", ->
+      @view.onUnauthorized = sinon.spy()
+      @view.initialize()
+      @view.model.account.trigger "unauthorized"
+      @view.onUnauthorized.should.have.been.calledOnce
+
+    it "renders password prompt", ->
+      @view.onUnauthorized()
+      @view.$el.should.have "#coreon-password-prompt"
+
+    it "passes account to password prompt", ->
+      sinon.spy Coreon.Views, "PasswordPromptView"
+      @view.onUnauthorized()
+      Coreon.Views.PasswordPromptView.should.have.been.calledWith model: @view.model.account

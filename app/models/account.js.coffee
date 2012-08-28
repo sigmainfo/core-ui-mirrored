@@ -13,6 +13,8 @@ class Coreon.Models.Account extends Backbone.Model
   initialize: ->
     @notifications = new Coreon.Collections.Notifications
     @connections = new Coreon.Collections.Connections
+
+    @connections.on "error:403", @onUnauthorized
     
   activate: (login, password) ->
     options =
@@ -36,6 +38,10 @@ class Coreon.Models.Account extends Backbone.Model
     @trigger "activated"
     @notifications.reset()
     @message I18n.t("notifications.account.login", name: @get "name")
+
+  onUnauthorized: =>
+    @unset "session"
+    @trigger "unauthorized"
 
   deactivate: ->
     @set "active", false

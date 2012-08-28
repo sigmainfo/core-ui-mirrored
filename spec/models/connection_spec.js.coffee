@@ -33,10 +33,23 @@ describe "Coreon.Models.Connection", ->
     afterEach ->
       I18n.t.restore()
 
+    it "triggers events", ->
+      errorSpy = sinon.spy()
+      statusSpy = sinon.spy()
+      @connection.on "error", errorSpy
+      @connection.on "error:403", statusSpy
+      @request.respond 403, {}, "{}"
+      errorSpy.should.have.been.calledOnce
+      statusSpy.should.have.been.calledOnce
+
     it "creates generic error message by default", ->
       I18n.t.withArgs("errors.generic").returns "An error occurred"
       @request.respond 500, {}, ""
       @connection.message.should.have.been.calledWith "An error occurred", type: "error"
+
+    it "does not create error message on 403", ->
+      @request.respond 403, {}, ""
+      @connection.message.should.not.have.been.called
 
     it "creates specific error when given", ->
       I18n.t.withArgs("errors.json.parse").returns "Could not parse JSON"

@@ -4,6 +4,7 @@
 #= require views/widgets_view
 #= require views/footer_view
 #= require views/login_view
+#= require views/password_prompt_view
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
@@ -19,6 +20,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
     @model.account.on "activated", @loginHandler, @
     @model.account.on "deactivated", @logoutHandler, @
+    @model.account.on "unauthorized", @onUnauthorized, @
 
   destroy: ->
     @model.account.off null, null, @
@@ -55,3 +57,10 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   renderLogin: ->
     @$el.append @login.render().$el
+
+  onUnauthorized: ->
+    prompt = new Coreon.Views.PasswordPromptView
+      model: @model.account
+    prompt.render()
+    @$el.append prompt.$el
+

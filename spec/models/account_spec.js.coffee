@@ -189,6 +189,29 @@ describe "Coreon.Models.Account", ->
         expect(localStorage.getItem "name").to.be.null
         expect(localStorage.getItem "session").to.be.null
 
+  describe "#onUnauthorized", ->
+
+    beforeEach ->
+      @account.save
+        name: "Dead Man"
+        session: "1234abcd-xxxx"
+    
+    it "is triggered by errors on connections", ->
+      @account.onUnauthorized = sinon.spy()
+      @account.initialize()
+      @account.connections.trigger "error:403"
+      @account.onUnauthorized.should.have.been.calledOnce
+
+    it "clears session ", ->
+      @account.onUnauthorized()
+      expect(@account.get "session").to.not.exist
+
+    it "triggers event", ->
+      spy = sinon.spy()
+      @account.on "unauthorized", spy
+      @account.onUnauthorized()
+      spy.should.have.been.calledOnce
+
   describe "#destroy", ->
     
     it "destroys notifications", ->
