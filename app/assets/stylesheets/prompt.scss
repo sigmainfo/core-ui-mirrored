@@ -1,0 +1,52 @@
+@import 'compass/css3';
+@import '_config';
+
+#coreon-password-prompt {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background-color: rgba($text-color, 0.8);
+  
+  .prompt {
+    @include box-sizing(border-box);
+    background-color: $greycolor;
+    @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset, rgba(black, 0.4) 2px 2px 5px);
+    min-width: 300px;
+    width: 50%;
+    max-width: 450px;
+    margin: 200px auto;
+    
+    input[type="password"] {
+      width: 82%;
+      height: 29px;
+      float: left;
+    }
+    
+    input[type="submit"] {
+      @include submit-button;
+      background-position: -44px -50px;   
+    }
+    
+    label {
+      display: none;
+    }
+    
+    p, form {
+      padding: 15px 22px;
+    }
+    
+    form {
+      padding-bottom: 20px;
+      border-bottom: 1px solid darken($greycolor, 4%);
+    }
+    
+    .links {
+      border-top: 1px solid lighten($greycolor, 4%);
+      @include retina-stripes("white");
+    }
+    
+  }
+}

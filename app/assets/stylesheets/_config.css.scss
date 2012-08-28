@@ -43,14 +43,6 @@ $notice-color: #6bc175;
   } 
 }
 
-@mixin retina-flash-icons {
-  background-image: image-url('layout/flash-icons.png');
-  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/flash-icons@2x.png');
-      @include background-size(30px 230px);
-  } 
-}
-
 @mixin retina-separator {
   background-image: image-url('layout/separator.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
@@ -59,10 +51,10 @@ $notice-color: #6bc175;
   } 
 }
 
-@mixin retina-stripes-blue {
-  background-image: image-url('layout/stripes-blue.png');
+@mixin retina-stripes($color) {
+  background-image: image-url('layout/stripes-#{$color}.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/stripes-blue@2x.png');
+      background-image: image-url('layout/stripes-#{$color}@2x.png');
       @include background-size(4px 8px);
   } 
 }
