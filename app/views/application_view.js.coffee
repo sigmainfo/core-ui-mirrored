@@ -1,6 +1,6 @@
 #= require environment
 #= require templates/application
-#= require views/notifications_view
+#= require views/header_view
 #= require views/widgets_view
 #= require views/footer_view
 #= require views/login_view
@@ -13,7 +13,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   events: "click a[href^='/']": "navigate"
 
   initialize: ->
-    @notifications = new Coreon.Views.NotificationsView collection: @model.account.notifications
+    @header        = new Coreon.Views.HeaderView collection: @model.account.notifications
     @widgets       = new Coreon.Views.WidgetsView
     @footer        = new Coreon.Views.FooterView model: @model
     @login         = new Coreon.Views.LoginView model: @model.account
@@ -24,12 +24,14 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @model.account.on "unauthorized", @onUnauthorized, @
     @model.account.on "reactivated", @onReactivated, @
 
+    @header.on "resize", @onResize, @
+
   destroy: ->
     @model.account.off null, null, @
 
   render: ->
     @$el.html @template()
-    @$("#coreon-header").append @notifications.render().$el
+    @$("#coreon-top").prepend @header.render().$el
     if not @model.account.get("active") then @renderLogin() else @renderApplication()
     @
 
@@ -61,7 +63,10 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @$el.append @login.render().$el
 
   onUnauthorized: ->
-    @$el.append @prompt.render().$el
+    @prompt.render().$el.appendTo @$("#coreon-modal")
 
   onReactivated: ->
     @prompt.remove()
+
+  onResize: ->
+    @login.$el.css "paddingTop": @header.$el.outerHeight()

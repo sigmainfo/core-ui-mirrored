@@ -28,9 +28,9 @@ describe "Coreon.Views.ApplicationView", ->
       @view.footer.should.be.an.instanceOf Coreon.Views.FooterView
       @view.footer.model.should.equal @view.model
 
-    it "creates notifications view", ->
-      @view.notifications.should.be.an.instanceOf Coreon.Views.NotificationsView
-      @view.notifications.collection.should.equal @view.model.account.notifications
+    it "creates header view", ->
+      @view.header.should.be.an.instanceOf Coreon.Views.HeaderView
+      @view.header.collection.should.equal @view.model.account.notifications
 
     it "creates widgets subview", ->
       @view.widgets.should.be.an.instanceOf Coreon.Views.WidgetsView
@@ -49,16 +49,16 @@ describe "Coreon.Views.ApplicationView", ->
       @view.render()
       @view.$el.should.not.have "#foo"
 
-    describe "notifications", ->
 
-      it "renders containers", ->
-        @view.render()
-        @view.$el.should.have "#coreon-top"
-        @view.$el.should.have "#coreon-top #coreon-header" 
+    it "renders containers", ->
+      @view.render()
+      @view.$el.should.have "#coreon-top"
+      @view.$("#coreon-top").should.have "#coreon-modal"
 
-      it "renders notifications", ->
-        @view.render()
-        @view.$("#coreon-header").should.have "#coreon-notifications"
+    it "renders header", ->
+      @view.render()
+      @view.$("#coreon-top").should.have "#coreon-header"
+      @view.$("#coreon-header").should.have "#coreon-notifications"
 
 
     describe "widgets", ->
@@ -190,6 +190,9 @@ describe "Coreon.Views.ApplicationView", ->
 
   describe "#onUnauthorized", ->
 
+    beforeEach ->
+      @view.render()
+
     it "is triggered by account", ->
       @view.onUnauthorized = sinon.spy()
       @view.initialize()
@@ -198,7 +201,7 @@ describe "Coreon.Views.ApplicationView", ->
 
     it "renders password prompt", ->
       @view.onUnauthorized()
-      @view.$el.should.have "#coreon-password-prompt"
+      @view.$("#coreon-modal").should.have "#coreon-password-prompt"
 
   describe "#onReactivated", ->
 
@@ -214,4 +217,3 @@ describe "Coreon.Views.ApplicationView", ->
     it "removes password prompt", ->
       @view.onReactivated()
       @view.$el.should.not.have "#coreon-password-prompt"
-      
