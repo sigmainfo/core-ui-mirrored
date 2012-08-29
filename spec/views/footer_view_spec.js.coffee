@@ -10,9 +10,11 @@ describe "Coreon.Views.FooterView", ->
     jQuery.fx.off = false
 
   beforeEach ->
+    account = new Backbone.Model
+    account.connections = new Backbone.Collection
     @view = new Coreon.Views.FooterView
       model:
-        account: new Backbone.Model
+        account: account
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -55,5 +57,20 @@ describe "Coreon.Views.FooterView", ->
       @view.$(".toggle").click()
       @view.$("#coreon-account").should.not.be.visible
 
+  describe "progress-indicator", ->
 
+    it "creates view", ->
+      @view.progress.should.be.an.instanceOf Coreon.Views.ProgressIndicatorView
+      @view.progress.collection.should.equal @view.model.account.connections
 
+    it "renders el", ->
+      @view.progress.render = sinon.stub().returns @view.progress
+      @view.render()
+      @view.progress.render.should.have.been.calledOnce
+
+    it "appends el", ->
+      @view.render()
+      @view.$(".toggle").should.have "#coreon-progress-indicator"
+      
+      
+      

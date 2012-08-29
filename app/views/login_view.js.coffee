@@ -24,4 +24,4 @@ class Coreon.Views.LoginView extends Backbone.View
   submitHandler: (event) ->
     event.preventDefault()
     event.stopPropagation()
-    @model.login @$("#coreon-login-login").val(), @$("#coreon-login-password").val()
+    @model.activate @$("#coreon-login-login").val(), @$("#coreon-login-password").val()

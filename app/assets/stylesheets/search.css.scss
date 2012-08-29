@@ -1,0 +1,27 @@
+@import '_config';
+@import 'compass/css3';
+
+
+#coreon-search {
+  @include box-sizing(border-box);
+  padding: 11px 16px;
+  background-color: $darkerbluecolor;
+  @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+  
+  label {
+    display: none;
+  }
+  
+  #coreon-search-query {
+    width: 82%;
+    height: 28px;
+    @include single-box-shadow($text-color, 1px, 1px, 2px, false, inset);
+    float: left;
+  }
+  
+  input[type="submit"] {
+    @include submit-button;
+    background-position: 0 -50px;   
+  }
+  
+}

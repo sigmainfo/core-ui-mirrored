@@ -1,5 +1,6 @@
 #= require environment
 #= require templates/notification
+#= require helpers/link_to
 
 class Coreon.Views.NotificationView extends Backbone.View
   tagName: "li"
@@ -26,4 +27,16 @@ class Coreon.Views.NotificationView extends Backbone.View
     @model.set "hidden", true 
 
   onChangeHidden: ->
-    if @model.get "hidden" then @$el.slideUp("fast") else @$el.slideDown()
+    [type, duration] =
+      if @model.get "hidden"
+        ["hide", "fast"]
+      else
+        ["show", 400]
+    @$el.animate {
+      height: type
+    },
+      duration: duration
+      step: @onStep
+
+  onStep: =>
+    @$el.trigger "animate"

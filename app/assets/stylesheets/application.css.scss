@@ -11,3 +11,65 @@
  *= require_self
  *= require_tree .
  */
+ 
+ @import 'compass/css3';
+ @import '_config';
+
+ * {
+   margin: 0;
+   padding: 0;
+ }
+
+ body {
+   font: 81% 'DroidSans', Trebuchet MS, Lucida;
+   line-height: 1.5em;
+   color: $text-color;
+   background:image-url("layout/bg.jpg");
+   margin:0;
+ }
+
+ h1, h2, h3, h4 {
+   font-weight: normal;
+ }
+
+ h3 {
+   font: 1.6em Palatino;
+ }
+
+ a {
+   color: $bluecolor;
+   text-decoration: none;
+   &:hover {
+     color: $hover-color;
+   };
+   &:active, &:visited, &:focus { 
+     outline: none;
+     }
+ }
+ 
+ button::-moz-focus-inner { 
+    padding: 0; 
+    border: none;
+  }
+
+ input[type="email"], input[type="password"], input[type="text"], textarea {
+   @include box-sizing(border-box);
+    height:30px;
+    width: 260px;
+    padding:6px 8px;
+    border: none;
+    outline:0;
+    font: 1em'Droid_Sans', Trebuchet MS, Lucida;
+    color: $text-color;
+    @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 1px, 1px, 2px, false, inset);
+ }
+
+ label {
+   display: block;
+   color: $browncolor;
+   padding-bottom: 5px;
+   padding-top: 35px;
+   abbr {
+     border: none;
+   }
+ }

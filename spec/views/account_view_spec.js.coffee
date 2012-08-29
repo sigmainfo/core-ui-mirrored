@@ -18,7 +18,7 @@ describe "Coreon.Views.AccountView", ->
       @view.render().should.equal @view
     
     it "renders login name", ->
-      @view.model.set "userName", "Big George"
+      @view.model.set "name", "Big George"
       @view.render()
       @view.$el.should.contain I18n.t "account.status", name: "Big George"
       
@@ -32,7 +32,7 @@ describe "Coreon.Views.AccountView", ->
 
     beforeEach ->
       Backbone.history = new Backbone.History
-      @view.model.logout = -> true
+      @view.model.deactivate = ->
       @event = new jQuery.Event "click"
 
     afterEach ->
@@ -54,6 +54,6 @@ describe "Coreon.Views.AccountView", ->
       @event.stopPropagation.should.have.been.calledOnce
 
     it "calls logout on model", ->
-      sinon.spy @view.model, "logout"
+      @view.model.deactivate = sinon.spy()
       @view.logout @event
-      @view.model.logout.should.have.been.calledOnce
+      @view.model.deactivate.should.have.been.calledOnce
