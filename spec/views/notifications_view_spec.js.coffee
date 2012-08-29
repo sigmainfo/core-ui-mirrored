@@ -5,7 +5,7 @@ describe "Coreon.Views.NotificationsView", ->
 
   beforeEach ->
     @view = new Coreon.Views.NotificationsView
-      collection: new Coreon.Collections.Notifications [
+      collection: new Backbone.Collection [
         { message: "The kid" },
         { message: "What?" }, 
         { message: "Did the kid see it?" }
@@ -16,6 +16,7 @@ describe "Coreon.Views.NotificationsView", ->
 
   it "creates list container", ->
     @view.$el.should.be "ul.notifications"
+    @view.$el.should.have.id "coreon-notifications"
 
   context "#render", ->
 

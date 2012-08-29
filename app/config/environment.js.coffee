@@ -4,14 +4,9 @@
 #= require hamlcoffee
 #= require i18n
 #= require i18n/translations
-#= require core_client
-
-window.Coreon =
-  Models: {}
-  Collections: {}
-  Helpers: {}
-  Views:
-    Widgets: {}
-  Routers: {}
+#= require namespace
+#= require modules/messages
 
 HAML.globals = -> Coreon.Helpers
+
+_(Backbone.Model::).extend Coreon.Modules.Messages

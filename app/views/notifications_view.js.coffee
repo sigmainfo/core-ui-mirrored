@@ -2,6 +2,7 @@
 #= require views/notification_view
 
 class Coreon.Views.NotificationsView extends Backbone.View
+  id: "coreon-notifications"
   tagName: "ul"
   className: "notifications"
 

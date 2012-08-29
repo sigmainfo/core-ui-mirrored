@@ -31,4 +31,4 @@ Feature: User signs in
     And fill in "Password" with "se7en!"
     And click on "Log in"
     Then I should see the login screen
-    But I should see an error "Service is currently unavailable"
+    And I should see an error "Service is currently unavailable"

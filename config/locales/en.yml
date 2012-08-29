@@ -9,6 +9,12 @@ en:
       password: "Password"
       submit: "Log in"
     status: "Logged in as {{name}}"
+    password_prompt:
+      message: "Please enter your password to proceed:"
+      submit: "Proceed"
+
+  search:
+    submit: "Search"
 
   notification:
     label:
@@ -21,7 +27,7 @@ en:
     account:
       logout: "Successfully logged out."
       login: "Successfully logged in as {{name}}."
-
+  
   errors:
     generic: "An error occured."
     login:

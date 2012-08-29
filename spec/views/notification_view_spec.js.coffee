@@ -85,12 +85,18 @@ describe "Coreon.Views.NotificationView", ->
       @view.onChangeHidden.should.have.been.calledOnce
 
     it "hides view when hidden", ->
-      sinon.spy @view.$el, "slideUp"
+      sinon.spy @view.$el, "animate"
       @view.model.set "hidden", false, silent: true
       @view.model.set "hidden", true
-      @view.$el.slideUp.should.have.been.calledWith "fast"
+      @view.$el.animate.should.have.been.calledWith {height: "hide"},
+        duration: "fast"
+        step: @view.onStep
 
     it "reveals view when not hidden", ->
+      sinon.spy @view.$el, "animate"
       @view.model.set "hidden", true, silent: true
       @view.model.set "hidden", false
       @view.$el.should.be.visible
+      @view.$el.animate.should.have.been.calledWith {height: "show"},
+        duration: 400
+        step: @view.onStep
