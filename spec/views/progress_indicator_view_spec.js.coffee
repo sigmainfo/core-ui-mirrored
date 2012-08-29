@@ -4,11 +4,12 @@
 describe "Coreon.Views.ProgressIndicatorView", ->
 
   beforeEach ->
-    @time = sinon.useFakeTimers()
+    @time = sinon.useFakeTimers 300
     @view = new Coreon.Views.ProgressIndicatorView
       collection: new Backbone.Collection
 
   afterEach ->
+    @view.destroy()
     @time.restore()
 
   it "is a Backbone view", ->

@@ -16,13 +16,40 @@ describe "Coreon.Models.Connection", ->
     @connection.should.be.an.instanceof Backbone.Model
 
   describe "on complete", ->
+    
+    beforeEach ->
+      @collection = new Backbone.Collection
+      @collection.add @connection
 
     it "removes itself from collection when completed", ->
-      collection = new Backbone.Collection
-      collection.add @connection
       @request.respond()
-      collection.length.should.equal 0
-     
+      @collection.length.should.equal 0
+
+    it "keeps connection on 403", ->
+      @request.respond 403, {}, "" 
+      @collection.length.should.equal 1
+      @collection.at(0).should.equal @connection
+
+  describe "#resume", ->
+
+    beforeEach ->
+      @collection = new Backbone.Collection
+      @collection.sync = sinon.spy()
+      @collection.add @connection
+
+    it "creates a new connection", ->
+      @connection.set
+        method: "read"
+        model: "myModel"
+        options:
+          url: "https://graph/my_models"
+      @connection.resume()
+      @collection.sync.should.have.been.calledWith "read", "myModel", url: "https://graph/my_models"
+
+    it "destroys old connection", ->
+      @connection.destroy = sinon.spy()
+      @connection.resume()
+      @connection.destroy.should.have.been.calledOnce
 
   describe "on error", ->
 

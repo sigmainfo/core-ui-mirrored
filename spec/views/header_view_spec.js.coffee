@@ -4,13 +4,9 @@
 describe "Coreon.Views.Header", ->
 
   beforeEach ->
-    @time = sinon.useFakeTimers()
     @notifications = new Backbone.Collection
     @view = new Coreon.Views.HeaderView collection: @notifications
   
-  afterEach ->
-    @time.restore()
-
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
 

@@ -1,4 +1,3 @@
-@wip
 Feature: User searches repository
   In order to get a list of relevant concepts
   As a user that searches for a specific information

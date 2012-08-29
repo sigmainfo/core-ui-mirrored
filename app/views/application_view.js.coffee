@@ -68,6 +68,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   onReactivated: ->
     @prompt.remove()
+    dropped = @model.account.connections.filter (connection) ->
+      connection.get("xhr").status == 403 
+    connection.resume() for connection in dropped
 
   onResize: ->
     @login.$el.css "paddingTop": @header.$el.outerHeight()

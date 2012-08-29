@@ -42,6 +42,7 @@ class Coreon.Views.ProgressIndicatorView extends Backbone.View
     @$el.css "backgroundPosition", "-#{@animation.frame * @animation.width}px 0"
 
   destroy: (remove = false) ->
+    @stop()
     @collection.off null, null, @
     @undelegateEvents()
     @remove() if remove

@@ -217,3 +217,17 @@ describe "Coreon.Views.ApplicationView", ->
     it "removes password prompt", ->
       @view.onReactivated()
       @view.$el.should.not.have "#coreon-password-prompt"
+
+    it "resumes all dropped connections", ->
+      conn1 = new Backbone.Model xhr: status: 200
+      conn2 = new Backbone.Model xhr: status: 403
+      conn3 = new Backbone.Model xhr: status: 0
+      conn1.resume = sinon.spy()
+      conn2.resume = sinon.spy()
+      conn3.resume = sinon.spy()
+      @view.model.account.connections.add [ conn1, conn2, conn3 ]
+      @view.onReactivated()
+      conn2.resume.should.have.been.calledOnce
+      conn1.resume.should.not.have.been.called
+      conn3.resume.should.not.have.been.called
+        
