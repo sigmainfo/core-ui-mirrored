@@ -9,6 +9,8 @@ $greycolor: #e0e7e1;
 $error-color: #f25a5a;
 $notice-color: #6bc175;
 
+$widget-width: 320px;
+
 @mixin submit-button {
   @include box-sizing(border-box);
   height:29px;
@@ -39,7 +41,7 @@ $notice-color: #6bc175;
   background-image: image-url('layout/icons.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/icons@2x.png');
-      @include background-size(100px 100px);
+      @include background-size(100px 200px);
   } 
 }
 

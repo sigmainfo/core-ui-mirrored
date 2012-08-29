@@ -13,10 +13,35 @@
   }
   
   #coreon-search-query {
-    width: 82%;
+    width: $widget-width - 80px;
     height: 28px;
+    padding-left: 28px;
     @include single-box-shadow($text-color, 1px, 1px, 2px, false, inset);
     float: left;
+  }
+
+  #coreon-search-target-select {
+
+    position: absolute;
+    
+    .toggle {
+      display: block;
+      float: left;
+      width: 28px;
+      height: 28px;
+      background: image-url("layout/icons.png") no-repeat 6px -96px;
+      @include retina-icons;
+      &:hover {
+        background-position: -44px -96px;
+      };
+    }
+
+    .hint {
+      float: left;
+      color: lighten($text-color, 60%);
+      padding-top: 5px;
+    }
+
   }
   
   input[type="submit"] {
@@ -24,4 +49,19 @@
     background-position: 0 -50px;   
   }
   
+}
+
+#coreon-search-target-select-dropdown {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 3000px;
+  
+  .options {
+    position: absolute;
+    right: 64px;
+    top: 39px;
+    border-top: 1px dotted $browncolor;
+    width: $widget-width - 80px;
+  }
 }

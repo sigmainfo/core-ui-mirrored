@@ -1,0 +1,3 @@
+%ul.options
+  - for option, index in @options
+    %li.option{class: "selected" if index is @selected}= I18n.t "search.target.#{option}.label"

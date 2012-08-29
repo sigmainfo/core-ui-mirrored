@@ -1,7 +1,6 @@
 @import 'compass/css3';
 @import '_config';
 
-
 #coreon-top {
   position: fixed;
   top: 0;
@@ -24,13 +23,12 @@
 
 #coreon-modal {
   position: relative;
-  float: left;
   height: 0;
   width: 100%;
 }
 
 #coreon-widgets {
-  width: 320px;
+  width: $widget-width;
   float: right;
   @include box-shadow(rgba(black, 0.4) -2px 0px 5px);
   

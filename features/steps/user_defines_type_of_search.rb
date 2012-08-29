@@ -2,19 +2,26 @@ class UserDefinesTypeOfSearch < Spinach::FeatureSteps
   include AuthSteps
 
   Then 'I should see the hint "Search all" in the search input' do
-    pending 'step not implemented'
+    page.find("#coreon-search .hint").should have_content("Search all")
   end
 
   When 'I click on the triangle within the search input' do
-    pending 'step not implemented'
+    page.find("#coreon-search .toggle").click
   end
 
   Then 'I should see a dropdown with "All", "Definition", and "Terms"' do
-    pending 'step not implemented'
+    page.find("#coreon-search-target-select-dropdown").should be_visible
+    options = []
+    page.all("#coreon-search-target-select-dropdown li").each { |li| options << li.text }
+    options.should == ["All", "Definition", "Terms"]
   end
 
   And '"All" should be selected' do
-    pending 'step not implemented'
+    page.all("#coreon-search-target-select-dropdown li").each do |li|
+      if li.text == "All"
+       li["class"].split(/\s+/).should include("selected")
+      end
+    end
   end
 
   When 'I click on "Terms"' do

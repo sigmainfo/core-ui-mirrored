@@ -16,6 +16,12 @@ describe "Coreon.Views.SearchView", ->
   it "creates container", ->
     @view.$el.should.have.id "coreon-search"
 
+
+  describe "#initialize", ->
+    
+    it "creates selector", ->
+      @view.selector.should.be.an.instanceof Coreon.Views.Widgets.SearchTargetSelectView
+
   describe "#render", ->
 
     it "can be chained", ->
@@ -36,6 +42,12 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$("form").should.have 'input[type="submit"]'
       @view.$('input[type="submit"]').val().should.equal "Search"
+
+    it "renders select", ->
+      @view.render()
+      @view.$el.should.have "#coreon-search-target-select"
+      @view.$("#coreon-search-target-select").should.have ".hint"
+      
 
   describe "#submitHandler", ->
 
