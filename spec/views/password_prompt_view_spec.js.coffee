@@ -4,7 +4,7 @@
 describe "Coreon.Views.PasswordPromptView", ->
   
   beforeEach ->
-    @view = new Coreon.Views.PasswordPromptView
+    @view = new Coreon.Views.PasswordPromptView model: new Backbone.Model
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
@@ -79,3 +79,32 @@ describe "Coreon.Views.PasswordPromptView", ->
       @view.$("#coreon-password-password").val "se7en"
       @view.$("form").trigger @event
       @view.model.reactivate.should.have.been.calledWith "se7en"
+
+  context "#logout", ->
+
+    beforeEach ->
+      @view.model.deactivate = sinon.spy()
+      @event = new jQuery.Event "click"
+
+    it "handles clicks on logout link", ->
+      sinon.spy @view, "logout"
+      @view.delegateEvents()
+      @view.render()
+      @view.$("a.logout").trigger @event
+      @view.logout.should.have.been.calledOnce
+
+    it "terminates propagation and default action", ->
+      sinon.spy @event, "preventDefault"
+      sinon.spy @event, "stopPropagation"
+      @view.logout @event
+      @event.preventDefault.should.have.been.calledOnce
+      @event.stopPropagation.should.have.been.calledOnce
+
+    it "hides prompt", ->
+      @view.remove = sinon.spy()
+      @view.logout @event
+      @view.remove.should.have.been.calledOnce
+
+    it "calls logout on model", ->
+      @view.logout @event
+      @view.model.deactivate.should.have.been.calledOnce
