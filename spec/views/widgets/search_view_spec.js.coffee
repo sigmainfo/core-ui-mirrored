@@ -75,4 +75,61 @@ describe "Coreon.Views.SearchView", ->
       @view.submitHandler @event
       Backbone.history.navigate.should.have.been.calledWith "concepts/search?q=foo", trigger: true
 
-      
+    it "navigates with type of search as a url param", ->
+      @view.render()
+      @view.$('input[name="q"]').val "foo"
+      @view.searchType.getSelectedType = -> "terms"
+      @view.submitHandler @event
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search/terms?q=foo", trigger: true
+
+  describe "#onClickedToFocus", ->
+
+    it "is triggered by select", ->
+      spy = sinon.spy()
+      @view.onClickedToFocus = spy
+      @view.initialize()
+      @view.selector.trigger "focus"
+      spy.should.have.been.calledOnce
+
+    it "puts focus on search input", ->
+      @view.render().$el.appendTo $("#konacha")
+      @view.onClickedToFocus()
+      @view.$(":focus").should.have.id "coreon-search-query"
+
+  describe "#onFocus", ->
+
+    beforeEach ->
+      @event = jQuery.Event "focus"
+      @view.render().$el.appendTo $("#konacha")
+
+    it "is triggered by focus of input", ->
+      @view.onFocus = sinon.spy()
+      @view.delegateEvents()
+      @view.$("input#coreon-search-query").trigger @event
+      @view.onFocus.should.have.been.calledWith @event
+
+    it "hides hint", ->
+      @view.onFocus @event
+      @view.selector.$(".hint").should.not.be.visible
+
+  describe "#onBlur", ->
+    
+    beforeEach ->
+      @event = jQuery.Event "blur"
+      @view.render().$el.appendTo $("#konacha")
+      @view.selector.hideHint()
+
+    it "is triggered by focus of input", ->
+      @view.onBlur = sinon.spy()
+      @view.delegateEvents()
+      @view.$("input#coreon-search-query").trigger @event
+      @view.onBlur.should.have.been.calledWith @event
+
+    it "reveals hint", ->
+      @view.onBlur @event
+      @view.selector.$(".hint").should.be.visible
+
+    it "does not reveal hint when not empty", ->
+      @view.$("input#coreon-search-query").val "Zitrone"
+      @view.onBlur @event
+      @view.selector.$(".hint").should.not.be.visible

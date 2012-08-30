@@ -25,42 +25,54 @@ class UserDefinesTypeOfSearch < Spinach::FeatureSteps
   end
 
   When 'I click on "Terms"' do
-    pending 'step not implemented'
+    page.all("#coreon-search-target-select-dropdown li").each do |li|
+      if li.text == "Terms"
+       li.click
+      end
+    end
   end
 
   Then 'I should not see the dropdown' do
-    pending 'step not implemented'
+    page.should have_no_css("#coreon-search-target-select-dropdown")
   end
 
   But 'I should see the hint "Search by terms" in the search input' do
-    pending 'step not implemented'
+    page.find("#coreon-search .hint").should have_content("Search by terms")
   end
 
   And '"Terms" should be selected' do
-    pending 'step not implemented'
+    page.find("#coreon-search-target-select-dropdown li.selected").text.should == "Terms"
   end
 
   When 'I click outside the dropdown' do
-    pending 'step not implemented'
+    # reduce height temporarily to make el clickable
+    page.execute_script('$("#coreon-search-target-select-dropdown").height(200)')
+    page.find("#coreon-search-target-select-dropdown").click
+    page.execute_script('$("#coreon-search-target-select-dropdown").height("")')
   end
 
   When 'I enter "poet" in the search field' do
-    pending 'step not implemented'
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "poet"
+    end
   end
 
-  And 'I press enter' do
-    pending 'step not implemented'
+  And 'I click the search button' do
+    within "#coreon-search" do
+      find('input[type="submit"]').click
+    end
   end
 
   Then 'I should be on the search concepts page' do
-    pending 'step not implemented'
+    current_path.should =~ %r{^/concepts/search}
   end
 
   And 'the search type should be "terms"' do
-    pending 'step not implemented'
+    current_path.should =~ %r{^/concepts/search/terms}
   end
 
   And 'the query string should be "poet"' do
-    pending 'step not implemented'
+    require 'uri'
+    URI.parse(current_url).query.should =~ /\bq=poet\b/
   end
 end

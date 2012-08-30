@@ -10,16 +10,26 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
 
   events:
     "click .toggle": "showDropdown"
+    "click .hint": "onFocus"
 
   initialize: ->
-    @searchType = new Backbone.Model
-      options: ["all", "definition", "terms"]
-      selected: 0
-    @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @searchType 
+    @model.on "change", @render, @
+    @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @model 
 
   render: ->
-    @$el.html @template()
+    @$el.html @template selectedType: @model.getSelectedType() 
     @
 
   showDropdown: (event) ->
+    @dropdown.delegateEvents()
     $("#coreon-modal").append @dropdown.render().$el
+
+  hideHint: ->
+    $(".hint").hide()
+
+  revealHint: ->
+    $(".hint").show()
+
+  onFocus: (event) ->
+    @hideHint() 
+    @trigger "focus"

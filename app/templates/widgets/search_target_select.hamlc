@@ -1,5 +1,2 @@
 .toggle
-.hint= I18n.t "search.target.all.hint"
-%ul.options
-  -# - for option in @options
-  -#   %li= I18n.t "search.target.#{option}.label"
+.hint= I18n.t "search.target.#{@selectedType}.hint"

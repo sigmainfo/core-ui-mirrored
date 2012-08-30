@@ -1,4 +1,3 @@
-@wip
 Feature: User defines type of search
   In order to search within the definition or for term values only
   As a user doing a search for concepts
@@ -21,9 +20,9 @@ Feature: User defines type of search
     And "Terms" should be selected
     When I click outside the dropdown
     Then I should not see the dropdown
-    And "Terms" should be selected
+    But I should see the hint "Search by terms" in the search input
     When I enter "poet" in the search field
-    And I press enter
+    And I click the search button
     Then I should be on the search concepts page
     And the search type should be "terms" 
     And the query string should be "poet"

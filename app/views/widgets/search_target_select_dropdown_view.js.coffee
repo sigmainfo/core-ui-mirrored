@@ -7,8 +7,19 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
 
   template: Coreon.Templates["widgets/search_target_select_dropdown"]
 
+  events:
+    "click": "onClick"
+    "click li": "onSelect"
+
   render: ->
     @$el.html @template
-      options: @model.get "options"
-      selected: @model.get "selected"
+      options: @model.get "availableTypes"
+      selected: @model.get "selectedTypeIndex"
     @
+
+  onClick: (event) ->
+    @undelegateEvents()
+    @remove()
+
+  onSelect: (event) ->
+    @model.set "selectedTypeIndex", $(event.target).index()

@@ -36,7 +36,6 @@ class Coreon.Application
     Backbone.history.start
       pushState: true
       root: @options.app_root
-      silent: true
 
     @view.render()
 
