@@ -17,7 +17,9 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
     @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @model 
 
   render: ->
+    hideHint = @$(".hint").is ":hidden"
     @$el.html @template selectedType: @model.getSelectedType() 
+    @hideHint() if hideHint
     @
 
   showDropdown: (event) ->
@@ -25,10 +27,10 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
     $("#coreon-modal").append @dropdown.render().$el
 
   hideHint: ->
-    $(".hint").hide()
+    @$(".hint").hide()
 
   revealHint: ->
-    $(".hint").show()
+    @$(".hint").show()
 
   onFocus: (event) ->
     @hideHint() 
