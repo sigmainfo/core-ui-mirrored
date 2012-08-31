@@ -19,11 +19,11 @@ en:
         hint: "Search all"
         label: "All"
       definition:
-        hint: "Search by definition"
-        label: "Definition"
+        hint: "Search concepts by definition"
+        label: "Concepts by Definition"
       terms:
-        hint: "Search by terms"
-        label: "Terms"
+        hint: "Search concepts by terms"
+        label: "Concepts by Terms"
     submit: "Search"
 
   notification:
