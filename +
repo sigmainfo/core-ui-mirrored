@@ -1,12 +1,6 @@
 #= require environment
 #= require templates/widgets/search_target_select_dropdown
 
-KEYCODE =
-  esc: 27
-  enter: 13
-  down: 40
-  up: 38
-
 class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View 
 
   id: "coreon-search-target-select-dropdown"
@@ -24,7 +18,7 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
     $(document).on "keydown", @onKeydown
 
   undelegateEvents: ->
-    $(document).off "keydown"
+    $(document).off null, null, @
 
   render: ->
     @$el.html @template
@@ -46,22 +40,7 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
   onBlur: (event) =>
     @$("li.option.focus").removeClass "focus"
 
-  onKeydown: (event) =>
-    focusedTypeIndex = @$("li.option.focus").index()
-    switch event.keyCode
-      when KEYCODE.esc
-        @undelegateEvents()
-        @remove()
-      when KEYCODE.enter
-        @undelegateEvents()
-        @remove()
-        if focusedTypeIndex > -1
-          @model.set "selectedTypeIndex", focusedTypeIndex
-      when KEYCODE.down
-        focusedTypeIndex++ unless focusedTypeIndex >= (@model.get("availableTypes").length - 1)
-        @$("li.option.focus").removeClass "focus"
-        @$("li.option").eq(focusedTypeIndex).addClass "focus"
-      when KEYCODE.up
-        focusedTypeIndex-- unless focusedTypeIndex <= 0
-        @$("li.option.focus").removeClass "focus"
-        @$("li.option").eq(focusedTypeIndex).addClass "focus"
+  onKeydown: (event) ->
+    console.log "key"
+
+
