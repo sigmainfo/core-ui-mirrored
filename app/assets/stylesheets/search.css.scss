@@ -13,10 +13,35 @@
   }
   
   #coreon-search-query {
-    width: 82%;
+    width: $widget-width - 80px;
     height: 28px;
+    padding-left: 28px;
     @include single-box-shadow($text-color, 1px, 1px, 2px, false, inset);
     float: left;
+  }
+
+  #coreon-search-target-select {
+
+    position: absolute;
+    
+    .toggle {
+      display: block;
+      float: left;
+      width: 28px;
+      height: 28px;
+      background: image-url("layout/icons.png") no-repeat 6px -96px;
+      @include retina-icons;
+      &:hover {
+        background-position: -44px -96px;
+      };
+    }
+
+    .hint {
+      float: left;
+      color: lighten($text-color, 60%);
+      padding-top: 5px;
+    }
+
   }
   
   input[type="submit"] {
@@ -24,4 +49,57 @@
     background-position: 0 -50px;   
   }
   
+}
+
+#coreon-search-target-select-dropdown {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 3000px; 
+  z-index: 1000;
+  
+  .options {
+    position: absolute;
+    right: 64px;
+    top: 38px;
+    width: $widget-width - 81px;
+    list-style: none;
+    background-color: $beigecolor;
+    @include border-bottom-radius(6px);
+    @include dottedline;
+    @include single-box-shadow(rgba($text-color, 0.5), 1px, 2px, 2px, false);
+    padding: 1px 0 0 0;
+    
+    .option {
+      font-size: 0.86em;
+      padding: 2px 10px 1px 28px;
+      color: $browncolor;
+      position: relative;
+      
+      &:last-child {
+        @include border-bottom-radius(6px);
+      };
+      
+      &.focus {
+        background-color: $greycolor;
+      }
+      
+      &.selected {
+        color: $bluecolor;
+        
+        &:before {
+          content:"";
+          display: block;
+          width: 16px;
+          height: 16px;
+          position: absolute;
+          left: 6px;
+          top: 2px;
+          background: image-url("layout/icons.png") no-repeat 0px -150px;
+          @include retina-icons;
+        };
+      }
+    }
+  }
+
 }

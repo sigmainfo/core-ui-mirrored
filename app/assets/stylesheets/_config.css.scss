@@ -5,9 +5,12 @@ $hover-color: lighten($bluecolor, 10%);
 $browncolor: #554f3c;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
+$beigecolor: #f1f4f0;
 /*$petrol: #5498b0;*/
 $error-color: #f25a5a;
 $notice-color: #6bc175;
+
+$widget-width: 320px;
 
 @mixin submit-button {
   @include box-sizing(border-box);
@@ -39,7 +42,7 @@ $notice-color: #6bc175;
   background-image: image-url('layout/icons.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/icons@2x.png');
-      @include background-size(100px 100px);
+      @include background-size(100px 200px);
   } 
 }
 
@@ -48,6 +51,15 @@ $notice-color: #6bc175;
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/separator@2x.png');
       @include background-size(4px 8px);
+  } 
+}
+
+@mixin dottedline {
+  background-image: image-url('layout/dottedline.png');
+  background-repeat: repeat-x;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/dottedline@2x.png');
+      @include background-size(12px 1px);
   } 
 }
 

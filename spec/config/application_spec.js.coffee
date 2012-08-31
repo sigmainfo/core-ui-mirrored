@@ -80,7 +80,6 @@ describe "Coreon.Application", ->
       Backbone.history.start.should.have.been.calledWith
         pushState: true
         root: "/app/root/"
-        silent: true
       
 
   describe "#destroy", ->
