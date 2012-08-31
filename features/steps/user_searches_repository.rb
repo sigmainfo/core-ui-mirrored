@@ -13,8 +13,8 @@ class UserSearchesRepository < Spinach::FeatureSteps
     end
   end
 
-  Then 'I should be on the search concepts page' do
-    current_path.should == "/concepts/search"
+  Then 'I should be on the search results page' do
+    current_path.should == "/search"
   end
 
   And 'I should see "poet" as the query string' do

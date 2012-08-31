@@ -13,6 +13,7 @@ class Coreon.Models.Account extends Backbone.Model
   initialize: ->
     @notifications = new Coreon.Collections.Notifications
     @connections = new Coreon.Collections.Connections
+    @connections.account = @
 
     @connections.on "error:403", @onUnauthorized
     

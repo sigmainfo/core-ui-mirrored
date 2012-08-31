@@ -12,38 +12,40 @@ describe "Coreon.Collections.Concepts", ->
 
   it "is a Backbone collection", ->
     @collection.should.be.an.instanceOf Backbone.Collection
+
+  it "uses Concept model", ->
+    @collection.model.should.equal Coreon.Models.Concept
     
   it "generates url", ->
     Coreon.application.account = get: sinon.stub();
     Coreon.application.account.get.withArgs("graph_root").returns("https://api.coreon/graph/")
     @collection.url().should.equal "https://api.coreon/graph/concepts"
 
-  describe "#fetch", ->
+  describe "#get", ->
 
-    beforeEach ->
-      @xhr = sinon.useFakeXMLHttpRequest()
-      @xhr.onCreate = (xhr) =>
-        @request = xhr
+    context "when already loaded", ->
 
-    afterEach ->
-      @xhr.restore()
+      beforeEach ->
+        @model = _(new Backbone.Model id: "1234abcf").extend
+          fetch: sinon.spy()
+        @collection.add @model
 
-    it "creates POST request on search url", ->
-      @collection.url = -> "https://graph/concepts"
-      @collection.fetch data: "q=dead+man"
-      @request.method.should.equal "POST"
-      @request.url.should.equal "https://graph/concepts/search"
-      @request.requestBody.should.equal "q=dead+man"
+      it "returns existing model from collection", ->
+        @collection.get("1234abcf").should.equal @model
+        @collection.length.should.equal 1
+        @collection.at(0).should.equal @model
+        @model.fetch.should.not.have.been.called
 
-  describe "#sync", ->
+    context "when not yet loaded", ->
 
-    afterEach ->
-      delete Coreon.application
+      beforeEach ->
+        @collection.on "add", (@model) =>
+          @model.fetch = sinon.spy()
 
-    it "delegates to connections.sync", ->
-      Coreon.application =
-        account:
-          connections:
-            sync: sinon.spy()
-      @collection.sync "update", "Model", data: "data"
-      Coreon.application.account.connections.sync.should.have.been.calledWith "update", "Model", data: "data"
+      it "adds model when not existing", ->
+        @collection.on "add", ->, 
+        @collection.get("1234abcf").should.equal @collection.at(0)  
+
+      it "fetches newly created model", () ->
+        @collection.get("1234abcf")
+        @model.fetch.should.have.been.calledOnce

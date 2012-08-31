@@ -40,9 +40,11 @@ describe "Coreon.Collections.Connections", ->
   describe "#sync", ->
     
     beforeEach ->
-      Coreon.application = 
-        account:
-          get: (key) -> "123-my-auth-token-xxx" if key is "session"
+      @connections.account =
+        get: (key) ->
+          switch key
+            when "session" then "123-my-auth-token-xxx"
+            when "graph_root" then "https://graph.coreon.com/"
 
       @xhr =
         abort: sinon.spy()
@@ -57,11 +59,23 @@ describe "Coreon.Collections.Connections", ->
       Backbone.sync.restore()
 
     it "sets auth header", ->
-      @connections.sync "read", "model", data: "data" 
+      @connections.sync "read", "model", data: "data", url: "search"
       @connections.at(0).get("options").headers.should.have.property "X-Core-Session", "123-my-auth-token-xxx"
 
+    it "prepends graph root to url", ->
+      @connections.sync "read", "model",
+        data: "data"
+        url: "search"
+      @connections.at(0).get("options").should.have.property "url", "https://graph.coreon.com/search"
+
+    it "does not prepend graph root when already given", ->
+      @connections.sync "read", "model",
+        data: "data"
+        url: "https://graph.coreon.com/search"
+      @connections.at(0).get("options").should.have.property "url", "https://graph.coreon.com/search"
+
     it "adds connection", ->
-      @connections.sync "read", "model", data: "data"
+      @connections.sync "read", "model", data: "data", url: "search"
       @connections.should.have.length 1
       @connections.at(0).get("xhr").should.equal @xhr
       @connections.at(0).get("options").should.have.property "data", "data"

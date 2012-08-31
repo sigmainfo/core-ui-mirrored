@@ -69,10 +69,10 @@ describe "Coreon.Application", ->
       @app.start(el: "#konacha")
       @app.view.$el.should.not.be ":empty"
 
-    it "creates concepts router", ->
+    it "creates search router", ->
       @app.start()
-      @app.routers.concepts_router.should.be.an.instanceof Coreon.Routers.ConceptsRouter
-      @app.routers.concepts_router.collection.should.equal @app.concepts
+      @app.routers.search_router.should.be.an.instanceof Coreon.Routers.SearchRouter
+      @app.routers.search_router.view.should.equal @app.view
 
     it "starts history", ->
       Backbone.history.start = sinon.spy()
@@ -92,3 +92,10 @@ describe "Coreon.Application", ->
     it "clears global reference", ->
       @app.destroy()
       Coreon.should.not.have.property "application"
+
+  describe "#sync", ->
+    
+    it "is a shortcut to account.connections.sync", ->
+      @app.account.connections.sync = sinon.spy()
+      @app.sync "read", "myModel", data: "myData"
+      @app.account.connections.sync.should.have.been.calledWith "read", "myModel", data: "myData"

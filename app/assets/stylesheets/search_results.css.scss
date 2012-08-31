@@ -1,0 +1,113 @@
+@import 'compass/css3';
+@import '_config';
+
+.search-results-terms, .search-results-concepts {
+  margin-right: 270px;
+  
+  h3 {
+    text-transform: uppercase;
+    color: $greencolor;
+    font-size: 0.9em;
+    position: relative;
+    display: block;
+    height: 20px;
+    top: 24px;
+  }
+  
+  tr {
+    vertical-align: baseline;
+    text-align: left;
+
+    th {
+      font-weight: normal;
+      text-align: left;
+      text-transform: uppercase;
+      font-size: 0.8em;
+      border-bottom: 1px solid $greencolor;   
+      height: 19px; 
+
+      &:before {
+        @include before-icon;
+        position: absolute;
+        top: 17px;
+        background-position: -52px -150px;
+      } 
+
+      &.value, &.label {
+        text-indent: -2000px;
+        overflow: hidden;
+      }
+    }
+
+    td {
+      border-bottom: 1px solid $greycolor;
+
+      &.lang {
+        text-transform: uppercase;
+        font-size: 0.9em;
+        color: $greencolor;
+      }
+
+      &.concept {
+
+        a {
+          @include concept-icon;
+          white-space: nowrap;
+          padding: 3px 3px 2px 4px;
+          margin-left: -4px;
+          &:hover {
+              background-color: white;
+          };
+        }
+      }
+    }
+
+    td, th {      
+    padding: 5px 20px 0px 2px;
+
+      &.value, &.label {
+        padding-left: 100px;
+      }    
+      &.lang {
+        width: 100px;
+      }
+      &.term {
+        font: 1.1em Palatino;
+      }
+    }
+
+    &:first-child {
+
+      td {
+        padding-top: 16px;
+      }
+    }
+
+  }
+  
+  .terms, .concepts {  
+    border-spacing: 0;
+    width: 100%;
+    min-width: 600px;
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+    @include dottedline;
+    background-position: bottom;
+    position: relative;   
+  }
+  
+  .terms {
+    .concept {
+      width: 180px;
+    }    
+  }
+  
+  .concepts {
+    .id {
+      width: 180px;
+    }
+    .label {
+      font-size: 1.1em;
+    }
+  }
+}

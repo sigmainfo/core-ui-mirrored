@@ -73,14 +73,14 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search?q=foo", trigger: true
+      Backbone.history.navigate.should.have.been.calledWith "search?q=foo", trigger: true
 
-    it "navigates with type of search as a url param", ->
+    it "navigates to concept search with type", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.searchType.getSelectedType = -> "terms"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search/terms?q=foo", trigger: true
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search?t=terms&q=foo", trigger: true
 
   describe "#onClickedToFocus", ->
 

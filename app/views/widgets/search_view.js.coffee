@@ -19,6 +19,14 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
       model: @searchType
     @selector.on "focus", @onClickedToFocus, @
 
+  delegateEvents: ->
+    super()
+    @selector.delegateEvents()
+
+  undelegateEvents: ->
+    super()
+    @selector.undelegateEvents()
+
   render: ->
     @$el.html @template label: I18n.t "search.submit"
     @$("#coreon-search-query").after @selector.render().$el
@@ -27,8 +35,13 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
   submitHandler: (event) ->
     event.preventDefault()
     event.stopPropagation()
-    searchParam = if @searchType.getSelectedType() == "all" then "" else "/#{@searchType.getSelectedType()}"
-    Backbone.history.navigate "concepts/search#{searchParam}?#{@$('form').serialize()}", trigger: true
+    path = switch @searchType.getSelectedType()
+      when "all"
+        "search?"
+      else
+        "concepts/search?t=#{@searchType.getSelectedType()}&"
+    path += @$('form').serialize()
+    Backbone.history.navigate path, trigger: true
 
   onClickedToFocus: (event) ->
     @$("input#coreon-search-query").focus()

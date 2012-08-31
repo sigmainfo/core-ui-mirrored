@@ -22,6 +22,8 @@ describe "config/environment", ->
 
     Coreon.Views.should.exist
     Coreon.Views.Widgets.should.exist
+    Coreon.Views.Main.should.exist
+    Coreon.Views.Concepts.should.exist
 
 
   it "makes helpers available to template context", ->

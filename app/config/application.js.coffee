@@ -2,7 +2,7 @@
 #= require models/account
 #= require collections/concepts
 #= require views/application_view
-#= require routers/concepts_router
+#= require routers/search_router
 
 class Coreon.Application
 
@@ -22,7 +22,6 @@ class Coreon.Application
     @account.fetch()
     @concepts = new Coreon.Collections.Concepts
 
-
   start: (options = {}) ->
     _(@options).extend options
 
@@ -30,17 +29,18 @@ class Coreon.Application
       model: @
       el: @options.el
 
-    @routers = 
-      concepts_router: new Coreon.Routers.ConceptsRouter @concepts
+    @view.render()
+
+    @routers = search_router: new Coreon.Routers.SearchRouter @view
 
     Backbone.history.start
       pushState: true
       root: @options.app_root
-
-    @view.render()
-
     @
 
   destroy: ->
     @account.deactivate()
     delete Coreon.application
+
+  sync: (method, model, options) ->
+    @account.connections.sync method, model, options

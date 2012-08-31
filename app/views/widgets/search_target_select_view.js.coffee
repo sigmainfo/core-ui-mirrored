@@ -22,6 +22,14 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
     @hideHint() if hideHint
     @
 
+  delegateEvents: ->
+    super()
+    @dropdown.delegateEvents()
+
+  undelegateEvents: ->
+    super()
+    @dropdown.undelegateEvents()
+
   showDropdown: (event) ->
     @dropdown.delegateEvents()
     $("#coreon-modal").append @dropdown.render().$el
