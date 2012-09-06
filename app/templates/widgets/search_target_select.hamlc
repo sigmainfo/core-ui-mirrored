@@ -1,0 +1,2 @@
+.toggle
+.hint= I18n.t "search.target.#{@selectedType}.hint"

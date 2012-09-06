@@ -23,6 +23,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
     it "is routed", ->
       @router.routes["concepts/search"].should.equal "search"
+      @router.routes["concepts/search/:target"].should.equal "search"
 
     it "fetches relevant concepts", ->
       @router.collection.fetch = sinon.spy()
@@ -30,3 +31,11 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.collection.fetch.should.have.been.calledWith 
         data:
           "search[query]": "dead man"
+
+    it "it defines search type", ->
+      @router.collection.fetch = sinon.spy()
+      @router.search "terms", q: "dead man"
+      @router.collection.fetch.should.have.been.calledWith 
+        data:
+          "search[query]": "dead man"
+          "search[target]": "terms"

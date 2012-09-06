@@ -14,6 +14,16 @@ en:
       submit: "Proceed"
 
   search:
+    target:
+      all:
+        hint: "Search all"
+        label: "All"
+      definition:
+        hint: "Search concepts by definition"
+        label: "Concepts by Definition"
+      terms:
+        hint: "Search concepts by terms"
+        label: "Concepts by Terms"
     submit: "Search"
 
   notification:
