@@ -22,9 +22,11 @@ describe "Coreon.Helpers.link_to", ->
 
   it "prefixes relative urls", ->
     Coreon.application = options: root: "/my/root/prefix/"
-    link = $ Coreon.Helpers.link_to "Foo Bar Baz", "foo/bar/baz"
-    link.should.have.attr "href", "/my/root/prefix/foo/bar/baz"
-    Coreon.application = null
+    try
+      link = $ Coreon.Helpers.link_to "Foo Bar Baz", "foo/bar/baz"
+      link.should.have.attr "href", "/my/root/prefix/foo/bar/baz"
+    finally
+      Coreon.application = null
 
   it "prepends slash when root is empty", ->
     Backbone.history.options.root = "/"

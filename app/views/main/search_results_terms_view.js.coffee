@@ -1,6 +1,7 @@
 #= require environment
 #= require helpers/link_to
 #= require templates/main/search_results_terms
+#= require views/concepts/concept_label_view
 
 class Coreon.Views.Main.SearchResultsTermsView extends Backbone.View
 
@@ -12,5 +13,8 @@ class Coreon.Views.Main.SearchResultsTermsView extends Backbone.View
     @model.on "change", @render, @
 
   render: ->
-    @$el.html @template terms: _(@model.get "hits").pluck("result")[0..9]
+    terms = _(@model.get "hits").pluck("result")[0..9]
+    @$el.html @template terms: terms
+    @$("td.concept").append (index) ->
+      new Coreon.Views.Concepts.ConceptLabelView(terms[index].concept_id).render().$el
     @

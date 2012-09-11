@@ -5,17 +5,24 @@ class Coreon.Collections.Concepts extends Backbone.Collection
 
   model: Coreon.Models.Concept
 
-  url: ->
-    Coreon.application.account.get("graph_root") + "concepts"
+  url: "concepts"
 
-  get: (id) ->
-    unless super(id)?
-      @add id: id
-      super(id).fetch()
-    super(id)
+  getOrFetch: (id) ->
+    @get(id) or @addAndFetch(id)
 
-  sync: (method, model, options) ->
-    if method is "read"
-      options.type = "POST" 
-      options.url = @url() + "/search"
-    Coreon.application.account.connections.sync method, model, options
+  addAndFetch: (id) ->
+    attrs = {}
+    attrs[@model::idAttribute] = id
+    @add attrs
+    model = @get id
+    model.fetch()
+    model
+
+  addOrUpdate: (models) ->
+    models = [models] unless _(models).isArray()
+    for model in models
+      id = model[@model::idAttribute]
+      if old = @get id
+        old.set model
+      else
+        @add model

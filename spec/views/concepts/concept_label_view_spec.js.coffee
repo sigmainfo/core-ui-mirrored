@@ -7,7 +7,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     @concept = _(new Backbone.Model).extend label: -> "poem"
     Coreon.application =
       concepts: _(new Backbone.Collection).extend
-        get: => @concept
+        getOrFetch: => @concept
     @view = new Coreon.Views.Concepts.ConceptLabelView "1234"
 
   afterEach ->
@@ -24,8 +24,8 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     
     it "gets model by id", ->
       concept = new Backbone.Model
-      Coreon.application.concepts.get = sinon.stub()
-      Coreon.application.concepts.get.withArgs("1234abcf").returns concept
+      Coreon.application.concepts.getOrFetch = sinon.stub()
+      Coreon.application.concepts.getOrFetch.withArgs("1234abcf").returns concept
       @view.initialize "1234abcf"
       @view.model.should.equal concept
     
@@ -37,7 +37,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     it "renders url to concept", ->
       @view.model.id = "1234"
       @view.render()
-      @view.$el.should.have.attr "href", "concepts/1234"
+      @view.$el.should.have.attr "href", "/concepts/1234"
 
     it "renders label", ->
       @view.model.label = -> "Zitrone"

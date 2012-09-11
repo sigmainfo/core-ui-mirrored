@@ -8,10 +8,6 @@
   %tbody
     - for concept in @concepts
       %tr
-        %td.label.concept!= @link_to concept.label, "concepts/#{concept.id}"
+        %td.label.concept
         %td.super.concept
-          - for parent, index in concept.super_concept_ids
-            != @link_to parent, "concepts/#{parent}"
-            - if index < concept.super_concept_ids.length - 1
-              ,
         %td.id= concept.id

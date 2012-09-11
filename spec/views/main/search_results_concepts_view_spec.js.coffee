@@ -1,14 +1,18 @@
 #= require spec_helper
 #= require views/main/search_results_concepts_view
+#= require config/application
 
 describe "Coreon.Views.Main.SearchResultsConceptsView", ->
   
   beforeEach ->
+    Coreon.application = new Coreon.Application
+    Coreon.application.sync = sinon.spy()
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Main.SearchResultsConceptsView model: new Backbone.Model
     @view.model.set "hits", []
 
   afterEach ->
+    Coreon.application.destroy()
     I18n.t.restore()
 
   it "is a Backbone view", ->
@@ -53,11 +57,10 @@ describe "Coreon.Views.Main.SearchResultsConceptsView", ->
       ]
       @view.render()
       @view.$(".concepts tbody tr:first td.label").should.have "a[href='/concepts/503e248cd198795712000005']"
-      @view.$("a[href='/concepts/503e248cd198795712000005']").should.have.text "poet"
+      @view.$("a[href='/concepts/503e248cd198795712000005']").should.have.text "503e248cd198795712000005"
 
-      @view.$(".concepts tbody tr:first td.super").should.have "a[href='/concepts/503e248cd198795712000002']"
-      @view.$(".concepts tbody tr:first td.super").should.have "a[href='/concepts/504e248cd198795712000042']"
-      @view.$(".concepts tbody tr:first td.super").text().should.match /503e248cd198795712000002\s+,\s+504e248cd198795712000042\s+$/
+      @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/concepts/503e248cd198795712000002']"
+      @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/concepts/504e248cd198795712000042']"
 
       @view.$(".concepts tbody tr:first td.id").should.have.text "503e248cd198795712000005"
 

@@ -10,4 +10,4 @@
       %tr
         %td.value.term= term.value
         %td.lang= term.lang
-        %td.concept!= @link_to term.concept_id, "concepts/#{term.concept_id}" 
+        %td.concept

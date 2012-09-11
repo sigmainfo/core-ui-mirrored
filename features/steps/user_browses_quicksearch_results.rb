@@ -12,15 +12,22 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     concept
   end
 
+  def create_term(value, lang = "en")
+    concept = Api::Graph::Concept.create!
+    term = concept.terms.create! value: value, lang: lang
+    concept.save!
+    term
+  end
+
   Given 'the following English terms: "dead", "man", "nobody", "poet", "poetic", "poetise", "poetize", "poetry", "train", "wild"' do
     %w|dead man nobody poet poetic poetise poetize poetry train wild|.each do |term|
-      Api::Graph::Term.create! value: term, lang: "en"
+      create_term term, "en"
     end
   end
 
   And 'given the following German terms: "poetisch", "dichterisch", "Dichtkunst"' do
     %w|poetisch dichterisch Dichtkunst|.each do |term|
-      Api::Graph::Term.create! value: term, lang: "de"
+      create_term term, "de"
     end
   end
 
@@ -30,10 +37,12 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     concept = Api::Graph::Concept.create!
     concept.id = "50005aece3ba3f095c000001"
     concept.save!
-    concept.terms << term1
-    concept.terms << term2
     concept.properties.create! key: "label", value: "versify"
     concept.save!
+    term1.concept = concept
+    term1.save!
+    term2.concept = concept
+    term2.save!
   end
 
   And 'I should see a listing "TERMS"' do
@@ -112,11 +121,11 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   When 'I click on link to concept "poetry"' do
-    pending 'step not implemented'
+    page.find("a.concept-label", text: "poetry").click
   end
 
   Then 'I should be on the concept page of "poetry"' do
-    pending 'step not implemented'
+    current_path.should == "/concepts/#{@poetry.id}"
   end
 
   Given 'a taxonomy "Professions"' do

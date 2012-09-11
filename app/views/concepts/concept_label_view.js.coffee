@@ -7,7 +7,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Backbone.View
   className: "concept-label"
 
   initialize: (id) ->
-    @model = Coreon.application.concepts.get id
+    @model = Coreon.application.concepts.getOrFetch id
     @model.on "change", @render, @
 
   appendTo: (target) ->
@@ -22,6 +22,6 @@ class Coreon.Views.Concepts.ConceptLabelView extends Backbone.View
     @dispose()
 
   render: ->
-    @$el.attr "href", "concepts/#{@model.id}"
+    @$el.attr "href", "/concepts/#{@model.id}"
     @$el.html @model.label()
     @

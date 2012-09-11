@@ -1,14 +1,17 @@
 #= require spec_helper
 #= require views/main/search_results_terms_view
+#= require config/application
 
 describe "Coreon.Views.Main.SearchResultsTermsView", ->
   
   beforeEach ->
+    Coreon.application = new Coreon.Application
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Main.SearchResultsTermsView model: new Backbone.Model
     @view.model.set "hits", []
 
   afterEach ->
+    Coreon.application.destroy()
     I18n.t.restore()
 
   it "is a Backbone view", ->

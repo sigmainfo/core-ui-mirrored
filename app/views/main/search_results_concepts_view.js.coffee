@@ -1,6 +1,7 @@
 #= require environment
 #= require helpers/link_to
 #= require templates/main/search_results_concepts
+#= require views/concepts/concept_label_view
 
 class Coreon.Views.Main.SearchResultsConceptsView extends Backbone.View
 
@@ -15,7 +16,13 @@ class Coreon.Views.Main.SearchResultsConceptsView extends Backbone.View
     @model.off null, null, @
 
   render: ->
-    @$el.html @template concepts: @extractConcepts(@model.get("hits")[0..9])
+    concepts = @extractConcepts(@model.get("hits")[0..9])
+    @$el.html @template concepts: concepts
+    @$("tbody td.label").append (index) ->
+      new Coreon.Views.Concepts.ConceptLabelView(concepts[index].id).render().$el
+    @$("tbody td.super").append (index) ->
+      for concept_id, index in concepts[index].super_concept_ids
+        new Coreon.Views.Concepts.ConceptLabelView(concept_id).render().el
     @
 
   extractConcepts: (hits) ->

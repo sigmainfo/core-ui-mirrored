@@ -14,12 +14,16 @@ CoreUi::Application.routes.draw do
     end
 
     namespace :graph do
-      resource :concepts do
-        post "search"
+      resources :concepts do
+        collection do
+          post "search"
+        end
       end
 
-      resource :terms do
-        post "search"
+      resources :terms do
+        collection do
+          post "search"
+        end
       end
     end
   end 

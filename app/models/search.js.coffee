@@ -10,7 +10,6 @@ class Coreon.Models.Search extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     _(options).extend
-      url: @url()
       type: "POST"
       data: @get "params"
     Coreon.application.sync method, model, options

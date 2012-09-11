@@ -2,6 +2,12 @@ class Api::Graph::ConceptsController < ApplicationController
 
   before_filter :authenticate
 
+  def show
+    render json: Api::Graph::Concept.find(params[:id]).as_document
+  rescue
+    render nothing: true, status: 404
+  end
+
   def search
     regexp = Regexp.new( Regexp.escape(params["search"]["query"]), Regexp::IGNORECASE )
     concepts_by_prop = Api::Graph::Concept.elem_match properties: { value: regexp }

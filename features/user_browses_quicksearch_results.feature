@@ -5,7 +5,7 @@ Feature: User browses quicksearch results
 
   Background:
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
-    Given I am logged in
+    And I am logged in
 
   Scenario: browse terms
     Given the following English terms: "dead", "man", "nobody", "poet", "poetic", "poetise", "poetize", "poetry", "train", "wild"
@@ -23,7 +23,6 @@ Feature: User browses quicksearch results
     When I click on link to concept "50005aece3ba3f095c000001"
     Then I should be on the page of concept "50005aece3ba3f095c000001"
 
-  @wip
   Scenario: browse concepts
     Given the a concept with id "50005aece3ba3f095c000001" and label "dead"
     And given a concept with id "50005aece3ba3f095c000002" and label "versify"
@@ -42,6 +41,7 @@ Feature: User browses quicksearch results
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"
 
+  @wip
   Scenario: browse taxonomies
     Given a taxonomy "Professions"
     And this taxonomy has a node "programmer"
