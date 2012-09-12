@@ -60,6 +60,10 @@ describe "Coreon.Views.ApplicationView", ->
       @view.$("#coreon-top").should.have "#coreon-header"
       @view.$("#coreon-header").should.have "#coreon-notifications"
 
+    it "renders main container", ->
+      @view.render()
+      @view.$el.should.have "#coreon-main"
+
 
     describe "widgets", ->
 
@@ -179,6 +183,12 @@ describe "Coreon.Views.ApplicationView", ->
       @view.model.account.trigger "deactivated"
       @view.$el.should.not.have "#coreon-widgets"
       @view.widgets.undelegateEvents.should.have.been.calledOnce
+
+    it "empties main view", ->
+      @view.render()
+      @view.$("#coreon-main").append $("<div id='my-content'>")
+      @view.model.account.trigger "deactivated"
+      @view.$("#coreon-main").should.be.empty
 
   describe "#destroy", ->
     

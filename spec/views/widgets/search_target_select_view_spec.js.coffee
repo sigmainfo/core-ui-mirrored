@@ -38,12 +38,6 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.$el.should.have ".hint"
       @view.$(".hint").should.have.text "Search all"
 
-    it "hides hint aagain when it was hidden before", ->
-      $("#konacha").append @view.render().$el
-      @view.$(".hint").hide()
-      @view.render()
-      @view.$(".hint").should.be.hidden
-   
     it "renders toggle", ->
       @view.render()
       @view.$el.should.have ".toggle"

@@ -1,12 +1,28 @@
 #= require environment
+#= require models/concept 
 
 class Coreon.Collections.Concepts extends Backbone.Collection
 
-  url: ->
-    Coreon.application.account.get("graph_root") + "concepts"
+  model: Coreon.Models.Concept
 
-  sync: (method, model, options) ->
-    if method is "read"
-      options.type = "POST" 
-      options.url = @url() + "/search"
-    Coreon.application.account.connections.sync method, model, options
+  url: "concepts"
+
+  getOrFetch: (id) ->
+    @get(id) or @addAndFetch(id)
+
+  addAndFetch: (id) ->
+    attrs = {}
+    attrs[@model::idAttribute] = id
+    @add attrs
+    model = @get id
+    model.fetch()
+    model
+
+  addOrUpdate: (models) ->
+    models = [models] unless _(models).isArray()
+    for model in models
+      id = model[@model::idAttribute]
+      if old = @get id
+        old.set model
+      else
+        @add model

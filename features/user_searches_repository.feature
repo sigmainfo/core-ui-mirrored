@@ -10,7 +10,7 @@ Feature: User searches repository
   Scenario: trigger search
     When I enter "poet" in the search field
     And I click the search button
-    Then I should be on the search concepts page
+    Then I should be on the search results page
     And I should see "poet" as the query string
     And I should see a progress indicator
 

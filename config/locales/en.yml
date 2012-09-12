@@ -25,6 +25,24 @@ en:
         hint: "Search concepts by terms"
         label: "Concepts by Terms"
     submit: "Search"
+    
+    results:
+      terms:
+        headline: "Terms"
+        header:
+          term: "Term"
+          language: "Language"
+          concept: "Concept"
+      concepts:
+        headline: "Concepts"
+        header:
+          label: "Concept"
+          super_concepts: "Superconcepts"
+          id: "ID"
+      tnodes:
+        headline: "Taxonomies"
+        header:
+          name: "Name"
 
   notification:
     label:

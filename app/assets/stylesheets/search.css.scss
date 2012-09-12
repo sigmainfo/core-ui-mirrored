@@ -92,15 +92,11 @@
         color: $bluecolor;
         
         &:before {
-          content:"";
-          display: block;
-          width: 16px;
-          height: 16px;
+          @include before-icon;
           position: absolute;
           left: 3px;
           top: 2px;
-          background: image-url("layout/icons.png") no-repeat 0px -150px;
-          @include retina-icons;
+          background-position: 0px -150px;
         };
       }
     }

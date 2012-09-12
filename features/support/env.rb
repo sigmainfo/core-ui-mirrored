@@ -13,6 +13,8 @@ Capybara.default_driver = :selenium
 Capybara.server_port = 4000
 
 Spinach.hooks.before_scenario do
+  Mongoid.purge!
+
   # start server
   include Capybara::DSL
   visit "/"

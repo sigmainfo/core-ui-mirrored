@@ -22,7 +22,13 @@ describe "config/environment", ->
 
     Coreon.Views.should.exist
     Coreon.Views.Widgets.should.exist
+    Coreon.Views.Main.should.exist
+    Coreon.Views.Concepts.should.exist
 
 
   it "makes helpers available to template context", ->
     HAML.globals().should.equal Coreon.Helpers
+
+  it "configures models for use with Mongoid id field", ->
+    model = new Backbone.Model _id: "1234"
+    model.id.should.equal "1234"

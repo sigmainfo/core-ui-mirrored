@@ -24,5 +24,5 @@ Feature: User defines type of search
     When I enter "poet" in the search field
     And I click the search button
     Then I should be on the search concepts page
-    And the search type should be "terms" 
+    And the search target should be "terms" 
     And the query string should be "poet"

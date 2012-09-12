@@ -48,6 +48,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
       @widgets.delegateEvents()
 
   logoutHandler: ->
+    @$("#coreon-main").empty()
     @widgets.remove()
     @widgets.undelegateEvents()
     @footer.remove()
