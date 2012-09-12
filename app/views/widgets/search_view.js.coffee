@@ -55,4 +55,3 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
 
   onChangeSelectedType: (event) ->
     @$("input#coreon-search-query").val ""
-

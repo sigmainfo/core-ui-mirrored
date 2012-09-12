@@ -12,6 +12,9 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
     @[key] = value for key, value of options
 
   search: (params) ->
+    @view.widgets.search.selector.hideHint()
+    @view.$("input#coreon-search-query").val params.q
+
     searches =
       terms: new Coreon.Models.Search
         path: "terms/search"

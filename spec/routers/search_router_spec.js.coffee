@@ -12,6 +12,11 @@ describe "Coreon.Routers.SearchRouter", ->
       view: new Backbone.View(el: $("#konacha"))
       concepts: Coreon.application.concepts
 
+    @router.view.widgets =
+      search:
+        selector:
+          hideHint: sinon.spy()
+
   afterEach ->
     Coreon.application.destroy()
 
@@ -94,3 +99,10 @@ describe "Coreon.Routers.SearchRouter", ->
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
       finally
         Coreon.Views.Main.SearchResultsView.restore()
+
+    it "restores search input", ->
+      spy = sinon.spy()
+      sinon.stub(@router.view, "$").withArgs("input#coreon-search-query").returns val: spy
+      @router.search q: "poet"
+      @router.view.widgets.search.selector.hideHint.should.have.been.calledOnce
+      spy.should.have.been.calledWith "poet"
