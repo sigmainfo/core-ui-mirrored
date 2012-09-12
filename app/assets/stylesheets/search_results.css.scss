@@ -33,7 +33,7 @@
         background-position: -52px -150px;
       } 
 
-      &.value, &.label {
+      &:first-child{
         text-indent: -2000px;
         overflow: hidden;
       }
@@ -60,19 +60,20 @@
           };
         }
       }
+      
+      &.term {
+        font: 1.1em Palatino;
+      }
     }
 
     td, th {      
-    padding: 5px 20px 0px 2px;
+    padding: 4px 20px 1px 2px;
 
-      &.value, &.label {
+      &:first-child {
         padding-left: 100px;
-      }    
+      }
       &.lang {
         width: 100px;
-      }
-      &.term {
-        font: 1.1em Palatino;
       }
     }
 
@@ -85,7 +86,7 @@
 
   }
   
-  .terms, .concepts {  
+  .terms, .concepts, .tnodes {  
     border-spacing: 0;
     width: 100%;
     min-width: 600px;
@@ -106,8 +107,16 @@
     .id {
       width: 180px;
     }
-    .label {
+    td.label {
       font-size: 1.1em;
+    }
+  }
+  
+  .tnodes {
+    color: $greencolor;
+    background: none;
+    td {
+      border:none;
     }
   }
 }
