@@ -73,14 +73,14 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search?q=foo", trigger: true
+      Backbone.history.navigate.should.have.been.calledWith "search?q=foo", trigger: true
 
-    it "navigates with type of search as a url param", ->
+    it "navigates to concept search with type", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.searchType.getSelectedType = -> "terms"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search/terms?q=foo", trigger: true
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search?t=terms&q=foo", trigger: true
 
   describe "#onClickedToFocus", ->
 
@@ -133,3 +133,17 @@ describe "Coreon.Views.SearchView", ->
       @view.$("input#coreon-search-query").val "Zitrone"
       @view.onBlur @event
       @view.selector.$(".hint").should.not.be.visible
+
+  describe "#onChangeSelectedType", ->
+
+    beforeEach ->
+      @view.render().$el.appendTo $("#konacha")
+
+    it "is triggered by change on model", ->
+      @view.onChangeSelectedType = sinon.spy()
+      @view.initialize()
+      @view.searchType.set "selectedTypeIndex", 2
+      @view.onChangeSelectedType.should.have.been.calledOnce
+
+    it "empties select", -> 
+      @view.$("input#coreon-search-query").val().should.equal ""

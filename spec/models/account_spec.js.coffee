@@ -32,6 +32,7 @@ describe "Coreon.Models.Account", ->
 
     it "creates connections", ->
       @account.connections.should.be.an.instanceof Coreon.Collections.Connections
+      @account.connections.account.should.equal @account
 
   describe "#activate", ->
     

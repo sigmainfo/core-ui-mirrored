@@ -10,3 +10,11 @@ class Coreon.Views.WidgetsView extends Backbone.View
   render: ->
     @$el.append @search.render().$el
     @
+
+  delegateEvents: ->
+    super()
+    @search.delegateEvents()
+
+  undelegateEvents: ->
+    super()
+    @search.undelegateEvents()

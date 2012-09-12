@@ -1,3 +1,5 @@
+require 'uri'
+
 class UserDefinesTypeOfSearch < Spinach::FeatureSteps
   include AuthSteps
 
@@ -64,15 +66,14 @@ class UserDefinesTypeOfSearch < Spinach::FeatureSteps
   end
 
   Then 'I should be on the search concepts page' do
-    current_path.should =~ %r{^/concepts/search}
+    current_path.should == "/concepts/search"
   end
 
-  And 'the search type should be "terms"' do
-    current_path.should =~ %r{^/concepts/search/terms}
+  And 'the search target should be "terms"' do
+    URI.parse(current_url).query.should =~ /\bt=terms\b/
   end
 
   And 'the query string should be "poet"' do
-    require 'uri'
     URI.parse(current_url).query.should =~ /\bq=poet\b/
   end
 end
