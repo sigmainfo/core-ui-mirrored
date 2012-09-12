@@ -133,3 +133,17 @@ describe "Coreon.Views.SearchView", ->
       @view.$("input#coreon-search-query").val "Zitrone"
       @view.onBlur @event
       @view.selector.$(".hint").should.not.be.visible
+
+  describe "#onChangeSelectedType", ->
+
+    beforeEach ->
+      @view.render().$el.appendTo $("#konacha")
+
+    it "is triggered by change on model", ->
+      @view.onChangeSelectedType = sinon.spy()
+      @view.initialize()
+      @view.searchType.set "selectedTypeIndex", 2
+      @view.onChangeSelectedType.should.have.been.calledOnce
+
+    it "empties select", -> 
+      @view.$("input#coreon-search-query").val().should.equal ""

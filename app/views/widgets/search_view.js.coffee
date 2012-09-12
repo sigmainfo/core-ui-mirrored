@@ -18,6 +18,7 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
     @selector = new Coreon.Views.Widgets.SearchTargetSelectView
       model: @searchType
     @selector.on "focus", @onClickedToFocus, @
+    @searchType.on "change:selectedTypeIndex", @onChangeSelectedType, @ 
 
   delegateEvents: ->
     super()
@@ -51,4 +52,7 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
 
   onBlur: (event) ->
     @selector.revealHint() unless @$("input#coreon-search-query").val()
+
+  onChangeSelectedType: (event) ->
+    @$("input#coreon-search-query").val ""
 
