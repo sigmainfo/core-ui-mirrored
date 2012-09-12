@@ -41,7 +41,6 @@ Feature: User browses quicksearch results
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"
 
-  @wip
   Scenario: browse taxonomies
     Given a taxonomy "Professions"
     And this taxonomy has a node "programmer"
@@ -52,5 +51,5 @@ Feature: User browses quicksearch results
     When I enter "poet" in the search field
     And I click the search button
     Then I should be on the search result page
-    And I should see a listing "Taxonomies"
+    And I should see a listing "TAXONOMIES"
     And the listing should contain "poet", "poetry editor", "artist"

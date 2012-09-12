@@ -39,6 +39,10 @@ en:
           label: "Concept"
           super_concepts: "Superconcepts"
           id: "ID"
+      tnodes:
+        headline: "Taxonomies"
+        header:
+          name: "Name"
 
   notification:
     label:

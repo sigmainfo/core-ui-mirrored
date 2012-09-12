@@ -1,26 +1,29 @@
 #= require spec_helper
 #= require routers/search_router
+#= require config/application
 
 describe "Coreon.Routers.SearchRouter", ->
   
   beforeEach ->
-    Coreon.application =
-      sync: ->
+    Coreon.application = new Coreon.Application
 
     $("#konacha").append('<div id="coreon-main">')
-    @router = new Coreon.Routers.SearchRouter new Backbone.View(el: $("#konacha"))
+    @router = new Coreon.Routers.SearchRouter
+      view: new Backbone.View(el: $("#konacha"))
+      concepts: Coreon.application.concepts
 
   afterEach ->
-    Coreon.application = null
+    Coreon.application.destroy()
 
   it "is a Backbone router", ->
     @router.should.be.an.instanceof Backbone.Router
 
   describe "#initialize", ->
     
-    it "stores view", ->
-      @router.initialize "myView"
+    it "stores references", ->
+      @router.initialize view: "myView", concepts: "concepts"
       @router.view.should.equal "myView"
+      @router.concepts.should.equal "concepts"
     
 
   describe "#search", ->
@@ -30,7 +33,7 @@ describe "Coreon.Routers.SearchRouter", ->
       @xhr.onCreate = (@request) =>
 
     afterEach ->
-      @xhr.restore()
+     @xhr.restore()
 
     it "is routed", ->
       @router.routes["search"].should.equal "search"
@@ -53,9 +56,41 @@ describe "Coreon.Routers.SearchRouter", ->
       @router.searchResultsView.concepts.model.get("path").should.equal "concepts/search"
       @router.searchResultsView.concepts.model.get("params")["search[query]"].should.equal "poet"
 
+    it "creates taxonomy search", ->
+      @router.search q: "poet"
+      @router.searchResultsView.tnodes.model.should.be.an.instanceof Coreon.Models.Search
+      @router.searchResultsView.tnodes.model.get("path").should.equal "tnodes/search"
+      @router.searchResultsView.tnodes.model.get("params")["search[query]"].should.equal "poet"
+
     it "fetches search results", ->
-      Coreon.application.sync = sinon.spy()
+      Coreon.application.sync = sinon.stub().returns done: ->
       @router.search q: "poet"
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.terms.model
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.concepts.model
+      Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.tnodes.model
 
+    it "updates concepts from results", ->
+      sinon.stub(Coreon.Views.Main, "SearchResultsView").returns render: ->
+      try
+        @router.search q: "poet"
+        @request.respond 200, {}, JSON.stringify
+          hits: [
+            {
+              score: 1.56
+              result:
+                _id: "1234"
+                properties: [
+                  { key: "label", value: "poet" }
+                ]
+                super_concept_ids: [
+                  "5047774cd19879479b000523"
+                  "5047774cd19879479b00002b"
+                ]
+            }
+          ]
+        concept = Coreon.application.concepts.get "1234"
+        expect(concept).to.be.an.instanceof Coreon.Models.Concept
+        concept.get("properties").should.eql [{key: "label", value: "poet"}]
+        concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
+      finally
+        Coreon.Views.Main.SearchResultsView.restore()

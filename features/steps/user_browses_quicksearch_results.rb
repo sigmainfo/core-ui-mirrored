@@ -129,34 +129,36 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   Given 'a taxonomy "Professions"' do
-    pending 'step not implemented'
+    @professions = Api::Graph::Taxonomy.create! name: "Professions"
   end
 
   And 'this taxonomy has a node "programmer"' do
-    pending 'step not implemented'
+    @professions.nodes.create! name: "programmer"
   end
 
   And 'this taxonomy has a node "artist"' do
-    pending 'step not implemented'
+    @artist = @professions.nodes.create! name: "artist"
   end
 
   And 'this taxonomy has a node "poet"' do
-    pending 'step not implemented'
+    @poet = @professions.nodes.create! name: "poet"
   end
 
   And '"poet" is a subnode of "artist"' do
-    pending 'step not implemented'
+    @artist.sub_nodes << @poet
+    @artist.save!
   end
 
   And 'this taxonomy has a node "poetry editor"' do
-    pending 'step not implemented'
+    @professions.nodes.create! name: "poetry editor"
   end
 
-  And 'I should see a listing "Taxonomies"' do
-    pending 'step not implemented'
+  And 'I should see a listing "TAXONOMIES"' do
+    page.should have_css(".search-results-tnodes h3", text: "TAXONOMIES")
   end
 
   And 'the listing should contain "poet", "poetry editor", "artist"' do
-    pending 'step not implemented'
+    sleep 0.2
+    page.all(".tnodes tbody td.name").map(&:text).should == ["poet", "poetry editor", "artist"]
   end
 end

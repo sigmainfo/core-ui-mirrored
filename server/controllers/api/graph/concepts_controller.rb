@@ -23,7 +23,7 @@ class Api::Graph::ConceptsController < ApplicationController
           score: 1.0 / ( Text::Levenshtein.distance(concept.properties[0].value, params["search"]["query"]) + 1 ),
           result: concept
         }
-      end.sort { |a, b| b[:score] <=> a[:score] }
+      end.try(:sort) { |a, b| b[:score] <=> a[:score] }
     }
   end
 

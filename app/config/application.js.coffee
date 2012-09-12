@@ -31,7 +31,10 @@ class Coreon.Application
 
     @view.render()
 
-    @routers = search_router: new Coreon.Routers.SearchRouter @view
+    @routers =
+      search_router: new Coreon.Routers.SearchRouter
+        view: @view
+        concepts: @concepts
 
     Backbone.history.start
       pushState: true

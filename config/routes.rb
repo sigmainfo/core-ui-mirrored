@@ -25,6 +25,12 @@ CoreUi::Application.routes.draw do
           post "search"
         end
       end
+
+      resources :tnodes do
+        collection do
+          post "search"
+        end
+      end
     end
   end 
 

@@ -8,6 +8,7 @@ describe "Coreon.Views.Main.SearchResultsView", ->
       model:
         terms: new Backbone.Model(hits: [])
         concepts: new Backbone.Model(hits: [])
+        tnodes: new Backbone.Model(hits: [])
 
   it "is a backbone view", ->
     @view.should.be.an.instanceof Backbone.View
@@ -21,6 +22,10 @@ describe "Coreon.Views.Main.SearchResultsView", ->
     it "creates concept results view", ->
       @view.concepts.should.be.an.instanceof Coreon.Views.Main.SearchResultsConceptsView
       @view.concepts.model.should.equal @view.model.concepts
+
+    it "creates tnodes results view", ->
+      @view.tnodes.should.be.an.instanceof Coreon.Views.Main.SearchResultsTnodesView
+      @view.tnodes.model.should.equal @view.model.tnodes
 
   describe "#render", ->
 
@@ -37,3 +42,8 @@ describe "Coreon.Views.Main.SearchResultsView", ->
       @view.render()
       @view.$el.should.have ".search-results-concepts"
       @view.$(".search-results-concepts").should.have "h3"
+      
+    it "renders tnodes results", ->
+      @view.render()
+      @view.$el.should.have ".search-results-tnodes"
+      @view.$(".search-results-tnodes").should.have "h3"

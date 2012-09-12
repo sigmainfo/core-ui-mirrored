@@ -1,5 +1,4 @@
 #= require environment
-#= require helpers/link_to
 #= require templates/main/search_results_terms
 #= require views/concepts/concept_label_view
 
