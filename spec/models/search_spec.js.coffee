@@ -36,3 +36,21 @@ describe "Coreon.Models.Search", ->
       @request.url.should.equal "https://graph.coreon.com/terms/search"
       @request.method.should.equal "POST"
       @request.requestBody.should.equal "search%5Bquery%5D=poet"
+
+  describe "#query", ->
+    
+    it "returns query string", ->
+      @model.set "params",
+        "search[query]": "poetry"
+        "search[target]": "terms"
+      @model.query().should.equal "t=terms&q=poetry"
+
+    it "skips target when not given", ->
+      @model.set "params", "search[query]": "poetry"
+      @model.query().should.equal "q=poetry"
+
+    it "urlencodes values", ->
+      @model.set "params", "search[query]": "[foo]"
+      @model.query().should.equal "q=%5Bfoo%5D"
+      
+    

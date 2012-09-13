@@ -14,7 +14,6 @@ class Coreon.Application
   initialize: (@options = {}) ->
     _(@options).defaults
       el         : "#app"
-      app_root   : "/"
       auth_root  : "/api/auth/"
       graph_root : "/api/graph/"
     
@@ -36,9 +35,7 @@ class Coreon.Application
         view: @view
         concepts: @concepts
 
-    Backbone.history.start
-      pushState: true
-      root: @options.app_root
+    Backbone.history.start pushState: true
     @
 
   destroy: ->

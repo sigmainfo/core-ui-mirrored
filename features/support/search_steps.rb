@@ -7,6 +7,12 @@ module SearchSteps
     end
   end
 
+  When 'I enter "gun" in the search field' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "gun"
+    end
+  end
+
   When 'I enter "poe" in the search field' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "poe"

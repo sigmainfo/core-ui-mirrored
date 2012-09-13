@@ -1,5 +1,4 @@
 #= require environment
-#= require helpers/link_to
 #= require templates/account
 
 class Coreon.Views.AccountView extends Backbone.View

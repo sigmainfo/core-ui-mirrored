@@ -8,6 +8,14 @@ class Coreon.Models.Search extends Backbone.Model
   url: ->
     @get "path"
 
+  query: ->
+    params = @get "params"
+    qparams = if params["search[target]"]?
+    then t: params["search[target]"]
+    else {}
+    qparams.q = params["search[query]"]
+    $.param qparams
+
   sync: (method, model, options = {}) ->
     _(options).extend
       type: "POST"

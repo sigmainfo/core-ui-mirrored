@@ -1,6 +1,5 @@
 #= require environment
 #= require templates/notification
-#= require helpers/link_to
 
 class Coreon.Views.NotificationView extends Backbone.View
   tagName: "li"
@@ -16,7 +15,7 @@ class Coreon.Views.NotificationView extends Backbone.View
 
   render: ->
     type = @model.get "type"
-    @$el.html @template message: @model.get("message"), url: "notification/hide", label: I18n.t "notification.label.#{type}"
+    @$el.html @template message: @model.get("message"), url: "/notification/hide", label: I18n.t "notification.label.#{type}"
     @$el.addClass type
     @$el.hide() if @model.get "hidden"
     @

@@ -8,8 +8,8 @@ describe "Coreon.Views.Main.SearchResultsConceptsView", ->
     Coreon.application = new Coreon.Application
     Coreon.application.sync = sinon.spy()
     sinon.stub I18n, "t"
-    @view = new Coreon.Views.Main.SearchResultsConceptsView model: new Backbone.Model
-    @view.model.set "hits", []
+    @view = new Coreon.Views.Main.SearchResultsConceptsView model: new Backbone.Model(hits: [])
+    @view.model.query = -> "q=foo"
 
   afterEach ->
     Coreon.application.destroy()
@@ -83,4 +83,9 @@ describe "Coreon.Views.Main.SearchResultsConceptsView", ->
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
 
-      
+    it "renders link to complete list", ->
+      I18n.t.withArgs("search.results.concepts.show_all").returns "Show all"
+      @view.model.query = -> "q=gun"
+      @view.render()
+      @view.$el.should.have "a.show-all[href='/concepts/search?q=gun']"
+      @view.$("a.show-all").should.have.text "Show all"

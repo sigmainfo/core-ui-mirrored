@@ -1,46 +1,52 @@
+# encoding: utf-8
 class UserBrowsesListOfConcepts < Spinach::FeatureSteps
+  include AuthSteps
+  include SearchSteps
+  include Api::Graph::Factory
+
   Given 'a concept with id "50005aece3ba3f095c000001" defined as "A portable firearm"' do
-    pending 'step not implemented'
+    @handgun = create_concept_with_id "50005aece3ba3f095c000001", definition: "A portable firearm"
   end
 
   And 'this concept has the label "handgun"' do
-    pending 'step not implemented'
+    @handgun.properties.create! key: "label", value: "handgun"
   end
 
   And 'this concept has the following English terms: "gun", "firearm", "shot gun", "musket"' do
-    pending 'step not implemented'
+    ["gun", "firearm", "shot gun", "musket"].each do |value|
+      @handgun.terms.create! value: value, lang: "en"
+    end
   end
 
   And 'this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    pending 'step not implemented'
+    ["Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"].each do |value|
+      @handgun.terms.create! value: value, lang: "de"
+    end
   end
 
   And 'given another concept with id "50005aece3ba3f095c000002" defined as "a handgun whose chamber is integral with the barrel;"' do
-    pending 'step not implemented'
+    @pistol = create_concept_with_id "50005aece3ba3f095c000002", definition: "a handgun whose chamber is integral with the barrel;"
   end
 
   And 'this concept has the following English terms: "pistol", "gun", "automatic pistol"' do
-    pending 'step not implemented'
+    ["pistol", "gun", "automatic pistol"].each do |value|
+      @handgun.terms.create! value: value, lang: "en"
+    end
   end
 
   And 'this concept is a subconcept of "handgun"' do
-    pending 'step not implemented'
-  end
-
-  When 'I enter "gun" in the search field' do
-    pending 'step not implemented'
-  end
-
-  And 'I click the search button' do
-    pending 'step not implemented'
+    @handgun.sub_concepts << @pistol
+    @handgun.save!
   end
 
   And 'I click "Show all" within the concept search results' do
-    pending 'step not implemented'
+    within ".search-results-concepts" do
+      click_link "Show all"
+    end
   end
 
   Then 'I should be on the search result page for concepts' do
-    pending 'step not implemented'
+    current_path.should == "/concepts/search"
   end
 
   And 'I should see a concept "handgun" with id "50005aece3ba3f095c000001"' do
@@ -84,14 +90,6 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   And 'the target should be "definition"' do
-    pending 'step not implemented'
-  end
-
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
-    pending 'step not implemented'
-  end
-
-  And 'I am logged in' do
     pending 'step not implemented'
   end
 end

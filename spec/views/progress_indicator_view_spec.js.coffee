@@ -67,7 +67,7 @@ describe "Coreon.Views.ProgressIndicatorView", ->
 
     it "starts animation", ->
       @view.start()
-      @time.tick 4505
+      @time.tick 4508
       @view.animation.frame.should.equal 9
       @view.$el.should.have.css "background-position", "-270px 0px"
       

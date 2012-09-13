@@ -6,9 +6,9 @@ describe "Coreon.Views.Main.SearchResultsView", ->
   beforeEach ->
     @view = new Coreon.Views.Main.SearchResultsView
       model:
-        terms: new Backbone.Model(hits: [])
-        concepts: new Backbone.Model(hits: [])
-        tnodes: new Backbone.Model(hits: [])
+        terms: new Backbone.Model(hits: [], params: {"search[query]": "poet"})
+        concepts: new Backbone.Model(hits: [], params: {"search[query]": "poet"})
+        tnodes: new Backbone.Model(hits: [], params: {"search[query]": "poet"})
 
   it "is a backbone view", ->
     @view.should.be.an.instanceof Backbone.View

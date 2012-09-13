@@ -1,4 +1,4 @@
 %span.label= @label
 %span.message= @message
 %span.actions
-  != @link_to I18n.t("notification.actions.hide"), @url, "class": "hide" 
+  %a.hide{href: @url}= I18n.t "notification.actions.hide"
