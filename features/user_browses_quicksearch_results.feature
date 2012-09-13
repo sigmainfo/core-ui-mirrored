@@ -1,4 +1,4 @@
-Feature: User browses quicksearch results
+Feature: user browses quicksearch results
   In order to quickly find a term, concept or taxonomy node
   As a user searching the repository
   I want to see the top matches for terms, concepts, and taxonomies

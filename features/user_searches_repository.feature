@@ -1,4 +1,4 @@
-Feature: User searches repository
+Feature: user searches repository
   In order to get a list of relevant concepts
   As a user that searches for a specific information
   I want to enter a query string and trigger a search
