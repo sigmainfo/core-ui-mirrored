@@ -50,7 +50,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   And 'I should see a concept "handgun" with id "50005aece3ba3f095c000001"' do
-    pending 'step not implemented'
+    page.find(".concept-list-item .concept-label").should have_text("handgun")
+    page.find(".concept-list-item .concept-label", text: "handgun").find(:xpath, "../*[contains(@class, 'id')]").should have_text("50005aece3ba3f095c000001")
   end
 
   And 'I should see it being defined as "A portable firearm"' do

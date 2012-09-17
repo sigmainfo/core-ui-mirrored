@@ -25,13 +25,12 @@ describe "Coreon.Application", ->
     it "sets default options", ->
       @app.options.should.eql
         el         : "#app"
-        app_root   : "/"
         auth_root  : "/api/auth/"
         graph_root : "/api/graph/"
 
     it "allows overriding defaults", ->
-      @app.initialize app_root: "/repository/"
-      @app.options.app_root.should.equal "/repository/"
+      @app.initialize auth_root: "/repository/"
+      @app.options.auth_root.should.equal "/repository/"
 
     it "creates account", ->
       @app.initialize
@@ -76,11 +75,8 @@ describe "Coreon.Application", ->
 
     it "starts history", ->
       Backbone.history.start = sinon.spy()
-      @app.start app_root: "/app/root/"
-      Backbone.history.start.should.have.been.calledWith
-        pushState: true
-        root: "/app/root/"
-      
+      @app.start()
+      Backbone.history.start.should.have.been.calledWith pushState: true
 
   describe "#destroy", ->
 

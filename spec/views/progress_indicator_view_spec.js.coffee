@@ -4,13 +4,13 @@
 describe "Coreon.Views.ProgressIndicatorView", ->
 
   beforeEach ->
-    @time = sinon.useFakeTimers 300
+    @time = sinon.useFakeTimers()
     @view = new Coreon.Views.ProgressIndicatorView
       collection: new Backbone.Collection
 
   afterEach ->
-    @view.destroy()
     @time.restore()
+    @view.destroy()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -67,9 +67,9 @@ describe "Coreon.Views.ProgressIndicatorView", ->
 
     it "starts animation", ->
       @view.start()
-      @time.tick 4508
-      @view.animation.frame.should.equal 9
-      @view.$el.should.have.css "background-position", "-270px 0px"
+      @time.tick 2500
+      @view.animation.frame.should.equal 8
+      @view.$el.should.have.css "background-position", "-240px 0px"
       
   describe "#stop", ->
 

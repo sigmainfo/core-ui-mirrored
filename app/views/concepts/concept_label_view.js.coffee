@@ -6,8 +6,13 @@ class Coreon.Views.Concepts.ConceptLabelView extends Backbone.View
 
   className: "concept-label"
 
-  initialize: (id) ->
-    @model = Coreon.application.concepts.getOrFetch id
+  initialize: (idOrOptions) ->
+    switch typeof idOrOptions
+      when "string"
+        @model = Coreon.application.concepts.getOrFetch idOrOptions
+      when "object"
+        @model = idOrOptions.model
+
     @model.on "change", @render, @
 
   appendTo: (target) ->

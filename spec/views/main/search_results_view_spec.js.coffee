@@ -6,9 +6,11 @@ describe "Coreon.Views.Main.SearchResultsView", ->
   beforeEach ->
     @view = new Coreon.Views.Main.SearchResultsView
       model:
-        terms: new Backbone.Model(hits: [], params: {"search[query]": "poet"})
-        concepts: new Backbone.Model(hits: [], params: {"search[query]": "poet"})
-        tnodes: new Backbone.Model(hits: [], params: {"search[query]": "poet"})
+        terms: new Backbone.Model(hits: [])
+        concepts: new Backbone.Model(hits: [])
+        tnodes: new Backbone.Model(hits: [])
+    for name, search of @view.model
+      search.query = -> "" 
 
   it "is a backbone view", ->
     @view.should.be.an.instanceof Backbone.View
