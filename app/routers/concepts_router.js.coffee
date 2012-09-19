@@ -15,10 +15,14 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @view.widgets.search.selector.hideHint()
     @view.$("input#coreon-search-query").val params.q
 
+    longParams = "search[query]": params.q
+
+    if params.t
+      longParams["search[target]"] = params.t
+
     search = new Coreon.Models.Search
       path: "concepts/search"
-      params:
-        "search[query]": params.q
+      params: longParams
     
     @view.switch new Coreon.Views.Concepts.ConceptListView
       model: search

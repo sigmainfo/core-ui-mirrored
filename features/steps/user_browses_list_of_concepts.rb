@@ -1,4 +1,7 @@
 # encoding: utf-8
+
+require 'uri'
+
 class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
@@ -78,22 +81,24 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   When 'I select "Concepts by Terms" as the type of search' do
-    pending 'step not implemented'
+    page.find("#coreon-search-target-select .toggle").click
+    page.find("li.option", text: "Concepts by Terms").click
   end
 
   And 'the target should be "terms"' do
-    pending 'step not implemented'
+    URI.parse(current_url).query.should =~ /\bt=terms\b/
   end
 
   And 'the query should be "gun"' do
-    pending 'step not implemented'
+    URI.parse(current_url).query.should =~ /\bq=gun\b/
   end
 
   When 'I select "Concepts by Definition" as the type of search' do
-    pending 'step not implemented'
+    page.find("#coreon-search-target-select .toggle").click
+    page.find("li.option", text: "Concepts by Definition").click
   end
 
   And 'the target should be "definition"' do
-    pending 'step not implemented'
+    URI.parse(current_url).query.should =~ /\bt=definition\b/
   end
 end

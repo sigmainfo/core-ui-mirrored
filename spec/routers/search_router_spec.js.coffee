@@ -48,7 +48,6 @@ describe "Coreon.Routers.SearchRouter", ->
       @router.search q: "poet"
       @router.searchResultsView.should.be.an.instanceof Coreon.Views.Main.SearchResultsView
       @screen.should.equal @router.searchResultsView
-      console.log @router.searchResultsView.$el
       @router.searchResultsView.$el.should.have ".search-results-terms"
       
     it "creates term search", ->
