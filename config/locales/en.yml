@@ -45,6 +45,15 @@ en:
         header:
           name: "Name"
 
+  concepts:
+    list:
+      header:
+        label: "Concept"
+        super_concepts: "Broader"
+        id: "ID"
+      props:
+        definition: "Definition"
+
   notification:
     label:
       info: "Info:"

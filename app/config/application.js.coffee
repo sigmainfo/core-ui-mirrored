@@ -3,6 +3,7 @@
 #= require collections/concepts
 #= require views/application_view
 #= require routers/search_router
+#= require routers/concepts_router
 
 class Coreon.Application
 
@@ -34,6 +35,9 @@ class Coreon.Application
       search_router: new Coreon.Routers.SearchRouter
         view: @view
         concepts: @concepts
+      concepts_router: new Coreon.Routers.ConceptsRouter
+        collection: @concepts
+        view: @view
 
     Backbone.history.start pushState: true
     @

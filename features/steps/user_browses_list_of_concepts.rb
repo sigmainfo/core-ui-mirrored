@@ -4,6 +4,10 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   include SearchSteps
   include Api::Graph::Factory
 
+  def find_concept(label)
+    @concept = page.find(".concept-list-item .label", text: label).find :xpath, "ancestor::*[contains(@class, 'concept-list-item')]"
+  end
+
   Given 'a concept with id "50005aece3ba3f095c000001" defined as "A portable firearm"' do
     @handgun = create_concept_with_id "50005aece3ba3f095c000001", definition: "A portable firearm"
   end
@@ -30,7 +34,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
 
   And 'this concept has the following English terms: "pistol", "gun", "automatic pistol"' do
     ["pistol", "gun", "automatic pistol"].each do |value|
-      @handgun.terms.create! value: value, lang: "en"
+      @pistol.terms.create! value: value, lang: "en"
     end
   end
 
@@ -50,28 +54,27 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   And 'I should see a concept "handgun" with id "50005aece3ba3f095c000001"' do
-    page.find(".concept-list-item .concept-label").should have_text("handgun")
-    page.find(".concept-list-item .concept-label", text: "handgun").find(:xpath, "../*[contains(@class, 'id')]").should have_text("50005aece3ba3f095c000001")
+    find_concept("handgun").find(".id").should have_content("50005aece3ba3f095c000001")
   end
 
   And 'I should see it being defined as "A portable firearm"' do
-    pending 'step not implemented'
+    @concept.find(".definition").should have_content("A portable firearm")
   end
 
   And 'I should see it having the following English terms: "gun", "firearm", "shot gun", "musket"' do
-    pending 'step not implemented'
+    @concept.find(".terms th", text: "en").find(:xpath, "../td").should have_content("gun, firearm, shot gun, musket")
   end
 
   And 'I should see it having the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    pending 'step not implemented'
+    @concept.find(".terms th", text: "de").find(:xpath, "../td").should have_content("Schusswaffe, Flinte, Pistole, Schießgewehr, Geschütz")
   end
 
   And 'I should see a concept "pistol" with id "50005aece3ba3f095c000002"' do
-    pending 'step not implemented'
+    find_concept("pistol").find(".id").should have_content("50005aece3ba3f095c000002")
   end
 
   And 'I should see it being narrower than "handgun"' do
-    pending 'step not implemented'
+    @concept.find(".super").should have_content("handgun")
   end
 
   When 'I select "Concepts by Terms" as the type of search' do

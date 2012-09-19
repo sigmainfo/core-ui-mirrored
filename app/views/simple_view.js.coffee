@@ -12,6 +12,10 @@ class Coreon.Views.SimpleView extends Backbone.View
         @$el[method] target
         @delegateEvents() if @_undelegated
 
+  clear: ->
+    @$el.empty()
+    @
+
   remove: ->
     @_undelegated = true
     super()

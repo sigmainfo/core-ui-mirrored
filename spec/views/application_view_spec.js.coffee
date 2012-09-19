@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require views/application_view
+#= require views/simple_view
 
 describe "Coreon.Views.ApplicationView", ->
 
@@ -15,8 +16,8 @@ describe "Coreon.Views.ApplicationView", ->
   afterEach ->
     @view.destroy()
 
-  it "is a Backbone view", ->
-    @view.should.be.an.instanceOf Backbone.View
+  it "is a Coreon view", ->
+    @view.should.be.an.instanceOf Coreon.Views.CompositeView
 
   describe "#initialize", ->
 
@@ -190,6 +191,28 @@ describe "Coreon.Views.ApplicationView", ->
       @view.model.account.trigger "deactivated"
       @view.$("#coreon-main").should.be.empty
 
+  describe "#switch", ->
+
+    beforeEach ->
+      @view.render()
+      @screen1 = new Coreon.Views.SimpleView
+      @view.switch @screen1
+      @screen2 = new Coreon.Views.SimpleView id: "screen2"
+
+    it "destroys current screen", ->
+      @screen1.destroy = sinon.spy()
+      @view.switch @screen2
+      @screen1.destroy.should.have.been.calledOnce
+ 
+    it "appends screen", ->
+      @view.switch @screen2
+      @view.$("#coreon-main").should.have "#screen2"
+
+    it "renders screen", ->
+      @screen2.render = sinon.stub().returns @screen2
+      @view.switch @screen2
+      @screen2.render.should.have.been.calledOnce
+    
   describe "#destroy", ->
     
     it "removes bindings on destroy", ->

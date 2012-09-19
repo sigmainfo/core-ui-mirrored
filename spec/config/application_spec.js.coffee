@@ -71,7 +71,14 @@ describe "Coreon.Application", ->
     it "creates search router", ->
       @app.start()
       @app.routers.search_router.should.be.an.instanceof Coreon.Routers.SearchRouter
+      @app.routers.search_router.concepts.should.equal @app.concepts
       @app.routers.search_router.view.should.equal @app.view
+
+    it "creates concepts router", ->
+      @app.start()
+      @app.routers.concepts_router.should.be.an.instanceof Coreon.Routers.ConceptsRouter
+      @app.routers.concepts_router.collection.should.equal @app.concepts
+      @app.routers.concepts_router.view.should.equal @app.view
 
     it "starts history", ->
       Backbone.history.start = sinon.spy()

@@ -14,10 +14,12 @@ Api::Graph::TaxonomyNode.delete_all
 %w|Zitrone Limone Frucht poetisch Poebene Poem Poet|.each_with_index do |value, index|
   concept = Api::Graph::Concept.create!
   concept.properties.create! key: "label", value: value
+  concept.properties.create! key: "definition", value: "A #{value} is a #{value} is a #{value}" if [0, 3, 4, 5].include? index
   concept.terms.create! value: value, lang: "de"
+  concept.terms.create! value: "poetic", lang: "en" if value == "poetisch"
 end
 
-%w|lemon poet poetic poetise poem dead man poetry poeple poenology|.each_with_index do |value, index|
+%w|lemon poet poetise poem dead man poetry poeple poenology|.each_with_index do |value, index|
   concept = Api::Graph::Concept.create!
   concept.properties.create! key: "label", value: value
   concept.terms.create! value: value, lang: "en"

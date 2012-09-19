@@ -9,7 +9,8 @@ describe "Coreon.Routers.SearchRouter", ->
 
     $("#konacha").append('<div id="coreon-main">')
     @router = new Coreon.Routers.SearchRouter
-      view: new Backbone.View(el: $("#konacha"))
+      view: _(new Backbone.View(el: $("#konacha"))).extend
+        switch: (@screen) => @screen.render() 
       concepts: Coreon.application.concepts
 
     @router.view.widgets =
@@ -46,7 +47,8 @@ describe "Coreon.Routers.SearchRouter", ->
     it "renders search results", ->
       @router.search q: "poet"
       @router.searchResultsView.should.be.an.instanceof Coreon.Views.Main.SearchResultsView
-      @router.searchResultsView.$el.should.have.id "coreon-main"
+      @screen.should.equal @router.searchResultsView
+      console.log @router.searchResultsView.$el
       @router.searchResultsView.$el.should.have ".search-results-terms"
       
     it "creates term search", ->

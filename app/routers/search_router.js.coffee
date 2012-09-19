@@ -32,12 +32,11 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
           "search[query]": params.q
 
     @searchResultsView = new Coreon.Views.Main.SearchResultsView
-      el: @view.$("#coreon-main")
       model: searches
-
-    @searchResultsView.render()
+    @view.switch @searchResultsView
 
     searches.terms.fetch()
     searches.tnodes.fetch()
     searches.concepts.fetch().done (data) =>
       @concepts.addOrUpdate _(data.hits).pluck "result"
+

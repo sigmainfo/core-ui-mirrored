@@ -66,10 +66,13 @@ describe "Coreon.Views.CompositeView", ->
       @subview1.render.should.have.been.calledOnce
       @subview2.render.should.have.been.calledOnce
 
-    it "can suppress rendering of subviews", ->
-      @subview.render = sinon.spy()
-      @view.render false
-      @subview.render.should.not.have.been.called
+    it "calls super", ->
+      sinon.spy Coreon.Views.SimpleView::, "render"
+      try
+        @view.render()
+        Coreon.Views.SimpleView::render.should.have.been.calledOn @view
+      finally
+        Coreon.Views.SimpleView::render.restore()
 
   describe "#delegateEvents", ->
 
@@ -86,10 +89,23 @@ describe "Coreon.Views.CompositeView", ->
       @subview1.delegateEvents.should.have.been.calledOnce
       @subview2.delegateEvents.should.have.been.calledOnce
 
-    it "can suppress delegateEventsing of subviews", ->
-      @subview.delegateEvents = sinon.spy()
-      @view.delegateEvents false
-      @subview.delegateEvents.should.not.have.been.called
+    it "calls super", ->
+      sinon.spy Coreon.Views.SimpleView::, "delegateEvents"
+      try
+        @view.delegateEvents()
+        Coreon.Views.SimpleView::delegateEvents.should.have.been.calledOn @view
+      finally
+        Coreon.Views.SimpleView::delegateEvents.restore()
+
+    it "passes arguments to calls", ->
+      method = ->
+      sinon.spy Coreon.Views.SimpleView::, "delegateEvents"
+      try
+        @view.delegateEvents "click": method
+        Coreon.Views.SimpleView::delegateEvents.should.always.have.been.calledWithExactly "click": method
+      finally
+        Coreon.Views.SimpleView::delegateEvents.restore()
+
 
   describe "#undelegateEvents", ->
 
@@ -106,10 +122,38 @@ describe "Coreon.Views.CompositeView", ->
       @subview1.undelegateEvents.should.have.been.calledOnce
       @subview2.undelegateEvents.should.have.been.calledOnce
 
-    it "can suppress undelegateEventsing of subviews", ->
-      @subview.undelegateEvents = sinon.spy()
-      @view.undelegateEvents false
-      @subview.undelegateEvents.should.not.have.been.called
+
+    it "calls super", ->
+      sinon.spy Coreon.Views.SimpleView::, "undelegateEvents"
+      try
+        @view.undelegateEvents()
+        Coreon.Views.SimpleView::undelegateEvents.should.have.been.calledOn @view
+      finally
+        Coreon.Views.SimpleView::undelegateEvents.restore()
+
+
+  describe "#clear", ->
+
+   beforeEach ->
+      @view.subviews = [@subview1, @subview2]
+
+    it "destroys subviews", ->
+      @subview1.destroy = sinon.spy()
+      @subview2.destroy = sinon.spy()
+      @view.clear()
+      @subview1.destroy.should.have.been.calledOnce
+      @subview2.destroy.should.have.been.calledOnce
+
+    it "calls super", ->
+      sinon.spy Coreon.Views.SimpleView::, "clear"
+      try
+        @view.clear()
+        Coreon.Views.SimpleView::clear.should.have.been.calledOn @view
+      finally
+        Coreon.Views.SimpleView::clear.restore()
+
+    it "can be chained", ->
+      @view.clear().should.equal @view
 
   describe "#destroy", ->
     

@@ -7,7 +7,7 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
   beforeEach ->
     @view = new Coreon.Views.Concepts.ConceptListView
       model: new Backbone.Model(hits: [])
-      concepts: new Backbone.Collection()
+      collection: new Backbone.Collection
 
   afterEach ->
     @view.destroy()
@@ -16,7 +16,7 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
 
   it "renders container", ->
-    @view.$el.should.have.class "concept-list"
+    @view.$el.should.match "table.concept-list"
 
   describe "#render", ->
     
@@ -25,6 +25,11 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
 
     it "renders list items", ->
       concept = _(new Backbone.Model).extend label: -> "A Concept"
+      concept2 = _(new Backbone.Model).extend label: -> "Another Concept"
+      @view.options.collection.addOrUpdate = sinon.spy()
+      sinon.stub @view.options.collection, "get"
+      @view.options.collection.get.withArgs("50506ebdd19879161b000019").returns concept
+      @view.options.collection.get.withArgs("50506ebdd19879161b000015").returns concept2
       @view.model.set
         hits: [
           {
@@ -37,22 +42,24 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
             result:
               _id: "50506ebdd19879161b000015"
           }
-
-        ]
-      @view.concepts = get: sinon.stub().withArgs("50506ebdd19879161b000019").returns concept
+        ], {silent: true}
       @view.render()
       @view.subviews.length.should.equal 2
       @view.subviews[0].should.be.an.instanceof Coreon.Views.Concepts.ConceptListItemView
       @view.subviews[0].model.should.equal concept
       @view.$el.should.have ".concept-list-item"
       @view.$(".concept-list-item").eq(0).should.have ".concept-label"
+      @view.options.collection.addOrUpdate.should.have.been.calledWith _id: "50506ebdd19879161b000019"
 
     it "destroys existing subviews", ->
-      subview = new Coreon.Views.CompositeView()
+      subview = new Coreon.Views.SimpleView()
       subview.destroy = sinon.spy()
-      @view.subviews = [subview]
-      @view.$el.append @view.subviews[0]
+      @view.append subview
       @view.render()
       subview.destroy.should.have.been.calledOnce
 
-
+    it "is triggered by model changes", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "change"
+      @view.render.should.have.been.calledOnce

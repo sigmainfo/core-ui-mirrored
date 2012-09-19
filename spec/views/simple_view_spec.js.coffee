@@ -113,7 +113,18 @@ describe "Coreon.Views.SimpleView", ->
       @view.delegateEvents()
       @view.insertBefore "#target"
       @view.delegateEvents.should.have.been.calledOnce
+  
+  describe "#clear", ->
+    
+    it "can be chained", ->
+      @view.clear().should.equal @view
 
+    it "clears out el", ->
+      @view.$el.append $("<p>foo</p>")
+      @view.$el.appendTo "#konacha"
+      @view.clear()
+      @view.$el.should.be.empty
+    
   describe "#remove", ->
     
     it "can be chained", ->

@@ -4,12 +4,14 @@
 class Coreon.Views.CompositeView extends Coreon.Views.SimpleView 
 
   initialize: ->
+    super()
     @subviews = []
   
   for method in ["render", "delegateEvents", "undelegateEvents", "destroy"]
     do (method) ->
-      CompositeView::[method] = (recursive = true) ->
-        subview[method]() for subview in @subviews if recursive
+      CompositeView::[method] = ->
+        subview[method].apply subview, arguments for subview in @subviews
+        CompositeView.__super__[method].apply @, arguments
         @
 
   for method in ["append", "prepend"]
@@ -18,3 +20,8 @@ class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
         @subviews.push view
         @$el[method] view.$el
         view.delegateEvents()
+
+  clear: ->
+    subview.destroy() for subview in @subviews
+    super()
+    @

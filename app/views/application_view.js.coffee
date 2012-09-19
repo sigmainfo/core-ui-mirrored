@@ -1,4 +1,5 @@
 #= require environment
+#= require views/composite_view
 #= require templates/application
 #= require views/header_view
 #= require views/widgets_view
@@ -6,18 +7,19 @@
 #= require views/login_view
 #= require views/password_prompt_view
 
-class Coreon.Views.ApplicationView extends Backbone.View
+class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
   template: Coreon.Templates["application"]
 
   events: "click a[href^='/']": "navigate"
 
   initialize: ->
-    @header        = new Coreon.Views.HeaderView collection: @model.account.notifications
-    @widgets       = new Coreon.Views.WidgetsView
-    @footer        = new Coreon.Views.FooterView model: @model
-    @login         = new Coreon.Views.LoginView model: @model.account
-    @prompt        = new Coreon.Views.PasswordPromptView model: @model.account
+    super()
+    @header  = new Coreon.Views.HeaderView collection: @model.account.notifications
+    @widgets = new Coreon.Views.WidgetsView
+    @footer  = new Coreon.Views.FooterView model: @model
+    @login   = new Coreon.Views.LoginView model: @model.account
+    @prompt  = new Coreon.Views.PasswordPromptView model: @model.account
 
     @model.account.on "activated", @loginHandler, @
     @model.account.on "deactivated", @logoutHandler, @
@@ -34,6 +36,11 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @$("#coreon-top").prepend @header.render().$el
     if not @model.account.get("active") then @renderLogin() else @renderApplication()
     @
+
+  switch: (screen) ->
+    @screen.destroy() if @screen
+    @$("#coreon-main").append screen.render().$el
+    @screen = screen
 
   navigate: (event) ->
     Backbone.history.navigate $(event.target).attr("href"), trigger: true

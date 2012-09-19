@@ -1,1 +1,20 @@
-.concept-id= @concept.id
+%tr.meta
+  %td.label
+  %td.super
+  %td.id= @concept.id
+- if @definition 
+  %tr.props
+    %td{colspan: 3}
+      %table
+        %tr.definition
+          %th= I18n.t "concepts.list.props.definition"
+          %td= @definition.value
+- if @terms
+  %tr.terms
+    %td{colspan: 3}
+      %table
+        - for lang, terms of @terms
+          %tr
+            %th= lang
+            %td= _(terms).pluck("value").join ", "
+

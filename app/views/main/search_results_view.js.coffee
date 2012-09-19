@@ -5,6 +5,8 @@
 
 class Coreon.Views.Main.SearchResultsView extends Backbone.View
 
+  className: "search-results"
+
   initialize: ->
     @subviews = []
     for key, value of @model

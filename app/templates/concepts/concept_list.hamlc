@@ -1,0 +1,5 @@
+%thead
+  %tr
+    %td.label= I18n.t "concepts.list.header.label"
+    %td.super= I18n.t "concepts.list.header.super_concepts"
+    %td.id= I18n.t "concepts.list.header.id"
