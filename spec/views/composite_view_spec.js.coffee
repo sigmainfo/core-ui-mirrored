@@ -5,8 +5,8 @@ describe "Coreon.Views.CompositeView", ->
 
   beforeEach ->
     @view = new Coreon.Views.CompositeView
-    @subview = @subview1 = new Coreon.Views.SimpleView
-    @subview2 = new Coreon.Views.SimpleView
+    @subview = @subview1 = new Coreon.Views.SimpleView className: "subview", id: "subview1"
+    @subview2 = new Coreon.Views.SimpleView className: "subview", id: "subview2"
 
   afterEach ->
     view.destroy() for view in [@view, @subview1, @subview2]
@@ -17,39 +17,87 @@ describe "Coreon.Views.CompositeView", ->
   it "creates an empty subview collection by default", ->
     @view.subviews.should.eql []
 
+  describe "#add", ->
+    
+    it "adds view to subviews", ->
+      @view.add @subview
+      @view.subviews.should.have.length 1
+      @view.subviews[0].should.equal @subview
+
+    it "adds view only once", ->
+      @view.add @subview
+      @view.add @subview
+      @view.subviews.should.have.length 1
+      @view.subviews[0].should.equal @subview
+
+    it "takes multiple views simultaneously", ->
+      @view.add @subview1, @subview2
+      @view.subviews.should.eql [@subview1, @subview2]
+
+  describe "#drop", ->
+
+    beforeEach ->
+      @view.add @subview1, @subview2
+    
+    it "removes view from subviews", ->
+      @view.drop @subview2
+      @view.subviews.should.eql [@subview1]
+
+    it "takes multiple arguments", ->
+      @view.drop @subview2, @subview1
+      @view.subviews.should.eql []
+    
+
   describe "#append", ->
     
     it "adds subview to collection", ->
       @view.append @subview
-      @view.subviews.should.have.length 1
-      @view.subviews[0].should.equal @subview
+      @view.subviews.should.eql [@subview]
 
     it "appends el", ->
-      @view.$el.append = sinon.spy()
       @view.append @subview
-      @view.$el.append.should.have.been.calledWith @subview.$el
+      @view.$el.should.have ".subview"
+
+    it "appends el to matching node", ->
+      @view.$el.append $("<div>").addClass("target")
+      @view.append ".target", @subview
+      @view.$(".target").should.have ".subview"
 
     it "calls delegateEvents on subview", ->
       @subview.delegateEvents = sinon.spy()
       @view.append @subview
       @subview.delegateEvents.should.have.been.calledOnce
 
-    describe "#prepend", ->
+    it "takes multiple subviews as arguments", ->
+      @view.append @subview1, @subview2
+      @view.$el.should.have "#subview1"
+      @view.$el.should.have "#subview2"
+
+  describe "#prepend", ->
 
     it "adds subview to collection", ->
       @view.prepend @subview
-      @view.subviews.should.have.length 1
-      @view.subviews[0].should.equal @subview
+      @view.subviews.should.eql [@subview]
 
     it "prepends el", ->
       @view.$el.prepend = sinon.spy()
       @view.prepend @subview
       @view.$el.prepend.should.have.been.calledWith @subview.$el
 
+    it "prepends el to matching node", ->
+      @view.$el.append $("<div>").addClass("target")
+      @view.prepend ".target", @subview
+      @view.$(".target").should.have ".subview"
+
     it "calls delegateEvents on subview", ->
       @subview.delegateEvents = sinon.spy()
       @view.prepend @subview
       @subview.delegateEvents.should.have.been.calledOnce
+
+    it "takes multiple subviews as arguments", ->
+      @view.prepend @subview1, @subview2
+      @view.$el.should.have "#subview1"
+      @view.$el.should.have "#subview2"
 
   describe "#render", ->
 
@@ -79,9 +127,6 @@ describe "Coreon.Views.CompositeView", ->
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
     
-    it "can be chained", ->
-      @view.delegateEvents().should.equal @view
-
     it "calls delegateEvents on every subview", ->
       @subview1.delegateEvents = sinon.spy()
       @subview2.delegateEvents = sinon.spy()
@@ -111,9 +156,6 @@ describe "Coreon.Views.CompositeView", ->
 
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
-    
-    it "can be chained", ->
-      @view.undelegateEvents().should.equal @view
 
     it "calls undelegateEvents on every subview", ->
       @subview1.undelegateEvents = sinon.spy()
@@ -136,6 +178,10 @@ describe "Coreon.Views.CompositeView", ->
 
    beforeEach ->
       @view.subviews = [@subview1, @subview2]
+
+    it "clears subview references", ->
+      @view.clear()
+      @view.subviews.should.eql []
 
     it "destroys subviews", ->
       @subview1.destroy = sinon.spy()
