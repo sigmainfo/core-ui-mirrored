@@ -16,7 +16,7 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
 
   it "renders container", ->
-    @view.$el.should.match "table.concept-list"
+    @view.$el.should.match "div.concept-list"
 
   describe "#render", ->
     

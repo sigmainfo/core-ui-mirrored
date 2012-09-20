@@ -65,11 +65,11 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   And 'I should see it having the following English terms: "gun", "firearm", "shot gun", "musket"' do
-    @concept.find(".terms th", text: "en").find(:xpath, "../td").should have_content("gun, firearm, shot gun, musket")
+    @concept.find(".terms th", text: "EN").find(:xpath, "../td").should have_content("gun, firearm, shot gun, musket")
   end
 
   And 'I should see it having the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    @concept.find(".terms th", text: "de").find(:xpath, "../td").should have_content("Schusswaffe, Flinte, Pistole, Schießgewehr, Geschütz")
+    @concept.find(".terms th", text: "DE").find(:xpath, "../td").should have_content("Schusswaffe, Flinte, Pistole, Schießgewehr, Geschütz")
   end
 
   And 'I should see a concept "pistol" with id "50005aece3ba3f095c000002"' do

@@ -1,4 +1,3 @@
-@wip
 Feature: user browses list of concepts
   In order to find relevant concepts
   As a user that searches the repository

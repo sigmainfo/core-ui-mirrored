@@ -27,5 +27,5 @@ class Coreon.Views.Main.SearchResultsConceptsView extends Backbone.View
   extractConcepts: (hits) ->
     _(hits).pluck("result").map (result) ->
       id: result._id
-      label: _(result.properties).find((prop)-> prop.key == "label").value
+      label: _(result.properties)?.find((prop)-> prop.key == "label")?.value
       super_concept_ids: result.super_concept_ids
