@@ -5,8 +5,6 @@
 
 class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
 
-  tagName: "table"
-
   className: "concept-list"
 
   template: Coreon.Templates["concepts/concept_list"]
@@ -22,5 +20,6 @@ class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
       @options.collection.addOrUpdate hit.result
       item = new Coreon.Views.Concepts.ConceptListItemView
         model: @options.collection.get hit.result._id
-      @append item.render()
+      @$("table.concepts").append item.render().$el
+      @subviews.push item
     @

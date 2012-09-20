@@ -1,6 +1,6 @@
 %tr.meta
-  %td.label
-  %td.super
+  %td.label.concept
+  %td.super.concept
   %td.id= @concept.id
 - if @definition 
   %tr.props
@@ -16,5 +16,5 @@
         - for lang, terms of @terms
           %tr
             %th= lang
-            %td= _(terms).pluck("value").join ", "
+            %td.term= _(terms).pluck("value").join ", "
 
