@@ -7,10 +7,13 @@ describe "Coreon.Views.Search.SearchResultsTermsView", ->
   beforeEach ->
     Coreon.application = new Coreon.Application
     sinon.stub I18n, "t"
+    @xhr = sinon.useFakeXMLHttpRequest()
+    @xhr.onCreate = (@request) =>
     @view = new Coreon.Views.Search.SearchResultsTermsView model: new Backbone.Model
     @view.model.set "hits", []
 
   afterEach ->
+    @xhr.restore()
     Coreon.application.destroy()
     I18n.t.restore()
 
