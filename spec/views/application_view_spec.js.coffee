@@ -5,40 +5,43 @@
 describe "Coreon.Views.ApplicationView", ->
 
   beforeEach ->
-    account = new Backbone.Model
-    account.notifications = new Backbone.Collection
-    account.connections = new Backbone.Collection
-
     @view = new Coreon.Views.ApplicationView
       el: "#konacha"
-      model: account: account
+      model: _(new Backbone.Model).extend
+        notifications: new Backbone.Collection
+        connections: new Backbone.Collection
 
   afterEach ->
     @view.destroy()
 
-  it "is a Coreon view", ->
+  it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView
 
   describe "#initialize", ->
 
-    it "creates login subview", ->
-      @view.login.should.be.an.instanceOf Coreon.Views.LoginView
-      @view.login.model.should.equal @view.model.account
-    
-    it "creates footer subview", ->
-      @view.footer.should.be.an.instanceOf Coreon.Views.FooterView
+    it "creates header", ->
+      @view.header.should.be.an.instanceOf Coreon.Views.Layout.HeaderView
+      @view.header.collection.should.equal @view.model.notifications
+      @view.subviews.should.contain @view.header
+
+    it "creates footer", ->
+      @view.footer.should.be.an.instanceOf Coreon.Views.Layout.FooterView
       @view.footer.model.should.equal @view.model
+      @view.subviews.should.contain @view.footer
 
-    it "creates header view", ->
-      @view.header.should.be.an.instanceOf Coreon.Views.HeaderView
-      @view.header.collection.should.equal @view.model.account.notifications
+    it "creates widgets", ->
+      @view.widgets.should.be.an.instanceOf Coreon.Views.Widgets.WidgetsView
+      @view.subviews.should.contain @view.widgets    
 
-    it "creates widgets subview", ->
-      @view.widgets.should.be.an.instanceOf Coreon.Views.WidgetsView
+    it "creates login subview", ->
+      @view.login.should.be.an.instanceOf Coreon.Views.Account.LoginView
+      @view.login.model.should.equal @view.model
+      @view.subviews.should.contain @view.login    
     
     it "creates prompt", ->
-      @view.prompt.should.be.an.instanceOf Coreon.Views.PasswordPromptView
-      @view.prompt.model.should.equal @view.model.account
+      @view.prompt.should.be.an.instanceOf Coreon.Views.Account.PasswordPromptView
+      @view.prompt.model.should.equal @view.model
+      @view.subviews.should.contain @view.prompt
     
   describe "#render", ->
 
@@ -49,7 +52,6 @@ describe "Coreon.Views.ApplicationView", ->
       $("#konacha").append $("<div>", id: "foo")
       @view.render()
       @view.$el.should.not.have "#foo"
-
 
     it "renders containers", ->
       @view.render()
@@ -69,13 +71,13 @@ describe "Coreon.Views.ApplicationView", ->
     describe "widgets", ->
 
       it "renders widgets when already logged in", ->
-        @view.model.account.set "active", true
+        @view.model.set "active", true
         @view.render()
         @view.$el.should.have "#coreon-widgets"
         @view.$("#coreon-widgets").should.have "#coreon-search"
 
       it "does not append element when not logged in", ->
-        @view.model.account.set "active", false
+        @view.model.set "active", false
         @view.render()
         @view.$el.should.not.have "#coreon-widgets"
 
@@ -83,25 +85,25 @@ describe "Coreon.Views.ApplicationView", ->
     describe "footer", ->
 
       it "appends element when already logged in", ->
-        @view.model.account.set "active", true
+        @view.model.set "active", true
         @view.render()
         @view.$el.should.have "#coreon-footer"
 
       it "does not append element when not logged in", ->
-        @view.model.account.set "active", false
+        @view.model.set "active", false
         @view.render()
         @view.$el.should.not.have "#coreon-footer"
 
     describe "login", ->
 
       it "renders login form when idle", ->
-        @view.model.account.set "active", false
+        @view.model.set "active", false
         @view.render()
         @view.$el.should.have "#coreon-login"
         @view.$("#coreon-login").should.have "input[type='submit']"
 
       it "renders no login form when already logged in", ->
-        @view.model.account.set "active", true
+        @view.model.set "active", true
         @view.render()
         @view.$el.should.not.have "#coreon-login"
 
@@ -131,33 +133,31 @@ describe "Coreon.Views.ApplicationView", ->
 
     beforeEach ->
       @view.render()
-      @view.model.account.set "active", true, silent: true
+      @view.model.set "active", true, silent: true
 
     it "renders footer", ->
       sinon.spy @view.footer, "delegateEvents"
-      @view.model.account.trigger "activated"
+      @view.model.trigger "activated"
       @view.$el.should.have "#coreon-footer"
       @view.$("#coreon-footer").should.have ".logout"
       @view.footer.delegateEvents.should.have.been.calledOnce
 
     it "renders widgets", ->
       sinon.spy @view.widgets, "delegateEvents"
-      @view.model.account.trigger "activated"
+      @view.model.trigger "activated"
       @view.$el.should.have "#coreon-widgets"
       @view.$("#coreon-widgets").should.have "#coreon-search"
       @view.widgets.delegateEvents.should.have.been.calledOnce
 
     it "removes login form", ->
-      sinon.spy @view.login, "undelegateEvents"
       @view.login.render()
-      @view.model.account.trigger "activated"
+      @view.model.trigger "activated"
       @view.$el.should.not.have "#coreon-login"
-      @view.login.undelegateEvents.should.have.been.calledOnce
 
     it "fails gracefully when idle", ->
-      @view.model.account.set "active", false, silent: true
+      @view.model.set "active", false, silent: true
       @view.render()
-      @view.model.account.trigger "activated"
+      @view.model.trigger "activated"
       @view.$el.should.have "#coreon-login"
       @view.$el.should.not.have "#coreon-footer"
       
@@ -166,29 +166,25 @@ describe "Coreon.Views.ApplicationView", ->
 
     it "renders login form", ->
       sinon.spy @view.login, "delegateEvents"
-      @view.model.account.trigger "deactivated"
+      @view.model.trigger "deactivated"
       @view.$el.should.have "#coreon-login"
       @view.$("#coreon-login").should.have "form.login"
       @view.login.delegateEvents.should.have.been.calledOnce
 
     it "removes footer", ->
-      sinon.spy @view.footer, "undelegateEvents"
       @view.footer.render().$el.appendTo @view.$el
-      @view.model.account.trigger "deactivated"
+      @view.model.trigger "deactivated"
       @view.$el.should.not.have "#coreon-footer"
-      @view.footer.undelegateEvents.should.have.been.calledOnce
 
     it "removes widgets", ->
-      sinon.spy @view.widgets, "undelegateEvents"
       @view.widgets.render().$el.appendTo @view.$el
-      @view.model.account.trigger "deactivated"
+      @view.model.trigger "deactivated"
       @view.$el.should.not.have "#coreon-widgets"
-      @view.widgets.undelegateEvents.should.have.been.calledOnce
 
     it "empties main view", ->
       @view.render()
       @view.$("#coreon-main").append $("<div id='my-content'>")
-      @view.model.account.trigger "deactivated"
+      @view.model.trigger "deactivated"
       @view.$("#coreon-main").should.be.empty
 
   describe "#switch", ->
@@ -216,9 +212,9 @@ describe "Coreon.Views.ApplicationView", ->
   describe "#destroy", ->
     
     it "removes bindings on destroy", ->
-      sinon.spy @view.model.account, "off"
+      sinon.spy @view.model, "off"
       @view.destroy()
-      @view.model.account.off.should.have.been.calledWith null, null, @view 
+      @view.model.off.should.have.been.calledWith null, null, @view 
 
 
   describe "#onUnauthorized", ->
@@ -229,7 +225,7 @@ describe "Coreon.Views.ApplicationView", ->
     it "is triggered by account", ->
       @view.onUnauthorized = sinon.spy()
       @view.initialize()
-      @view.model.account.trigger "unauthorized"
+      @view.model.trigger "unauthorized"
       @view.onUnauthorized.should.have.been.calledOnce
 
     it "renders password prompt", ->
@@ -244,7 +240,7 @@ describe "Coreon.Views.ApplicationView", ->
     it "is triggered by account", ->
       @view.onReactivated = sinon.spy()
       @view.initialize()
-      @view.model.account.trigger "reactivated"
+      @view.model.trigger "reactivated"
       @view.onReactivated.should.have.been.calledOnce
 
     it "removes password prompt", ->
@@ -258,7 +254,7 @@ describe "Coreon.Views.ApplicationView", ->
       conn1.resume = sinon.spy()
       conn2.resume = sinon.spy()
       conn3.resume = sinon.spy()
-      @view.model.account.connections.add [ conn1, conn2, conn3 ]
+      @view.model.connections.add [ conn1, conn2, conn3 ]
       @view.onReactivated()
       conn2.resume.should.have.been.calledOnce
       conn1.resume.should.not.have.been.called

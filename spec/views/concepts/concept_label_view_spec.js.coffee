@@ -14,8 +14,8 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     @view.destroy()
     Coreon.application = null
 
-  it "is a Backbone view", ->
-    @view.should.be.an.instanceof Backbone.View
+  it "is a simple view", ->
+    @view.should.be.an.instanceof Coreon.Views.SimpleView
 
   it "creates link as container", ->
     @view.$el.should.match "a.concept-label"

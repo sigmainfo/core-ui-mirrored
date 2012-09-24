@@ -10,7 +10,7 @@ class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
   template: Coreon.Templates["concepts/concept_list"]
 
   initialize: ->
-    super()
+    super
     @model.on "change", @render, @
 
   render: () ->

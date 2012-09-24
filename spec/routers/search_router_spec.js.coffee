@@ -46,7 +46,7 @@ describe "Coreon.Routers.SearchRouter", ->
 
     it "renders search results", ->
       @router.search q: "poet"
-      @router.searchResultsView.should.be.an.instanceof Coreon.Views.Main.SearchResultsView
+      @router.searchResultsView.should.be.an.instanceof Coreon.Views.Search.SearchResultsView
       @screen.should.equal @router.searchResultsView
       @router.searchResultsView.$el.should.have ".search-results-terms"
       
@@ -76,7 +76,7 @@ describe "Coreon.Routers.SearchRouter", ->
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.tnodes.model
 
     it "updates concepts from results", ->
-      sinon.stub(Coreon.Views.Main, "SearchResultsView").returns render: ->
+      sinon.stub(Coreon.Views.Search, "SearchResultsView").returns render: ->
       try
         @router.search q: "poet"
         @request.respond 200, {}, JSON.stringify
@@ -99,7 +99,7 @@ describe "Coreon.Routers.SearchRouter", ->
         concept.get("properties").should.eql [{key: "label", value: "poet"}]
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
       finally
-        Coreon.Views.Main.SearchResultsView.restore()
+        Coreon.Views.Search.SearchResultsView.restore()
 
     it "restores search input", ->
       spy = sinon.spy()

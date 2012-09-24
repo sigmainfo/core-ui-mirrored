@@ -10,8 +10,8 @@ describe "Coreon.Views.SearchView", ->
   afterEach ->
     I18n.t.restore()
 
-  it "is a Backbone view", ->
-    @view.should.be.an.instanceOf Backbone.View
+  it "is a composite view", ->
+    @view.should.be.an.instanceOf Coreon.Views.CompositeView
     
   it "creates container", ->
     @view.$el.should.have.id "coreon-search"

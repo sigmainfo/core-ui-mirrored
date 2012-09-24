@@ -24,17 +24,8 @@ describe "Coreon.Views.SimpleView", ->
       @view.appendTo "#konacha"
       @view.delegateEvents.should.have.been.calledOnce
 
-    it "delegates events only when necessary", ->
-      @view.delegateEvents = sinon.spy()
-      @view.appendTo "#konacha"
-      @view.delegateEvents.should.not.have.been.called
-
-    it "delegates events only once", ->
-      sinon.spy @view, "delegateEvents"
-      @view.remove()
-      @view.delegateEvents()
-      @view.appendTo "#konacha"
-      @view.delegateEvents.should.have.been.calledOnce
+    it "can be chained", ->
+      @view.appendTo("#konacha").should.equal @view
 
   describe "#prependTo", ->
     
@@ -48,17 +39,8 @@ describe "Coreon.Views.SimpleView", ->
       @view.prependTo "#konacha"
       @view.delegateEvents.should.have.been.calledOnce
 
-    it "delegates events only when necessary", ->
-      @view.delegateEvents = sinon.spy()
-      @view.prependTo "#konacha"
-      @view.delegateEvents.should.not.have.been.called
-
-    it "delegates events only once", ->
-      sinon.spy @view, "delegateEvents"
-      @view.remove()
-      @view.delegateEvents()
-      @view.prependTo "#konacha"
-      @view.delegateEvents.should.have.been.calledOnce
+    it "can be chained", ->
+      @view.appendTo("#konacha").should.equal @view
 
   describe "#insertAfter", ->
 
@@ -75,17 +57,8 @@ describe "Coreon.Views.SimpleView", ->
       @view.insertAfter "#target"
       @view.delegateEvents.should.have.been.calledOnce
 
-    it "delegates events only when necessary", ->
-      @view.delegateEvents = sinon.spy()
-      @view.insertAfter "#target"
-      @view.delegateEvents.should.not.have.been.called
-
-    it "delegates events only once", ->
-      sinon.spy @view, "delegateEvents"
-      @view.remove()
-      @view.delegateEvents()
-      @view.insertAfter "#target"
-      @view.delegateEvents.should.have.been.calledOnce
+    it "can be chained", ->
+      @view.appendTo("#konacha").should.equal @view
 
   describe "#insertBefore", ->
 
@@ -102,18 +75,9 @@ describe "Coreon.Views.SimpleView", ->
       @view.insertBefore "#target"
       @view.delegateEvents.should.have.been.calledOnce
 
-    it "delegates events only when necessary", ->
-      @view.delegateEvents = sinon.spy()
-      @view.insertBefore "#target"
-      @view.delegateEvents.should.not.have.been.called
+    it "can be chained", ->
+      @view.appendTo("#konacha").should.equal @view
 
-    it "delegates events only once", ->
-      sinon.spy @view, "delegateEvents"
-      @view.remove()
-      @view.delegateEvents()
-      @view.insertBefore "#target"
-      @view.delegateEvents.should.have.been.calledOnce
-  
   describe "#clear", ->
     
     it "can be chained", ->
@@ -164,3 +128,6 @@ describe "Coreon.Views.SimpleView", ->
       @view.dissolve = sinon.spy()
       @view.destroy()
       @view.dissolve.should.have.been.calledOnce   
+
+    it "can be chained", ->
+      @view.appendTo("#konacha").should.equal @view

@@ -13,8 +13,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
     @view.undelegateEvents()
     I18n.t.restore()
 
-  it "is a Backbone view", ->
-    @view.should.be.an.instanceof Backbone.View
+  it "is a simple view", ->
+    @view.should.be.an.instanceof Coreon.Views.SimpleView
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-search-target-select-dropdown"

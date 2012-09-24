@@ -4,7 +4,7 @@
 class Coreon.Views.CompositeView extends Coreon.Views.SimpleView 
 
   initialize: ->
-    super()
+    super
     @subviews = []
 
   add: (views...) ->
@@ -35,5 +35,5 @@ class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
   clear: ->
     subview.destroy() for subview in @subviews
     @subviews = []
-    super()
+    super
     @

@@ -1,6 +1,6 @@
 #= require environment
 
-class Coreon.Views.Concepts.ConceptLabelView extends Backbone.View
+class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
 
   tagName: "a"
 
