@@ -20,7 +20,7 @@ class Coreon.Views.Layout.FooterView extends Coreon.Views.CompositeView
     @$el.html @template()
     @$(".toggle").prepend @progress.render().$el
     @$el.append (new Coreon.Views.Account.AccountView model: @model).render().$el.hide()
-    @
+    super
 
   toggle: ->
     @$el.children(":not(.toggle)").slideToggle()

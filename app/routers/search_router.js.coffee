@@ -18,18 +18,15 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
     searches =
       terms: new Coreon.Models.Search
         path: "terms/search"
-        params:
-          "search[query]": params.q
+        query: params.q
 
       concepts: new Coreon.Models.Search
         path: "concepts/search"
-        params:
-          "search[query]": params.q
+        query: params.q
 
       tnodes: new Coreon.Models.Search
         path: "tnodes/search"
-        params:
-          "search[query]": params.q
+        query: params.q
 
     @searchResultsView = new Coreon.Views.Search.SearchResultsView
       model: searches

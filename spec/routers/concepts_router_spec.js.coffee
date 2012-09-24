@@ -47,7 +47,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.search q: "gun"
       @screen.model.should.be.an.instanceof Coreon.Models.Search 
       @screen.model.get("path").should.equal "concepts/search" 
-      @screen.model.get("params")["search[query]"].should.equal "gun" 
+      @screen.model.get("query").should.equal "gun" 
       @screen.collection.should.be @router.collection
 
     it "renders search results", ->

@@ -54,19 +54,19 @@ describe "Coreon.Routers.SearchRouter", ->
       @router.search q: "poet"
       @router.searchResultsView.terms.model.should.be.an.instanceof Coreon.Models.Search
       @router.searchResultsView.terms.model.get("path").should.equal "terms/search"
-      @router.searchResultsView.terms.model.get("params")["search[query]"].should.equal "poet"
+      @router.searchResultsView.terms.model.get("query").should.equal "poet"
 
     it "creates concepts search", ->
       @router.search q: "poet"
       @router.searchResultsView.concepts.model.should.be.an.instanceof Coreon.Models.Search
       @router.searchResultsView.concepts.model.get("path").should.equal "concepts/search"
-      @router.searchResultsView.concepts.model.get("params")["search[query]"].should.equal "poet"
+      @router.searchResultsView.concepts.model.get("query").should.equal "poet"
 
     it "creates taxonomy search", ->
       @router.search q: "poet"
       @router.searchResultsView.tnodes.model.should.be.an.instanceof Coreon.Models.Search
       @router.searchResultsView.tnodes.model.get("path").should.equal "tnodes/search"
-      @router.searchResultsView.tnodes.model.get("params")["search[query]"].should.equal "poet"
+      @router.searchResultsView.tnodes.model.get("query").should.equal "poet"
 
     it "fetches search results", ->
       Coreon.application.sync = sinon.stub().returns done: ->

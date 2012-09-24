@@ -32,9 +32,9 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.html @template()
-    @prepend "#coreon-top", @header
+    @prepend "#coreon-top", @header.render()
     if not @model.get("active") then @renderLogin() else @renderApplication()
-    super
+    @
 
   switch: (screen) ->
     @screen.destroy() if @screen
