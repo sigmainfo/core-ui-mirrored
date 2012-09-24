@@ -67,7 +67,6 @@ describe "Coreon.Views.ApplicationView", ->
       @view.render()
       @view.$el.should.have "#coreon-main"
 
-
     describe "widgets", ->
 
       it "renders widgets when already logged in", ->
@@ -164,11 +163,14 @@ describe "Coreon.Views.ApplicationView", ->
 
   context "on logout", ->
 
+    beforeEach ->
+      @view.render()
+
     it "renders login form", ->
       sinon.spy @view.login, "delegateEvents"
       @view.model.trigger "deactivated"
       @view.$el.should.have "#coreon-login"
-      @view.$("#coreon-login").should.have "form.login"
+      @view.$("#coreon-main").should.have "form.login"
       @view.login.delegateEvents.should.have.been.calledOnce
 
     it "removes footer", ->
@@ -181,11 +183,11 @@ describe "Coreon.Views.ApplicationView", ->
       @view.model.trigger "deactivated"
       @view.$el.should.not.have "#coreon-widgets"
 
-    it "empties main view", ->
-      @view.render()
-      @view.$("#coreon-main").append $("<div id='my-content'>")
+    it "clears screen", ->
+      screen = new Coreon.Views.SimpleView
+      @view.switch screen
       @view.model.trigger "deactivated"
-      @view.$("#coreon-main").should.be.empty
+      @view.$("#coreon-main > *").not("#coreon-login").size().should.equal 0
 
   describe "#switch", ->
 
@@ -217,34 +219,34 @@ describe "Coreon.Views.ApplicationView", ->
       @view.model.off.should.have.been.calledWith null, null, @view 
 
 
-  describe "#onUnauthorized", ->
+  describe "#reauthorize", ->
 
     beforeEach ->
       @view.render()
 
     it "is triggered by account", ->
-      @view.onUnauthorized = sinon.spy()
+      @view.reauthorize = sinon.spy()
       @view.initialize()
       @view.model.trigger "unauthorized"
-      @view.onUnauthorized.should.have.been.calledOnce
+      @view.reauthorize.should.have.been.calledOnce
 
     it "renders password prompt", ->
-      @view.onUnauthorized()
+      @view.reauthorize()
       @view.$("#coreon-modal").should.have "#coreon-password-prompt"
 
-  describe "#onReactivated", ->
+  describe "#reactivate", ->
 
     beforeEach ->
-      @view.onUnauthorized()
+      @view.reauthorize()
 
     it "is triggered by account", ->
-      @view.onReactivated = sinon.spy()
+      @view.reactivate = sinon.spy()
       @view.initialize()
       @view.model.trigger "reactivated"
-      @view.onReactivated.should.have.been.calledOnce
+      @view.reactivate.should.have.been.calledOnce
 
     it "removes password prompt", ->
-      @view.onReactivated()
+      @view.reactivate()
       @view.$el.should.not.have "#coreon-password-prompt"
 
     it "resumes all dropped connections", ->
@@ -255,7 +257,7 @@ describe "Coreon.Views.ApplicationView", ->
       conn2.resume = sinon.spy()
       conn3.resume = sinon.spy()
       @view.model.connections.add [ conn1, conn2, conn3 ]
-      @view.onReactivated()
+      @view.reactivate()
       conn2.resume.should.have.been.calledOnce
       conn1.resume.should.not.have.been.called
       conn3.resume.should.not.have.been.called

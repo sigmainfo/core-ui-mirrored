@@ -23,54 +23,48 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
       @prompt  = new Coreon.Views.Account.PasswordPromptView model: @model
     ]
 
-    @model.on "activated"    , @loginHandler   , @
-    @model.on "deactivated"  , @logoutHandler  , @
-    @model.on "unauthorized" , @onUnauthorized , @
-    @model.on "reactivated"  , @onReactivated  , @
+    @model.on "activated"    , @activate    , @
+    @model.on "deactivated"  , @deactivate  , @
+    @model.on "unauthorized" , @reauthorize , @
+    @model.on "reactivated"  , @reactivate  , @
 
     @header.on "resize", @onResize, @
 
   render: ->
     @$el.html @template()
-    @prepend "#coreon-top", @header.render()
-    if not @model.get("active") then @renderLogin() else @renderApplication()
-    @
+    @prepend "#coreon-top", @header
+    if @model.get "active" then @activate() else @deactivate()
+    super
 
   switch: (screen) ->
-    @screen.destroy() if @screen
+    @clearScreen()
     @append "#coreon-main", screen
     @screen = screen.render()
+
+  clearScreen: ->
+    @screen.destroy() if @screen
 
   navigate: (event) ->
     Backbone.history.navigate $(event.target).attr("href"), trigger: true
     event.preventDefault()
 
-  loginHandler: ->
-    if @model.get("active")
+  activate: ->
+    if @model.get "active"
       @login.remove()
-      @renderApplication() 
-      @footer.delegateEvents()
-      @widgets.delegateEvents()
+      @append "#coreon-top", @widgets
+      @append @footer
 
-  logoutHandler: ->
-    @$("#coreon-main").empty()
+  deactivate: ->
+    @clearScreen()
     @widgets.remove()
     @footer.remove()
-    @renderLogin()
-    @login.delegateEvents()
+    @append "#coreon-main", @login
 
-  renderApplication: ->
-    @$("#coreon-top").append @widgets.render().$el
-    @$el.append @footer.render().$el
-
-  renderLogin: ->
-    @$el.append @login.render().$el
-
-  onUnauthorized: ->
-    @prompt.render().$el.appendTo @$("#coreon-modal")
+  reauthorize: ->
+    @append "#coreon-modal", @prompt
     @$("#coreon-password-password").focus()
 
-  onReactivated: ->
+  reactivate: ->
     @prompt.remove()
     dropped = @model.connections.filter (connection) ->
       connection.get("xhr").status == 403 
