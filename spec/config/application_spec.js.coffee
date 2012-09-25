@@ -18,20 +18,18 @@ describe "Coreon.Application", ->
 
   it "enforces single instance", ->
     (-> new Coreon.Application).should.throw "Coreon application does already exist"
-    
-
+  
   describe "#initialize", ->
     
     it "sets default options", ->
       @app.options.should.eql
         el         : "#app"
-        app_root   : "/"
         auth_root  : "/api/auth/"
         graph_root : "/api/graph/"
 
     it "allows overriding defaults", ->
-      @app.initialize app_root: "/repository/"
-      @app.options.app_root.should.equal "/repository/"
+      @app.initialize auth_root: "/repository/"
+      @app.options.auth_root.should.equal "/repository/"
 
     it "creates account", ->
       @app.initialize
@@ -62,7 +60,7 @@ describe "Coreon.Application", ->
     it "creates view", ->
       @app.start el: "#coreon"
       @app.view.should.be.an.instanceof Coreon.Views.ApplicationView
-      @app.view.model.should.equal @app
+      @app.view.model.should.equal @app.account
       @app.view.options.el.should.equal "#coreon"
 
     it "renders view", ->
@@ -72,15 +70,19 @@ describe "Coreon.Application", ->
     it "creates search router", ->
       @app.start()
       @app.routers.search_router.should.be.an.instanceof Coreon.Routers.SearchRouter
+      @app.routers.search_router.concepts.should.equal @app.concepts
       @app.routers.search_router.view.should.equal @app.view
+
+    it "creates concepts router", ->
+      @app.start()
+      @app.routers.concepts_router.should.be.an.instanceof Coreon.Routers.ConceptsRouter
+      @app.routers.concepts_router.collection.should.equal @app.concepts
+      @app.routers.concepts_router.view.should.equal @app.view
 
     it "starts history", ->
       Backbone.history.start = sinon.spy()
-      @app.start app_root: "/app/root/"
-      Backbone.history.start.should.have.been.calledWith
-        pushState: true
-        root: "/app/root/"
-      
+      @app.start()
+      Backbone.history.start.should.have.been.calledWith pushState: true
 
   describe "#destroy", ->
 

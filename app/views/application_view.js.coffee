@@ -1,77 +1,77 @@
 #= require environment
-#= require templates/application
-#= require views/header_view
-#= require views/widgets_view
-#= require views/footer_view
-#= require views/login_view
-#= require views/password_prompt_view
+#= require views/composite_view
+#= require templates/application/application
+#= require views/layout/header_view
+#= require views/layout/footer_view
+#= require views/widgets/widgets_view
+#= require views/account/login_view
+#= require views/account/password_prompt_view
 
-class Coreon.Views.ApplicationView extends Backbone.View
+class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
-  template: Coreon.Templates["application"]
+  template: Coreon.Templates["application/application"]
 
   events: "click a[href^='/']": "navigate"
 
   initialize: ->
-    @header        = new Coreon.Views.HeaderView collection: @model.account.notifications
-    @widgets       = new Coreon.Views.WidgetsView
-    @footer        = new Coreon.Views.FooterView model: @model
-    @login         = new Coreon.Views.LoginView model: @model.account
-    @prompt        = new Coreon.Views.PasswordPromptView model: @model.account
-
-    @model.account.on "activated", @loginHandler, @
-    @model.account.on "deactivated", @logoutHandler, @
-    @model.account.on "unauthorized", @onUnauthorized, @
-    @model.account.on "reactivated", @onReactivated, @
-
+    super
+    @header = new Coreon.Views.Layout.HeaderView
+      collection: @model.notifications
+    @add @header
     @header.on "resize", @onResize, @
 
-  destroy: ->
-    @model.account.off null, null, @
+    @model.on "activated"    , @activate    , @
+    @model.on "deactivated"  , @deactivate  , @
+    @model.on "unauthorized" , @reauthorize , @
+    @model.on "reactivated"  , @reactivate  , @
 
   render: ->
     @$el.html @template()
-    @$("#coreon-top").prepend @header.render().$el
-    if not @model.account.get("active") then @renderLogin() else @renderApplication()
-    @
+    @prepend "#coreon-top", @header
+    if @model.get "active" then @activate() else @deactivate()
+    super
+
+  switch: (screen) ->
+    @destroy @screen if @screen
+    @screen = screen
+    @append "#coreon-main", screen.render()
 
   navigate: (event) ->
     Backbone.history.navigate $(event.target).attr("href"), trigger: true
     event.preventDefault()
 
-  loginHandler: ->
-    if @model.account.get("active")
-      @login.remove()
-      @login.undelegateEvents()
-      @renderApplication() 
-      @footer.delegateEvents()
-      @widgets.delegateEvents()
+  clear: ->
+    subviews = _(@subviews).without @header
+    if subviews.length > 0
+      @destroy.apply @, _(@subviews).without @header
 
-  logoutHandler: ->
-    @$("#coreon-main").empty()
-    @widgets.remove()
-    @widgets.undelegateEvents()
-    @footer.remove()
-    @footer.undelegateEvents()
-    @renderLogin()
-    @login.delegateEvents()
+  activate: ->
+    if @model.get "active"
+      @clear()
+      @widgets = new Coreon.Views.Widgets.WidgetsView
+      @append "#coreon-top", @widgets.render()
+      @footer = new Coreon.Views.Layout.FooterView
+        model: @model
+      @append @footer.render()
 
-  renderApplication: ->
-    @$("#coreon-top").append @widgets.render().$el
-    @$el.append @footer.render().$el
+  deactivate: ->
+    @clear()
+    @login = new Coreon.Views.Account.LoginView
+      model: @model
+    @append "#coreon-main", @login.render()
 
-  renderLogin: ->
-    @$el.append @login.render().$el
-
-  onUnauthorized: ->
-    @prompt.render().$el.appendTo @$("#coreon-modal")
+  reauthorize: ->
+    @destroy @prompt if @prompt
+    @prompt = new Coreon.Views.Account.PasswordPromptView
+      model: @model
+    @append "#coreon-modal", @prompt.render()
     @$("#coreon-password-password").focus()
 
-  onReactivated: ->
-    @prompt.remove()
-    dropped = @model.account.connections.filter (connection) ->
+  reactivate: ->
+    @destroy @prompt if @prompt
+    dropped = @model.connections.filter (connection) ->
       connection.get("xhr").status == 403 
     connection.resume() for connection in dropped
 
   onResize: ->
-    @login.$el.css "paddingTop": @header.$el.outerHeight()
+    @$("#coreon-main").css "paddingTop": @header.$el.outerHeight()

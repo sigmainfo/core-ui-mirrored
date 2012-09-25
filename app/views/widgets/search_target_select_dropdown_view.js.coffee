@@ -1,4 +1,5 @@
 #= require environment
+#= require views/simple_view
 #= require templates/widgets/search_target_select_dropdown
 
 KEYCODE =
@@ -7,7 +8,7 @@ KEYCODE =
   down: 40
   up: 38
 
-class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View 
+class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Coreon.Views.SimpleView 
 
   id: "coreon-search-target-select-dropdown"
 
@@ -20,7 +21,7 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
     "mouseout li": "onBlur"
 
   delegateEvents: ->
-    super()
+    super
     $(document).on "keydown", @onKeydown
 
   undelegateEvents: ->

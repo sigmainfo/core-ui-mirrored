@@ -20,8 +20,12 @@ class Api::Graph::ConceptsController < ApplicationController
       current_page: 1,
       hits: concepts.map do |concept|
         {
-          score: 1.0 / ( Text::Levenshtein.distance(concept.properties[0].value, params["search"]["query"]) + 1 ),
-          result: concept
+          score: if concept.properties.length > 0
+              1.0 / ( Text::Levenshtein.distance(concept.properties[0].value, params["search"]["query"]) + 1 )
+            else
+              0.5
+            end,
+          result: concept.serializable_hash(:include => :terms)
         }
       end.try(:sort) { |a, b| b[:score] <=> a[:score] }
     }

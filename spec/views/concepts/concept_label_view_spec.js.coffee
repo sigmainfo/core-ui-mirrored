@@ -14,20 +14,28 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     @view.destroy()
     Coreon.application = null
 
-  it "is a Backbone view", ->
-    @view.should.be.an.instanceof Backbone.View
+  it "is a simple view", ->
+    @view.should.be.an.instanceof Coreon.Views.SimpleView
 
   it "creates link as container", ->
     @view.$el.should.match "a.concept-label"
 
   describe "#initialize", ->
+
+    beforeEach ->
+      @concept = new Backbone.Model
     
     it "gets model by id", ->
-      concept = new Backbone.Model
       Coreon.application.concepts.getOrFetch = sinon.stub()
-      Coreon.application.concepts.getOrFetch.withArgs("1234abcf").returns concept
+      Coreon.application.concepts.getOrFetch.withArgs("1234abcf").returns @concept
       @view.initialize "1234abcf"
-      @view.model.should.equal concept
+      @view.model.should.equal @concept
+
+    it "sets model from options", ->
+      sinon.spy Coreon.application.concepts, "getOrFetch"
+      @view.initialize model: @concept
+      @view.model.should.equal @concept
+      Coreon.application.concepts.getOrFetch.should.not.have.been.called
     
   describe "#render", ->
     

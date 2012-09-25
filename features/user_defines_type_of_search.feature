@@ -1,4 +1,4 @@
-Feature: User defines type of search
+Feature: user defines type of search
   In order to search within the definition or for term values only
   As a user doing a search for concepts
   I want to select a search type

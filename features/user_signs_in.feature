@@ -1,4 +1,4 @@
-Feature: User signs in
+Feature: user signs in
   In order to access the repository
   As a user that starts a session
   I want to log in

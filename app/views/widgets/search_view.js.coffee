@@ -1,9 +1,10 @@
 #= require environment
+#= require views/composite_view
 #= require templates/widgets/search
 #= require models/search_type
 #= require views/widgets/search_target_select_view
 
-class Coreon.Views.Widgets.SearchView extends Backbone.View
+class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
   id: "coreon-search"
 
   template: Coreon.Templates["widgets/search"]
@@ -14,6 +15,7 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
     "blur input#coreon-search-query": "onBlur"
 
   initialize: ->
+    super
     @searchType = new Coreon.Models.SearchType
     @selector = new Coreon.Views.Widgets.SearchTargetSelectView
       model: @searchType
@@ -21,11 +23,11 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
     @searchType.on "change:selectedTypeIndex", @onChangeSelectedType, @ 
 
   delegateEvents: ->
-    super()
+    super
     @selector.delegateEvents()
 
   undelegateEvents: ->
-    super()
+    super
     @selector.undelegateEvents()
 
   render: ->

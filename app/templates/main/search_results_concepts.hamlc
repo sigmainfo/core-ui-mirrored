@@ -11,3 +11,5 @@
         %td.label.concept
         %td.super.concept
         %td.id= concept.id
+%p.actions
+  %a.show-all{href: "/concepts/search?#{@query}"}= I18n.t "search.results.concepts.show_all"

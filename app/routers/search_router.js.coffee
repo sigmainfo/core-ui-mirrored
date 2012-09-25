@@ -1,6 +1,6 @@
 #= require environment
 #= require backbone.queryparams
-#= require views/main/search_results_view 
+#= require views/search/search_results_view 
 #= require models/search
 
 class Coreon.Routers.SearchRouter extends Backbone.Router
@@ -18,26 +18,22 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
     searches =
       terms: new Coreon.Models.Search
         path: "terms/search"
-        params:
-          "search[query]": params.q
+        query: params.q
 
       concepts: new Coreon.Models.Search
         path: "concepts/search"
-        params:
-          "search[query]": params.q
+        query: params.q
 
       tnodes: new Coreon.Models.Search
         path: "tnodes/search"
-        params:
-          "search[query]": params.q
+        query: params.q
 
-    @searchResultsView = new Coreon.Views.Main.SearchResultsView
-      el: @view.$("#coreon-main")
-      model: searches
-
-    @searchResultsView.render()
+    @searchResultsView = new Coreon.Views.Search.SearchResultsView
+      models: searches
+    @view.switch @searchResultsView
 
     searches.terms.fetch()
     searches.tnodes.fetch()
     searches.concepts.fetch().done (data) =>
       @concepts.addOrUpdate _(data.hits).pluck "result"
+
