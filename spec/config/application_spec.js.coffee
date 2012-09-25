@@ -18,8 +18,7 @@ describe "Coreon.Application", ->
 
   it "enforces single instance", ->
     (-> new Coreon.Application).should.throw "Coreon application does already exist"
-    
-
+  
   describe "#initialize", ->
     
     it "sets default options", ->

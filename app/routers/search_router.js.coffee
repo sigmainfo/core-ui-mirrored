@@ -29,7 +29,7 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
         query: params.q
 
     @searchResultsView = new Coreon.Views.Search.SearchResultsView
-      model: searches
+      models: searches
     @view.switch @searchResultsView
 
     searches.terms.fetch()

@@ -15,20 +15,15 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
   initialize: ->
     super
-    @subviews  = [
-      @header  = new Coreon.Views.Layout.HeaderView collection: @model.notifications
-      @footer  = new Coreon.Views.Layout.FooterView model: @model
-      @widgets = new Coreon.Views.Widgets.WidgetsView
-      @login   = new Coreon.Views.Account.LoginView model: @model
-      @prompt  = new Coreon.Views.Account.PasswordPromptView model: @model
-    ]
+    @header = new Coreon.Views.Layout.HeaderView
+      collection: @model.notifications
+    @add @header
+    @header.on "resize", @onResize, @
 
     @model.on "activated"    , @activate    , @
     @model.on "deactivated"  , @deactivate  , @
     @model.on "unauthorized" , @reauthorize , @
     @model.on "reactivated"  , @reactivate  , @
-
-    @header.on "resize", @onResize, @
 
   render: ->
     @$el.html @template()
@@ -37,38 +32,46 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     super
 
   switch: (screen) ->
-    @clearScreen()
-    @append "#coreon-main", screen
-    @screen = screen.render()
-
-  clearScreen: ->
-    @screen.destroy() if @screen
+    @destroy @screen if @screen
+    @screen = screen
+    @append "#coreon-main", screen.render()
 
   navigate: (event) ->
     Backbone.history.navigate $(event.target).attr("href"), trigger: true
     event.preventDefault()
 
+  clear: ->
+    subviews = _(@subviews).without @header
+    if subviews.length > 0
+      @destroy.apply @, _(@subviews).without @header
+
   activate: ->
     if @model.get "active"
-      @login.remove()
-      @append "#coreon-top", @widgets
-      @append @footer
+      @clear()
+      @widgets = new Coreon.Views.Widgets.WidgetsView
+      @append "#coreon-top", @widgets.render()
+      @footer = new Coreon.Views.Layout.FooterView
+        model: @model
+      @append @footer.render()
 
   deactivate: ->
-    @clearScreen()
-    @widgets.remove()
-    @footer.remove()
-    @append "#coreon-main", @login
+    @clear()
+    @login = new Coreon.Views.Account.LoginView
+      model: @model
+    @append "#coreon-main", @login.render()
 
   reauthorize: ->
-    @append "#coreon-modal", @prompt
+    @destroy @prompt if @prompt
+    @prompt = new Coreon.Views.Account.PasswordPromptView
+      model: @model
+    @append "#coreon-modal", @prompt.render()
     @$("#coreon-password-password").focus()
 
   reactivate: ->
-    @prompt.remove()
+    @destroy @prompt if @prompt
     dropped = @model.connections.filter (connection) ->
       connection.get("xhr").status == 403 
     connection.resume() for connection in dropped
 
   onResize: ->
-    @login.$el.css "paddingTop": @header.$el.outerHeight()
+    @$("#coreon-main").css "paddingTop": @header.$el.outerHeight()

@@ -173,6 +173,70 @@ describe "Coreon.Views.CompositeView", ->
       finally
         Coreon.Views.SimpleView::undelegateEvents.restore()
 
+  describe "#remove", ->
+    
+    beforeEach ->
+      @view.subviews = [@subview1, @subview2]
+
+    context "with no arguments", ->
+
+      it "removes element", ->
+        @view.$el.remove = sinon.spy()
+        @view.remove()
+        @view.$el.remove.should.have.been.calledOnce
+
+    context "with arguments", ->
+
+      it "removes subview elements", ->
+        @view.$el.remove = sinon.spy()
+        @subview1.$el.remove = sinon.spy()
+        @subview2.$el.remove = sinon.spy()
+        @view.remove @subview2
+        @subview2.$el.remove.should.have.been.calledOnce
+        @view.$el.remove.should.not.have.been.called
+        @subview1.$el.remove.should.not.have.been.called
+
+      it "drops removed subviews", ->
+        @view.remove @subview2
+        @view.subviews.should.eql [@subview1]
+
+  describe "#destroy", ->
+    
+    beforeEach ->
+      @view.subviews = [@subview1, @subview2]
+
+    context "with no arguments", ->
+      
+      it "destroys subviews", ->
+        @subview1.destroy = sinon.spy()
+        @subview2.destroy = sinon.spy()
+        @view.destroy()
+        @subview1.destroy.should.have.been.calledOnce
+        @subview2.destroy.should.have.been.calledOnce
+
+      it "destroys itself", ->
+        @view.dissolve = sinon.spy()
+        @view.remove = sinon.spy()
+        @view.destroy()
+        @view.dissolve.should.have.been.calledOnce
+        @view.remove.should.have.been.calledOnce
+
+    context "with arguments", ->
+    
+      it "destroys given subviews only", ->
+        @view.dissolve = sinon.spy()
+        @view.remove = sinon.spy()
+        @subview1.destroy = sinon.spy()
+        @subview2.destroy = sinon.spy()
+        @view.destroy @subview2
+        @subview2.destroy.should.have.been.calledOnce
+        @view.dissolve.should.not.have.been.called
+        @view. remove.should.not.have.been.called
+        @subview1.destroy.should.not.have.been.called
+
+     it "drops destroyed subviews", ->
+        @view.destroy @subview2
+        @view.subviews.should.eql [@subview1]
 
   describe "#clear", ->
 

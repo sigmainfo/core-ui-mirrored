@@ -5,7 +5,7 @@
 #= require routers/search_router
 #= require routers/concepts_router
 
-class Coreon.Application extends Backbone.Model
+class Coreon.Application
 
   constructor: ->
     throw new Error "Coreon application does already exist" if Coreon.application?

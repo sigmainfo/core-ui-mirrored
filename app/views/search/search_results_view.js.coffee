@@ -8,9 +8,9 @@ class Coreon.Views.Search.SearchResultsView extends Coreon.Views.CompositeView
 
   className: "search-results"
 
-  initialize: ->
+  initialize: () ->
     super
-    for key, value of @model
+    for key, value of @options.models
       @[key] = new Coreon.Views.Search["SearchResults#{key[0].toUpperCase() + key[1..-1]}View"]
         model: value
       @subviews.push @[key]

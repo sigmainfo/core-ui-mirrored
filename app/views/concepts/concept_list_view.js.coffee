@@ -14,12 +14,10 @@ class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
     @model.on "change", @render, @
 
   render: () ->
-    @clear()
     @$el.html @template()
     for hit in @model.get "hits"
       @options.collection.addOrUpdate hit.result
       item = new Coreon.Views.Concepts.ConceptListItemView
         model: @options.collection.get hit.result._id
-      @$("table.concepts").append item.render().$el
-      @subviews.push item
-    @
+      @append ".concepts", item.render()
+    super

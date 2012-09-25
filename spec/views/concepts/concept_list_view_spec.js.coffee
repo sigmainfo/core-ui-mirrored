@@ -51,13 +51,6 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
       @view.$(".concept-list-item").eq(0).should.have ".concept-label"
       @view.options.collection.addOrUpdate.should.have.been.calledWith _id: "50506ebdd19879161b000019"
 
-    it "destroys existing subviews", ->
-      subview = new Coreon.Views.SimpleView()
-      subview.destroy = sinon.spy()
-      @view.append subview
-      @view.render()
-      subview.destroy.should.have.been.calledOnce
-
     it "is triggered by model changes", ->
       @view.render = sinon.spy()
       @view.initialize()

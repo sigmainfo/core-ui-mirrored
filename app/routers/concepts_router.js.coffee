@@ -19,9 +19,11 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       path: "concepts/search"
       query: params.q
       target: params.t
-    
-    @view.switch new Coreon.Views.Concepts.ConceptListView
+
+    results = new Coreon.Views.Concepts.ConceptListView
       model: search
       collection: @collection
+    
+    @view.switch results.render()
 
     search.fetch()

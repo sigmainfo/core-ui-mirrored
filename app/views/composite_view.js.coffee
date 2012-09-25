@@ -32,8 +32,23 @@ class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
         @add.apply @, views
         view.delegateEvents() for view in views
 
+  remove: (subviews...) ->
+    if subviews.length is 0
+      super
+    else
+      for subview in subviews
+        subview.remove() 
+        @drop subview
+
+  destroy: (subviews...) ->
+    if subviews.length is 0
+      subviews = @subviews
+      super
+    for subview in subviews
+      subview.destroy()
+      @drop subview
+
   clear: ->
-    subview.destroy() for subview in @subviews
-    @subviews = []
+    @destroy.apply @, @subviews
     super
     @
