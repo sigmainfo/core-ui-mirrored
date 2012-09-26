@@ -1,46 +1,58 @@
+# encoding: utf-8
+
 class UserBrowsesSingleConcept < Spinach::FeatureSteps
+  include AuthSteps
+  include Api::Graph::Factory
+
   Given 'a concept with id "50005aece3ba3f095c000001" and label "handgun"' do
-    pending 'step not implemented'
+    @handgun = create_concept_with_id "50005aece3ba3f095c000001", label: "handgun"
   end
 
   And 'this concept has an English definition with value "A portable firearm"' do
-    pending 'step not implemented'
+    @handgun.properties.create! key: "definition", value: "A portable firearm", lang: "en"
   end
 
   And 'this concept has an German definition with value "Tragbare Feuerwaffe"' do
-    pending 'step not implemented'
+    @handgun.properties.create! key: "definition", value: "Tragbare Feuerwaffe", lang: "de"
   end
 
   And 'this concept has a property "notes" with value "Bitte überprüfen!!!"' do
-    pending 'step not implemented'
+    @handgun.properties.create! key: "notes", value: "Bitte überprüfen!!!"
   end
 
   And 'this concept has the following English terms: "gun", "firearm", "shot gun", "musket"' do
-    pending 'step not implemented'
+    ["gun", "firearm", "shot gun", "musket"].each do |value|
+      @handgun.terms.create! value: value, lang: "en"
+    end
   end
 
   And 'this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    pending 'step not implemented'
+    ["Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"].each do |value|
+      @handgun.terms.create! value: value, lang: "de"
+    end
   end
 
   And 'the term "Schusswaffe" should have property "gender" with value "f"' do
-    pending 'step not implemented'
+    term = @handgun.terms.find_by value: "Schusswaffe"
+    term.properties.create! key: "gender", value: "f"
   end
 
   And 'given a broader concept with id "50005aece3ba3f095c000004" and a label "weapon"' do
-    pending 'step not implemented'
+    weapon = create_concept_with_id "50005aece3ba3f095c000004", label: "weapon"
+    @handgun.super_concepts << weapon
+    @handgun.save!
   end
 
   And 'given a narrower concept with id "50005aece3ba3f095c000002" and a label "pistol"' do
-    pending 'step not implemented'
+    pistol = create_concept_with_id "50005aece3ba3f095c000004", label: "pistol"
+    @handgun.sub_concepts << pistol
+    @handgun.save!
   end
 
   And 'given a narrower concept with id "50005aece3ba3f095c000005" and a label "revolver"' do
-    pending 'step not implemented'
-  end
-
-  And 'this concept is a subconcept of "handgun"' do
-    pending 'step not implemented'
+    revolver = create_concept_with_id "50005aece3ba3f095c000004", label: "revolver"
+    @handgun.sub_concepts << revolver
+    @handgun.save!
   end
 
   When 'I enter "gun" in the search field' do
@@ -132,14 +144,6 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should see the term "gun"' do
-    pending 'step not implemented'
-  end
-
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
-    pending 'step not implemented'
-  end
-
-  And 'I am logged in' do
     pending 'step not implemented'
   end
 end
