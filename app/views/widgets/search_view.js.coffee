@@ -19,6 +19,7 @@ class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
     @searchType = new Coreon.Models.SearchType
     @selector = new Coreon.Views.Widgets.SearchTargetSelectView
       model: @searchType
+    @add @selector
     @selector.on "focus", @onClickedToFocus, @
     @searchType.on "change:selectedTypeIndex", @onChangeSelectedType, @ 
 
@@ -32,7 +33,7 @@ class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.html @template label: I18n.t "search.submit"
-    @$("#coreon-search-query").after @selector.render().$el
+    @selector.render().insertAfter "#coreon-search-query"
     @
 
   submitHandler: (event) ->
