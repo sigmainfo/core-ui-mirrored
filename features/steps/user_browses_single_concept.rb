@@ -1,7 +1,7 @@
 # encoding: utf-8
-
 class UserBrowsesSingleConcept < Spinach::FeatureSteps
   include AuthSteps
+  include SearchSteps
   include Api::Graph::Factory
 
   Given 'a concept with id "50005aece3ba3f095c000001" and label "handgun"' do
@@ -55,32 +55,24 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     @handgun.save!
   end
 
-  When 'I enter "gun" in the search field' do
-    pending 'step not implemented'
-  end
-
-  And 'I click the search button' do
-    pending 'step not implemented'
-  end
-
   And 'I click on the label "handgun"' do
-    pending 'step not implemented'
+    page.find(".concepts a.concept-label", text: "handgun").click
   end
 
   Then 'I should be on the show concept page for id "50005aece3ba3f095c000001"' do
-    pending 'step not implemented'
+    current_path.should == "/concepts/50005aece3ba3f095c000001"
   end
 
   And 'I should see the label "handgun"' do
-    pending 'step not implemented'
+    page.find(".concept .label").should have_content("handgun")
   end
 
   And 'I should see id "50005aece3ba3f095c000001"' do
-    pending 'step not implemented'
+    page.find(".concept .id").should have_content("50005aece3ba3f095c000001")
   end
 
   And 'I should see the section "Broader & Narrower"' do
-    pending 'step not implemented'
+    page.should have_css(".section h3", text: "Broader & Narrower")
   end
 
   And 'this section should display "pistol" as being narrower' do

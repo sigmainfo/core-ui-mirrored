@@ -19,7 +19,6 @@ Feature: user browses single concept
     And given a broader concept with id "50005aece3ba3f095c000004" and a label "weapon"
     And given a narrower concept with id "50005aece3ba3f095c000002" and a label "pistol"
     And given a narrower concept with id "50005aece3ba3f095c000005" and a label "revolver"
-    And this concept is a subconcept of "handgun"
     When I enter "gun" in the search field
     And I click the search button
     And I click on the label "handgun"
@@ -48,3 +47,6 @@ Feature: user browses single concept
     Then the locale should be hidden
     When I click on the toggle of the locale "en"
     Then I should see the term "gun"
+
+  # Scenario: pin property locale
+    

@@ -54,6 +54,12 @@ en:
       props:
         definition: "Definition"
 
+    concept:
+      id: "ID"
+
+      values:
+        id: "#{{id}}"
+
   notification:
     label:
       info: "Info:"
