@@ -21,8 +21,10 @@ describe "config/environment", ->
     Coreon.Routers.should.exist
 
     Coreon.Views.should.exist
+    Coreon.Views.Layout.should.exist
     Coreon.Views.Widgets.should.exist
-    Coreon.Views.Main.should.exist
+    Coreon.Views.Account.should.exist
+    Coreon.Views.Search.should.exist
     Coreon.Views.Concepts.should.exist
 
 

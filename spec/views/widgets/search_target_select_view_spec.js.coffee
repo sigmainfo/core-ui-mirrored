@@ -12,8 +12,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
   afterEach ->
     I18n.t.restore()
 
-  it "is a Backbone view", ->
-    @view.should.be.an.instanceof Backbone.View 
+  it "is a composite view", ->
+    @view.should.be.an.instanceof Coreon.Views.CompositeView 
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-search-target-select"

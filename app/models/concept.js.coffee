@@ -6,8 +6,13 @@ class Coreon.Models.Concept extends Backbone.Model
     properties: []
 
   label: ->
-    label = _(@get "properties").find (prop) -> prop.key is "label"
-    if label? then label.value else @id
+    @propLabel() or @termLabel() or @id
+
+  propLabel: ->
+    _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
+
+  termLabel: ->
+    @get("terms")?[0]?.value
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options

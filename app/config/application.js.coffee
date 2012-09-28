@@ -3,6 +3,7 @@
 #= require collections/concepts
 #= require views/application_view
 #= require routers/search_router
+#= require routers/concepts_router
 
 class Coreon.Application
 
@@ -14,7 +15,6 @@ class Coreon.Application
   initialize: (@options = {}) ->
     _(@options).defaults
       el         : "#app"
-      app_root   : "/"
       auth_root  : "/api/auth/"
       graph_root : "/api/graph/"
     
@@ -26,7 +26,7 @@ class Coreon.Application
     _(@options).extend options
 
     @view = new Coreon.Views.ApplicationView
-      model: @
+      model: @account
       el: @options.el
 
     @view.render()
@@ -35,10 +35,11 @@ class Coreon.Application
       search_router: new Coreon.Routers.SearchRouter
         view: @view
         concepts: @concepts
+      concepts_router: new Coreon.Routers.ConceptsRouter
+        collection: @concepts
+        view: @view
 
-    Backbone.history.start
-      pushState: true
-      root: @options.app_root
+    Backbone.history.start pushState: true
     @
 
   destroy: ->

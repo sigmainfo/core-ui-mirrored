@@ -1,8 +1,9 @@
 #= require environment
+#= require views/composite_view
 #= require templates/widgets/search_target_select
 #= require views/widgets/search_target_select_dropdown_view
 
-class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
+class Coreon.Views.Widgets.SearchTargetSelectView extends Coreon.Views.CompositeView
 
   id: "coreon-search-target-select"
 
@@ -13,6 +14,7 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
     "click .hint": "onFocus"
 
   initialize: ->
+    super
     @model.on "change", @render, @
     @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @model 
 
@@ -21,11 +23,11 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
     @
 
   delegateEvents: ->
-    super()
+    super
     @dropdown.delegateEvents()
 
   undelegateEvents: ->
-    super()
+    super
     @dropdown.undelegateEvents()
 
   showDropdown: (event) ->
