@@ -28,13 +28,6 @@ describe "Coreon.Views.Concepts.ConceptListItemView", ->
       @view.$el.should.have ".id"
       @view.$(".id").should.have.text "1234"
 
-    it "destroys previously created subviews", ->
-      @view.render()
-      label = @view.subviews[0]
-      label.destroy = sinon.spy()
-      @view.render()
-      label.destroy.should.have.been.calledOnce
-
     it "renders definition", ->
       @view.model.set "properties", [
         key: "definition"

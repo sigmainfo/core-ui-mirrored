@@ -68,15 +68,18 @@ describe "Coreon.Routers.ConceptsRouter", ->
   describe "#show", ->
 
     beforeEach ->
-      @router.collection.getOrFetch = sinon.stub()
+      sinon.stub Coreon.Models.Concept, "find"
       @concept = _( new Backbone.Model ).extend
         label: -> "concept #123"
+
+    afterEach ->
+      Coreon.Models.Concept.find.restore()
     
     it "is routed", ->
       @router.routes["concepts/:id"].should.equal "show"
       
     it "renders concept details", ->
-      @router.collection.getOrFetch.withArgs("123").returns @concept
+      Coreon.Models.Concept.find.withArgs("123").returns @concept
       @router.show "123"
       @screen.should.be.an.instanceof Coreon.Views.Concepts.ConceptView
       @screen.model.should.equal @concept

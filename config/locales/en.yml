@@ -56,6 +56,7 @@ en:
 
     concept:
       id: "ID"
+      tree: "Broader & Narrower"
 
       values:
         id: "#{{id}}"

@@ -34,6 +34,6 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
 
     searches.terms.fetch()
     searches.tnodes.fetch()
-    searches.concepts.fetch().done (data) =>
-      @concepts.addOrUpdate _(data.hits).pluck "result"
+    searches.concepts.fetch().done (data) ->
+      Coreon.Models.Concept.upsert _(data.hits).pluck "result"
 

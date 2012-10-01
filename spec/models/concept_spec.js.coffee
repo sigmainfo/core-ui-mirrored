@@ -10,8 +10,20 @@ describe "Coreon.Models.Concept", ->
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
 
-  it "has an empty set of properties by default", ->
-    @model.get("properties").should.eql [] 
+  it "is an accumulating model", ->
+    Coreon.Models.Concept.find.should.equal Coreon.Modules.Accumulation.find
+
+  it "has an URL root", ->
+    @model.urlRoot.should.equal "concepts"
+
+  context "defaults", ->
+
+    it "has an empty set of properties", ->
+      @model.get("properties").should.eql [] 
+
+    it "has empty sets for superconcept and subconcept ids", ->
+      @model.get("super_concept_ids").should.eql []
+      @model.get("sub_concept_ids").should.eql []
 
   describe "#label", ->
     

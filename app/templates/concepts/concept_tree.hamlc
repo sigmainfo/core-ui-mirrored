@@ -1,0 +1,5 @@
+%h3.section-toggle= I18n.t "concepts.concept.tree"
+.section
+  %ul.super
+  %p.self= @concept.label()
+  %ul.sub

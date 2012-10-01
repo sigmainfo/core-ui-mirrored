@@ -32,5 +32,5 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   show: (id) ->
     screen = new Coreon.Views.Concepts.ConceptView
-      model: @collection.getOrFetch id
+      model: Coreon.Models.Concept.find id
     @view.switch screen

@@ -44,13 +44,13 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'given a narrower concept with id "50005aece3ba3f095c000002" and a label "pistol"' do
-    pistol = create_concept_with_id "50005aece3ba3f095c000004", label: "pistol"
+    pistol = create_concept_with_id "50005aece3ba3f095c000002", label: "pistol"
     @handgun.sub_concepts << pistol
     @handgun.save!
   end
 
   And 'given a narrower concept with id "50005aece3ba3f095c000005" and a label "revolver"' do
-    revolver = create_concept_with_id "50005aece3ba3f095c000004", label: "revolver"
+    revolver = create_concept_with_id "50005aece3ba3f095c000005", label: "revolver"
     @handgun.sub_concepts << revolver
     @handgun.save!
   end
@@ -72,19 +72,19 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see the section "Broader & Narrower"' do
-    page.should have_css(".section h3", text: "Broader & Narrower")
+    page.should have_css("h3.section-toggle", text: "Broader & Narrower")
   end
 
   And 'this section should display "pistol" as being narrower' do
-    pending 'step not implemented'
+    page.should have_css(".sub .concept-label", text: "pistol")
   end
 
   And 'it should display "revolver" as being narrower' do
-    pending 'step not implemented'
+    page.should have_css(".sub .concept-label", text: "revolver")
   end
 
   And 'it should display "weapon" as being broader' do
-    pending 'step not implemented'
+    page.should have_css(".super .concept-label", text: "weapon")
   end
 
   And 'I should see the section "Properties"' do

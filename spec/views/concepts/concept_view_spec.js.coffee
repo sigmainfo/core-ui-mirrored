@@ -1,13 +1,13 @@
 #= require spec_helper
 #= require views/concepts/concept_view
+#= require models/concept
 
 describe "Coreon.Views.ConceptView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Concepts.ConceptView
-      model: _( new Backbone.Model ).extend
-        label: -> "Concept #1"
+      model: new Coreon.Models.Concept
 
   afterEach ->
     I18n.t.restore()
@@ -17,6 +17,13 @@ describe "Coreon.Views.ConceptView", ->
 
   it "creates container", ->
     @view.$el.should.match ".concept"
+
+  describe "#initialize", ->
+  
+    it "creates tree view", ->
+      @view.initialize()
+      @view.tree.should.be.an.instanceof Coreon.Views.Concepts.ConceptTreeView
+      @view.tree.model.should.equal @view.model
 
   describe "#render", ->
 
@@ -37,7 +44,7 @@ describe "Coreon.Views.ConceptView", ->
       @view.$el.should.have "h3.id"
       @view.$("h3.id").text().should.match /^\s*ID\s+#1234\s*$/
 
-    xit "renders concept tree", ->
+    it "renders tree", ->
       @view.render()
       @view.$el.should.have ".concept-tree"
       @view.$(".concept-tree").should.have ".super"
