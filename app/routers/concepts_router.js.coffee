@@ -26,7 +26,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       model: search
       collection: @collection
     
-    @view.switch results.render()
+    @view.switch results
 
     search.fetch()
 
