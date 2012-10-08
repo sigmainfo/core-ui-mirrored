@@ -63,3 +63,4 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       @view.$(".sub .concept-label").eq(0).should.have.text "84"
       @view.$(".sub .concept-label").eq(1).should.have.text "53"
       @view.$(".sub .concept-label").eq(2).should.have.text "56"
+
