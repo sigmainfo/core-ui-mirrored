@@ -1,0 +1,7 @@
+%ul.index
+  - for label, index in @labels
+    %li
+      %a{href: "javascript:void(0)", "data-index": index}= label
+%ul.values
+  - for value in @values
+    %li= value

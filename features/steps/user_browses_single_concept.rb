@@ -88,23 +88,26 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see the section "Properties"' do
-    pending 'step not implemented'
+    page.should have_css("h3.section-toggle", text: "Properties")
   end
 
-  And 'it should have an English property "Definition" with value "A portable firearm"' do
-    pending 'step not implemented'
+  And 'it should have an English property "definition" with value "A portable firearm"' do
+    @td = page.find("th", text: "definition").find :xpath, "parent::*/td"
+    @td.find("ul.index li.selected").text.should == "en"
+    @td.find("ul.values li").text.should == "A portable firearm"
   end
 
   When 'I click on "de" for that property' do
-    pending 'step not implemented'
+    @td.find("ul.index li a", text: "de").click
   end
 
   Then 'the value should have changed to "Tragbare Feuerwaffe"' do
-    pending 'step not implemented'
+    @td.find("ul.values li").text.should == "Tragbare Feuerwaffe"
   end
 
   And 'it should have a property "notes" with value "Bitte überprüfen!!!"' do
-    pending 'step not implemented'
+    @td = page.find("th", text: "notes").find :xpath, "parent::*/td"
+    @td.text.should == "Bitte überprüfen!!!"
   end
 
   And 'I should see a section for locale "en"' do

@@ -21,9 +21,12 @@ describe "Coreon.Views.ConceptView", ->
   describe "#initialize", ->
   
     it "creates tree view", ->
-      @view.initialize()
       @view.tree.should.be.an.instanceof Coreon.Views.Concepts.ConceptTreeView
       @view.tree.model.should.equal @view.model
+
+    it "creates properties view", ->
+      @view.props.should.be.an.instanceof Coreon.Views.Properties.PropertiesView
+      @view.props.model.should.equal @view.model
 
   describe "#render", ->
 
@@ -48,4 +51,9 @@ describe "Coreon.Views.ConceptView", ->
       @view.render()
       @view.$el.should.have ".concept-tree"
       @view.$(".concept-tree").should.have ".super"
+
+    it "renders properties", ->
+      @view.render()
+      @view.$el.should.have ".properties"
+      @view.$(".properties").should.have ".section table"
 

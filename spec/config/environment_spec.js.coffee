@@ -26,7 +26,7 @@ describe "config/environment", ->
     Coreon.Views.Account.should.exist
     Coreon.Views.Search.should.exist
     Coreon.Views.Concepts.should.exist
-
+    Coreon.Views.Properties.should.exist
 
   it "makes helpers available to template context", ->
     HAML.globals().should.equal Coreon.Helpers

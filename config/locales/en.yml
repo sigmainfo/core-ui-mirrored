@@ -60,6 +60,9 @@ en:
 
       values:
         id: "#{{id}}"
+  
+  properties:
+    title: "Properties"
 
   notification:
     label:

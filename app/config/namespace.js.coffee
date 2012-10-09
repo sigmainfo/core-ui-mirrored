@@ -10,5 +10,6 @@ Coreon.Views.Layout        ?= {}
 Coreon.Views.Widgets       ?= {}
 Coreon.Views.Account       ?= {}
 Coreon.Views.Notifications ?= {}
-Coreon.Views.Search          ?= {}
+Coreon.Views.Search        ?= {}
 Coreon.Views.Concepts      ?= {}
+Coreon.Views.Properties    ?= {}
