@@ -1,2 +1,2 @@
-%h3.section-toggle= @title
-.section
+%h3.section-toggle{class: "collapsed" if @collapsed}= @title
+.section{style: "display: none;" if @collapsed}

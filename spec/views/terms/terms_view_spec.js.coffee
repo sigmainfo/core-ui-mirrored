@@ -25,8 +25,8 @@ describe "Coreon.Views.Terms.TermsView", ->
         { value: "Pistole" , lang: "de" }
       ], silent: true
       @view.render()
-      @view.$(".section-toggle").length.should.equal 2
-      @view.$(".section-toggle").eq(0).should.have.text "en"
-      @view.$(".section-toggle").eq(1).should.have.text "de"
-      @view.$(".section").eq(0).should.contain "gun"
+      @view.$(".language > .section-toggle").length.should.equal 2
+      @view.$(".language > .section-toggle").eq(0).should.have.text "en"
+      @view.$(".language > .section-toggle").eq(1).should.have.text "de"
+      @view.$(".language > .section").eq(0).should.contain "gun"
     

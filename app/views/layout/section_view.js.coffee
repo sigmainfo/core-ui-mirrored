@@ -4,18 +4,28 @@
 
 class Coreon.Views.Layout.SectionView extends Coreon.Views.CompositeView
 
-  sectionTitle: ""
-
   layout: Coreon.Templates["layout/section"]
 
-  events:
-    "click .section-toggle": "toggle"
+  events: {}
+
+  sectionTitle: ""
+
+  delegateEvents: ->
+    super
+    @$el.on "click.toggle_#{@cid}", ".section-toggle", @toggle
+
+  undelegateEvents: ->
+    super
+    @$el.off ".toggle_#{@cid}"
 
   render: ->
-    @$el.html @layout title: _(@).result "sectionTitle"
+    @$el.html @layout
+      title: _(@).result "sectionTitle"
+      collapsed: @options.collapsed
     super
     
-  toggle: ->
-    @$(".section-toggle").toggleClass "collapsed"
-    @$(".section").slideToggle()
-    @
+  toggle: (event) ->
+    toggle = $(event.target)
+    toggle.siblings(".section-toggle").andSelf().toggleClass "collapsed"
+    toggle.siblings(".section").slideToggle()
+    event.stopPropagation()

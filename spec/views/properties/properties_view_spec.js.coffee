@@ -39,6 +39,17 @@ describe "Coreon.Views.Properties.PropertiesView", ->
       @view.$(".section table tr").size().should.equal 2
       @view.$(".section table tr th").eq(0).should.have.text "definition"
       @view.$(".section table tr th").eq(1).should.have.text "notes"
+    
+    it "allows passing data as option", ->
+      @view.options.properties =[
+        { key: "definition" , value: "A portable weapon"    }
+        { key: "definition" , value: "Tragbare Schusswaffe" }
+        { key: "notes"      , value: "DO NOT USE!"          }
+      ]
+      @view.render()
+      @view.$(".section table tr").size().should.equal 2
+      @view.$(".section table tr th").eq(0).should.have.text "definition"
+      @view.$(".section table tr th").eq(1).should.have.text "notes"
 
 
     context " single value for key", ->

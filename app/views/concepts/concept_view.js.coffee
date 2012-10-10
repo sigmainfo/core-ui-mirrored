@@ -19,5 +19,7 @@ class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.html @template concept: @model
-    @append @tree, @props, @terms
+    @append @tree if @model.get("super_concept_ids")?.length + @model.get("sub_concept_ids")?.length > 0
+    @append @props if @model.get("properties")?.length > 0
+    @append @terms
     super

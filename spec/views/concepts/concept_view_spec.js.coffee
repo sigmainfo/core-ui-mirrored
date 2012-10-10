@@ -8,9 +8,11 @@ describe "Coreon.Views.ConceptView", ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Concepts.ConceptView
       model: new Coreon.Models.Concept
+    sinon.stub Coreon.Models.Concept, "find", (id) -> new Coreon.Models.Concept _id: id
 
   afterEach ->
     I18n.t.restore()
+    Coreon.Models.Concept.find.restore()
 
   it "is a composite view", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
@@ -52,18 +54,33 @@ describe "Coreon.Views.ConceptView", ->
       @view.$("h3.id").text().should.match /^\s*ID\s+#1234\s*$/
 
     it "renders tree", ->
+      @view.model.set "super_concept_ids", ["1234"]
       @view.render()
       @view.$el.should.have ".concept-tree"
       @view.$(".concept-tree").should.have ".super"
 
+    it "renders tree only when applicable", ->
+      @view.model.set
+        sub_concept_ids: []
+        super_concept_ids: []
+      @view.render()
+      @view.$el.should.not.have ".concept-tree"
+
     it "renders properties", ->
+      @view.model.set "properties", [{key: "label", value: "handgun"}], silent: true
       @view.render()
       @view.$el.should.have ".properties"
       @view.$(".properties").should.have ".section table"
 
+    it "renders properties only when applicable", ->
+      @view.model.set "properties", [], silent: true
+      @view.render()
+      @view.$el.should.not.have ".properties"
+      
+
     it "renders terms", ->
       @view.model.set "terms", [
-        { lang: "de", value: "Puffe" }
+        { lang: "de", value: "Puffe", properties: [] }
       ], silent: true
       @view.render()
       @view.$el.should.have ".terms"

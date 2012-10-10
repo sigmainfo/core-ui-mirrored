@@ -4,6 +4,14 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   include SearchSteps
   include Api::Graph::Factory
 
+  def click_on_toggle(name)
+    find(:xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']").click
+  end
+
+  def section_for(name)
+    find :xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']/following-sibling::*[contains(@class, 'section')]"
+  end
+
   Given 'a concept with id "50005aece3ba3f095c000001" and label "handgun"' do
     @handgun = create_concept_with_id "50005aece3ba3f095c000001", label: "handgun"
   end
@@ -112,7 +120,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   And 'I should see a section for locale "en"' do
     page.should have_css("h3.section-toggle", text: "en")
-    @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and contains(text(), 'en')]/following-sibling::div[contains(@class, 'section')]"
+    @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and text()='en']/following-sibling::div[contains(@class, 'section')]"
   end
 
   And 'it shoud have the following terms "gun", "firearm", "shot gun", "musket"' do
@@ -132,19 +140,41 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     end
   end
 
-  And 'the term "Schusswaffe" should have a property "gender" with value "f"' do
-    pending 'step not implemented'
+  When 'I click on toggle "Properties" of term "Schusswaffe"' do
+    page.find(:xpath, "//*[contains(@class, 'value') and text() = 'Schusswaffe']/following-sibling::*[contains(@class, 'properties')]/*[contains(@class, 'section-toggle')]").click
+  end
+
+  Then 'I should see property "gender" with value "f"' do
+    page.should have_css(".term .properties th", text: "gender")
+    page.find(:xpath, "//th[text() = 'gender']/following-sibling::td").text.should == "f"
   end
 
   When 'I click on the toggle of the locale "en"' do
-    pending 'step not implemented'
+    click_on_toggle "en"
   end
 
   Then 'the locale should be hidden' do
-    pending 'step not implemented'
+    section_for("en").should_not be_visible
   end
 
   Then 'I should see the term "gun"' do
-    pending 'step not implemented'
+    page.should have_css(".term .value", text: "gun")
+  end
+
+  When 'I click on the toggle "Broader & Narrower"' do
+    page.execute_script "$('.notification .hide').click()"
+    click_on_toggle "Broader & Narrower"
+  end
+
+  Then 'the concept tree should be hidden' do
+    section_for("Broader & Narrower").should_not be_visible
+  end
+
+  When 'I click on the toggle "Properties"' do
+    click_on_toggle "Properties"
+  end
+
+  Then 'the concept properties should be hidden' do
+    section_for("Properties").should_not be_visible
   end
 end

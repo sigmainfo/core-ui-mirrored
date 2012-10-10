@@ -24,3 +24,19 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.render()
       @view.$el.should.have "h4.value"
       @view.$("h4.value").should.have.text "gat"
+
+    it "renders properties", ->
+      @view.options.term.properties = [
+        { key: "foo", value: "bar" }
+      ]
+      @view.render()
+      @view.$el.should.have ".properties"
+      @view.$el.should.have ".properties .section-toggle"
+      @view.$(".section-toggle").should.have.text "Properties"
+      @view.$(".section-toggle").should.have.class "collapsed"
+      @view.$(".section table th").should.have.text "foo"
+
+    it "renders properties only when not empty", ->
+      @view.options.term.properties = []
+      @view.render()
+      @view.$el.should.not.have ".properties"

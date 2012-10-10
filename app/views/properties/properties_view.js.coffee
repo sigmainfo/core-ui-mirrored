@@ -17,7 +17,7 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
 
   render: ->
     super
-    props = _(@model.get "properties").groupBy "key"
+    props = @data()
     keys = ( key for key of props )
     @$(".section").html @template keys: keys
     cells = @$("tr td")
@@ -34,6 +34,9 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
       @selector
         labels: (prop.lang or index + 1 for prop, index in props)
         values: (prop.value for prop in props)
+
+  data: ->
+    _(@options.properties or @model.get "properties").groupBy "key"
 
   select: (event) ->
     target = $(event.target)

@@ -1,4 +1,3 @@
-@wip
 Feature: user browses single concept
   In order to get all available information regarding a single concept
   As a user that browses the repository
@@ -38,14 +37,24 @@ Feature: user browses single concept
     And it shoud have the following terms "gun", "firearm", "shot gun", "musket"
     And I should see a section for locale "de"
     And it shoud have the following terms "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
-    And the term "Schusswaffe" should have a property "gender" with value "f"
+    When I click on toggle "Properties" of term "Schusswaffe"
+    Then I should see property "gender" with value "f"
 
   Scenario: toggle sections
     Given a concept with id "50005aece3ba3f095c000001" and label "handgun"
+    And this concept has a property "notes" with value "Bitte überprüfen!!!"
     And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
+    And given a broader concept with id "50005aece3ba3f095c000004" and a label "weapon"
+    When I enter "gun" in the search field
+    And I click the search button
+    And I click on the label "handgun"
     When I click on the toggle of the locale "en"
     Then the locale should be hidden
     When I click on the toggle of the locale "en"
     Then I should see the term "gun"
+    When I click on the toggle "Broader & Narrower"
+    Then the concept tree should be hidden
+    When I click on the toggle "Properties"
+    Then the concept properties should be hidden
 
   #Scenario: browse attributes
