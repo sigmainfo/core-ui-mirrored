@@ -7,7 +7,7 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
 
   className: "properties"
 
-  sectionTitle: "properties.title"
+  sectionTitle: -> I18n.t "properties.title"
 
   template: Coreon.Templates["properties/properties"]
   selector: Coreon.Templates["properties/selector"]

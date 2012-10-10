@@ -24,10 +24,14 @@ describe "Coreon.Views.Layout.SectionView", ->
       @view.render().should.equal @view
   
     it "renders title", ->
-      I18n.t.withArgs("concepts.concept.tree").returns "Broader & Narrower"
-      @view.sectionTitle = "concepts.concept.tree"
+      @view.sectionTitle = "Broader & Narrower"
       @view.render()
       @view.$el.should.have ".section-toggle"
+      @view.$(".section-toggle").should.have.text "Broader & Narrower"
+
+    it "renders title from function", ->
+      @view.sectionTitle = -> ["Broader", "&", "Narrower"].join " "
+      @view.render()
       @view.$(".section-toggle").should.have.text "Broader & Narrower"
 
     it "renders section container", ->

@@ -9,6 +9,7 @@ class Coreon.Models.Concept extends Backbone.Model
 
   defaults:
     properties: []
+    terms: []
     super_concept_ids: []
     sub_concept_ids: []
 

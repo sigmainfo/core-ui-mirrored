@@ -111,19 +111,25 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see a section for locale "en"' do
-    pending 'step not implemented'
+    page.should have_css("h3.section-toggle", text: "en")
+    @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and contains(text(), 'en')]/following-sibling::div[contains(@class, 'section')]"
   end
 
   And 'it shoud have the following terms "gun", "firearm", "shot gun", "musket"' do
-    pending 'step not implemented'
+    ["gun", "firearm", "shot gun", "musket"].each do |term|
+      @lang.should have_content(term)
+    end
   end
 
   And 'I should see a section for locale "de"' do
-    pending 'step not implemented'
+    page.should have_css("h3.section-toggle", text: "de")
+    @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and text()='de']/following-sibling::div[contains(@class, 'section')]"
   end
 
   And 'it shoud have the following terms "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    pending 'step not implemented'
+    ["Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"].each do |term|
+      @lang.should have_content(term)
+    end
   end
 
   And 'the term "Schusswaffe" should have a property "gender" with value "f"' do

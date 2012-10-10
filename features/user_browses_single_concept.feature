@@ -48,5 +48,4 @@ Feature: user browses single concept
     When I click on the toggle of the locale "en"
     Then I should see the term "gun"
 
-  # Scenario: pin property locale
-    
+  #Scenario: browse attributes

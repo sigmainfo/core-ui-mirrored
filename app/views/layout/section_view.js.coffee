@@ -4,13 +4,15 @@
 
 class Coreon.Views.Layout.SectionView extends Coreon.Views.CompositeView
 
+  sectionTitle: ""
+
   layout: Coreon.Templates["layout/section"]
 
   events:
     "click .section-toggle": "toggle"
 
   render: ->
-    @$el.html @layout title: I18n.t @sectionTitle
+    @$el.html @layout title: _(@).result "sectionTitle"
     super
     
   toggle: ->

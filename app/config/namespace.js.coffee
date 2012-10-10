@@ -13,3 +13,4 @@ Coreon.Views.Notifications ?= {}
 Coreon.Views.Search        ?= {}
 Coreon.Views.Concepts      ?= {}
 Coreon.Views.Properties    ?= {}
+Coreon.Views.Terms         ?= {}

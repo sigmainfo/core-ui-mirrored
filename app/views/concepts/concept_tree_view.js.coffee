@@ -9,7 +9,7 @@ class Coreon.Views.Concepts.ConceptTreeView extends Coreon.Views.Layout.SectionV
 
   template: Coreon.Templates["concepts/concept_tree"]
 
-  sectionTitle: "concepts.concept.tree"
+  sectionTitle: -> I18n.t "concepts.concept.tree"
 
   render: ->
     super

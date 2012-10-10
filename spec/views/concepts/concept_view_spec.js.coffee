@@ -28,6 +28,10 @@ describe "Coreon.Views.ConceptView", ->
       @view.props.should.be.an.instanceof Coreon.Views.Properties.PropertiesView
       @view.props.model.should.equal @view.model
 
+    it "creates terms view", ->
+      @view.terms.should.be.an.instanceof Coreon.Views.Terms.TermsView
+      @view.terms.model.should.equal @view.model
+
   describe "#render", ->
 
     it "can be chained", ->
@@ -57,3 +61,10 @@ describe "Coreon.Views.ConceptView", ->
       @view.$el.should.have ".properties"
       @view.$(".properties").should.have ".section table"
 
+    it "renders terms", ->
+      @view.model.set "terms", [
+        { lang: "de", value: "Puffe" }
+      ], silent: true
+      @view.render()
+      @view.$el.should.have ".terms"
+      @view.$(".terms").should.have ".section"
