@@ -1,4 +1,3 @@
 %h2.label= @concept.label()
-%h3.id
-  %span.label= I18n.t "concepts.concept.id"
-  = I18n.t "concepts.concept.values.id", id: @concept.id
+%h4.system-info-toggle= I18n.t "concept.info"
+!= @info

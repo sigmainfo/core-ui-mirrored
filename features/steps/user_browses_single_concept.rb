@@ -17,15 +17,15 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this concept has an English definition with value "A portable firearm"' do
-    @handgun.properties.create! key: "definition", value: "A portable firearm", lang: "en"
+    @prop = @handgun.properties.create! key: "definition", value: "A portable firearm", lang: "en"
   end
 
   And 'this concept has an German definition with value "Tragbare Feuerwaffe"' do
-    @handgun.properties.create! key: "definition", value: "Tragbare Feuerwaffe", lang: "de"
+    @prop = @handgun.properties.create! key: "definition", value: "Tragbare Feuerwaffe", lang: "de"
   end
 
   And 'this concept has a property "notes" with value "Bitte überprüfen!!!"' do
-    @handgun.properties.create! key: "notes", value: "Bitte überprüfen!!!"
+    @prop = @handgun.properties.create! key: "notes", value: "Bitte überprüfen!!!"
   end
 
   And 'this concept has the following English terms: "gun", "firearm", "shot gun", "musket"' do
@@ -63,6 +63,38 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     @handgun.save!
   end
 
+  And 'this property has an attribute "author" of "William"' do
+    @prop[:author] = "William"
+    @prop.save!
+  end
+
+  And 'this concept has a property "notes" with value "I\'m not dead. Am I?"' do
+    @prop = @handgun.properties.create! key: "notes", value: "I\'m not dead. Am I?"
+  end
+
+  And 'this property has an attribute "author" of "Nobody"' do
+    @prop[:author] = "Nobody"
+    @prop.save!
+  end
+
+  And 'this concept has a term "shot gun"' do
+    @term = @handgun.terms.create! value: "shot gun", lang: "en"
+  end
+
+  And 'this term has an attribute "legacy_id" of "543"' do
+    @term["legacy_id"] = "543"
+    @term.save!
+  end
+
+  And 'this term has a property "parts of speach" with value "noun"' do
+    @prop = @term.properties.create! key: "parts of speach", value: "noun"
+  end
+
+  And 'this property has an attribute "author" of "Mr. Blake"' do
+    @prop[:author] = "Mr. Blake"
+    @prop.save!
+  end
+
   And 'I click on the label "handgun"' do
     page.find(".concepts a.concept-label", text: "handgun").click
   end
@@ -73,10 +105,6 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   And 'I should see the label "handgun"' do
     page.find(".concept .label").should have_content("handgun")
-  end
-
-  And 'I should see id "50005aece3ba3f095c000001"' do
-    page.find(".concept .id").should have_content("50005aece3ba3f095c000001")
   end
 
   And 'I should see the section "Broader & Narrower"' do
@@ -176,5 +204,51 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   Then 'the concept properties should be hidden' do
     section_for("Properties").should_not be_visible
+  end
+
+  When 'I click the toggle "System Info" on the concept' do
+    page.execute_script "$('.notification .hide').click()"
+    page.find(:xpath, "//*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
+  end
+
+  Then 'I should see "id" with value "50005aece3ba3f095c000001"' do
+    page.find(:xpath, "//th[text()='id']/following-sibling::td").should have_content("50005aece3ba3f095c000001")
+  end
+
+  And 'I should see "author" with value "William" for property "notes"' do
+    page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td//li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("William")
+  end
+
+  When 'I click on index item "2" for property "notes"' do
+    page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td/ul[@class='index']/li/a[@data-index='1']").click
+  end
+
+  Then 'I should see "author" with value "Nobody" for property "notes"' do
+    page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td/ul[@class='values']/li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("Nobody")
+  end
+
+  Then 'I should not see information for "id" or "author"' do
+    page.should_not have_css(".system-info th", text: "id")
+    page.should_not have_css(".system-info th", text: "author")
+  end
+
+  When 'I click the toggle "System Info" on the term "shot gun"' do
+    page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
+  end
+
+  Then 'I should see "legacy_id" with value "543" for this term' do
+    info = page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'system-info']")
+    info.should have_css("th", text: "legacy_id")
+    info.should have_css("td", text: "543")
+  end
+
+  When 'I click on the toggle "Properties" for this term' do
+    page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'properties']/*[contains(@class, 'section-toggle')]").click
+  end
+
+  Then 'I should see "author" with value "Mr. Blake" for property "parts of speach"' do
+    td = page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'properties']//th[text() = 'parts of speach']/following-sibling::td")
+    td.should have_css(".system-info th", text: "author") 
+    td.should have_css(".system-info td", text: "Mr. Blake") 
   end
 end

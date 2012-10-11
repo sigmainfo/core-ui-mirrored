@@ -13,7 +13,7 @@ class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
   drop: (views...) ->
     @subviews = _(@subviews).difference views
   
-  for method in ["render", "delegateEvents", "undelegateEvents", "destroy"]
+  for method in ["render", "delegateEvents", "undelegateEvents"]
     do (method) ->
       CompositeView::[method] = ->
         subview[method].apply subview, arguments for subview in @subviews

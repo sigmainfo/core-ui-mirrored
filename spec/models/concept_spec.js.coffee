@@ -5,7 +5,7 @@
 describe "Coreon.Models.Concept", ->
 
   beforeEach ->
-    @model = new Coreon.Models.Concept id: "123"
+    @model = new Coreon.Models.Concept _id: "123"
   
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
@@ -41,6 +41,17 @@ describe "Coreon.Models.Concept", ->
         value: "poetry"
       ]  
       @model.label().should.equal "poetry"
+
+  describe "info", ->
+    
+    it "returns hash with system info attributes", ->
+      @model.set
+        _id: "abcd1234"
+        author: "Nobody"
+      @model.info().should.eql {
+        id: "abcd1234"
+        author: "Nobody"
+      }
 
 
   describe "#fetch", ->

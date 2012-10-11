@@ -36,9 +36,9 @@ describe "Coreon.Views.Properties.PropertiesView", ->
         { key: "notes"      , value: "DO NOT USE!"          }
       ], silent: true
       @view.render()
-      @view.$(".section table tr").size().should.equal 2
-      @view.$(".section table tr th").eq(0).should.have.text "definition"
-      @view.$(".section table tr th").eq(1).should.have.text "notes"
+      @view.$(".section table tr:not(.system-info *)").size().should.equal 2
+      @view.$(".section table tr th:not(.system-info *)").eq(0).should.have.text "definition"
+      @view.$(".section table tr th:not(.system-info *)").eq(1).should.have.text "notes"
     
     it "allows passing data as option", ->
       @view.options.properties =[
@@ -47,9 +47,9 @@ describe "Coreon.Views.Properties.PropertiesView", ->
         { key: "notes"      , value: "DO NOT USE!"          }
       ]
       @view.render()
-      @view.$(".section table tr").size().should.equal 2
-      @view.$(".section table tr th").eq(0).should.have.text "definition"
-      @view.$(".section table tr th").eq(1).should.have.text "notes"
+      @view.$(".section table tr:not(.system-info *)").size().should.equal 2
+      @view.$(".section table tr th:not(.system-info *)").eq(0).should.have.text "definition"
+      @view.$(".section table tr th:not(.system-info *)").eq(1).should.have.text "notes"
 
 
     context " single value for key", ->
@@ -64,7 +64,7 @@ describe "Coreon.Views.Properties.PropertiesView", ->
           {key: "notes", value: "DO NOT USE!"}
         ], silent: true
         @view.render()
-        @view.$("tr td").eq(0).should.have.text "DO NOT USE!"
+        @view.$("tr td .value").eq(0).should.have.text "DO NOT USE!"
 
       it "renders lang when given", ->
         @view.model.set "properties", [
@@ -73,7 +73,19 @@ describe "Coreon.Views.Properties.PropertiesView", ->
         @view.render()
         @view.$("tr td").eq(0).should.have "ul.index"
         @view.$("ul.index li a").eq(0).should.have.text "en"
-        @view.$("ul.values li").eq(0).should.have.text "DO NOT USE!"
+        @view.$("ul.values li .value").eq(0).should.have.text "DO NOT USE!"
+
+      it "renders system info", ->
+        $("#konacha").append @view.$el
+        @view.model.set "properties", [
+          {key: "notes", value: "DO NOT USE!", level: "42"}
+        ], silent: true
+        @view.render()
+        @view.$el.should.have "td .system-info"
+        @view.$("td .system-info").should.be.hidden
+        @view.$("td .system-info th").eq(0).should.have.text "id"
+        @view.$("td .system-info th").eq(1).should.have.text "level"
+        @view.$("td .system-info td").eq(1).should.have.text "42"
 
     context "multiple values for key", ->
      
@@ -86,8 +98,8 @@ describe "Coreon.Views.Properties.PropertiesView", ->
       it "renders list of values", ->
         @view.render()
         @view.$("tr td").should.have "ul.values"
-        @view.$("ul.values li").eq(0).should.have.text "DO NOT USE!"
-        @view.$("ul.values li").eq(1).should.have.text "I MEAN IT!"
+        @view.$("ul.values li .value").eq(0).should.have.text "DO NOT USE!"
+        @view.$("ul.values li .value").eq(1).should.have.text "I MEAN IT!"
 
       it "renders index", ->
         @view.render()

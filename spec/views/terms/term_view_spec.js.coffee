@@ -4,9 +4,13 @@
 describe "Coreon.Views.Terms.TermView", ->
 
   beforeEach ->
+    sinon.stub I18n, "t"
     @view = new Coreon.Views.Terms.TermView
       term:
         value: "pistol"
+
+  afterEach ->
+    I18n.t.restore()
 
   it "is a composite view", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
@@ -26,6 +30,7 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.$("h4.value").should.have.text "gat"
 
     it "renders properties", ->
+      I18n.t.withArgs("properties.title").returns "Properties"
       @view.options.term.properties = [
         { key: "foo", value: "bar" }
       ]
@@ -34,9 +39,24 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.$el.should.have ".properties .section-toggle"
       @view.$(".section-toggle").should.have.text "Properties"
       @view.$(".section-toggle").should.have.class "collapsed"
-      @view.$(".section table th").should.have.text "foo"
+      @view.$(".section table th").eq(0).should.have.text "foo"
 
     it "renders properties only when not empty", ->
       @view.options.term.properties = []
       @view.render()
       @view.$el.should.not.have ".properties"
+
+    it "renders system info", ->
+      I18n.t.withArgs("term.info").returns "Term Info"
+      $("#konacha").append @view.$el
+      @view.options.term._id = "abcd1234"
+      @view.options.term.source = "http://iate.europa.eu"
+      @view.render()
+      @view.$el.should.have ".system-info-toggle"
+      @view.$(".system-info-toggle").should.have.text "Term Info"
+      @view.$el.should.have ".system-info"
+      @view.$(".system-info").should.be.hidden
+      @view.$(".system-info th").eq(0).should.have.text "id"
+      @view.$(".system-info td").eq(0).should.have.text "abcd1234"
+      @view.$(".system-info th").eq(1).should.have.text "source"
+      @view.$(".system-info td").eq(1).should.have.text "http://iate.europa.eu"

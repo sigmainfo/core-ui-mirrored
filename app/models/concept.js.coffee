@@ -16,6 +16,11 @@ class Coreon.Models.Concept extends Backbone.Model
   label: ->
     @propLabel() or @termLabel() or @id
 
+  info: ->
+    internals = _(@defaults).keys()
+    internals.unshift @idAttribute
+    _(id: @id).extend _(@attributes).omit internals
+
   propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 

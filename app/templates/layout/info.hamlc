@@ -1,0 +1,6 @@
+.system-info{style: "display: none;"}
+  %table
+    - for attr, value of @data
+      %tr
+        %th= attr
+        %td= value

@@ -88,7 +88,7 @@ describe "Coreon.Views.ConceptView", ->
       @view.$(".terms").should.have ".section"
       #TODO: test for correct model/data
 
-    #TODO: test render terms only when applicable 
+    #TODO: render terms only when applicable 
 
   describe "#toggleInfo", ->
 

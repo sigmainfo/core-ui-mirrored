@@ -54,12 +54,12 @@ en:
       props:
         definition: "Definition"
 
-    concept:
-      id: "ID"
-      tree: "Broader & Narrower"
+  concept:
+    info: "System Info"
+    tree: "Broader & Narrower"
 
-      values:
-        id: "#{{id}}"
+  term:
+    info: "System Info"
   
   properties:
     title: "Properties"

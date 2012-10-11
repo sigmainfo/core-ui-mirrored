@@ -1,7 +1,10 @@
 #= require environment
 #= require views/layout/section_view
 #= require templates/properties/properties
+#= require templates/properties/property
 #= require templates/properties/selector
+#= require templates/layout/info
+#= require models/concept
 
 class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.SectionView
 
@@ -10,6 +13,8 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
   sectionTitle: -> I18n.t "properties.title"
 
   template: Coreon.Templates["properties/properties"]
+  property: Coreon.Templates["properties/property"]
+  info:     Coreon.Templates["layout/info"]
   selector: Coreon.Templates["properties/selector"]
 
   events:
@@ -23,23 +28,31 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
     cells = @$("tr td")
     for key, index in keys
       cells.eq(index).html @renderValues props[key]
-    @$("ul.index").each (index, ul) =>
-      @select target: $(ul).find("li a").get(0)
     @
 
   renderValues: (props) ->
     if props.length == 1 and not props[0].lang?
-      props[0].value
+      @renderProperty props[0]
     else
       @selector
         labels: (prop.lang or index + 1 for prop, index in props)
-        values: (prop.value for prop in props)
+        properties: (@renderProperty(prop) for prop in props)
+
+  renderProperty: (prop) ->
+    idAttr = Coreon.Models.Concept::idAttribute
+    internals = [idAttr, "key", "value", "lang"]
+    data = _(id: prop[idAttr]).extend _(prop).omit internals
+    @property
+      value: prop.value
+      info: @info(data: data)
 
   data: ->
     _(@options.properties or @model.get "properties").groupBy "key"
 
   select: (event) ->
     target = $(event.target)
+    event.preventDefault()
+    event.stopPropagation()
 
     item = target.closest("li")
     item.siblings().removeClass "selected"
@@ -50,4 +63,5 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
 
     values.hide()
     values.eq(index).show()
+
 

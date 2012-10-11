@@ -30,7 +30,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       Coreon.Models.Concept.find.restore()
 
     it "renders section header", ->
-      I18n.t.withArgs("concepts.concept.tree").returns "Broader & Narrower"
+      I18n.t.withArgs("concept.tree").returns "Broader & Narrower"
       @view.render()
       @view.$el.should.have ".section-toggle", text: "Broader & Narrower"
 

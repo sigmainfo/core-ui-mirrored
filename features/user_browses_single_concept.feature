@@ -23,7 +23,6 @@ Feature: user browses single concept
     And I click on the label "handgun"
     Then I should be on the show concept page for id "50005aece3ba3f095c000001"
     And I should see the label "handgun"
-    And I should see id "50005aece3ba3f095c000001"
     And I should see the section "Broader & Narrower"
     And this section should display "pistol" as being narrower
     And it should display "revolver" as being narrower
@@ -57,4 +56,27 @@ Feature: user browses single concept
     When I click on the toggle "Properties"
     Then the concept properties should be hidden
 
-  #Scenario: browse attributes
+  Scenario: browse system info
+    Given a concept with id "50005aece3ba3f095c000001" and label "handgun"
+    And this concept has a property "notes" with value "Bitte überprüfen!!!"
+    And this property has an attribute "author" of "William"
+    And this concept has a property "notes" with value "I'm not dead. Am I?"
+    And this property has an attribute "author" of "Nobody"
+    And this concept has a term "shot gun"
+    And this term has an attribute "legacy_id" of "543"
+    And this term has a property "parts of speach" with value "noun"
+    And this property has an attribute "author" of "Mr. Blake"
+    When I enter "gun" in the search field
+    And I click the search button
+    And I click on the label "handgun"
+    When I click the toggle "System Info" on the concept
+    Then I should see "id" with value "50005aece3ba3f095c000001"
+    And I should see "author" with value "William" for property "notes"
+    When I click on index item "2" for property "notes"
+    Then I should see "author" with value "Nobody" for property "notes"
+    When I click the toggle "System Info" on the concept
+    Then I should not see information for "id" or "author"
+    When I click the toggle "System Info" on the term "shot gun"
+    Then I should see "legacy_id" with value "543" for this term
+    When I click on the toggle "Properties" for this term
+    Then I should see "author" with value "Mr. Blake" for property "parts of speach"
