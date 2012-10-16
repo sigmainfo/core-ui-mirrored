@@ -12,6 +12,9 @@ class Coreon.Views.Terms.TermView extends Coreon.Views.CompositeView
   template: Coreon.Templates["terms/term"]
   info: Coreon.Templates["layout/info"]
 
+  events:
+    "click .system-info-toggle": "toggleInfo"
+
   render: ->
     @$el.html @template
       value: @options.term.value
@@ -26,3 +29,8 @@ class Coreon.Views.Terms.TermView extends Coreon.Views.CompositeView
     term = @options.term
     idAttr = Coreon.Models.Concept::idAttribute
     _(id: term[idAttr]).extend _(term).omit idAttr, "value", "lang", "properties"
+
+  toggleInfo: (event) ->
+    event.stopPropagation()
+    @$(".system-info").slideToggle()
+

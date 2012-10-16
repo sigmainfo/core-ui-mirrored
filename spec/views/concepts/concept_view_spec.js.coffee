@@ -93,6 +93,9 @@ describe "Coreon.Views.ConceptView", ->
   describe "#toggleInfo", ->
 
     beforeEach ->
+      @view.model.set "terms", [
+        { lang: "de", value: "Puffe" }
+      ], silent: true
       @view.render()
   
     it "is triggered by click on system info toggle", ->
@@ -108,4 +111,10 @@ describe "Coreon.Views.ConceptView", ->
       @view.$(".system-info").should.be.visible
       @view.toggleInfo()
       @view.$(".system-info").should.be.hidden
+
+    it "does not toggle system info for terms", ->
+      $("#konacha").append(@view.$el)
+      @view.$(".terms .system-info").should.be.hidden
+      @view.toggleInfo()
+      @view.$(".terms .system-info").should.be.hidden
     

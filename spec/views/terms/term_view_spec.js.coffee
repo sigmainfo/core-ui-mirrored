@@ -60,3 +60,28 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.$(".system-info td").eq(0).should.have.text "abcd1234"
       @view.$(".system-info th").eq(1).should.have.text "source"
       @view.$(".system-info td").eq(1).should.have.text "http://iate.europa.eu"
+    
+  describe "#toggleInfo", ->
+
+    beforeEach ->
+      @event = new jQuery.Event "click"
+      @view.render()
+  
+    it "is triggered by click on system info toggle", ->
+      @view.toggleInfo = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".system-info-toggle").click()
+      @view.toggleInfo.should.have.been.calledOnce
+
+    it "toggles system info", ->
+      $("#konacha").append(@view.$el)
+      @view.$(".system-info").should.be.hidden
+      @view.toggleInfo @event
+      @view.$(".system-info").should.be.visible
+      @view.toggleInfo @event
+      @view.$(".system-info").should.be.hidden
+
+    it "does not propagate", ->
+      @event.stopPropagation = sinon.spy()
+      @view.toggleInfo @event
+      @event.stopPropagation.should.have.been.calledOnce

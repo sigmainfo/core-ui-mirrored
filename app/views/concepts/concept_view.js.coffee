@@ -14,7 +14,7 @@ class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
   info: Coreon.Templates["layout/info"]
 
   events:
-    "click .system-info-toggle": "toggleInfo"
+    "click .system-info-toggle:not(.terms *)": "toggleInfo"
 
   initialize: ->
     super
@@ -34,4 +34,4 @@ class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
     @
 
   toggleInfo: ->
-    @$(".system-info").slideToggle()
+    @$(".system-info").not(".terms *").slideToggle()
