@@ -21,17 +21,15 @@ class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
     @model.on "change", @render, @
 
   render: ->
+    @clear()
     @$el.html @template concept: @model, info: @info(data: @model.info())
     if @model.get("super_concept_ids")?.length + @model.get("sub_concept_ids")?.length > 0
-      tree = new Coreon.Views.Concepts.ConceptTreeView model: @model
-      @$el.append tree.render().$el
+      @append new Coreon.Views.Concepts.ConceptTreeView model: @model
     if @model.get("properties")?.length > 0
-      props = new Coreon.Views.Properties.PropertiesView model: @model
-      @$el.append props.render().$el
+      @append new Coreon.Views.Properties.PropertiesView model: @model
     if @model.get("terms")?.length > 0
-      terms = new Coreon.Views.Terms.TermsView model: @model
-      @$el.append terms.render().$el
-    @
+      @append new Coreon.Views.Terms.TermsView model: @model
+    super
 
   toggleInfo: ->
     @$(".system-info").not(".terms *").slideToggle()
