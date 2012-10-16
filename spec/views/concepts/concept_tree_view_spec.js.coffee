@@ -51,7 +51,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       @view.model.set "super_concept_ids", ["71", "75"], silent: true
       @view.render()
       @view.$el.should.have ".super"
-      @view.$(".super").find(".concept-label").length.should.equal 2
+      @view.$(".super").find("li .concept-label").length.should.equal 2
       @view.$(".super .concept-label").eq(0).should.have.text "71"
       @view.$(".super .concept-label").eq(1).should.have.text "75"
 
@@ -59,7 +59,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       @view.model.set "sub_concept_ids", ["84", "53", "56"], silent: true
       @view.render()
       @view.$el.should.have ".sub"
-      @view.$(".sub").find(".concept-label").length.should.equal 3
+      @view.$(".sub").find("li .concept-label").length.should.equal 3
       @view.$(".sub .concept-label").eq(0).should.have.text "84"
       @view.$(".sub .concept-label").eq(1).should.have.text "53"
       @view.$(".sub .concept-label").eq(2).should.have.text "56"

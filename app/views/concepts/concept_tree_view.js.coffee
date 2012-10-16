@@ -15,8 +15,13 @@ class Coreon.Views.Concepts.ConceptTreeView extends Coreon.Views.Layout.SectionV
     super
     @$(".section").html @template concept: @model
     for id in @model.get "super_concept_ids"
-      @append ".super", new Coreon.Views.Concepts.ConceptLabelView id
+      @$(".super").append @concept(id)
     for id in @model.get "sub_concept_ids"
-      @append ".sub", new Coreon.Views.Concepts.ConceptLabelView id
-    view.render() for view in @subviews
+      @$(".sub").append @concept(id)
     @
+
+  concept: (id) ->
+    label = new Coreon.Views.Concepts.ConceptLabelView id
+    @add label.render()
+    $("<li>").append label.$el
+

@@ -20,8 +20,6 @@ describe "Coreon.Views.ConceptView", ->
   it "creates container", ->
     @view.$el.should.match ".concept"
 
-  #TODO: test render on change
-
   describe "#render", ->
 
     it "can be chained", ->
