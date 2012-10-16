@@ -56,7 +56,7 @@ describe "Coreon.Views.ConceptView", ->
       @view.render()
       @view.$el.should.have ".concept-tree"
       @view.$(".concept-tree").should.have ".super"
-      #TODO: test for correct model/data
+      @view.$(".concept-tree .super li").eq(0).should.have.text "1234"
 
     it "renders tree only when applicable", ->
       @view.model.set
@@ -70,7 +70,7 @@ describe "Coreon.Views.ConceptView", ->
       @view.render()
       @view.$el.should.have ".properties"
       @view.$(".properties").should.have ".section table"
-      #TODO: test for correct model/data
+      @view.$(".properties th").eq(0).should.have.text "label"
 
     it "renders properties only when applicable", ->
       @view.model.set "properties", [], silent: true
@@ -84,9 +84,13 @@ describe "Coreon.Views.ConceptView", ->
       @view.render()
       @view.$el.should.have ".terms"
       @view.$(".terms").should.have ".section"
-      #TODO: test for correct model/data
+      @view.$(".terms .value").should.have.text "Puffe"
 
-    #TODO: test render terms only when applicable 
+    it "renders terms only when applicable", ->
+      @view.model.set "terms", [], silent: true
+      @view.render()
+      @view.$el.should.not.have ".terms"
+
 
   describe "#toggleInfo", ->
 
