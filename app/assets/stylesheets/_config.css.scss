@@ -5,6 +5,7 @@ $hover-color: #5498b0;
 $browncolor: #554f3c;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
+$greytext-color: #908f89;
 $beigecolor: #f1f4f0;
 $petrol: #5498b0;
 $error-color: #f25a5a;
@@ -27,6 +28,20 @@ $widget-width: 320px;
   @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
   &:hover {
      background-color: rgba(30,80,80, 0.3);
+  };
+}
+
+@mixin toggle {
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  line-height: 17px;
+  padding: 5px;
+  &:before {
+    @include before-icon;
+    float: left;
+    background-position: -51px -102px;
+    @include rotate(-90deg);
   };
 }
 
