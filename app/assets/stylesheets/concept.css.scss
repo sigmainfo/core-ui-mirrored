@@ -1,15 +1,15 @@
 @import '_config';
 @import 'compass/css3';
 
-.concept {
+div.concept {
   margin-right: 270px;
   min-width: 400px;
   position: relative;
   
   h2 {
     font-size: 1.8em;
-    padding-bottom:
-    20px;
+    line-height: 1.8em;
+    padding-bottom: 14px;
     @include concept-icon;
     &:before {
       border: 3px solid lighten($text-color, 20%);
@@ -30,13 +30,29 @@
       background-repeat: repeat-x;
       padding-top: 8px;
       min-height: 19px;
+      
+      >.section-toggle {
+        margin: 1px 0;
+        position: absolute;
+        z-index: 1;
+      }
+      
+      &:before {
+        content:"";
+        display: block;
+        width: 18px;
+        height: 16px;
+        position: absolute;
+        background: $greycolor;
+        left: -19px;
+        margin-top: 1px;
+        @include border-top-left-radius(3px);
+        @include border-bottom-left-radius(3px);
+        @include single-box-shadow(rgba(black, 0.4), 1px, 1px, 2px, false, inset);
+      };
     }
     
-    .section-toggle {
-      margin: 1px 0;
-      position: absolute;
-      z-index: 2;
-    }
+
     
     .section {
       padding: 0 0 2px 0;
@@ -52,7 +68,7 @@
 
       h4.value {
         font: 1.4em Palatino;
-        padding-left: 100px;
+        padding-left: 97px;
         padding-bottom: 6px;
         padding-top: 12px;
         &:before {
@@ -72,10 +88,11 @@
       .section-toggle {
         position: absolute;
         right: 20px;
-        top: 14px;
+        top: 9px;
       }
       .section {
         margin: 0;
+        padding-left: 116px;
         border-top: 1px solid $greycolor;
       }
     }
@@ -104,7 +121,7 @@
   .system-info-toggle {
     display: block;
     width: 17px;   
-    height: 17px;
+    height: 16px;
     background: rgba($greencolor, 0.2) image-url("layout/icons.png") no-repeat -1px -201px;
     @include retina-icons;
     text-indent: -2000px;
@@ -150,6 +167,9 @@
         };
       }
     }
+  }
+  >.system-info {
+    padding-left: 16px;
   }
   
   table {
