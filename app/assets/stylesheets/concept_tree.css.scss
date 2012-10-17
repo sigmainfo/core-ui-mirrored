@@ -1,0 +1,77 @@
+@import '_config';
+@import 'compass/css3';
+
+.concept {
+
+  .concept-tree .section{
+/*    display:table-cell;*/
+    position: relative;
+    padding-bottom: 20px;
+    padding-top: 10px;
+    .self {   
+      @include concept-icon;
+    }
+    ul, .self {
+      list-style: none;
+      display: inline-block;
+      padding: 0 30px;
+      vertical-align: middle;
+    }
+    ul.super {
+      position: relative;
+      background: image-url("layout/bracket.png") no-repeat right center;
+      &:before {
+        content:"";
+        display: block;
+        width: 12px;
+        height: 4px;
+        position: absolute;
+        top: -4px;
+        right: 0;
+        background: image-url("layout/bracket.png") no-repeat 0px 0px;
+      };
+      &:after {
+        content:"";
+        display: block;
+        width: 12px;
+        height: 4px;
+        position: absolute;
+        bottom: -4px;
+        right: 0;
+        background: image-url("layout/bracket.png") no-repeat 0px bottom;
+      };
+    }
+    ul.sub {
+      position: relative;
+      padding-right: 0;
+      background: image-url("layout/bracket.png") no-repeat left center;
+      &:before {
+        content:"";
+        display: block;
+        width: 12px;
+        height: 4px;
+        position: absolute;
+        top: -4px;
+        left: 0;
+        background: image-url("layout/bracket.png") no-repeat 0px 0px;
+      };
+      &:after {
+        content:"";
+        display: block;
+        width: 12px;
+        height: 4px;
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        background: image-url("layout/bracket.png") no-repeat 0px bottom;
+      };
+    }
+    ul:empty {
+      min-height: 18px;
+      min-width: 30px;
+      @include opacity(0.3);
+    }
+  }
+  
+  
+}
