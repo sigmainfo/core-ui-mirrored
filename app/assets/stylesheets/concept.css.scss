@@ -87,7 +87,7 @@ div.concept {
       background: none;
       .section-toggle {
         position: absolute;
-        right: 20px;
+        right: 24px;
         top: 9px;
       }
       .section {
@@ -120,51 +120,50 @@ div.concept {
   
   .system-info-toggle {
     display: block;
-    width: 17px;   
+    width: 20px;   
     height: 16px;
-    background: rgba($greencolor, 0.2) image-url("layout/icons.png") no-repeat -1px -201px;
+    background: rgba($greencolor, 0.08) image-url("layout/icons.png") no-repeat 0px -200px;
     @include retina-icons;
     text-indent: -2000px;
     overflow: hidden;
     position: absolute;
     right: 0;
     top: 15px;
-    @include opacity(0.5);
     &:hover {
       cursor: pointer;
-      @include opacity(1);
-      background-position: -51px -201px;
+      background-position: -50px -200px;
     };
   }
   .system-info {
-    font-size: 0.9em;
     line-height: 12px;
     
     table {
       margin: 8px 0 2px 0;
       
       td, th {
+        font: 1em Palatino;
+        font-style: italic;
         color: $greytext-color;
         padding-top: 0px;
         padding-right: 6px;
+              vertical-align: baseline;
       }     
       th {
+        text-transform: none;
         width: auto;
-        padding-top: 1px;
-        padding-left: 6px;
-        border-left: 1px solid $greytext-color;
+        color: lighten($greytext-color, 20%);
+        &:after {
+          content:":";
+        };
       }
       td {
-        font: 1em Palatino;
-        font-style: italic;
+        &:after {
+          content:",";
+        };
       }
       tr {
         float: left;
         padding-bottom: 3px;
-        &:first-child th{
-          padding-left: 0;
-          border: none;
-        };
       }
     }
   }
