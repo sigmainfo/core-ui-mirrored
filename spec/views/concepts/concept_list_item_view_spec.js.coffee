@@ -22,12 +22,6 @@ describe "Coreon.Views.Concepts.ConceptListItemView", ->
       @view.$el.should.have ".concept-label"
       @view.$(".concept-label").should.have.text "My Concept"
 
-    it "renders id", ->
-      @view.model.id = "1234"
-      @view.render()
-      @view.$el.should.have ".id"
-      @view.$(".id").should.have.text "1234"
-
     it "renders definition", ->
       @view.model.set "properties", [
         key: "definition"
