@@ -3,6 +3,7 @@
 #= require views/widgets/search_view
 
 class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
+
   id: "coreon-widgets"
 
   initialize: ->
@@ -10,13 +11,5 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     @search = new Coreon.Views.Widgets.SearchView
 
   render: ->
-    @$el.append @search.render().$el
+    @append @search
     super
-
-  delegateEvents: ->
-    super
-    @search.delegateEvents()
-
-  undelegateEvents: ->
-    super
-    @search.undelegateEvents()

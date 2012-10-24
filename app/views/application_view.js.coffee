@@ -28,13 +28,14 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
   render: ->
     @$el.html @template()
     @prepend "#coreon-top", @header
-    if @model.get "active" then @activate() else @deactivate()
     super
+    if @model.get "active" then @activate() else @deactivate()
+    @
 
   switch: (screen) ->
     @destroy @screen if @screen
-    @screen = screen
-    @append "#coreon-main", screen.render()
+    @screen = screen.render()
+    @append "#coreon-main", @screen
 
   navigate: (event) ->
     Backbone.history.navigate $(event.target).attr("href"), trigger: true

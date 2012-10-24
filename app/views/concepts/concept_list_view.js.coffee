@@ -2,6 +2,7 @@
 #= require views/composite_view
 #= require templates/concepts/concept_list
 #= require views/concepts/concept_list_item_view
+#= require models/concept
 
 class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
 
@@ -16,8 +17,8 @@ class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
   render: () ->
     @$el.html @template()
     for hit in @model.get "hits"
-      @options.collection.addOrUpdate hit.result
+      model = Coreon.Models.Concept.upsert hit.result
       item = new Coreon.Views.Concepts.ConceptListItemView
-        model: @options.collection.get hit.result._id
+        model: model
       @append ".concepts", item.render()
     super

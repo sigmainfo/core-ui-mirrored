@@ -10,29 +10,22 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Coreon.Views.Composite
   template: Coreon.Templates["widgets/search_target_select"]
 
   events:
-    "click .toggle": "showDropdown"
-    "click .hint": "onFocus"
+    "click .toggle" : "showDropdown"
+    "click .hint"   : "onFocus"
 
   initialize: ->
     super
     @model.on "change", @render, @
-    @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @model 
+    @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @model
+    @add @dropdown
 
   render: ->
     @$el.html @template selectedType: @model.getSelectedType() 
-    @
-
-  delegateEvents: ->
     super
-    @dropdown.delegateEvents()
-
-  undelegateEvents: ->
-    super
-    @dropdown.undelegateEvents()
 
   showDropdown: (event) ->
-    @dropdown.delegateEvents()
     $("#coreon-modal").append @dropdown.render().$el
+    @dropdown.delegateEvents()
 
   hideHint: ->
     @$(".hint").hide()

@@ -94,8 +94,7 @@ describe "Coreon.Routers.SearchRouter", ->
                 ]
             }
           ]
-        concept = Coreon.application.concepts.get "1234"
-        expect(concept).to.be.an.instanceof Coreon.Models.Concept
+        concept = Coreon.Models.Concept.find "1234"
         concept.get("properties").should.eql [{key: "label", value: "poet"}]
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
       finally

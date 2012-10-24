@@ -3,12 +3,6 @@
 
 describe "Coreon.Views.Layout.FooterView", ->
   
-  before ->
-    jQuery.fx.off = true
-
-  after ->
-    jQuery.fx.off = false
-
   beforeEach ->
     account = new Backbone.Model
     account.connections = new Backbone.Collection

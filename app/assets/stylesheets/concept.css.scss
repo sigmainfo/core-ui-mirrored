@@ -1,0 +1,227 @@
+@import '_config';
+@import 'compass/css3';
+
+div.concept {
+  margin-right: 270px;
+  min-width: 400px;
+  position: relative;
+  
+  h2 {
+    font-size: 1.8em;
+    line-height: 1.8em;
+    padding-bottom: 14px;
+    @include concept-icon;
+    &:before {
+      border: 3px solid lighten($text-color, 20%);
+      @include border-radius(6px);
+    };
+  }
+  
+  .concept-tree, .properties {
+    @include dottedline;
+  }
+
+  
+  .terms {
+    padding-top: 20px;
+    
+    .language {
+      @include retina-separator;
+      background-repeat: repeat-x;
+      padding-top: 8px;
+      min-height: 19px;
+      
+      >.section-toggle {
+        margin: 1px 0;
+        position: absolute;
+        z-index: 1;
+      }
+      
+    }
+    
+    .section {
+      padding: 0 0 2px 0;
+    }
+    
+    .term {
+      overflow: hidden;
+      position: relative;
+      @include dottedline;
+      &:first-child {
+        background: none;
+      };
+
+      h4.value {
+        font: 1.4em Palatino;
+        padding-left: 97px;
+        padding-bottom: 6px;
+        padding-top: 12px;
+        &:before {
+          content:"» ";
+          font-size: 1.3em;
+        };
+      }
+      >.system-info {
+        padding-left: 116px;
+        table {
+          margin-top: 2px;
+        }
+      }
+    }
+    .properties {
+      background: none;
+      .section-toggle {
+        position: absolute;
+        right: 20px;
+        top: 9px;
+      }
+      .section {
+        margin: 0;
+        padding-left: 116px;
+        border-top: 1px solid $greycolor;
+      }
+    }
+  }
+  
+  .section-toggle {
+    @include toggle;
+    padding: 0;
+    margin: 6px 0 5px 0;
+    padding-right: 7px;
+    color: $browncolor;
+    background: rgba($greencolor, 0.08);
+    &:before {
+      @include rotate(0deg);
+    };
+    &:hover {
+      cursor: pointer;
+    };
+    &.collapsed {
+      &:before {
+        @include rotate(-90deg);
+      };
+    }
+  }
+  
+  .system-info-toggle {
+    display: block;
+    width: 16px;   
+    height: 16px;
+    background: rgba($greencolor, 0.08) image-url("layout/icons.png") no-repeat -2px -201px;
+    @include retina-icons;
+    text-indent: -2000px;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 15px;
+    &:hover {
+      cursor: pointer;
+      background-position: -52px -201px;
+    };
+  }
+  .system-info {
+    line-height: 12px;
+    
+    table {
+      margin: 8px 0 2px 0;
+      
+      td, th {
+        font: 11px monospace;
+        // font-style: italic;
+        color: $greytext-color;
+        vertical-align: baseline;
+      }     
+
+      th {
+        text-transform: none;
+        width: auto;
+        padding: 0 1px 0 0;
+        color: lighten($greytext-color, 20%);
+        &:after {
+          content:":";
+        }
+      }
+
+      td {
+        padding: 0 6px 0 0;
+      }
+
+      tr {
+        float: left;
+        padding-bottom: 3px;
+      }
+    }
+  }
+  >.system-info {
+    margin-left: 16px;
+    margin-bottom: 12px;
+  }
+  
+  table {
+    border-spacing: 0;
+    
+    tr {
+        vertical-align: top;
+        
+      td, th {
+        padding-top: 10px;
+      }
+      th {
+        font-weight: normal;
+        text-align: right;
+        text-transform: uppercase;
+        font-size: 0.8em;
+        padding-top: 11px;
+        color: $browncolor;
+        width: 98px;
+        padding-right: 16px;
+      }
+    }
+  }
+  
+  ul.index, ul.values {
+    overflow: hidden;
+    list-style: none;
+  }
+  
+  ul.index {
+    padding-bottom: 10px;
+  
+    li {
+      position: relative;
+      float: left;
+      text-transform: uppercase;
+      font-size: 0.8em;
+      padding-top: 1px;
+      
+      a {
+        padding: 0 10px;
+        border-left: 1px solid $browncolor;
+      }
+      &:first-child a{
+        border:none;
+        padding-left: 0;
+      }
+      
+      &.selected  {
+        &:before {
+          @include before-icon;
+          position: absolute;
+          top: 11px;
+          left: 10px;
+          background-position: -04px -100px;
+        }
+        &:first-child {
+          &:before {
+            left: 0;
+          };
+        }
+        a {
+          color: $browncolor;
+        }
+      }
+    }
+  }
+  
+  
+}

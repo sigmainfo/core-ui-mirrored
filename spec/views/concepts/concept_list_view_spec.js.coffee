@@ -5,12 +5,16 @@
 describe "Coreon.Views.Concepts.ConceptListView", ->
   
   beforeEach ->
+    sinon.spy Coreon.Models.Concept, "upsert"
+    sinon.stub Coreon.Models.Concept, "find"
     @view = new Coreon.Views.Concepts.ConceptListView
       model: new Backbone.Model(hits: [])
       collection: new Backbone.Collection
 
   afterEach ->
     @view.destroy()
+    Coreon.Models.Concept.find.restore()
+    Coreon.Models.Concept.upsert.restore()
 
   it "is a composite view", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
@@ -26,10 +30,8 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
     it "renders list items", ->
       concept = _(new Backbone.Model).extend label: -> "A Concept"
       concept2 = _(new Backbone.Model).extend label: -> "Another Concept"
-      @view.options.collection.addOrUpdate = sinon.spy()
-      sinon.stub @view.options.collection, "get"
-      @view.options.collection.get.withArgs("50506ebdd19879161b000019").returns concept
-      @view.options.collection.get.withArgs("50506ebdd19879161b000015").returns concept2
+      Coreon.Models.Concept.find.withArgs("50506ebdd19879161b000019").returns concept
+      Coreon.Models.Concept.find.withArgs("50506ebdd19879161b000015").returns concept2
       @view.model.set
         hits: [
           {
@@ -49,7 +51,7 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
       @view.subviews[0].model.should.equal concept
       @view.$el.should.have ".concept-list-item"
       @view.$(".concept-list-item").eq(0).should.have ".concept-label"
-      @view.options.collection.addOrUpdate.should.have.been.calledWith _id: "50506ebdd19879161b000019"
+      Coreon.Models.Concept.upsert.should.have.been.calledWith _id: "50506ebdd19879161b000019"
 
     it "is triggered by model changes", ->
       @view.render = sinon.spy()
