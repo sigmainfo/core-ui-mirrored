@@ -107,8 +107,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(".concept .label").should have_content("handgun")
   end
 
-  And 'I should see the section "Broader & Narrower"' do
-    page.should have_css("h3.section-toggle", text: "Broader & Narrower")
+  And 'I should see the section "BROADER & NARROWER"' do
+    page.should have_css("h3.section-toggle", text: "BROADER & NARROWER")
   end
 
   And 'this section should display "pistol" as being narrower' do
@@ -123,31 +123,31 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.should have_css(".super .concept-label", text: "weapon")
   end
 
-  And 'I should see the section "Properties"' do
-    page.should have_css("h3.section-toggle", text: "Properties")
+  And 'I should see the section "PROPERTIES"' do
+    page.should have_css("h3.section-toggle", text: "PROPERTIES")
   end
 
-  And 'it should have an English property "definition" with value "A portable firearm"' do
-    @td = page.find("th", text: "definition").find :xpath, "parent::*/td"
-    @td.find("ul.index li.selected").text.should == "en"
+  And 'it should have an English property "DEFINITION" with value "A portable firearm"' do
+    @td = page.find("th", text: "DEFINITION").find :xpath, "parent::*/td"
+    @td.find("ul.index li.selected").text.should == "EN"
     @td.find("ul.values li").text.should == "A portable firearm"
   end
 
   When 'I click on "de" for that property' do
-    @td.find("ul.index li a", text: "de").click
+    @td.find("ul.index li a", text: "DE").click
   end
 
   Then 'the value should have changed to "Tragbare Feuerwaffe"' do
     @td.find("ul.values li").text.should == "Tragbare Feuerwaffe"
   end
 
-  And 'it should have a property "notes" with value "Bitte überprüfen!!!"' do
-    @td = page.find("th", text: "notes").find :xpath, "parent::*/td"
+  And 'it should have a property "NOTES" with value "Bitte überprüfen!!!"' do
+    @td = page.find("th", text: "NOTES").find :xpath, "parent::*/td"
     @td.text.should == "Bitte überprüfen!!!"
   end
 
-  And 'I should see a section for locale "en"' do
-    page.should have_css("h3.section-toggle", text: "en")
+  And 'I should see a section for locale "EN"' do
+    page.should have_css("h3.section-toggle", text: "EN")
     @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and text()='en']/following-sibling::div[contains(@class, 'section')]"
   end
 
@@ -157,8 +157,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     end
   end
 
-  And 'I should see a section for locale "de"' do
-    page.should have_css("h3.section-toggle", text: "de")
+  And 'I should see a section for locale "DE"' do
+    page.should have_css("h3.section-toggle", text: "DE")
     @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and text()='de']/following-sibling::div[contains(@class, 'section')]"
   end
 
@@ -168,16 +168,16 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     end
   end
 
-  When 'I click on toggle "Properties" of term "Schusswaffe"' do
+  When 'I click on toggle "PROPERTIES" of term "Schusswaffe"' do
     page.find(:xpath, "//*[contains(@class, 'value') and text() = 'Schusswaffe']/following-sibling::*[contains(@class, 'properties')]/*[contains(@class, 'section-toggle')]").click
   end
 
-  Then 'I should see property "gender" with value "f"' do
-    page.should have_css(".term .properties th", text: "gender")
+  Then 'I should see property "GENDER" with value "f"' do
+    page.should have_css(".term .properties th", text: "GENDER")
     page.find(:xpath, "//th[text() = 'gender']/following-sibling::td").text.should == "f"
   end
 
-  When 'I click on the toggle of the locale "en"' do
+  When 'I click on the toggle of the locale "EN"' do
     click_on_toggle "en"
   end
 
@@ -189,7 +189,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.should have_css(".term .value", text: "gun")
   end
 
-  When 'I click on the toggle "Broader & Narrower"' do
+  When 'I click on the toggle "BROADER & NARROWER"' do
     page.execute_script "$('.notification .hide').click()"
     click_on_toggle "Broader & Narrower"
   end
@@ -198,7 +198,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     section_for("Broader & Narrower").should_not be_visible
   end
 
-  When 'I click on the toggle "Properties"' do
+  When 'I click on the toggle "PROPERTIES"' do
     click_on_toggle "Properties"
   end
 
@@ -215,7 +215,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(:xpath, "//th[text()='id']/following-sibling::td").should have_content("50005aece3ba3f095c000001")
   end
 
-  And 'I should see "author" with value "William" for property "notes"' do
+  And 'I should see "AUTHOR" with value "William" for property "notes"' do
     page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td//li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("William")
   end
 
