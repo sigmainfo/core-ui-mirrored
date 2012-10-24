@@ -8,6 +8,10 @@ class Coreon.Views.Terms.LanguageView extends Coreon.Views.Layout.SectionView
 
   sectionTitle: -> @options.lang
 
+  initialize: ->
+    super
+    @$el.addClass @options.lang
+
   render: ->
     super
     for term in @options.terms

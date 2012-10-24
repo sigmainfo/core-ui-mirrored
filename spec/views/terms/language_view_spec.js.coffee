@@ -13,7 +13,10 @@ describe "Coreon.Views.Terms.LanguageView", ->
     @view.should.be.an.instanceof Coreon.Views.Layout.SectionView
 
   it "creates container", ->
+    @view.options.lang = "hu"
+    @view.initialize()
     @view.$el.should.have.class "language"
+    @view.$el.should.have.class "hu"
 
   describe "#render", ->
   
