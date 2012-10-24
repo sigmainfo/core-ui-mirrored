@@ -265,6 +265,13 @@ describe "Coreon.Views.CompositeView", ->
     it "can be chained", ->
       @view.clear().should.equal @view
 
+    it "does not destroy itself on empty subview list", ->
+      @view.subviews = []
+      @view.destroy = sinon.spy()
+      @view.clear()
+      @view.destroy.should.not.have.been.called
+
+
   describe "#destroy", ->
     
     beforeEach ->

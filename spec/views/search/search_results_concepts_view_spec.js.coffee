@@ -35,12 +35,10 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
     it "renders table header", ->
       I18n.t.withArgs("search.results.concepts.header.label").returns "Label"
       I18n.t.withArgs("search.results.concepts.header.super_concepts").returns "Superconcepts"
-      I18n.t.withArgs("search.results.concepts.header.id").returns "ID"
       @view.render()
       @view.$el.should.have "table.concepts"
       @view.$(".concepts th").eq(0).should.have.text "Label"
       @view.$(".concepts th").eq(1).should.have.text "Superconcepts"
-      @view.$(".concepts th").eq(2).should.have.text "ID"
 
     it "renders concepts", ->
       @view.model.set "hits", [
@@ -61,8 +59,6 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
 
       @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/concepts/503e248cd198795712000002']"
       @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/concepts/504e248cd198795712000042']"
-
-      @view.$(".concepts tbody tr:first td.id").should.have.text "503e248cd198795712000005"
 
     it "renders top 10 concepts only", ->
       @view.model.set "hits",

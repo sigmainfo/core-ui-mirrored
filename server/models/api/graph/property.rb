@@ -4,6 +4,7 @@ class Api::Graph::Property
   include Mongoid::Paranoia
 
   embedded_in :concept
+  embedded_in :term
 
   field :key
   field :value

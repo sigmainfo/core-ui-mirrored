@@ -1,4 +1,6 @@
 #= require environment
+#= require views/simple_view
+#= require models/concept
 
 class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
 
@@ -9,7 +11,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
   initialize: (idOrOptions) ->
     switch typeof idOrOptions
       when "string"
-        @model = Coreon.application.concepts.getOrFetch idOrOptions
+        @model = Coreon.Models.Concept.find idOrOptions
       when "object"
         @model = idOrOptions.model
 

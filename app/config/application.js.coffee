@@ -1,6 +1,5 @@
 #= require environment
 #= require models/account
-#= require collections/concepts
 #= require views/application_view
 #= require routers/search_router
 #= require routers/concepts_router
@@ -20,7 +19,6 @@ class Coreon.Application
     
     @account = new Coreon.Models.Account _(@options).pick "auth_root", "graph_root"
     @account.fetch()
-    @concepts = new Coreon.Collections.Concepts
 
   start: (options = {}) ->
     _(@options).extend options

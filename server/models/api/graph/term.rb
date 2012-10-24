@@ -7,4 +7,5 @@ class Api::Graph::Term
   field :value
 
   belongs_to :concept
+  embeds_many :properties, class_name: "Api::Graph::Property"
 end
