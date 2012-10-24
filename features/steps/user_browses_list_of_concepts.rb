@@ -56,8 +56,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     current_path.should == "/concepts/search"
   end
 
-  And 'I should see a concept "handgun" with id "50005aece3ba3f095c000001"' do
-    find_concept("handgun").find(".id").should have_content("50005aece3ba3f095c000001")
+  And 'I should see a concept "handgun"' do
+    @concept = find_concept("handgun")
   end
 
   And 'I should see it being defined as "A portable firearm"' do
@@ -72,8 +72,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     @concept.find(".terms th", text: "DE").find(:xpath, "../td").should have_content("Schusswaffe, Flinte, Pistole, Schießgewehr, Geschütz")
   end
 
-  And 'I should see a concept "pistol" with id "50005aece3ba3f095c000002"' do
-    find_concept("pistol").find(".id").should have_content("50005aece3ba3f095c000002")
+  And 'I should see a concept "pistol"' do
+    @concept = find_concept("pistol")
   end
 
   And 'I should see it being narrower than "handgun"' do

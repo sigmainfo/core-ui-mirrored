@@ -36,7 +36,6 @@ Feature: user browses quicksearch results
     Then I should be on the search result page
     And I should see a listing "CONCEPTS"
     And the listing should contain "poet", "poem", "poetry", "versify"
-    And "poem" should have id "50005aece3ba3f095c000004"
     And "poem" should have superconcept "poetry"
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"

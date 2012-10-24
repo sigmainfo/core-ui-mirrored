@@ -23,12 +23,12 @@ Feature: user browses single concept
     And I click on the label "handgun"
     Then I should be on the show concept page for id "50005aece3ba3f095c000001"
     And I should see the label "handgun"
-    And I should see the section "Broader & Narrower"
+    And I should see the section "BROADER & NARROWER"
     And this section should display "pistol" as being narrower
     And it should display "revolver" as being narrower
     And it should display "weapon" as being broader
-    And I should see the section "Properties"
-    And it should have an English property "Definition" with value "A portable firearm"  
+    And I should see the section "PROPERTIES"
+    And it should have an English property "DEFINITION" with value "A portable firearm"  
     When I click on "de" for that property
     Then the value should have changed to "Tragbare Feuerwaffe"
     And it should have a property "notes" with value "Bitte überprüfen!!!"

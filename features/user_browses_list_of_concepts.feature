@@ -19,11 +19,11 @@ Feature: user browses list of concepts
     And I click the search button
     And I click "Show all" within the concept search results
     Then I should be on the search result page for concepts
-    And I should see a concept "handgun" with id "50005aece3ba3f095c000001"
+    And I should see a concept "handgun"
     And I should see it being defined as "A portable firearm"
     And I should see it having the following English terms: "gun", "firearm", "shot gun", "musket"
     And I should see it having the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
-    And I should see a concept "pistol" with id "50005aece3ba3f095c000002"
+    And I should see a concept "pistol"
     And I should see it being narrower than "handgun"
 
   Scenario: concept search by term
