@@ -3,4 +3,4 @@
     - for attr, value of @data
       %tr
         %th= attr
-        %td= value
+        %td= value or "-"

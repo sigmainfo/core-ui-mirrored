@@ -141,26 +141,26 @@ div.concept {
       margin: 8px 0 2px 0;
       
       td, th {
-        font: 1em Palatino;
-        font-style: italic;
+        font: 11px monospace;
+        // font-style: italic;
         color: $greytext-color;
-        padding-top: 0px;
-        padding-right: 6px;
-              vertical-align: baseline;
+        vertical-align: baseline;
       }     
+
       th {
         text-transform: none;
         width: auto;
+        padding: 0 1px 0 0;
         color: lighten($greytext-color, 20%);
         &:after {
           content:":";
-        };
+        }
       }
+
       td {
-        &:after {
-          content:",";
-        };
+        padding: 0 6px 0 0;
       }
+
       tr {
         float: left;
         padding-bottom: 3px;
@@ -168,7 +168,8 @@ div.concept {
     }
   }
   >.system-info {
-    padding-left: 16px;
+    margin-left: 16px;
+    margin-bottom: 12px;
   }
   
   table {
