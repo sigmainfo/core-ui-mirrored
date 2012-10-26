@@ -25,7 +25,7 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
         query: params.q
 
       tnodes: new Coreon.Models.Search
-        path: "tnodes/search"
+        path: "taxonomy_nodes/search"
         query: params.q
 
     @searchResultsView = new Coreon.Views.Search.SearchResultsView

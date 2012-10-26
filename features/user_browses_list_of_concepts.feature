@@ -8,11 +8,11 @@ Feature: user browses list of concepts
     And I am logged in
 
   Scenario: expand search results
-    Given a concept with id "50005aece3ba3f095c000001" defined as "A portable firearm"
+    Given a concept defined as "A portable firearm"
     And this concept has the label "handgun"
     And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
     And this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
-    And given another concept with id "50005aece3ba3f095c000002" defined as "a handgun whose chamber is integral with the barrel;"
+    And given another concept defined as "a handgun whose chamber is integral with the barrel;"
     And this concept has the following English terms: "pistol", "gun", "automatic pistol"
     And this concept is a subconcept of "handgun"
     When I enter "gun" in the search field

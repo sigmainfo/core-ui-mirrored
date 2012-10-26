@@ -14,6 +14,7 @@ class Coreon.Models.Search extends Backbone.Model
       params["search[only]"] = switch @get "target"
         when "terms" then "terms"
         else "properties/#{@get "target"}"
+    params["search[tolerance]"] = 2
     params
 
   query: ->

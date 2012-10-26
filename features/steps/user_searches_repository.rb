@@ -39,6 +39,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should see the password prompt' do
+    sleep 30
     page.should have_css("#coreon-password-prompt")
   end
 
