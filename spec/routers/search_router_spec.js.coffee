@@ -65,7 +65,7 @@ describe "Coreon.Routers.SearchRouter", ->
     it "creates taxonomy search", ->
       @router.search q: "poet"
       @router.searchResultsView.tnodes.model.should.be.an.instanceof Coreon.Models.Search
-      @router.searchResultsView.tnodes.model.get("path").should.equal "tnodes/search"
+      @router.searchResultsView.tnodes.model.get("path").should.equal "taxonomy_nodes/search"
       @router.searchResultsView.tnodes.model.get("query").should.equal "poet"
 
     it "fetches search results", ->
