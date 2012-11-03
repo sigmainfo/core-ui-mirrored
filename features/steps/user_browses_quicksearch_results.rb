@@ -72,7 +72,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   And 'given a concept with label "poet"' do
-    create_concept properties: [{key: 'label', value: "poet"}]
+    @poet = create_concept properties: [{key: 'label', value: "poet"}]
   end
 
   And 'given a concept with label "poem"' do
@@ -83,13 +83,13 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     @poetry = create_concept properties: [{key: 'label', value: "poetry"}]
   end
 
-  And '"poem" is a subconcept of "poetry"' do
+  And '"poet" is a subconcept of "poetry"' do
     create_edge({
       source_node_type: 'Concept', 
-      source_node_id: @poem['_id'],
+      source_node_id: @poetry['_id'],
       edge_type: 'SUPERCONCEPT_OF',
       target_node_type: 'Concept',
-      target_node_id: @poetry['_id']
+      target_node_id: @poet['_id']
     })
   end
 
@@ -97,17 +97,17 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     page.should have_css(".search-results-concepts h3", text: "CONCEPTS")
   end
 
-  And 'the listing should contain "poet", "poem", "poetry", "versify"' do
+  And 'the listing should contain "poet", "versify", "poetry"' do
     sleep 0.2
-    page.all(".concepts tbody td.label").map(&:text).should == %w|poet poem poetry versify|
+    page.all(".concepts tbody td.label").map(&:text).should == %w|poet versify poetry|
   end
 
   And '"poem" should have the correct id' do
     page.find("td", text: "poem").find(:xpath, "following::td[@class='id']").text.should == "50005aece3ba3f095c000004"
   end
 
-  And '"poem" should have superconcept "poetry"' do
-    page.find("td", text: "poem").find(:xpath, "following::td[contains(@class, 'super')]").text.should == "poetry"
+  And '"poet" should have superconcept "poetry"' do
+    page.find("td", text: "poet").find(:xpath, "following::td[contains(@class, 'super')]").text.should == "poetry"
   end
 
   When 'I click on link to concept "poetry"' do
@@ -115,23 +115,23 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   Then 'I should be on the concept page of "poetry"' do
-    current_path.should == "/concepts/#{@poetry.id}"
+    current_path.should == "/concepts/#{@poetry['_id']}"
   end
 
   Given 'a taxonomy "Professions"' do
-    @professions = create_taxonomy label: "Professions"
+    @professions = create_taxonomy properties: [{key: "label", value: "Professions"}]
   end
 
   And 'this taxonomy has a node "programmer"' do
-    create_taxonomy_taxonomy_node @professions, properties: [{key: 'label', value: "programmer"}]
+    @programmer = create_taxonomy_taxonomy_node @professions, properties: [{key: "label", value: "programmer"}]
   end
 
   And 'this taxonomy has a node "artist"' do
-    @artist = create_taxonomy_taxonomy_node @professions, properties: [{key: 'label', value: "artist"}]
+    @artist = create_taxonomy_taxonomy_node @professions, properties: [{key: "label", value: "artist"}]
   end
 
   And 'this taxonomy has a node "poet"' do
-    @poet = create_taxonomy_taxonomy_node @professions, properties: [{key: 'label', value: "poet"}]
+    @poet = create_taxonomy_taxonomy_node @professions, properties: [{key: "label", value: "poet"}]
   end
 
   And '"poet" is a subnode of "artist"' do
@@ -145,7 +145,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   And 'this taxonomy has a node "poetry editor"' do
-    create_taxonomy_taxonomy_node @professions, properties: [{key: 'label', value: "poetry editor"}]
+    create_taxonomy_taxonomy_node @professions, properties: [{key: "label", value: "poetry editor"}]
   end
 
   And 'I should see a listing "TAXONOMIES"' do

@@ -30,13 +30,13 @@ Feature: user browses quicksearch results
     And given a concept with label "poet"
     And given a concept with label "poem"
     And given a concept with label "poetry"
-    And "poem" is a subconcept of "poetry"
-    When I enter "poe" in the search field
+    And "poet" is a subconcept of "poetry"
+    When I enter "poet" in the search field
     And I click the search button
     Then I should be on the search result page
     And I should see a listing "CONCEPTS"
-    And the listing should contain "poet", "poem", "poetry", "versify"
-    And "poem" should have superconcept "poetry"
+    And the listing should contain "poet", "versify", "poetry"
+    And "poet" should have superconcept "poetry"
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"
 
