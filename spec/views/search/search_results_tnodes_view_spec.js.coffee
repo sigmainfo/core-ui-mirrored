@@ -40,7 +40,9 @@ describe "Coreon.Views.Search.SearchResultsTnodesView", ->
     it "renders tnodes", ->
       @view.model.set "hits", [
         result:
-          name: "poet"
+          properties: [
+            { key: "label", value: "poet" }
+          ]
       ]
       @view.render()
       @view.$(".tnodes tbody tr:first td").eq(0).should.have.text "poet"

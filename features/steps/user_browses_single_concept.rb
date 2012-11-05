@@ -12,95 +12,85 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     find :xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']/following-sibling::*[contains(@class, 'section')]"
   end
 
-  Given 'a concept with id "50005aece3ba3f095c000001" and label "handgun"' do
-    @handgun = create_concept_with_id "50005aece3ba3f095c000001", label: "handgun"
+  Given 'a concept with label "handgun"' do
+    @handgun = create_concept properties: [{key: 'label', value: 'handgun'}]
   end
 
   And 'this concept has an English definition with value "A portable firearm"' do
-    @prop = @handgun.properties.create! key: "definition", value: "A portable firearm", lang: "en"
+    create_concept_property @handgun, key: "definition", value: "A portable firearm", lang: "en"
   end
 
   And 'this concept has an German definition with value "Tragbare Feuerwaffe"' do
-    @prop = @handgun.properties.create! key: "definition", value: "Tragbare Feuerwaffe", lang: "de"
+    create_concept_property @handgun, key: "definition", value: "Tragbare Feuerwaffe", lang: "de"
   end
 
   And 'this concept has a property "notes" with value "Bitte überprüfen!!!"' do
-    @prop = @handgun.properties.create! key: "notes", value: "Bitte überprüfen!!!"
+    @prop = create_concept_property @handgun, key: "notes", value: "Bitte überprüfen!!!"
   end
 
   And 'this concept has the following English terms: "gun", "firearm", "shot gun", "musket"' do
     ["gun", "firearm", "shot gun", "musket"].each do |value|
-      @handgun.terms.create! value: value, lang: "en"
+      create_concept_term @handgun, value: value, lang: "en"
     end
   end
 
   And 'this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
+    @handgun_terms = {}
     ["Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"].each do |value|
-      @handgun.terms.create! value: value, lang: "de"
+      @handgun_terms[value] = create_concept_term @handgun, value: value, lang: "de"
     end
   end
 
   And 'the term "Schusswaffe" should have property "gender" with value "f"' do
-    term = @handgun.terms.find_by value: "Schusswaffe"
-    term.properties.create! key: "gender", value: "f"
+    create_concept_term_property @handgun, @handgun_terms["Schusswaffe"], key: "gender", value: "f"
   end
 
-  And 'given a broader concept with id "50005aece3ba3f095c000004" and a label "weapon"' do
-    weapon = create_concept_with_id "50005aece3ba3f095c000004", label: "weapon"
-    @handgun.super_concepts << weapon
-    @handgun.save!
+  And 'given a broader concept with label "weapon"' do    
+    weapon = create_concept properties: [{key: 'label', value: 'weapon'}], sub_concepts: [@handgun['_id']]
   end
 
-  And 'given a narrower concept with id "50005aece3ba3f095c000002" and a label "pistol"' do
-    pistol = create_concept_with_id "50005aece3ba3f095c000002", label: "pistol"
-    @handgun.sub_concepts << pistol
-    @handgun.save!
+  And 'given a narrower concept with label "pistol"' do
+    pistol = create_concept properties: [{key: 'label', value: 'pistol'}], super_concepts: [@handgun['_id']]
   end
 
-  And 'given a narrower concept with id "50005aece3ba3f095c000005" and a label "revolver"' do
-    revolver = create_concept_with_id "50005aece3ba3f095c000005", label: "revolver"
-    @handgun.sub_concepts << revolver
-    @handgun.save!
+  And 'given a narrower concept with label "revolver"' do
+    revolver = create_concept properties: [{key: 'label', value: 'revolver'}], super_concepts: [@handgun['_id']]
   end
 
   And 'this property has an attribute "author" of "William"' do
-    @prop[:author] = "William"
-    @prop.save!
+    update_concept_property @handgun, @prop, author: 'William'
   end
 
   And 'this concept has a property "notes" with value "I\'m not dead. Am I?"' do
-    @prop = @handgun.properties.create! key: "notes", value: "I\'m not dead. Am I?"
+    @prop = create_concept_property @handgun, key: "notes", value: "I\'m not dead. Am I?"
   end
 
   And 'this property has an attribute "author" of "Nobody"' do
-    @prop[:author] = "Nobody"
-    @prop.save!
+    update_concept_property @handgun, @prop, author: 'Nobody'
   end
 
   And 'this concept has a term "shot gun"' do
-    @term = @handgun.terms.create! value: "shot gun", lang: "en"
+    @term = create_concept_term @handgun, value: "shot gun", lang: "en"
   end
 
   And 'this term has an attribute "legacy_id" of "543"' do
-    @term["legacy_id"] = "543"
-    @term.save!
+    update_concept_term @handgun, @term, legacy_id: '543'
   end
 
   And 'this term has a property "parts of speach" with value "noun"' do
-    @prop = @term.properties.create! key: "parts of speach", value: "noun"
+    @prop = create_concept_term_property @handgun, @term, key: "parts of speach", value: "noun"
   end
 
   And 'this property has an attribute "author" of "Mr. Blake"' do
-    @prop[:author] = "Mr. Blake"
-    @prop.save!
+    update_concept_term_property @handgun, @term, @prop, author: "Mr. Blake"
   end
 
   And 'I click on the label "handgun"' do
     page.find(".concepts a.concept-label", text: "handgun").click
   end
 
-  Then 'I should be on the show concept page for id "50005aece3ba3f095c000001"' do
-    current_path.should == "/concepts/50005aece3ba3f095c000001"
+  Then 'I should be on the show concept page for "handgun"' do
+    current_path.should == "/concepts/#{@handgun['_id']}"
   end
 
   And 'I should see the label "handgun"' do
@@ -211,8 +201,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(:xpath, "//*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
   end
 
-  Then 'I should see "id" with value "50005aece3ba3f095c000001"' do
-    page.find(:xpath, "//th[text()='id']/following-sibling::td").should have_content("50005aece3ba3f095c000001")
+  Then 'I should see "id" of the "handgun" concept' do
+    page.find(:xpath, "//th[text()='id']/following-sibling::td").should have_content(@handgun['_id'])
   end
 
   And 'I should see "AUTHOR" with value "William" for property "notes"' do

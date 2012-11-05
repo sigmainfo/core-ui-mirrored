@@ -8,20 +8,20 @@ Feature: user browses single concept
     And I am logged in
 
   Scenario: show details
-    Given a concept with id "50005aece3ba3f095c000001" and label "handgun"
+    Given a concept with label "handgun"
     And this concept has an English definition with value "A portable firearm"
     And this concept has an German definition with value "Tragbare Feuerwaffe"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
     And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
     And this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
     And the term "Schusswaffe" should have property "gender" with value "f"
-    And given a broader concept with id "50005aece3ba3f095c000004" and a label "weapon"
-    And given a narrower concept with id "50005aece3ba3f095c000002" and a label "pistol"
-    And given a narrower concept with id "50005aece3ba3f095c000005" and a label "revolver"
+    And given a broader concept with label "weapon"
+    And given a narrower concept with label "pistol"
+    And given a narrower concept with label "revolver"
     When I enter "gun" in the search field
     And I click the search button
     And I click on the label "handgun"
-    Then I should be on the show concept page for id "50005aece3ba3f095c000001"
+    Then I should be on the show concept page for "handgun"
     And I should see the label "handgun"
     And I should see the section "BROADER & NARROWER"
     And this section should display "pistol" as being narrower
@@ -40,10 +40,10 @@ Feature: user browses single concept
     Then I should see property "gender" with value "f"
 
   Scenario: toggle sections
-    Given a concept with id "50005aece3ba3f095c000001" and label "handgun"
+    Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
     And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
-    And given a broader concept with id "50005aece3ba3f095c000004" and a label "weapon"
+    And given a broader concept with label "weapon"
     When I enter "gun" in the search field
     And I click the search button
     And I click on the label "handgun"
@@ -57,7 +57,7 @@ Feature: user browses single concept
     Then the concept properties should be hidden
 
   Scenario: browse system info
-    Given a concept with id "50005aece3ba3f095c000001" and label "handgun"
+    Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
     And this property has an attribute "author" of "William"
     And this concept has a property "notes" with value "I'm not dead. Am I?"
@@ -70,7 +70,7 @@ Feature: user browses single concept
     And I click the search button
     And I click on the label "handgun"
     When I click the toggle "System Info" on the concept
-    Then I should see "id" with value "50005aece3ba3f095c000001"
+    Then I should see "id" of the "handgun" concept
     And I should see "author" with value "William" for property "notes"
     When I click on index item "2" for property "notes"
     Then I should see "author" with value "Nobody" for property "notes"
