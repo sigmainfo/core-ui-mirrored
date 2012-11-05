@@ -22,6 +22,10 @@ class UserSearchesRepository < Spinach::FeatureSteps
     URI.parse(current_url).query.should =~ /\bq=poet\b/
   end
 
+  And 'I should see a listing of the search results' do
+    page.should have_css(".search-results")
+  end
+  
   Then 'I should see a progress indicator' do
     find("#coreon-progress-indicator")["class"].should == "busy"
   end
@@ -39,7 +43,6 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should see the password prompt' do
-    sleep 30
     page.should have_css("#coreon-password-prompt")
   end
 

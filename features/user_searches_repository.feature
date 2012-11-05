@@ -12,7 +12,7 @@ Feature: user searches repository
     And I click the search button
     Then I should be on the search results page
     And I should see "poet" as the query string
-    And I should see a progress indicator
+    And I should see a listing of the search results
 
   Scenario: service unavailable
     Given the repository is not available
@@ -30,4 +30,4 @@ Feature: user searches repository
     Then I should see the password prompt
     When I enter "se7en!" for password
     And click on "Proceed"
-    Then I should see a progress indicator
+    Then I should see a listing of the search results

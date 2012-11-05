@@ -35,11 +35,12 @@ Feature: user browses quicksearch results
     And I click the search button
     Then I should be on the search result page
     And I should see a listing "CONCEPTS"
-    And the listing should contain "poet", "versify", "poetry"
+    And the listing should contain "versify", "poet", "poetry"
     And "poet" should have superconcept "poetry"
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"
 
+  # @wip
   Scenario: browse taxonomies
     Given a taxonomy "Professions"
     And this taxonomy has a node "programmer"

@@ -86,6 +86,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   When 'I select "Concepts by Terms" as the type of search' do
+    sleep 0.5
     page.find("#coreon-search-target-select .toggle").click
     page.find("li.option", text: "Concepts by Terms").click
   end
@@ -99,6 +100,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   When 'I select "Concepts by Definition" as the type of search' do
+    sleep 0.5
     page.find("#coreon-search-target-select .toggle").click
     page.find("li.option", text: "Concepts by Definition").click
   end

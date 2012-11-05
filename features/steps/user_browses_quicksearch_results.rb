@@ -36,7 +36,6 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   And 'the listing should contain "poet", "poetic", "poetisch", "poetise", "poetize", "poetry"' do
     sleep 0.3
     page.all(".terms tbody td:first").map(&:text).should == ["poet", "poetisch", "poetry", "poetic", "poetize", "poetise"]
-    # Old order: %w|poet poetic poetisch poetise poetize poetry|
   end
 
   And '"poetic" should have language "EN"' do
@@ -97,9 +96,9 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     page.should have_css(".search-results-concepts h3", text: "CONCEPTS")
   end
 
-  And 'the listing should contain "poet", "versify", "poetry"' do
+  And 'the listing should contain "versify", "poet", "poetry"' do
     sleep 0.2
-    page.all(".concepts tbody td.label").map(&:text).should == %w|poet versify poetry|
+    page.all(".concepts tbody td.label").map(&:text).should == %w|versify poet poetry|
   end
 
   And '"poem" should have the correct id' do
@@ -107,7 +106,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   And '"poet" should have superconcept "poetry"' do
-    page.find("td", text: "poet").find(:xpath, "following::td[contains(@class, 'super')]").text.should == "poetry"
+    page.find(".search-results-concepts td", text: "poet").find(:xpath, "following::td[contains(@class, 'super')]").text.should == "poetry"
   end
 
   When 'I click on link to concept "poetry"' do
