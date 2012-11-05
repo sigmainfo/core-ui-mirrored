@@ -11,7 +11,7 @@ Capybara.register_driver :selenium do |app|
   Capybara::Selenium::Driver.new(app, :browser => :chrome)
 end
 Capybara.default_driver = :selenium
-# Capybara.default_wait_time = 5
+Capybara.default_wait_time = 2
 Capybara.server_port = 4000
 
 Spinach.hooks.before_scenario do
