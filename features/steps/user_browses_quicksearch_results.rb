@@ -96,9 +96,9 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     page.should have_css(".search-results-concepts h3", text: "CONCEPTS")
   end
 
-  And 'the listing should contain "versify", "poet", "poetry"' do
+  And 'the listing should contain "poet", "versify", "poetry"' do
     sleep 0.2
-    page.all(".concepts tbody td.label").map(&:text).should == %w|versify poet poetry|
+    page.all(".concepts tbody td.label").map(&:text).should == %w|poet versify poetry|
   end
 
   And '"poem" should have the correct id' do
@@ -151,8 +151,8 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
     page.should have_css(".search-results-tnodes h3", text: "TAXONOMIES")
   end
 
-  And 'the listing should contain "poet", "poetry editor", "artist"' do
+  And 'the listing should contain "poet", "poetry editor"' do
     sleep 0.2
-    page.all(".tnodes tbody td.name").map(&:text).should == ["poet", "poetry editor", "artist"]
+    page.all(".tnodes tbody td.name").map(&:text).should == ["poet", "poetry editor"]
   end
 end
