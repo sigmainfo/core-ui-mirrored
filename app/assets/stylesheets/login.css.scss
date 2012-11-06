@@ -19,12 +19,17 @@
 
   }
   
+  h3 {
+    font: 1.6em Palatino;
+  }
+  
   .login {
     width: 520px;
     padding-bottom: 50px;
-    position: absolute;
-    top: 99px;
-    left: 380px;
+    margin-left: 380px;
+    // position: absolute;
+    // top: 99px;
+    // left: 380px;
     background:image-url("layout/separator.png") repeat-x bottom;
     @include retina-separator;
 

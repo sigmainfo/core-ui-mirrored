@@ -1,0 +1,175 @@
+@import 'compass/css3';
+@import '_config';
+
+.search-results-terms, .search-results-concepts, .search-results-tnodes, .concept-list {
+  margin-right: 270px;
+
+  &>table {  
+    border-spacing: 0;
+    width: 100%;
+    min-width: 600px;
+    margin-bottom: 30px;
+    position: relative;
+    
+    thead th {
+      border-bottom: 1px solid $greencolor;   
+      height: 19px;
+      &:before {
+        @include before-icon;
+        position: absolute;
+        top: 17px;
+        background-position: -52px -150px;
+      }
+    }
+
+    tr {
+      vertical-align: baseline;
+      text-align: left;
+
+      th {
+        font-weight: normal;
+        text-align: left;
+        text-transform: uppercase;
+        font-size: 0.8em;
+      }
+
+      td {
+        border-bottom: 1px solid $greycolor;
+
+        &.lang {
+          text-transform: uppercase;
+          font-size: 0.9em;
+          color: $greencolor;
+        }
+
+        &.term {
+          font: 1.1em Palatino;
+        }
+      }
+
+      td, th {      
+      padding: 4px 20px 1px 2px;
+
+        &.lang {
+          width: 100px;
+        }
+      }
+
+      &:first-child {
+        td {
+          padding-top: 16px;
+        }
+      }
+
+    }
+    
+    &.terms {
+      .concept {
+        width: 180px;
+      }    
+    }
+
+    &.concepts {
+      .id {
+        width: 180px;
+      }
+      td.label a{
+        font-size: 1.1em;
+        background-color: white;
+      }
+    }
+
+    &.tnodes {
+      color: $greencolor;
+      td {
+        border:none;
+      }
+    }
+
+  }
+  
+}
+
+.search-results-terms, .search-results-concepts, .search-results-tnodes {
+  
+  h3 {
+    text-transform: uppercase;
+    color: $greencolor;
+    font-size: 0.9em;
+    position: relative;
+    display: block;
+    height: 20px;
+    top: 24px;
+  }
+  
+  .actions {
+    @include dottedline;
+    margin-bottom: 10px;
+    display: block;
+    text-align: right;
+    
+    a {
+      @include toggle;
+    }
+    
+  }
+
+  table {  
+
+    tr {
+      th {
+        &:first-child{
+          text-indent: -2000px;
+          overflow: hidden;
+        }
+      }
+
+      td, th {      
+        &:first-child {
+          padding-left: 100px;
+        }
+      }
+    } 
+  }
+  
+}
+
+.concept-list {
+  &>table {
+    tr:last-child {
+      td {
+        @include dottedline;
+        background-position: bottom;
+        border: none;
+      }
+    };
+  }
+  .label a{
+    background-color: white;
+  } 
+
+  .concepts table{
+
+    th {
+      width: 100px;
+      text-align: right;
+    }
+    td, th {
+      border: none;
+    }
+    tr {
+      td {
+        padding-top: 4px;
+        background: none;
+      }
+    }
+    th {
+      color: $greencolor;
+    }
+    
+  }
+  
+}
+
+
+

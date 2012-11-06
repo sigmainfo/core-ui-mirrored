@@ -1,0 +1,13 @@
+%h3= I18n.t "search.results.terms.headline"
+%table.terms
+  %thead
+    %tr
+      %th.value= I18n.t "search.results.terms.header.term"
+      %th.lang= I18n.t "search.results.terms.header.language"
+      %th.concept= I18n.t "search.results.terms.header.concept"
+  %tbody
+    - for term in @terms
+      %tr
+        %td.value.term= term.value
+        %td.lang= term.lang
+        %td.concept

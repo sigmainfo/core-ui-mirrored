@@ -1,67 +1,48 @@
 #= require environment
-#= require views/application_view
-#= require collections/notifications
 #= require models/account
+#= require views/application_view
+#= require routers/search_router
+#= require routers/concepts_router
 
 class Coreon.Application
 
-  @defaults:
-    el: "#app"
-    root: "/"
+  constructor: ->
+    throw new Error "Coreon application does already exist" if Coreon.application?
+    @initialize.apply @, arguments
+    Coreon.application = @
 
-  init: (options = {}) ->
-    @options = _.defaults options, @constructor.defaults
+  initialize: (@options = {}) ->
+    _(@options).defaults
+      el         : "#app"
+      auth_root  : "/api/auth/"
+      graph_root : "/api/graph/"
+    
+    @account = new Coreon.Models.Account _(@options).pick "auth_root", "graph_root"
+    @account.fetch()
 
-    @notifications = new Coreon.Collections.Notifications
-    @account       = new Coreon.Models.Account
-
-    @account.on "logout", @onLogout, @
-    @account.on "login", @onLogin, @
+  start: (options = {}) ->
+    _(@options).extend options
 
     @view = new Coreon.Views.ApplicationView
+      model: @account
       el: @options.el
-      model: @
 
     @view.render()
 
-    $(document).ajaxError @ajaxErrorHandler
+    @routers =
+      search_router: new Coreon.Routers.SearchRouter
+        view: @view
+        concepts: @concepts
+      concepts_router: new Coreon.Routers.ConceptsRouter
+        collection: @concepts
+        view: @view
 
-    Backbone.history ?= new Backbone.History
-    Backbone.history.start
-      pushState: true
-      root: @options.root
-      silent: true
+    Backbone.history.start pushState: true
+    @
 
-    Coreon.application = @
+  destroy: ->
+    @account.deactivate()
+    delete Coreon.application
 
-  notify: (message = "") ->
-    @notifications.unshift message: message
-
-  alert: (message = "") ->
-    @notifications.unshift message: message, type: "error"
-
-  onLogout: ->
-    @notifications.reset()
-    @notify I18n.t "notifications.account.logout"
-
-  onLogin: ->
-    @notifications.reset()
-    @notify I18n.t "notifications.account.login", name: @account.get "userName"
-
-  ajaxErrorHandler: (event, jqXHR, ajaxSettings, thrownError) =>
-    if @isApiUrl ajaxSettings.url
-      if jqXHR.readyState is 0
-        @alert I18n.t "errors.service.unavailable"
-      else
-        try
-          data = JSON.parse jqXHR.responseText 
-          data.message ?= I18n.t "errors.generic"
-          if _.isString data.code
-            @alert I18n.t data.code, defaultValue: data.message
-          else
-            @alert data.message
-        catch e
-
-  isApiUrl: (url) ->
-    url.indexOf(CoreClient.Graph.root_url) > -1 or
-    url.indexOf(CoreClient.Auth.root_url) > -1
+  sync: (method, model, options) ->
+    @account.connections.sync method, model, options

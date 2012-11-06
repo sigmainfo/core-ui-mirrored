@@ -43,4 +43,5 @@ end
 group :test, :development do
   gem "capybara-webkit"
   gem "rspec-rails", require: false
+  gem "text"
 end

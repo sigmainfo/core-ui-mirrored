@@ -1,0 +1,13 @@
+%h3= I18n.t "search.results.concepts.headline"
+%table.concepts
+  %thead
+    %tr
+      %th.label= I18n.t "search.results.concepts.header.label"
+      %th.super= I18n.t "search.results.concepts.header.super_concepts"
+  %tbody
+    - for concept in @concepts
+      %tr
+        %td.label.concept
+        %td.super.concept
+%p.actions
+  %a.show-all{href: "/concepts/search?#{@query}"}= I18n.t "search.results.concepts.show_all"

@@ -1,0 +1,5 @@
+%table.concepts
+  %thead
+    %tr
+      %th.label= I18n.t "concepts.list.header.label"
+      %th.super= I18n.t "concepts.list.header.super_concepts"

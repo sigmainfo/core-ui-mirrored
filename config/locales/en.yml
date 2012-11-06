@@ -9,6 +9,60 @@ en:
       password: "Password"
       submit: "Log in"
     status: "Logged in as {{name}}"
+    password_prompt:
+      message: "Please enter your password to proceed:"
+      submit: "Proceed"
+
+  search:
+    target:
+      all:
+        hint: "Search all"
+        label: "All"
+      definition:
+        hint: "Search concepts by definition"
+        label: "Concepts by Definition"
+      terms:
+        hint: "Search concepts by terms"
+        label: "Concepts by Terms"
+    submit: "Search"
+    
+    results:
+      terms:
+        headline: "Terms"
+        header:
+          term: "Term"
+          language: "Language"
+          concept: "Concept"
+      concepts:
+        headline: "Concepts"
+        header:
+          label: "Concept"
+          super_concepts: "Broader"
+          id: "ID"
+        show_all: "Show all"
+      tnodes:
+        headline: "Taxonomies"
+        header:
+          name: "Name"
+
+  concepts:
+    list:
+      header:
+        label: "Concept"
+        super_concepts: "Broader"
+        id: "ID"
+      props:
+        definition: "Definition"
+
+  concept:
+    info: "System Info"
+    tree: "Broader & Narrower"
+
+  term:
+    info: "System Info"
+  
+  properties:
+    title: "Properties"
 
   notification:
     label:
@@ -21,7 +75,7 @@ en:
     account:
       logout: "Successfully logged out."
       login: "Successfully logged in as {{name}}."
-
+  
   errors:
     generic: "An error occured."
     login:
