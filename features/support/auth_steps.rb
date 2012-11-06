@@ -13,8 +13,10 @@ module AuthSteps
   end
 
   Given 'I am logged in' do
+    page.execute_script "Coreon.application.account.deactivate();"
     page.execute_script "Coreon.application.account.activate('#{me[:login]}', '#{me[:password]}');"
     wait_until { page.evaluate_script "Coreon.application.account.get('active');" }
+    CoreAPI.session = page.evaluate_script "Coreon.application.account.get('session')"
   end
 
   Given 'I am logged out' do

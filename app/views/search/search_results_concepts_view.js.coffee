@@ -1,13 +1,13 @@
 #= require environment
 #= require views/composite_view
-#= require templates/main/search_results_concepts
+#= require templates/search/search_results_concepts
 #= require views/concepts/concept_label_view
 
 class Coreon.Views.Search.SearchResultsConceptsView extends Coreon.Views.CompositeView
 
   className: "search-results-concepts"
 
-  template: Coreon.Templates["main/search_results_concepts"]
+  template: Coreon.Templates["search/search_results_concepts"]
 
   initialize: ->
     super

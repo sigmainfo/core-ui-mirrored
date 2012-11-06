@@ -1,18 +1,17 @@
 #= require spec_helper
-#= require views/concepts/concept_label_view.js.coffee
+#= require views/concepts/concept_label_view
 
 describe "Coreon.Views.Concepts.ConceptLabelView", ->
   
   beforeEach ->
     @concept = _(new Backbone.Model).extend label: -> "poem"
-    Coreon.application =
-      concepts: _(new Backbone.Collection).extend
-        getOrFetch: => @concept
+    sinon.stub Coreon.Models.Concept, "find"
+    Coreon.Models.Concept.find.withArgs("1234").returns @concept
     @view = new Coreon.Views.Concepts.ConceptLabelView "1234"
 
   afterEach ->
     @view.destroy()
-    Coreon.application = null
+    Coreon.Models.Concept.find.restore()
 
   it "is a simple view", ->
     @view.should.be.an.instanceof Coreon.Views.SimpleView
@@ -26,16 +25,15 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @concept = new Backbone.Model
     
     it "gets model by id", ->
-      Coreon.application.concepts.getOrFetch = sinon.stub()
-      Coreon.application.concepts.getOrFetch.withArgs("1234abcf").returns @concept
+      Coreon.Models.Concept.find.withArgs("1234abcf").returns @concept
       @view.initialize "1234abcf"
       @view.model.should.equal @concept
 
     it "sets model from options", ->
-      sinon.spy Coreon.application.concepts, "getOrFetch"
+      Coreon.Models.Concept.find.reset()
       @view.initialize model: @concept
       @view.model.should.equal @concept
-      Coreon.application.concepts.getOrFetch.should.not.have.been.called
+      Coreon.Models.Concept.find.should.not.have.been.calledWith "1234"
     
   describe "#render", ->
     

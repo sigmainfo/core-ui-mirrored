@@ -1,0 +1,7 @@
+%ul.index
+  - for label, index in @labels
+    %li{class: "selected" if index is 0}
+      %a{href: "javascript:void(0)", "data-index": index}= label
+%ul.values
+  - for property, index in @properties
+    %li{style: "display: none;" unless index is 0}!= property

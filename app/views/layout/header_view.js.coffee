@@ -3,6 +3,7 @@
 #= require views/notifications/notifications_view
 
 class Coreon.Views.Layout.HeaderView extends Coreon.Views.CompositeView
+
   id: "coreon-header"
 
   events:
@@ -14,8 +15,8 @@ class Coreon.Views.Layout.HeaderView extends Coreon.Views.CompositeView
     @height = @$el.height()
 
   render: ->
-    @$el.append @notifications.render().$el
-    @
+    @append @notifications
+    super
 
   onAnimate: ->
     @trigger "resize"

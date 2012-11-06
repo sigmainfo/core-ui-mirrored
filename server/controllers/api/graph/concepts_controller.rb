@@ -3,7 +3,7 @@ class Api::Graph::ConceptsController < ApplicationController
   before_filter :authenticate
 
   def show
-    render json: Api::Graph::Concept.find(params[:id]).as_document
+    render json: Api::Graph::Concept.find(params[:id]).serializable_hash(include: {terms: {include: :properties}})
   rescue
     render nothing: true, status: 404
   end
@@ -25,7 +25,7 @@ class Api::Graph::ConceptsController < ApplicationController
             else
               0.5
             end,
-          result: concept.serializable_hash(:include => :terms)
+          result: concept.serializable_hash(include: {terms: {include: :properties}})
         }
       end.try(:sort) { |a, b| b[:score] <=> a[:score] }
     }

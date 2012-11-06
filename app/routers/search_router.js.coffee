@@ -25,7 +25,7 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
         query: params.q
 
       tnodes: new Coreon.Models.Search
-        path: "tnodes/search"
+        path: "taxonomy_nodes/search"
         query: params.q
 
     @searchResultsView = new Coreon.Views.Search.SearchResultsView
@@ -34,6 +34,6 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
 
     searches.terms.fetch()
     searches.tnodes.fetch()
-    searches.concepts.fetch().done (data) =>
-      @concepts.addOrUpdate _(data.hits).pluck "result"
+    searches.concepts.fetch().done (data) ->
+      Coreon.Models.Concept.upsert _(data.hits).pluck "result"
 

@@ -8,9 +8,9 @@ Feature: user browses quicksearch results
     And I am logged in
 
   Scenario: browse terms
-    Given the following English terms: "dead", "man", "nobody", "poet", "poetic", "poetise", "poetize", "poetry", "train", "wild"
+    Given the following English terms: "dead", "man", "nobody", "poet", "poetic", "poetry", "train", "wild"
     And given the following German terms: "poetisch", "dichterisch", "Dichtkunst"
-    And a concept with id "50005aece3ba3f095c000001" that contains the terms "poetize" and "poetise"
+    And a concept "versify" that contains the terms "poetize" and "poetise"
     When I enter "poet" in the search field
     And I click the search button
     Then I should be on the search result page
@@ -19,28 +19,28 @@ Feature: user browses quicksearch results
     And the listing should contain "poet", "poetic", "poetisch", "poetise", "poetize", "poetry"
     And "poetic" should have language "EN"
     And "poetisch" should have language "DE"
-    And "poetize" should have concept "50005aece3ba3f095c000001"
-    When I click on link to concept "50005aece3ba3f095c000001"
-    Then I should be on the page of concept "50005aece3ba3f095c000001"
+    And "poetize" should have concept "versify"
+    When I click on link to concept "versify"
+    Then I should be on the page of concept "versify"
 
   Scenario: browse concepts
-    Given the a concept with id "50005aece3ba3f095c000001" and label "dead"
-    And given a concept with id "50005aece3ba3f095c000002" and label "versify"
+    Given the a concept with label "dead"
+    And given a concept with label "versify"
     And that concept has the English term "poetize"
-    And given a concept with id "50005aece3ba3f095c000003" and label "poet"
-    And given a concept with id "50005aece3ba3f095c000004" and label "poem"
-    And given a concept with id "50005aece3ba3f095c000005" and label "poetry"
-    And "poem" is a subconcept of "poetry"
-    When I enter "poe" in the search field
+    And given a concept with label "poet"
+    And given a concept with label "poem"
+    And given a concept with label "poetry"
+    And "poet" is a subconcept of "poetry"
+    When I enter "poet" in the search field
     And I click the search button
     Then I should be on the search result page
     And I should see a listing "CONCEPTS"
-    And the listing should contain "poet", "poem", "poetry", "versify"
-    And "poem" should have id "50005aece3ba3f095c000004"
-    And "poem" should have superconcept "poetry"
+    And the listing should contain "poet", "versify", "poetry"
+    And "poet" should have superconcept "poetry"
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"
 
+  # @wip
   Scenario: browse taxonomies
     Given a taxonomy "Professions"
     And this taxonomy has a node "programmer"
@@ -52,4 +52,4 @@ Feature: user browses quicksearch results
     And I click the search button
     Then I should be on the search result page
     And I should see a listing "TAXONOMIES"
-    And the listing should contain "poet", "poetry editor", "artist"
+    And the listing should contain "poet", "poetry editor"

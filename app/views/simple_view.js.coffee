@@ -20,4 +20,3 @@ class Coreon.Views.SimpleView extends Backbone.View
   destroy: ->
     @remove()
     @dissolve()
-

@@ -65,7 +65,7 @@ describe "Coreon.Routers.SearchRouter", ->
     it "creates taxonomy search", ->
       @router.search q: "poet"
       @router.searchResultsView.tnodes.model.should.be.an.instanceof Coreon.Models.Search
-      @router.searchResultsView.tnodes.model.get("path").should.equal "tnodes/search"
+      @router.searchResultsView.tnodes.model.get("path").should.equal "taxonomy_nodes/search"
       @router.searchResultsView.tnodes.model.get("query").should.equal "poet"
 
     it "fetches search results", ->
@@ -94,8 +94,7 @@ describe "Coreon.Routers.SearchRouter", ->
                 ]
             }
           ]
-        concept = Coreon.application.concepts.get "1234"
-        expect(concept).to.be.an.instanceof Coreon.Models.Concept
+        concept = Coreon.Models.Concept.find "1234"
         concept.get("properties").should.eql [{key: "label", value: "poet"}]
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
       finally

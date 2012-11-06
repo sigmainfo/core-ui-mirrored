@@ -42,19 +42,6 @@
           color: $greencolor;
         }
 
-        &.concept {
-
-          a {
-            @include concept-icon;
-            white-space: nowrap;
-            padding: 3px 3px 2px 4px;
-            margin-left: -4px;
-            &:hover {
-                background-color: white;
-            };
-          }
-        }
-
         &.term {
           font: 1.1em Palatino;
         }
@@ -86,8 +73,9 @@
       .id {
         width: 180px;
       }
-      td.label {
+      td.label a{
         font-size: 1.1em;
+        background-color: white;
       }
     }
 
@@ -121,16 +109,7 @@
     text-align: right;
     
     a {
-      display: inline-block;
-      text-transform: uppercase;
-      font-size: 0.8em;
-      padding: 5px;
-      &:before {
-        @include before-icon;
-        float: left;
-        background-position: -51px -102px;
-        @include rotate(-90deg);
-      };
+      @include toggle;
     }
     
   }

@@ -10,7 +10,6 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       model: new Coreon.Models.SearchType
      
   afterEach ->
-    @view.undelegateEvents()
     I18n.t.restore()
 
   it "is a simple view", ->
@@ -52,10 +51,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.onClick.should.have.been.calledWith @event
 
     it "hides itself", ->
-      @view.undelegateEvents = sinon.spy()
       @view.remove = sinon.spy()
       @view.onClick @event
-      @view.undelegateEvents.should.have.been.calledOnce
       @view.remove.should.have.been.calledOnce
 
   describe "#onSelect", ->
@@ -117,42 +114,35 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
 
     it "is triggered by keydown", ->
       @view.onKeydown = sinon.spy()
-      @view.delegateEvents()
+      @view.initialize()
       $(document).trigger @event
       @view.onKeydown.should.have.been.calledWith @event
 
     it "is not triggered after undelegating events", ->
       @view.onKeydown = sinon.spy()
       @view.delegateEvents()
-      @view.undelegateEvents()
       $(document).trigger @event
       @view.onKeydown.should.not.have.been.called
 
     it "hides itself on <esc>", ->
-      @view.undelegateEvents = sinon.spy()
       @view.remove = sinon.spy()
       @event.keyCode = 27
       @view.onKeydown @event
-      @view.undelegateEvents.should.have.been.calledOnce
       @view.remove.should.have.been.calledOnce
 
     it "selects focused on <enter", ->
       @view.$("li.option").eq(1).addClass "focus"
-      @view.undelegateEvents = sinon.spy()
       @view.remove = sinon.spy()
       @event.keyCode = 13
       @view.onKeydown @event
       @view.model.get("selectedTypeIndex").should.equal 1
-      @view.undelegateEvents.should.have.been.calledOnce
       @view.remove.should.have.been.calledOnce
 
     it "simply keeps selection when nothing is focused on <enter>", ->
-      @view.undelegateEvents = sinon.spy()
       @view.remove = sinon.spy()
       @event.keyCode = 13
       @view.onKeydown @event
       @view.model.get("selectedTypeIndex").should.equal 0
-      @view.undelegateEvents.should.have.been.calledOnce
       @view.remove.should.have.been.calledOnce    
 
     it "moves focus down on <down>", ->

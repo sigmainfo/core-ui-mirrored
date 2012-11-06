@@ -20,21 +20,21 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Coreon.Views.S
     "mouseover li": "onFocus"
     "mouseout li": "onBlur"
 
-  delegateEvents: ->
+  initialize: ->
     super
     $(document).on "keydown", @onKeydown
 
-  undelegateEvents: ->
+  resolve: ->
+    super
     $(document).off "keydown"
 
   render: ->
     @$el.html @template
       options: @model.get "availableTypes"
       selected: @model.get "selectedTypeIndex"
-    @
+    super
 
   onClick: (event) ->
-    @undelegateEvents()
     @remove()
 
   onSelect: (event) ->
@@ -51,10 +51,8 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Coreon.Views.S
     focusedTypeIndex = @$("li.option.focus").index()
     switch event.keyCode
       when KEYCODE.esc
-        @undelegateEvents()
         @remove()
       when KEYCODE.enter
-        @undelegateEvents()
         @remove()
         if focusedTypeIndex > -1
           @model.set "selectedTypeIndex", focusedTypeIndex

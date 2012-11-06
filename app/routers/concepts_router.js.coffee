@@ -1,12 +1,14 @@
 #= require environment
 #= require backbone.queryparams
 #= require views/concepts/concept_list_view
+#= require views/concepts/concept_view
 #= require models/search
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
-    "concepts/search": "search"
+    "concepts/search" : "search"
+    "concepts/:id"    : "show"
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -24,6 +26,11 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       model: search
       collection: @collection
     
-    @view.switch results.render()
+    @view.switch results
 
     search.fetch()
+
+  show: (id) ->
+    screen = new Coreon.Views.Concepts.ConceptView
+      model: Coreon.Models.Concept.find id
+    @view.switch screen

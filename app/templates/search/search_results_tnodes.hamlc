@@ -6,4 +6,4 @@
   %tbody
     - for tnode in @tnodes
       %tr
-        %td.value.name= tnode.name
+        %td.value.name= tnode.label()

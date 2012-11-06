@@ -28,17 +28,20 @@ describe "Coreon.Models.Search", ->
       @model.params().should.eql
         "search[query]": "gun"
         "search[only]":  "terms"
+        "search[tolerance]": 2
 
     it "skips target when not given", ->
       @model.unset "target"
       @model.params().should.eql
         "search[query]": "gun"
+        "search[tolerance]": 2
 
     it "prepends prefixes properties", ->
       @model.set target: "definition"
       @model.params().should.eql
         "search[query]": "gun"
         "search[only]":  "properties/definition"
+        "search[tolerance]": 2
 
   describe "#fetch", ->
 
@@ -57,7 +60,7 @@ describe "Coreon.Models.Search", ->
       @model.fetch()
       @request.url.should.equal "https://graph.coreon.com/terms/search"
       @request.method.should.equal "POST"
-      @request.requestBody.should.equal "search%5Bquery%5D=poet"
+      @request.requestBody.should.equal "search%5Bquery%5D=poet&search%5Btolerance%5D=2"
 
   describe "#query", ->
     

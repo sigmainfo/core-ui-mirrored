@@ -23,6 +23,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
     it "creates dropdown", ->
       @view.dropdown.should.be.an.instanceof Coreon.Views.Widgets.SearchTargetSelectDropdownView 
       @view.dropdown.model.should.equal @view.model
+      @view.subviews.should.eql [@view.dropdown]
 
   describe "#render", ->
 

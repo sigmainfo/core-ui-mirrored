@@ -11,39 +11,44 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     @concept = page.find(".concept-list-item .label", text: label).find :xpath, "ancestor::*[contains(@class, 'concept-list-item')]"
   end
 
-  Given 'a concept with id "50005aece3ba3f095c000001" defined as "A portable firearm"' do
-    @handgun = create_concept_with_id "50005aece3ba3f095c000001", definition: "A portable firearm"
+  Given 'a concept defined as "A portable firearm"' do
+    @handgun = create_concept properties: [{key: 'definition', value: 'A portable firearm'}] 
   end
 
   And 'this concept has the label "handgun"' do
-    @handgun.properties.create! key: "label", value: "handgun"
+    create_concept_property @handgun, key: "label", value: "handgun"
   end
 
   And 'this concept has the following English terms: "gun", "firearm", "shot gun", "musket"' do
     ["gun", "firearm", "shot gun", "musket"].each do |value|
-      @handgun.terms.create! value: value, lang: "en"
+      create_concept_term @handgun, value: value, lang: "en"
     end
   end
 
   And 'this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
     ["Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"].each do |value|
-      @handgun.terms.create! value: value, lang: "de"
+      create_concept_term @handgun, value: value, lang: "de"
     end
   end
 
-  And 'given another concept with id "50005aece3ba3f095c000002" defined as "a handgun whose chamber is integral with the barrel;"' do
-    @pistol = create_concept_with_id "50005aece3ba3f095c000002", definition: "a handgun whose chamber is integral with the barrel;"
+  And 'given another concept defined as "a handgun whose chamber is integral with the barrel;"' do
+    @pistol = create_concept properties: [{key: 'definition', value: 'a handgun whose chamber is integral with the barrel;'}]
   end
 
   And 'this concept has the following English terms: "pistol", "gun", "automatic pistol"' do
     ["pistol", "gun", "automatic pistol"].each do |value|
-      @pistol.terms.create! value: value, lang: "en"
+      create_concept_term @pistol, value: value, lang: "en"
     end
   end
 
   And 'this concept is a subconcept of "handgun"' do
-    @handgun.sub_concepts << @pistol
-    @handgun.save!
+    create_edge({
+      source_node_type: 'Concept', 
+      source_node_id: @handgun['_id'],
+      edge_type: 'SUPERCONCEPT_OF',
+      target_node_type: 'Concept',
+      target_node_id: @pistol['_id']
+    })
   end
 
   And 'I click "Show all" within the concept search results' do
@@ -56,8 +61,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     current_path.should == "/concepts/search"
   end
 
-  And 'I should see a concept "handgun" with id "50005aece3ba3f095c000001"' do
-    find_concept("handgun").find(".id").should have_content("50005aece3ba3f095c000001")
+  And 'I should see a concept "handgun"' do
+    @concept = find_concept("handgun")
   end
 
   And 'I should see it being defined as "A portable firearm"' do
@@ -72,8 +77,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     @concept.find(".terms th", text: "DE").find(:xpath, "../td").should have_content("Schusswaffe, Flinte, Pistole, Schießgewehr, Geschütz")
   end
 
-  And 'I should see a concept "pistol" with id "50005aece3ba3f095c000002"' do
-    find_concept("pistol").find(".id").should have_content("50005aece3ba3f095c000002")
+  And 'I should see a concept "pistol"' do
+    @concept = find_concept("pistol")
   end
 
   And 'I should see it being narrower than "handgun"' do
@@ -81,6 +86,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   When 'I select "Concepts by Terms" as the type of search' do
+    sleep 0.5
     page.find("#coreon-search-target-select .toggle").click
     page.find("li.option", text: "Concepts by Terms").click
   end
@@ -94,6 +100,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   When 'I select "Concepts by Definition" as the type of search' do
+    sleep 0.5
     page.find("#coreon-search-target-select .toggle").click
     page.find("li.option", text: "Concepts by Definition").click
   end
