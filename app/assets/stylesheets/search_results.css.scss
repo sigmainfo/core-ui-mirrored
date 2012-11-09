@@ -18,7 +18,8 @@
       &:before {
         @include before-icon;
         position: absolute;
-        bottom: -9px;
+/*        bottom: -9px;*/
+        top: 1.65em;
         background-position: -52px -150px;
       }
     }
