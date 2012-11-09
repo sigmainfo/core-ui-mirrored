@@ -14,10 +14,11 @@
     thead th {
       border-bottom: 1px solid $greencolor;   
       height: 19px;
+      position: relative;
       &:before {
         @include before-icon;
         position: absolute;
-        top: 17px;
+        bottom: -9px;
         background-position: -52px -150px;
       }
     }
