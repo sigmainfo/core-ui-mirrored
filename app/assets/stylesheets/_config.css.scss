@@ -39,7 +39,7 @@ $widget-width: 320px;
   padding: 5px;
   &:before {
     @include before-icon;
-display: inline-block;
+    display: inline-block;
     background-position: -53px -103px;
     height: 12px;
     @include rotate(-90deg);
