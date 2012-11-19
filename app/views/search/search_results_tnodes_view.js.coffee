@@ -1,4 +1,5 @@
 #= require environment
+#= require views/composite_view
 #= require templates/search/search_results_tnodes
 #= require models/taxonomy_node
 
