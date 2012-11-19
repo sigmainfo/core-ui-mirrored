@@ -33,7 +33,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   Then 'I should see the widget "Concept Map"' do
-    page.should have_css("#concept-map")
+    page.should have_css(".widget h4", text: "Concept Map")
   end
 
   And 'it should be empty' do
