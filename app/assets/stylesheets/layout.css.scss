@@ -28,8 +28,9 @@
 }
 
 #coreon-widgets {
+  position: absolute;
+  right: 0;
   width: $widget-width;
-  float: right;
   @include box-shadow(rgba(black, 0.4) -2px 0px 5px);
   
 }

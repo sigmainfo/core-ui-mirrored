@@ -1,6 +1,7 @@
 #= require spec_helper
 #= require models/concept
 #= require config/application
+#= require collections/hits
 
 describe "Coreon.Models.Concept", ->
 
@@ -42,7 +43,7 @@ describe "Coreon.Models.Concept", ->
       ]  
       @model.label().should.equal "poetry"
 
-  describe "info", ->
+  describe "#info", ->
     
     it "returns hash with system info attributes", ->
       @model.set

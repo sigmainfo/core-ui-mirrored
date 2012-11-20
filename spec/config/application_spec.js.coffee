@@ -45,6 +45,11 @@ describe "Coreon.Application", ->
       @app.initialize()
       @app.account.get("session").should.equal "my-auth-token"
 
+    it "creates current hits", ->
+      @app.initialize()
+      @app.hits.should.be.an.instanceof Coreon.Collections.Hits
+      @app.hits.length.should.equal 0
+
   describe "#start", ->
 
     it "can be chained", ->
@@ -68,11 +73,13 @@ describe "Coreon.Application", ->
       @app.start()
       @app.routers.search_router.should.be.an.instanceof Coreon.Routers.SearchRouter
       @app.routers.search_router.view.should.equal @app.view
+      @app.routers.search_router.app.should.equal @app
 
     it "creates concepts router", ->
       @app.start()
       @app.routers.concepts_router.should.be.an.instanceof Coreon.Routers.ConceptsRouter
       @app.routers.concepts_router.view.should.equal @app.view
+      @app.routers.concepts_router.app.should.equal @app
 
     it "starts history", ->
       Backbone.history.start = sinon.spy()

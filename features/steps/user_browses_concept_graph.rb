@@ -37,15 +37,11 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   And 'it should be empty' do
-    pending 'step not implemented'
-  end
-
-  When 'I search for "handgun"' do
-    pending 'step not implemented'
+    page.all("#coreon-concept-map .concept-node").count.should == 0
   end
 
   And 'select "handgun" from the result list' do
-    pending 'step not implemented'
+    page.find(".search-results-concepts .concept-label", text: "handgun").click
   end
 
   Then 'I shoud see "weapon", "handgun", "long gun", "pistol", and "revolver" displayed in the concept map' do
