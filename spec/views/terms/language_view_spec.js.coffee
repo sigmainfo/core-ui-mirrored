@@ -13,12 +13,28 @@ describe "Coreon.Views.Terms.LanguageView", ->
     @view.should.be.an.instanceof Coreon.Views.Layout.SectionView
 
   it "creates container", ->
-    @view.options.lang = "hu"
-    @view.initialize()
     @view.$el.should.have.class "language"
-    @view.$el.should.have.class "hu"
 
-  describe "#render", ->
+  describe "#initialize()", ->
+
+    it "adds class for language", ->
+      @view.options.lang = "hu"
+      @view.initialize()
+      @view.$el.should.have.class "hu"
+
+    it "normalizes language code", ->
+      @view.options.lang = "DE_AT"
+      @view.initialize()
+      @view.$el.should.have.class "de"
+
+    it "replaces previously set language", ->
+      @view.options.lang = "hu"
+      @view.initialize()
+      @view.options.lang = "fr"
+      @view.initialize()
+      @view.$el.should.not.have.class "hu"
+
+  describe "#render()", ->
   
     it "can be chained", ->
       @view.render().should.equal @view
