@@ -15,26 +15,28 @@ describe "Coreon.Views.Terms.LanguageView", ->
   it "creates container", ->
     @view.$el.should.have.class "language"
 
-  describe "#initialize()", ->
+  describe ".$el", ->
 
-    it "adds class for language", ->
+    beforeEach ->
+      @view.recreate = ->
+        @setElement()
+        @_configure()
+        @_ensureElement()
+
+    it "has basic identifier class", ->
+      @view.$el.should.have.class "language"
+
+    it "has language code assigned", ->
       @view.options.lang = "hu"
-      @view.initialize()
+      @view.recreate()
       @view.$el.should.have.class "hu"
 
     it "normalizes language code", ->
       @view.options.lang = "DE_AT"
-      @view.initialize()
+      @view.recreate()
       @view.$el.should.have.class "de"
 
-    it "replaces previously set language", ->
-      @view.options.lang = "hu"
-      @view.initialize()
-      @view.options.lang = "fr"
-      @view.initialize()
-      @view.$el.should.not.have.class "hu"
-
-  describe "#render()", ->
+  describe ".render()", ->
   
     it "can be chained", ->
       @view.render().should.equal @view

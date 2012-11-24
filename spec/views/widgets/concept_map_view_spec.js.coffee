@@ -17,7 +17,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     @view.$el.should.have.id "coreon-concept-map"
     @view.$el.should.have.class "widget"
 
-  describe "#render", ->
+  describe "#render()", ->
   
     it "can be chained", ->
       @view.render().should.equal @view
