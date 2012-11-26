@@ -62,7 +62,7 @@ describe "Coreon.Application", ->
     it "creates view", ->
       @app.start el: "#coreon"
       @app.view.should.be.an.instanceof Coreon.Views.ApplicationView
-      @app.view.model.should.equal @app.account
+      @app.view.model.should.equal @app
       @app.view.options.el.should.equal "#coreon"
 
     it "renders view", ->

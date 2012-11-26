@@ -5,8 +5,8 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
   beforeEach ->
     @view = new Coreon.Views.Widgets.WidgetsView
-    sinon.stub @view.search
-    sinon.stub @view.map
+      model:
+        hits: new Backbone.Collection
 
   it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView
@@ -14,15 +14,20 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   it "creates container", ->
     @view.$el.should.have.id "coreon-widgets"
 
-  it "creates subviews", ->
-    @view.search.should.be.an.instanceOf Coreon.Views.Widgets.SearchView
-    @view.map.should.be.an.instanceOf Coreon.Views.Widgets.ConceptMapView
+  describe "initialize()", ->
+
+    it "creates search", ->
+      @view.search.should.be.an.instanceOf Coreon.Views.Widgets.SearchView
+
+    it "creates concept map", ->
+      @view.map.should.be.an.instanceOf Coreon.Views.Widgets.ConceptMapView
+      @view.map.model.should.equal @view.model.hits
     
-  describe "#render", ->
+  describe "render()", ->
 
     beforeEach ->
-      @view.search.render.returns @view.search
-      @view.map.render.returns @view.map
+      @view.search.render = sinon.stub().returns @view.search
+      @view.map.render = sinon.stub().returns @view.map
 
     it "is chainable", ->
       @view.render().should.equal @view

@@ -6,6 +6,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   beforeEach ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Widgets.ConceptMapView
+      model: new Backbone.Collection
+    @view.model.tree = -> children: []
 
   afterEach ->
     I18n.t.restore()
@@ -17,7 +19,17 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     @view.$el.should.have.id "coreon-concept-map"
     @view.$el.should.have.class "widget"
 
-  describe "#render()", ->
+  describe "initialize()", ->
+    
+    it "creates layout", ->
+      sinon.stub d3.layout, "tree", -> "tree layout"
+      try
+        @view.initialize()
+        @view.layout.should.equal "tree layout"
+      finally
+        d3.layout.tree.restore()
+    
+  describe "render()", ->
   
     it "can be chained", ->
       @view.render().should.equal @view
@@ -32,3 +44,30 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render()
       @view.$el.should.have "svg"
 
+  describe "_onHitUpdate()", ->
+    
+    it "is triggered by current hits", ->
+      @view._onHitUpdate = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "hit:update"
+      @view._onHitUpdate.should.have.been.calledOnce
+
+    it "updates layout", ->
+      @view.model.tree = sinon.stub().returns children: ["foo", "bar"]
+      @view.layout.nodes = sinon.spy()
+      @view._onHitUpdate()
+      @view.layout.nodes.should.have.been.calledOnce
+      @view.layout.nodes.should.have.been.calledWith children: ["foo", "bar"]
+
+    it "updates nodes"
+
+    it "updates links"
+      
+
+  describe "dissolve()", ->
+
+    it "dissolves hits", ->
+      @view.model.off = sinon.spy()
+      @view.dissolve()
+      @view.model.off.should.have.been.calledOnce
+      @view.model.off.should.have.been.calledWith null, null, @view

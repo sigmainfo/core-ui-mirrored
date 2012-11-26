@@ -27,7 +27,7 @@ class Coreon.Application
     _(@options).extend options
 
     @view = new Coreon.Views.ApplicationView
-      model: @account
+      model: @
       el: @options.el
 
     @view.render()

@@ -10,7 +10,7 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
   initialize: ->
     super
     @search = new Coreon.Views.Widgets.SearchView
-    @map = new Coreon.Views.Widgets.ConceptMapView
+    @map = new Coreon.Views.Widgets.ConceptMapView model: @model.hits
 
   render: ->
     @append @search, @map
