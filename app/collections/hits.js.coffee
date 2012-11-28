@@ -17,11 +17,17 @@ class Coreon.Collections.Hits extends Backbone.Collection
       @_invalidateGraph()
       @trigger "hit:update", @, options unless options.silent?
 
+  graph: ->
+    @_graph ?= @_createGraph()
+
   nodes: ->
-    @_nodes ?= @_createNodes()
+    @graph().nodes
 
   edges: ->
-    @_edges ?= @_createEdges()
+    @graph().edges
+
+  roots: ->
+    @graph().roots
 
   _removeDropped: (hits, options) ->
     drops = []
@@ -54,11 +60,20 @@ class Coreon.Collections.Hits extends Backbone.Collection
     concept = Coreon.Models.Concept.find model.id
     concept.trigger "hit:#{event}", model, collection, options
 
-  _createNode: (id, hit = null) ->
-    concept: Coreon.Models.Concept.find id
-    hit: hit
+  _createGraph: ->
+    nodesHash = @_createNodesHash()
+    edges = @_createEdges nodesHash
+    @_createRelations edges
+    nodes = []
+    roots = []
+    for id, node of nodesHash
+      nodes.push node
+      roots.push node if node.parents is null
+    edges: edges
+    nodes: nodes
+    roots: roots
 
-  _createNodes: ->
+  _createNodesHash: ->
     nodes = {}
     for hit in @models
       nodes[hit.id] = @_createNode hit.id, hit
@@ -70,9 +85,15 @@ class Coreon.Collections.Hits extends Backbone.Collection
         nodes[childId] ||= @_createNode childId
     nodes
 
-  _createEdges: ->
+  _createNode: (id, hit = null) ->
+    id: id
+    concept: Coreon.Models.Concept.find id
+    hit: hit
+    parents: null
+    children: null
+
+  _createEdges: (nodes) ->
     edges = []
-    nodes = @nodes()
     for id, node of nodes
       for parentId in node.concept.get "super_concept_ids"
         if nodes[parentId]?
@@ -81,5 +102,12 @@ class Coreon.Collections.Hits extends Backbone.Collection
             target: node
     edges
 
+  _createRelations: (edges) ->
+    for edge in edges
+      edge.source.children ?= []
+      edge.source.children.push edge.target
+      edge.target.parents ?= []
+      edge.target.parents.push edge.source
+
   _invalidateGraph: ->
-    @_nodes = @_edges = null
+    @_graph = null
