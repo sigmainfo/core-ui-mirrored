@@ -16,3 +16,6 @@ tmp
 
 chromedriver.log
 .DS_Store
+
+# Ignore SASS files
+.sass-cache
