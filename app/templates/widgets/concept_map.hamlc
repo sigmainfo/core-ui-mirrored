@@ -1,0 +1,3 @@
+.titlebar
+  %h4= I18n.t "concept-map.title"
+%svg

@@ -1,4 +1,7 @@
 #= require spec_helper
+#= require jquery
+#= require underscore
+#= require backbone
 #= require modules/messages
 
 describe "Coreon.Modules.Messages", ->

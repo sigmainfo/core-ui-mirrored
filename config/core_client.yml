@@ -1,6 +1,9 @@
 development:
   graph_root: http://localhost:3332/
   auth_root: http://localhost:3333/
+styling:
+  graph_root: http://styling.local:3332/
+  auth_root: http://styling.local:3333/
 test:  
   graph_root: http://localhost:3336/
   auth_root: http://localhost:3335/

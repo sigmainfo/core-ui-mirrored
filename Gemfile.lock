@@ -233,7 +233,7 @@ DEPENDENCIES
   haml_coffee_assets
   i18n-js
   jquery-rails
-  konacha
+  konacha (~> 2.0.0)
   launchy
   mongoid (~> 3.0.0)
   pry

@@ -12,6 +12,7 @@ describe "Coreon.Routers.SearchRouter", ->
       view: _(new Backbone.View(el: $("#konacha"))).extend
         switch: (@screen) => @screen.render() 
       concepts: Coreon.application.concepts
+      app: Coreon.application
 
     @router.view.widgets =
       search:
@@ -39,7 +40,7 @@ describe "Coreon.Routers.SearchRouter", ->
       @xhr.onCreate = (@request) =>
 
     afterEach ->
-     @xhr.restore()
+      @xhr.restore()
 
     it "is routed", ->
       @router.routes["search"].should.equal "search"
@@ -75,9 +76,15 @@ describe "Coreon.Routers.SearchRouter", ->
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.concepts.model
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.tnodes.model
 
-    it "updates concepts from results", ->
-      sinon.stub(Coreon.Views.Search, "SearchResultsView").returns render: ->
-      try
+    context "done", ->
+      
+      beforeEach ->
+        sinon.stub(Coreon.Views.Search, "SearchResultsView").returns render: ->
+
+      afterEach ->
+        Coreon.Views.Search.SearchResultsView.restore()
+        
+      it "updates concepts from results", ->
         @router.search q: "poet"
         @request.respond 200, {}, JSON.stringify
           hits: [
@@ -97,8 +104,20 @@ describe "Coreon.Routers.SearchRouter", ->
         concept = Coreon.Models.Concept.find "1234"
         concept.get("properties").should.eql [{key: "label", value: "poet"}]
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
-      finally
-        Coreon.Views.Search.SearchResultsView.restore()
+
+      it "updates current hits", ->
+        @router.app.hits.update = sinon.spy()
+        @router.search q: "poet"
+        @request.respond 200, {}, JSON.stringify
+          hits: [
+            {
+              score: 1.56
+              result:
+                _id: "1234"
+            }
+          ]
+        @router.app.hits.update.should.have.been.calledWith [ { id: "1234", score: 1.56 }]
+       
 
     it "restores search input", ->
       spy = sinon.spy()

@@ -1,4 +1,5 @@
 #= require environment
+#= require views/simple_view
 
 class Coreon.Views.Layout.ProgressIndicatorView extends Coreon.Views.SimpleView
   id: "coreon-progress-indicator"

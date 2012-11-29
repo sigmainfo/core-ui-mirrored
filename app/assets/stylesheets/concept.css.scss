@@ -92,6 +92,7 @@ div.concept {
     background: rgba($greencolor, 0.08);
     &:before {
       @include rotate(0deg);
+      background-position: -50px -103px;
     };
     &:hover {
       cursor: pointer;
@@ -99,15 +100,16 @@ div.concept {
     &.collapsed {
       &:before {
         @include rotate(-90deg);
+        background-position: -53px -103px;
       };
     }
   }
   
   .system-info-toggle {
     display: block;
-    width: 16px;   
-    height: 16px;
-    background: rgba($greencolor, 0.08) image-url("layout/icons.png") no-repeat -2px -201px;
+    width: 18px;   
+    height: 17px;
+    background: rgba($greencolor, 0.08) image-url("layout/icons.png") no-repeat -1px -201px;
     @include retina-icons;
     text-indent: -2000px;
     overflow: hidden;
@@ -116,7 +118,7 @@ div.concept {
     top: 15px;
     &:hover {
       cursor: pointer;
-      background-position: -52px -201px;
+      background-position: -51px -201px;
     };
   }
   .system-info {
@@ -126,8 +128,7 @@ div.concept {
       margin: 8px 0 2px 0;
       
       td, th {
-        font: 11px monospace;
-        // font-style: italic;
+        font: 11px monospace;;
         color: $greytext-color;
         vertical-align: baseline;
       }     
@@ -165,6 +166,7 @@ div.concept {
         
       td, th {
         padding-top: 10px;
+        padding-bottom: 0.5em;
       }
       th {
         font-weight: normal;
@@ -207,7 +209,7 @@ div.concept {
         &:before {
           @include before-icon;
           position: absolute;
-          top: 11px;
+          bottom: -5px;
           left: 10px;
           background-position: -04px -100px;
         }

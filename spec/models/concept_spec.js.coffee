@@ -1,6 +1,7 @@
 #= require spec_helper
 #= require models/concept
 #= require config/application
+#= require collections/hits
 
 describe "Coreon.Models.Concept", ->
 
@@ -28,21 +29,69 @@ describe "Coreon.Models.Concept", ->
       @model.get("super_concept_ids").should.eql []
       @model.get("sub_concept_ids").should.eql []
 
-  describe "#label", ->
+  describe "#label()", ->
     
     it "uses id when no label is given", ->
       @model.id = "abcd1234"
       @model.label().should.equal "abcd1234"
 
-    it "uses label property when give", ->
+    it "uses first English term when given", ->
+      @model.set "terms", [
+        {
+          lang: "fr"
+          value: "poésie"
+        }
+        {
+          lang: "en"
+          value: "poetry"
+        }
+      ], silent: true
+      @model.label().should.equal "poetry"    
+
+    it "uses first given term when no English term exists", ->
       @model.id = "abcd1234"
+      @model.set "terms", [
+        lang: "fr"
+        value: "poésie"
+      ], silent: true  
+      @model.label().should.equal "poésie"
+
+    it "uses label property when given", ->
+      @model.id = "abcd1234"
+      @model.set {
+        terms: [
+          lang: "en"
+          value: "poetry"
+        ]
+        properties: [
+          key: "label"
+          value: "MyLabel"
+        ]
+      }, silent: true
+      @model.label().should.equal "MyLabel"
+
+    it "escapes label value", ->
       @model.set "properties", [
         key: "label"
-        value: "poetry"
-      ]  
-      @model.label().should.equal "poetry"
+        value: "<script>xss()</script>"
+      ]
+      @model.label().should.equal "&lt;script&gt;xss()&lt;&#x2F;script&gt;"
 
-  describe "info", ->
+    it "handles term lang gracefully", ->
+      @model.set "terms", [
+        {
+          lang: "fr"
+          value: "poésie"
+        }
+        {
+          lang: "EN_US"
+          value: "poetry"
+        }
+      ], silent: true
+      @model.label().should.equal "poetry" 
+
+
+  describe "#info()", ->
     
     it "returns hash with system info attributes", ->
       @model.set
@@ -54,7 +103,7 @@ describe "Coreon.Models.Concept", ->
       }
 
 
-  describe "#fetch", ->
+  describe "#fetch()", ->
 
     it "uses application sync", ->
       Coreon.application = sync: sinon.spy()

@@ -1,5 +1,6 @@
 #= require environment
 #= require models/account
+#= require collections/hits
 #= require views/application_view
 #= require routers/search_router
 #= require routers/concepts_router
@@ -16,15 +17,17 @@ class Coreon.Application
       el         : "#app"
       auth_root  : "/api/auth/"
       graph_root : "/api/graph/"
-    
+      
     @account = new Coreon.Models.Account _(@options).pick "auth_root", "graph_root"
     @account.fetch()
+
+    @hits = new Coreon.Collections.Hits
 
   start: (options = {}) ->
     _(@options).extend options
 
     @view = new Coreon.Views.ApplicationView
-      model: @account
+      model: @
       el: @options.el
 
     @view.render()
@@ -33,9 +36,11 @@ class Coreon.Application
       search_router: new Coreon.Routers.SearchRouter
         view: @view
         concepts: @concepts
+        app: @
       concepts_router: new Coreon.Routers.ConceptsRouter
         collection: @concepts
         view: @view
+        app: @
 
     Backbone.history.start pushState: true
     @

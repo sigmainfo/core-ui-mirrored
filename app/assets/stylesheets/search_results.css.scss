@@ -7,17 +7,18 @@
   &>table {  
     border-spacing: 0;
     width: 100%;
-    min-width: 600px;
+    min-width: 400px;
     margin-bottom: 30px;
     position: relative;
     
     thead th {
       border-bottom: 1px solid $greencolor;   
       height: 19px;
+      position: relative;
       &:before {
         @include before-icon;
         position: absolute;
-        top: 17px;
+        top: 1.65em;
         background-position: -52px -150px;
       }
     }
@@ -107,6 +108,7 @@
     margin-bottom: 10px;
     display: block;
     text-align: right;
+    min-width: 400px;
     
     a {
       @include toggle;
@@ -119,14 +121,14 @@
     tr {
       th {
         &:first-child{
-          text-indent: -2000px;
-          overflow: hidden;
+          text-indent: -4000px;
+/*          overflow: hidden;*/
         }
       }
 
       td, th {      
         &:first-child {
-          padding-left: 100px;
+          padding-left: 10%;
         }
       }
     } 

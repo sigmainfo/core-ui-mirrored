@@ -7,9 +7,12 @@ describe "Coreon.Views.ApplicationView", ->
   beforeEach ->
     @view = new Coreon.Views.ApplicationView
       el: "#konacha"
-      model: _(new Backbone.Model).extend
-        notifications: new Backbone.Collection
-        connections: new Backbone.Collection
+      model:
+        account: _(new Backbone.Model).extend
+          notifications: new Backbone.Collection
+          connections: new Backbone.Collection
+        hits: new Backbone.Collection
+        off: ->
 
   afterEach ->
     @view.destroy()
@@ -17,14 +20,14 @@ describe "Coreon.Views.ApplicationView", ->
   it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView
 
-  describe "#initialize", ->
+  describe "initialize()", ->
 
     it "creates header", ->
       @view.header.should.be.an.instanceOf Coreon.Views.Layout.HeaderView
-      @view.header.collection.should.equal @view.model.notifications
+      @view.header.collection.should.equal @view.model.account.notifications
       @view.subviews.should.contain @view.header
     
-  describe "#render", ->
+  describe "render()", ->
 
     it "allows chaining", ->
       @view.render().should.equal @view
@@ -48,7 +51,7 @@ describe "Coreon.Views.ApplicationView", ->
     context "when active", ->
 
       beforeEach ->
-        @view.model.set "active", true
+        @view.model.account.set "active", true
 
       it "renders application", ->
         @view.render()
@@ -64,7 +67,7 @@ describe "Coreon.Views.ApplicationView", ->
     context "when inactive", ->
       
       beforeEach ->
-        @view.model.set "active", false
+        @view.model.account.set "active", false
 
       it "renders login", ->
         @view.render()
@@ -75,16 +78,16 @@ describe "Coreon.Views.ApplicationView", ->
         @view.$el.should.not.have "#coreon-widgets"
         @view.$el.should.not.have "#coreon-footer"
 
-  describe "#activate", ->
+  describe "activate()", ->
 
     beforeEach ->
       @view.render()
-      @view.model.set "active", true, silent: true
+      @view.model.account.set "active", true, silent: true
 
     it "is triggered by model", ->
       @view.activate = sinon.spy()
       @view.initialize()
-      @view.model.trigger "activated"
+      @view.model.account.trigger "activated"
       @view.activate.should.have.been.calledOnce
 
     it "clears view", ->
@@ -96,31 +99,32 @@ describe "Coreon.Views.ApplicationView", ->
     it "renders widgets", ->
       @view.activate()
       @view.widgets.should.be.an.instanceOf Coreon.Views.Widgets.WidgetsView
+      @view.widgets.model.should.equal @view.model
       @view.$("#coreon-top").should.have "#coreon-widgets"
       @view.$("#coreon-widgets").should.have "#coreon-search"
 
     it "renders footer", ->
       @view.activate()
       @view.footer.should.be.an.instanceOf Coreon.Views.Layout.FooterView
-      @view.footer.model.should.equal @view.model
+      @view.footer.model.should.equal @view.model.account
       @view.$el.should.have "#coreon-footer"
       @view.$("#coreon-footer").should.have "#coreon-account"
 
     it "fails when not active", ->
-      @view.model.set "active", false, silent: true
+      @view.model.account.set "active", false, silent: true
       @view.activate()
       @view.$el.should.not.have "#coreon-widgets"
 
-  describe "#deactivate", ->
+  describe "deactivate()", ->
   
     beforeEach ->
       @view.render()
-      @view.model.set "active", false, silent: true
+      @view.model.account.set "active", false, silent: true
 
     it "is triggered by model", ->
       @view.deactivate = sinon.spy()
       @view.initialize()
-      @view.model.trigger "deactivated"
+      @view.model.account.trigger "deactivated"
       @view.deactivate.should.have.been.calledOnce
       
     it "clears view", ->
@@ -132,11 +136,11 @@ describe "Coreon.Views.ApplicationView", ->
     it "renders login", ->
       @view.deactivate()
       @view.login.should.be.an.instanceOf Coreon.Views.Account.LoginView
-      @view.login.model.should.equal @view.model
+      @view.login.model.should.equal @view.model.account
       @view.$("#coreon-main").should.have "#coreon-login"
       @view.$("#coreon-login").should.have "form.login input[type='submit']"
 
-  describe "#reauthorize", ->
+  describe "reauthorize()", ->
 
     beforeEach ->
       @view.render()
@@ -144,16 +148,16 @@ describe "Coreon.Views.ApplicationView", ->
     it "is triggered by account", ->
       @view.reauthorize = sinon.spy()
       @view.initialize()
-      @view.model.trigger "unauthorized"
+      @view.model.account.trigger "unauthorized"
       @view.reauthorize.should.have.been.calledOnce
 
     it "renders password prompt", ->
       @view.reauthorize()
       @view.prompt.should.be.an.instanceOf Coreon.Views.Account.PasswordPromptView
-      @view.prompt.model.should.equal @view.model
+      @view.prompt.model.should.equal @view.model.account
       @view.$("#coreon-modal").should.have "#coreon-password-prompt"
 
-  describe "#reactivate", ->
+  describe "reactivate()", ->
 
     beforeEach ->
       @view.reauthorize()
@@ -161,7 +165,7 @@ describe "Coreon.Views.ApplicationView", ->
     it "is triggered by account", ->
       @view.reactivate = sinon.spy()
       @view.initialize()
-      @view.model.trigger "reactivated"
+      @view.model.account.trigger "reactivated"
       @view.reactivate.should.have.been.calledOnce
 
     it "removes password prompt", ->
@@ -175,12 +179,13 @@ describe "Coreon.Views.ApplicationView", ->
       conn1.resume = sinon.spy()
       conn2.resume = sinon.spy()
       conn3.resume = sinon.spy()
-      @view.model.connections.add [ conn1, conn2, conn3 ]
+      @view.model.account.connections.add [ conn1, conn2, conn3 ]
       @view.reactivate()
       conn2.resume.should.have.been.calledOnce
       conn1.resume.should.not.have.been.called
       conn3.resume.should.not.have.been.called
-  describe "#navigate", ->
+
+  describe "navigate()", ->
 
     beforeEach ->
       Backbone.history = new Backbone.History
@@ -202,7 +207,7 @@ describe "Coreon.Views.ApplicationView", ->
       Backbone.history.navigate.should.not.have.been.called
       @event.preventDefault.should.not.have.been.called
 
-  describe "#switch", ->
+  describe "switch()", ->
 
     beforeEach ->
       @view.render()
@@ -224,11 +229,9 @@ describe "Coreon.Views.ApplicationView", ->
       @view.switch @screen2
       @screen2.render.should.have.been.calledOnce
     
-  describe "#destroy", ->
+  describe "destroy()", ->
     
     it "removes bindings on destroy", ->
-      sinon.spy @view.model, "off"
+      @view.model.account.off = sinon.spy()
       @view.destroy()
-      @view.model.off.should.have.been.calledWith null, null, @view 
-
-        
+      @view.model.account.off.should.have.been.calledWith null, null, @view 

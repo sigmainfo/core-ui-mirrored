@@ -28,13 +28,14 @@
 }
 
 #coreon-widgets {
+  position: absolute;
+  right: 0;
   width: $widget-width;
-  float: right;
   @include box-shadow(rgba(black, 0.4) -2px 0px 5px);
   
 }
 
 #coreon-main {
-  padding: 0 100px 60px 100px;
+  padding: 0 100px 60px 10%;
   margin-top: 60px;
 }

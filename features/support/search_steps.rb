@@ -25,6 +25,13 @@ module SearchSteps
     end
   end
 
+  When 'I search for "handgun"' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "handgun"
+      find('input[type="submit"]').click
+    end
+  end
+
   Then 'I should be on the search result page' do
     current_path.should == "/search"
   end
