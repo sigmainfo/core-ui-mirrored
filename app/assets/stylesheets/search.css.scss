@@ -4,7 +4,7 @@
 
 #coreon-search {
   @include box-sizing(border-box);
-  padding: 11px 16px;
+  padding: 11px 14px;
   background-color: $darkerbluecolor;
   @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
   
@@ -60,7 +60,7 @@
   
   ul.options {
     position: absolute;
-    right: 64px;
+    right: 66px;
     top: 38px;
     width: $widget-width - 81px;
     list-style: none;

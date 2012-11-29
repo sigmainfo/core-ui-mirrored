@@ -8,6 +8,9 @@
     position: relative;
     padding-bottom: 20px;
     padding-top: 10px;
+    ul li {
+      padding-bottom: 2px;
+    }
     .self {   
       @include concept-icon;
     }

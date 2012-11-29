@@ -16,6 +16,7 @@
         background: $greycolor;
         background-image: image-url('layout/flags.png');
         @include background-size(20px 100px);
+        background-position: -1px 50px;
         left: -19px;
         margin-top: 1px;
         @include border-top-left-radius(3px);
