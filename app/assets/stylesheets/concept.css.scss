@@ -10,12 +10,15 @@ div.concept {
     font-size: 1.8em;
     line-height: 1.8em;
     padding-bottom: 14px;
+    padding-right: 40px;
+    text-indent: 18px;
     @include concept-icon;
     &:before {
       border: 2px solid lighten($text-color, 20%);
       @include border-radius(5px);
       width: 5px;
       height: 5px;
+      top: 18px;
     };
   }
   
@@ -46,7 +49,7 @@ div.concept {
     }
     
     .term {
-      overflow: hidden;
+/*      overflow: hidden;*/
       position: relative;
       @include dottedline;
       &:first-child {
@@ -55,11 +58,9 @@ div.concept {
 
       h4.value {
         font: 1.4em Palatino;
-        padding-left: 97px;
-        padding-bottom: 6px;
-        padding-top: 12px;
+        padding: 12px 100px 6px 97px;
         &:before {
-          content:"» ";
+          content:"»\00a0";
           font-size: 1.3em;
         };
       }

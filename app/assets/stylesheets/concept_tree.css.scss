@@ -4,23 +4,23 @@
 .concept {
 
   .concept-tree .section{
-/*    display:table-cell;*/
     position: relative;
     padding-bottom: 20px;
     padding-top: 10px;
-    ul li {
-      padding-bottom: 2px;
-    }
+
     .self {   
       @include concept-icon;
+      margin: 0 4%;
+      padding-left: 14px;
     }
     ul, .self {
       list-style: none;
       display: inline-block;
-      padding: 0 30px;
       vertical-align: middle;
+      margin-top: 10px;
     }
     ul.super {
+      padding: 0 6%;
       position: relative;
       background: image-url("layout/bracket.png") no-repeat right center;
       &:before {
@@ -47,6 +47,7 @@
     ul.sub {
       position: relative;
       padding-right: 0;
+      padding-left: 6%;
       background: image-url("layout/bracket.png") no-repeat left center;
       &:before {
         content:"";

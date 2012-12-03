@@ -49,10 +49,10 @@
       }
 
       td, th {      
-      padding: 4px 20px 1px 2px;
+      padding: 4px 16px 1px 2px;
 
         &.lang {
-          width: 100px;
+          width: 14%;
         }
       }
 
@@ -66,13 +66,15 @@
     
     &.terms {
       .concept {
-        width: 180px;
+        width: 160px;
+        padding-right: 4px;
       }    
     }
 
     &.concepts {
-      .id {
-        width: 180px;
+      .super {
+         width: 160px;
+          padding-right: 4px;
       }
       td.label a{
         font-size: 1.1em;
