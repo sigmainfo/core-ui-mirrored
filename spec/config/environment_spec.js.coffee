@@ -19,6 +19,7 @@ describe "config/environment", ->
     Coreon.Modules.should.exist
     Coreon.Helpers.should.exist
     Coreon.Routers.should.exist
+    Coreon.Data.should.exist
 
     Coreon.Views.should.exist
     Coreon.Views.Layout.should.exist
