@@ -57,13 +57,17 @@ $widget-width: 320px;
 }
 
 @mixin concept-icon {
+    position: relative;
   &:before {
     content:"";
     display: inline-block;
+    position: absolute;
     width: 4px;
     height: 4px;
-    margin-right: 5px;
-    margin-bottom: 2px;
+    top: 6px;
+    left: 4px;
+/*    margin-right: 5px;
+    margin-bottom: 2px;*/
     border: 1px solid lighten($text-color, 20%);
     @include border-radius(2px);
   };  
