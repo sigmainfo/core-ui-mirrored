@@ -189,3 +189,79 @@ describe "Coreon.Data.Digraph", ->
       @digraph.edges().should.have.length 1
       @digraph.edges()[0].should.have.deep.property "source.id", 1
       @digraph.edges()[0].should.have.deep.property "target.id", 2
+
+  describe "roots()", ->
+    
+    it "is empty when graph is empty", ->
+      @digraph.roots().should.be.an "array"
+      @digraph.roots().should.have.length 0
+
+    it "returns nodes that do nat have a parent", ->
+      @digraph.reset [
+          { id: 1, children: null }
+          { id: 2, children: [4]  }
+          { id: 3, children: null }     
+          { id: 4, children: [2]  }
+          { id: 5, children: [4]  }
+      ]
+      ( root.id for root in @digraph.roots() ).should.eql [1, 3, 5]
+
+    it "memoizes selection", ->
+      @digraph.roots().should.equal @digraph.roots()
+
+    it "recreates selection after reset", ->
+      memoized = @digraph.roots()
+      @digraph.reset [ id: 1 ]
+      @digraph.roots().should.not.equal memoized   
+
+  describe "leaves()", ->
+    
+    it "is empty when not applicable", ->
+      @digraph.leaves().should.be.an "array"
+      @digraph.leaves().should.have.length 0
+ 
+    
+    it "returns nodes that have multiple parents", ->
+      @digraph.reset [
+          { id: 1, children: null }
+          { id: 2, children: [1] }
+          { id: 3, children: [4, 1] }     
+          { id: 4, children: [] }
+          { id: 5, children: [2, 3, 4] }
+      ]
+      ( leaf.id for leaf in @digraph.leaves() ).should.eql [1, 4]
+
+    it "memoizes selection", ->
+      @digraph.leaves().should.equal @digraph.leaves()
+
+
+    it "recreates selection after update", ->
+      memoized = @digraph.leaves()
+      @digraph.reset [ id: 1 ]
+      @digraph.leaves().should.not.equal memoized
+
+  describe "junctions()", ->
+    
+    it "is empty when not applicable", ->
+      @digraph.junctions().should.be.an "array"
+      @digraph.junctions().should.have.length 0
+ 
+    
+    it "returns nodes that have multiple parents", ->
+      @digraph.reset [
+          { id: 1, children: null }
+          { id: 2, children: [1] }
+          { id: 3, children: [4, 1] }     
+          { id: 4, children: [] }
+          { id: 5, children: [2, 3, 4] }
+      ]
+      @digraph.junctions().should.have.length 2
+
+    it "memoizes selection", ->
+      @digraph.junctions().should.equal @digraph.junctions()
+
+
+    it "recreates selection after update", ->
+      memoized = @digraph.junctions()
+      @digraph.reset [ id: 1 ]
+      @digraph.junctions().should.not.equal memoized

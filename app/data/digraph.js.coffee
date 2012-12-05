@@ -27,10 +27,21 @@ class Coreon.Data.Digraph
   edges: ->
     @_edges
 
+  roots: ->
+    @_selections.roots
+
+  junctions: ->
+    @_selections.junctions
+
+  leaves: ->
+    @_selections.leaves
+
   reset: ( data = [] ) ->
+    @_junctions = @_roots = null
     hash = @createNodesHash data
     @_edges = @createEdges hash
     @_nodes = @createNodes hash, @_edges
+    @_selections = @createSelections @_nodes
 
   optionsWithDefaults: (options) ->
     copy = {}
@@ -77,3 +88,16 @@ class Coreon.Data.Digraph
               source: node
               target: hash[id]
     edges
+
+  createSelections: (nodes) ->
+    selections =
+      roots: []
+      leaves: []
+      junctions: []
+    for node in nodes
+      unless node.parents?.length > 0
+        selections.roots.push node
+      else
+        selections.junctions.push node if node.parents.length > 1
+      selections.leaves.push node unless node.children?.length > 0
+    selections
