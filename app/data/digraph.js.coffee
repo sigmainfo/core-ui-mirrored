@@ -13,7 +13,7 @@ class Coreon.Data.Digraph
       datum.parents
     down: (datum) ->
       datum.children
-
+      
   constructor: ->
     @initialize.apply @, arguments
 
@@ -30,18 +30,54 @@ class Coreon.Data.Digraph
   roots: ->
     @_selections.roots
 
-  junctions: ->
-    @_selections.junctions
+  tree: ->
+    root =
+      treeUp: []
+      treeDown: @roots()
+    for node in @nodes()
+      node.treeUp   = if node.parents?  then node.parents[..]  else [] 
+      node.treeDown = if node.children? then node.children[..] else []
+    @down (node) ->
+      node.treeUp.push(root) if node.treeUp.length is 0
+      removed = []
+      for child in node.treeDown
+        if child.treeUp.length > 1
+          child.treeUp = ( up for up in child.treeUp when up isnt node )
+          removed.push child
+      node.treeDown = ( down for down in node.treeDown when removed.indexOf(down) < 0 )
+    root
+
+  multiParentNodes: ->
+    @_selections.multiParentNodes
 
   leaves: ->
     @_selections.leaves
 
   reset: ( data = [] ) ->
-    @_junctions = @_roots = null
+    @_multiNodes = @_roots = null
     hash = @createNodesHash data
     @_edges = @createEdges hash
     @_nodes = @createNodes hash, @_edges
     @_selections = @createSelections @_nodes
+
+  down: (nodes..., callback) ->
+    nodes = @roots() if nodes.length is 0
+    children = []
+    try
+      for node in nodes
+        callback node
+        node._visited = true
+      for node in nodes
+        if node.children?.length > 0
+          for child in node.children
+            children.push child if child._visited isnt true
+            child._visited = true
+      if children.length > 0
+        @down children..., callback
+      else
+        @cleanUpAfterWalk()
+    catch error
+      @cleanUpAfterWalk()
 
   optionsWithDefaults: (options) ->
     copy = {}
@@ -93,11 +129,14 @@ class Coreon.Data.Digraph
     selections =
       roots: []
       leaves: []
-      junctions: []
+      multiParentNodes: []
     for node in nodes
       unless node.parents?.length > 0
         selections.roots.push node
       else
-        selections.junctions.push node if node.parents.length > 1
+        selections.multiParentNodes.push node if node.parents.length > 1
       selections.leaves.push node unless node.children?.length > 0
     selections
+
+  cleanUpAfterWalk: ->
+    delete node._visited for node in @nodes()

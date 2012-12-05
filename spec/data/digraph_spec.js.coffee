@@ -240,11 +240,11 @@ describe "Coreon.Data.Digraph", ->
       @digraph.reset [ id: 1 ]
       @digraph.leaves().should.not.equal memoized
 
-  describe "junctions()", ->
+  describe "multiParentNodes()", ->
     
     it "is empty when not applicable", ->
-      @digraph.junctions().should.be.an "array"
-      @digraph.junctions().should.have.length 0
+      @digraph.multiParentNodes().should.be.an "array"
+      @digraph.multiParentNodes().should.have.length 0
  
     
     it "returns nodes that have multiple parents", ->
@@ -255,13 +255,160 @@ describe "Coreon.Data.Digraph", ->
           { id: 4, children: [] }
           { id: 5, children: [2, 3, 4] }
       ]
-      @digraph.junctions().should.have.length 2
+      ( leaf.id for leaf in @digraph.leaves() ).should.eql [1, 4]
 
     it "memoizes selection", ->
-      @digraph.junctions().should.equal @digraph.junctions()
+      @digraph.multiParentNodes().should.equal @digraph.multiParentNodes()
 
 
     it "recreates selection after update", ->
-      memoized = @digraph.junctions()
+      memoized = @digraph.multiParentNodes()
       @digraph.reset [ id: 1 ]
-      @digraph.junctions().should.not.equal memoized
+      @digraph.multiParentNodes().should.not.equal memoized
+
+
+  describe "down()", ->
+
+    beforeEach ->
+      # create following graph:
+      #
+      # A   B   C
+      # |    \ /
+      # D     E
+      # |   / | \
+      # F  |  G  H
+      #  \ | /   |
+      #    J     K
+      #
+      @digraph.reset [
+        { id: "A", children: [ "D" ]           }
+        { id: "B", children: [ "E" ]           }
+        { id: "C", children: [ "E" ]           }
+        { id: "D", children: [ "F" ]           }
+        { id: "E", children: [ "J", "G", "H" ] }
+        { id: "F", children: [ "J" ]           }
+        { id: "G", children: [ "J" ]           }
+        { id: "H", children: [ "K" ]           }
+        { id: "J", children: null              }
+        { id: "K", children: null              }
+      ]
+      @walker = sinon.spy()
+
+    it "invokes callback on root node first", ->
+      root = node for node in @digraph.nodes() when node.id is "B"
+      @digraph.down root, @walker
+      @walker.firstCall.args[0].should.have.property "id", "B"
+
+    it "can start on multiple root nodes", ->
+      roots = []
+      roots.push node for node in @digraph.nodes() when "DE".indexOf(node.id) > -1
+      @digraph.down roots..., @walker
+      ( arg[0].id for arg in @walker.args[0..1] ).join("->").should.equal "D->E" 
+
+    it "defaults start nodes to root nodes", ->
+      @digraph.down @walker
+      ( arg[0].id for arg in @walker.args[0..2] ).join("->").should.equal "A->B->C"
+    
+    it "walks down the graph invoking the callback once for every connected node", ->
+      root = node for node in @digraph.nodes() when node.id is "A"
+      @digraph.down root, @walker
+      ( arg[0].id for arg in @walker.args ).join("->").should.equal "A->D->F->J"
+
+    it "walks the graph breadth first invoking the callback only once per node", ->
+      @digraph.down @walker
+      ( arg[0].id for arg in @walker.args ).join("->").should.equal "A->B->C->D->E->F->J->G->H->K"
+
+    it "does not revisit start nodes", ->
+      rootA = node for node in @digraph.nodes() when node.id is "A"
+      rootB = node for node in @digraph.nodes() when node.id is "B"
+      rootA.children.push rootB
+      @digraph.down rootA, rootB, @walker
+      ( arg[0].id for arg in @walker.args ).join("->").should.equal "A->B->D->E->F->J->G->H->K"
+
+    it "cleans up intermediate state property", ->
+      @digraph.down @walker
+      @digraph.nodes()[5].should.not.have.property "_visited"
+
+    it "cleans up on error", ->
+      try
+        beast = node for node in @digraph.nodes() when node.id is "G"
+        @walker = (node) ->
+          throw new Error "666 is the number of the beast!" if node is beast
+        @digraph.down @walker
+      finally
+        @digraph.nodes()[5].should.not.have.property "_visited"
+
+  describe "tree()", ->
+    
+    it "returns bare root node for empty graph", ->
+      @digraph.tree().should.eql
+        treeUp: []
+        treeDown: []
+
+    it "attaches graph roots to tree root", ->
+      @digraph.reset [
+        { id: "A", children: [ "C" ] }
+        { id: "B", children: [ "C" ] }
+        { id: "C", children: null    }
+        { id: "D", children: null    }
+      ]
+      root = @digraph.tree()
+      ( child.id for child in root.treeDown ).should.eql [ "A", "B", "D" ]
+      root.treeDown[0].should.have.deep.property "treeUp[0]", root
+      root.treeDown[1].should.have.deep.property "treeUp[0]", root
+      root.treeDown[2].should.have.deep.property "treeUp[0]", root
+
+    context "walking graph as a tree structure", ->  
+        
+      beforeEach ->
+        # create following graph:
+        #
+        # A   B   C
+        # |    \ /
+        # D     E
+        # |   / | \
+        # F  |  G  H
+        #  \ | /   |
+        #    J     K
+        #
+        @digraph.reset [
+          { id: "A", children: [ "D" ]           }
+          { id: "B", children: [ "E" ]           }
+          { id: "C", children: [ "E" ]           }
+          { id: "D", children: [ "F" ]           }
+          { id: "E", children: [ "J", "G", "H" ] }
+          { id: "F", children: [ "J" ]           }
+          { id: "G", children: [ "J" ]           }
+          { id: "H", children: [ "K" ]           }
+          { id: "J", children: null              }
+          { id: "K", children: null              }
+        ]
+        @root = @digraph.tree()
+        @nodes = {}
+        @nodes["B"] = node for node in @root.treeDown when node.id is "B"
+        @nodes["C"] = node for node in @root.treeDown when node.id is "C"
+        @nodes["E"] = @nodes["B"].children[0]
+        @nodes["G"] = node for node in @nodes["E"].children when node.id is "G"
+        @nodes["J"] = @nodes["G"].children[0]
+
+      it "uses most distant parent", ->
+        @root.treeUp.should.eql []
+        @nodes["B"].should.have.deep.property "treeUp[0]", @root
+        @nodes["C"].should.have.deep.property "treeUp[0]", @root
+        @nodes["E"].should.have.deep.property "treeUp.length", 1
+        @nodes["E"].should.have.deep.property "treeUp[0].id", "C"
+        @nodes["G"].should.have.deep.property "treeUp[0].id", "E"
+        @nodes["J"].should.have.deep.property "treeUp.length", 1
+        @nodes["J"].should.have.deep.property "treeUp[0].id", "G"
+
+      it "removes orphaned children", ->
+        @root.should.have.deep.property "treeDown.length", 3
+        @nodes["B"].should.have.deep.property "treeDown.length", 0
+        @nodes["C"].should.have.deep.property "treeDown.length", 1
+        @nodes["C"].should.have.deep.property "treeDown[0].id", "E"
+        @nodes["E"].should.have.deep.property "treeDown.length", 2
+        @nodes["E"].should.have.deep.property "treeDown[0].id", "G"
+        @nodes["E"].should.have.deep.property "treeDown[1].id", "H"
+        @nodes["G"].should.have.deep.property "treeDown.length", 1
+        @nodes["G"].should.have.deep.property "treeDown[0].id", "J"
+        @nodes["J"].should.have.deep.property "treeDown.length", 0
