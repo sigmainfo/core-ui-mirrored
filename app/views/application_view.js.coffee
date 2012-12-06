@@ -42,9 +42,8 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     event.preventDefault()
 
   clear: ->
-    subviews = _(@subviews).without @header
-    if subviews.length > 0
-      @destroy.apply @, _(@subviews).without @header
+    subviews = (view for view in @subviews when view isnt @header)
+    @destroy.apply @, subviews if subviews.length > 0
 
   activate: ->
     if @model.account.get "active"
@@ -78,6 +77,6 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
   onResize: ->
     @$("#coreon-main").css "paddingTop": @header.$el.outerHeight()
 
-  destroy: ->
-    super
-    @model.account.off null, null, @
+  destroy: (subviews...) ->
+    super subviews...
+    @model.account.off null, null, @ if subviews.length is 0

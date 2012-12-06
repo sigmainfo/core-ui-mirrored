@@ -62,7 +62,7 @@ en:
     info: "System Info"
   
   properties:
-    title: "Meta Data"
+    title: "Properties"
 
   notification:
     label:

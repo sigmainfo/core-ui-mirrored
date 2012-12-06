@@ -14,7 +14,7 @@ class Coreon.Views.SimpleView extends Backbone.View
     @
 
   dissolve: ->
-    @model.off null, null, @ if @model
+    @model?.off? null, null, @
     @
 
   destroy: ->

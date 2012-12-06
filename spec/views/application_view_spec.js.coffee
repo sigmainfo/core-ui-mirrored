@@ -231,7 +231,16 @@ describe "Coreon.Views.ApplicationView", ->
     
   describe "destroy()", ->
     
-    it "removes bindings on destroy", ->
+    beforeEach ->
       @view.model.account.off = sinon.spy()
+      
+    
+    it "removes bindings on destroy", ->
       @view.destroy()
       @view.model.account.off.should.have.been.calledWith null, null, @view 
+
+    it "keeps bindings when deleting subviews", ->
+      @view.destroy @view.subviews[0]
+      @view.model.account.off.should.not.have.been.called 
+
+      
