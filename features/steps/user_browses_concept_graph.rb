@@ -45,7 +45,9 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   Then 'I shoud see "weapon", "handgun", "long gun", "pistol", and "revolver" displayed in the concept map' do
-    pending 'step not implemented'
+    ["weapon", "handgun", "long gun", "pistol", "revolver"].each do |label|
+      page.should have_css("#coreon-concept-map .concept-node", text: label)
+    end
   end
 
   And '"handgun" should be marked as being selected' do

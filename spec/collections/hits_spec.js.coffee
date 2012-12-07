@@ -126,3 +126,12 @@ describe "Coreon.Collections.Hits", ->
       @hits.update [ @hit ], silent: true
       @hits.graph().edges()[0].should.have.deep.property "target.score", 1.587
       @hits.graph().edges()[0].should.have.deep.property "source.score", null
+
+  describe "tree()", ->
+    
+    it "returns tree representation of graph", ->
+      graph = @hits.graph()
+      graph.tree = sinon.stub().returns id: "root"
+      @hits.tree().should.eql id: "root"
+
+    

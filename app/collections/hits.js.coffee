@@ -27,6 +27,9 @@ class Coreon.Collections.Hits extends Backbone.Collection
       up: (datum) -> Coreon.Models.Concept.find(datum.id).get "super_concept_ids"
       down: (datum) -> Coreon.Models.Concept.find(datum.id).get "sub_concept_ids"
 
+  tree: ->
+    @graph().tree()
+
   _removeDropped: (hits, options) ->
     drops = []
     for model in @models
