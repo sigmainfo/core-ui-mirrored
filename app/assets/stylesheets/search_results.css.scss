@@ -157,18 +157,12 @@
     th {
       width: 100px;
       text-align: right;
-    }
-    td, th {
-      border: none;
-    }
-    tr {
-      td {
-        padding-top: 4px;
-        background: none;
-      }
-    }
-    th {
       color: $greencolor;
+    }
+    tr td, tr th {
+      border: none;
+      padding-top: 2px;
+      background: none;
     }
     
   }
