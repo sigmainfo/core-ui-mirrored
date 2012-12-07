@@ -54,7 +54,6 @@ class Coreon.Data.Digraph
     @_selections.leaves
 
   reset: ( data = [] ) ->
-    @_multiNodes = @_roots = null
     hash = @createNodesHash data
     @_edges = @createEdges hash
     @_nodes = @createNodes hash, @_edges
@@ -131,10 +130,11 @@ class Coreon.Data.Digraph
       leaves: []
       multiParentNodes: []
     for node in nodes
-      unless node.parents?.length > 0
-        selections.roots.push node
+      if node.parents?.length > 0
+        if node.parents.length > 1
+          selections.multiParentNodes.push node 
       else
-        selections.multiParentNodes.push node if node.parents.length > 1
+        selections.roots.push node
       selections.leaves.push node unless node.children?.length > 0
     selections
 

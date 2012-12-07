@@ -1,28 +1,6 @@
 @import '_config';
 @import 'compass/css3';
 
-
-/*#coreon-concept-map {
-  width: 100%;
-  
-  .map {
-    position: relative;
-    line-height: 0;
-    width: 100%;
-    height: 0;
-    padding-bottom: 75%;
-    border-top: 1px solid rgba(white, 0.3);
-    background-color: blue;
-    
-    svg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: red;
-    }
-  }
-}*/
-
 #coreon-concept-map {
   
   .map {
@@ -34,7 +12,18 @@
     svg {
     
       text {
+        font-size: 11px;
         fill: $text-color;
+      }
+
+      circle {
+        fill: none;
+        stroke-width: 1px;
+        stroke: $text-color;
+      }
+      
+      .background {
+        fill: white;
       } 
     }
   }

@@ -25,11 +25,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @renderNodes nodes[1..]
 
   renderNodes: (nodes) ->
-
+    
     nodes = d3.select("##{@id} svg .concept-map")
       .selectAll(".concept-node")
       .data(nodes, (d) -> d.id )
-   
+    
+    self = @
+
     nodes.enter()
       .append("svg:g")
       .each( (d) ->
@@ -37,11 +39,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         d.view.render()
       )
 
+    nodes.attr("transform", (d) -> "translate(#{(d.depth) * 100 - 90}, #{d.x * 200})")
+    
     nodes.exit()
       .each( (d) ->
         d.view.destroy()
         d.view = null
       )
+      .remove()
 
   dissolve: ->
     @model.off null, null, @

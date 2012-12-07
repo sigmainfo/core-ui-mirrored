@@ -15,17 +15,10 @@ class Coreon.Collections.Hits extends Backbone.Collection
     updated = @_removeDropped hits, options
     updated ||= @_addMissing hits, options
     if updated
-      @_graph = null
-      @trigger "hit:update", @, options unless options.silent?
+      @updateGraph()
 
   graph: ->
-    @_graph ?= new Coreon.Data.Digraph @models,
-      factory: (id, datum) ->
-        id: id
-        concept: Coreon.Models.Concept.find id
-        score: if datum? then datum.get "score" else null
-      up: (datum) -> Coreon.Models.Concept.find(datum.id).get "super_concept_ids"
-      down: (datum) -> Coreon.Models.Concept.find(datum.id).get "sub_concept_ids"
+    @_graph ?= @createGraph()
 
   tree: ->
     @graph().tree()
@@ -60,3 +53,25 @@ class Coreon.Collections.Hits extends Backbone.Collection
   _triggerEventOnConcept: (event, model, collection, options) ->
     concept = Coreon.Models.Concept.find model.id
     concept.trigger "hit:#{event}", model, collection, options
+
+  createGraph: () ->
+    graph = new Coreon.Data.Digraph @models,
+      factory: (id, datum) ->
+        id: id
+        concept: Coreon.Models.Concept.find id
+        score: if datum? then datum.get "score" else null
+      up: (datum) -> Coreon.Models.Concept.find(datum.id).get "super_concept_ids"
+      down: (datum) -> Coreon.Models.Concept.find(datum.id).get "sub_concept_ids"
+    for node in graph.nodes()
+      node.concept.on "change", @updateGraph, @
+    graph
+
+  updateGraph: ->
+    @invalidateGraph()
+    @trigger "hit:update"
+
+  invalidateGraph: ->
+    if @_graph?
+      for node in @_graph.nodes()
+        node.concept.off null, null, @
+      @_graph = null
