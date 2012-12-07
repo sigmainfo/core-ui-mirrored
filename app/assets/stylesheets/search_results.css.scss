@@ -148,9 +148,6 @@
       }
     };
   }
-  .label a{
-    background-color: white;
-  } 
 
   .concepts table{
 
@@ -159,10 +156,12 @@
       text-align: right;
       color: $greencolor;
     }
-    tr td, tr th {
-      border: none;
-      padding-top: 2px;
-      background: none;
+    tr {
+      td, th {
+        border: none;
+        padding-top: 2px;
+        background: none;
+      }
     }
     
   }
