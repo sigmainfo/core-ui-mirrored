@@ -60,7 +60,7 @@ $widget-width: 320px;
     position: relative;
   &:before {
     content:"";
-    display: inline-block;
+    display: block;
     position: absolute;
     width: 4px;
     height: 4px;

@@ -8,17 +8,19 @@ div.concept {
   
   h2 {
     font-size: 1.8em;
-    line-height: 1.8em;
+    line-height: 1.4em;
     padding-bottom: 14px;
+    padding-top: 6px;
     padding-right: 40px;
-    text-indent: 18px;
+    padding-left: 20px;
+/*    text-indent: 18px;*/
     @include concept-icon;
     &:before {
       border: 2px solid lighten($text-color, 20%);
       @include border-radius(5px);
       width: 5px;
       height: 5px;
-      top: 18px;
+      top: 16px;
     };
   }
   
