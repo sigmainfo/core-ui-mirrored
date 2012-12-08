@@ -12,9 +12,9 @@ class Coreon.Collections.Hits extends Backbone.Collection
     @on "remove", @_onRemove
 
   update: (hits = [], options = {}) ->
-    updated = @_removeDropped hits, options
-    updated ||= @_addMissing hits, options
-    if updated
+    removed = @_removeDropped hits, options
+    added   = @_addMissing hits, options
+    if removed or added
       @invalidateGraph()
       @trigger "hit:update", @, options unless options.silent?
  

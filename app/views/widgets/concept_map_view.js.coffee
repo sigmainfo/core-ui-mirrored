@@ -45,7 +45,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     
     nodes.exit()
       .each( (d) ->
-        d.view.destroy()
+        d.view.dissolve()
         d.view = null
       )
       .remove()

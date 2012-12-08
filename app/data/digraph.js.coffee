@@ -30,6 +30,12 @@ class Coreon.Data.Digraph
   roots: ->
     @_selections.roots
 
+  multiParentNodes: ->
+    @_selections.multiParentNodes
+
+  leaves: ->
+    @_selections.leaves
+
   tree: ->
     root =
       treeUp: []
@@ -46,12 +52,6 @@ class Coreon.Data.Digraph
           removed.push child
       node.treeDown = ( down for down in node.treeDown when removed.indexOf(down) < 0 )
     root
-
-  multiParentNodes: ->
-    @_selections.multiParentNodes
-
-  leaves: ->
-    @_selections.leaves
 
   reset: ( data = [] ) ->
     hash = @createNodesHash data

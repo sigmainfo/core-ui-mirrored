@@ -17,7 +17,6 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
       .attr("cy", 10)
       .attr("r", 3)
 
-
     label = @svg.append("svg:text")
       .attr("x", 14)
       .attr("y", 14)

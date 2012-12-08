@@ -4,11 +4,11 @@
 describe "Coreon.Views.Concepts.ConceptNodeView", ->
 
   beforeEach ->
-    svg = $("#konacha").append("svg")
+    svg = d3.select $("<svg>").appendTo("#konacha").get(0)
     model = new Backbone.Model
     model.label = -> "#123"
     @view = new Coreon.Views.Concepts.ConceptNodeView
-      el: svg.append "svg:g"
+      el: svg.append("g").node()
       model: model
     @el = d3.select @view.el
 

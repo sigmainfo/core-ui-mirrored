@@ -118,7 +118,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       nodes[1].view.should.have.property "el", @view.$(".concept-node").get(0)
       nodes[1].view.should.have.property "model", nodes[1].concept
 
-    it "destroys view for exit node", ->
+    it "dissolves view for exit node", ->
       nodes = [
         { id: "root" }
         { id: "1", concept: @createConcept "Pistol" }
@@ -126,11 +126,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.layout.nodes = -> nodes
       @view.onHitUpdate()
       nodeView = nodes[1].view
-      nodeView.destroy = sinon.spy()
+      nodeView.dissolve = sinon.spy()
       @view.layout.nodes = -> []
       @view.onHitUpdate()
       expect(nodes[1].view).to.be.null
-      nodeView.destroy.should.have.been.calledOnce 
+      nodeView.dissolve.should.have.been.calledOnce 
       
 
   describe "dissolve()", ->

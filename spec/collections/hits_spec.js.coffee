@@ -42,6 +42,13 @@ describe "Coreon.Collections.Hits", ->
       @spy.should.have.been.calledOnce
       @hits.models.should.eql []
 
+    it "adds after removing", ->
+      @createConcept "7878"
+      @hits.update [ @hit ], silent: true
+      @hits.update [ id: "7878" ], silent: true
+      @hits.models.should.have.length 1
+
+
     it "keeps existing", ->
       @hits.add [ @hit ], silent: true
       @hit.on "add remove", @spy
