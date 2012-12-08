@@ -29,7 +29,7 @@ describe "Coreon.Models.Concept", ->
       @model.get("super_concept_ids").should.eql []
       @model.get("sub_concept_ids").should.eql []
 
-  describe "#label()", ->
+  describe "label()", ->
     
     it "uses id when no label is given", ->
       @model.id = "abcd1234"
@@ -91,7 +91,7 @@ describe "Coreon.Models.Concept", ->
       @model.label().should.equal "poetry" 
 
 
-  describe "#info()", ->
+  describe "info()", ->
     
     it "returns hash with system info attributes", ->
       @model.set
@@ -103,7 +103,7 @@ describe "Coreon.Models.Concept", ->
       }
 
 
-  describe "#fetch()", ->
+  describe "fetch()", ->
 
     it "uses application sync", ->
       Coreon.application = sync: sinon.spy()
@@ -112,3 +112,19 @@ describe "Coreon.Models.Concept", ->
         Coreon.application.sync.should.have.been.calledWith "read", @model
       finally
         Coreon.application = null
+
+  describe "hit()", ->
+
+    beforeEach ->
+      Coreon.application =
+        hits: new Coreon.Collections.Hits
+
+    afterEach ->
+      Coreon.application = null
+  
+    it "returns false when not within hits", ->
+      @model.hit().should.be.false
+
+    it "returns true when within hits", ->
+      Coreon.application.hits.add { id: @model.id }, silent: true
+      @model.hit().should.be.true

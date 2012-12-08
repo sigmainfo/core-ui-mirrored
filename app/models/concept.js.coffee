@@ -21,6 +21,9 @@ class Coreon.Models.Concept extends Backbone.Model
     internals.unshift @idAttribute
     _(id: @id).extend _(@attributes).omit internals
 
+  hit: ->
+    Coreon.application.hits.get(@id)?
+
   propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 

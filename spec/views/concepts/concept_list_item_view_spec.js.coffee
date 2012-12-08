@@ -7,6 +7,7 @@ describe "Coreon.Views.Concepts.ConceptListItemView", ->
     @view = new Coreon.Views.Concepts.ConceptListItemView
       model: _(new Backbone.Model terms: []).extend
         label: -> "Concept123"
+        hit: -> false
 
   it "is a Coreon view", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView

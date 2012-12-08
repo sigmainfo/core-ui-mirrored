@@ -55,6 +55,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @createConcept = (label) ->
         concept = new Backbone.Model
         concept.label = -> label
+        concept.hit = -> false
         concept
     
     it "is triggered by current hits", ->

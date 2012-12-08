@@ -4,7 +4,9 @@
 describe "Coreon.Views.Concepts.ConceptLabelView", ->
   
   beforeEach ->
-    @concept = _(new Backbone.Model).extend label: -> "poem"
+    @concept = _(new Backbone.Model).extend
+      label: -> "poem"
+      hit: -> false
     sinon.stub Coreon.Models.Concept, "find"
     Coreon.Models.Concept.find.withArgs("1234").returns @concept
     @view = new Coreon.Views.Concepts.ConceptLabelView "1234"
@@ -55,6 +57,19 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.initialize()
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
+
+    it "classifies as hit when true", ->
+      @concept.hit = -> true
+      @view.render()
+      @view.$el.should.have.class "hit"
+  
+    it "does not classify as hit when false", ->
+      @concept.hit = -> true
+      @view.render()
+      @concept.hit = -> false
+      @view.render()
+      @view.$el.should.not.have.class "hit"
+      
 
   describe "#appendTo", ->
     

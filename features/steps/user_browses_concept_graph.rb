@@ -51,7 +51,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   And '"handgun" should be marked as being selected' do
-    pending 'step not implemented'
+    page.should have_css("#coreon-concept-map .concept-node.hit", text: "handgun")
   end
 
   And '"weapon" should be connected to "handgun"' do

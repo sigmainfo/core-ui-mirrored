@@ -28,8 +28,12 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
       @view.render().should.equal @view
 
     it "renders list items", ->
-      concept = _(new Backbone.Model terms: []).extend label: -> "A Concept"
-      concept2 = _(new Backbone.Model terms: []).extend label: -> "Another Concept"
+      concept = _(new Backbone.Model terms: []).extend
+        label: -> "A Concept"
+        hit: -> false
+      concept2 = _(new Backbone.Model terms: []).extend
+        label: -> "Another Concept"
+        hit: -> false
       Coreon.Models.Concept.find.withArgs("50506ebdd19879161b000019").returns concept
       Coreon.Models.Concept.find.withArgs("50506ebdd19879161b000015").returns concept2
       @view.model.set

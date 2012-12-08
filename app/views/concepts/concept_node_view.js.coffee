@@ -4,10 +4,13 @@
 class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
 
   initialize: ->
+    @model.on "hit:add hit:remove", @toggleHit, @
     @model.on "change", @render, @
 
   render: () ->
     @clear()
+    @toggleHit()
+
     bg = @svg.append("svg:rect")
       .attr("class", "background")
       .attr("height", 19)
@@ -24,10 +27,15 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
 
     box = label.node().getBBox()
     bg.attr("width", box.width + box.x + 3)
+    
+
 
   setElement: (el, delegate) ->
     super el, delegate
     @svg = d3.select(@el).classed "concept-node", true
+
+  toggleHit: ->
+    @svg.classed "hit", @model.hit()
 
   clear: ->
     @svg.selectAll("*").remove()

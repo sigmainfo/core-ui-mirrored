@@ -2,7 +2,7 @@
 #= require views/concepts/concept_view
 #= require models/concept
 
-describe "Coreon.Views.ConceptView", ->
+describe "Coreon.Views.Concepts.ConceptView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
@@ -20,7 +20,7 @@ describe "Coreon.Views.ConceptView", ->
   it "creates container", ->
     @view.$el.should.match ".concept"
 
-  describe "#render", ->
+  describe "render()", ->
 
     it "can be chained", ->
       @view.render().should.equal @view
@@ -52,7 +52,8 @@ describe "Coreon.Views.ConceptView", ->
       @view.$("> .system-info td").eq(1).should.have.text "543"
 
     it "renders tree", ->
-      @view.model.set "super_concept_ids", ["1234"]
+      Coreon.application = hits: get: -> undefined
+      @view.model.set "super_concept_ids", ["1234"], silent: true
       @view.render()
       @view.$el.should.have ".concept-tree"
       @view.$(".concept-tree").should.have ".super"
@@ -92,7 +93,7 @@ describe "Coreon.Views.ConceptView", ->
       @view.$el.should.not.have ".terms"
 
 
-  describe "#toggleInfo", ->
+  describe "toggleInfo()", ->
 
     beforeEach ->
       @view.model.set "terms", [

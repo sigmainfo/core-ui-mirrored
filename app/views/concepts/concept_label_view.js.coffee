@@ -31,6 +31,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   render: ->
+    @$el.toggleClass "hit", @model.hit()
     @$el.attr "href", "/concepts/#{@model.id}"
     @$el.html @model.label()
     @

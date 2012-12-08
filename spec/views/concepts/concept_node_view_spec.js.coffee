@@ -7,6 +7,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     svg = d3.select $("<svg>").appendTo("#konacha").get(0)
     model = new Backbone.Model
     model.label = -> "#123"
+    model.hit = -> false
     @view = new Coreon.Views.Concepts.ConceptNodeView
       el: svg.append("g").node()
       model: model
@@ -47,6 +48,32 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
         @el.select(".background").attr("width").should.equal "113"
       finally
         SVGTextElement::getBBox.restore()
+
+    it "classifies hit", ->
+      @view.model.hit = -> true
+      @view.render()
+      @el.classed("hit").should.be.true
+
+    it "removes hit class when no longer valid", ->
+      @view.model.hit = -> true
+      @view.render()
+      @view.model.hit = -> false
+      @view.render()
+      @el.classed("hit").should.be.false
+
+  describe "toggleHit", ->
+
+    it "classifies hit on hit add", ->
+      @view.model.hit = -> true
+      @view.model.trigger "hit:add"
+      @el.classed("hit").should.be.true
+
+    it "classifies hit on hit remove", ->
+      @view.model.hit = -> true
+      @view.render()
+      @view.model.hit = -> false
+      @view.model.trigger "hit:remove"
+      @el.classed("hit").should.not.be.true
 
   describe "dissolve()", ->
   
