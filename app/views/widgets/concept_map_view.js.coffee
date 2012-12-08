@@ -13,8 +13,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   template: Coreon.Templates["widgets/concept_map"]
 
   initialize: ->
-    @layout = d3.layout.tree().children (d) -> d.treeDown
-    @model.on "hit:update", @onHitUpdate, @
+    @layout = d3.layout.tree()
+      .children( (d) -> d.treeDown )
+      .size( [ 200, 320 ] )
+    @model.on "hit:update hit:graph:update", @onHitUpdate, @
 
   render: ->
     @$el.html @template()
@@ -39,7 +41,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         d.view.render()
       )
 
-    nodes.attr("transform", (d) -> "translate(#{(d.depth) * 100 - 90}, #{d.x * 200})")
+    nodes.attr("transform", (d) -> "translate(#{(d.depth - 1) * 100}, #{d.x})")
     
     nodes.exit()
       .each( (d) ->

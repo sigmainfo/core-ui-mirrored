@@ -69,6 +69,16 @@ describe "Coreon.Collections.Hits", ->
         @hits.update [], silent: true
         @spy.should.not.have.been.called
 
+    context "hit:graph:update", ->
+      
+      it "is triggered by concept changes", ->
+        @hits.update [ @hit ], silent: true
+        @createConcept "123"
+        @hits.graph()
+        @hits.on "hit:graph:update", @spy
+        @concept.set "super_concept_ids", ["123"]
+        @spy.should.have.been.calledOnce
+
     context "events on related concept", ->
 
       it "triggers hit:add", ->
@@ -95,6 +105,13 @@ describe "Coreon.Collections.Hits", ->
     it "recreates graph after update", ->
       memoized = @hits.graph()
       @hits.update [ @hit ], silent: true
+      @hits.graph().should.not.equal memoized
+
+    it "recreates graph after concept changes", ->
+      @hits.update [ @hit ], silent: true
+      memoized = @hits.graph()
+      @createConcept "123"
+      @concept.set "super_concept_ids", ["123"]
       @hits.graph().should.not.equal memoized
 
     it "creates graph from models", ->

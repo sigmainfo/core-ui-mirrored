@@ -8,7 +8,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   And 'this concept is narrower than "weapon"' do
-    @weapon = create_concept_with_label "weapon"
+    @weapon ||= create_concept_with_label "weapon"
     link_narrower_to_broader @concept, @weapon
   end
 

@@ -15,8 +15,9 @@ class Coreon.Collections.Hits extends Backbone.Collection
     updated = @_removeDropped hits, options
     updated ||= @_addMissing hits, options
     if updated
-      @updateGraph()
-
+      @invalidateGraph()
+      @trigger "hit:update", @, options unless options.silent?
+ 
   graph: ->
     @_graph ?= @createGraph()
 
@@ -66,9 +67,9 @@ class Coreon.Collections.Hits extends Backbone.Collection
       node.concept.on "change", @updateGraph, @
     graph
 
-  updateGraph: ->
+  updateGraph: (options = {}) ->
     @invalidateGraph()
-    @trigger "hit:update"
+    @trigger "hit:graph:update", @
 
   invalidateGraph: ->
     if @_graph?

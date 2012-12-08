@@ -61,7 +61,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.onHitUpdate = sinon.spy()
       @view.initialize()
       @view.model.trigger "hit:update"
-      @view.onHitUpdate.should.have.been.calledOnce
+      @view.model.trigger "hit:graph:update"
+      @view.onHitUpdate.should.have.been.calledTwice
 
     it "updates layout", ->
       @view.model.tree = -> id: "root"
@@ -80,6 +81,15 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.$el.should.have ".concept-node"
       @view.$(".concept-node").size().should.equal 2
       ($(label).text() for label in @view.$(".concept-node")).join("|").should.equal "Pistol|Revolver"
+
+    it "updates node positions", ->
+     nodes = [
+        { id: "root" }
+        { id: "1", concept: @createConcept("Pistol"), depth: 2, x: 23.7, y: 48.6 }
+      ]
+      @view.layout.nodes = -> nodes
+      @view.onHitUpdate()
+      @view.$(".concept-node").attr("transform").should.equal "translate(100, 23.7)"
 
     it "removes deprecated nodes", ->
       @view.layout.nodes = => [

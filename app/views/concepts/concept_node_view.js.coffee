@@ -34,9 +34,9 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
   dissolve: ->
     @model.off null, null, @
 
-  # remove: ->
-  #   @svg.remove()
+  remove: ->
+    @svg.remove()
 
   destroy: ->
     @dissolve()
-    # @remove()
+    @remove()

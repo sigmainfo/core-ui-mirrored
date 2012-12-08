@@ -8,7 +8,7 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
     sinon.spy Coreon.Models.Concept, "upsert"
     sinon.stub Coreon.Models.Concept, "find"
     @view = new Coreon.Views.Concepts.ConceptListView
-      model: new Backbone.Model(hits: [])
+      model: new Backbone.Model(hits: [], terms: [])
       collection: new Backbone.Collection
 
   afterEach ->
@@ -28,8 +28,8 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
       @view.render().should.equal @view
 
     it "renders list items", ->
-      concept = _(new Backbone.Model).extend label: -> "A Concept"
-      concept2 = _(new Backbone.Model).extend label: -> "Another Concept"
+      concept = _(new Backbone.Model terms: []).extend label: -> "A Concept"
+      concept2 = _(new Backbone.Model terms: []).extend label: -> "Another Concept"
       Coreon.Models.Concept.find.withArgs("50506ebdd19879161b000019").returns concept
       Coreon.Models.Concept.find.withArgs("50506ebdd19879161b000015").returns concept2
       @view.model.set
