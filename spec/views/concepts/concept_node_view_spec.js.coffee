@@ -36,6 +36,18 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @el.select("text").text().should.equal "Revolver"
 
+    it "adjusts bg width to label length", ->
+      sinon.stub SVGTextElement::, "getBBox", ->
+        x: 10
+        y: 5
+        width:100
+        height: 20
+      try
+        @view.render()
+        @el.select(".background").attr("width").should.equal "113"
+      finally
+        SVGTextElement::getBBox.restore()
+
   describe "dissolve()", ->
   
     it "dissolves model", ->

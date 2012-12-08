@@ -8,9 +8,8 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
 
   render: () ->
     @clear()
-    @svg.append("svg:rect")
+    bg = @svg.append("svg:rect")
       .attr("class", "background")
-      .attr("width", 60)
       .attr("height", 19)
 
     @svg.append("svg:circle")
@@ -19,10 +18,13 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
       .attr("r", 3)
 
 
-    @svg.append("svg:text")
+    label = @svg.append("svg:text")
       .attr("x", 14)
       .attr("y", 14)
       .text(@model.label())
+
+    box = label.node().getBBox()
+    bg.attr("width", box.width + box.x + 3)
 
   setElement: (el, delegate) ->
     super el, delegate
