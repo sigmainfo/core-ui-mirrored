@@ -37,6 +37,11 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @el.select("text").text().should.equal "Revolver"
 
+    it "shortens lengthy labels", ->
+      @view.model.label = -> "Horticultural mulches made from cocoa shell waste"
+      @view.render()
+      @el.select("text").text().should.equal "Horticultur…"
+
     it "adjusts bg width to label length", ->
       sinon.stub SVGTextElement::, "getBBox", ->
         x: 10

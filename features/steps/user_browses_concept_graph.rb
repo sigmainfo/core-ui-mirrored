@@ -55,23 +55,30 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   And '"weapon" should be connected to "handgun"' do
-    pending 'step not implemented'
+    @edges = []
+    (0..3).each do |i|
+      edge = page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.source.concept.label()|)
+      edge << " -> "
+      edge << page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.target.concept.label()|)
+      @edges.push edge
+    end
+    @edges.should include("weapon -> handgun")
   end
 
   And '"weapon" should be connected to "long gun"' do
-    pending 'step not implemented'
+    @edges.should include("weapon -> long gun")
   end
 
   And '"handgun" should be connected to "pistol"' do
-    pending 'step not implemented'
+    @edges.should include("handgun -> pistol")
   end
 
   And '"handgun" should be connected to "revolver"' do
-    pending 'step not implemented'
+    @edges.should include("handgun -> revolver")
   end
 
   But 'I should not see "rifle"' do
-    pending 'step not implemented'
+    page.should have_no_css("#coreon-concept-map .concept-node", text: "rifle")
   end
 
   When 'I click to toggle the children of "long gun"' do

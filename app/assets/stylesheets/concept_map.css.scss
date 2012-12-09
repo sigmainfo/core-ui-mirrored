@@ -34,7 +34,13 @@
             fill: $bluecolor;
           }
         }
-      } 
+      }
+
+      .concept-edge {
+        fill: none;
+        stroke: $greytext-color;
+        stroke-width: 1px;
+      }
     }
   }
 }

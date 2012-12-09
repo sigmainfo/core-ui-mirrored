@@ -16,6 +16,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @layout = d3.layout.tree()
       .children( (d) -> d.treeDown )
       .size( [ 200, 320 ] )
+    @stencil = d3.svg.diagonal()
+      .projection (d) -> [d.y, d.x]
     @model.on "hit:update hit:graph:update", @onHitUpdate, @
 
   render: ->
@@ -25,16 +27,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   onHitUpdate: ->
     nodes = @layout.nodes @model.tree()
     @renderNodes nodes[1..], @scaleY(nodes)
-    # @renderEdges @model.edges()
+    @renderEdges @model.edges()
 
   renderNodes: (nodes, scaleY = 1) ->
-    
-    nodes = d3.select("##{@id} svg .concept-map")
+    nodes = d3.select( @$("svg .concept-map").get(0) )
       .selectAll(".concept-node")
       .data(nodes, (d) -> d.id )
     
-    self = @
-
     nodes.enter()
       .append("svg:g")
       .each( (d) ->
@@ -46,6 +45,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .each( (d) ->
         d.y = d.x * scaleY
         d.x = (d.depth - 1) * 100
+        d.box = @getBBox()
       )
       .attr("transform", (d) -> "translate(#{d.x}, #{d.y})")
     
@@ -55,6 +55,29 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         d.view = null
       )
       .remove()
+
+  renderEdges: (edges) ->
+    edges = d3.select( @$("svg .concept-map").get(0) )
+      .selectAll(".concept-edge")
+      .data(edges, (d) -> "#{d.source.id}|#{d.target.id}")
+
+    edges.enter()
+      .insert("svg:path")
+      .attr("class", "concept-edge")
+
+    edges.attr("d", (d) =>
+      @stencil
+        source:
+          x: d.source.y + d.source.box.height / 2
+          y: d.source.x + d.source.box.width
+        target:
+          x: d.target.y + d.source.box.height / 2
+          y: d.target.x
+    )
+
+    edges.exit()
+      .remove()
+    
 
   scaleY: (nodes) ->
     minDeltaY = 30

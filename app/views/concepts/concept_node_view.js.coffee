@@ -19,16 +19,18 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
       .attr("cx", 7)
       .attr("cy", 10)
       .attr("r", 3)
-
+    
     label = @svg.append("svg:text")
       .attr("x", 14)
       .attr("y", 14)
-      .text(@model.label())
+      .text(@abbreviate(@model.label()))
 
     box = label.node().getBBox()
     bg.attr("width", box.width + box.x + 3)
     
-
+  abbreviate: (text) ->
+    text = text[0..10] + "…" if text.length > 10
+    text
 
   setElement: (el, delegate) ->
     super el, delegate

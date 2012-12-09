@@ -8,6 +8,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     @view = new Coreon.Views.Widgets.ConceptMapView
       model: new Backbone.Collection
     @view.model.tree = -> children: []
+    @view.model.edges = -> children: []
 
   afterEach ->
     I18n.t.restore()
@@ -29,6 +30,16 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.layout.should.equal layout
       finally
         d3.layout.tree.restore()
+
+    it "creates diagonals factory", ->
+      diagonal = d3.svg.diagonal()
+      sinon.stub d3.svg, "diagonal", -> diagonal
+      try
+        @view.initialize()
+        @view.stencil.should.equal diagonal
+        @view.stencil.projection()(x: "x", y: "y").should.eql ["y", "x"]
+      finally
+        d3.svg.diagonal.restore()
     
   describe "render()", ->
   
@@ -68,6 +79,13 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.onHitUpdate()
       @view.renderNodes.should.have.been.calledOnce
       @view.renderNodes.should.have.been.calledWith [ {id: "1" } ], 1.2
+
+    it "renders edges", ->
+      @view.model.edges = -> [ source: "A", target: "B" ]
+      @view.renderEdges = sinon.spy()
+      @view.onHitUpdate()
+      @view.renderEdges.should.have.been.calledOnce
+      @view.renderEdges.should.have.been.calledWith [ source: "A", target: "B" ]
 
   describe "renderNodes()", ->
   
@@ -123,6 +141,56 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.onHitUpdate()
       expect(nodes[0].view).to.be.null
       nodeView.dissolve.should.have.been.calledOnce 
+
+    it "stores dimensions on datum", ->
+      nodes = [ id: "1", concept: @createConcept "Pistol" ]
+      @view.renderNodes nodes
+      nodes[0].should.have.property "box"
+
+  describe "renderEges()", ->
+
+    beforeEach ->
+      @view.render()
+      $("#konacha").append @view.$el
+    
+    it "draws new edges", ->
+      @view.renderEdges [
+        {
+          source: { id: "a", x: 20, y: 25, box: { height: 20, width: 50 } }
+          target: { id: "b", x: 40, y: 55 }
+        }
+        {
+          source: { id: "a", x: 20, y: 25, box: { height: 20, width: 50 } }
+          target: { id: "c", x: 70, y: 75 }
+        }
+      ]
+      @view.$el.should.have ".concept-edge"
+      @view.$(".concept-edge").size().should.equal 2
+
+    it "redraws edges", ->
+      @view.renderEdges [
+        source: { id: "a", x: 20, y: 25, box: { height: 20, width: 50 } }
+        target: { id: "b", x: 40, y: 55, box: { height: 20, width: 50 } }
+      ]
+      @view.$(".concept-edge").attr("d").should.match /M70,35.*40,65/
+
+    it "erases deprecated edges", ->
+      @view.renderEdges [
+        {
+          source: { id: "a", x: 20, y: 25, box: { height: 20, width: 50 } }
+          target: { id: "b", x: 40, y: 55, box: { height: 20, width: 50 } }
+        }
+        {
+          source: { id: "a", x: 20, y: 25, box: { height: 20, width: 50 } }
+          target: { id: "c", x: 70, y: 75, box: { height: 20, width: 50 } }
+        }
+      ] 
+      @view.renderEdges [
+        source: { id: "a", x: 20, y: 25, box: { height: 20, width: 50 } }
+        target: { id: "c", x: 70, y: 75, box: { height: 20, width: 50 } }
+      ] 
+      @view.$(".concept-edge").size().should.equal 1
+
 
 
   describe "scaleY()", ->

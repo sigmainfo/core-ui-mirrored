@@ -158,4 +158,9 @@ describe "Coreon.Collections.Hits", ->
       graph.tree = sinon.stub().returns id: "root"
       @hits.tree().should.eql id: "root"
 
+  describe "edges()", ->
     
+    it "returns edges of graph", ->
+      graph = @hits.graph()
+      graph.edges = sinon.stub().returns [ source: "a", target: "b" ]
+      @hits.edges().should.eql [ source: "a", target: "b" ]

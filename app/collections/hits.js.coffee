@@ -24,6 +24,9 @@ class Coreon.Collections.Hits extends Backbone.Collection
   tree: ->
     @graph().tree()
 
+  edges: ->
+    @graph().edges()
+
   _removeDropped: (hits, options) ->
     drops = []
     for model in @models
