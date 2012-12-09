@@ -12,22 +12,25 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   template: Coreon.Templates["widgets/concept_map"]
 
+  size: [200, 320]
+
   initialize: ->
     @layout = d3.layout.tree()
       .children( (d) -> d.treeDown )
-      .size( [ 200, 320 ] )
+      .size( @size )
     @stencil = d3.svg.diagonal()
       .projection (d) -> [d.y, d.x]
     @model.on "hit:update hit:graph:update", @onHitUpdate, @
 
   render: ->
-    @$el.html @template()
+    @$el.html @template size: @size
     @
 
   onHitUpdate: ->
     nodes = @layout.nodes @model.tree()
     @renderNodes nodes[1..], @scaleY(nodes)
     @renderEdges @model.edges()
+    @centerY()
 
   renderNodes: (nodes, scaleY = 1) ->
     nodes = d3.select( @$("svg .concept-map").get(0) )
@@ -44,7 +47,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     nodes
       .each( (d) ->
         d.y = d.x * scaleY
-        d.x = (d.depth - 1) * 100
+        d.x = (d.depth - 1) * 120
         d.box = @getBBox()
       )
       .attr("transform", (d) -> "translate(#{d.x}, #{d.y})")
@@ -80,10 +83,18 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     
 
   scaleY: (nodes) ->
-    minDeltaY = 30
+    minDeltaY = 24
     for node in nodes
       minDeltaY = Math.min(node.children[1].x - node.children[0].x, minDeltaY) if node.children?.length >= 2
-    scaleY = 30 / minDeltaY
+    scaleY = 24 / minDeltaY
+
+  centerY: ->
+    map = @$("svg .concept-map").get(0)
+    box = map.getBBox()
+    deltaY = @size[0] - box.height
+    y = if deltaY < 0 then deltaY / 2 else 0
+    d3.select(map).attr("transform", "translate(10, #{y - 10})")
+
 
   dissolve: ->
     @model.off null, null, @

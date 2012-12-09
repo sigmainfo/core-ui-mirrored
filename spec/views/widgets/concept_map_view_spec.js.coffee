@@ -58,6 +58,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   describe "onHitUpdate()", ->
 
+    beforeEach ->
+      @view.render()
+
     it "is triggered by current hits", ->
       @view.onHitUpdate = sinon.spy()
       @view.initialize()
@@ -87,6 +90,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.renderEdges.should.have.been.calledOnce
       @view.renderEdges.should.have.been.calledWith [ source: "A", target: "B" ]
 
+    it "centers horizontally", ->
+      @view.centerY = sinon.spy()
+      @view.onHitUpdate()
+      @view.centerY.should.have.been.calledOnce
+
   describe "renderNodes()", ->
   
     beforeEach ->
@@ -111,7 +119,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
     it "updates node positions", ->
       @view.renderNodes [ id: "1", concept: @createConcept("Pistol"), depth: 2, x: 23, y: 48.6 ], 2
-      @view.$(".concept-node").attr("transform").should.equal "translate(100, 46)"
+      @view.$(".concept-node").attr("transform").should.equal "translate(120, 46)"
 
     it "removes deprecated nodes", ->
       @view.renderNodes [
@@ -191,19 +199,34 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       ] 
       @view.$(".concept-edge").size().should.equal 1
 
-
-
   describe "scaleY()", ->
   
     it "stretches height to fit concepts vertically", ->
      nodes = [
         { id: "root" }
         { id: "1", concept: @createConcept("Pistol"),   depth: 2, x: 10 }
-        { id: "2", concept: @createConcept("Revolver"), depth: 2, x: 25 }
+        { id: "2", concept: @createConcept("Revolver"), depth: 2, x: 22 }
       ]
       nodes[0].children = nodes[1..]
       @view.layout.nodes = -> nodes
       @view.scaleY(nodes).should.equal 2
+
+  describe "centerY()", ->
+    
+    beforeEach ->
+      @view.render()
+      @map = @view.$("svg .concept-map")
+      @map.get(0).getBBox = sinon.stub()
+
+    it "moves slightly towards center when not higher than viewport", ->
+      @map.get(0).getBBox.returns x: 0, y: 0, width: 100, height: 45
+      @view.centerY()
+      @map.attr("transform").should.equal "translate(10, -10)"
+
+    it "centers vertically when higher than viewport", ->
+      @map.get(0).getBBox.returns x: 0, y: 0, width: 100, height: 450
+      @view.centerY()
+      @map.attr("transform").should.equal "translate(10, -135)"
 
   describe "dissolve()", ->
 

@@ -1,5 +1,5 @@
 .titlebar
   %h4= I18n.t "concept-map.title"
 .map
-  %svg{ width: 320, height: 200 }
+  %svg{ width: @size[1], height: @size[0] }
     %g.concept-map
