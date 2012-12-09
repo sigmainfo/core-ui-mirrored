@@ -47,17 +47,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   describe "onHitUpdate()", ->
 
-    beforeEach ->
-      @view.render()
-      $("#konacha").append @view.$el
-      @view.model.tree = -> {}
-      @view.layout.nodes = -> []
-      @createConcept = (label) ->
-        concept = new Backbone.Model
-        concept.label = -> label
-        concept.hit = -> false
-        concept
-    
     it "is triggered by current hits", ->
       @view.onHitUpdate = sinon.spy()
       @view.initialize()
@@ -72,67 +61,81 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.layout.nodes.should.have.been.calledOnce
       @view.layout.nodes.should.have.been.calledWith id: "root"
 
+    it "renders nodes", ->
+      @view.layout.nodes = -> [ { id: "root" }, { id: "1" } ]
+      @view.scaleY = -> 1.2
+      @view.renderNodes = sinon.spy()
+      @view.onHitUpdate()
+      @view.renderNodes.should.have.been.calledOnce
+      @view.renderNodes.should.have.been.calledWith [ {id: "1" } ], 1.2
+
+  describe "renderNodes()", ->
+  
+    beforeEach ->
+      @view.render()
+      $("#konacha").append @view.$el
+      @view.model.tree = -> {}
+      @view.layout.nodes = -> []
+      @createConcept = (label) ->
+        concept = new Backbone.Model
+        concept.label = -> label
+        concept.hit = -> false
+        concept 
+
     it "renders concept nodes", ->
-      @view.layout.nodes = => [
-        { id: "root" }
+      @view.renderNodes [
         { id: "1", concept: @createConcept "Pistol"   }
         { id: "2", concept: @createConcept "Revolver" }
-      ] 
-      @view.onHitUpdate()
+      ]
       @view.$el.should.have ".concept-node"
       @view.$(".concept-node").size().should.equal 2
       ($(label).text() for label in @view.$(".concept-node")).join("|").should.equal "Pistol|Revolver"
 
     it "updates node positions", ->
-     nodes = [
-        { id: "root" }
-        { id: "1", concept: @createConcept("Pistol"), depth: 2, x: 23.7, y: 48.6 }
-      ]
-      @view.layout.nodes = -> nodes
-      @view.onHitUpdate()
-      @view.$(".concept-node").attr("transform").should.equal "translate(100, 23.7)"
+      @view.renderNodes [ id: "1", concept: @createConcept("Pistol"), depth: 2, x: 23, y: 48.6 ], 2
+      @view.$(".concept-node").attr("transform").should.equal "translate(100, 46)"
 
     it "removes deprecated nodes", ->
-      @view.layout.nodes = => [
-        { id: "root" }
+      @view.renderNodes [
         { id: "1", concept: @createConcept "Pistol"   }
         { id: "2", concept: @createConcept "Revolver" }
       ] 
-      @view.onHitUpdate()
-      @view.layout.nodes = => [
-        { id: "root" }
+      @view.renderNodes [
         { id: "2", concept: @createConcept "Revolver" }
       ] 
-      @view.onHitUpdate()
       @view.$(".concept-node").size().should.equal 1
       @view.$(".concept-node").text().should.equal "Revolver"
 
     it "creates view for enter node", ->
-      nodes = [
-        { id: "root" }
-        { id: "1", concept: @createConcept "Pistol" }
-      ]
-      @view.layout.nodes = -> nodes
-      @view.onHitUpdate()
-      nodes[1].should.have.property "view"
-      nodes[1].view.should.be.an.instanceof Coreon.Views.Concepts.ConceptNodeView
-      nodes[1].view.should.have.property "el", @view.$(".concept-node").get(0)
-      nodes[1].view.should.have.property "model", nodes[1].concept
+      nodes = [ id: "1", concept: @createConcept "Pistol" ]
+      @view.renderNodes nodes
+      nodes[0].should.have.property "view"
+      nodes[0].view.should.be.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+      nodes[0].view.should.have.property "el", @view.$(".concept-node").get(0)
+      nodes[0].view.should.have.property "model", nodes[0].concept
 
     it "dissolves view for exit node", ->
-      nodes = [
-        { id: "root" }
-        { id: "1", concept: @createConcept "Pistol" }
-      ]
-      @view.layout.nodes = -> nodes
-      @view.onHitUpdate()
-      nodeView = nodes[1].view
+      nodes = [ id: "1", concept: @createConcept "Pistol" ]
+      @view.renderNodes nodes
+      nodeView = nodes[0].view
       nodeView.dissolve = sinon.spy()
-      @view.layout.nodes = -> []
+      @view.renderNodes []
       @view.onHitUpdate()
-      expect(nodes[1].view).to.be.null
+      expect(nodes[0].view).to.be.null
       nodeView.dissolve.should.have.been.calledOnce 
-      
+
+
+  describe "scaleY()", ->
+  
+    it "stretches height to fit concepts vertically", ->
+     nodes = [
+        { id: "root" }
+        { id: "1", concept: @createConcept("Pistol"),   depth: 2, x: 10 }
+        { id: "2", concept: @createConcept("Revolver"), depth: 2, x: 25 }
+      ]
+      nodes[0].children = nodes[1..]
+      @view.layout.nodes = -> nodes
+      @view.scaleY(nodes).should.equal 2
 
   describe "dissolve()", ->
 

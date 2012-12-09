@@ -24,9 +24,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   onHitUpdate: ->
     nodes = @layout.nodes @model.tree()
-    @renderNodes nodes[1..]
+    @renderNodes nodes[1..], @scaleY(nodes)
+    # @renderEdges @model.edges()
 
-  renderNodes: (nodes) ->
+  renderNodes: (nodes, scaleY = 1) ->
     
     nodes = d3.select("##{@id} svg .concept-map")
       .selectAll(".concept-node")
@@ -41,7 +42,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         d.view.render()
       )
 
-    nodes.attr("transform", (d) -> "translate(#{(d.depth - 1) * 100}, #{d.x})")
+    nodes
+      .each( (d) ->
+        d.y = d.x * scaleY
+        d.x = (d.depth - 1) * 100
+      )
+      .attr("transform", (d) -> "translate(#{d.x}, #{d.y})")
     
     nodes.exit()
       .each( (d) ->
@@ -49,6 +55,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         d.view = null
       )
       .remove()
+
+  scaleY: (nodes) ->
+    minDeltaY = 30
+    for node in nodes
+      minDeltaY = Math.min(node.children[1].x - node.children[0].x, minDeltaY) if node.children?.length >= 2
+    scaleY = 30 / minDeltaY
 
   dissolve: ->
     @model.off null, null, @

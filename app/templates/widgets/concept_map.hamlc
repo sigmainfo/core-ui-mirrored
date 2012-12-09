@@ -2,5 +2,4 @@
   %h4= I18n.t "concept-map.title"
 .map
   %svg{ width: 320, height: 200 }
-    %svg{ x: 10, y: -10 }
-      %g.concept-map
+    %g.concept-map
