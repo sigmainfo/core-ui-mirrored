@@ -11,9 +11,12 @@
 
     .self {   
       @include concept-icon;
+      color: $bluecolor;
+      background-color: white;
       margin: 0 2%;
       max-width: 25%;
       padding-left: 14px;
+      padding-right: 3px;
     }
     li {
       padding-bottom: 1px;

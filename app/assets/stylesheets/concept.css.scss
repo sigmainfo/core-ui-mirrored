@@ -7,20 +7,21 @@ div.concept {
   position: relative;
   
   h2 {
+    display: inline-block;
     font-size: 1.8em;
     line-height: 1.4em;
-    padding-bottom: 14px;
-    padding-top: 6px;
-    padding-right: 40px;
-    padding-left: 20px;
-/*    text-indent: 18px;*/
+    padding: 0px 10px 0px 20px;
+    margin-bottom: 12px;
+    margin-right: 30px;
+    background-color: white;
+    color: $bluecolor;
     @include concept-icon;
     &:before {
       border: 2px solid lighten($text-color, 20%);
       @include border-radius(5px);
       width: 5px;
       height: 5px;
-      top: 16px;
+      top: 11px;
     };
   }
   

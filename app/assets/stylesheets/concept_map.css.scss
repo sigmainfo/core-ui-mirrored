@@ -13,7 +13,7 @@
 
       text {
         font-size: 11px;
-        fill: $text-color;
+        fill: $greytext-color;
       }
 
       .concept-node {
@@ -31,7 +31,7 @@
         &.hit {
 
           text {
-            fill: red;
+            fill: $bluecolor;
           }
         }
       } 
