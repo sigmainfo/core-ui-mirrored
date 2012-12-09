@@ -4,21 +4,37 @@
 .concept {
 
   .concept-tree .section{
-/*    display:table-cell;*/
     position: relative;
+    width: 100%;
     padding-bottom: 20px;
     padding-top: 10px;
+
     .self {   
       @include concept-icon;
+      color: $bluecolor;
+      background-color: white;
+      margin: 0 2%;
+      max-width: 25%;
+      padding-left: 14px;
+      padding-right: 3px;
     }
-    ul, .self {
+    li {
+      padding-bottom: 1px;
+    }
+    
+    ul {
       list-style: none;
+      
+    }
+    .super, .self, .subContainer {
       display: inline-block;
-      padding: 0 30px;
       vertical-align: middle;
+      margin-top: 10px;
     }
     ul.super {
+      padding: 0 5% 0 3%;
       position: relative;
+      max-width: 22%;
       background: image-url("layout/bracket.png") no-repeat right center;
       &:before {
         content:"";
@@ -41,9 +57,11 @@
         background: image-url("layout/bracket.png") no-repeat 0px bottom;
       };
     }
-    ul.sub {
+    .subContainer {
       position: relative;
+      max-width: 38%;
       padding-right: 0;
+      padding-left: 4%;
       background: image-url("layout/bracket.png") no-repeat left center;
       &:before {
         content:"";
@@ -65,6 +83,12 @@
         left: 0;
         background: image-url("layout/bracket.png") no-repeat 0px bottom;
       };
+    }
+    ul.sub {
+      position: relative;
+      max-height: 512px;
+      overflow: auto;
+      padding-right: 10px;
     }
     ul:empty {
       min-height: 18px;

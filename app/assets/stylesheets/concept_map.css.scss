@@ -1,0 +1,48 @@
+@import '_config';
+@import 'compass/css3';
+
+#coreon-concept-map {
+
+  .map {
+    line-height: 0;
+    width: 100%;
+    height: 200px;
+    border-top: 1px solid rgba(white, 0.3);
+
+    svg {
+
+      text {
+        font-size: 11px;
+        fill: $greytext-color;
+      }
+
+      .concept-node {
+
+        circle {
+          fill: none;
+          stroke-width: 1px;
+          stroke: $text-color;
+        }
+
+        .background {
+          fill: white;
+        }
+
+        &.hit {
+
+          text {
+            fill: $bluecolor;
+          }
+        }
+      }
+
+      .concept-edge {
+        fill: none;
+        stroke: #bfc5c0;
+        stroke-width: 1px;
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,23 @@
+@import '_config';
+@import 'compass/css3';
+
+
+.widget {
+  background-color: $greycolor;
+  position: relative;
+  @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
+  @include background(linear-gradient(rgba(white, 0.3), rgba(white, 0)));
+  
+  .titlebar {
+    background: rgba(30,80,80, 0.06) image-url("layout/stripes-white.png");
+    @include retina-stripes("white");
+    border-bottom: 1px solid rgba(black, 0.05);
+    height: 19px;
+    h4 {
+      color: $browncolor;
+      font-size: 0.86em;
+      padding: 1px 0 0 12px;
+    }
+  }
+
+}

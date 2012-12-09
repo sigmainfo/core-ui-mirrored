@@ -14,18 +14,28 @@ class Coreon.Models.Concept extends Backbone.Model
     sub_concept_ids: []
 
   label: ->
-    @propLabel() or @termLabel() or @id
+    _.escape( @propLabel() or @termLabel() or @id )
 
   info: ->
     internals = _(@defaults).keys()
     internals.unshift @idAttribute
     _(id: @id).extend _(@attributes).omit internals
 
+  hit: ->
+    Coreon.application.hits.get(@id)?
+
   propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 
   termLabel: ->
-    @get("terms")?[0]?.value
+    terms = @get "terms"
+    label = null
+    for term in terms
+      if term.lang.match /^en/i
+        label = term.value
+        break
+    label ||= terms?[0]?.value
+    label
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options

@@ -1,4 +1,5 @@
 #= require environment
+#= require views/simple_view
 #= require templates/notifications/notification
 
 class Coreon.Views.Notifications.NotificationView extends Coreon.Views.SimpleView

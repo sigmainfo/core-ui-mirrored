@@ -16,20 +16,20 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
   initialize: ->
     super
     @header = new Coreon.Views.Layout.HeaderView
-      collection: @model.notifications
+      collection: @model.account.notifications
     @add @header
     @header.on "resize", @onResize, @
 
-    @model.on "activated"    , @activate    , @
-    @model.on "deactivated"  , @deactivate  , @
-    @model.on "unauthorized" , @reauthorize , @
-    @model.on "reactivated"  , @reactivate  , @
+    @model.account.on "activated"    , @activate    , @
+    @model.account.on "deactivated"  , @deactivate  , @
+    @model.account.on "unauthorized" , @reauthorize , @
+    @model.account.on "reactivated"  , @reactivate  , @
 
   render: ->
     @$el.html @template()
     @prepend "#coreon-top", @header
     super
-    if @model.get "active" then @activate() else @deactivate()
+    if @model.account.get "active" then @activate() else @deactivate()
     @
 
   switch: (screen) ->
@@ -42,37 +42,41 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     event.preventDefault()
 
   clear: ->
-    subviews = _(@subviews).without @header
-    if subviews.length > 0
-      @destroy.apply @, _(@subviews).without @header
+    subviews = (view for view in @subviews when view isnt @header)
+    @destroy.apply @, subviews if subviews.length > 0
 
   activate: ->
-    if @model.get "active"
+    if @model.account.get "active"
       @clear()
       @widgets = new Coreon.Views.Widgets.WidgetsView
+        model: @model
       @append "#coreon-top", @widgets.render()
       @footer = new Coreon.Views.Layout.FooterView
-        model: @model
+        model: @model.account
       @append @footer.render()
 
   deactivate: ->
     @clear()
     @login = new Coreon.Views.Account.LoginView
-      model: @model
+      model: @model.account
     @append "#coreon-main", @login.render()
 
   reauthorize: ->
     @destroy @prompt if @prompt
     @prompt = new Coreon.Views.Account.PasswordPromptView
-      model: @model
+      model: @model.account
     @append "#coreon-modal", @prompt.render()
     @$("#coreon-password-password").focus()
 
   reactivate: ->
     @destroy @prompt if @prompt
-    dropped = @model.connections.filter (connection) ->
+    dropped = @model.account.connections.filter (connection) ->
       connection.get("xhr").status == 403 
     connection.resume() for connection in dropped
 
   onResize: ->
     @$("#coreon-main").css "paddingTop": @header.$el.outerHeight()
+
+  destroy: (subviews...) ->
+    super subviews...
+    @model.account.off null, null, @ if subviews.length is 0

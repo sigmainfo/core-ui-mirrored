@@ -3,6 +3,7 @@ $bluecolor: #3da2e6;
 $darkerbluecolor: #6cb1d3;
 $hover-color: #5498b0;
 $browncolor: #554f3c;
+$darkbrowncolor: #58513d;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
 $greytext-color: #908f89;
@@ -56,13 +57,17 @@ $widget-width: 320px;
 }
 
 @mixin concept-icon {
+    position: relative;
   &:before {
     content:"";
-    display: inline-block;
+    display: block;
+    position: absolute;
     width: 4px;
     height: 4px;
-    margin-right: 5px;
-    margin-bottom: 2px;
+    top: 6px;
+    left: 4px;
+/*    margin-right: 5px;
+    margin-bottom: 2px;*/
     border: 1px solid lighten($text-color, 20%);
     @include border-radius(2px);
   };  

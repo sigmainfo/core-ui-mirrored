@@ -18,6 +18,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
           search:
             selector:
               hideHint: ->
+      app: Coreon.application
 
   afterEach ->
     Coreon.application.destroy()
@@ -65,12 +66,55 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @screen.should.be.an.instanceof Coreon.Views.Concepts.ConceptListView
       @screen.$el.should.have ".concept-list-item"
 
+    context "done", ->
+      
+      beforeEach ->
+        sinon.stub(Coreon.Views.Concepts, "ConceptListView").returns render: ->
+
+      afterEach ->
+        Coreon.Views.Concepts.ConceptListView.restore()
+        
+      it "updates concepts from results", ->
+        @router.search q: "poet"
+        @request.respond 200, {}, JSON.stringify
+          hits: [
+            {
+              score: 1.56
+              result:
+                _id: "1234"
+                properties: [
+                  { key: "label", value: "poet" }
+                ]
+                super_concept_ids: [
+                  "5047774cd19879479b000523"
+                  "5047774cd19879479b00002b"
+                ]
+            }
+          ]
+        concept = Coreon.Models.Concept.find "1234"
+        concept.get("properties").should.eql [{key: "label", value: "poet"}]
+        concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
+
+      it "updates current hits", ->
+        @router.app.hits.update = sinon.spy()
+        @router.search q: "poet"
+        @request.respond 200, {}, JSON.stringify
+          hits: [
+            {
+              score: 1.56
+              result:
+                _id: "1234"
+            }
+          ]
+        @router.app.hits.update.should.have.been.calledWith [ { id: "1234", score: 1.56 }]
+       
   describe "#show", ->
 
     beforeEach ->
       sinon.stub Coreon.Models.Concept, "find"
       @concept = _( new Backbone.Model ).extend
         label: -> "concept #123"
+      Coreon.Models.Concept.find.withArgs("123").returns @concept
 
     afterEach ->
       Coreon.Models.Concept.find.restore()
@@ -79,7 +123,11 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.routes["concepts/:id"].should.equal "show"
       
     it "renders concept details", ->
-      Coreon.Models.Concept.find.withArgs("123").returns @concept
       @router.show "123"
       @screen.should.be.an.instanceof Coreon.Views.Concepts.ConceptView
       @screen.model.should.equal @concept
+
+    it "updates selection", ->
+      @router.app.hits.update = sinon.spy()
+      @router.show "123"
+      @router.app.hits.update.should.have.been.calledWith [ id: "123" ]

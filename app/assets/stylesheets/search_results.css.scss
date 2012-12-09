@@ -49,10 +49,10 @@
       }
 
       td, th {      
-      padding: 4px 20px 1px 2px;
+      padding: 4px 16px 1px 2px;
 
         &.lang {
-          width: 100px;
+          width: 14%;
         }
       }
 
@@ -66,13 +66,15 @@
     
     &.terms {
       .concept {
-        width: 180px;
+        width: 36%;
+        padding-right: 4px;
       }    
     }
 
     &.concepts {
-      .id {
-        width: 180px;
+      .super {
+         width: 36%;
+          padding-right: 4px;
       }
       td.label a{
         font-size: 1.1em;
@@ -146,27 +148,20 @@
       }
     };
   }
-  .label a{
-    background-color: white;
-  } 
 
   .concepts table{
 
     th {
       width: 100px;
       text-align: right;
-    }
-    td, th {
-      border: none;
+      color: $greencolor;
     }
     tr {
-      td {
-        padding-top: 4px;
+      td, th {
+        border: none;
+        padding-top: 2px;
         background: none;
       }
-    }
-    th {
-      color: $greencolor;
     }
     
   }

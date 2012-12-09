@@ -5,6 +5,7 @@ Coreon.Modules             ?= {}
 Coreon.Collections         ?= {}
 Coreon.Helpers             ?= {}
 Coreon.Routers             ?= {}
+Coreon.Data                ?= {}
 Coreon.Views               ?= {}
 Coreon.Views.Layout        ?= {}
 Coreon.Views.Widgets       ?= {}

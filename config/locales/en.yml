@@ -82,3 +82,6 @@ en:
       failed: "Invalid login or password."
     service:
       unavailable: "Service is currently unavailable."
+
+  concept-map:
+    title: "Concept Map"

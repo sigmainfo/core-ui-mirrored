@@ -29,7 +29,7 @@ gem "rack-cors", require: "rack/cors"
 
 group :development do
   gem "thin"
-  gem "konacha"
+  gem "konacha", "~> 2.0.0"
   gem 'pry'
   gem 'capistrano'
   gem 'capistrano-ext'
