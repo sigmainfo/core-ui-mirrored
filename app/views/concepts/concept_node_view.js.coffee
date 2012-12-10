@@ -11,21 +11,22 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
     @clear()
     @toggleHit()
 
-    bg = @svg.append("svg:rect")
+    a = @svg.append("svg:a")
+      .attr("xlink:href", "/concepts/#{@model.id}")
+
+    bg = a.append("svg:rect")
       .attr("class", "background")
       .attr("height", 19)
 
-    @svg.append("svg:circle")
+    a.append("svg:circle")
       .attr("cx", 7)
       .attr("cy", 10)
       .attr("r", 3)
     
-    label = @svg.append("svg:a")
-      .attr("xlink:href", "/concepts/#{@model.id}")
-      .append("svg:text")
-        .attr("x", 14)
-        .attr("y", 14)
-        .text(@abbreviate(@model.label()))
+    label = a.append("svg:text")
+      .attr("x", 14)
+      .attr("y", 14)
+      .text(@abbreviate(@model.label()))
 
     box = label.node().getBBox()
     bg.attr("width", box.width + box.x + 3)

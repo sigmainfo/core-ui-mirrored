@@ -20,8 +20,8 @@
 
         circle {
           fill: none;
-          stroke-width: 1px;
-          stroke: $text-color;
+          stroke-width: 2px;
+          stroke: $greytext-color;
         }
 
         .background {
@@ -29,6 +29,10 @@
         }
 
         &.hit {
+
+          circle {
+            stroke: $text-color;
+          }
 
           text {
             fill: $bluecolor;
@@ -47,7 +51,7 @@
       .concept-edge {
         fill: none;
         stroke: #bfc5c0;
-        stroke-width: 1px;
+        stroke-width: 1.5px;
       }
     }
   }
