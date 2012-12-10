@@ -17,7 +17,7 @@ Feature: user browses list of concepts
     And this concept is a subconcept of "handgun"
     When I enter "gun" in the search field
     And I click the search button
-    And I click "Show all" within the concept search results
+    And I click "Concepts only" within the concept search results
     Then I should be on the search result page for concepts
     And I should see a concept "handgun"
     And I should see it being defined as "A portable firearm"

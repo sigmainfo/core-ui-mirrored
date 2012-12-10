@@ -51,9 +51,9 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     })
   end
 
-  And 'I click "Show all" within the concept search results' do
+  And 'I click "Concepts only" within the concept search results' do
     within ".search-results-concepts" do
-      click_link "Show all"
+      click_link "Concepts only"
     end
   end
 

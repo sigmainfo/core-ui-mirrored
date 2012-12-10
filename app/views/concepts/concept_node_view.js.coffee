@@ -20,10 +20,12 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
       .attr("cy", 10)
       .attr("r", 3)
     
-    label = @svg.append("svg:text")
-      .attr("x", 14)
-      .attr("y", 14)
-      .text(@abbreviate(@model.label()))
+    label = @svg.append("svg:a")
+      .attr("xlink:href", "/concepts/#{@model.id}")
+      .append("svg:text")
+        .attr("x", 14)
+        .attr("y", 14)
+        .text(@abbreviate(@model.label()))
 
     box = label.node().getBBox()
     bg.attr("width", box.width + box.x + 3)

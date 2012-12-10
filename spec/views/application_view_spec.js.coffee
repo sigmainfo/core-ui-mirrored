@@ -201,6 +201,13 @@ describe "Coreon.Views.ApplicationView", ->
       Backbone.history.navigate.should.have.been.calledWith "/this/is/within/the/app", trigger: true
       @event.preventDefault.should.have.been.called
 
+    it "extracts href from self or ancestor <a>", ->
+      img = $("<img>")
+      @link.attr "href", "/this/is/within/the/app"
+      @link.append img
+      img.trigger @event
+      Backbone.history.navigate.should.have.been.calledWith "/this/is/within/the/app", trigger: true
+
     it "triggers default action for other links", ->
       @link.attr "href", "http://go/somewhere/else"
       @link.trigger @event

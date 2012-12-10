@@ -38,7 +38,7 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     @append "#coreon-main", @screen
 
   navigate: (event) ->
-    Backbone.history.navigate $(event.target).attr("href"), trigger: true
+    Backbone.history.navigate $(event.target).closest("a").attr("href"), trigger: true
     event.preventDefault()
 
   clear: ->
