@@ -39,7 +39,7 @@ en:
           label: "Concept"
           super_concepts: "Broader"
           id: "ID"
-        show_all: "Show all"
+        show_all: "Concepts only"
       tnodes:
         headline: "Taxonomies"
         header:

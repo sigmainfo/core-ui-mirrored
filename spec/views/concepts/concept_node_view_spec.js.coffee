@@ -42,6 +42,11 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @el.select("text").text().should.equal "Horticultur…"
 
+    it "renders link to concept", ->
+      @view.model.id = "nobody"
+      @view.render()
+      @el.select("a").attr("xlink:href").should.equal "/concepts/nobody"
+
     it "adjusts bg width to label length", ->
       sinon.stub SVGTextElement::, "getBBox", ->
         x: 10
