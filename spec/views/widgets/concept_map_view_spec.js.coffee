@@ -103,55 +103,73 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.model.tree = -> {}
       @view.layout.nodes = -> []
       @createConcept = (label) ->
-        concept = new Backbone.Model
+        concept = new Backbone.Model super_concept_ids: [], sub_concept_ids: []
         concept.label = -> label
         concept.hit = -> false
         concept 
 
-    it "renders concept nodes", ->
+    it "creates new concept nodes", ->
       @view.renderNodes [
-        { id: "1", concept: @createConcept "Pistol"   }
-        { id: "2", concept: @createConcept "Revolver" }
+        { id: "1", concept: @createConcept("Pistol"), treeDown: [], treeUp: [] }
+        { id: "2", concept: @createConcept("Revolver"), treeDown: [], treeUp: [] }
       ]
       @view.$el.should.have ".concept-node"
       @view.$(".concept-node").size().should.equal 2
       ($(label).text() for label in @view.$(".concept-node")).join("|").should.equal "Pistol|Revolver"
 
-    it "updates node positions", ->
-      @view.renderNodes [ id: "1", concept: @createConcept("Pistol"), depth: 2, x: 23, y: 48.6 ], 2
+    it "updates nodes", ->
+      concept = @createConcept("Pistol")
+      @view.renderNodes [ id: "1", concept: concept, depth: 1, x: 0, y: 0, treeUp: [], treeDown: [] ], 2
+      @view.views["1"].render = sinon.spy()
+      @view.renderNodes [ id: "1", concept: concept, depth: 2, x: 23, y: 48.6, treeUp: ["2"], treeDown: ["7"] ], 2
       @view.$(".concept-node").attr("transform").should.equal "translate(120, 46)"
+      @view.views["1"].options.should.have.property "treeRoot", false
+      @view.views["1"].options.should.have.property "treeLeaf", false
+      @view.views["1"].render.should.have.been.calledOnce
+
+    it "updates box dimensions", ->
+      node = id: "1", concept: @createConcept("Pistol"), depth: 2, x: 23, y: 48.6, treeUp: [], treeDown: []
+      sinon.stub SVGRectElement::, "getBBox", -> x: 0, y: 0, height: 20, width: 48
+      try
+        @view.renderNodes [ node ], 2
+        node.box.should.have.property "height", 20
+        node.box.should.have.property "width", 48
+      finally
+        SVGRectElement::getBBox.restore()
 
     it "removes deprecated nodes", ->
       @view.renderNodes [
-        { id: "1", concept: @createConcept "Pistol"   }
-        { id: "2", concept: @createConcept "Revolver" }
+        { id: "1", concept: @createConcept("Pistol"), treeUp: [], treeDown: [] }
+        { id: "2", concept: @createConcept("Revolver"), treeUp: [], treeDown: [] }
       ] 
       @view.renderNodes [
-        { id: "2", concept: @createConcept "Revolver" }
+        { id: "2", concept: @createConcept("Revolver"), treeUp: [], treeDown: [] }
       ] 
       @view.$(".concept-node").size().should.equal 1
       @view.$(".concept-node").text().should.equal "Revolver"
 
     it "creates view for enter node", ->
-      nodes = [ id: "1", concept: @createConcept "Pistol" ]
+      nodes = [ id: "1", concept: @createConcept("Pistol"), treeUp: [], treeDown: [] ]
       @view.renderNodes nodes
-      nodes[0].should.have.property "view"
-      nodes[0].view.should.be.an.instanceof Coreon.Views.Concepts.ConceptNodeView
-      nodes[0].view.should.have.property "el", @view.$(".concept-node").get(0)
-      nodes[0].view.should.have.property "model", nodes[0].concept
+      expect(@view.views["1"]).to.exist
+      @view.views["1"].should.be.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+      @view.views["1"].should.have.property "el", @view.$(".concept-node").get(0)
+      @view.views["1"].should.have.property "model", nodes[0].concept
+      @view.views["1"].options.should.have.property "treeRoot", true
+      @view.views["1"].options.should.have.property "treeLeaf", true
 
     it "dissolves view for exit node", ->
-      nodes = [ id: "1", concept: @createConcept "Pistol" ]
+      nodes = [ id: "1", concept: @createConcept("Pistol"), treeUp: [], treeDown: [] ]
       @view.renderNodes nodes
-      nodeView = nodes[0].view
+      nodeView = @view.views["1"]
       nodeView.dissolve = sinon.spy()
       @view.renderNodes []
       @view.onHitUpdate()
-      expect(nodes[0].view).to.be.null
+      expect(@view.views["1"]).to.not.exist
       nodeView.dissolve.should.have.been.calledOnce 
 
     it "stores dimensions on datum", ->
-      nodes = [ id: "1", concept: @createConcept "Pistol" ]
+      nodes = [ id: "1", concept: @createConcept("Pistol"), treeUp: [], treeDown: [] ]
       @view.renderNodes nodes
       nodes[0].should.have.property "box"
 
@@ -205,11 +223,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
      nodes = [
         { id: "root" }
         { id: "1", concept: @createConcept("Pistol"),   depth: 2, x: 10 }
-        { id: "2", concept: @createConcept("Revolver"), depth: 2, x: 22 }
+        { id: "2", concept: @createConcept("Revolver"), depth: 2, x: 20 }
       ]
       nodes[0].children = nodes[1..]
       @view.layout.nodes = -> nodes
-      @view.scaleY(nodes).should.equal 2
+      @view.scaleY(nodes).should.equal 2.2
 
   describe "centerY()", ->
     

@@ -5,12 +5,15 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
 
   beforeEach ->
     svg = d3.select $("<svg>").appendTo("#konacha").get(0)
-    model = new Backbone.Model
+    model = new Backbone.Model sub_concept_ids: [], super_concept_ids: []
     model.label = -> "#123"
     model.hit = -> false
     @view = new Coreon.Views.Concepts.ConceptNodeView
       el: svg.append("g").node()
       model: model
+      node:
+        treeUp: []
+        treeDown: []
     @el = d3.select @view.el
 
   afterEach ->
@@ -70,6 +73,45 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.model.hit = -> false
       @view.render()
       @el.classed("hit").should.be.false
+
+    it "creates children toggle", ->
+      @view.model.set "sub_concept_ids", ["123"], silent: true
+      sinon.stub SVGRectElement::, "getBBox", ->
+        x: 0, y: 0, width: 50, height: 20 
+      try
+        @view.render()
+        @view.$el.should.have ".toggle-children"
+        @view.$(".toggle-children").attr("transform").should.equal "translate(50, 0)"
+      finally
+        SVGRectElement::getBBox.restore()
+    
+    it "does not create children toggle for leaves", ->
+      @view.model.set "sub_concept_ids", [], silent: true
+      @view.render()
+      @view.$el.should.not.have ".toggle-children"
+
+    it "classifies expanded toggles", ->
+      @view.model.set {sub_concept_ids: ["123"], super_concept_ids: ["456"]}, silent: true
+      @view.options.node = treeUp: [{}], treeDown: [{}]
+      @view.render()
+      d3.select( @view.$(".toggle-children").get(0) ).classed("expanded").should.be.true
+      d3.select( @view.$(".toggle-parents").get(0) ).classed("expanded").should.be.true
+
+    it "creates parents toggle", ->
+      @view.model.set "super_concept_ids", ["123"], silent: true
+      sinon.stub SVGRectElement::, "getBBox", ->
+        x: 0, y: 0, width: 50, height: 20 
+      try
+        @view.render()
+        @view.$el.should.have ".toggle-parents"
+        @view.$(".toggle-parents").attr("transform").should.equal "translate(-20, 0)"
+      finally
+        SVGRectElement::getBBox.restore()
+    
+    it "does not create parents toggle for roots", ->
+      @view.model.set "super_concept_ids", [], silent: true
+      @view.render()
+      @view.$el.should.not.have ".toggle-parents"
 
   describe "toggleHit", ->
 

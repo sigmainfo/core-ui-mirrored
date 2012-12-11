@@ -14,6 +14,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   size: [200, 320]
 
+  views: []
+
+  defaults:
+    treeRoot: false
+    treeLeaf: false
+
   initialize: ->
     @layout = d3.layout.tree()
       .children( (d) -> d.treeDown )
@@ -36,26 +42,32 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     nodes = d3.select( @$("svg .concept-map").get(0) )
       .selectAll(".concept-node")
       .data(nodes, (d) -> d.id )
+
+    views = @views
     
     nodes.enter()
       .append("svg:g")
       .each( (d) ->
-        d.view = new Coreon.Views.Concepts.ConceptNodeView el: @, model: d.concept
-        d.view.render()
+        views[d.id] = new Coreon.Views.Concepts.ConceptNodeView
+          el: @
+          model: d.concept
       )
 
     nodes
       .each( (d) ->
         d.y = d.x * scaleY
         d.x = (d.depth - 1) * 120
-        d.box = @getBBox()
+        views[d.id].options.treeRoot = d.treeUp.length is 0
+        views[d.id].options.treeLeaf = d.treeDown.length is 0
+        views[d.id].render()
+        d.box = d3.select(@).select(".background").node().getBBox()
       )
       .attr("transform", (d) -> "translate(#{d.x}, #{d.y})")
     
     nodes.exit()
       .each( (d) ->
-        d.view?.dissolve()
-        d.view = null
+        views[d.id].dissolve()
+        delete views[d.id]
       )
       .remove()
 
@@ -65,7 +77,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .data(edges, (d) -> "#{d.source.id}|#{d.target.id}")
 
     edges.enter()
-      .insert("svg:path")
+      .insert("svg:path", ".concept-node")
       .attr("class", "concept-edge")
 
     edges.attr("d", (d) =>
@@ -83,10 +95,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     
 
   scaleY: (nodes) ->
-    minDeltaY = 24
+    minDeltaY = 22
     for node in nodes
       minDeltaY = Math.min(node.children[1].x - node.children[0].x, minDeltaY) if node.children?.length >= 2
-    scaleY = 24 / minDeltaY
+    scaleY = 22 / minDeltaY
 
   centerY: ->
     map = @$("svg .concept-map").get(0)

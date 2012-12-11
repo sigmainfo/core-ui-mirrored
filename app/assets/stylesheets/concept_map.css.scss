@@ -1,6 +1,8 @@
 @import '_config';
 @import 'compass/css3';
 
+$edge-color: #bfc5c0;
+
 #coreon-concept-map {
 
   .map {
@@ -20,12 +22,8 @@
 
         circle {
           fill: none;
-          stroke-width: 2px;
+          stroke-width: 1.5px;
           stroke: $greytext-color;
-        }
-
-        .background {
-          fill: white;
         }
 
         &.hit {
@@ -46,11 +44,51 @@
             cursor: pointer;
           }
         }
+
+        .background {
+
+          fill: white;
+        }
+
+        .toggle {
+          fill: transparent;
+
+          &:hover {
+            fill: $edge-color;
+
+            .icon {
+              stroke: white;
+            }
+
+            &:hover {
+              
+              .icon {
+                stroke: white;
+              }
+            }
+          }
+
+          &.expanded {
+
+            .icon {
+              stroke: none;
+            }
+          }
+          
+          .icon {
+            stroke: $edge-color;
+            stroke-width: 2px;
+
+            &:hover {
+              stroke: white;
+            }
+          }
+        }
       }
 
       .concept-edge {
         fill: none;
-        stroke: #bfc5c0;
+        stroke: $edge-color;
         stroke-width: 1.5px;
       }
     }

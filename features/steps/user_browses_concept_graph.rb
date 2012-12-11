@@ -82,7 +82,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   When 'I click to toggle the children of "long gun"' do
-    pending 'step not implemented'
+    page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children")
   end
 
   Then 'I should see "rifle"' do
