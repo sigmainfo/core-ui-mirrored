@@ -33,9 +33,11 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
 
     bgBox = bg.node().getBBox()
     if @model.get("sub_concept_ids").length > 0
-      @renderToggle "toggle-children", bgBox.height, bgBox.width, not @options.treeLeaf
+      @renderToggle("toggle-children", bgBox.height, bgBox.width, not @options.treeLeaf)
+        .on("click", (d) => @trigger "toggle:children", d)
     if @model.get("super_concept_ids").length > 0
-      @renderToggle "toggle-parents", bgBox.height, -bgBox.height, not @options.treeRoot
+      @renderToggle("toggle-parents", bgBox.height, -bgBox.height, not @options.treeRoot)
+        .on("click", (d) => @trigger "toggle:parents", d)
 
 
   renderToggle: (name, size, pos, expanded) ->
@@ -59,7 +61,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
       .attr("d", "M #{(size - w) / 2 } 7 l #{w} 0 m 0 3.5 l #{-w} 0")
 
     icon.attr("transform", "rotate(90, #{size / 2}, #{size / 2})") if expanded
-
+    
     toggle
     
   abbreviate: (text) ->
@@ -72,6 +74,9 @@ class Coreon.Views.Concepts.ConceptNodeView extends Backbone.View
 
   toggleHit: ->
     @svg.classed "hit", @model.hit()
+
+  onToggleParents: =>
+    @trigger "toggle:parent"
 
   clear: ->
     @svg.selectAll("*").remove()

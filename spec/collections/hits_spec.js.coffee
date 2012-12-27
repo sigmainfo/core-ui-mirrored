@@ -123,33 +123,33 @@ describe "Coreon.Collections.Hits", ->
 
     it "creates graph from models", ->
       @hits.update [ @hit ], silent: true
-      @hits.graph().nodes().should.have.length 1
-      @hits.graph().nodes()[0].should.have.property "id", "799"
-      @hits.graph().nodes()[0].should.have.property "concept", @concept
+      @hits.graph().nodes.should.have.length 1
+      @hits.graph().nodes[0].should.have.property "id", "799"
+      @hits.graph().nodes[0].should.have.property "concept", @concept
 
     it "creates edges from concept graph", ->
       @createConcept "fff999", super_concept_ids: [ "799" ]
       @concept.set "sub_concept_ids", [ "fff999" ]
       @hits.update [ @hit ], silent: true
-      @hits.graph().edges().should.have.length 1
-      @hits.graph().edges()[0].should.have.deep.property "source.id", "799"
-      @hits.graph().edges()[0].should.have.deep.property "target.id", "fff999"
+      @hits.graph().edges.should.have.length 1
+      @hits.graph().edges[0].should.have.deep.property "source.id", "799"
+      @hits.graph().edges[0].should.have.deep.property "target.id", "fff999"
 
     it "creates nodes for parent concepts", ->
       @createConcept "fff999", sub_concept_ids: [ "799" ]
       @concept.set "super_concept_ids", [ "fff999" ]
       @hits.update [ @hit ], silent: true
-      @hits.graph().nodes().should.have.length 2
-      @hits.graph().edges()[0].should.have.deep.property "source.id", "fff999"
-      @hits.graph().edges()[0].should.have.deep.property "target.id", "799"
+      @hits.graph().nodes.should.have.length 2
+      @hits.graph().edges[0].should.have.deep.property "source.id", "fff999"
+      @hits.graph().edges[0].should.have.deep.property "target.id", "799"
 
     it "gets score from hit", ->
       @hit.set "score", 1.587
       @createConcept "fff999", sub_concept_ids: [ "799" ]
       @concept.set "super_concept_ids", [ "fff999" ]
       @hits.update [ @hit ], silent: true
-      @hits.graph().edges()[0].should.have.deep.property "target.score", 1.587
-      @hits.graph().edges()[0].should.have.deep.property "source.score", null
+      @hits.graph().edges[0].should.have.deep.property "target.score", 1.587
+      @hits.graph().edges[0].should.have.deep.property "source.score", null
 
   describe "tree()", ->
     
@@ -162,5 +162,5 @@ describe "Coreon.Collections.Hits", ->
     
     it "returns edges of graph", ->
       graph = @hits.graph()
-      graph.edges = sinon.stub().returns [ source: "a", target: "b" ]
+      graph.edges = [ source: "a", target: "b" ]
       @hits.edges().should.eql [ source: "a", target: "b" ]

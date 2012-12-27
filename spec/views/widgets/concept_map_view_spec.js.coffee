@@ -9,6 +9,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       model: new Backbone.Collection
     @view.model.tree = -> children: []
     @view.model.edges = -> children: []
+    @view.model.graph = -> {}
+    @createConcept = (label) ->
+      concept = new Backbone.Model super_concept_ids: [], sub_concept_ids: []
+      concept.label = -> label
+      concept.hit = -> false
+      concept 
 
   afterEach ->
     I18n.t.restore()
@@ -102,11 +108,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       $("#konacha").append @view.$el
       @view.model.tree = -> {}
       @view.layout.nodes = -> []
-      @createConcept = (label) ->
-        concept = new Backbone.Model super_concept_ids: [], sub_concept_ids: []
-        concept.label = -> label
-        concept.hit = -> false
-        concept 
 
     it "creates new concept nodes", ->
       @view.renderNodes [
@@ -245,6 +246,51 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @map.get(0).getBBox.returns x: 0, y: 0, width: 100, height: 450
       @view.centerY()
       @map.attr("transform").should.equal "translate(10, -135)"
+
+  describe "onToggleChildren()", ->
+
+    beforeEach ->
+      @view.model.graph =
+          expand: ->
+          reduce: ->
+      @view.render()
+    
+    it "is triggered by view instances", ->
+      @view.onToggleChildren = sinon.spy()
+      @view.renderNodes [ id: "1", concept: @createConcept("Pistol"), treeUp: [], treeDown: [] ]
+      @view.views["1"].trigger "toggle:children", id: "123"
+      @view.onToggleChildren.should.have.been.calledOnce
+      @view.onToggleChildren.should.have.been.calledWith id: "123"
+
+    context "when collapsed", ->
+
+      beforeEach ->
+        @node =
+          treeDown: []
+          concept:
+            get: ->
+      
+      it "adds nodes to graph", ->
+        @node.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
+        @view.model.graph.expand = sinon.spy()
+        @view.onToggleChildren @node
+        @view.model.graph.expand.should.have.been.calledOnce
+        @view.model.graph.expand.should.have.been.calledWith [ "child1", "child2" ]
+
+    context "when expanded", ->
+
+      beforeEach ->
+        @node =
+          treeDown: [ "child1", "child2" ]
+          concept:
+            get: ->
+      
+      it "removes nodes from graph", ->
+        @node.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
+        @view.model.graph.reduce = sinon.spy()
+        @view.onToggleChildren @node
+        @view.model.graph.reduce.should.have.been.calledOnce
+        @view.model.graph.reduce.should.have.been.calledWith [ "child1", "child2" ]
 
   describe "dissolve()", ->
 

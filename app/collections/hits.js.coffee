@@ -25,7 +25,7 @@ class Coreon.Collections.Hits extends Backbone.Collection
     @graph().tree()
 
   edges: ->
-    @graph().edges()
+    @graph().edges
 
   _removeDropped: (hits, options) ->
     drops = []
@@ -66,7 +66,7 @@ class Coreon.Collections.Hits extends Backbone.Collection
         score: if datum? then datum.get "score" else null
       up: (datum) -> Coreon.Models.Concept.find(datum.id).get "super_concept_ids"
       down: (datum) -> Coreon.Models.Concept.find(datum.id).get "sub_concept_ids"
-    for node in graph.nodes()
+    for node in graph.nodes
       node.concept.on "change", @updateGraph, @
     graph
 
@@ -76,6 +76,6 @@ class Coreon.Collections.Hits extends Backbone.Collection
 
   invalidateGraph: ->
     if @_graph?
-      for node in @_graph.nodes()
+      for node in @_graph.nodes
         node.concept.off null, null, @
       @_graph = null

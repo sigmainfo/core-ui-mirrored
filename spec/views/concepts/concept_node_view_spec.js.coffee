@@ -113,7 +113,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @view.$el.should.not.have ".toggle-parents"
 
-  describe "toggleHit", ->
+  describe "toggleHit()", ->
 
     it "classifies hit on hit add", ->
       @view.model.hit = -> true
@@ -126,6 +126,31 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.model.hit = -> false
       @view.model.trigger "hit:remove"
       @el.classed("hit").should.not.be.true
+
+  describe "toggle", ->
+
+      beforeEach ->
+        @view.model.set {super_concept_ids: ["456"], sub_concept_ids: ["333"]}, silent: true
+        @event = document.createEvent "MouseEvents"
+        @event.initMouseEvent "click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
+  
+      it "is triggered by clicking on parents toggle", ->
+        spy = sinon.spy()
+        d3.select(@view.el).data [ foo: "bar" ]
+        @view.render()
+        @view.on "toggle:parents", spy
+        @view.$(".toggle-parents").get(0).dispatchEvent @event
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith foo: "bar"
+      
+      it "is triggered by clicking on children toggle", ->
+        spy = sinon.spy()
+        d3.select(@view.el).data [ foo: "bar" ]
+        @view.render()
+        @view.on "toggle:children", spy
+        @view.$(".toggle-children").get(0).dispatchEvent @event
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith foo: "bar"
 
   describe "dissolve()", ->
   

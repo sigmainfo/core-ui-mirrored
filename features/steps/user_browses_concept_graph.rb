@@ -86,7 +86,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   Then 'I should see "rifle"' do
-    pending 'step not implemented'
+    page.should have_css("#coreon-concept-map .concept-node", text: "rifle")
   end
 
   And '"rifle" should be connected to "handgun"' do

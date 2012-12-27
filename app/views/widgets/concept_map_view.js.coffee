@@ -14,13 +14,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   size: [200, 320]
 
-  views: []
-
   defaults:
     treeRoot: false
     treeLeaf: false
 
   initialize: ->
+    @views = {}
     @layout = d3.layout.tree()
       .children( (d) -> d.treeDown )
       .size( @size )
@@ -44,6 +43,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .data(nodes, (d) -> d.id )
 
     views = @views
+    self = @
     
     nodes.enter()
       .append("svg:g")
@@ -51,6 +51,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         views[d.id] = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: d.concept
+        views[d.id].on "toggle:children", self.onToggleChildren, self
       )
 
     nodes
@@ -107,6 +108,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     y = if deltaY < 0 then deltaY / 2 else 0
     d3.select(map).attr("transform", "translate(10, #{y - 10})")
 
+  onToggleChildren: (node) ->
+    ids = node.get "sub_concept_ids"
+    if node.treeDown.length > 0
+      @model.graph.reduce ids
+    else
+      @model.graph.expand ids
 
   dissolve: ->
     @model.off null, null, @

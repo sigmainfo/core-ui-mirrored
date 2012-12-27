@@ -21,26 +21,87 @@ class Coreon.Data.Digraph
     @options = @optionsWithDefaults options
     @reset data
 
-  nodes: ->
-    @_nodes
+  optionsWithDefaults: (options) ->
+    copy = {}
+    copy[key] = value for key, value of @defaults
+    copy[key] = value for key, value of options
+    copy
 
-  edges: ->
-    @_edges
+  reset: ( data = [] ) ->
+    @hash = {}
+    @createNodes data
+    @createParentAndChildNodes data
+    @update()
 
-  roots: ->
-    @_selections.roots
+  expand: ( data = [] ) ->
+    @createNodes data
+    @update()
 
-  multiParentNodes: ->
-    @_selections.multiParentNodes
+  update: ->
+    @updateEdges()
+    @updateNodes()
+    @updateSelections()
 
-  leaves: ->
-    @_selections.leaves
+  createNodes: (data) ->
+    for datum in data
+      id = @options.id datum
+      @hash[id] ?= @options.factory id, datum
+    @hash
+
+  createParentAndChildNodes: (data) ->
+    for datum in data
+      if children = @options.down datum
+        for id in children
+          @hash[id] ?= @options.factory id
+      if parents = @options.up datum
+        for id in parents
+          parent = @options.factory id
+          @hash[id] ?= parent
+          if siblings = @options.down parent
+            for id in siblings
+              @hash[id] ?= @options.factory id
+    @hash
+
+  updateEdges: ->
+    @edges = []
+    for id, node of @hash
+      if children = @options.down node
+        for id in children
+          if @hash[id]?
+            @edges.push
+              source: node
+              target: @hash[id]
+    @edges
+
+  updateNodes: ->
+    @nodes = for id, node of @hash
+      node.children = node.parents = null
+      node
+    for edge in @edges
+      edge.source.children ?= []
+      edge.source.children.push edge.target
+      edge.target.parents ?= []
+      edge.target.parents.push edge.source
+    @nodes
+
+  updateSelections: ->
+    @roots = []
+    @leaves = []
+    @multiParentNodes = []
+
+    for node in @nodes
+      if node.parents?.length > 0
+        if node.parents.length > 1
+          @multiParentNodes.push node 
+      else
+        @roots.push node
+      @leaves.push node unless node.children?.length > 0
 
   tree: ->
     root =
       treeUp: []
-      treeDown: @roots()
-    for node in @nodes()
+      treeDown: @roots
+    for node in @nodes
       node.treeUp   = if node.parents?  then node.parents[..]  else [] 
       node.treeDown = if node.children? then node.children[..] else []
     @down (node) ->
@@ -53,14 +114,8 @@ class Coreon.Data.Digraph
       node.treeDown = ( down for down in node.treeDown when removed.indexOf(down) < 0 )
     root
 
-  reset: ( data = [] ) ->
-    hash = @createNodesHash data
-    @_edges = @createEdges hash
-    @_nodes = @createNodes hash, @_edges
-    @_selections = @createSelections @_nodes
-
   down: (nodes..., callback) ->
-    nodes = @roots() if nodes.length is 0
+    nodes = @roots if nodes.length is 0
     children = []
     try
       for node in nodes
@@ -78,65 +133,5 @@ class Coreon.Data.Digraph
     catch error
       @cleanUpAfterWalk()
 
-  optionsWithDefaults: (options) ->
-    copy = {}
-    copy[key] = value for key, value of @defaults
-    copy[key] = value for key, value of options
-    copy
-
-  createNodes: (hash, edges) ->
-    nodes = for id, node of hash
-      node.children = node.parents = null
-      node
-    for edge in edges
-      edge.source.children ?= []
-      edge.source.children.push edge.target
-      edge.target.parents ?= []
-      edge.target.parents.push edge.source
-    nodes
-
-  createNodesHash: (data) ->
-    hash = {}
-    for datum in data
-      id = @options.id datum
-      hash[id] ?= @options.factory id, datum
-    for datum in data
-      if children = @options.down datum
-        for id in children
-          hash[id] ?= @options.factory id
-      if parents = @options.up datum
-        for id in parents
-          parent = @options.factory id
-          hash[id] ?= parent
-          if siblings = @options.down parent
-            for id in siblings
-              hash[id] ?= @options.factory id
-    hash
-
-  createEdges: (hash) ->
-    edges = []
-    for id, node of hash
-      if children = @options.down node
-        for id in children
-          if hash[id]?
-            edges.push
-              source: node
-              target: hash[id]
-    edges
-
-  createSelections: (nodes) ->
-    selections =
-      roots: []
-      leaves: []
-      multiParentNodes: []
-    for node in nodes
-      if node.parents?.length > 0
-        if node.parents.length > 1
-          selections.multiParentNodes.push node 
-      else
-        selections.roots.push node
-      selections.leaves.push node unless node.children?.length > 0
-    selections
-
   cleanUpAfterWalk: ->
-    delete node._visited for node in @nodes()
+    delete node._visited for node in @nodes
