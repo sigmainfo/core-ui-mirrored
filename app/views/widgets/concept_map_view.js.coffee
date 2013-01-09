@@ -25,7 +25,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .size( @size )
     @stencil = d3.svg.diagonal()
       .projection (d) -> [d.y, d.x]
-    @model.on "hit:update hit:graph:update", @onHitUpdate, @
+    @model.on "hit:update hit:change", @onHitUpdate, @
 
   render: ->
     @$el.html @template size: @size
@@ -109,11 +109,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(map).attr("transform", "translate(10, #{y - 10})")
 
   onToggleChildren: (node) ->
-    ids = node.get "sub_concept_ids"
+    ids = node.concept.get "sub_concept_ids"
     if node.treeDown.length > 0
-      @model.graph.reduce ids
+      @model.graph().reduce ids
     else
-      @model.graph.expand ids
+      @model.graph().expand ids
+    @onHitUpdate()
 
   dissolve: ->
     @model.off null, null, @

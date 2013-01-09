@@ -71,7 +71,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.onHitUpdate = sinon.spy()
       @view.initialize()
       @view.model.trigger "hit:update"
-      @view.model.trigger "hit:graph:update"
+      @view.model.trigger "hit:change"
       @view.onHitUpdate.should.have.been.calledTwice
 
     it "updates layout", ->
@@ -250,7 +250,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "onToggleChildren()", ->
 
     beforeEach ->
-      @view.model.graph =
+      @view.model.graph = ->
           expand: ->
           reduce: ->
       @view.render()
@@ -271,7 +271,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             get: ->
       
       it "adds nodes to graph", ->
-        @node.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
+        @node.concept.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
         @view.model.graph.expand = sinon.spy()
         @view.onToggleChildren @node
         @view.model.graph.expand.should.have.been.calledOnce
@@ -286,7 +286,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             get: ->
       
       it "removes nodes from graph", ->
-        @node.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
+        @node.concept.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
         @view.model.graph.reduce = sinon.spy()
         @view.onToggleChildren @node
         @view.model.graph.reduce.should.have.been.calledOnce

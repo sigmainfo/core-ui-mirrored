@@ -76,13 +76,13 @@ describe "Coreon.Collections.Hits", ->
         @hits.update [], silent: true
         @spy.should.not.have.been.called
 
-    context "hit:graph:update", ->
+    context "hit:change", ->
       
       it "is triggered by concept changes", ->
         @hits.update [ @hit ], silent: true
         @createConcept "123"
         @hits.graph()
-        @hits.on "hit:graph:update", @spy
+        @hits.on "hit:change", @spy
         @concept.set "super_concept_ids", ["123"]
         @spy.should.have.been.calledOnce
 

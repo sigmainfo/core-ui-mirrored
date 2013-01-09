@@ -72,7 +72,7 @@ class Coreon.Collections.Hits extends Backbone.Collection
 
   updateGraph: (options = {}) ->
     @invalidateGraph()
-    @trigger "hit:graph:update", @
+    @trigger "hit:change", @
 
   invalidateGraph: ->
     if @_graph?
