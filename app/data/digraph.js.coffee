@@ -33,11 +33,11 @@ class Coreon.Data.Digraph
     @createParentAndChildNodes data
     @update()
 
-  expand: ( data = [] ) ->
+  add: ( data = [] ) ->
     @createNodes data
     @update()
 
-  reduce: ->
+  reduce: (ids = [])->
 
   update: ->
     @updateEdges()

@@ -3,6 +3,7 @@
 #= require templates/widgets/concept_map
 #= require d3
 #= require views/concepts/concept_node_view
+#= require models/hit
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
@@ -25,13 +26,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .size( @size )
     @stencil = d3.svg.diagonal()
       .projection (d) -> [d.y, d.x]
-    @model.on "hit:update hit:change", @onHitUpdate, @
+    @model.on "hit:update hit:change", @renderMap, @
 
   render: ->
     @$el.html @template size: @size
     @
 
-  onHitUpdate: ->
+  renderMap: ->
     nodes = @layout.nodes @model.tree()
     @renderNodes nodes[1..], @scaleY(nodes)
     @renderEdges @model.edges()
@@ -110,11 +111,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   onToggleChildren: (node) ->
     ids = node.concept.get "sub_concept_ids"
-    if node.treeDown.length > 0
-      @model.graph().reduce ids
-    else
-      @model.graph().expand ids
-    @onHitUpdate()
+    # if node.treeDown.length > 0
+    #   @model.graph().reduce ids
+    # else
+      # @model.graph().expand ids
+    @model.graph().add ( new Coreon.Models.Hit id: id for id in ids )
+    @renderMap()
 
   dissolve: ->
     @model.off null, null, @

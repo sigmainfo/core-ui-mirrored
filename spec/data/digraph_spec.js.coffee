@@ -212,19 +212,19 @@ describe "Coreon.Data.Digraph", ->
       ]
       ( leaf.id for leaf in @digraph.leaves ).should.eql [1, 4]
         
-  describe "expand()", ->
+  describe "add()", ->
 
     beforeEach ->
       @digraph.reset [ id: 1 ]
       
     it "creates missing nodes", ->
-      @digraph.expand [ id: 2, foo: "bar" ]
+      @digraph.add [ id: 2, foo: "bar" ]
       @digraph.nodes.should.have.length 2
       added = node for node in @digraph.nodes when node.id is 2
       added.should.have.property "foo", "bar"
 
     it "updates edges", ->
-      @digraph.expand [ id: 2, children: [ 1 ] ]
+      @digraph.add [ id: 2, children: [ 1 ] ]
       @digraph.edges.should.have.length 1
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
@@ -232,14 +232,14 @@ describe "Coreon.Data.Digraph", ->
       @digraph.edges[0].should.have.property "target", child
 
     it "updates nodes", ->
-      @digraph.expand [ id: 2, children: [ 1 ] ]
+      @digraph.add [ id: 2, children: [ 1 ] ]
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
       child.should.have.property "parents"
       child.parents[0].should.equal parent
 
     it "updates selections", ->
-      @digraph.expand [ id: 2, children: [ 1 ] ]
+      @digraph.add [ id: 2, children: [ 1 ] ]
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
       @digraph.roots.should.have.length 1

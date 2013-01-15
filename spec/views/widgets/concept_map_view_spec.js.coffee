@@ -62,22 +62,22 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render()
       @view.$el.should.have "svg"
 
-  describe "onHitUpdate()", ->
+  describe "renderMap()", ->
 
     beforeEach ->
       @view.render()
 
     it "is triggered by current hits", ->
-      @view.onHitUpdate = sinon.spy()
+      @view.renderMap = sinon.spy()
       @view.initialize()
       @view.model.trigger "hit:update"
       @view.model.trigger "hit:change"
-      @view.onHitUpdate.should.have.been.calledTwice
+      @view.renderMap.should.have.been.calledTwice
 
     it "updates layout", ->
       @view.model.tree = -> id: "root"
       @view.layout.nodes = sinon.stub().returns []
-      @view.onHitUpdate()
+      @view.renderMap()
       @view.layout.nodes.should.have.been.calledOnce
       @view.layout.nodes.should.have.been.calledWith id: "root"
 
@@ -85,20 +85,20 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.layout.nodes = -> [ { id: "root" }, { id: "1" } ]
       @view.scaleY = -> 1.2
       @view.renderNodes = sinon.spy()
-      @view.onHitUpdate()
+      @view.renderMap()
       @view.renderNodes.should.have.been.calledOnce
       @view.renderNodes.should.have.been.calledWith [ {id: "1" } ], 1.2
 
     it "renders edges", ->
       @view.model.edges = -> [ source: "A", target: "B" ]
       @view.renderEdges = sinon.spy()
-      @view.onHitUpdate()
+      @view.renderMap()
       @view.renderEdges.should.have.been.calledOnce
       @view.renderEdges.should.have.been.calledWith [ source: "A", target: "B" ]
 
     it "centers horizontally", ->
       @view.centerY = sinon.spy()
-      @view.onHitUpdate()
+      @view.renderMap()
       @view.centerY.should.have.been.calledOnce
 
   describe "renderNodes()", ->
@@ -165,7 +165,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       nodeView = @view.views["1"]
       nodeView.dissolve = sinon.spy()
       @view.renderNodes []
-      @view.onHitUpdate()
+      @view.renderMap()
       expect(@view.views["1"]).to.not.exist
       nodeView.dissolve.should.have.been.calledOnce 
 
@@ -250,9 +250,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "onToggleChildren()", ->
 
     beforeEach ->
-      @view.model.graph = ->
-          expand: ->
-          reduce: ->
+      graph =
+        add: ->
+      @view.model.graph = -> graph
       @view.render()
     
     it "is triggered by view instances", ->
@@ -272,25 +272,30 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       
       it "adds nodes to graph", ->
         @node.concept.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
-        @view.model.graph.expand = sinon.spy()
+        @view.model.graph().add = sinon.spy()
         @view.onToggleChildren @node
-        @view.model.graph.expand.should.have.been.calledOnce
-        @view.model.graph.expand.should.have.been.calledWith [ "child1", "child2" ]
+        @view.model.graph().add.should.have.been.calledOnce
+        @view.model.graph().add.firstCall.args[0].should.be.an "array"
+        @view.model.graph().add.firstCall.args[0].should.have.length 2
+        @view.model.graph().add.firstCall.args[0][0].should.be.an.instanceof Coreon.Models.Hit
+        @view.model.graph().add.firstCall.args[0][0].id.should.equal "child1"
+        @view.model.graph().add.firstCall.args[0][1].should.be.an.instanceof Coreon.Models.Hit
+        @view.model.graph().add.firstCall.args[0][1].id.should.equal "child2"
 
-    context "when expanded", ->
+    # context "when added", ->
 
-      beforeEach ->
-        @node =
-          treeDown: [ "child1", "child2" ]
-          concept:
-            get: ->
-      
-      it "removes nodes from graph", ->
-        @node.concept.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
-        @view.model.graph.reduce = sinon.spy()
-        @view.onToggleChildren @node
-        @view.model.graph.reduce.should.have.been.calledOnce
-        @view.model.graph.reduce.should.have.been.calledWith [ "child1", "child2" ]
+    #   beforeEach ->
+    #     @node =
+    #       treeDown: [ "child1", "child2" ]
+    #       concept:
+    #         get: ->
+    #   
+    #   it "removes nodes from graph", ->
+    #     @node.concept.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
+    #     @view.model.graph.reduce = sinon.spy()
+    #     @view.onToggleChildren @node
+    #     @view.model.graph.reduce.should.have.been.calledOnce
+    #     @view.model.graph.reduce.should.have.been.calledWith [ "child1", "child2" ]
 
   describe "dissolve()", ->
 
