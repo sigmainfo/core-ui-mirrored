@@ -3,6 +3,17 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   include SearchSteps
   include Api::Graph::Factory
 
+  def collect_edges(count)
+    @edges = []
+    (0...count).each do |i|
+      edge = page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.source.concept.label()|)
+      edge << " -> "
+      edge << page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.target.concept.label()|)
+      @edges.push edge
+    end
+    @edges
+  end
+
   Given 'a concept "handgun"' do
     @concept = create_concept_with_label "handgun"
   end
@@ -55,13 +66,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   And '"weapon" should be connected to "handgun"' do
-    @edges = []
-    (0..3).each do |i|
-      edge = page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.source.concept.label()|)
-      edge << " -> "
-      edge << page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.target.concept.label()|)
-      @edges.push edge
-    end
+    collect_edges 4
     @edges.should include("weapon -> handgun")
   end
 
@@ -82,14 +87,15 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   When 'I click to toggle the children of "long gun"' do
-    page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children")
+    page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children").click
   end
 
   Then 'I should see "rifle"' do
     page.should have_css("#coreon-concept-map .concept-node", text: "rifle")
   end
 
-  And '"rifle" should be connected to "handgun"' do
-    pending 'step not implemented'
+  And '"long gun" should be connected to "rifle"' do
+    collect_edges 5
+    @edges.should include("long gun -> rifle")
   end
 end

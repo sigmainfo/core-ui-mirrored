@@ -29,6 +29,4 @@ Feature: user browses concept graph
     But I should not see "rifle"
     When I click to toggle the children of "long gun"
     Then I should see "rifle"
-    And "rifle" should be connected to "handgun"
- 
-
+    And "long gun" should be connected to "rifle"
