@@ -30,3 +30,6 @@ Feature: user browses concept graph
     When I click to toggle the children of "long gun"
     Then I should see "rifle"
     And "long gun" should be connected to "rifle"
+    When I click to toggle the children of "weapon"
+    Then "weapon" should be the only node left
+    And there should be no more connections

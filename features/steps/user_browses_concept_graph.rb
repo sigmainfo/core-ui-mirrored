@@ -89,6 +89,10 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   When 'I click to toggle the children of "long gun"' do
     page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children").click
   end
+  
+  When 'I click to toggle the children of "weapon"' do
+    page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-children").click
+  end
 
   Then 'I should see "rifle"' do
     page.should have_css("#coreon-concept-map .concept-node", text: "rifle")
@@ -97,5 +101,11 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   And '"long gun" should be connected to "rifle"' do
     collect_edges 5
     @edges.should include("long gun -> rifle")
+  end
+
+  Then '"weapon" should be the only node left' do
+    nodes = page.all("#coreon-concept-map .concept-node")
+    nodes.should have(1).item
+    nodes.first.text.should == "weapon"
   end
 end
