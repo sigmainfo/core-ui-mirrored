@@ -252,6 +252,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     beforeEach ->
       graph =
         add: ->
+        remove: ->
       @view.model.graph = -> graph
       @view.render()
     
@@ -282,20 +283,45 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.model.graph().add.firstCall.args[0][1].should.be.an.instanceof Coreon.Models.Hit
         @view.model.graph().add.firstCall.args[0][1].id.should.equal "child2"
 
-    # context "when added", ->
+      it "updates rendering of map"
+        
 
-    #   beforeEach ->
-    #     @node =
-    #       treeDown: [ "child1", "child2" ]
-    #       concept:
-    #         get: ->
-    #   
-    #   it "removes nodes from graph", ->
-    #     @node.concept.get = (attr) -> [ "child1", "child2" ] if attr is "sub_concept_ids"
-    #     @view.model.graph.reduce = sinon.spy()
-    #     @view.onToggleChildren @node
-    #     @view.model.graph.reduce.should.have.been.calledOnce
-    #     @view.model.graph.reduce.should.have.been.calledWith [ "child1", "child2" ]
+    context "when expanded", ->
+      
+      beforeEach ->
+        @node =
+          treeDown: [ id: "123" ]
+        @view.model.graph().remove = sinon.spy()
+
+      it "removes nodes from graph", ->
+        @node.treeDown = [
+          { id: "child_1" }
+          { id: "child_2" }
+        ]
+        @view.onToggleChildren @node
+        @view.model.graph().remove.should.have.been.calledOnce
+        @view.model.graph().remove.should.have.been.calledWith "child_1", "child_2"
+
+      it "removes nodes recursively", ->
+        @node.treeDown = [
+          id: "child"
+          treeDown: [ id: "child_of_child"]
+        ]
+        @view.onToggleChildren @node
+        @view.model.graph().remove.should.have.been.calledOnce
+        @view.model.graph().remove.should.have.been.calledWith "child", "child_of_child"
+
+
+      it "does not remove nodes that have outer parents", ->
+        @node.treeDown = [
+          id: "child"
+          treeDown: [ id: "child_of_child"]
+          parents: [ @node, { id: "other" } ]
+        ]
+        @view.onToggleChildren @node
+        @view.model.graph().remove.should.not.have.been.called
+
+      it "updates rendering of map"
 
   describe "dissolve()", ->
 

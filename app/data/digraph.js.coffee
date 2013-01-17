@@ -37,7 +37,7 @@ class Coreon.Data.Digraph
     @createNodes data
     @update()
 
-  reduce: (ids = [])->
+  remove: (ids = [])->
 
   update: ->
     @updateEdges()

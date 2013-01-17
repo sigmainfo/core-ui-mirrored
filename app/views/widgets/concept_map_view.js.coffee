@@ -110,13 +110,30 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(map).attr("transform", "translate(10, #{y - 10})")
 
   onToggleChildren: (node) ->
-    ids = node.concept.get "sub_concept_ids"
-    # if node.treeDown.length > 0
-    #   @model.graph().reduce ids
-    # else
-      # @model.graph().expand ids
-    @model.graph().add ( new Coreon.Models.Hit id: id for id in ids )
+    if node.treeDown?.length > 0
+      @collapseChildren node
+    else
+      @expandChildren node
     @renderMap()
+
+  collapseChildren: (root) ->
+    nodes_to_check = root.treeDown
+    ids_to_remove = []
+    while node = nodes_to_check.shift()
+      remove = true
+      if node.parents?
+        for parent in node.parents
+          if ids_to_remove.indexOf(parent.id) < 0 and parent isnt root
+            remove = false
+            break
+      if remove
+        ids_to_remove.push node.id
+        nodes_to_check.push node.treeDown...
+    @model.graph().remove ids_to_remove... unless ids_to_remove.length is 0 
+
+  expandChildren: (node) ->
+    ids = node.concept.get "sub_concept_ids"
+    @model.graph().add ( new Coreon.Models.Hit id: id for id in ids )
 
   dissolve: ->
     @model.off null, null, @

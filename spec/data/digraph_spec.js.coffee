@@ -245,6 +245,17 @@ describe "Coreon.Data.Digraph", ->
       @digraph.roots.should.have.length 1
       @digraph.roots[0].should.equal parent
 
+  describe "remove()", ->
+    
+    it "removes nodes", ->
+      fail()
+
+    it "updates edges"
+    it "updates nodes"
+    it "updates selections"
+      
+    
+
   describe "nodes", ->
   
     it "is empty by default", ->
