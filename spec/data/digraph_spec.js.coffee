@@ -62,7 +62,7 @@ describe "Coreon.Data.Digraph", ->
 
       it "creates entries for children", ->
         @digraph.options.factory = sinon.stub().returnsArg 0
-        @digraph.reset [ id: 1, children: [ 2, 3 ] ]
+        @digraph.reset [ id: 1, child_ids: [ 2, 3 ] ]
         @digraph.nodes.should.eql [ 1, 2, 3 ]
         
       it "uses walker method", ->
@@ -73,8 +73,8 @@ describe "Coreon.Data.Digraph", ->
 
       it "skips duplicates prefering data", ->
         @digraph.reset [
-          { id: 1, children: [ 2, 3 ] }
-          { id: 2, children: [ 3, 4 ], label: "Nobody" }
+          { id: 1, child_ids: [ 2, 3 ] }
+          { id: 2, child_ids: [ 3, 4 ], label: "Nobody" }
         ]
         @digraph.nodes.should.have.length 4
         dup = node for node in @digraph.nodes when node.id is 2
@@ -84,7 +84,7 @@ describe "Coreon.Data.Digraph", ->
       
       it "creates entries for parents", ->
         @digraph.options.factory = sinon.stub().returnsArg 0
-        @digraph.reset [ id: 1, parents: [ 2, 3 ] ]
+        @digraph.reset [ id: 1, parent_ids: [ 2, 3 ] ]
         @digraph.nodes.should.eql [ 1, 2, 3 ]
         
       it "uses walker method", ->
@@ -95,8 +95,8 @@ describe "Coreon.Data.Digraph", ->
 
       it "skips duplicates prefering data", ->
         @digraph.reset [
-          { id: 1, parents: [ 2, 3 ] }
-          { id: 2, parents: [ 3, 4 ], label: "Nobody" }
+          { id: 1, parent_ids: [ 2, 3 ] }
+          { id: 2, parent_ids: [ 3, 4 ], label: "Nobody" }
         ]
         @digraph.nodes.should.have.length 4
         dup = node for node in @digraph.nodes when node.id is 2
@@ -106,8 +106,8 @@ describe "Coreon.Data.Digraph", ->
       
       it "creates entries for siblings", ->
         @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, children: [3, 4] else id: id
-        @digraph.reset [ { id: 1, parents: [ 2 ] } ]
+          if id is 2 then id: 2, child_ids: [3, 4] else id: id
+        @digraph.reset [ { id: 1, parent_ids: [ 2 ] } ]
         ids = ( node.id for node in @digraph.nodes )
         ids.should.contain 3
         ids.should.contain 4
@@ -124,9 +124,9 @@ describe "Coreon.Data.Digraph", ->
         
       it "skips duplicates prefering data", ->
         @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, children: [3, 4] else datum or id: id
+          if id is 2 then id: 2, child_ids: [3, 4] else datum or id: id
         @digraph.reset [
-          { id: 1, parents: [ 2 ] }
+          { id: 1, parent_ids: [ 2 ] }
           { id: 3, label: "Nobody" }
         ]
         @digraph.nodes.should.have.length 4
@@ -141,13 +141,13 @@ describe "Coreon.Data.Digraph", ->
           switch id
             when 2 then child
             else datum
-        @digraph.reset [ id: 1, children: [ 2 ] ]
+        @digraph.reset [ id: 1, child_ids: [ 2 ] ]
         parent = node for node in @digraph.nodes when node.id is 1
         parent.should.have.property("children").that.is.an "array"
         parent.should.have.deep.property "children[0]", child
       
       it "references parent nodes", ->
-        parent = id: 1, children: [ 2 ]
+        parent = id: 1, child_ids: [ 2 ]
         @digraph.options.factory = (id, datum) ->
           switch id
             when 1 then parent
@@ -166,7 +166,7 @@ describe "Coreon.Data.Digraph", ->
 
       it "creates edges for child relations", ->
         @digraph.options.factory = (id, datum) -> datum or id: id
-        @digraph.reset [ id: 1, children: [ 2, 3 ] ]
+        @digraph.reset [ id: 1, child_ids: [ 2, 3 ] ]
         @digraph.edges.should.have.length 2
         relation = edge for edge in @digraph.edges when edge.target.id is 2
         relation.should.exist
@@ -174,8 +174,8 @@ describe "Coreon.Data.Digraph", ->
         
       it "skips relations to external nodes", ->
         @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, children: [ 3 ] else datum
-        @digraph.reset [ id: 1, children: [ 2 ] ]
+          if id is 2 then id: 2, child_ids: [ 3 ] else datum
+        @digraph.reset [ id: 1, child_ids: [ 2 ] ]
         @digraph.edges.should.have.length 1
         @digraph.edges[0].should.have.deep.property "source.id", 1
         @digraph.edges[0].should.have.deep.property "target.id", 2
@@ -184,31 +184,31 @@ describe "Coreon.Data.Digraph", ->
 
       it "references nodes that do not have a parent as roots", ->
         @digraph.reset [
-            { id: 1, children: null }
-            { id: 2, children: [4]  }
-            { id: 3, children: null }     
-            { id: 4, children: [2]  }
-            { id: 5, children: [4]  }
+            { id: 1, child_ids: null }
+            { id: 2, child_ids: [4]  }
+            { id: 3, child_ids: null }     
+            { id: 4, child_ids: [2]  }
+            { id: 5, child_ids: [4]  }
         ]
         ( root.id for root in @digraph.roots ).should.eql [1, 3, 5]
     
     it "references nodes that do not have a child as leaves", ->
       @digraph.reset [
-          { id: 1, children: null }
-          { id: 2, children: [1] }
-          { id: 3, children: [4, 1] }     
-          { id: 4, children: [] }
-          { id: 5, children: [2, 3, 4] }
+          { id: 1, child_ids: null }
+          { id: 2, child_ids: [1] }
+          { id: 3, child_ids: [4, 1] }     
+          { id: 4, child_ids: [] }
+          { id: 5, child_ids: [2, 3, 4] }
       ]
       ( leaf.id for leaf in @digraph.leaves ).should.eql [1, 4]
 
     it "returns nodes that have multiple parents", ->
       @digraph.reset [
-          { id: 1, children: null }
-          { id: 2, children: [1] }
-          { id: 3, children: [4, 1] }     
-          { id: 4, children: [] }
-          { id: 5, children: [2, 3, 4] }
+          { id: 1, child_ids: null }
+          { id: 2, child_ids: [1] }
+          { id: 3, child_ids: [4, 1] }     
+          { id: 4, child_ids: [] }
+          { id: 5, child_ids: [2, 3, 4] }
       ]
       ( leaf.id for leaf in @digraph.leaves ).should.eql [1, 4]
         
@@ -224,7 +224,7 @@ describe "Coreon.Data.Digraph", ->
       added.should.have.property "foo", "bar"
 
     it "updates edges", ->
-      @digraph.add [ id: 2, children: [ 1 ] ]
+      @digraph.add [ id: 2, child_ids: [ 1 ] ]
       @digraph.edges.should.have.length 1
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
@@ -232,30 +232,70 @@ describe "Coreon.Data.Digraph", ->
       @digraph.edges[0].should.have.property "target", child
 
     it "updates nodes", ->
-      @digraph.add [ id: 2, children: [ 1 ] ]
+      @digraph.add [ id: 2, child_ids: [ 1 ] ]
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
       child.should.have.property "parents"
       child.parents[0].should.equal parent
 
     it "updates selections", ->
-      @digraph.add [ id: 2, children: [ 1 ] ]
+      @digraph.add [ id: 2, child_ids: [ 1 ] ]
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
       @digraph.roots.should.have.length 1
       @digraph.roots[0].should.equal parent
 
   describe "remove()", ->
-    
+
     it "removes nodes", ->
-      fail()
+      @digraph.reset [
+        { id: 1 }
+        { id: 2 }
+        { id: 3 }     
+      ] 
+      @digraph.remove 1, 3
+      @digraph.nodes.should.have.length 1
+      @digraph.nodes[0].should.have.property "id", 2
 
-    it "updates edges"
-    it "updates nodes"
-    it "updates selections"
+    it "updates edges", ->
+      @digraph.reset [
+        { id: 1, child_ids: [ 2, 3 ] }
+        { id: 2 }
+        { id: 3 }     
+      ]
+      @digraph.remove 2
+      @digraph.edges.should.have.length 1
+      @digraph.edges[0].source.should.have.property "id", 1
+      @digraph.edges[0].target.should.have.property "id", 3
+
+    it "updates nodes", ->
+      @digraph.reset [
+        { id: 1, child_ids: [ 2, 3 ] }
+        { id: 2 }
+        { id: 3 }     
+      ]
+      @digraph.remove 2
+      node_1 = node for node in @digraph.nodes when node.id is 1    
+      node_3 = node for node in @digraph.nodes when node.id is 3    
+      node_1.children.should.have.length 1
+      node_1.children[0].should.have.property "id", 3
+      node_3.parents.should.have.length 1
+      node_3.parents[0].should.have.property "id", 1
+
+    it "updates selections", ->
+      @digraph.reset [
+        { id: 1, child_ids: [ 2, 3 ] }
+        { id: 2, child_ids: [ 3 ] }
+        { id: 3, child_ids: [ 4 ] }     
+        { id: 4 }     
+      ]
+      @digraph.remove 1, 4
+      @digraph.multiParentNodes.should.have.length 0
+      @digraph.roots.should.have.length 1
+      @digraph.roots[0].should.have.property "id", 2
+      @digraph.leaves.should.have.length 1
+      @digraph.leaves[0].should.have.property "id", 3
       
-    
-
   describe "nodes", ->
   
     it "is empty by default", ->
@@ -300,16 +340,16 @@ describe "Coreon.Data.Digraph", ->
       #    J     K
       #
       @digraph.reset [
-        { id: "A", children: [ "D" ]           }
-        { id: "B", children: [ "E" ]           }
-        { id: "C", children: [ "E" ]           }
-        { id: "D", children: [ "F" ]           }
-        { id: "E", children: [ "J", "G", "H" ] }
-        { id: "F", children: [ "J" ]           }
-        { id: "G", children: [ "J" ]           }
-        { id: "H", children: [ "K" ]           }
-        { id: "J", children: null              }
-        { id: "K", children: null              }
+        { id: "A", child_ids: [ "D" ]           }
+        { id: "B", child_ids: [ "E" ]           }
+        { id: "C", child_ids: [ "E" ]           }
+        { id: "D", child_ids: [ "F" ]           }
+        { id: "E", child_ids: [ "J", "G", "H" ] }
+        { id: "F", child_ids: [ "J" ]           }
+        { id: "G", child_ids: [ "J" ]           }
+        { id: "H", child_ids: [ "K" ]           }
+        { id: "J", child_ids: null              }
+        { id: "K", child_ids: null              }
       ]
       @walker = sinon.spy()
 
@@ -366,10 +406,10 @@ describe "Coreon.Data.Digraph", ->
 
     it "attaches graph roots to tree root", ->
       @digraph.reset [
-        { id: "A", children: [ "C" ] }
-        { id: "B", children: [ "C" ] }
-        { id: "C", children: null    }
-        { id: "D", children: null    }
+        { id: "A", child_ids: [ "C" ] }
+        { id: "B", child_ids: [ "C" ] }
+        { id: "C", child_ids: null    }
+        { id: "D", child_ids: null    }
       ]
       root = @digraph.tree()
       ( child.id for child in root.treeDown ).should.eql [ "A", "B", "D" ]
@@ -391,16 +431,16 @@ describe "Coreon.Data.Digraph", ->
         #    J     K
         #
         @digraph.reset [
-          { id: "A", children: [ "D" ]           }
-          { id: "B", children: [ "E" ]           }
-          { id: "C", children: [ "E" ]           }
-          { id: "D", children: [ "F" ]           }
-          { id: "E", children: [ "J", "G", "H" ] }
-          { id: "F", children: [ "J" ]           }
-          { id: "G", children: [ "J" ]           }
-          { id: "H", children: [ "K" ]           }
-          { id: "J", children: null              }
-          { id: "K", children: null              }
+          { id: "A", child_ids: [ "D" ]           }
+          { id: "B", child_ids: [ "E" ]           }
+          { id: "C", child_ids: [ "E" ]           }
+          { id: "D", child_ids: [ "F" ]           }
+          { id: "E", child_ids: [ "J", "G", "H" ] }
+          { id: "F", child_ids: [ "J" ]           }
+          { id: "G", child_ids: [ "J" ]           }
+          { id: "H", child_ids: [ "K" ]           }
+          { id: "J", child_ids: null              }
+          { id: "K", child_ids: null              }
         ]
         @root = @digraph.tree()
         @nodes = {}

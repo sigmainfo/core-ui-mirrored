@@ -10,9 +10,9 @@ class Coreon.Data.Digraph
       copy[key] = value for key, value of datum
       copy
     up: (datum) ->
-      datum.parents
+      datum.parent_ids
     down: (datum) ->
-      datum.children
+      datum.child_ids
       
   constructor: ->
     @initialize.apply @, arguments
@@ -37,7 +37,10 @@ class Coreon.Data.Digraph
     @createNodes data
     @update()
 
-  remove: (ids = [])->
+  remove: (ids... ) ->
+    for id in ids
+      delete @hash[id]
+    @update()
 
   update: ->
     @updateEdges()
