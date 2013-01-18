@@ -108,4 +108,8 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     nodes.should have(1).item
     nodes.first.text.should == "weapon"
   end
+
+  Then 'there should be no more connections' do
+    page.should have_no_css("#coreon-concept-map .concept-edge")
+  end
 end
