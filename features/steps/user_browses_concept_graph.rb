@@ -39,6 +39,11 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     link_narrower_to_broader @rifle, @concept
   end
 
+  And '"weapon" is narrower than "tool"' do
+    @tool ||= create_concept_with_label "tool"
+    link_narrower_to_broader @weapon, @tool
+  end
+
   When 'I enter the application' do
     visit "/"
   end
@@ -111,5 +116,13 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
 
   Then 'there should be no more connections' do
     page.should have_no_css("#coreon-concept-map .concept-edge")
+  end
+
+  When 'I click to toggle the parents of "weapon"' do
+    page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-parents").click
+  end
+
+  Then 'I should see "tool"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "tool")
   end
 end

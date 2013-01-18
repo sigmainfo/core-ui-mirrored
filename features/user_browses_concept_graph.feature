@@ -15,6 +15,7 @@ Feature: user browses concept graph
     And given a concept "long gun"
     And this concept is narrower than "weapon"
     And this concept is broader than "rifle"
+    And "weapon" is narrower than "tool"
     When I enter the application
     Then I should see the widget "Concept Map"
     And it should be empty
@@ -33,3 +34,8 @@ Feature: user browses concept graph
     When I click to toggle the children of "weapon"
     Then "weapon" should be the only node left
     And there should be no more connections
+    When I click to toggle the parents of "weapon"
+    Then I should see "tool"
+    And "tool" should be connected to "weapon"
+    When I click to toggle the parents of "weapon"
+    Then "weapon" should be the only node left
