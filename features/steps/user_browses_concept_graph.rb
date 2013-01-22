@@ -39,9 +39,11 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     link_narrower_to_broader @rifle, @concept
   end
 
-  And '"weapon" is narrower than "tool"' do
+  And '"weapon", "pen" are narrower than "tool"' do
     @tool ||= create_concept_with_label "tool"
+    @pen  ||= create_concept_with_label "pen"
     link_narrower_to_broader @weapon, @tool
+    link_narrower_to_broader @pen, @tool
   end
 
   When 'I enter the application' do
@@ -124,5 +126,14 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
 
   Then 'I should see "tool"' do
     page.should have_css("#coreon-concept-map .concept-node", text: "tool")
+  end
+
+  And 'I should see "pen"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "pen")
+  end
+
+  And '"tool" should be connected to "weapon"' do
+    collect_edges 1
+    @edges.should include("tool -> weapon")
   end
 end

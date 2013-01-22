@@ -15,6 +15,9 @@ describe "Coreon.Models.Hit", ->
   it "uses simple id attribute", ->
     @hit.id.should.equal "1234"
 
+  it "does not expand children by default", ->
+    @hit.get("expandChildren").should.be.false
+
   describe "#validate", ->
 
     it "enforces id", ->

@@ -59,16 +59,31 @@ class Coreon.Collections.Hits extends Backbone.Collection
     concept.trigger "hit:#{event}", model, collection, options
 
   createGraph: () ->
-    graph = new Coreon.Data.Digraph @models,
+    graph = new Coreon.Data.Digraph @expandedHits(),
+      up: (datum) -> Coreon.Models.Concept.find(datum.id).get "super_concept_ids"
+      down: (datum) -> Coreon.Models.Concept.find(datum.id).get "sub_concept_ids"
       factory: (id, datum) ->
         id: id
         concept: Coreon.Models.Concept.find id
-        score: if datum? then datum.get "score" else null
-      up: (datum) -> Coreon.Models.Concept.find(datum.id).get "super_concept_ids"
-      down: (datum) -> Coreon.Models.Concept.find(datum.id).get "sub_concept_ids"
+        score: datum?.get("score") or null
     for node in graph.nodes
       node.concept.on "change", @updateGraph, @
     graph
+
+  expandedHits: ->
+    hits = {}
+    for model in @models
+      hits[model.id] ?= model
+      concept = Coreon.Models.Concept.find model.id
+      if model.get "expandChildren"
+        for child_id in concept.get "sub_concept_ids"
+          hits[child_id] ?= new Coreon.Models.Hit id: child_id
+      if model.get "expandParents"
+        for parent_id in concept.get "super_concept_ids"
+          hits[parent_id] ?= new Coreon.Models.Hit id: parent_id
+          for sibling_id in Coreon.Models.Concept.find(parent_id).get "sub_concept_ids"
+            hits[sibling_id] ?= new Coreon.Models.Hit id: sibling_id
+    (hit for id, hit of hits)
 
   updateGraph: (options = {}) ->
     @invalidateGraph()

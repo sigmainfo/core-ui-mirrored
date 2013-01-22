@@ -15,10 +15,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   size: [200, 320]
 
-  defaults:
-    treeRoot: false
-    treeLeaf: false
-
   initialize: ->
     @views = {}
     @layout = d3.layout.tree()
@@ -53,6 +49,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
           el: @
           model: d.concept
         views[d.id].on "toggle:children", self.onToggleChildren, self
+        views[d.id].on "toggle:parents", self.onToggleParents, self
       )
 
     nodes
@@ -134,6 +131,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   expandChildren: (node) ->
     ids = node.concept.get "sub_concept_ids"
     @model.graph().add ( new Coreon.Models.Hit id: id for id in ids )
+
+  onToggleParents: (node) ->
+    console.log "toggle parents"
+    ids = node.concept.get "super_concept_ids"
+    @model.graph().add ( new Coreon.Models.Hit id: id, expandChildren: true for id in ids )
+    @renderMap()
 
   dissolve: ->
     @model.off null, null, @

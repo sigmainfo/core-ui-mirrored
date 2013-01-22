@@ -58,102 +58,29 @@ describe "Coreon.Data.Digraph", ->
         @digraph.reset [ {id: 1, label: "foo" }, {id: 2, label: "foo"} ]
         @digraph.nodes.should.have.length 1
 
-    context "creating child nodes", ->
-
-      it "creates entries for children", ->
-        @digraph.options.factory = sinon.stub().returnsArg 0
-        @digraph.reset [ id: 1, child_ids: [ 2, 3 ] ]
-        @digraph.nodes.should.eql [ 1, 2, 3 ]
-        
-      it "uses walker method", ->
-        @digraph.options.factory = sinon.stub().returnsArg 0
-        @digraph.options.down = (d) -> d.kidz
-        @digraph.reset [ id: 1, kidz: [ 2, 3 ] ]
-        @digraph.nodes.should.eql [ 1, 2, 3 ]
-
-      it "skips duplicates prefering data", ->
-        @digraph.reset [
-          { id: 1, child_ids: [ 2, 3 ] }
-          { id: 2, child_ids: [ 3, 4 ], label: "Nobody" }
-        ]
-        @digraph.nodes.should.have.length 4
-        dup = node for node in @digraph.nodes when node.id is 2
-        dup.should.have.property "label", "Nobody"
-
-    context "creating parent nodes", ->
-      
-      it "creates entries for parents", ->
-        @digraph.options.factory = sinon.stub().returnsArg 0
-        @digraph.reset [ id: 1, parent_ids: [ 2, 3 ] ]
-        @digraph.nodes.should.eql [ 1, 2, 3 ]
-        
-      it "uses walker method", ->
-        @digraph.options.factory = sinon.stub().returnsArg 0
-        @digraph.options.up = (d) -> d.mommies
-        @digraph.reset [ id: 1, mommies: [ 2, 3 ] ]
-        @digraph.nodes.should.eql [ 1, 2, 3 ]
-
-      it "skips duplicates prefering data", ->
-        @digraph.reset [
-          { id: 1, parent_ids: [ 2, 3 ] }
-          { id: 2, parent_ids: [ 3, 4 ], label: "Nobody" }
-        ]
-        @digraph.nodes.should.have.length 4
-        dup = node for node in @digraph.nodes when node.id is 2
-        dup.should.have.property "label", "Nobody"
-
-    context "creating sibling nodes", ->
-      
-      it "creates entries for siblings", ->
-        @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, child_ids: [3, 4] else id: id
-        @digraph.reset [ { id: 1, parent_ids: [ 2 ] } ]
-        ids = ( node.id for node in @digraph.nodes )
-        ids.should.contain 3
-        ids.should.contain 4
-        
-      it "uses walker method", ->
-        @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, kidz: [3, 4] else id: id
-        @digraph.options.up = (d) -> d.mommies
-        @digraph.options.down = (d) -> d.kidz
-        @digraph.reset [ { id: 1, mommies: [ 2 ] } ]
-        ids = ( node.id for node in @digraph.nodes )
-        ids.should.contain 3
-        ids.should.contain 4
-        
-      it "skips duplicates prefering data", ->
-        @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, child_ids: [3, 4] else datum or id: id
-        @digraph.reset [
-          { id: 1, parent_ids: [ 2 ] }
-          { id: 3, label: "Nobody" }
-        ]
-        @digraph.nodes.should.have.length 4
-        dup = node for node in @digraph.nodes when node.id is 3
-        dup.should.have.property "label", "Nobody"
-
     context "updating relations", ->
 
-      it "references child nodes", ->
-        child = id: 2
-        @digraph.options.factory = (id, datum) ->
-          switch id
-            when 2 then child
-            else datum
-        @digraph.reset [ id: 1, child_ids: [ 2 ] ]
-        parent = node for node in @digraph.nodes when node.id is 1
+      it "creates references to child nodes", ->
+        parent =
+          id: "parent"
+          child_ids: [ "child" ]
+        child =
+          id: "child"
+        @digraph.reset [ parent, child ]
+        parent = node for node in @digraph.nodes when node.id is "parent"
+        child  = node for node in @digraph.nodes when node.id is "child"
         parent.should.have.property("children").that.is.an "array"
         parent.should.have.deep.property "children[0]", child
-      
-      it "references parent nodes", ->
-        parent = id: 1, child_ids: [ 2 ]
-        @digraph.options.factory = (id, datum) ->
-          switch id
-            when 1 then parent
-            else id: id
-        @digraph.reset [ parent ]
-        child = node for node in @digraph.nodes when node.id is 2
+
+      it "creates references to parent nodes", ->
+        parent =
+          id: "parent"
+        child =
+          id: "child"
+          parent_ids: [ "parent"]
+        @digraph.reset [ parent, child ]
+        parent = node for node in @digraph.nodes when node.id is "parent"
+        child  = node for node in @digraph.nodes when node.id is "child"
         child.should.have.property("parents").that.is.an "array"
         child.should.have.deep.property "parents[0]", parent
 
@@ -165,20 +92,40 @@ describe "Coreon.Data.Digraph", ->
     context "creating edges", ->
 
       it "creates edges for child relations", ->
-        @digraph.options.factory = (id, datum) -> datum or id: id
-        @digraph.reset [ id: 1, child_ids: [ 2, 3 ] ]
+        parent =
+          id: "parent"
+          child_ids: [ "child_1", "child_2" ]
+        child1 = id: "child_1"
+        child2 = id: "child_2"
+        @digraph.reset [ parent, child1, child2 ]
         @digraph.edges.should.have.length 2
-        relation = edge for edge in @digraph.edges when edge.target.id is 2
-        relation.should.exist
-        relation.should.have.deep.property "source.id",  1
+        relation1 = edge for edge in @digraph.edges when edge.target.id is "child_1"
+        relation1.should.have.deep.property "source.id",  "parent"
+        relation2 = edge for edge in @digraph.edges when edge.target.id is "child_2"
+        relation2.should.have.deep.property "source.id",  "parent"
+        
+      it "creates edges for parent relations", ->
+        parent = id: "parent"
+        child1 =
+          id: "child_1"
+          parent_ids: [ "parent" ]
+        child2 =
+          id: "child_2"
+          parent_ids: [ "parent" ]
+        @digraph.reset [ parent, child1, child2 ]
+        @digraph.edges.should.have.length 2
+        relation1 = edge for edge in @digraph.edges when edge.target.id is "child_1"
+        relation1.should.have.deep.property "source.id",  "parent"
+        relation2 = edge for edge in @digraph.edges when edge.target.id is "child_2"
+        relation2.should.have.deep.property "source.id",  "parent"
         
       it "skips relations to external nodes", ->
-        @digraph.options.factory = (id, datum) ->
-          if id is 2 then id: 2, child_ids: [ 3 ] else datum
-        @digraph.reset [ id: 1, child_ids: [ 2 ] ]
-        @digraph.edges.should.have.length 1
-        @digraph.edges[0].should.have.deep.property "source.id", 1
-        @digraph.edges[0].should.have.deep.property "target.id", 2
+        node =
+          id: "node"
+          parent_ids: [ "outer_1" ]
+          child_ids:  [ "outer_2" ]
+        @digraph.reset [ node ]
+        @digraph.edges.should.have.length 0
 
     context "creating selections", ->
 

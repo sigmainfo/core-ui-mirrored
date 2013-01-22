@@ -30,10 +30,9 @@ class Coreon.Data.Digraph
   reset: ( data = [] ) ->
     @hash = {}
     @createNodes data
-    @createParentAndChildNodes data
     @update()
 
-  add: ( data = [] ) ->
+  add: ( data = []) ->
     @createNodes data
     @update()
 
@@ -53,30 +52,22 @@ class Coreon.Data.Digraph
       @hash[id] ?= @options.factory id, datum
     @hash
 
-  createParentAndChildNodes: (data) ->
-    for datum in data
-      if children = @options.down datum
-        for id in children
-          @hash[id] ?= @options.factory id
-      if parents = @options.up datum
-        for id in parents
-          parent = @options.factory id
-          @hash[id] ?= parent
-          if siblings = @options.down parent
-            for id in siblings
-              @hash[id] ?= @options.factory id
-    @hash
-
   updateEdges: ->
-    @edges = []
-    for id, node of @hash
-      if children = @options.down node
-        for id in children
-          if @hash[id]?
-            @edges.push
+    edges_hash = {}
+    for node_id, node of @hash
+      if child_ids = @options.down node
+        for child_id in child_ids
+          if @hash[child_id]
+            edges_hash["#{node_id}-[:BROADER]->#{child_id}"] ?=
               source: node
-              target: @hash[id]
-    @edges
+              target: @hash[child_id]
+      if parent_ids = @options.up node
+        for parent_id in parent_ids
+          if @hash[parent_id]
+            edges_hash["#{parent_id}-[:BROADER]->#{node_id}"] ?=
+              source: @hash[parent_id]
+              target: node
+    @edges = (edge for key, edge of edges_hash)
 
   updateNodes: ->
     @nodes = for id, node of @hash

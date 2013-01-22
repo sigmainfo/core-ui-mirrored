@@ -130,27 +130,70 @@ describe "Coreon.Collections.Hits", ->
     it "creates edges from concept graph", ->
       @createConcept "fff999", super_concept_ids: [ "799" ]
       @concept.set "sub_concept_ids", [ "fff999" ]
-      @hits.update [ @hit ], silent: true
+      @hits.update [ @hit, new Coreon.Models.Hit id: "fff999" ], silent: true
       @hits.graph().edges.should.have.length 1
       @hits.graph().edges[0].should.have.deep.property "source.id", "799"
       @hits.graph().edges[0].should.have.deep.property "target.id", "fff999"
-
-    it "creates nodes for parent concepts", ->
-      @createConcept "fff999", sub_concept_ids: [ "799" ]
-      @concept.set "super_concept_ids", [ "fff999" ]
-      @hits.update [ @hit ], silent: true
-      @hits.graph().nodes.should.have.length 2
-      @hits.graph().edges[0].should.have.deep.property "source.id", "fff999"
-      @hits.graph().edges[0].should.have.deep.property "target.id", "799"
 
     it "gets score from hit", ->
       @hit.set "score", 1.587
       @createConcept "fff999", sub_concept_ids: [ "799" ]
       @concept.set "super_concept_ids", [ "fff999" ]
       @hits.update [ @hit ], silent: true
-      @hits.graph().edges[0].should.have.deep.property "target.score", 1.587
-      @hits.graph().edges[0].should.have.deep.property "source.score", null
+      @hits.graph().nodes[0].should.have.property "score", 1.587
+      
+    it "defaults score to null", ->
+      @createConcept "fff999", sub_concept_ids: [ "799" ]
+      @concept.set "super_concept_ids", [ "fff999" ]
+      @hits.update [ @hit ], silent: true
+      @hits.graph().nodes[0].should.have.property "score", null
 
+    context "expanding the graph", ->
+
+      context "for children", ->
+
+      it "creates child nodes when marked to expand children", ->
+        @createConcept "child_1"
+        @createConcept "child_2"
+        @concept.set "sub_concept_ids", ["child_1", "child_2"]
+        @hit.set "expandChildren", true
+        @hits.update [ @hit ], silent: true
+        (node.id for node in @hits.graph().nodes).should.eql [ "799", "child_1", "child_2" ]
+
+      it "does not expand children by default", ->
+        @createConcept "child_1"
+        @createConcept "child_2"
+        @concept.set "sub_concept_ids", ["child_1", "child_2"]
+        @hits.update [ @hit ], silent: true
+        (node.id for node in @hits.graph().nodes).should.eql [ "799" ]
+
+    context "for parents", ->
+      
+      it "creates parent nodes when marked to expand parents", ->
+        @createConcept "parent_1"
+        @createConcept "parent_2"
+        @concept.set "super_concept_ids", ["parent_1", "parent_2"]
+        @hit.set "expandParents", true
+        @hits.update [ @hit ], silent: true
+        (node.id for node in @hits.graph().nodes).should.eql [ "799", "parent_1", "parent_2" ]
+
+      it "does not expand parents by default", ->
+        @createConcept "parent_1"
+        @createConcept "parent_2"
+        @concept.set "sub_concept_ids", ["parent_1", "parent_2"]
+        @hits.update [ @hit ], silent: true
+        (node.id for node in @hits.graph().nodes).should.eql [ "799" ]
+
+      it "expands children of parents", ->
+        @createConcept "parent", sub_concept_ids: [ "sibling" ]
+        @createConcept "sibling"
+        @concept.set "super_concept_ids", ["parent"]
+        @hit.set "expandParents", true
+        @hits.update [ @hit ], silent: true
+        (node.id for node in @hits.graph().nodes).should.eql [ "799", "parent", "sibling" ]
+
+
+      
   describe "tree()", ->
     
     it "returns tree representation of graph", ->

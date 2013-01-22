@@ -323,6 +323,44 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "updates rendering of map"
 
+  describe "onToggleParents()", ->
+
+    beforeEach ->
+      graph =
+       add: ->
+       remove: ->
+      @view.model.graph = -> graph
+      @view.render()
+    
+    it "is triggered by view instances", ->
+      @view.onToggleParents = sinon.spy()
+      @view.renderNodes [ id: "1", concept: @createConcept("Pistol"), treeUp: [], treeDown: [] ]
+      @view.views["1"].trigger "toggle:parents", id: "123"
+      @view.onToggleParents.should.have.been.calledOnce
+      @view.onToggleParents.should.have.been.calledWith id: "123"
+
+    context "when collapsed", ->
+
+      beforeEach ->
+        @node =
+          treeUp: []
+          concept:
+            get: ->
+        @view.model.graph().add = sinon.spy()
+      
+      it "adds nodes to graph", ->
+        @node.concept.get = (attr) -> [ "parent1", "parent2" ] if attr is "super_concept_ids"
+        @view.onToggleParents @node
+        @view.model.graph().add.should.have.been.calledOnce
+        @view.model.graph().add.firstCall.args[0].should.be.an "array"
+        @view.model.graph().add.firstCall.args[0].should.have.length 2
+        @view.model.graph().add.firstCall.args[0][0].should.be.an.instanceof Coreon.Models.Hit
+        @view.model.graph().add.firstCall.args[0][0].should.have.property "id", "parent1"
+        @view.model.graph().add.firstCall.args[0][0].get("expandChildren").should.be.true
+        @view.model.graph().add.firstCall.args[0][1].should.be.an.instanceof Coreon.Models.Hit
+        @view.model.graph().add.firstCall.args[0][1].id.should.equal "parent2"
+        @view.model.graph().add.firstCall.args[0][1].get("expandChildren").should.be.true
+
   describe "dissolve()", ->
 
     it "dissolves hits", ->
