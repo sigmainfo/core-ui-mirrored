@@ -39,7 +39,7 @@ describe "Coreon.Collections.Connections", ->
       @connections.add xhr: xhr
       @connections.destroy()
       @connections.reset.should.have.been.calledOnce
-      @connections.length.should.equal 0
+      @connections.should.have.lengthOf 0
 
   describe "#sync", ->
     
@@ -73,7 +73,7 @@ describe "Coreon.Collections.Connections", ->
 
     it "adds connection to collection", ->
       jqXHR = @connections.sync "read", @model, data: "I'm not dead. Am I?"
-      @connections.should.have.length 1 
+      @connections.should.have.lengthOf 1 
       @connections.at(0).get("xhr").should.equal jqXHR 
       @connections.at(0).get("method").should.equal "read" 
       @connections.at(0).get("model").should.equal @model 

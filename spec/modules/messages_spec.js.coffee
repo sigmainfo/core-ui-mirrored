@@ -23,7 +23,7 @@ describe "Coreon.Modules.Messages", ->
 
     it "creates notification", ->
       @module.message "Did you kill the white man who killed you?"
-      @notifications.should.have.length 1
+      @notifications.should.have.lengthOf 1
       @notifications.first().get("message").should.equal "Did you kill the white man who killed you?"
 
     it "takes optional attributes", ->

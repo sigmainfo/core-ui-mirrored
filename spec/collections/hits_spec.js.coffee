@@ -46,7 +46,7 @@ describe "Coreon.Collections.Hits", ->
       @createConcept "7878"
       @hits.update [ @hit ], silent: true
       @hits.update [ id: "7878" ], silent: true
-      @hits.models.should.have.length 1
+      @hits.models.should.have.lengthOf 1
 
 
     it "keeps existing", ->
@@ -123,7 +123,7 @@ describe "Coreon.Collections.Hits", ->
 
     it "creates graph from models", ->
       @hits.update [ @hit ], silent: true
-      @hits.graph().nodes.should.have.length 1
+      @hits.graph().nodes.should.have.lengthOf 1
       @hits.graph().nodes[0].should.have.property "id", "799"
       @hits.graph().nodes[0].should.have.property "concept", @concept
 
@@ -131,7 +131,7 @@ describe "Coreon.Collections.Hits", ->
       @createConcept "fff999", super_concept_ids: [ "799" ]
       @concept.set "sub_concept_ids", [ "fff999" ]
       @hits.update [ @hit, new Coreon.Models.Hit id: "fff999" ], silent: true
-      @hits.graph().edges.should.have.length 1
+      @hits.graph().edges.should.have.lengthOf 1
       @hits.graph().edges[0].should.have.deep.property "source.id", "799"
       @hits.graph().edges[0].should.have.deep.property "target.id", "fff999"
 

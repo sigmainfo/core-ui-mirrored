@@ -25,12 +25,12 @@ describe "Coreon.Data.Digraph", ->
     it "clears graph by default", ->
       @digraph.reset [ { id: 1 }, { id: 2 } ]
       @digraph.reset()
-      @digraph.nodes.should.have.length 0
+      @digraph.nodes.should.have.lengthOf 0
 
     it "recreates graph", ->
       @digraph.reset [ { id: 1 } ]
       @digraph.reset [ { id: 3 }, { id: 2 } ]
-      @digraph.nodes.should.have.length 2
+      @digraph.nodes.should.have.lengthOf 2
 
     context "creating datum nodes", ->
       
@@ -49,14 +49,14 @@ describe "Coreon.Data.Digraph", ->
 
       it "does not create duplicates", ->
         @digraph.reset [ {id: 1, label: "foo" }, {id: 1, label: "bar"} ]
-        @digraph.nodes.should.have.length 1
+        @digraph.nodes.should.have.lengthOf 1
         @digraph.nodes[0].should.have.property "id", 1
         @digraph.nodes[0].should.have.property "label", "foo"
 
       it "uses identifier method", ->
         @digraph.options.id = (d) -> d.label
         @digraph.reset [ {id: 1, label: "foo" }, {id: 2, label: "foo"} ]
-        @digraph.nodes.should.have.length 1
+        @digraph.nodes.should.have.lengthOf 1
 
     context "updating relations", ->
 
@@ -98,7 +98,7 @@ describe "Coreon.Data.Digraph", ->
         child1 = id: "child_1"
         child2 = id: "child_2"
         @digraph.reset [ parent, child1, child2 ]
-        @digraph.edges.should.have.length 2
+        @digraph.edges.should.have.lengthOf 2
         relation1 = edge for edge in @digraph.edges when edge.target.id is "child_1"
         relation1.should.have.deep.property "source.id",  "parent"
         relation2 = edge for edge in @digraph.edges when edge.target.id is "child_2"
@@ -113,7 +113,7 @@ describe "Coreon.Data.Digraph", ->
           id: "child_2"
           parent_ids: [ "parent" ]
         @digraph.reset [ parent, child1, child2 ]
-        @digraph.edges.should.have.length 2
+        @digraph.edges.should.have.lengthOf 2
         relation1 = edge for edge in @digraph.edges when edge.target.id is "child_1"
         relation1.should.have.deep.property "source.id",  "parent"
         relation2 = edge for edge in @digraph.edges when edge.target.id is "child_2"
@@ -125,7 +125,7 @@ describe "Coreon.Data.Digraph", ->
           parent_ids: [ "outer_1" ]
           child_ids:  [ "outer_2" ]
         @digraph.reset [ node ]
-        @digraph.edges.should.have.length 0
+        @digraph.edges.should.have.lengthOf 0
 
     context "creating selections", ->
 
@@ -166,13 +166,13 @@ describe "Coreon.Data.Digraph", ->
       
     it "creates missing nodes", ->
       @digraph.add [ id: 2, foo: "bar" ]
-      @digraph.nodes.should.have.length 2
+      @digraph.nodes.should.have.lengthOf 2
       added = node for node in @digraph.nodes when node.id is 2
       added.should.have.property "foo", "bar"
 
     it "updates edges", ->
       @digraph.add [ id: 2, child_ids: [ 1 ] ]
-      @digraph.edges.should.have.length 1
+      @digraph.edges.should.have.lengthOf 1
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
       @digraph.edges[0].should.have.property "source", parent
@@ -189,7 +189,7 @@ describe "Coreon.Data.Digraph", ->
       @digraph.add [ id: 2, child_ids: [ 1 ] ]
       parent = node for node in @digraph.nodes when node.id is 2
       child  = node for node in @digraph.nodes when node.id is 1
-      @digraph.roots.should.have.length 1
+      @digraph.roots.should.have.lengthOf 1
       @digraph.roots[0].should.equal parent
 
   describe "remove()", ->
@@ -201,7 +201,7 @@ describe "Coreon.Data.Digraph", ->
         { id: 3 }     
       ] 
       @digraph.remove 1, 3
-      @digraph.nodes.should.have.length 1
+      @digraph.nodes.should.have.lengthOf 1
       @digraph.nodes[0].should.have.property "id", 2
 
     it "updates edges", ->
@@ -211,7 +211,7 @@ describe "Coreon.Data.Digraph", ->
         { id: 3 }     
       ]
       @digraph.remove 2
-      @digraph.edges.should.have.length 1
+      @digraph.edges.should.have.lengthOf 1
       @digraph.edges[0].source.should.have.property "id", 1
       @digraph.edges[0].target.should.have.property "id", 3
 
@@ -224,9 +224,9 @@ describe "Coreon.Data.Digraph", ->
       @digraph.remove 2
       node_1 = node for node in @digraph.nodes when node.id is 1    
       node_3 = node for node in @digraph.nodes when node.id is 3    
-      node_1.children.should.have.length 1
+      node_1.children.should.have.lengthOf 1
       node_1.children[0].should.have.property "id", 3
-      node_3.parents.should.have.length 1
+      node_3.parents.should.have.lengthOf 1
       node_3.parents[0].should.have.property "id", 1
 
     it "updates selections", ->
@@ -237,41 +237,41 @@ describe "Coreon.Data.Digraph", ->
         { id: 4 }     
       ]
       @digraph.remove 1, 4
-      @digraph.multiParentNodes.should.have.length 0
-      @digraph.roots.should.have.length 1
+      @digraph.multiParentNodes.should.have.lengthOf 0
+      @digraph.roots.should.have.lengthOf 1
       @digraph.roots[0].should.have.property "id", 2
-      @digraph.leaves.should.have.length 1
+      @digraph.leaves.should.have.lengthOf 1
       @digraph.leaves[0].should.have.property "id", 3
       
   describe "nodes", ->
   
     it "is empty by default", ->
       @digraph.nodes.should.be.an "array"
-      @digraph.nodes.should.have.length 0
+      @digraph.nodes.should.have.lengthOf 0
 
   describe "edges", ->
   
     it "is empty by default", ->
       @digraph.edges.should.be.an "array"
-      @digraph.edges.should.have.length 0
+      @digraph.edges.should.have.lengthOf 0
 
   describe "roots", ->
     
     it "is empty when graph is empty", ->
       @digraph.roots.should.be.an "array"
-      @digraph.leaves.should.have.length 0
+      @digraph.leaves.should.have.lengthOf 0
 
   describe "leaves", ->
     
     it "is empty when not applicable", ->
       @digraph.leaves.should.be.an "array"
-      @digraph.leaves.should.have.length 0
+      @digraph.leaves.should.have.lengthOf 0
  
   describe "multiParentNodes", ->
     
     it "is empty when not applicable", ->
       @digraph.multiParentNodes.should.be.an "array"
-      @digraph.multiParentNodes.should.have.length 0
+      @digraph.multiParentNodes.should.have.lengthOf 0
  
   describe "down()", ->
 
