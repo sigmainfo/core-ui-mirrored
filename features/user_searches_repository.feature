@@ -10,8 +10,7 @@ Feature: user searches repository
   Scenario: trigger search
     When I enter "poet" in the search field
     And I click the search button
-    Then I should be on the search results page
-    And I should see "poet" as the query string
+    Then I should be on the search results page for query "poet"
     And I should see a listing of the search results
 
   Scenario: service unavailable

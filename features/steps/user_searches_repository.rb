@@ -13,13 +13,8 @@ class UserSearchesRepository < Spinach::FeatureSteps
     end
   end
 
-  Then 'I should be on the search results page' do
-    current_path.should == "/search"
-  end
-
-  And 'I should see "poet" as the query string' do
-    require 'uri'
-    URI.parse(current_url).query.should =~ /\bq=poet\b/
+  Then 'I should be on the search results page for query "poet"' do
+    current_path.should == "/search/poet"
   end
 
   And 'I should see a listing of the search results' do

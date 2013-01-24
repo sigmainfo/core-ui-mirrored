@@ -57,8 +57,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     end
   end
 
-  Then 'I should be on the search result page for concepts' do
-    current_path.should == "/concepts/search"
+  step 'I should be on the search result page for concepts with query "gun"' do
+    current_path.should == "/concepts/search/gun"
   end
 
   And 'I should see a concept "handgun"' do
@@ -91,12 +91,8 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     page.find("li.option", text: "Concepts by Terms").click
   end
 
-  And 'the target should be "terms"' do
-    URI.parse(current_url).query.should =~ /\bt=terms\b/
-  end
-
-  And 'the query should be "gun"' do
-    URI.parse(current_url).query.should =~ /\bq=gun\b/
+  step 'I should be on the search result page for concepts with target "terms" and query "gun"' do
+    current_path.should == "/concepts/search/terms/gun"
   end
 
   When 'I select "Concepts by Definition" as the type of search' do
@@ -105,7 +101,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     page.find("li.option", text: "Concepts by Definition").click
   end
 
-  And 'the target should be "definition"' do
-    URI.parse(current_url).query.should =~ /\bt=definition\b/
+  step 'I should be on the search result page for concepts with target "definition" and query "gun"' do
+    current_path.should == "/concepts/search/definition/gun"
   end
 end

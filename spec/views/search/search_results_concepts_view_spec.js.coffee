@@ -81,7 +81,9 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
 
     it "renders link to complete list", ->
       I18n.t.withArgs("search.results.concepts.show_all").returns "Show all"
-      @view.model.query = -> "q=gun"
+      @view.model.query = -> "gun"
       @view.render()
-      @view.$el.should.have "a.show-all[href='/concepts/search?q=gun']"
+      console.log @view.$el
+      @view.$el.should.have "a.show-all"
       @view.$("a.show-all").should.have.text "Show all"
+      @view.$("a.show-all").should.have.attr "href", "/concepts/search/gun"

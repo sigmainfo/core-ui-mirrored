@@ -42,13 +42,14 @@ describe "Coreon.Routers.ConceptsRouter", ->
   describe "#search", ->
     
     it "is routed", ->
-      @router.routes["concepts/search"].should.equal "search"
+      @router.routes.should.have.property "concepts/search/(:target/):query", "search"
 
     it "creates search", ->
-      @router.search q: "gun"
+      @router.search "terms", "gun"
       @screen.model.should.be.an.instanceof Coreon.Models.Search 
       @screen.model.get("path").should.equal "concepts/search" 
       @screen.model.get("query").should.equal "gun" 
+      @screen.model.get("target").should.equal "terms" 
       @screen.collection.should.be @router.collection
 
     it "renders search results", ->

@@ -64,18 +64,18 @@ describe "Coreon.Models.Search", ->
 
   describe "#query", ->
     
-    it "returns query string", ->
+    it "returns query component", ->
       @model.set 
         query: "poetry"
         target: "terms"
-      @model.query().should.equal "t=terms&q=poetry"
+      @model.query().should.equal "terms/poetry"
 
     it "skips target when not given", ->
       @model.set query: "poetry"
-      @model.query().should.equal "q=poetry"
+      @model.query().should.equal "poetry"
 
     it "urlencodes values", ->
-      @model.set query: "[foo]"
-      @model.query().should.equal "q=%5Bfoo%5D"
+      @model.set query: "foo bar bäz"
+      @model.query().should.equal "foo%20bar%20b%C3%A4z"
       
     

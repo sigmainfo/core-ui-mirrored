@@ -21,7 +21,7 @@ class Coreon.Views.Concepts.ConceptTreeView extends Coreon.Views.Layout.SectionV
     @
 
   concept: (id) ->
-    label = new Coreon.Views.Concepts.ConceptLabelView id
+    label = new Coreon.Views.Concepts.ConceptLabelView id: id
     @add label.render()
     $("<li>").append label.$el
 

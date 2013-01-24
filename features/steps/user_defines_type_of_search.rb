@@ -65,15 +65,7 @@ class UserDefinesTypeOfSearch < Spinach::FeatureSteps
     end
   end
 
-  Then 'I should be on the search concepts page' do
-    current_path.should == "/concepts/search"
-  end
-
-  And 'the search target should be "terms"' do
-    URI.parse(current_url).query.should =~ /\bt=terms\b/
-  end
-
-  And 'the query string should be "poet"' do
-    URI.parse(current_url).query.should =~ /\bq=poet\b/
+  Then 'I should be on the search concepts page with target "terms and query "poet' do
+    current_path.should == "/concepts/search/terms/poet"
   end
 end

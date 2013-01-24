@@ -8,12 +8,11 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
 
   className: "concept-label"
 
-  initialize: (idOrOptions) ->
-    switch typeof idOrOptions
-      when "string"
-        @model = Coreon.Models.Concept.find idOrOptions
-      when "object"
-        @model = idOrOptions.model
+  initialize: (options = {}) ->
+    @model =  if options.model?
+        options.model
+      else
+        Coreon.Models.Concept.find options.id
 
     @model.on "change"     , @render       , @
     @model.on "hit:add"    , @_onHitAdd    , @

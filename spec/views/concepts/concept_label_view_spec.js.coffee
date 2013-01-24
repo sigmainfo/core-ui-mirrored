@@ -9,7 +9,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       hit: -> false
     sinon.stub Coreon.Models.Concept, "find"
     Coreon.Models.Concept.find.withArgs("1234").returns @concept
-    @view = new Coreon.Views.Concepts.ConceptLabelView "1234"
+    @view = new Coreon.Views.Concepts.ConceptLabelView id: "1234"
 
   afterEach ->
     @view.destroy()
@@ -28,7 +28,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     
     it "gets model by id", ->
       Coreon.Models.Concept.find.withArgs("1234abcf").returns @concept
-      @view.initialize "1234abcf"
+      @view.initialize id: "1234abcf"
       @view.model.should.equal @concept
 
     it "sets model from options", ->
@@ -54,7 +54,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
 
     it "is triggered on model changes", ->
       @view.render = sinon.spy()
-      @view.initialize()
+      @view.initialize model: new Backbone.Model
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
 
@@ -91,7 +91,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
 
     it "disposes events on model", ->
       @view.render = sinon.spy()
-      @view.initialize()
+      @view.initialize model: new Backbone.Model
       @view.destroy()
       @view.model.trigger "change"
       @view.render.should.not.have.been.called

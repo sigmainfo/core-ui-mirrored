@@ -35,7 +35,6 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
 
   And 'the listing should contain "poet", "poetic", "poetisch", "poetise", "poetize", "poetry"' do
     sleep 0.3
-    # page.all(".terms tbody td:first").map(&:text).should == [ "poet", "poetisch", "poetry", "poetic", "poetize", "poetise" ]
     page.all(".terms tbody td:first").map(&:text).should == [ "poet", "poetisch", "poetic", "poetry", "poetize", "poetise" ]
   end
 

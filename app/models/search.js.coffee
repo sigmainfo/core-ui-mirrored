@@ -18,10 +18,9 @@ class Coreon.Models.Search extends Backbone.Model
     params
 
   query: ->
-    query = {}
-    query.t = @get "target" if @has "target"
-    query.q = @get "query"
-    $.param query
+    path = encodeURIComponent @get("query")
+    path = @get("target") + "/" + path if @has "target"
+    path
 
 
   sync: (method, model, options = {}) ->

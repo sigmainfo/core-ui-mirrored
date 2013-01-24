@@ -29,6 +29,6 @@ class Coreon.Views.Concepts.ConceptListItemView extends Coreon.Views.CompositeVi
 
   renderSuperconcepts: ->
     for superconceptId in @model.get "super_concept_ids"
-      label = new Coreon.Views.Concepts.ConceptLabelView superconceptId
+      label = new Coreon.Views.Concepts.ConceptLabelView id: superconceptId
       @$("td.super").append label.render().$el
       @subviews.push label

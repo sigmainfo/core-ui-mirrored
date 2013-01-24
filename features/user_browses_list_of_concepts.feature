@@ -18,7 +18,7 @@ Feature: user browses list of concepts
     When I enter "gun" in the search field
     And I click the search button
     And I click "Concepts only" within the concept search results
-    Then I should be on the search result page for concepts
+    Then I should be on the search result page for concepts with query "gun"
     And I should see a concept "handgun"
     And I should see it being defined as "A portable firearm"
     And I should see it having the following English terms: "gun", "firearm", "shot gun", "musket"
@@ -30,14 +30,10 @@ Feature: user browses list of concepts
     When I select "Concepts by Terms" as the type of search
     And I enter "gun" in the search field
     And I click the search button
-    Then I should be on the search result page for concepts
-    And the target should be "terms"
-    And the query should be "gun"
+    Then I should be on the search result page for concepts with target "terms" and query "gun"
   
   Scenario: concept search by definition
     When I select "Concepts by Definition" as the type of search
     And I enter "gun" in the search field
     And I click the search button
-    Then I should be on the search result page for concepts
-    And the target should be "definition"
-    And the query should be "gun"
+    Then I should be on the search result page for concepts with target "definition" and query "gun"

@@ -62,7 +62,7 @@ describe "Coreon.Collections.Hits", ->
         @hits.on "hit:update", @spy
         @hits.update [ @hit ]
         @spy.should.have.been.calledOnce
-        @spy.should.have.been.calledWith @hits, index: 0
+        @spy.should.have.been.calledWith @hits
 
       it "does not trigger hit:update when not changed", ->
         @hits.update [ @hit ], silent: true
@@ -92,7 +92,7 @@ describe "Coreon.Collections.Hits", ->
         @concept.on "hit:add", @spy
         @hits.update [ @hit ]
         @spy.should.have.been.calledOnce
-        @spy.should.have.been.calledWith @hit, @hits, index: 0
+        @spy.should.have.been.calledWith @hit, @hits
 
       it "triggers hit:remove", ->
         @hits.update [ @hit ], silent: true
