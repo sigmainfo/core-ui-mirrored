@@ -31,10 +31,10 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     search.fetch().done (data) =>
       Coreon.Models.Concept.upsert ( hit.result for hit in data.hits )
       idAttribute = Coreon.Models.Concept::idAttribute
-      @app.hits.update ( id: hit.result[idAttribute], score: hit.score, expandChildren: true, expandParents: true for hit in data.hits ) 
+      @app.hits.update ( id: hit.result[idAttribute], score: hit.score for hit in data.hits ) 
 
   show: (id) ->
     screen = new Coreon.Views.Concepts.ConceptView
       model: Coreon.Models.Concept.find id
     @view.switch screen
-    @app.hits.update [ id: id, expandChildren: true, expandParents: true ]
+    @app.hits.update [ id: id ]

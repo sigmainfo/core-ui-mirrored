@@ -99,7 +99,7 @@ describe "Coreon.Views.SearchView", ->
   describe "#onFocus", ->
 
     beforeEach ->
-      @event = jQuery.Event "focus"
+      @event = jQuery.Event "focusin"
       @view.render().$el.appendTo $("#konacha")
 
     it "is triggered by focus of input", ->

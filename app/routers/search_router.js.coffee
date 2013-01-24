@@ -37,4 +37,4 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
     searches.concepts.fetch().done (data) =>
       Coreon.Models.Concept.upsert ( hit.result for hit in data.hits )
       idAttribute = Coreon.Models.Concept::idAttribute
-      @app.hits.update ( id: hit.result[idAttribute], score: hit.score, expandChildren: true, expandParents: true for hit in data.hits ) 
+      @app.hits.update ( id: hit.result[idAttribute], score: hit.score for hit in data.hits ) 

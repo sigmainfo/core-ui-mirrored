@@ -48,7 +48,7 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
       @view.$el.should.have "input#coreon-password-password"
       @view.$("input#coreon-password-password").should.have.attr "type", "password"
       @view.$("input#coreon-password-password").should.have.attr "name", "login[password]"
-      @view.$("input#coreon-password-password").should.be ":required"
+      @view.$("input#coreon-password-password").should.have.attr "required"
 
 
     it "renders logout link", ->

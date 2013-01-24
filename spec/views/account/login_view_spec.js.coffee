@@ -32,7 +32,7 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.$el.should.have "input[id='coreon-login-login']"
       @view.$("input[id='coreon-login-login']").should.have.attr "type", "text"
       @view.$("input[id='coreon-login-login']").should.have.attr "name", "login[login]"
-      @view.$("input[id='coreon-login-login']").should.be ":required"
+      @view.$("input[id='coreon-login-login']").should.have.attr "required"
 
     it "renders input for password", ->
       @view.render()
@@ -41,7 +41,7 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.$el.should.have "input[id='coreon-login-password']"
       @view.$("input[id='coreon-login-password']").should.have.attr "type", "password"
       @view.$("input[id='coreon-login-password']").should.have.attr "name", "login[password]"
-      @view.$("input[id='coreon-login-password']").should.be ":required"
+      @view.$("input[id='coreon-login-password']").should.have.attr "required"
 
   describe "on keyup", ->
 
