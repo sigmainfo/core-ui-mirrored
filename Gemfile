@@ -38,6 +38,7 @@ end
 group :test do
   gem "spinach-rails"
   gem "launchy"
+  gem "rspec"
 end
 
 group :test, :development do

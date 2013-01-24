@@ -35,7 +35,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should see an error "Service is currently unavailable"' do
-    find("#coreon-notifications .error").should have_content "Service is currently unavailable"
+    page.should have_css("#coreon-notifications .error", text: "Service is currently unavailable")
   end
 
   Given 'my auth token is not valid' do
