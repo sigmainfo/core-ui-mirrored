@@ -23,7 +23,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @layout = d3.layout.tree()
   #   @stencil = d3.svg.diagonal()
   #     .projection (d) -> [d.y, d.x]
-    @model.on "change", @render, @
+    @listenTo @model, "change", @render
 
   renderMarkupSkeleton: ->
     @$el.html @template size: @options.size
@@ -48,7 +48,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     selection.exit()
       .remove()
       .each( (datum) ->
-        datum.view.dissolve()
+        datum.view.stopListening()
       )
 
     selection

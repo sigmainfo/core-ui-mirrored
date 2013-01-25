@@ -190,10 +190,10 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           @view.render()
           el = @view.$(".concept-node").get(0)
           datum = d3.select(el).data()[0]
-          datum.view.dissolve = sinon.spy()
+          datum.view.stopListening = sinon.spy()
           @view.model.tree = -> id: "root"
           @view.render()
-          datum.view.dissolve.should.have.been.calledOnce
+          datum.view.stopListening.should.have.been.calledOnce
           
         
         
