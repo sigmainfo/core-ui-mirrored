@@ -94,7 +94,7 @@ describe "Coreon.Views.SearchView", ->
     it "puts focus on search input", ->
       @view.render().$el.appendTo $("#konacha")
       @view.onClickedToFocus()
-      @view.$(":focus").should.have.id "coreon-search-query"
+      @view.$("#coreon-search-query").should.match ":focus"
 
   describe "#onFocus", ->
 
