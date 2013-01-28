@@ -1,6 +1,5 @@
 #= require spec_helper
 #= require models/concept
-#= require config/application
 #= require collections/hits
 
 describe "Coreon.Models.Concept", ->

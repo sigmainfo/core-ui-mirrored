@@ -106,7 +106,7 @@ describe "Coreon.Routers.SearchRouter", ->
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
 
       it "updates current hits", ->
-        @router.app.hits.update = sinon.spy()
+        @router.app.hits.reset = sinon.spy()
         @router.search "poet"
         @request.respond 200, {}, JSON.stringify
           hits: [
@@ -116,7 +116,7 @@ describe "Coreon.Routers.SearchRouter", ->
                 _id: "1234"
             }
           ]
-        @router.app.hits.update.should.have.been.calledWith [ { id: "1234", score: 1.56 }]
+        @router.app.hits.reset.should.have.been.calledWith [ { id: "1234", score: 1.56 }]
        
 
     it "restores search input", ->

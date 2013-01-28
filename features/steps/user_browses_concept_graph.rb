@@ -14,125 +14,129 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     @edges
   end
 
-  Given 'a concept "handgun"' do
+  step 'a concept "handgun"' do
     @concept = create_concept_with_label "handgun"
   end
 
-  And 'this concept is narrower than "weapon"' do
+  step 'this concept is narrower than "weapon"' do
     @weapon ||= create_concept_with_label "weapon"
     link_narrower_to_broader @concept, @weapon
   end
 
-  And 'this concept is broader than "pistol", "revolver"' do
+  step 'this concept is broader than "pistol", "revolver"' do
     @pistol = create_concept_with_label "pistol"
     link_narrower_to_broader @pistol, @concept
     @revolver = create_concept_with_label "revolver"
     link_narrower_to_broader @revolver, @concept
   end
 
-  And 'given a concept "long gun"' do
+  step 'given a concept "long gun"' do
     @concept = create_concept_with_label "long gun"
   end
 
-  And 'this concept is broader than "rifle"' do
+  step 'this concept is broader than "rifle"' do
     @rifle = create_concept_with_label "rifle"
     link_narrower_to_broader @rifle, @concept
   end
 
-  And '"weapon", "pen" are narrower than "tool"' do
+  step '"weapon", "pen" are narrower than "tool"' do
     @tool ||= create_concept_with_label "tool"
     @pen  ||= create_concept_with_label "pen"
     link_narrower_to_broader @weapon, @tool
     link_narrower_to_broader @pen, @tool
   end
 
-  When 'I enter the application' do
+  step 'I enter the application' do
     visit "/"
   end
 
-  Then 'I should see the widget "Concept Map"' do
+  step 'I should see the widget "Concept Map"' do
     page.should have_css(".widget h4", text: "Concept Map")
   end
 
-  And 'it should be empty' do
+  step 'it should be empty' do
     page.all("#coreon-concept-map .concept-node").count.should == 0
   end
 
-  And 'select "handgun" from the result list' do
+  step 'select "handgun" from the result list' do
     page.find(".search-results-concepts .concept-label", text: "handgun").click
   end
 
-  Then 'I shoud see "weapon", "handgun", "long gun", "pistol", and "revolver" displayed in the concept map' do
-    ["weapon", "handgun", "long gun", "pistol", "revolver"].each do |label|
+  step 'I shoud see "handgun" displayed in the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "handgun")
+  end
+
+  step 'I shoud see "weapon", "long gun", "pistol", and "revolver" displayed in the concept map' do
+    ["weapon", "long gun", "pistol", "revolver"].each do |label|
       page.should have_css("#coreon-concept-map .concept-node", text: label)
     end
   end
 
-  And '"handgun" should be marked as being selected' do
+  step '"handgun" should be marked as being selected' do
     page.should have_css("#coreon-concept-map .concept-node.hit", text: "handgun")
   end
 
-  And '"weapon" should be connected to "handgun"' do
+  step '"weapon" should be connected to "handgun"' do
     collect_edges 4
     @edges.should include("weapon -> handgun")
   end
 
-  And '"weapon" should be connected to "long gun"' do
+  step '"weapon" should be connected to "long gun"' do
     @edges.should include("weapon -> long gun")
   end
 
-  And '"handgun" should be connected to "pistol"' do
+  step '"handgun" should be connected to "pistol"' do
     @edges.should include("handgun -> pistol")
   end
 
-  And '"handgun" should be connected to "revolver"' do
+  step '"handgun" should be connected to "revolver"' do
     @edges.should include("handgun -> revolver")
   end
 
-  But 'I should not see "rifle"' do
+  step 'I should not see "rifle"' do
     page.should have_no_css("#coreon-concept-map .concept-node", text: "rifle")
   end
 
-  When 'I click to toggle the children of "long gun"' do
+  step 'I click to toggle the children of "long gun"' do
     page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children").click
   end
   
-  When 'I click to toggle the children of "weapon"' do
+  step 'I click to toggle the children of "weapon"' do
     page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-children").click
   end
 
-  Then 'I should see "rifle"' do
+  step 'I should see "rifle"' do
     page.should have_css("#coreon-concept-map .concept-node", text: "rifle")
   end
 
-  And '"long gun" should be connected to "rifle"' do
+  step '"long gun" should be connected to "rifle"' do
     collect_edges 5
     @edges.should include("long gun -> rifle")
   end
 
-  Then '"weapon" should be the only node left' do
+  step '"weapon" should be the only node left' do
     nodes = page.all("#coreon-concept-map .concept-node")
     nodes.should have(1).item
     nodes.first.text.should == "weapon"
   end
 
-  Then 'there should be no more connections' do
+  step 'there should be no more connections' do
     page.should have_no_css("#coreon-concept-map .concept-edge")
   end
 
-  When 'I click to toggle the parents of "weapon"' do
+  step 'I click to toggle the parents of "weapon"' do
     page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-parents").click
   end
 
-  Then 'I should see "tool"' do
+  step 'I should see "tool"' do
     page.should have_css("#coreon-concept-map .concept-node", text: "tool")
   end
 
-  And 'I should see "pen"' do
+  step 'I should see "pen"' do
     page.should have_css("#coreon-concept-map .concept-node", text: "pen")
   end
 
-  And '"tool" should be connected to "weapon"' do
+  step '"tool" should be connected to "weapon"' do
     collect_edges 1
     @edges.should include("tool -> weapon")
   end

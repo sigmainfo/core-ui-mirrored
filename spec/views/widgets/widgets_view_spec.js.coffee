@@ -22,7 +22,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     it "creates concept map", ->
       @view.map.should.be.an.instanceOf Coreon.Views.Widgets.ConceptMapView
       @view.map.model.should.be.an.instanceof Coreon.Collections.ConceptNodes
-      @view.map.model.options.should.have.property "hits", @view.model.hits
+      @view.map.model.should.have.property "hits", @view.model.hits
     
   describe "render()", ->
 

@@ -21,7 +21,8 @@ Feature: user browses concept graph
     And it should be empty
     When I search for "handgun"
     And select "handgun" from the result list
-    Then I shoud see "weapon", "handgun", "long gun", "pistol", and "revolver" displayed in the concept map
+    Then I shoud see "handgun" displayed in the concept map
+    And I shoud see "weapon", "long gun", "pistol", and "revolver" displayed in the concept map
     And "handgun" should be marked as being selected
     And "weapon" should be connected to "handgun"
     And "weapon" should be connected to "long gun"
