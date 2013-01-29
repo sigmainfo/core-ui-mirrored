@@ -1,3 +1,3 @@
-%h2.label= @concept.label()
+%h2.label= @concept.get "label"
 %h4.system-info-toggle(title="System Info")= I18n.t "concept.info"
 != @info

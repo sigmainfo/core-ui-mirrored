@@ -28,68 +28,91 @@ describe "Coreon.Models.Concept", ->
       @model.get("super_concept_ids").should.eql []
       @model.get("sub_concept_ids").should.eql []
 
-  describe "label()", ->
-    
-    it "uses id when no label is given", ->
-      @model.id = "abcd1234"
-      @model.label().should.equal "abcd1234"
+  describe "attributes", ->
+  
+    describe "label", ->
 
-    it "uses first English term when given", ->
-      @model.set "terms", [
-        {
-          lang: "fr"
-          value: "poésie"
-        }
-        {
-          lang: "en"
-          value: "poetry"
-        }
-      ], silent: true
-      @model.label().should.equal "poetry"    
+      context "when created", ->
 
-    it "uses first given term when no English term exists", ->
-      @model.id = "abcd1234"
-      @model.set "terms", [
-        lang: "fr"
-        value: "poésie"
-      ], silent: true  
-      @model.label().should.equal "poésie"
+        it "defaults to id", ->
+          @model.id = "#abcdef"
+          @model.initialize()
+          @model.get("label").should.equal "#abcdef"
 
-    it "uses label property when given", ->
-      @model.id = "abcd1234"
-      @model.set {
-        terms: [
-          lang: "en"
-          value: "poetry"
-        ]
-        properties: [
-          key: "label"
-          value: "MyLabel"
-        ]
-      }, silent: true
-      @model.label().should.equal "MyLabel"
+        it "uses first English term", ->
+          @model.set "terms", [
+            {
+              lang: "fr"
+              value: "poésie"
+            }
+            {
+              lang: "en"
+              value: "poetry"
+            }
+          ], silent: true
+          @model.initialize()
+          @model.get("label").should.equal "poetry"
 
-    it "escapes label value", ->
-      @model.set "properties", [
-        key: "label"
-        value: "<script>xss()</script>"
-      ]
-      @model.label().should.equal "&lt;script&gt;xss()&lt;&#x2F;script&gt;"
+        it "falls back to term in other language", ->
+          @model.set "terms", [
+            lang: "fr"
+            value: "poésie"
+          ], silent: true
+          @model.initialize()
+          @model.get("label").should.equal "poésie"
 
-    it "handles term lang gracefully", ->
-      @model.set "terms", [
-        {
-          lang: "fr"
-          value: "poésie"
-        }
-        {
-          lang: "EN_US"
-          value: "poetry"
-        }
-      ], silent: true
-      @model.label().should.equal "poetry" 
+        it "is overwritten by property", ->
+          @model.set {
+            terms: [
+              lang: "en"
+              value: "poetry"
+            ]
+            properties: [
+              key: "label"
+              value: "My_label"
+            ]
+          }, silent: true
+          @model.initialize()
+          @model.get("label").should.equal "My_label"
 
+        it "escapes label value", ->
+          @model.set "properties", [
+            key: "label"
+            value: "<script>xss()</script>"
+          ]
+          @model.initialize()
+          @model.get("label").should.equal "&lt;script&gt;xss()&lt;&#x2F;script&gt;"
 
+        it "handles term lang gracefully", ->
+          @model.set "terms", [
+            {
+              lang: "fr"
+              value: "poésie"
+            }
+            {
+              lang: "EN_US"
+              value: "poetry"
+            }
+          ], silent: true
+          @model.initialize()
+          @model.get("label").should.equal "poetry"
+
+      context "on changes", ->
+       
+        it "updates label on term changes", ->
+          @model.set "terms", [
+            lang: "en"
+            value: "poetry"
+          ]
+          @model.get("label").should.equal "poetry"
+            
+        it "updates label on property changes", ->
+          @model.set "properties", [
+            key: "label"
+            value: "My Label"
+          ]
+          @model.get("label").should.equal "My Label"
+        
   describe "info()", ->
     
     it "returns hash with system info attributes", ->

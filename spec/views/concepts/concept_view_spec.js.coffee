@@ -32,7 +32,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render.should.have.been.calledOnce
   
     it "renders label", ->
-      @view.model.label = -> "Handgun"
+      @view.model.set "label", "Handgun", silent: true
       @view.render()
       @view.$el.should.have "h2.label"
       @view.$("h2.label").should.have.text "Handgun"

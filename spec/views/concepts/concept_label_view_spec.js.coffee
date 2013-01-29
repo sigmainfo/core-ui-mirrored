@@ -48,7 +48,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.$el.should.have.attr "href", "/concepts/1234"
 
     it "renders label", ->
-      @view.model.label = -> "Zitrone"
+      @view.model.set "label", "Zitrone", silent: true
       @view.render()
       @view.$el.should.have.text "Zitrone"
 

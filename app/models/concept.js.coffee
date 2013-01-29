@@ -12,10 +12,12 @@ class Coreon.Models.Concept extends Backbone.Model
     terms: []
     super_concept_ids: []
     sub_concept_ids: []
+    label: ""
 
-  label: ->
-    _.escape( @propLabel() or @termLabel() or @id )
-
+  initialize: ->
+    @set "label", @_label(), silent: true
+    @on "change:terms change:properties", @_updateLabel, @
+ 
   info: ->
     internals = _(@defaults).keys()
     internals.unshift @idAttribute
@@ -24,10 +26,16 @@ class Coreon.Models.Concept extends Backbone.Model
   hit: ->
     Coreon.application.hits.get(@id)?
 
-  propLabel: ->
+  _updateLabel: ->
+    @set "label", @_label()
+
+  _label: ->
+    _.escape( @_propLabel() or @_termLabel() or @id )
+
+  _propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 
-  termLabel: ->
+  _termLabel: ->
     terms = @get "terms"
     label = null
     for term in terms

@@ -92,7 +92,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             id: "root"
             children: [
               id: "node_1"
-              model: new Backbone.Model(id: "node_1")
+              model: new Backbone.Model(id: "node_1", label: "Node 1")
             ]
           @view.render()
 
@@ -100,8 +100,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           @view.model.tree = ->
             id: "root"
             children: [
-              { id: "node_1", model: new Backbone.Model(id: "node_1") }
-              { id: "node_2", model: new Backbone.Model(id: "node_2") }
+              { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1") }
+              { id: "node_2", model: new Backbone.Model(id: "node_2", label: "Node 2") }
             ]
           @view.render()
           @view.$("svg g.concept-map .concept-node").should.have.lengthOf 2
@@ -125,14 +125,14 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
               { id: "root" }
               {
                 id: "node_1"
-                model: new Backbone.Model(id: "node_1")
+                model: new Backbone.Model(id: "node_1", label: "Node 1")
                 depth: 3 
                 x: 0.2
                 y: 0.75
               }
               {
                 id: "node_2"
-                model: new Backbone.Model(id: "node_2")
+                model: new Backbone.Model(id: "node_2", label: "Node 2")
                 depth: 5 
                 x: 0.5
                 y: 0.6
@@ -154,7 +154,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
               { id: "root" }
               {
                 id: "node_1"
-                model: new Backbone.Model(id: "node_1")
+                model: new Backbone.Model(id: "node_1", label: "Node 1")
                 depth: 3 
                 x: 0.2
               }
@@ -165,7 +165,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       context "updating view instances", ->
 
         it "creates view for newly created node", ->
-          node = new Backbone.Model id: "node"
+          node = new Backbone.Model id: "node", label: "Node"
           @view.model.tree = ->
             id: "root"
             children: [
@@ -185,7 +185,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             id: "root"
             children: [
               id: "node"
-              model: new Backbone.Model(id: "node_1")
+              model: new Backbone.Model(id: "node_1", label: "Node 1")
             ]
           @view.render()
           el = @view.$(".concept-node").get(0)

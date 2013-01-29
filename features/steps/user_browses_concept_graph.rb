@@ -6,9 +6,9 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   def collect_edges(count)
     @edges = []
     (0...count).each do |i|
-      edge = page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.source.concept.label()|)
+      edge = page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.source.concept.get("label")|)
       edge << " -> "
-      edge << page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.target.concept.label()|)
+      edge << page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.target.concept.get("label")|)
       @edges.push edge
     end
     @edges

@@ -43,6 +43,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         datum.view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
+        datum.view.render()
       )
     
     selection.exit()
