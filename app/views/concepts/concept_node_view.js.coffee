@@ -11,40 +11,35 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     @listenTo @model, "change", @render
 
   render: ->
-    
+    @clear()
+
+    @svg.classed "hit", @model.has "hit"
+
     a = @svg.append("svg:a")
       .attr("xlink:href", "/concepts/#{@model.id}")
 
+    bg = a.append("svg:rect")
+      .attr("class", "background")
+      .attr("height", 17)
+
+    a.append("svg:circle")
+      .attr("class", "bullet")
+      .attr("cx", 7)
+      .attr("cy", 9)
+      .attr("r", 2.5)
+    
     label = a.append("svg:text")
       .attr("x", 14)
       .attr("y", 13)
       .text(@shorten @model.get("label"))
+    
+    labelBox = label.node().getBBox()
+    bg.attr("width", labelBox.x + labelBox.width + 3)
+
     @
 
 
-
-  #   @clear()
   #   @toggleHit()
-
-  #   a = @svg.append("svg:a")
-  #     .attr("xlink:href", "/concepts/#{@model.id}")
-
-  #   bg = a.append("svg:rect")
-  #     .attr("class", "background")
-  #     .attr("height", 17)
-
-  #   a.append("svg:circle")
-  #     .attr("cx", 7)
-  #     .attr("cy", 9)
-  #     .attr("r", 2.5)
-  #   
-  #   label = a.append("svg:text")
-  #     .attr("x", 14)
-  #     .attr("y", 13)
-  #     .text(@abbreviate(@model.label()))
-
-  #   textBox = label.node().getBBox()
-  #   bg.attr("width", textBox.width + textBox.x + 3)
 
   #   bgBox = bg.node().getBBox()
   #   if @model.get("sub_concept_ids").length > 0
@@ -79,13 +74,6 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
   #   
   #   toggle
   #   
-  # abbreviate: (text) ->
-  #   text = text[0..10] + "…" if text.length > 10
-  #   text
-# 
-#   setElement: (el, delegate) ->
-#     super el, delegate
-#     @svg = d3.select(@el).classed "concept-node", true
 
   # toggleHit: ->
   #   @svg.classed "hit", @model.hit()

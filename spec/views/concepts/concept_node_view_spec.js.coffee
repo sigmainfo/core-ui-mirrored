@@ -37,34 +37,46 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @el.select("text").text().should.equal "Revolver"
 
-  #   it "shortens lengthy labels", ->
-  #     @view.model.label = -> "Horticultural mulches made from cocoa shell waste"
-  #     @view.render()
-  #     @el.select("text").text().should.equal "Horticultur…"
+    it "is cleared before rerendering", ->
+      @view.render()
+      @view.render()
+      console.log @el.selectAll("a")[0].should.have.length 1
 
-  #   it "adjusts bg width to label length", ->
-  #     sinon.stub SVGTextElement::, "getBBox", ->
-  #       x: 10
-  #       y: 5
-  #       width:100
-  #       height: 20
-  #     try
-  #       @view.render()
-  #       @el.select(".background").attr("width").should.equal "113"
-  #     finally
-  #       SVGTextElement::getBBox.restore()
+    it "shortens lengthy labels", ->
+      @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true
+      @view.render()
+      @el.select("text").text().should.equal "Horticult…"
 
-  #   it "classifies hit", ->
-  #     @view.model.hit = -> true
-  #     @view.render()
-  #     @el.classed("hit").should.be.true
+    it "classifies hit", ->
+      @view.model.set "hit", { score: 1.5 },  silent: true
+      @view.render()
+      @el.classed("hit").should.be.true
 
-  #   it "removes hit class when no longer valid", ->
-  #     @view.model.hit = -> true
-  #     @view.render()
-  #     @view.model.hit = -> false
-  #     @view.render()
-  #     @el.classed("hit").should.be.false
+    it "does not classify as hit by default", ->
+      @view.model.set "hit", null,  silent: true
+      @view.render()
+      @el.classed("hit").should.be.false
+
+    it "renders circle", ->
+      @view.render()
+      @el.select("circle").attr("class").should.equal "bullet"
+
+    it "renders background", ->
+      @view.render()
+      @el.select("rect").attr("class").should.equal "background"
+      
+    it "adjusts bg width to label length", ->
+      sinon.stub SVGTextElement::, "getBBox", ->
+        x: 10
+        y: 5
+        width:100
+        height: 20
+      try
+        @view.render()
+        @el.select(".background").attr("width").should.equal "113"
+      finally
+        SVGTextElement::getBBox.restore()
+
 
   #   it "creates children toggle", ->
   #     @view.model.set "sub_concept_ids", ["123"], silent: true
@@ -105,19 +117,6 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
   #     @view.render()
   #     @view.$el.should.not.have ".toggle-parents"
 
-  # describe "toggleHit()", ->
-
-  #   it "classifies hit on hit add", ->
-  #     @view.model.hit = -> true
-  #     @view.model.trigger "hit:add"
-  #     @el.classed("hit").should.be.true
-
-  #   it "classifies hit on hit remove", ->
-  #     @view.model.hit = -> true
-  #     @view.render()
-  #     @view.model.hit = -> false
-  #     @view.model.trigger "hit:remove"
-  #     @el.classed("hit").should.not.be.true
 
   # describe "toggle", ->
 
