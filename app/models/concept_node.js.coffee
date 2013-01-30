@@ -18,10 +18,13 @@ class Coreon.Models.ConceptNode extends Backbone.Model
     else if attributes.id?
       Coreon.Models.Concept.find attributes.id
     if @concept?
-      @listenTo @concept, "all", @trigger
+      @listenTo @concept, "all", @_onConceptChange
 
   get: (attr) ->
     if @concept?.attributes.hasOwnProperty attr
       @concept.get attr
     else
       super attr
+
+  _onConceptChange: (type, model, args...) ->
+    @trigger type, @, args... if type.indexOf("change") is 0

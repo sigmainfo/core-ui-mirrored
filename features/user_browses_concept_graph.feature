@@ -22,9 +22,10 @@ Feature: user browses concept graph
     When I search for "handgun"
     And select "handgun" from the result list
     Then I shoud see "handgun" displayed in the concept map
-    And I should see 
-    And I shoud see "weapon", "long gun", "pistol", and "revolver" displayed in the concept map
-    And "handgun" should be marked as being selected
+    And I should see nodes for "pistol" and "revolver"
+    And I should see a node "weapon"
+    And I should see a node "long gun"
+    And only "handgun" should be marked as being selected
     And "weapon" should be connected to "handgun"
     And "weapon" should be connected to "long gun"
     And "handgun" should be connected to "pistol"

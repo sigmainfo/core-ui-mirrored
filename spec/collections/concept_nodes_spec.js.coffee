@@ -82,3 +82,67 @@ describe "Coreon.Collections.ConceptNodes", ->
       node = @collection.get "123"
       node.get("childrenExpanded").should.be.true
       node.get("parentsExpanded").should.be.true
+
+  describe "on add", ->
+
+    beforeEach ->
+      @node = new Backbone.Model _id: "node"
+    
+    context "with children expanded", ->
+
+      beforeEach ->
+        @node.set "childrenExpanded", true, silent: true
+
+      it "adds children", ->
+        @node.set "sub_concept_ids", ["child_1", "child_2"]
+        @collection.add @node
+        @collection.should.have.length 3 
+        expect( @collection.get "child_1" ).to.exist
+        expect( @collection.get "child_2" ).to.exist
+
+      it "does not create duplicates", ->
+        @node.set "sub_concept_ids", ["node"], silent: true
+        @collection.add @node
+        @collection.should.have.length 1 
+        
+    context "with children collapsed", ->
+
+      beforeEach ->
+        @node.set "childrenExpanded", false, silent: true
+
+      it "does not add children", ->
+        @node.set "sub_concept_ids", ["child_1", "child_2"], silent: true
+        @collection.add @node
+        @collection.should.have.length 1 
+
+  describe "on change", ->
+
+    beforeEach ->
+      @node = new Backbone.Model _id: "node"
+      @collection.reset [ @node ], silent: true
+
+    context "sub_concept_ids", ->
+      
+      context "with children expanded", ->
+
+        beforeEach ->
+          @node.set "childrenExpanded", true, silent: true
+        
+        it "adds children when sub_concept_ids change", ->
+          @node.set "sub_concept_ids", ["child_1", "child_2"]
+          @collection.should.have.length 3 
+          expect( @collection.get "child_1" ).to.exist
+          expect( @collection.get "child_2" ).to.exist
+        
+        it "does not create duplicates", ->
+          @node.set "sub_concept_ids", ["node"]
+          @collection.should.have.length 1 
+
+      context "with children collapsed", ->
+
+        beforeEach ->
+          @node.set "childrenExpanded", false, silent: true
+
+        it "does  not add children when sub_concept_ids change", ->
+          @node.set "sub_concept_ids", ["child_1", "child_2"]
+          @collection.should.have.length 1 

@@ -54,10 +54,16 @@ describe "Coreon.Models.ConceptNode", ->
         @concept.set "label", "concept #123", silent: true
         @node.get("label").should.equal "concept #123"
 
-      it "triggers concept events", ->
+      it "triggers concept change events", ->
         spy = sinon.spy()
-        @node.on "change:foo", spy
-        @concept.trigger "change:foo", @node, {}
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith @node, {}
+        @node.on "all", spy
+        @concept.set "foo", "bar", myOption: true
+        spy.should.have.been.calledTwice
+        spy.firstCall.should.have.been.calledWith "change:foo", @node, "bar", myOption: true
+        spy.secondCall.should.have.been.calledWith "change", @node, myOption: true
 
+      it "does not trigger other concept events", ->
+        spy = sinon.spy()
+        @node.on "all", spy
+        @concept.destroy()
+        spy.should.not.have.been.called

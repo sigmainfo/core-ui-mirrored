@@ -15,6 +15,7 @@ class Coreon.Collections.ConceptNodes extends Backbone.Collection
       @listenTo @hits, "reset", @_onHitsReset
       @_onHitsReset()
     @initializeDigraph()
+    @on "add change:sub_concept_ids", @_onChangeChildren, @
   
   resetFromHits: (hits) ->
     attrs = for hit in hits
@@ -23,6 +24,10 @@ class Coreon.Collections.ConceptNodes extends Backbone.Collection
       childrenExpanded: true
       parentsExpanded: true
     @update attrs
+
+  _onChangeChildren: (model) ->
+    if ( childIds = model.get "sub_concept_ids" ) and model.get "childrenExpanded"
+      @add id: childId for childId in childIds when not @get(childId)?
 
   _onHitsReset: ->
     @resetFromHits @hits.models
