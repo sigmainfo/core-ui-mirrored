@@ -76,6 +76,10 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: "weapon")
   end
 
+  step 'I should see a node "long gun"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "long gun")
+  end
+
   step '"handgun" should be marked as being selected' do
     page.should have_css("#coreon-concept-map .concept-node.hit", text: "handgun")
   end

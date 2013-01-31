@@ -21,6 +21,10 @@ describe "Coreon.Collections.ConceptNodes", ->
   it "includes digraph functionality", ->
     Coreon.Collections.ConceptNodes::tree.should.equal Coreon.Modules.Digraph.tree
 
+  it "is configured to use sub_concept_ids for walking the graph", ->
+    node = new Coreon.Models.ConceptNode sub_concept_ids: ["child_1", "child_2"]
+    @collection.options.down(node).should.eql ["child_1", "child_2"]
+
   describe "initialize()", ->
 
     it "initializes digraph options", ->
@@ -83,10 +87,10 @@ describe "Coreon.Collections.ConceptNodes", ->
       node.get("childrenExpanded").should.be.true
       node.get("parentsExpanded").should.be.true
 
-  describe "on add", ->
+  describe "add()", ->
 
     beforeEach ->
-      @node = new Backbone.Model _id: "node"
+      @node = new @collection.model id: "node"
     
     context "with children expanded", ->
 
@@ -94,17 +98,12 @@ describe "Coreon.Collections.ConceptNodes", ->
         @node.set "childrenExpanded", true, silent: true
 
       it "adds children", ->
-        @node.set "sub_concept_ids", ["child_1", "child_2"]
+        @node.set "sub_concept_ids", ["child_1", "child_2"], silent: true
         @collection.add @node
         @collection.should.have.length 3 
         expect( @collection.get "child_1" ).to.exist
         expect( @collection.get "child_2" ).to.exist
 
-      it "does not create duplicates", ->
-        @node.set "sub_concept_ids", ["node"], silent: true
-        @collection.add @node
-        @collection.should.have.length 1 
-        
     context "with children collapsed", ->
 
       beforeEach ->
@@ -113,12 +112,74 @@ describe "Coreon.Collections.ConceptNodes", ->
       it "does not add children", ->
         @node.set "sub_concept_ids", ["child_1", "child_2"], silent: true
         @collection.add @node
-        @collection.should.have.length 1 
+        @collection.should.have.length 1
+
+    context "with parents expanded", ->
+      
+      beforeEach ->
+        @node.set "parentsExpanded", true, silent: true
+
+      it "adds parents", ->
+        @node.set "super_concept_ids", ["parent_1", "parent_2"], silent: true
+        @collection.add @node
+        @collection.should.have.length 3 
+        expect( @collection.get "parent_1" ).to.exist
+        expect( @collection.get "parent_2" ).to.exist
+
+      it "expands children of newly added parents", ->
+        @node.set "super_concept_ids", ["parent"], silent: true
+        @collection.add @node
+        @collection.get("parent").get("childrenExpanded").should.be.true
+
+      it "expands children of existing parents", ->
+        @node.set "super_concept_ids", ["parent"], silent: true
+        @collection.reset [ id: "parent", sub_concept_ids: ["sibling_1", "sibling_2"] ], silent: true
+        @collection.add @node
+        @collection.get("parent").get("childrenExpanded").should.be.true
+        @collection.should.have.length 4
+        expect( @collection.get "sibling_1" ).to.exist
+        expect( @collection.get "sibling_2" ).to.exist
+
+    context "with parents collapsed", ->
+      
+      beforeEach ->
+        @node.set "parentsExpanded", false, silent: true
+
+      it "does not add parents", ->
+        @node.set "super_concept_ids", ["parent_1", "parent_2"], silent: true
+        @collection.add @node
+        @collection.should.have.length 1
+  
+  describe "remove()", ->
+
+    beforeEach ->
+      @node = new @collection.model id: "node"
+      @collection.reset [ @node ], silent: true
+      
+    it "removes children", ->
+      @node.set "sub_concept_ids", [ "child_1", "child_2" ], silent: true
+      @collection.add [ {id: "child_1"}, {id: "child_2"} ], silent: true
+      @collection.remove @node 
+      @collection.should.have.length 0
+
+    it "removes children of children", ->
+      @node.set "sub_concept_ids", [ "child" ], silent: true
+      child = id: "child", sub_concept_ids: [ id: "child_of_child" ]
+      @collection.add [
+        { id: "child", sub_concept_ids: [ "child_of_child" ] }
+        { id: "child_of_child" }
+      ], silent: true
+      @collection.remove @node 
+      @collection.should.have.length 0
+
+    it "keeps nodes that have another parent", ->
+      
+      
 
   describe "on change", ->
 
     beforeEach ->
-      @node = new Backbone.Model _id: "node"
+      @node = new @collection.model id: "node"
       @collection.reset [ @node ], silent: true
 
     context "sub_concept_ids", ->
@@ -128,7 +189,7 @@ describe "Coreon.Collections.ConceptNodes", ->
         beforeEach ->
           @node.set "childrenExpanded", true, silent: true
         
-        it "adds children when sub_concept_ids change", ->
+        it "adds children", ->
           @node.set "sub_concept_ids", ["child_1", "child_2"]
           @collection.should.have.length 3 
           expect( @collection.get "child_1" ).to.exist
@@ -143,6 +204,116 @@ describe "Coreon.Collections.ConceptNodes", ->
         beforeEach ->
           @node.set "childrenExpanded", false, silent: true
 
-        it "does  not add children when sub_concept_ids change", ->
+        it "does not add children", ->
           @node.set "sub_concept_ids", ["child_1", "child_2"]
-          @collection.should.have.length 1 
+          @collection.should.have.length 1
+
+    context "super_concept_ids", ->
+
+      context "with parents expanded", ->
+        
+        beforeEach ->
+          @node.set "parentsExpanded", true, silent: true
+
+        it "adds parents", ->
+          @node.set "super_concept_ids", ["parent_1", "parent_2"]
+          @collection.should.have.length 3 
+          expect( @collection.get "parent_1" ).to.exist
+          expect( @collection.get "parent_2" ).to.exist
+
+        it "expands children of newly added parents", ->
+          @node.set "super_concept_ids", ["parent"]
+          @collection.get("parent").get("childrenExpanded").should.be.true
+
+        it "expands children of existing parents", ->
+          parent = id: "parent", sub_concept_ids: ["sibling_1", "sibling_2"]
+          @collection.reset [ parent, @node ], silent: true
+          @node.set "super_concept_ids", ["parent"]
+          @collection.get("parent").get("childrenExpanded").should.be.true
+          @collection.should.have.length 4
+          expect( @collection.get "sibling_1" ).to.exist
+          expect( @collection.get "sibling_2" ).to.exist
+
+
+      context "with parents collapsed", ->
+        
+        beforeEach ->
+          @node.set "parentsExpanded", false, silent: true
+
+        it "does not add parents", ->
+          @node.set "super_concept_ids", ["parent_1", "parent_2"]
+          @collection.should.have.length 1
+
+    context "childrenExpanded", ->
+
+      beforeEach ->
+        @node.set sub_concept_ids: ["child_1", "child_2"]
+        @collection.reset [ @node ]
+
+      context "set to true", ->
+        
+        beforeEach ->
+          @node.set "childrenExpanded", false, silent: true
+        
+        it "adds children", ->
+          @node.set "childrenExpanded", true
+          @collection.should.have.length 3
+          expect( @collection.get "child_1" ).to.exist
+          expect( @collection.get "child_2" ).to.exist
+
+      context "set to false", ->
+        
+        beforeEach ->
+          @node.set "childrenExpanded", true, silent: true
+        
+        xit "removes children", ->
+          @collection.add [ {id: "child_1"}, {id: "child_2"} ], silent: true
+          @node.set "childrenExpanded", false
+          @collection.should.have.length 1
+
+        it "keeps children that have other parent"
+        it "removes children of children"
+        it "keeps children of children that have other parents"
+
+    context "parentsExpanded", ->
+     
+      beforeEach ->
+        @node.set super_concept_ids: ["parent_1", "parent_2"]
+        @collection.reset [ @node ], silent: true
+
+      context "set to true", ->
+        
+        beforeEach ->
+          @node.set "parentsExpanded", false, silent: true
+        
+        it "adds parents", ->
+          @node.set "parentsExpanded", true
+          @collection.should.have.length 3
+          expect( @collection.get "parent_1" ).to.exist
+          expect( @collection.get "parent_2" ).to.exist
+
+        it "expands children of newly added parents", ->
+          @node.set "parentsExpanded", true
+          @collection.get("parent_1").get("childrenExpanded").should.be.true
+          @collection.get("parent_2").get("childrenExpanded").should.be.true
+
+        it "expands children of existing parents", ->
+          parent = id: "parent_1", sub_concept_ids: ["sibling_1", "sibling_2"]
+          @collection.reset [ parent, @node ], silent: true
+          @node.set "parentsExpanded", true
+          @collection.get("parent_1").get("childrenExpanded").should.be.true
+          @collection.should.have.length 5
+          expect( @collection.get "sibling_1" ).to.exist
+          expect( @collection.get "sibling_2" ).to.exist
+
+      context "set to false", ->
+        
+        beforeEach ->
+          @node.set "parentsExpanded", true
+          
+        it "removes children"
+        it "keeps children that have other parent"
+        it "removes children of children"
+        it "keeps children of children that have other parents"
+
+
