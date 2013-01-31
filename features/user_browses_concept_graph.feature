@@ -1,4 +1,3 @@
-@wip
 Feature: user browses concept graph
   In order to explore related concepts
   As a user browsing a selection of concepts

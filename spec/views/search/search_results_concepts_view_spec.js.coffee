@@ -85,3 +85,11 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
       @view.render()
       @view.$el.should.have "a.show-all[href='/concepts/search?q=gun']"
       @view.$("a.show-all").should.have.text "Show all"
+
+    it "renders link to create concept", ->
+      I18n.t.withArgs("search.concepts.create").returns "Create Concept Stub"
+      @view.model.query = -> "q=gun"
+      @view.render()
+      @view.$el.should.have "a.create-concept[href='/concepts/create']"
+      @view.$("a.create-concept").should.have.text "Create Concept Stub"
+
