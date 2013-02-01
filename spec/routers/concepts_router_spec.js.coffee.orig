@@ -135,6 +135,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.app.hits.reset.should.have.been.calledWith [ id: "123" ]
 =======
       @router.app.hits.update.should.have.been.calledWith [ id: "123" ]
+>>>>>>> 0818c1d45eb856828bc4961f8721011c2c41afa3
 
   describe "#create", ->
 
@@ -143,4 +144,3 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
 
 
->>>>>>> model, model-spec, router, router-spec, view, view-spec initialized.

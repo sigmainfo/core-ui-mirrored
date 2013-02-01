@@ -42,6 +42,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @app.hits.reset [ id: id ]
 =======
     @app.hits.update [ id: id ]
+>>>>>>> 0818c1d45eb856828bc4961f8721011c2c41afa3
 
   create: ->
->>>>>>> model, model-spec, router, router-spec, view, view-spec initialized.

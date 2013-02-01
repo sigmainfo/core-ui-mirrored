@@ -88,6 +88,7 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
 <<<<<<< HEAD
       @view.$("a.show-all").should.have.attr "href", "/concepts/search/gun"
 =======
+>>>>>>> 0818c1d45eb856828bc4961f8721011c2c41afa3
 
     it "renders link to create concept", ->
       I18n.t.withArgs("search.concepts.create").returns "Create Concept Stub"
@@ -96,4 +97,3 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
       @view.$el.should.have "a.create-concept[href='/concepts/create']"
       @view.$("a.create-concept").should.have.text "Create Concept Stub"
 
->>>>>>> started feature
