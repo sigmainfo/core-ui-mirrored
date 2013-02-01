@@ -1,7 +1,7 @@
 #= require environment
 #= require views/simple_view
 
-class Coreon.Views.CompositeView extends Coreon.Views.SimpleView 
+class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
 
   initialize: ->
     super

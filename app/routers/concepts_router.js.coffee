@@ -8,6 +8,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
   routes:
     "concepts/search/(:target/):query" : "search"
     "concepts/:id"    : "show"
+    "concepts/create" : "create"
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -38,3 +39,5 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       model: Coreon.Models.Concept.find id
     @view.switch screen
     @app.hits.reset [ id: id ]
+
+  create: ->

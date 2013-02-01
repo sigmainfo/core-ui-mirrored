@@ -132,3 +132,11 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.app.hits.reset = sinon.spy()
       @router.show "123"
       @router.app.hits.reset.should.have.been.calledWith [ id: "123" ]
+
+  describe "#create", ->
+
+    it "is routed", ->
+      @router.routes["concepts/create"].should.equal "create"
+
+
+
