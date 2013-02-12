@@ -11,205 +11,537 @@ describe "Coreon.Collections.Digraph", ->
 
   describe "initialize()", ->
   
-    it "takes option for target ids"
+    it "prepares edgesIn", ->
+      @graph.edgesIn.should.eql {}
+
+    it "prepares edgesOut", ->
+      @graph.edgesOut.should.eql {}
+
+    it "takes option for target ids", ->
+      @graph.initialize [], digraph: out: "__targets__"
+      @graph.reset [
+        { _id: "source", __targets__: [ "target" ] }
+        { _id: "target" }
+      ]
+      @graph.edgesIn.should.have.deep.property "target.length", 1
+      @graph.get("source").set "__targets__", []
+      @graph.edgesIn.should.have.deep.property "target.length", 0
+
+    it "takes option for source ids", ->
+      @graph.initialize [], digraph: in: "__sources__"
+      @graph.reset [
+        { _id: "target", __sources__: [ "source" ] }
+        { _id: "source" }
+      ]
+      @graph.edgesIn.should.have.deep.property "target.length", 1
+      @graph.get("target").set "__sources__", []
+      @graph.edgesIn.should.have.deep.property "target.length", 0
+
+  describe "add()", ->
+  
+    it "can be chained", ->
+      @graph.add().should.equal @graph
+
+    it "calls super", ->
+      sinon.spy Backbone.Collection::, "add"
+      try
+        @graph.add _id: "node"
+        Backbone.Collection::add.should.have.been.calledOnce
+        Backbone.Collection::add.should.have.been.calledWithExactly _id: "node"
+      finally
+        Backbone.Collection::add.restore()
+
+    context "edgesIn", ->
+
+      context "for nodes without target or source ids", ->
+
+        it "creates empty array", ->
+          @graph.add _id: "node"
+          @graph.edgesIn.should.have.property "node"
+          @graph.edgesIn["node"].should.be.an.instanceof Array
+          @graph.edgesIn["node"].should.have.length 0
+           
+        it "handles multiple nodes", ->
+          @graph.add [
+            { _id: "node_1" }
+            { _id: "node_2" }
+          ]
+          @graph.edgesIn.should.have.property "node_1"
+          @graph.edgesIn.should.have.property "node_2"
+
+      context "for nodes with target ids", ->
+
+        it "creates edge for newly added node", ->
+          @graph.reset [ _id: "target" ], silent: true
+          @graph.add _id: "source", targetIds: [ "target" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+          @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
+
+        it "drops edge to external node", ->
+          @graph.add _id: "source", targetIds: [ "external" ]
+          @graph.edgesIn.should.not.have.property "external"
+
+        it "creates edge to existing node", ->
+          @graph.reset [ _id: "source", targetIds: [ "target" ] ], silent: true
+          @graph.add _id: "target"
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+          @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
+
+        it "does not create duplicates", ->
+          @graph.reset [ _id: "source", targetIds: [ "target", "target" ] ], silent: true
+          @graph.add _id: "target"
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+
+      context "for nodes with source ids", ->
+        
+        it "creates edge for newly added node", ->
+          @graph.reset [ _id: "source" ], silent: true
+          @graph.add _id: "target", sourceIds: [ "source" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+          @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
+
+        it "drops edge to external node", ->
+          @graph.add _id: "target", sourceIds: [ "external" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+
+        it "creates edge to existing node", ->
+          @graph.reset [ _id: "target", sourceIds: [ "source" ] ], silent: true
+          @graph.add _id: "source"
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+          @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
+
+        it "does not create duplicates", ->
+          @graph.reset [ _id: "target", sourceIds: [ "source", "source" ] ], silent: true
+          @graph.add _id: "source"
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+
+      context "for nodes with both source and target ids", ->
+        
+        it "does not create duplicates for target ids", ->
+          @graph.reset [ _id: "target", sourceIds: [ "source" ] ], silent: true
+          @graph.add _id: "source", targetIds: [ "target" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+
+        it "does not create duplicates for source ids", ->
+          @graph.reset [ _id: "source", targetIds: [ "target" ] ], silent: true
+          @graph.add _id: "target", sourceIds: [ "source" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+
+    context "edgesOut", ->
+      
+      context "for nodes without target or source ids", ->
+
+        it "creates empty array", ->
+          @graph.add _id: "node"
+          @graph.edgesOut.should.have.property "node"
+          @graph.edgesOut["node"].should.be.an.instanceof Array
+          @graph.edgesOut["node"].should.have.length 0
+           
+        it "handles multiple nodes", ->
+          @graph.add [
+            { _id: "node_1" }
+            { _id: "node_2" }
+          ]
+          @graph.edgesOut.should.have.property "node_1"
+          @graph.edgesOut.should.have.property "node_2"
+
+      context "for nodes with target ids", ->
+
+        it "creates edge for newly added node", ->
+          @graph.reset [ _id: "target" ], silent: true
+          @graph.add _id: "source", targetIds: [ "target" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+          @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
+
+        it "drops edge to external node", ->
+          @graph.add _id: "source", targetIds: [ "external" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 0
+
+        it "creates edge to existing node", ->
+          @graph.reset [ _id: "source", targetIds: [ "target" ] ], silent: true
+          @graph.add _id: "target"
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+          @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
+
+        it "does not create duplicates", ->
+          @graph.reset [ _id: "source", targetIds: [ "target", "target" ] ], silent: true
+          @graph.add _id: "target"
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+
+      context "for nodes with source ids", ->
+        
+        it "creates edge for newly added node", ->
+          @graph.reset [ _id: "source" ], silent: true
+          @graph.add _id: "target", sourceIds: [ "source" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+          @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
+
+        it "drops edge to external node", ->
+          @graph.add _id: "target", sourceIds: [ "external" ]
+          @graph.edgesOut.should.not.have.property "external"
+
+        it "creates edge to existing node", ->
+          @graph.reset [ _id: "target", sourceIds: [ "source" ] ], silent: true
+          @graph.add _id: "source"
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+          @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
+
+        it "does not create duplicates", ->
+          @graph.reset [ _id: "target", sourceIds: [ "source", "source" ] ], silent: true
+          @graph.add _id: "source"
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+
+      context "for nodes with both source and target ids", ->
+        
+        it "does not create duplicates for target ids", ->
+          @graph.reset [ _id: "target", sourceIds: [ "source" ] ], silent: true
+          @graph.add _id: "source", targetIds: [ "target" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+
+        it "does not create duplicates for source ids", ->
+          @graph.reset [ _id: "source", targetIds: [ "target" ] ], silent: true
+          @graph.add _id: "target", sourceIds: [ "source" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+
+  describe "remove()", ->
+  
+    it "can be chained", ->
+      @graph.remove().should.equal @graph 
+
+    it "calls super", ->
+      @graph.reset [ _id: "node" ], silent: true
+      sinon.spy Backbone.Collection::, "remove"
+      try
+        @graph.remove [ "node" ]
+        Backbone.Collection::remove.should.have.been.calledOnce
+        Backbone.Collection::remove.should.have.been.calledWithExactly [ "node" ]
+      finally
+        Backbone.Collection::remove.restore()
+
+    context "edgesIn", ->
+      
+      it "removes edges for node", ->
+        @graph.reset [ _id: "node" ], silent: true
+        @graph.remove "node"
+        @graph.edgesIn.should.not.have.property "node"
+
+      it "removes node from edges", ->
+        @graph.reset [
+          { _id: "target", sourceIds: [ "source" ] }
+          { _id: "source" }
+        ], silent: true
+        @graph.remove "source"
+        @graph.edgesIn.should.have.deep.property "target.length", 0
+
+      it "does create edge for deprecated source nodes", ->
+        @graph.reset [ { _id: "source", targetIds: [ "target" ] } ], silent: true 
+        @graph.remove "source"
+        @graph.add _id: "target"
+        @graph.edgesIn.should.have.deep.property "target.length", 0
+
+    context "edgesOut", ->
+      
+      it "removes edges for node", ->
+        @graph.reset [ _id: "node" ], silent: true
+        @graph.remove "node"
+        @graph.edgesOut.should.not.have.property "node"
+
+      it "removes node from edges", ->
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ], silent: true
+        @graph.remove "target"
+        @graph.edgesOut.should.have.deep.property "source.length", 0
+
+      it "does create edge for deprecated target nodes", ->
+        @graph.reset [ { _id: "target", sourceIds: [ "source" ] } ], silent: true 
+        @graph.remove "target"
+        @graph.add _id: "source"
+        @graph.edgesOut.should.have.deep.property "source.length", 0
 
   describe "reset()", ->
     
-    it "can be chained", ->
-      @graph.reset().should.equal @graph
-
-    it "creates edges", ->
+    it "empties edgesIn", ->
       @graph.reset [
-        { _id: "source", targetIds: [ "target" ] }
-        { _id: "target" }
-      ]
-      @graph.edgesIn.should.have.deep.property "target[0].id", "source"
-
-  describe "edgesIn", ->
-
-    it "is empty by default", ->
-      @graph.edgesIn.should.be.an "object" 
+        { _id: "node" }
+      ], silent: true
+      @graph.reset []
       @graph.edgesIn.should.be.empty
-
-    context "adding node", ->
-
-      context "with outgoing edges", ->
-
-        it "creates edges from newly added nodes", ->
-          @graph.reset [ _id: "target" ], silent: true
-          @graph.add [
-            { _id: "source_1", targetIds: [ "target" ] }
-            { _id: "source_2", targetIds: [ "target" ] }
-          ]
-          @graph.edgesIn.should.have.deep.property "target[0].id", "source_1"
-          @graph.edgesIn.should.have.deep.property "target[1].id", "source_2"
-        
-        it "ignores edges to unknown nodes", ->
-          @graph.reset [ _id: "target" ], silent: true
-          @graph.add [
-            { _id: "node", targetIds: [ "nobody" ] }
-          ]
-          @graph.edgesIn.should.be.empty
-
-        it "creates edges to existing nodes", ->
-          @graph.reset [ _id: "source", targetIds: [ "target_1", "target_2" ] ], silent: true
-          @graph.add _id: "target_1"
-          @graph.add _id: "target_2"
-          @graph.edgesIn.should.have.deep.property "target_1[0].id", "source"
-          @graph.edgesIn.should.have.deep.property "target_2[0].id", "source"
-
-      context "with incoming edges", ->
-
-        it "creates edges from newly added nodes"
-
-        
-
-    context "removing node", ->
-
-      context "with outgoing edges", ->
-
-        beforeEach ->
-          @graph.reset [
-            { _id: "source", targetIds: [ "target" ] }
-            { _id: "target" }
-          ], silent: true
       
-        it "removes edges to removed nodes", ->
-          target = @graph.get "target"
-          @graph.remove target
-          @graph.edgesIn.should.not.have.property "target"
+    it "empties edgesOut", ->
+      @graph.reset [
+        { _id: "node" }
+      ], silent: true
+      @graph.reset []
+      @graph.edgesOut.should.be.empty
 
-        it "restores edges after readding a node", ->
-          target = @graph.get "target"
-          @graph.remove target
-          @graph.add target
-          @graph.edgesIn.should.have.deep.property "target[0].id", "source"
-          
-        it "removes edges from removed nodes", ->
-          source = @graph.get "source"
-          @graph.remove source
-          @graph.edgesIn.should.not.have.property "target"
+    context "for nodes without target or source ids", ->
 
-    context "changing targetIds on node", ->
-
-      it "creates edges for added ids", ->
+      it "creates empty array", ->
+        @graph.reset [ _id: "node" ]
+        @graph.edgesIn.should.have.property "node"
+        @graph.edgesIn["node"].should.be.an.instanceof Array
+        @graph.edgesIn["node"].should.have.length 0
+         
+      it "handles multiple nodes", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target_1" ] }
-          { _id: "target_1" }
-          { _id: "target_2" }
-        ], silent: true
-        @graph.add _id: "target_2"
-        source = @graph.get "source"
-        source.set "targetIds", [ "target_1", "target_2" ]
-        @graph.edgesIn.should.have.deep.property "target_1[0].id", "source"
-        @graph.edgesIn.should.have.deep.property "target_2[0].id", "source"
+          { _id: "node_1" }
+          { _id: "node_2" }
+        ]
+        @graph.edgesIn.should.have.property "node_1"
+        @graph.edgesIn.should.have.property "node_2"
 
-      it "removes edges for dropped ids", ->
+    context "for nodes with target ids", ->
+
+      it "creates edge", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target_1", "target_2" ] }
-          { _id: "target_1" }
-          { _id: "target_2" }
-        ], silent: true
-        source = @graph.get "source"
-        source.set "targetIds", [ "target_2" ]
-        @graph.edgesIn.should.not.have.property "target_1"
-        @graph.edgesIn.should.have.deep.property "target_2[0].id", "source"
+          { _id: "target" }
+          { _id: "source", targetIds: [ "target" ] }
+        ]
+        @graph.edgesIn.should.have.deep.property "target.length", 1
+        @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
 
-  describe "on edges:in", ->
+      it "drops edge to external node", ->
+        @graph.reset [ _id: "source", targetIds: [ "external" ] ]
+        @graph.edgesIn.should.not.have.property "external"
 
-    context "resetting collection", ->
-      
-      it "does not trigger edges:in:add events", ->
-        spy = sinon.spy()
-        @graph.on "edges:in:add", spy
+      it "creates edge to node when after source", ->
         @graph.reset [
           { _id: "source", targetIds: [ "target" ] }
           { _id: "target" }
         ]
-        spy.should.not.have.been.called
+        @graph.edgesIn.should.have.deep.property "target.length", 1
+        @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
 
-      it "does not trigger remove events", ->
+      it "does not create duplicates", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
+          { _id: "source", targetIds: [ "target", "target" ] }
           { _id: "target" }
-        ], silent: true
-        spy = sinon.spy()
-        @graph.on "edges:in:remove", spy
-        @graph.reset []
-        spy.should.not.have.been.called
+        ]
+        @graph.edgesIn.should.have.deep.property "target.length", 1
 
-    context "adding node", ->
-
-      it "triggers event on target when added", ->
-        @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-        ], silent: true 
-        source = @graph.get "source"
-        target = new @graph.model _id: "target"
-        spy = sinon.spy()
-        target.on "edges:in:add", spy
-        @graph.add target
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith target, source
-
-      it "triggers event on target when source is added", ->
-        @graph.reset [ _id: "target" ], silent: true 
-        source = new @graph.model _id: "source", targetIds: [ "target" ]
-        target = @graph.get "target"
-        spy = sinon.spy()
-        target.on "edges:in:add", spy
-        @graph.add source
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith target, source
-
-    context "removing node", ->
-
-      beforeEach ->
-        @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
-        ], silent: true
-        @source = @graph.get "source"
-        @target = @graph.get "target"
+    context "for nodes with source ids", ->
       
-      it "triggers event on target when removed", ->
-        spy = sinon.spy()
-        @target.on "edges:in:remove", spy
-        @graph.remove @target
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith @target, @source
-
-      it "triggers event on target when source is removed", ->
-        spy = sinon.spy()
-        @target.on "edges:in:remove", spy
-        @graph.remove @source
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith @target, @source
-
-    context "changing targetIds on node", ->
-
-      it "triggers event on target when added", ->
-        @graph.reset [
+      it "creates edge", ->
+        @graph.reset [ 
           { _id: "source" }
-          { _id: "target" }
-        ], silent: true 
-        source = @graph.get "source"
-        target = @graph.get "target"
-        spy = sinon.spy()
-        target.on "edges:in:add", spy
-        source.set targetIds: [ "target" ]
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith target, source
+          { _id: "target", sourceIds: [ "source" ] }
+        ]
+        @graph.edgesOut.should.have.deep.property "source.length", 1
+        @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
 
-      it "triggers event on target when removed", ->
+      it "drops edge to external node", ->
+        @graph.reset [ _id: "target", sourceIds: [ "external" ] ]
+        @graph.edgesOut.should.not.have.property "external"
+
+      it "creates edge to node when after target", ->
+        @graph.reset [
+          { _id: "target", sourceIds: [ "source" ] }
+          { _id: "source" }
+        ]
+        @graph.edgesOut.should.have.deep.property "source.length", 1
+        @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
+
+      it "does not create duplicates", ->
+        @graph.reset [
+          { _id: "target", sourceIds: [ "source", "source" ] }        
+          { _id: "source" }
+        ]
+        @graph.edgesOut.should.have.deep.property "source.length", 1
+
+    context "for nodes with both source and target ids", ->
+    
+      it "does not create duplicates for target ids", ->
+        @graph.reset [
+          { _id: "target", sourceIds: [ "source" ] }
+          { _id: "source", targetIds: [ "target" ] }
+        ]
+        @graph.edgesOut.should.have.deep.property "source.length", 1
+
+      it "does not create duplicates for source ids", ->
         @graph.reset [
           { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
-        ], silent: true 
-        source = @graph.get "source"
-        target = @graph.get "target"
-        spy = sinon.spy()
-        target.on "edges:in:remove", spy
-        source.set targetIds: []
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith target, source
+          { _id: "target", sourceIds: [ "source" ] }
+        ]
+        @graph.edgesOut.should.have.deep.property "source.length", 1
+
+  describe "on change:targetIds", ->
+
+    context "edgesIn", ->
+
+      context "adding ids", ->
+
+        beforeEach ->
+          @graph.reset [
+            { _id: "source" }
+            { _id: "target" }
+          ], silent: true
+          @source = @graph.get "source"
+          @target = @graph.get "target"
+
+        it "creates edge for added id", ->
+          @source.set "targetIds", [ "target" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+          @graph.edgesIn.should.have.deep.property "target[0]", @source
+        
+        it "ignores external ids", ->
+          @source.set "targetIds", [ "external" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+
+        it "creates edges when target bis added later", ->
+          @source.set "targetIds", [ "other" ]
+          @graph.add _id: "other"
+          @graph.edgesIn.should.have.deep.property "other[0]", @source
+
+      context "removing ids", ->
+
+        it "removes edge for removed id", ->
+          @graph.reset [
+            { _id: "source", targetIds: [ "target" ] }
+            { _id: "target" }
+          ], silent: true
+          @graph.get("source").set "targetIds", []
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+
+        it "does not create edge when node is added later", ->
+          @graph.reset [
+            { _id: "source", targetIds: [ "target" ] }
+          ], silent: true
+          @graph.get("source").set "targetIds", []
+          @graph.add _id: "target"
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+          
+    context "edgesOut", ->
+
+      context "adding ids", ->
+
+        beforeEach ->
+          @graph.reset [
+            { _id: "source" }
+            { _id: "target" }
+          ], silent: true
+          @source = @graph.get "source"
+          @target = @graph.get "target"
+
+        it "creates edge for added id", ->
+          @source.set "targetIds", [ "target" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+          @graph.edgesOut.should.have.deep.property "source[0]", @target
+        
+        it "ignores external ids", ->
+          @source.set "targetIds", [ "external" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 0
+
+        it "creates edges when target is added later", ->
+          @source.set "targetIds", [ "other" ]
+          @graph.add _id: "other"
+          @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("other")
+
+      context "removing ids", ->
+
+        it "removes edge for removed id", ->
+          @graph.reset [
+            { _id: "source", targetIds: [ "target" ] }
+            { _id: "target" }
+          ], silent: true
+          @graph.get("source").set "targetIds", []
+          @graph.edgesOut.should.have.deep.property "source.length", 0
+
+        it "does not create edge when node is added later", ->
+          @graph.reset [
+            { _id: "source", targetIds: [ "target" ] }
+          ], silent: true
+          @graph.get("source").set "targetIds", []
+          @graph.add _id: "target"
+          @graph.edgesOut.should.have.deep.property "source.length", 0
+
+  describe "on change:sourceIds", ->
+
+    context "edgesIn", ->
+
+      context "adding ids", ->
+
+        beforeEach ->
+          @graph.reset [
+            { _id: "source" }
+            { _id: "target" }
+          ], silent: true
+          @source = @graph.get "source"
+          @target = @graph.get "target"
+
+        it "creates edge for added id", ->
+          @target.set "sourceIds", [ "source" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 1
+          @graph.edgesIn.should.have.deep.property "target[0]", @source
+        
+        it "ignores external ids", ->
+          @target.set "sourceIds", [ "external" ]
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+
+        it "creates edges when source is added later", ->
+          @target.set "sourceIds", [ "other" ]
+          @graph.add _id: "other"
+          @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("other")
+
+      context "removing ids", ->
+
+        it "removes edge for removed id", ->
+          @graph.reset [
+            { _id: "target", sourceIds: [ "source" ] }
+            { _id: "source" }
+          ], silent: true
+          @graph.get("target").set "sourceIds", []
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+
+        it "does not create edge when node is added later", ->
+          @graph.reset [
+            { _id: "target", sourceIds: [ "source" ] }
+          ], silent: true
+          @graph.get("target").set "sourceIds", []
+          @graph.add _id: "source"
+          @graph.edgesIn.should.have.deep.property "target.length", 0
+          
+    context "edgesOut", ->
+
+      context "adding ids", ->
+
+        beforeEach ->
+          @graph.reset [
+            { _id: "source" }
+            { _id: "target" }
+          ], silent: true
+          @source = @graph.get "source"
+          @target = @graph.get "target"
+
+        it "creates edge for added id", ->
+          @target.set "sourceIds", [ "source" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 1
+          @graph.edgesOut.should.have.deep.property "source[0]", @target
+        
+        it "ignores external ids", ->
+          @source.set "sourceIds", [ "external" ]
+          @graph.edgesOut.should.have.deep.property "source.length", 0
+
+        it "creates edges when source bis added later", ->
+          @target.set "sourceIds", [ "other" ]
+          @graph.add _id: "other"
+          @graph.edgesOut.should.have.deep.property "other[0]", @target
+
+      context "removing ids", ->
+
+        it "removes edge for removed id", ->
+          @graph.reset [
+            { _id: "target", sourceIds: [ "source" ] }
+            { _id: "source" }
+          ], silent: true
+          @graph.get("target").set "sourceIds", []
+          @graph.edgesOut.should.have.deep.property "source.length", 0
+
+        it "does not create edge when node is added later", ->
+          @graph.reset [
+            { _id: "target", sourceIds: [ "source" ] }
+          ], silent: true
+          @graph.get("target").set "sourceIds", []
+          @graph.add _id: "source"
+          @graph.edgesOut.should.have.deep.property "source.length", 0
