@@ -27,107 +27,98 @@ class Coreon.Collections.Digraph extends Backbone.Collection
 
   add: (models = [], options) ->
     super
-    models = if _.isArray(models) then models[..] else [ models ]
-    for model in models when model = @get model
-      @edgesIn[model.id]  = []
-      @edgesOut[model.id] = []
-      if @_tailsIn[model.id]?
-        for source in @_tailsIn[model.id]
-          @edgesIn[model.id].push source  if @edgesIn[model.id].indexOf(source)  < 0
-          @edgesOut[source.id].push model if @edgesOut[source.id].indexOf(model) < 0
-        delete @_tailsIn[model.id]
-      if tailsOut = @_tailsOut[model.id]
-        for source in tailsOut
-          @edgesIn[source.id].push model  if @edgesIn[source.id].indexOf(model)  < 0
-          @edgesOut[model.id].push source if @edgesOut[model.id].indexOf(source) < 0
-        delete @_tailsOut[model.id]
-      if targetIds = model.get @options.digraph.out
-        for targetId in targetIds
-          if @edgesIn[targetId]?
-            target = @get targetId
-            @edgesIn[target.id].push model  if @edgesIn[target.id].indexOf(model)  < 0
-            @edgesOut[model.id].push target if @edgesOut[model.id].indexOf(target) < 0
-          else
-            @_tailsIn[targetId] ?= []
-            @_tailsIn[targetId].push model if @_tailsIn[targetId].indexOf(model) < 0
-      if sourceIds = model.get @options.digraph.in
-        for sourceId in sourceIds
-          if @edgesOut[sourceId]? 
-            source = @get sourceId
-            @edgesIn[model.id].push source  if @edgesIn[model.id].indexOf(source)  < 0
-            @edgesOut[source.id].push model if @edgesOut[source.id].indexOf(model) < 0
-          else
-            @_tailsOut[sourceId] ?= []
-            @_tailsOut[sourceId].push model if @_tailsOut[sourceId].indexOf(model) < 0
+    for model in @_getModels models
+      @_prepareEdges model
+      @_connectTailsIn model
+      @_connectTailsOut model
+      @_evaluateTargetIds model, model.get @options.digraph.out
+      @_evaluateSourceIds model, model.get @options.digraph.in
     @
 
-  remove: (models = [], options) ->
-    models = if _.isArray(models) then models[..] else [ models ]
-    for model in models when model = @get model
-      for target in @edgesOut[model.id]
-        pos = @edgesIn[target.id].indexOf(model)
-        @edgesIn[target.id].splice pos, 1
-      delete @edgesOut[model.id] 
-      for source in @edgesIn[model.id]
-        pos = @edgesOut[source.id].indexOf(model)
-        @edgesOut[source.id].splice pos, 1
-      delete @edgesIn[model.id]
-      if targetIds = model.get @options.digraph.out
-        for targetId in targetIds
-          if tailsIn = @_tailsIn[targetId]
-            pos = tailsIn.indexOf(model)
-            @_tailsIn[targetId].splice pos, 1
-      if sourceIds = model.get @options.digraph.in
-        for sourceId in sourceIds
-          if tailsOut = @_tailsOut[sourceId]
-            pos = tailsOut.indexOf(model)
-            @_tailsOut[sourceId].splice pos, 1
+  remove: (models, options) ->
+    for model in @_getModels models
+      @_removeEdge source, model for source in @edgesIn[model.id]
+      @_removeEdge model, target for target in @edgesOut[model.id]
+      @_dismissTargetIds model, model.get @options.digraph.out
+      @_dismissSourceIds model, model.get @options.digraph.in
+      @_swipeEdges model
     super
 
   _onChangeTargetIds: (model, targetIds, options) ->
-    previousTargetIds = model.previous(@options.digraph.out) ? []
-    addedIds =   (id for id in targetIds when previousTargetIds.indexOf(id) < 0)
-    removedIds = (id for id in previousTargetIds when targetIds.indexOf(id) < 0)
-    for targetId in addedIds
-      if @edgesIn[targetId]?
-        target = @get targetId
-        @edgesIn[target.id].push model  if @edgesIn[target.id].indexOf(model)  < 0
-        @edgesOut[model.id].push target if @edgesOut[model.id].indexOf(target) < 0
-      else
-        @_tailsIn[targetId] ?= []
-        @_tailsIn[targetId].push model if @_tailsIn[targetId].indexOf(model) < 0
-    for targetId in removedIds
-      if @edgesIn[targetId]?
-        pos = @edgesIn[targetId].indexOf(model)
-        @edgesIn[targetId].splice pos, 1
-      if @_tailsIn[targetId]?
-        pos = @_tailsIn[targetId].indexOf(model)
-        @_tailsIn[targetId].splice pos, 1
-      if @edgesOut[model.id]?
-        target = @get targetId
-        pos = @edgesOut[model.id].indexOf(target)
-        @edgesOut[model.id].splice pos, 1
+    [addedIds, removedIds] = @_getChanges targetIds, model.previous(@options.digraph.out)
+    @_evaluateTargetIds model, addedIds
+    @_dismissTargetIds model, removedIds
 
   _onChangeSourceIds: (model, sourceIds, options) ->
-    previousSourceIds = model.previous(@options.digraph.in) ? []
-    addedIds =   (id for id in sourceIds when previousSourceIds.indexOf(id) < 0)
-    removedIds = (id for id in previousSourceIds when sourceIds.indexOf(id) < 0)
-    for sourceId in addedIds
-      if @edgesIn[sourceId]?
-        source = @get sourceId
-        @edgesIn[model.id].push source if @edgesIn[model.id].indexOf(source) < 0
-        @edgesOut[sourceId].push model if @edgesOut[sourceId].indexOf(model) < 0
+    [addedIds, removedIds] = @_getChanges sourceIds, model.previous(@options.digraph.in)
+    @_evaluateSourceIds model, addedIds
+    @_dismissSourceIds model, removedIds
+  
+  _prepareEdges: (model) ->
+    @edgesIn[model.id]  = []
+    @edgesOut[model.id] = []
+
+  _swipeEdges: (model) ->
+    delete @edgesIn[model.id]
+    delete @edgesOut[model.id]
+
+  _connectTailsIn: (model) ->
+    if @_tailsIn[model.id]?
+      @_createEdge source, model for source in @_tailsIn[model.id]
+      delete @_tailsIn[model.id]
+
+  _connectTailsOut: (model) ->
+    if @_tailsOut[model.id]?
+      @_createEdge model, target for target in @_tailsOut[model.id]
+      delete @_tailsOut[model.id]
+
+  _evaluateTargetIds: (model, targetIds = []) ->
+    for targetId in targetIds
+      if @edgesIn[targetId]?
+        @_createEdge model, @get(targetId)
+      else
+        @_tailsIn[targetId] ?= []
+        @_addToList @_tailsIn[targetId], model
+
+  _evaluateSourceIds: (model, sourceIds = []) ->
+    for sourceId in sourceIds
+      if @edgesOut[sourceId]? 
+        @_createEdge @get(sourceId), model
       else
         @_tailsOut[sourceId] ?= []
-        @_tailsOut[sourceId].push model if @_tailsOut[sourceId].indexOf(model) < 0
-    for sourceId in removedIds
-      if @edgesIn[model.id]?
-        source = @get sourceId
-        pos = @edgesIn[model.id].indexOf source
-        @edgesIn[model.id].splice pos, 1
-      if @_tailsOut[sourceId]?
-        pos = @_tailsOut[sourceId].indexOf model
-        @_tailsOut[sourceId].splice pos, 1
-      if @edgesOut[sourceId]?
-        pos = @edgesOut[sourceId].indexOf model
-        @edgesOut[sourceId].splice pos, 1
+        @_addToList @_tailsOut[sourceId], model
+
+  _dismissTargetIds: (model, targetIds = []) ->
+    for targetId in targetIds
+      @_removeEdge model, target if target = @get(targetId)
+      @_removeFromList @_tailsIn[targetId], model
+
+  _dismissSourceIds: (model, sourceIds = []) ->
+    for sourceId in sourceIds
+      @_removeEdge source, model if source = @get(sourceId)
+      @_removeFromList @_tailsOut[sourceId], model
+
+  _createEdge: (source, target) ->
+    @_addToList @edgesOut[source.id], target
+    @_addToList @edgesIn[target.id], source
+
+  _removeEdge: (source, target) ->
+    @_removeFromList @edgesOut[source.id], target
+    @_removeFromList @edgesIn[target.id], source
+
+  _getModels: (models = []) ->
+    models = [ models ] unless _.isArray(models)
+    model for model in models when model = @get model
+
+  _addToList: (list, value) ->
+    list.push value if list.indexOf(value) < 0
+
+  _removeFromList: (list, value) ->
+    if list?
+      pos = list.indexOf value
+      list.splice pos, 1 unless pos < 0
+
+  _getChanges: (currentItems, previousItems = []) ->
+    added   = (item for item in currentItems when previousItems.indexOf(item) < 0)
+    removed = (item for item in previousItems when currentItems.indexOf(item) < 0)
+    [added, removed]

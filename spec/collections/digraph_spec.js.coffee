@@ -276,95 +276,21 @@ describe "Coreon.Collections.Digraph", ->
       @graph.reset []
       @graph.edgesOut.should.be.empty
 
-    context "for nodes without target or source ids", ->
+    it "creates edges for target ids", ->
+      @graph.reset [
+        { _id: "source", targetIds: [ "target" ] }
+        { _id: "target" }
+      ]
+      @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
+      @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
 
-      it "creates empty array", ->
-        @graph.reset [ _id: "node" ]
-        @graph.edgesIn.should.have.property "node"
-        @graph.edgesIn["node"].should.be.an.instanceof Array
-        @graph.edgesIn["node"].should.have.length 0
-         
-      it "handles multiple nodes", ->
-        @graph.reset [
-          { _id: "node_1" }
-          { _id: "node_2" }
-        ]
-        @graph.edgesIn.should.have.property "node_1"
-        @graph.edgesIn.should.have.property "node_2"
-
-    context "for nodes with target ids", ->
-
-      it "creates edge", ->
-        @graph.reset [
-          { _id: "target" }
-          { _id: "source", targetIds: [ "target" ] }
-        ]
-        @graph.edgesIn.should.have.deep.property "target.length", 1
-        @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
-
-      it "drops edge to external node", ->
-        @graph.reset [ _id: "source", targetIds: [ "external" ] ]
-        @graph.edgesIn.should.not.have.property "external"
-
-      it "creates edge to node when after source", ->
-        @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
-        ]
-        @graph.edgesIn.should.have.deep.property "target.length", 1
-        @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
-
-      it "does not create duplicates", ->
-        @graph.reset [
-          { _id: "source", targetIds: [ "target", "target" ] }
-          { _id: "target" }
-        ]
-        @graph.edgesIn.should.have.deep.property "target.length", 1
-
-    context "for nodes with source ids", ->
-      
-      it "creates edge", ->
-        @graph.reset [ 
-          { _id: "source" }
-          { _id: "target", sourceIds: [ "source" ] }
-        ]
-        @graph.edgesOut.should.have.deep.property "source.length", 1
-        @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
-
-      it "drops edge to external node", ->
-        @graph.reset [ _id: "target", sourceIds: [ "external" ] ]
-        @graph.edgesOut.should.not.have.property "external"
-
-      it "creates edge to node when after target", ->
-        @graph.reset [
-          { _id: "target", sourceIds: [ "source" ] }
-          { _id: "source" }
-        ]
-        @graph.edgesOut.should.have.deep.property "source.length", 1
-        @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
-
-      it "does not create duplicates", ->
-        @graph.reset [
-          { _id: "target", sourceIds: [ "source", "source" ] }        
-          { _id: "source" }
-        ]
-        @graph.edgesOut.should.have.deep.property "source.length", 1
-
-    context "for nodes with both source and target ids", ->
-    
-      it "does not create duplicates for target ids", ->
-        @graph.reset [
-          { _id: "target", sourceIds: [ "source" ] }
-          { _id: "source", targetIds: [ "target" ] }
-        ]
-        @graph.edgesOut.should.have.deep.property "source.length", 1
-
-      it "does not create duplicates for source ids", ->
-        @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target", sourceIds: [ "source" ] }
-        ]
-        @graph.edgesOut.should.have.deep.property "source.length", 1
+    it "creates edges for source ids", ->
+      @graph.reset [
+        { _id: "target", sourceIds: [ "source" ] }
+        { _id: "source" }
+      ]
+      @graph.edgesIn.should.have.deep.property "target[0]", @graph.get("source")
+      @graph.edgesOut.should.have.deep.property "source[0]", @graph.get("target")
 
   describe "on change:targetIds", ->
 
