@@ -1,0 +1,1 @@
+%h3.button.add_term= I18n.t "create_terms.add"

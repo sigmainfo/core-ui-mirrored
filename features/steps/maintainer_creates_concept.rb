@@ -3,9 +3,13 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
 
-  And 'I should see a create concept link' do
-    pending "need a view"
+  step 'I should see a button "CREATE CONCEPT"' do
+    page.should have_css(".button", text: "CREATE CONCEPT")
   end
+
+#  And 'I should see a create concept link' do
+#    pending "need a view"
+#  end
 
   And 'I click on the create concept link' do
     find('a.create-concept').click

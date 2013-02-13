@@ -10,5 +10,5 @@
         %td.label.concept
         %td.super.concept
 %p.actions
-  %a.show-all{href: "/concepts/search?#{@query}"}= I18n.t "search.results.concepts.show_all"
-  %a.create-concept{href: "/concepts/create"}= I18n.t "search.concepts.create"
+  %a.show-all{href: "/concepts/search/#{@query}"}= I18n.t "search.results.concepts.show_all"
+  %a.button.create-concept{href: "/concepts/create"}= I18n.t "search.concepts.create"

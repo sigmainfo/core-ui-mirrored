@@ -1,0 +1,56 @@
+@import '_config';
+@import 'compass/css3';
+
+  .button {
+    float:right;
+    font-size: 1em;
+    color: $browncolor;
+    &.collapsed {
+      display:none;
+    }
+    &:hover {
+      cursor: pointer;
+    };
+  }
+  .section
+  {
+    &.collapsed {
+      display:none;
+    }
+  }
+  .create-property .property, .create-term .term
+  {
+    margin-bottom: 4px;
+    background-color: #e0e7e1;
+  }
+  .create-property label
+  {
+    display: inline-block;
+    width: 200px;
+    padding: 10px;
+  }
+  .create-property .input
+  {
+    display:inline;
+    background-color:red;
+  }
+  .create-terms label
+  {
+    display: inline-block;
+    width: 200px;
+    padding: 10px;
+  }
+  .create-terms .input
+  {
+    display:inline;
+    background-color:red;
+  }
+  .create-term-properties
+  {
+    margin-left: 40px;
+  }
+  .footer
+  {
+    background-color: #3f3b2c;
+    margin-top:40px;
+  }

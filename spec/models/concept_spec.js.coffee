@@ -19,10 +19,10 @@ describe "Coreon.Models.Concept", ->
   context "defaults", ->
 
     it "has an empty set of properties", ->
-      @model.get("properties").should.eql [] 
+      @model.get("properties").should.eql []
 
     it "has an empty set of terms", ->
-      @model.get("terms").should.eql [] 
+      @model.get("terms").should.eql []
 
     it "has empty sets for superconcept and subconcept ids", ->
       @model.get("super_concept_ids").should.eql []

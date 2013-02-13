@@ -138,5 +138,12 @@ describe "Coreon.Routers.ConceptsRouter", ->
     it "is routed", ->
       @router.routes["concepts/create"].should.equal "create"
 
+    it "renders concept create", ->
+      @router.create()
+      @screen.should.be.an.instanceof Coreon.Views.Concepts.CreateConceptView
+      console.log "HERE"
+      console.log @screen.model
+      @screen.model.should.be.an.instanceof Coreon.Models.Concept
+
 
 

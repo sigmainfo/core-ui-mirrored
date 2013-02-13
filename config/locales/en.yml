@@ -25,6 +25,8 @@ en:
         hint: "Search concepts by terms"
         label: "Concepts by Terms"
     submit: "Search"
+    concepts:
+      create: "Create Concept"
     
     results:
       terms:
@@ -85,3 +87,27 @@ en:
 
   concept-map:
     title: "Concept Map"
+
+  create_properties:
+    title: "Properties"
+    add: "Add property"
+
+  create_property:
+    remove: "Remove property"
+    property_key: "Property key"
+    property_value: "Property value"
+    language: "Language"
+
+  create_terms:
+    add: "Add term"
+
+  create_term:
+    remove: "Remove term"
+    value: "Term value"
+    language: "Language"
+    add_property: "Add property"
+
+  create_concept:
+    cancel: "Cancel"
+    create: "Create"
+    no_label: "[Label]"

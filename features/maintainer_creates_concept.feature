@@ -8,19 +8,12 @@ Feature: maintainer creates concept
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
     And I am logged in
 
-  Scenario: cancel create concept
-    When I enter "gun" in the search field
-    And I click the search button
-    And I click on the create concept link
-    Then I should be on the create concept page
-    And I click on the "cancel" link
-    Then I should see the empty search result page again
-
   Scenario: create concept
     When I enter "gun" in the search field
     And I click the search button
+    Then I should see a button "CREATE CONCEPT"
     And I click on the create concept link
-    Then I should see the create concept page
+    Then I should be on the create concept page
     And there should be an input for Term Value filled with "gun"
     And there should be an input "language" filled with the users search language
     And there should be a "Remove Term" link
@@ -54,3 +47,11 @@ Feature: maintainer creates concept
     And the concept should have title "gun"
     And it should have german term "Waffe" and english term "gun"
     And it should have property "description" with value "something to kill with"
+
+#  Scenario: cancel create concept
+#    When I enter "gun" in the search field
+#    And I click the search button
+#    And I click on the create concept link
+#    Then I should be on the create concept page
+#    And I click on the "cancel" link
+#    Then I should see the empty search result page again

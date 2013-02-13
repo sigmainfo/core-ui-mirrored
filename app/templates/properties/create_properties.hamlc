@@ -1,0 +1,3 @@
+%h3.section-toggle{class: "collapsed" if @collapsed}= I18n.t "create_properties.title"
+%h3.button.add_property{class: "collapsed" if @collapsed}= I18n.t "create_properties.add"
+.section{class: "collapsed" if @collapsed}

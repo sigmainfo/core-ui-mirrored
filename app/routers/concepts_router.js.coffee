@@ -1,14 +1,15 @@
 #= require environment
 #= require views/concepts/concept_list_view
 #= require views/concepts/concept_view
+#= require views/concepts/create_concept_view
 #= require models/search
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
     "concepts/search/(:target/):query" : "search"
-    "concepts/:id"    : "show"
     "concepts/create" : "create"
+    "concepts/:id"    : "show"
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -41,3 +42,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @app.hits.reset [ id: id ]
 
   create: ->
+    screen = new Coreon.Views.Concepts.CreateConceptView
+      model: new Coreon.Models.Concept
+    @view.switch screen
+

@@ -18,6 +18,9 @@ class Coreon.Models.Concept extends Backbone.Model
     @set "label", @_label(), silent: true
     @on "change:terms change:properties", @_updateLabel, @
  
+  toJSON: (options) ->
+    {concept: _.clone(this.attributes)}
+
   info: ->
     internals = _(@defaults).keys()
     internals.unshift @idAttribute
