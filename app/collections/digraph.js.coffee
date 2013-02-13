@@ -29,18 +29,18 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     super
     for model in @_getModels models
       @_prepareEdges model
-      @_connectTailsIn model
-      @_connectTailsOut model
-      @_evaluateTargetIds model, model.get @options.digraph.out
-      @_evaluateSourceIds model, model.get @options.digraph.in
+      @_connectTailsIn model, options
+      @_connectTailsOut model, options
+      @_evaluateTargetIds model, model.get(@options.digraph.out), options
+      @_evaluateSourceIds model, model.get(@options.digraph.in), options
     @
 
   remove: (models, options) ->
     for model in @_getModels models
-      @_removeEdge source, model for source in @edgesIn[model.id]
-      @_removeEdge model, target for target in @edgesOut[model.id]
-      @_dismissTargetIds model, model.get @options.digraph.out
-      @_dismissSourceIds model, model.get @options.digraph.in
+      @_removeEdge source, model, options for source in @edgesIn[model.id]
+      @_removeEdge model, target, options for target in @edgesOut[model.id]
+      @_dismissTargetIds model, model.get(@options.digraph.out), options
+      @_dismissSourceIds model, model.get(@options.digraph.in), options
       @_swipeEdges model
     super
 
@@ -62,49 +62,59 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     delete @edgesIn[model.id]
     delete @edgesOut[model.id]
 
-  _connectTailsIn: (model) ->
+  _connectTailsIn: (model, options) ->
     if @_tailsIn[model.id]?
-      @_createEdge source, model for source in @_tailsIn[model.id]
+      @_createEdge source, model, options for source in @_tailsIn[model.id]
       delete @_tailsIn[model.id]
 
-  _connectTailsOut: (model) ->
+  _connectTailsOut: (model, options) ->
     if @_tailsOut[model.id]?
-      @_createEdge model, target for target in @_tailsOut[model.id]
+      @_createEdge model, target, options for target in @_tailsOut[model.id]
       delete @_tailsOut[model.id]
 
-  _evaluateTargetIds: (model, targetIds = []) ->
+  _evaluateTargetIds: (model, targetIds = [], options) ->
     for targetId in targetIds
       if @edgesIn[targetId]?
-        @_createEdge model, @get(targetId)
+        @_createEdge model, @get(targetId), options
       else
         @_tailsIn[targetId] ?= []
         @_addToList @_tailsIn[targetId], model
 
-  _evaluateSourceIds: (model, sourceIds = []) ->
+  _evaluateSourceIds: (model, sourceIds = [], options) ->
     for sourceId in sourceIds
       if @edgesOut[sourceId]? 
-        @_createEdge @get(sourceId), model
+        @_createEdge @get(sourceId), model, options
       else
         @_tailsOut[sourceId] ?= []
         @_addToList @_tailsOut[sourceId], model
 
-  _dismissTargetIds: (model, targetIds = []) ->
+  _dismissTargetIds: (model, targetIds = [], options) ->
     for targetId in targetIds
-      @_removeEdge model, target if target = @get(targetId)
+      @_removeEdge model, target, options if target = @get(targetId)
       @_removeFromList @_tailsIn[targetId], model
 
-  _dismissSourceIds: (model, sourceIds = []) ->
+  _dismissSourceIds: (model, sourceIds = [], options) ->
     for sourceId in sourceIds
-      @_removeEdge source, model if source = @get(sourceId)
+      @_removeEdge source, model, options if source = @get(sourceId)
       @_removeFromList @_tailsOut[sourceId], model
 
-  _createEdge: (source, target) ->
+  _createEdge: (source, target, options) ->
     @_addToList @edgesOut[source.id], target
     @_addToList @edgesIn[target.id], source
+    @_triggerEdgeEvent "add", source, target, options
 
-  _removeEdge: (source, target) ->
+  _removeEdge: (source, target, options) ->
     @_removeFromList @edgesOut[source.id], target
     @_removeFromList @edgesIn[target.id], source
+    @_triggerEdgeEvent "remove", source, target, options
+
+  _triggerEdgeEvent: (type, source, target, options = {}) -> 
+    unless options.silent?
+      edge =
+        source: source
+        target: target
+      source.trigger "edge:out:#{type}", edge
+      target.trigger "edge:in:#{type}", edge
 
   _getModels: (models = []) ->
     models = [ models ] unless _.isArray(models)

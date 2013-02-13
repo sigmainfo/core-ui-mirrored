@@ -471,3 +471,95 @@ describe "Coreon.Collections.Digraph", ->
           @graph.get("target").set "sourceIds", []
           @graph.add _id: "source"
           @graph.edgesOut.should.have.deep.property "source.length", 0
+
+  describe "events", ->
+  
+    context "edge:in:add", ->
+
+      it "is triggered on target", ->
+        @graph.reset [
+          { _id: "source" }
+          { _id: "target" }
+        ], silent: true
+        source = @graph.get "source"
+        target = @graph.get "target"
+        spy = sinon.spy()
+        target.on "edge:in:add", spy
+        target.set "sourceIds", [ "source" ]
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith source: source, target: target
+
+      it "can be silenced", ->
+        @graph.reset [ _id: "source" ]
+        spy = sinon.spy()
+        @graph.on "edge:in:add", spy
+        @graph.add { _id: "ghost", sourceIds: [ "source" ] }, silent: true
+        spy.should.not.have.been.called
+
+    context "edge:in:remove", ->
+
+      beforeEach ->
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ], silent: true
+        @source = @graph.get "source"
+        @target = @graph.get "target"
+
+      it "is triggered on target", ->
+        spy = sinon.spy()
+        @target.on "edge:in:remove", spy
+        @source.set "targetIds", []
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith source: @source, target: @target
+
+      it "can be silenced", ->
+        spy = sinon.spy()
+        @graph.on "edge:in:remove", spy
+        @graph.remove "target", silent: true
+        spy.should.not.have.been.called
+
+    context "edge:out:add", ->
+
+      it "is triggered on source", ->
+        @graph.reset [
+          { _id: "source" }
+          { _id: "target" }
+        ], silent: true
+        source = @graph.get "source"
+        target = @graph.get "target"
+        spy = sinon.spy()
+        source.on "edge:out:add", spy
+        target.set "sourceIds", [ "source" ]
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith source: source, target: target
+
+      it "can be silenced", ->
+        @graph.reset [ _id: "source" ]
+        spy = sinon.spy()
+        @graph.on "edge:out:add", spy
+        @graph.add { _id: "ghost", sourceIds: [ "source" ] }, silent: true
+        spy.should.not.have.been.called
+
+    context "edge:out:remove", ->
+
+      beforeEach ->
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ], silent: true
+        @source = @graph.get "source"
+        @target = @graph.get "target"
+
+      it "is triggered on target", ->
+        spy = sinon.spy()
+        @source.on "edge:out:remove", spy
+        @source.set "targetIds", []
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith source: @source, target: @target
+
+      it "can be silenced", ->
+        spy = sinon.spy()
+        @graph.on "edge:out:remove", spy
+        @graph.remove "target", silent: true
+        spy.should.not.have.been.called
