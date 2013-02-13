@@ -604,3 +604,150 @@ describe "Coreon.Collections.Digraph", ->
         memo = @graph.edges()
         @graph.remove "target"
         @graph.edges().should.have.length 0
+
+  describe "roots()", ->
+  
+    it "is an empty array by default", ->
+      @graph.roots().should.be.an.instanceof Array
+      @graph.roots().should.have.length 0
+
+    it "returns root nodes", ->
+      @graph.reset [
+        { _id: "source", targetIds: [ "target" ] }
+        { _id: "target" }
+      ], silent: true
+      source = @graph.get "source"
+      @graph.roots().should.eql [ source ]
+    
+    context "memoizing", ->
+      
+      it "reuses roots data", ->
+        memo = @graph.roots()
+        @graph.roots().should.equal memo
+
+      it "is recreated on reset", ->
+        memo = @graph.roots()
+        @graph.reset [ _id: "node" ]
+        @graph.roots().should.have.length 1
+
+      it "is recreated when a node is added", ->
+        memo = @graph.roots()
+        @graph.add _id: "node"
+        @graph.roots().should.have.length 1
+
+      it "is recreated when a node is removed", ->
+        @graph.reset [ _id: "node" ], silent: true
+        memo = @graph.roots()
+        @graph.remove "node"
+        @graph.roots().should.have.length 0
+
+      it "is recreated when a new edge is created", ->
+        memo = @graph.roots()
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ]
+        @graph.roots().should.have.length 1
+      
+      it "is recreated when an edge is removed", ->
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ], silent: true
+        memo = @graph.roots()
+        @graph.get("source").set "targetIds", []
+        @graph.roots().should.have.length 2
+
+  describe "leaves()", ->
+  
+    it "is an empty array by default", ->
+      @graph.leaves().should.be.an.instanceof Array
+      @graph.leaves().should.have.length 0
+
+    it "returns leave nodes", ->
+      @graph.reset [
+        { _id: "source", targetIds: [ "target" ] }
+        { _id: "target" }
+      ], silent: true
+      target = @graph.get "target"
+      @graph.leaves().should.eql [ target ]
+    
+    context "memoizing", ->
+      
+      it "reuses leaves data", ->
+        memo = @graph.leaves()
+        @graph.leaves().should.equal memo
+
+      it "is recreated on reset", ->
+        memo = @graph.leaves()
+        @graph.reset [ _id: "node" ]
+        @graph.leaves().should.have.length 1
+
+      it "is recreated when a node is added", ->
+        memo = @graph.leaves()
+        @graph.add _id: "node"
+        @graph.leaves().should.have.length 1
+
+      it "is recreated when a node is removed", ->
+        @graph.reset [ _id: "node" ], silent: true
+        memo = @graph.leaves()
+        @graph.remove "node"
+        @graph.leaves().should.have.length 0
+
+      it "is recreated when a new edge is created", ->
+        memo = @graph.leaves()
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ]
+        @graph.leaves().should.have.length 1
+      
+      it "is recreated when an edge is removed", ->
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ], silent: true
+        memo = @graph.leaves()
+        @graph.get("source").set "targetIds", []
+        @graph.leaves().should.have.length 2
+
+  describe "breadthFirstOut()", ->
+
+    beforeEach ->
+      @callback = sinon.spy()
+  
+    it "invokes callback for every node", ->
+      @graph.reset [
+        { _id: "node_1" }
+        { _id: "node_2" }
+      ], silent: true
+      node_1 = @graph.get "node_1"
+      node_2 = @graph.get "node_2"
+      @graph.breadthFirstOut @callback 
+      @callback.should.have.been.calledTwice
+      @callback.should.always.have.been.calledOn @graph
+      @callback.firstCall.should.have.been.calledWith node_1
+      @callback.secondCall.should.have.been.calledWith node_2
+
+    it "invokes callback breadth first", ->
+      @graph.reset [
+        { _id: "root", targetIds: [ "child_1", "child_2" ] }
+        { _id: "child_1", targetIds: [ "child_of_child"] }
+        { _id: "child_2" }
+        { _id: "child_of_child" }
+      ], silent: true
+      @graph.breadthFirstOut @callback 
+      @callback.getCall(0).should.have.deep.property "args[0].id", "root"
+      @callback.getCall(1).should.have.deep.property "args[0].id", "child_1"
+      @callback.getCall(2).should.have.deep.property "args[0].id", "child_2"
+      @callback.getCall(3).should.have.deep.property "args[0].id", "child_of_child"
+
+    it "invokes callback only once per node", ->
+      @graph.reset [
+        { _id: "root", targetIds: [ "child_1", "child_2" ] }
+        { _id: "child_1", targetIds: [ "child_of_child"] }
+        { _id: "child_2", targetIds: [ "child_of_child"] }
+        { _id: "child_of_child" }
+      ], silent: true
+      @graph.breadthFirstOut @callback 
+      @callback.should.have.property "callCount", 4

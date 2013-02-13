@@ -24,9 +24,12 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     @_tailsOut = {}
     @edgesIn   = {}
     @edgesOut  = {}
+    @_invalidate()
+    @_invalidateEdges()
 
   add: (models = [], options) ->
     super
+    @_invalidate()
     for model in @_getModels models
       @_prepareEdges model
       @_connectTailsIn model, options
@@ -36,6 +39,7 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     @
 
   remove: (models, options) ->
+    @_invalidate()
     for model in @_getModels models
       @_removeEdge source, model, options for source in @edgesIn[model.id]
       @_removeEdge model, target, options for target in @edgesOut[model.id]
@@ -44,9 +48,25 @@ class Coreon.Collections.Digraph extends Backbone.Collection
       @_swipeEdges model
     super
 
-  edges: () ->
-    @_edges = @_collectEdges() unless @_edges?
-    @_edges
+  edges: ->
+    @_edges ?= @_collectEdges()
+
+  roots: ->
+    @_roots ?= @_collectRoots()
+
+  leaves: ->
+    @_leaves ?= @_collectLeaves()
+
+  breadthFirstOut: (callback) ->
+    queue = @roots()[..]
+    queued = {}
+    while queue.length > 0
+      node = queue.shift()
+      callback.call @, node
+      for target in @edgesOut[node.id]
+        unless queued[target.id]?
+          queue.push target
+          queued[target.id] = true
 
   _onChangeTargetIds: (model, targetIds, options) ->
     [addedIds, removedIds] = @_getChanges targetIds, model.previous(@options.digraph.out)
@@ -105,12 +125,14 @@ class Coreon.Collections.Digraph extends Backbone.Collection
   _createEdge: (source, target, options) ->
     @_addToList @edgesOut[source.id], target
     @_addToList @edgesIn[target.id], source
+    @_invalidate()
     @_invalidateEdges()
     @_triggerEdgeEvent "add", source, target, options
 
   _removeEdge: (source, target, options) ->
     @_removeFromList @edgesOut[source.id], target
     @_removeFromList @edgesIn[target.id], source
+    @_invalidate()
     @_invalidateEdges()
     @_triggerEdgeEvent "remove", source, target, options
 
@@ -139,6 +161,13 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     removed = (item for item in previousItems when currentItems.indexOf(item) < 0)
     [added, removed]
 
+  _invalidate: ->
+    @_roots  = null
+    @_leaves = null
+
+  _invalidateEdges: ->
+    @_edges  = null
+
   _collectEdges: ->
     edges = []
     for sourceId, targets of @edgesOut
@@ -148,7 +177,9 @@ class Coreon.Collections.Digraph extends Backbone.Collection
           source: source
           target: target
     edges
+  
+  _collectRoots: ->
+    model for model in @models when @edgesIn[model.id].length is 0
 
-  _invalidateEdges: ->
-    @_edges = null
-
+  _collectLeaves: ->
+    model for model in @models when @edgesOut[model.id].length is 0
