@@ -563,3 +563,44 @@ describe "Coreon.Collections.Digraph", ->
         @graph.on "edge:out:remove", spy
         @graph.remove "target", silent: true
         spy.should.not.have.been.called
+
+  describe "edges()", ->
+  
+    it "is an empty array by default", ->
+      @graph.edges().should.be.an.instanceof Array
+      @graph.edges().should.have.length 0
+
+    it "returns edges as vectors", ->
+      @graph.reset [
+        { _id: "source", targetIds: [ "target" ] }
+        { _id: "target" }
+      ], silent: true
+      source = @graph.get "source"
+      target = @graph.get "target"
+      @graph.edges().should.eql [
+        source: source
+        target: target
+      ]
+    
+    context "memoizing", ->
+      
+      it "reuses edges data", ->
+        memo = @graph.edges()
+        @graph.edges().should.equal memo
+
+      it "is recreated when a new edge is created", ->
+        memo = @graph.edges()
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ]
+        @graph.edges().should.have.length 1
+      
+      it "is recreated when an edge is removed", ->
+        @graph.reset [
+          { _id: "source", targetIds: [ "target" ] }
+          { _id: "target" }
+        ], silent: true
+        memo = @graph.edges()
+        @graph.remove "target"
+        @graph.edges().should.have.length 0
