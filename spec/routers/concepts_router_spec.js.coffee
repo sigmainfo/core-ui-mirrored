@@ -136,14 +136,18 @@ describe "Coreon.Routers.ConceptsRouter", ->
   describe "#create", ->
 
     it "is routed", ->
-      @router.routes["concepts/create"].should.equal "create"
+      @router.routes.should.have.property "concepts/create(/:query)", "create"
 
-    it "renders concept create", ->
+    it "switches to concept create view", ->
       @router.create()
       @screen.should.be.an.instanceof Coreon.Views.Concepts.CreateConceptView
-      console.log "HERE"
-      console.log @screen.model
       @screen.model.should.be.an.instanceof Coreon.Models.Concept
+
+    it "creates default term with query string", ->
+      @router.create("gun")
+      @screen.model.get("terms").should.have.length 1
+      @screen.model.get("terms")[0].value.should.equal "gun"
+      @screen.model.get("terms")[0].lang.should.equal "en"
 
 
 

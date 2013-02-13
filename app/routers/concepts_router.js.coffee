@@ -8,7 +8,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
     "concepts/search/(:target/):query" : "search"
-    "concepts/create" : "create"
+    "concepts/create(/:query)" : "create"
     "concepts/:id"    : "show"
 
   initialize: (options) ->
@@ -33,7 +33,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     search.fetch().done (data) =>
       Coreon.Models.Concept.upsert ( hit.result for hit in data.hits )
       idAttribute = Coreon.Models.Concept::idAttribute
-      @app.hits.reset ( id: hit.result[idAttribute], score: hit.score for hit in data.hits ) 
+      @app.hits.reset ( id: hit.result[idAttribute], score: hit.score for hit in data.hits )
 
   show: (id) ->
     screen = new Coreon.Views.Concepts.ConceptView
@@ -41,8 +41,9 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @view.switch screen
     @app.hits.reset [ id: id ]
 
-  create: ->
+  create: (query) ->
     screen = new Coreon.Views.Concepts.CreateConceptView
       model: new Coreon.Models.Concept
+        terms: [ lang: "en", value: query ]
     @view.switch screen
 

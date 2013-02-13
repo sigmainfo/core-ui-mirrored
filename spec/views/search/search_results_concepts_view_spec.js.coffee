@@ -89,10 +89,11 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
 
     it "renders button to create concept", ->
       I18n.t.withArgs("search.concepts.create").returns "Create concept"
+      @view.model.query = -> "gun"
       @view.render()
       @view.$el.should.have "a.create-concept"
       @view.$("a.create-concept").should.have.text "Create concept"
-      @view.$("a.create-concept").should.have.attr "href", "/concepts/create"
+      @view.$("a.create-concept").should.have.attr "href", "/concepts/create/gun"
       @view.$("a.create-concept").should.have.class "button"
 
       #      I18n.t.withArgs("search.concepts.create").returns "Create Concept Stub"

@@ -13,15 +13,17 @@ Feature: maintainer creates concept
     And I click the search button
     Then I should see a button "CREATE CONCEPT"
     And I click on the create concept link
-    Then I should be on the create concept page
-    And there should be an input for Term Value filled with "gun"
+    Then I should be on the create concept page for "gun"
+    And I should see title "gun"
+    And I should see an "Add Property" link
+    And I should see an "Add Term" link
+    And I should see a link to "create" the concept
+    And I should see a link to "cancel" the creation of the concept
+    And I should see an input for term value with "gun"
     And there should be an input "language" filled with the users search language
     And there should be a "Remove Term" link
-    And there should be an "Add Term" link
-    And there should be an "Add Property" link
-    And the concept title should be "gun"
     And the "Broader and Narrower" section should contain only "gun"
-    And there should be a link to actually "create" the concept.
+    And there should be an "Add Property" link for the term
     And I click on "Add Term"
     Then I should see two new empty inputs for Term Value and Language
     And the input for Term Value should be selected
