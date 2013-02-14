@@ -19,48 +19,87 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
 
   initialize: ->
-    @renderMarkupSkeleton()
+    @nodes = {}
     @layout = d3.layout.tree()
-  #   @stencil = d3.svg.diagonal()
-  #     .projection (d) -> [d.y, d.x]
+    @stencil = d3.svg.diagonal()
+      .projection (d) -> [d.y, d.x]
+    @stopListening()
     @listenTo @model, "change", @render
-
-  renderMarkupSkeleton: ->
-    @$el.html @template size: @options.size
+    @_renderMarkupSkeleton()
 
   render: ->
-    data      = @layout.nodes @model.tree()
-    group     = @$("svg g.concept-map").get 0
+    @_renderNodes()
+    @_renderEdges()
+    @
+
+  _renderMarkupSkeleton: ->
+    @$el.html @template size: @options.size
+
+  _renderNodes: ->
+    data = @layout.nodes @model.tree().root
+    group = @$("svg g.concept-map").get 0
+    map = @
 
     selection = d3.select(group)
       .selectAll(".concept-node")
-      .data( data[1..])#, (datum) -> datum.id )
+      .data( data[1..], (datum) -> datum.id )
 
     selection.enter()
       .append("svg:g")
       .attr("class", "concept-node")
       .each( (datum) ->
-        datum.view = new Coreon.Views.Concepts.ConceptNodeView
+        view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
-        datum.view.render()
+        map.nodes[datum.id] = view.render()
       )
-    
+
     selection.exit()
       .remove()
       .each( (datum) ->
-        datum.view.stopListening()
+        map.nodes[datum.id].stopListening()
       )
 
     selection
-      .each( (datum) =>
-        datum.y = datum.x * @options.size[0]
-        datum.x = ( datum.depth - 1 ) * @options.offsetX
+      .each( (datum) ->
+        datum.y = datum.x * map.options.size[0]
+        datum.x = ( datum.depth - 1 ) * map.options.offsetX
       )
       .attr( "transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"
       )
     @
+
+  _renderEdges: ->
+    data = @model.tree().edges
+    group = @$("svg g.concept-map").get 0
+    map = @
+
+    selection = d3.select(group)
+      .selectAll(".concept-edge")
+      .data( data, (datum) -> "#{datum.source.id}->#{datum.target.id}" )
+    
+    selection.enter()
+      .insert("svg:path", ".concept-node")
+      .attr("class", "concept-edge")
+
+    selection.attr("d", (datum) ->
+      [source, target] = [datum.source, datum.target]
+      [sourceBox, targetBox] = ( map.nodes[datum.id].box() for datum in [source, target] )
+      map.stencil
+        source:
+          x: source.y + sourceBox.height / 2
+          y: source.x + sourceBox.width
+        target:
+          x: target.y + sourceBox.height / 2
+          y: target.x
+    )
+
+    selection.exit()
+      .remove()
+    @
+
+
 
   # renderMap: ->
   #   nodes = @layout.nodes @model.tree()

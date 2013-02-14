@@ -11,26 +11,16 @@ describe "Coreon.Collections.ConceptNodes", ->
     @collection.stopListening()
     Coreon.Models.Concept.find.restore()
 
-  it "is a backbone collection", ->
-    @collection.should.be.an.instanceof Backbone.Collection
+  it "is a Treegraph collection", ->
+    @collection.should.be.an.instanceof Coreon.Collections.Treegraph
+    @collection.options.should.have.deep.property "digraph.in", "super_concept_ids"
+    @collection.options.should.have.deep.property "digraph.out", "sub_concept_ids"
 
   it "creates ConceptNode models", ->
     @collection.add id: "node"
     @collection.get("node").should.be.an.instanceof Coreon.Models.ConceptNode
 
-  it "includes digraph functionality", ->
-    Coreon.Collections.ConceptNodes::tree.should.equal Coreon.Modules.Digraph.tree
-
-  it "is configured to use sub_concept_ids for walking the graph", ->
-    node = new Coreon.Models.ConceptNode sub_concept_ids: ["child_1", "child_2"]
-    @collection.options.down(node).should.eql ["child_1", "child_2"]
-
   describe "initialize()", ->
-
-    it "initializes digraph options", ->
-      @collection.initializeDigraph = sinon.spy()
-      @collection.initialize()
-      @collection.initializeDigraph.should.have.been.calledOnce
 
     context "when connected to hits", ->
     

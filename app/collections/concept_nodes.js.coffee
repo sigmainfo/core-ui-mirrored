@@ -1,15 +1,14 @@
 #= require environment
+#= require collections/treegraph
 #= require models/concept_node
 #= require modules/helpers
-#= require modules/digraph
 
-class Coreon.Collections.ConceptNodes extends Backbone.Collection
-
-  Coreon.Modules.include @, Coreon.Modules.Digraph
+class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
 
   options:
-    down: (node) ->
-      node.get "sub_concept_ids"
+    digraph:
+      in: "super_concept_ids"
+      out: "sub_concept_ids"
 
   model: Coreon.Models.ConceptNode
 
@@ -18,7 +17,6 @@ class Coreon.Collections.ConceptNodes extends Backbone.Collection
       @hits = options.hits
       @listenTo @hits, "reset", @_onHitsReset
       @_onHitsReset()
-    @initializeDigraph()
     @on "add change:childrenExpanded change:sub_concept_ids", @_onChangeChildren, @
     @on "add change:parentsExpanded change:super_concept_ids", @_onChangeParents, @
     @on "remove", @_onRemove, @

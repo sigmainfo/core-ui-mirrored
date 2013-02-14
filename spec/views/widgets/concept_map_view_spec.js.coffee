@@ -7,8 +7,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     sinon.stub I18n, "t"
     nodes = new Backbone.Collection
     nodes.tree = ->
-      id: "root"
-      children: []
+      root:
+        children: []
+      edges: []
     @view = new Coreon.Views.Widgets.ConceptMapView
       model: nodes
 
@@ -55,15 +56,15 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         finally
           d3.layout.tree.restore()
 
-  #   it "creates diagonals factory", ->
-  #     diagonal = d3.svg.diagonal()
-  #     sinon.stub d3.svg, "diagonal", -> diagonal
-  #     try
-  #       @view.initialize()
-  #       @view.stencil.should.equal diagonal
-  #       @view.stencil.projection()(x: "x", y: "y").should.eql ["y", "x"]
-  #     finally
-  #       d3.svg.diagonal.restore()
+      it "creates diagonals factory", ->
+        diagonal = d3.svg.diagonal()
+        sinon.stub d3.svg, "diagonal", -> diagonal
+        try
+          @view.initialize()
+          @view.stencil.should.equal diagonal
+          @view.stencil.projection()(x: "x", y: "y").should.eql ["y", "x"]
+        finally
+          d3.svg.diagonal.restore()
 
   describe "render()", ->
   
@@ -76,40 +77,44 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
 
-    context "rendering nodes", ->
-
+    context "nodes", ->
+      
       it "does not render root node", ->
         @view.model.tree = ->
-          id: "root"
-          children: []
+          root:
+            children: []
+          edges: []
         @view.render()
-        @view.$(".concept-node").should.not.exist
+        @view.$el.should.not.have ".concept-node"
 
       context "updating svg elements", ->
           
         beforeEach ->
           @view.model.tree = ->
-            id: "root"
-            children: [
-              id: "node_1"
-              model: new Backbone.Model(id: "node_1", label: "Node 1")
-            ]
+            root:
+              children: [
+                id: "node_1"
+                model: new Backbone.Model(id: "node_1", label: "Node 1")
+              ]
+            edges: []
           @view.render()
 
         it "renders additional nodes", ->
           @view.model.tree = ->
-            id: "root"
-            children: [
-              { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1") }
-              { id: "node_2", model: new Backbone.Model(id: "node_2", label: "Node 2") }
-            ]
+            root:
+              children: [
+                { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1") }
+                { id: "node_2", model: new Backbone.Model(id: "node_2", label: "Node 2") }
+              ]
+            edges: []
           @view.render()
           @view.$("svg g.concept-map .concept-node").should.have.lengthOf 2
 
         it "removes deprecated nodes", ->
           @view.model.tree = ->
-            id: "root"
-            children: []
+            root:
+              children: []
+            edges: []
           @view.render()
           @view.$(".concept-node").should.not.exist
 
@@ -167,37 +172,98 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         it "creates view for newly created node", ->
           node = new Backbone.Model id: "node", label: "Node"
           @view.model.tree = ->
-            id: "root"
-            children: [
-              id: "node"
-              model: node
-            ]
+            root:
+              children: [
+                id: "node"
+                model: node
+              ]
+            edges: []
           @view.render()
-          el = @view.$(".concept-node").get(0)
-          datum = d3.select(el).data()[0]
-          datum.should.have.property "view"
-          datum.view.should.be.an.instanceof Coreon.Views.Concepts.ConceptNodeView
-          datum.view.should.have.property "el", el 
-          datum.view.should.have.property "model", node 
+          @view.nodes.should.have.property("node").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+          @view.nodes.should.have.deep.property "node.el", @view.$(".concept-node").get(0)
+          @view.nodes.should.have.deep.property "node.model", node
 
         it "resolves view for removed nodes", ->
           @view.model.tree = ->
-            id: "root"
-            children: [
-              id: "node"
-              model: new Backbone.Model(id: "node_1", label: "Node 1")
-            ]
+            root:
+              children: [
+                id: "node"
+                model: new Backbone.Model(id: "node_1", label: "Node 1")
+              ]
+            edges: []
           @view.render()
-          el = @view.$(".concept-node").get(0)
-          datum = d3.select(el).data()[0]
-          datum.view.stopListening = sinon.spy()
-          @view.model.tree = -> id: "root"
+          @view.nodes["node"].stopListening = sinon.spy()
+          @view.model.tree = ->
+            root:
+              children: []
+            edges: []
           @view.render()
-          datum.view.stopListening.should.have.been.calledOnce
-          
-        
-        
+          @view.nodes["node"].stopListening.should.have.been.calledOnce
+  
+    context "edges", ->
 
+      beforeEach ->
+        @view.nodes =
+          parent:  box: -> height: 0, width: 0
+          child_1: box: -> height: 0, width: 0
+          child_2: box: -> height: 0, width: 0
+
+      it "can be chained", ->
+        @view.render().should.equal @view
+          
+      it "is triggered by model changes", ->
+        @view.render = sinon.spy()
+        @view.initialize()
+        @view.model.trigger "change"
+        @view.render.should.have.been.calledOnce
+
+      it "renders newly added eges", ->
+        @view.model.tree = ->
+          root:
+            children: []
+          edges: [
+            {
+              source: { id: "parent",  x: 0, y: 0 }
+              target: { id: "child_1", x: 0, y: 0 }
+            }
+            {
+              source: { id: "parent",  x: 0, y: 0 }
+              target: { id: "child_2", x: 0, y: 0 }
+            }
+          ]
+        @view.render()
+        @view.$el.should.have ".concept-edge"
+        @view.$(".concept-edge").size().should.equal 2
+
+      it "removes dropped edges", ->
+        @view.model.tree = ->
+          root: children: []
+          edges: [
+            {
+              source: { id: "parent",  x: 0, y: 0 }
+              target: { id: "child_1", x: 0, y: 0 }
+            }
+          ]
+        @view.render()
+        @view.model.tree = ->
+          root: children: []
+          edges: []
+        @view.render()
+        @view.$el.should.not.have ".concept-edge"
+
+      it "renders curves from box to box", ->
+        @view.nodes =
+          parent:  box: -> height: 30, width: 120
+          child_1: box: -> height: 20, width: 150
+        @view.model.tree = ->
+          root: children: []
+          edges: [
+            source: { id: "parent",  x: 20, y: 25 }
+            target: { id: "child_1", x: 40, y: 55 }
+          ]
+        @view.render()
+        @view.$(".concept-edge").attr("d").should.match /M140,40.*40,70/
+      
 
   # describe "renderMap()", ->
 

@@ -18,7 +18,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     a = @svg.append("svg:a")
       .attr("xlink:href", "/concepts/#{@model.id}")
 
-    bg = a.append("svg:rect")
+    @bg = a.append("svg:rect")
       .attr("class", "background")
       .attr("height", 17)
 
@@ -34,9 +34,12 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       .text(@shorten @model.get("label"))
     
     labelBox = label.node().getBBox()
-    bg.attr("width", labelBox.x + labelBox.width + 3)
+    @bg.attr("width", labelBox.x + labelBox.width + 3)
 
     @
+
+  box: ->
+    if @bg? then @bg.node().getBBox() else x: 0, y: 0, height: 0, width: 0
 
 
   #   @toggleHit()
