@@ -26,6 +26,14 @@ describe "Coreon.Collections.ConceptNodes", ->
     
       beforeEach ->
         @hits = new Backbone.Collection
+
+      it "calls super", ->
+        sinon.stub Coreon.Collections.Treegraph::, "initialize"
+        try
+          @collection.initialize()
+          Coreon.Collections.Treegraph::initialize.should.have.been.calledOnce
+        finally
+          Coreon.Collections.Treegraph::initialize.restore()
       
       it "assigns hits from options", ->
         @collection.initialize [], hits: @hits

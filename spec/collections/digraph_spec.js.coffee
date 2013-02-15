@@ -69,6 +69,7 @@ describe "Coreon.Collections.Digraph", ->
           @graph.edgesIn.should.have.property "node_1"
           @graph.edgesIn.should.have.property "node_2"
 
+
       context "for nodes with target ids", ->
 
         it "creates edge for newly added node", ->

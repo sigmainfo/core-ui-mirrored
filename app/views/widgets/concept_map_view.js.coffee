@@ -21,10 +21,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   initialize: ->
     @nodes = {}
     @layout = d3.layout.tree()
-    @stencil = d3.svg.diagonal()
-      .projection (d) -> [d.y, d.x]
+    @stencil = d3.svg.diagonal().projection (d) -> [d.y, d.x]
     @stopListening()
-    @listenTo @model, "change", @render
+    @listenTo @model, "change edge:in:add edge:in:remove", @render
     @_renderMarkupSkeleton()
 
   render: ->
@@ -38,7 +37,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   _renderNodes: ->
     data = @layout.nodes @model.tree().root
     group = @$("svg g.concept-map").get 0
-    map = @
+    nodes = @nodes
 
     selection = d3.select(group)
       .selectAll(".concept-node")
@@ -48,22 +47,25 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .append("svg:g")
       .attr("class", "concept-node")
       .each( (datum) ->
+        console.log "enter: #{datum.id}"
         view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
-        map.nodes[datum.id] = view.render()
+        nodes[datum.id] = view.render()
       )
 
     selection.exit()
-      .remove()
       .each( (datum) ->
-        map.nodes[datum.id].stopListening()
+        console.log "exit: #{datum.id}"
+        # nodes[datum.id].stopListening()
+        # delete nodes[datum.id]
       )
+      .remove()
 
     selection
-      .each( (datum) ->
-        datum.y = datum.x * map.options.size[0]
-        datum.x = ( datum.depth - 1 ) * map.options.offsetX
+      .each( (datum) =>
+        datum.y = datum.x * @options.size[0]
+        datum.x = ( datum.depth - 1 ) * @options.offsetX
       )
       .attr( "transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"
@@ -73,7 +75,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   _renderEdges: ->
     data = @model.tree().edges
     group = @$("svg g.concept-map").get 0
-    map = @
+    nodes = @nodes
 
     selection = d3.select(group)
       .selectAll(".concept-edge")
@@ -83,20 +85,24 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .insert("svg:path", ".concept-node")
       .attr("class", "concept-edge")
 
-    selection.attr("d", (datum) ->
-      [source, target] = [datum.source, datum.target]
-      [sourceBox, targetBox] = ( map.nodes[datum.id].box() for datum in [source, target] )
-      map.stencil
-        source:
-          x: source.y + sourceBox.height / 2
-          y: source.x + sourceBox.width
-        target:
-          x: target.y + sourceBox.height / 2
-          y: target.x
-    )
-
     selection.exit()
       .remove()
+
+    selection
+      .each( (datum) ->
+      )
+    #   .attr("d", (datum) ->
+    #     [source, target] = [datum.source, datum.target]
+    #     [sourceBox, targetBox] = ( map.nodes[datum.id].box() for datum in [source, target] )
+    #     map.stencil
+    #       source:
+    #         x: source.y + sourceBox.height / 2
+    #         y: source.x + sourceBox.width
+    #       target:
+    #         x: target.y + sourceBox.height / 2
+    #         y: target.x
+    #   )
+
     @
 
 

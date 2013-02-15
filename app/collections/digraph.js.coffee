@@ -14,7 +14,6 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     options.digraph ?= {}
     options.digraph[key] = value for key, value of @options.digraph when not options.digraph[key]?
     @options = options
-    super
     @on "change:#{@options.digraph.out}", @_onChangeTargetIds, @
     @on "change:#{@options.digraph.in}" , @_onChangeSourceIds, @
 
@@ -179,7 +178,7 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     edges
   
   _collectRoots: ->
-    model for model in @models when @edgesIn[model.id].length is 0
+    @get id for id, sources of @edgesIn when sources.length is 0
 
   _collectLeaves: ->
-    model for model in @models when @edgesOut[model.id].length is 0
+    @get id for id, targets of @edgesOut when targets.length is 0

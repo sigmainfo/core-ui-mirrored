@@ -13,6 +13,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
   model: Coreon.Models.ConceptNode
 
   initialize: (models, options = {}) ->
+    super
     if options.hits?
       @hits = options.hits
       @listenTo @hits, "reset", @_onHitsReset
