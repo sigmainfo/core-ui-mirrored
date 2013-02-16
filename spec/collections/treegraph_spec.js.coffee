@@ -13,10 +13,10 @@ describe "Coreon.Collections.Treegraph", ->
 
     describe "root", ->
     
-      it "returns root node", ->
+     it "returns root node", ->
         @graph.tree().root.should.eql children: []
 
-      it "accumulates data from models", ->
+     it "accumulates data from models", ->
         @graph.reset [ _id: "node" ], silent: true
         @graph.tree()
         node = @graph.get "node"
@@ -24,7 +24,7 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.tree().should.have.deep.property "root.children[0].model", node
         @graph.tree().should.have.deep.property("root.children[0].children").with.length 0
 
-      it "creates complete branch downto leaves", ->
+     it "creates complete branch downto leaves", ->
         @graph.reset [
           { _id: "parent", targetIds: [ "child" ] }
           { _id: "child", targetIds: [ "child_of_child" ] }
@@ -34,7 +34,7 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.tree().should.have.deep.property "root.children[0].children[0].id", "child"
         @graph.tree().should.have.deep.property "root.children[0].children[0].children[0].id", "child_of_child"
 
-      it "uses longest path for multiparented nodes", ->
+     it "uses longest path for multiparented nodes", ->
         @graph.reset [
           { _id: "parent", targetIds: [ "child", "child_of_child" ] }
           { _id: "child", targetIds: [ "child_of_child" ] }
@@ -47,43 +47,42 @@ describe "Coreon.Collections.Treegraph", ->
 
     describe "edges", ->
     
-      it "is empty by default", ->
+     it "is empty by default", ->
         @graph.tree().should.have.property("edges").with.length 0      
 
-      it "creates data vectors for edges", ->
+     it "creates data vectors for edges", ->
         @graph.reset [
           { _id: "parent", targetIds: [ "child", "child_of_child" ] }
           { _id: "child", targetIds: [ "child_of_child" ] }
           { _id: "child_of_child" }
         ], silent: true
-        console.log @graph.tree().edges
         @graph.tree().should.have.deep.property "edges.length", 3
         @graph.tree().should.have.deep.property "edges[0].source", @graph.tree().root.children[0]
         @graph.tree().should.have.deep.property "edges[0].target", @graph.tree().root.children[0].children[0]
         
     context "memoizing", ->
 
-      it "reuses tree data", ->
+     it "reuses tree data", ->
         memo = @graph.tree()
         @graph.tree().should.equal memo
 
-      it "is recreated on reset", ->
+     it "is recreated on reset", ->
         memo = @graph.tree()
         @graph.reset [ _id: "node" ]
         @graph.tree().should.have.deep.property "root.children[0].id", "node"
 
-      it "is recreated on add", ->
+     it "is recreated on add", ->
         memo = @graph.tree()
         @graph.add _id: "node"
         @graph.tree().should.have.deep.property "root.children[0].id", "node"
 
-      it "is recreated on remove", ->
+     it "is recreated on remove", ->
         @graph.reset [ _id: "node" ], silent: true
         memo = @graph.tree()
         @graph.remove "node"
         @graph.tree().should.have.deep.property "root.children.length", 0
 
-      it "is recreated when an edge was added", ->
+     it "is recreated when an edge was added", ->
         @graph.reset [
           { _id: "source" }
           { _id: "target" }
@@ -92,7 +91,7 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.get("source").set "targetIds", [ "target" ]
         @graph.tree().should.have.deep.property "root.children[0].children[0].id", "target"
 
-      it "is recreated when an edge was removed", ->
+     it "is recreated when an edge was removed", ->
         @graph.reset [
           { _id: "source", targetIds: [ "target" ] }
           { _id: "target" }

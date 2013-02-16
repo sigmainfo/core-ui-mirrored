@@ -6,7 +6,7 @@ class Coreon.Collections.Digraph extends Backbone.Collection
     @options =
       sourceIds: options.sourceIds ? "sourceIds"
       targetIds: options.targetIds ? "targetIds"
-    @on "reset add remove change:#{@options.targetIds} change:#{@options.sourceIds}", @_invalidateEdges, @
+    @on "reset add remove change:#{@options.targetIds} change:#{@options.sourceIds}", @_invalidateGraph, @
 
   edges: ->
     @_edges ?= @_createEdges()
@@ -62,5 +62,5 @@ class Coreon.Collections.Digraph extends Backbone.Collection
         source: source
         target: target
 
-  _invalidateEdges: ->
+  _invalidateGraph: ->
     @_edges = null

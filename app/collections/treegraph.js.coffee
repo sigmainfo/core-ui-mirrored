@@ -8,18 +8,18 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     @_tree
 
   _createTree: ->
+    @_data = {}
+    @_parents = {}
     @_tree =
       root:
         children: []
       edges:
         []
-    @_data = {}
-    @_parents = {}
     @breadthFirstOut @_processDatum
 
   _processDatum: (model) ->
     datum = @_getDatum model
-    @_createEdges datum
+    @_createDatumEdges datum
     @_attachDatum datum
     @_fillParents datum
 
@@ -29,15 +29,15 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
       model: model
       children: []
 
-  _createEdges: (datum) ->
-    targets = @edgesOut[datum.id]
+  _createDatumEdges: (datum) ->
+    targets = ( edge.target for edge in @edgesOut datum.id )
     for target in targets
       @_tree.edges.push
         source: datum
         target: @_getDatum target
 
   _attachDatum: (datum) ->
-    sources = @edgesIn[datum.id]
+    sources = ( edge.source for edge in @edgesIn datum.id )
     parents = @_parents[datum.id]
     if sources.length is 0
       @_tree.root.children.push datum
@@ -45,12 +45,13 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
       parents[0].children.push datum
 
   _fillParents: (datum) ->
-    for target in @edgesOut[datum.id]
+    for edge in @edgesOut datum.id
+      target = edge.target
       @_parents[target.id] ?= []
       @_parents[target.id].unshift datum
 
-  _invalidate: ->
+  _invalidateGraph: ->
     super
-    @_tree = null
+    @_tree    = null
     @_parents = null
-    @_data = null
+    @_data    = null

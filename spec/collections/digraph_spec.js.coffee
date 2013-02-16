@@ -111,8 +111,6 @@ describe "Coreon.Collections.Digraph", ->
         @graph.edges()
         @graph.get("target").set "sourceIds", [ "source" ]
         @graph.edges().should.have.length 1
-        
-      
 
   describe "edgesIn()", ->
   
