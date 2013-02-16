@@ -2,183 +2,65 @@
 
 class Coreon.Collections.Digraph extends Backbone.Collection
 
-  edgesIn: null
-  edgesOut: null
-
-  options:
-    digraph:
-      in:  "sourceIds"
-      out: "targetIds"
-
   initialize: (models, options = {}) ->
-    options.digraph ?= {}
-    options.digraph[key] = value for key, value of @options.digraph when not options.digraph[key]?
-    @options = options
-    @on "change:#{@options.digraph.out}", @_onChangeTargetIds, @
-    @on "change:#{@options.digraph.in}" , @_onChangeSourceIds, @
-
-  _reset: ->
-    super
-    @_tailsIn  = {}
-    @_tailsOut = {}
-    @edgesIn   = {}
-    @edgesOut  = {}
-    @_invalidate()
-    @_invalidateEdges()
-
-  add: (models = [], options) ->
-    super
-    @_invalidate()
-    for model in @_getModels models
-      @_prepareEdges model
-      @_connectTailsIn model, options
-      @_connectTailsOut model, options
-      @_evaluateTargetIds model, model.get(@options.digraph.out), options
-      @_evaluateSourceIds model, model.get(@options.digraph.in), options
-    @
-
-  remove: (models, options) ->
-    @_invalidate()
-    for model in @_getModels models
-      @_removeEdge source, model, options for source in @edgesIn[model.id]
-      @_removeEdge model, target, options for target in @edgesOut[model.id]
-      @_dismissTargetIds model, model.get(@options.digraph.out), options
-      @_dismissSourceIds model, model.get(@options.digraph.in), options
-      @_swipeEdges model
-    super
+    @options =
+      sourceIds: options.sourceIds ? "sourceIds"
+      targetIds: options.targetIds ? "targetIds"
+    @on "reset add remove change:#{@options.targetIds} change:#{@options.sourceIds}", @_invalidateEdges, @
 
   edges: ->
-    @_edges ?= @_collectEdges()
+    @_edges ?= @_createEdges()
+    @_edges[..]
+
+  edgesIn: (target) ->
+    target = @get target
+    edge for edge in @edges() when edge.target is target
+
+  edgesOut: (source) ->
+    source = @get source
+    edge for edge in @edges() when edge.source is source
 
   roots: ->
-    @_roots ?= @_collectRoots()
+    model for model in @models when @edgesIn(model).length is 0
 
   leaves: ->
-    @_leaves ?= @_collectLeaves()
+    model for model in @models when @edgesOut(model).length is 0
 
   breadthFirstOut: (callback) ->
-    queue = @roots()[..]
+    queue = @roots()
     queued = {}
     while queue.length > 0
       node = queue.shift()
       callback.call @, node
-      for target in @edgesOut[node.id]
+      for edge in @edgesOut(node.id)
+        target = edge.target
         unless queued[target.id]?
           queue.push target
           queued[target.id] = true
 
-  _onChangeTargetIds: (model, targetIds, options) ->
-    [addedIds, removedIds] = @_getChanges targetIds, model.previous(@options.digraph.out)
-    @_evaluateTargetIds model, addedIds
-    @_dismissTargetIds model, removedIds
+  _createEdges: ->
+    edges = []
+    for model in @models
+      if sourceIds = model.get @options.sourceIds
+        for sourceId in sourceIds
+          if source = @get sourceId
+            @_createEdge edges, source, model
+      if targetIds = model.get @options.targetIds
+        for targetId in targetIds
+          if target = @get targetId
+            @_createEdge edges, model, target
+    edges
 
-  _onChangeSourceIds: (model, sourceIds, options) ->
-    [addedIds, removedIds] = @_getChanges sourceIds, model.previous(@options.digraph.in)
-    @_evaluateSourceIds model, addedIds
-    @_dismissSourceIds model, removedIds
-  
-  _prepareEdges: (model) ->
-    @edgesIn[model.id]  = []
-    @edgesOut[model.id] = []
-
-  _swipeEdges: (model) ->
-    delete @edgesIn[model.id]
-    delete @edgesOut[model.id]
-
-  _connectTailsIn: (model, options) ->
-    if @_tailsIn[model.id]?
-      @_createEdge source, model, options for source in @_tailsIn[model.id]
-      delete @_tailsIn[model.id]
-
-  _connectTailsOut: (model, options) ->
-    if @_tailsOut[model.id]?
-      @_createEdge model, target, options for target in @_tailsOut[model.id]
-      delete @_tailsOut[model.id]
-
-  _evaluateTargetIds: (model, targetIds = [], options) ->
-    for targetId in targetIds
-      if @edgesIn[targetId]?
-        @_createEdge model, @get(targetId), options
-      else
-        @_tailsIn[targetId] ?= []
-        @_addToList @_tailsIn[targetId], model
-
-  _evaluateSourceIds: (model, sourceIds = [], options) ->
-    for sourceId in sourceIds
-      if @edgesOut[sourceId]? 
-        @_createEdge @get(sourceId), model, options
-      else
-        @_tailsOut[sourceId] ?= []
-        @_addToList @_tailsOut[sourceId], model
-
-  _dismissTargetIds: (model, targetIds = [], options) ->
-    for targetId in targetIds
-      @_removeEdge model, target, options if target = @get(targetId)
-      @_removeFromList @_tailsIn[targetId], model
-
-  _dismissSourceIds: (model, sourceIds = [], options) ->
-    for sourceId in sourceIds
-      @_removeEdge source, model, options if source = @get(sourceId)
-      @_removeFromList @_tailsOut[sourceId], model
-
-  _createEdge: (source, target, options) ->
-    @_addToList @edgesOut[source.id], target
-    @_addToList @edgesIn[target.id], source
-    @_invalidate()
-    @_invalidateEdges()
-    @_triggerEdgeEvent "add", source, target, options
-
-  _removeEdge: (source, target, options) ->
-    @_removeFromList @edgesOut[source.id], target
-    @_removeFromList @edgesIn[target.id], source
-    @_invalidate()
-    @_invalidateEdges()
-    @_triggerEdgeEvent "remove", source, target, options
-
-  _triggerEdgeEvent: (type, source, target, options = {}) -> 
-    unless options.silent?
-      edge =
+  _createEdge: (edges, source, target) ->
+    hasEdge = false
+    for edge in edges
+      if edge.source is source and edge.target is target
+        hasEdge = true
+        break
+    unless hasEdge
+      edges.push
         source: source
         target: target
-      source.trigger "edge:out:#{type}", edge
-      target.trigger "edge:in:#{type}", edge
-
-  _getModels: (models = []) ->
-    models = [ models ] unless _.isArray(models)
-    model for model in models when model = @get model
-
-  _addToList: (list, value) ->
-    list.push value if list.indexOf(value) < 0
-
-  _removeFromList: (list, value) ->
-    if list?
-      pos = list.indexOf value
-      list.splice pos, 1 unless pos < 0
-
-  _getChanges: (currentItems, previousItems = []) ->
-    added   = (item for item in currentItems when previousItems.indexOf(item) < 0)
-    removed = (item for item in previousItems when currentItems.indexOf(item) < 0)
-    [added, removed]
-
-  _invalidate: ->
-    @_roots  = null
-    @_leaves = null
 
   _invalidateEdges: ->
-    @_edges  = null
-
-  _collectEdges: ->
-    edges = []
-    for sourceId, targets of @edgesOut
-      source = @get sourceId
-      for target in targets
-        edges.push
-          source: source
-          target: target
-    edges
-  
-  _collectRoots: ->
-    @get id for id, sources of @edgesIn when sources.length is 0
-
-  _collectLeaves: ->
-    @get id for id, targets of @edgesOut when targets.length is 0
+    @_edges = null
