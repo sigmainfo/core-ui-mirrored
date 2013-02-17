@@ -3,8 +3,6 @@
 
 class Coreon.Models.ConceptNode extends Backbone.Model
 
-  idAttribute: "id"
-
   concept: null
 
   defaults:

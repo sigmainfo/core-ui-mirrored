@@ -183,7 +183,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           @view.nodes.should.have.deep.property "node.el", @view.$(".concept-node").get(0)
           @view.nodes.should.have.deep.property "node.model", node
 
-        it "resolves view for removed nodes", ->
+        xit "resolves view for removed nodes", ->
           @view.model.tree = ->
             root:
               children: [
@@ -251,7 +251,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.render()
         @view.$el.should.not.have ".concept-edge"
 
-      it "renders curves from box to box", ->
+      xit "renders curves from box to box", ->
         @view.nodes =
           parent:  box: -> height: 30, width: 120
           child_1: box: -> height: 20, width: 150

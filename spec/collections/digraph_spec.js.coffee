@@ -182,6 +182,16 @@ describe "Coreon.Collections.Digraph", ->
       @graph.roots().should.have.length 1
       @graph.roots().should.have.deep.property "[0].id", "source"
 
+    it "filters roots that are connected to given nodes", ->
+      @graph.reset [
+        { _id: "source_1", targetIds: [ "target_1" ] }
+        { _id: "target_1" }
+        { _id: "source_2", targetIds: [ "target_2" ] }
+        { _id: "target_2" }
+      ], silent: true
+      @graph.roots("target_1").should.have.length 1
+      @graph.roots().should.have.deep.property "[0].id", "source_1"
+
   describe "leaves()", ->
   
     it "is empty by default", ->
@@ -195,6 +205,67 @@ describe "Coreon.Collections.Digraph", ->
       ], silent: true
       @graph.leaves().should.have.length 1
       @graph.leaves().should.have.deep.property "[0].id", "target"
+
+    it "filters leaves that are connected to given nodes", ->
+      @graph.reset [
+        { _id: "source_1", targetIds: [ "target_1" ] }
+        { _id: "target_1" }
+        { _id: "source_2", targetIds: [ "target_2" ] }
+        { _id: "target_2" }
+      ], silent: true
+      @graph.leaves("source_1").should.have.length 1
+      @graph.leaves().should.have.deep.property "[0].id", "target_1"
+
+  describe "breadthFirstIn()", ->
+
+    beforeEach ->
+      @callback = sinon.spy()
+  
+    it "invokes callback for every node", ->
+      @graph.reset [
+        { _id: "node_1" }
+        { _id: "node_2" }
+      ], silent: true
+      node_1 = @graph.get "node_1"
+      node_2 = @graph.get "node_2"
+      @graph.breadthFirstIn @callback 
+      @callback.should.have.been.calledTwice
+      @callback.should.always.have.been.calledOn @graph
+      @callback.firstCall.should.have.been.calledWith node_1
+      @callback.secondCall.should.have.been.calledWith node_2
+
+    it "invokes callback breadth first", ->
+      @graph.reset [
+        { _id: "root", targetIds: [ "child_1", "child_2" ] }
+        { _id: "child_1", targetIds: [ "child_of_child"] }
+        { _id: "child_2" }
+        { _id: "child_of_child" }
+      ], silent: true
+      @graph.breadthFirstIn @callback 
+      @callback.getCall(0).should.have.deep.property "args[0].id", "root"
+      @callback.getCall(1).should.have.deep.property "args[0].id", "child_1"
+      @callback.getCall(2).should.have.deep.property "args[0].id", "child_2"
+      @callback.getCall(3).should.have.deep.property "args[0].id", "child_of_child"
+
+    it "invokes callback only once per node", ->
+      @graph.reset [
+        { _id: "root", targetIds: [ "child_1", "child_2" ] }
+        { _id: "child_1", targetIds: [ "child_of_child"] }
+        { _id: "child_2", targetIds: [ "child_of_child"] }
+        { _id: "child_of_child" }
+      ], silent: true
+      @graph.breadthFirstIn @callback 
+      @callback.should.have.property "callCount", 4
+
+    it "takes starting nodes as an option", ->
+      @graph.reset [
+        { _id: "root", targetIds: [ "child" ] }
+        { _id: "child", targetIds: [ "child_of_child"] }
+        { _id: "child_of_child" }
+      ], silent: true
+      @graph.breadthFirstIn @callback, start: "child"
+      @callback.should.have.been.calledTwice
+      @callback.should.not.have.been.calledWith @graph.get "root"
 
   describe "breadthFirstOut()", ->
 
@@ -216,23 +287,33 @@ describe "Coreon.Collections.Digraph", ->
 
     it "invokes callback breadth first", ->
       @graph.reset [
-        { _id: "root", targetIds: [ "child_1", "child_2" ] }
-        { _id: "child_1", targetIds: [ "child_of_child"] }
-        { _id: "child_2" }
-        { _id: "child_of_child" }
+        { _id: "leaf", sourceIds: [ "parent_1", "parent_2" ] }
+        { _id: "parent_1", sourceIds: [ "parent_of_parent"] }
+        { _id: "parent_2" }
+        { _id: "parent_of_parent" }
       ], silent: true
       @graph.breadthFirstOut @callback 
-      @callback.getCall(0).should.have.deep.property "args[0].id", "root"
-      @callback.getCall(1).should.have.deep.property "args[0].id", "child_1"
-      @callback.getCall(2).should.have.deep.property "args[0].id", "child_2"
-      @callback.getCall(3).should.have.deep.property "args[0].id", "child_of_child"
+      @callback.getCall(0).should.have.deep.property "args[0].id", "leaf"
+      @callback.getCall(1).should.have.deep.property "args[0].id", "parent_1"
+      @callback.getCall(2).should.have.deep.property "args[0].id", "parent_2"
+      @callback.getCall(3).should.have.deep.property "args[0].id", "parent_of_parent"
 
     it "invokes callback only once per node", ->
       @graph.reset [
-        { _id: "root", targetIds: [ "child_1", "child_2" ] }
-        { _id: "child_1", targetIds: [ "child_of_child"] }
-        { _id: "child_2", targetIds: [ "child_of_child"] }
-        { _id: "child_of_child" }
+        { _id: "leaf", sourceIds: [ "parent_1", "parent_2" ] }
+        { _id: "parent_1", sourceIds: [ "parent_of_parent"] }
+        { _id: "parent_2", sourceIds: [ "parent_of_parent"] }
+        { _id: "parent_of_parent" }
       ], silent: true
       @graph.breadthFirstOut @callback 
       @callback.should.have.property "callCount", 4
+
+    it "takes starting nodes as argument", ->
+      @graph.reset [
+        { _id: "leaf", sourceIds: [ "parent" ] }
+        { _id: "parent", sourceIds: [ "parent_of_parent"] }
+        { _id: "parent_of_parent" }
+      ], silent: true
+      @graph.breadthFirstOut @callback, start: "parent"
+      @callback.should.have.been.calledTwice
+      @callback.should.not.have.been.calledWith @graph.get "leaf"

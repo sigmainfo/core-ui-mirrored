@@ -15,7 +15,7 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
         children: []
       edges:
         []
-    @breadthFirstOut @_processDatum
+    @breadthFirstIn @_processDatum
 
   _processDatum: (model) ->
     datum = @_getDatum model

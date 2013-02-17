@@ -5,48 +5,46 @@
 
 class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
 
-  options:
-    digraph:
-      in: "super_concept_ids"
-      out: "sub_concept_ids"
-
   model: Coreon.Models.ConceptNode
 
   initialize: (models, options = {}) ->
-    super
-    if options.hits?
-      @hits = options.hits
-      @listenTo @hits, "reset", @_onHitsReset
-      @_onHitsReset()
-    @on "add change:childrenExpanded change:sub_concept_ids", @_onChangeChildren, @
-    @on "add change:parentsExpanded change:super_concept_ids", @_onChangeParents, @
-    @on "remove", @_onRemove, @
+    options.sourceIds = "super_concept_ids"
+    options.targetIds = "sub_concept_ids"
+    super models, options
+    if hits = options.hits
+      @hits = hits
+      @listenTo @hits, "reset", @_resetFromHits
+      @_resetFromHits()
+    @on "remove", @_removeSubnodes, @
 
-  resetFromHits: (hits) ->
-    attrs = for hit in hits
-      id: hit.id
+  remove: (models, options = {}) ->
+    options.previousEdges = @edges()
+    models = [ models ] unless Array.isArray models
+    models = for model in models when model = @get model
+      if except = options.except
+        except = [ except ] unless Array.isArray except
+        filter = false
+        for exception in except when exception = @get exception
+          if model is exception
+            filter = true
+            break
+        continue if filter
+      continue unless @edgesIn(model).length is 0
+      model
+    super models, options
+
+  focus: (models, options = {}) ->
+    @remove @roots(models), except: models
+
+  _resetFromHits: ->
+    attrs = for hit in @hits.models
+      _id: hit.id
       hit: hit
-      childrenExpanded: true
-      parentsExpanded: true
-    @update attrs
+    @reset attrs
 
-  _onChangeChildren: (model) ->
-    if model.get "childrenExpanded"
-      @add id: childId for childId in childIds if childIds = model.get "sub_concept_ids"
-
-  _onChangeParents: (model) ->
-    if ( parentIds = model.get "super_concept_ids" ) and model.get "parentsExpanded"
-      for parentId in parentIds
-        if parent = @get parentId
-          parent.set "childrenExpanded", true
-        else
-          @add id: parentId, childrenExpanded: true
-
-  _onRemove: (model) ->
-    if childIds = model.get "sub_concept_ids"
-      for childId in childIds
-        if model = @get childId  
-          @remove model
-
-  _onHitsReset: ->
-    @resetFromHits @hits.models
+  _removeSubnodes: (model, collection, options) ->
+    subnodes = for edge in options.previousEdges when edge.source is model
+      target = edge.target
+      continue unless @edgesIn(target).length is 0
+      target
+    @remove(subnodes, options) if subnodes.length > 0
