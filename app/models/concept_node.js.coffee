@@ -7,8 +7,8 @@ class Coreon.Models.ConceptNode extends Backbone.Model
 
   defaults:
     hit:  null
-    parentsExpanded: false
-    childrenExpanded: false
+    expandedIn: false
+    expandedOut: false
 
   initialize: (attributes = {}, options = {}) ->
     @concept = if options.concept?

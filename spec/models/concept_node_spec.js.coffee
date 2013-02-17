@@ -34,15 +34,15 @@ describe "Coreon.Models.ConceptNode", ->
       it "defaults to null", ->
         expect( @node.get "hit" ).to.be.null
 
-    describe "parentsExpanded", ->
+    describe "expandedIn", ->
 
       it "defaults to false", ->
-        expect( @node.get "parentsExpanded" ).to.be.false
+        expect( @node.get "expandedIn" ).to.be.false
         
-    describe "childrenExpanded", ->
+    describe "expandedOut", ->
     
       it "defaults to false", ->
-        expect( @node.get "childrenExpanded" ).to.be.false
+        expect( @node.get "expandedOut" ).to.be.false
 
     context "derived from concept", ->
 

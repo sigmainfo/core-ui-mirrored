@@ -45,6 +45,11 @@ describe "Coreon.Collections.ConceptNodes", ->
         should.exist @collection.get("hit")
         @collection.get("hit").get("hit").should.equal @hits.get "hit"
 
+      it "expands nodes from hits", ->
+        @collection.initialize [], hits: @hits
+        @collection.get("hit").get("expandedIn").should.be.true
+        @collection.get("hit").get("expandedOut").should.be.true
+
       it "is updated when hits are reset", ->
         @collection.initialize [], hits: @hits
         @hits.reset [ _id: "hit_2" ]
@@ -126,3 +131,123 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.focus "subnode"
       @collection.should.have.length 2
       should.exist @collection.get "root_1"
+
+  describe "add()", ->
+
+    context "spreading out", ->
+
+      context "expanding edges out", ->
+
+        it "adds targets when expanded", ->
+          @collection.add [
+            _id: "node"
+            sub_concept_ids: [ "subnode_1", "subnode_2" ]
+            expandedOut: true
+          ]
+          @collection.should.have.length 3
+          should.exist @collection.get "subnode_1"
+          should.exist @collection.get "subnode_2"
+
+        it "does not add nodes when not expanded", ->
+          @collection.add [
+            _id: "node"
+            sub_concept_ids: [ "subnode_1", "subnode_2" ]
+            expandedOut: false
+          ]
+          @collection.should.have.length 1
+        
+        it "does not expand added nodes", ->
+          @collection.add [
+            _id: "node"
+            sub_concept_ids: [ "subnode" ]
+            expandedOut: true
+          ]
+          @collection.get("subnode").get("expandedOut").should.be.false
+
+      context "expanding edges in", ->
+        
+        it "adds sources when expanded", ->
+          @collection.add [
+            _id: "node"
+            super_concept_ids: [ "supernode_1", "supernode_2" ]
+            expandedIn: true
+          ]
+          @collection.should.have.length 3
+          should.exist @collection.get "supernode_1"
+          should.exist @collection.get "supernode_2"
+
+        it "does not add nodes when not expanded", ->
+          @collection.add [
+            _id: "node"
+            super_concept_ids: [ "supernode_1", "supernode_2" ]
+            expandedIn: false
+          ]
+          @collection.should.have.length 1
+        
+        it "expands out added nodes", ->
+          @collection.add [
+            _id: "node"
+            super_concept_ids: [ "supernode" ]
+            expandedIn: true
+          ]
+          @collection.get("supernode").get("expandedOut").should.equal true
+
+  describe "reset()", ->
+
+    context "spreading out", ->
+
+      context "expanding edges out", ->
+
+        it "resets targets when expanded", ->
+          @collection.reset [
+            _id: "node"
+            sub_concept_ids: [ "subnode_1", "subnode_2" ]
+            expandedOut: true
+          ]
+          @collection.should.have.length 3
+          should.exist @collection.get "subnode_1"
+          should.exist @collection.get "subnode_2"
+
+        it "does not reset nodes when not expanded", ->
+          @collection.reset [
+            _id: "node"
+            sub_concept_ids: [ "subnode_1", "subnode_2" ]
+            expandedOut: false
+          ]
+          @collection.should.have.length 1
+        
+        it "does not expand reseted nodes", ->
+          @collection.reset [
+            _id: "node"
+            sub_concept_ids: [ "subnode" ]
+            expandedOut: true
+          ]
+          @collection.get("subnode").get("expandedOut").should.equal false
+
+      context "expanding edges in", ->
+        
+        it "resets sources when expanded", ->
+          @collection.reset [
+            _id: "node"
+            super_concept_ids: [ "supernode_1", "supernode_2" ]
+            expandedIn: true
+          ]
+          @collection.should.have.length 3
+          should.exist @collection.get "supernode_1"
+          should.exist @collection.get "supernode_2"
+
+        it "does not reset nodes when not expanded", ->
+          @collection.reset [
+            _id: "node"
+            super_concept_ids: [ "supernode_1", "supernode_2" ]
+            expandedIn: false
+          ]
+          @collection.should.have.length 1
+        
+        it "expands out reseted nodes", ->
+          @collection.reset [
+            _id: "node"
+            super_concept_ids: [ "supernode" ]
+            expandedIn: true
+          ]
+          @collection.get("supernode").get("expandedOut").should.equal true
