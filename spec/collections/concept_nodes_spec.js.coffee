@@ -264,7 +264,48 @@ describe "Coreon.Collections.ConceptNodes", ->
         ]
         @node = @collection.get "node"
       
-      xit "removes deprecated subnodes", ->
+      it "removes deprecated subnodes", ->
         @node.set "sub_concept_ids", []
         @collection.should.have.length 1
         should.not.exist @collection.get "subnode_1"
+
+      it "creates subnode for added ids", ->
+        @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ]
+        @collection.should.have.length 3
+        should.exist @collection.get "subnode_2"
+
+      it "handles undefined targetIds gracefully", ->
+        @node.set "sub_concept_ids", null
+        @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ]
+        @collection.should.have.length 3
+        should.exist @collection.get "subnode_2"
+        
+  describe "on change:super_concept_ids", ->
+
+    xcontext "spreading out", ->
+      
+      beforeEach ->
+        @collection.reset [
+          _id: "node"
+          super_concept_ids: [ "supernode_1" ]
+          expandedIn: true
+        ]
+        @node = @collection.get "node"
+      
+      it "removes deprecated supernodes", ->
+        @node.set "super_concept_ids", []
+        @collection.should.have.length 1
+        should.not.exist @collection.get "supernode_1"
+
+      it "creates supernode for added ids", ->
+        @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ]
+        @collection.should.have.length 3
+        should.exist @collection.get "supernode_2"
+
+      it "handles undefined targetIds gracefully", ->
+        @node.set "super_concept_ids", null
+        @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ]
+        @collection.should.have.length 3
+        should.exist @collection.get "supernode_2"
+        
+        
