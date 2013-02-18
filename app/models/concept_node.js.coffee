@@ -3,20 +3,18 @@
 
 class Coreon.Models.ConceptNode extends Backbone.Model
 
-  idAttribute: "id"
-
   concept: null
 
   defaults:
     hit:  null
-    parentsExpanded: false
-    childrenExpanded: false
+    expandedIn: false
+    expandedOut: false
 
   initialize: (attributes = {}, options = {}) ->
     @concept = if options.concept?
       options.concept
-    else if attributes.id?
-      Coreon.Models.Concept.find attributes.id
+    else if @id?
+      Coreon.Models.Concept.find @id
     if @concept?
       @listenTo @concept, "all", @_onConceptChange
 

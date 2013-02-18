@@ -77,6 +77,18 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       finally
         SVGTextElement::getBBox.restore()
 
+  describe "box()", ->
+
+    it "defaults dimensions to zero", ->
+      @view.box().should.eql { x: 0, y: 0, height: 0, width: 0 }
+      
+    
+    it "returns boundaries from background", ->
+      @view.render()
+      @view.bg.node = -> getBBox: -> { x: 5, y: 15, height: 30, width: 120 }
+      @view.box().should.eql { x: 5, y: 15, height: 30, width: 120 }
+    
+
 
   #   it "creates children toggle", ->
   #     @view.model.set "sub_concept_ids", ["123"], silent: true

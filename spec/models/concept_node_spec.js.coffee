@@ -17,14 +17,15 @@ describe "Coreon.Models.ConceptNode", ->
   describe "initialize()", ->
 
     it "assigns concept from options when given", ->
-      concept = new Backbone.Model id: "123"
+      concept = new Backbone.Model _id: "123"
       @node.initialize {}, concept: concept
       @node.concept.should.equal concept
 
     it "assigns concept from id attribute", ->
-      concept = new Backbone.Model id: "123"
+      concept = new Backbone.Model _id: "123"
       Coreon.Models.Concept.find.withArgs("123").returns concept
-      @node.initialize id: "123"
+      @node.id = "123"
+      @node.initialize()
       @node.concept.should.equal concept
 
   describe "attributes", ->
@@ -34,15 +35,15 @@ describe "Coreon.Models.ConceptNode", ->
       it "defaults to null", ->
         expect( @node.get "hit" ).to.be.null
 
-    describe "parentsExpanded", ->
+    describe "expandedIn", ->
 
       it "defaults to false", ->
-        expect( @node.get "parentsExpanded" ).to.be.false
+        expect( @node.get "expandedIn" ).to.be.false
         
-    describe "childrenExpanded", ->
+    describe "expandedOut", ->
     
       it "defaults to false", ->
-        expect( @node.get "childrenExpanded" ).to.be.false
+        expect( @node.get "expandedOut" ).to.be.false
 
     context "derived from concept", ->
 

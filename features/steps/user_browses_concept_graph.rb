@@ -3,15 +3,14 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   include SearchSteps
   include Api::Graph::Factory
 
-  def collect_edges(count)
-    @edges = []
-    (0...count).each do |i|
-      edge = page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.source.concept.get("label")|)
-      edge << " -> "
-      edge << page.evaluate_script(%Q|$("#coreon-concept-map .concept-edge").get(#{i}).__data__.target.concept.get("label")|)
-      @edges.push edge
-    end
-    @edges
+  def collect_edges
+    page.evaluate_script <<-JS
+      $("#coreon-concept-map .concept-edge").map( function() {
+        source = this.__data__.source.model.get("label");
+        target = this.__data__.target.model.get("label");
+        return source + " -> " + target;
+      }).get();
+    JS
   end
 
   step 'a concept "handgun"' do
@@ -80,12 +79,13 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: "long gun")
   end
 
-  step '"handgun" should be marked as being selected' do
+  step 'only "handgun" should be marked as being selected' do
     page.should have_css("#coreon-concept-map .concept-node.hit", text: "handgun")
+    page.all("#coreon-concept-map .concept-node.hit").size.should == 1
   end
 
   step '"weapon" should be connected to "handgun"' do
-    collect_edges 4
+    @edges = collect_edges
     @edges.should include("weapon -> handgun")
   end
 
@@ -118,7 +118,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step '"long gun" should be connected to "rifle"' do
-    collect_edges 5
+    @edges = collect_edges
     @edges.should include("long gun -> rifle")
   end
 
@@ -145,7 +145,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step '"tool" should be connected to "weapon"' do
-    collect_edges 1
+    @edges = collect_edges
     @edges.should include("tool -> weapon")
   end
 end

@@ -23,9 +23,12 @@ class Coreon.Models.Concept extends Backbone.Model
     {concept: _.clone(this.attributes)}
 
   info: ->
-    internals = _(@defaults).keys()
-    internals.unshift @idAttribute
-    _(id: @id).extend _(@attributes).omit internals
+    info = id: @id
+    defaults = ( key for key, value of @defaults() )
+    defaults.push @idAttribute
+    for key, value of @attributes when key not in defaults
+      info[key] = value
+    info
 
   hit: ->
     Coreon.application.hits.get(@id)?
