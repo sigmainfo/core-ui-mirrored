@@ -1,10 +1,11 @@
-.term
-  .button.remove_term= I18n.t "create_term.remove"
-  %div
-    %label{:for => "concept[terms][#{@id}][value]"}= I18n.t "create_term.value"
-    %div.input.value
-      %input{:type => "text", :name => "concept[terms][#{@id}][value]", :value => @term.value}
-  %div
-    %label{:for => "concept[terms][#{@id}][lang]"}= I18n.t "create_term.language"
-    %div.input.language
-      %input{:type => "text", :name => "concept[terms][#{@id}][lang]", :value => @term.lang}
+.value
+  %label{:for => "concept_terms_#{@id}_value"}= I18n.t "create_term.value"
+  .input
+    %input{:type => "text", :id => "concept_terms_#{@id}_value", :name => "concept[terms][#{@id}][value]", :value => @term.get("value")}
+.language
+  %label{:for => "concept[terms][#{@id}][lang]"}= I18n.t "create_term.language"
+  .input
+    %input{:type => "text", :name => "concept[terms][#{@id}][lang]", :value => @term.get("lang")}
+
+
+-# .button.remove_term= I18n.t "create_term.remove"

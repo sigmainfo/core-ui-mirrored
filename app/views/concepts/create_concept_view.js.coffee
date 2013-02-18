@@ -21,22 +21,18 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
 
   render: ->
     @$el.html @template concept: @model
+
+    @model.get("terms")?.each (term, index) =>
+      term_view = new Coreon.Views.Terms.CreateTermView model: term
+      @$el.find('.terms').append term_view.render().$el
+
     @
 
-#    @$el.empty()
-#    @$el.html @template concept: @model
 #    #    if @model.get("super_concept_ids")?.length + @model.get("sub_concept_ids")?.length > 0
 #    #  @$el.append new Coreon.Views.Concepts.ConceptTreeView model: @model
-#
 #    create_properties_view = new Coreon.Views.Properties.CreatePropertiesView model: @model
 #    create_properties_view.render()
 #    @$el.find('.properties').replaceWith create_properties_view.el
-#
-#    create_terms_view = new Coreon.Views.Terms.CreateTermsView model: @model
-#    create_terms_view.render()
-#    @$el.find('.terms').replaceWith create_terms_view.el
-#
-#    super
 #
 #  render_label: () =>
 #    label = @model.get "label"

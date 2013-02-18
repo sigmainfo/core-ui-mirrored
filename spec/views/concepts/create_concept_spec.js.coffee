@@ -7,7 +7,7 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
   beforeEach ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Concepts.CreateConceptView
-      model: new Coreon.Models.Concept
+      model: new Backbone.Model
 
   afterEach ->
     I18n.t.restore()
@@ -52,4 +52,18 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.render()
       @view.$el.should.have ".cancel"
       @view.$('.cancel').should.have.text "Cancel"
-      
+
+    it "renders Term", ->
+      term =  new Backbone.Model
+      term.set "value", "gun", silent: true
+      term.set "lang", "en", silent: true
+      terms = new Backbone.Collection [term]
+      @view.model.get = (attr) ->
+        terms if attr is "terms"
+      @view.render()
+      @view.$el.should.have ".terms"
+      @view.$('.terms').should.have ".create-term"
+      console.log @view.$('.create-term')
+      @view.$('.create-term').should.have '.value'
+      @view.$('.create-term').should.have '.language'
+

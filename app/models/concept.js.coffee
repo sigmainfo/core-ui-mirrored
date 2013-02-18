@@ -1,5 +1,6 @@
 #= require environment
 #= require modules/accumulation
+#= require collections/terms
 
 class Coreon.Models.Concept extends Backbone.Model
 
@@ -7,9 +8,9 @@ class Coreon.Models.Concept extends Backbone.Model
 
   urlRoot: "concepts"
 
-  defaults:
+  defaults: ->
     properties: []
-    terms: []
+    terms: new Coreon.Collections.Terms
     super_concept_ids: []
     sub_concept_ids: []
     label: ""

@@ -1,6 +1,9 @@
 %h2.label= @concept.get("label")
 %h3.add_property= I18n.t "create_properties.add"
 %h3.add_term= I18n.t "create_terms.add"
+
+.terms
+
 .footer
   .create.button= I18n.t "create_concept.create"
   .cancel.button= I18n.t "create_concept.cancel"

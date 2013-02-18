@@ -35,8 +35,12 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".cancel", "Cancel")
   end
 
-  step 'I should see an input for term value with "gun"' do
-    find('.input.value input').value.should == "gun"
+#  step 'I should see an input for term value with "gun"' do
+  step 'I should see "gun" for "Value" within the first term' do
+    within ".term:first" do
+      find_field("Value").value.should == "gun"
+    end
+#    find('.input.value input').value.should == "gun"
   end
 
 #  step 'I should see an input for term value with "gun"' do
