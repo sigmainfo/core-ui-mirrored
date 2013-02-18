@@ -24,28 +24,18 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
 
+    it "is cleared before rerendering", ->
+      @view.render()
+      @view.render()
+      @el.selectAll("a")[0].should.have.length 1
+
     it "can be chained", ->
       @view.render().should.equal @view
-  
+
     it "renders link to concept", ->
       @view.model.id = "nobody"
       @view.render()
       @el.select("a").attr("xlink:href").should.equal "/concepts/nobody"
-
-    it "renders label text", ->
-      @view.model.set "label", "Revolver"
-      @view.render()
-      @el.select("text").text().should.equal "Revolver"
-
-    it "is cleared before rerendering", ->
-      @view.render()
-      @view.render()
-      console.log @el.selectAll("a")[0].should.have.length 1
-
-    it "shortens lengthy labels", ->
-      @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true
-      @view.render()
-      @el.select("text").text().should.equal "Horticult…"
 
     it "classifies hit", ->
       @view.model.set "hit", { score: 1.5 },  silent: true
@@ -57,54 +47,113 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @el.classed("hit").should.be.false
 
-    it "renders circle", ->
-      @view.render()
-      @el.select("circle").attr("class").should.equal "bullet"
+    context "label", ->
 
-    it "renders background", ->
-      @view.render()
-      @el.select("rect").attr("class").should.equal "background"
-      
-    it "adjusts bg width to label length", ->
-      sinon.stub SVGTextElement::, "getBBox", ->
-        x: 10
-        y: 5
-        width:100
-        height: 20
-      try
+      it "renders label text", ->
+        @view.model.set "label", "Revolver"
         @view.render()
-        @el.select(".background").attr("width").should.equal "113"
-      finally
-        SVGTextElement::getBBox.restore()
+        @el.select("text").text().should.equal "Revolver"
+
+      it "shortens lengthy labels", ->
+        @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true
+        @view.render()
+        @el.select("text").text().should.equal "Horticult…"
+
+      it "renders circle", ->
+        @view.render()
+        @el.select("circle").attr("class").should.equal "bullet"
+
+      it "renders background", ->
+        @view.render()
+        @el.select("rect").attr("class").should.equal "background"
+        
+      it "adjusts bg width to label length", ->
+        sinon.stub SVGTextElement::, "getBBox", ->
+          x: 10
+          y: 5
+          width:100
+          height: 20
+        try
+          @view.render()
+          @el.select(".background").attr("width").should.equal "113"
+        finally
+          SVGTextElement::getBBox.restore()
+
+    context "toggle for subconcepts", ->
+
+      beforeEach ->
+        @view.model.set "sub_concept_ids", ["123"], silent: true
+      
+      it "renders toggle", ->
+        @view.render()
+        @view.$el.should.have ".toggle-children"
+
+      it "positions toggle on right side of box", ->
+        @view.box = -> x: 0, y: 0, width: 50, height: 20
+        @view.render()
+        @view.$(".toggle-children").attr("transform").should.equal "translate(50, 0)"
+      
+      it "does not create children toggle for leaves", ->
+        @view.model.set "sub_concept_ids", [], silent: true
+        @view.render()
+        @view.$el.should.not.have ".toggle-children"
+
+      it "classifies expanded toggle", ->
+        @view.model.set "expandedOut", true, silent: true
+        @view.render()
+        @view.$(".toggle-children").attr("class").should.match /\bexpanded\b/
+
+      it "rotates icon for expanded toggle", ->
+        @view.model.set "expandedOut", true, silent: true
+        @view.render()
+        @view.$(".toggle-children .icon").attr("transform").should.equal "rotate(90, 0, 0)" 
+        
+      it "does not classify collapsed toggle", ->
+        @view.model.set "expandedOut", false, silent: true
+        @view.render()
+        @view.$(".toggle-children").attr("class").should.not.match /\bexpanded\b/
+
+      it "does not rotate icon for collapsed toggle", ->
+        @view.model.set "expandedOut", false, silent: true
+        @view.render()
+        should.not.exist @view.$(".toggle-children .icon").attr("transform") 
 
   describe "box()", ->
 
     it "defaults dimensions to zero", ->
       @view.box().should.eql { x: 0, y: 0, height: 0, width: 0 }
-      
     
     it "returns boundaries from background", ->
       @view.render()
       @view.bg.node = -> getBBox: -> { x: 5, y: 15, height: 30, width: 120 }
       @view.box().should.eql { x: 5, y: 15, height: 30, width: 120 }
+
+  describe "toggleChildren()", ->
+
+    beforeEach ->
+      @view.model.set {
+        super_concept_ids: ["456"],
+        sub_concept_ids: ["333"]
+      }, silent: true
+      @event = document.createEvent "MouseEvents"
+      @event.initMouseEvent "click", true, true, window,
+        0, 0, 0, 0, 0, false, false, false, false, 0, null
+      
+    it "is triggered by click on toggle", ->
+      @view.toggleChildren = sinon.spy()
+      @view.render()
+      @view.$(".toggle-children").get(0).dispatchEvent @event
+      @view.toggleChildren.should.have.been.calledOnce
+
+    it "toggles model state", ->
+      @view.model.set "expandedOut", false, silent: true
+      @view.toggleChildren()
+      @view.model.get("expandedOut").should.be.true
+      @view.toggleChildren()
+      @view.model.get("expandedOut").should.be.false
     
 
 
-  #   it "creates children toggle", ->
-  #     @view.model.set "sub_concept_ids", ["123"], silent: true
-  #     sinon.stub SVGRectElement::, "getBBox", ->
-  #       x: 0, y: 0, width: 50, height: 20 
-  #     try
-  #       @view.render()
-  #       @view.$el.should.have ".toggle-children"
-  #       @view.$(".toggle-children").attr("transform").should.equal "translate(50, 0)"
-  #     finally
-  #       SVGRectElement::getBBox.restore()
-  #   
-  #   it "does not create children toggle for leaves", ->
-  #     @view.model.set "sub_concept_ids", [], silent: true
-  #     @view.render()
-  #     @view.$el.should.not.have ".toggle-children"
 
   #   it "classifies expanded toggles", ->
   #     @view.model.set {sub_concept_ids: ["123"], super_concept_ids: ["456"]}, silent: true
