@@ -19,6 +19,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     @on "add", @_spreadOut, @
     @on "reset", @_spreadOutAll, @
     @on "change:#{@options.targetIds}", @_spreadOutSubnodes, @ 
+    @on "change:#{@options.sourceIds}", @_spreadOutSupernodes, @ 
 
   remove: (models, options = {}) ->
     options.previousEdges = @edges()
@@ -66,6 +67,11 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     previousTargetIds = model.previous(@options.targetIds) ? []
     @add _id: id for id in targetIds when id not in previousTargetIds
     @remove id for id in previousTargetIds when id not in targetIds
+
+  _spreadOutSupernodes: (model, sourceIds = [], options) ->
+    previousSourceIds = model.previous(@options.sourceIds) ? []
+    @add _id: id for id in sourceIds when id not in previousSourceIds
+    @remove id for id in previousSourceIds when id not in sourceIds
 
   _spreadOutAll: ->
     @_spreadOut(model) for model in @models

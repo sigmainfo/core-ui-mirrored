@@ -282,7 +282,7 @@ describe "Coreon.Collections.ConceptNodes", ->
         
   describe "on change:super_concept_ids", ->
 
-    xcontext "spreading out", ->
+    context "spreading out", ->
       
       beforeEach ->
         @collection.reset [
@@ -302,7 +302,7 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.should.have.length 3
         should.exist @collection.get "supernode_2"
 
-      it "handles undefined targetIds gracefully", ->
+      it "handles undefined souceIds gracefully", ->
         @node.set "super_concept_ids", null
         @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ]
         @collection.should.have.length 3
