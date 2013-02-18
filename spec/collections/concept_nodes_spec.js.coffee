@@ -251,3 +251,20 @@ describe "Coreon.Collections.ConceptNodes", ->
             expandedIn: true
           ]
           @collection.get("supernode").get("expandedOut").should.equal true
+
+  describe "on change:sub_concept_ids", ->
+
+    context "spreading out", ->
+      
+      beforeEach ->
+        @collection.reset [
+          _id: "node"
+          sub_concept_ids: [ "subnode_1" ]
+          expandedOut: true
+        ]
+        @node = @collection.get "node"
+      
+      xit "removes deprecated subnodes", ->
+        @node.set "sub_concept_ids", []
+        @collection.should.have.length 1
+        should.not.exist @collection.get "subnode_1"

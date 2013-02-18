@@ -27,7 +27,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       .attr("cx", 7)
       .attr("cy", 9)
       .attr("r", 2.5)
-    
+
     label = a.append("svg:text")
       .attr("x", 14)
       .attr("y", 13)

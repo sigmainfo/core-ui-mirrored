@@ -23,7 +23,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @layout = d3.layout.tree()
     @stencil = d3.svg.diagonal().projection (d) -> [d.y, d.x]
     @stopListening()
-    @listenTo @model, "change edge:in:add edge:in:remove", @render
+    @listenTo @model, "reset change edge:in:add edge:in:remove", @render
     @_renderMarkupSkeleton()
 
   render: ->
@@ -47,7 +47,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .append("svg:g")
       .attr("class", "concept-node")
       .each( (datum) ->
-        console.log "enter: #{datum.id}"
+        # console.log "enter: #{datum.id}"
         view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
@@ -56,7 +56,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
     selection.exit()
       .each( (datum) ->
-        console.log "exit: #{datum.id}"
+        # console.log "exit: #{datum.id}"
         # nodes[datum.id].stopListening()
         # delete nodes[datum.id]
       )
@@ -89,19 +89,17 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .remove()
 
     selection
-      .each( (datum) ->
+      .attr("d", (datum) =>
+        [source, target] = [datum.source, datum.target]
+        [sourceBox, targetBox] = ( nodes[datum.id].box() for datum in [source, target] )
+        @stencil
+          source:
+            x: source.y + sourceBox.height / 2
+            y: source.x + sourceBox.width
+          target:
+            x: target.y + sourceBox.height / 2
+            y: target.x
       )
-    #   .attr("d", (datum) ->
-    #     [source, target] = [datum.source, datum.target]
-    #     [sourceBox, targetBox] = ( map.nodes[datum.id].box() for datum in [source, target] )
-    #     map.stencil
-    #       source:
-    #         x: source.y + sourceBox.height / 2
-    #         y: source.x + sourceBox.width
-    #       target:
-    #         x: target.y + sourceBox.height / 2
-    #         y: target.x
-    #   )
 
     @
 
