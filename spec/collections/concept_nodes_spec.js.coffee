@@ -118,21 +118,20 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.remove "super"
         @collection.should.have.length 0
 
-    context "updating expansion states", ->
+    context "updating expansion state", ->
       
       it "collapses subnodes", ->
         @collection.reset [
           { _id: "node" }
           { _id: "other", expandedIn: true }
-          { _id: "subnode_1", super_concept_ids: [ "node, other" ], expandedIn: true }
-          { _id: "subnode_2", super_concept_ids: [ "node, other" ], expandedIn: true }
+          { _id: "subnode_1", super_concept_ids: [ "node", "other" ], expandedIn: true }
+          { _id: "subnode_2", super_concept_ids: [ "node", "other" ], expandedIn: true }
         ], silent: true
         @collection.remove "node"
-        console.log  @collection.get("subnode_1")
         @collection.get("subnode_1").get("expandedIn").should.be.false 
         @collection.get("subnode_2").get("expandedIn").should.be.false 
         @collection.get("other").get("expandedIn").should.be.true
-      
+
   describe "focus()", ->
 
     it "removes supernodes", ->
@@ -217,6 +216,27 @@ describe "Coreon.Collections.ConceptNodes", ->
           ]
           @collection.get("supernode").get("expandedOut").should.equal true
 
+      context "updating expansion states", ->
+
+        it "expands supernodes", ->
+          @collection.reset [
+            _id: "supernode",
+            expandedOut: false
+            sub_concept_ids: [ "node" ]
+          ], silent: true
+          @collection.add _id: "node"
+          @collection.get("supernode").get("expandedOut").should.be.true
+
+        it "expands subnodes", ->
+          @collection.reset [
+            _id: "subnode",
+            expandedIn: false
+            super_concept_ids: [ "node" ]
+          ], silent: true
+          @collection.add _id: "node"
+          @collection.get("subnode").get("expandedIn").should.be.true
+          
+        
   describe "reset()", ->
 
     context "spreading out", ->
@@ -277,6 +297,23 @@ describe "Coreon.Collections.ConceptNodes", ->
           ]
           @collection.get("supernode").get("expandedOut").should.equal true
 
+      context "updating expansion states", ->
+
+        it "expands supernodes", ->
+          @collection.reset [
+            { _id: "node" }
+            { _id: "supernode", expandedOut: false, sub_concept_ids: [ "node" ] }
+          ]
+          @collection.get("supernode").get("expandedOut").should.be.true
+
+        it "expands subnodes", ->
+          @collection.reset [
+            { _id: "node" }
+            { _id: "subnode", expandedIn: false, super_concept_ids: [ "node" ] }
+          ]
+          @collection.add _id: "node"
+          @collection.get("subnode").get("expandedIn").should.be.true
+
   describe "on change:sub_concept_ids", ->
 
     context "spreading out", ->
@@ -310,6 +347,17 @@ describe "Coreon.Collections.ConceptNodes", ->
         @node.set "sub_concept_ids", [ "subnode_2" ]
         @collection.should.have.length 2
         should.not.exist @collection.get "subnode_2"
+
+    context "updating expansion states", ->
+
+      it "expands out", ->
+        @collection.reset [
+          { _id: "node" }
+          { _id: "supernode", expandedOut: false, sub_concept_ids: [ "node", "other" ] }
+        ], silent: true
+        node = @collection.get("supernode")
+        node.set "sub_concept_ids", [ "node" ]
+        node.get("expandedOut").should.be.true
         
   describe "on change:super_concept_ids", ->
 
@@ -350,6 +398,18 @@ describe "Coreon.Collections.ConceptNodes", ->
         @node.set "super_concept_ids", [ "subnode_2" ]
         @collection.should.have.length 2
         should.not.exist @collection.get "subnode_2"
+
+    context "updating expansion states", ->
+
+      it "expands in", ->
+        @collection.reset [
+          { _id: "node" }
+          { _id: "subnode", expandedOut: false, super_concept_ids: [ "node", "other" ] }
+        ], silent: true
+        node = @collection.get("subnode")
+        node.set "super_concept_ids", [ "node" ]
+        node.get("expandedIn").should.be.true
+
 
   describe "on change:expandedOut", ->
 
