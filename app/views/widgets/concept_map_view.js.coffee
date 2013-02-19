@@ -21,9 +21,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   initialize: ->
     @nodes = {}
     @layout = d3.layout.tree()
-    @stencil = d3.svg.diagonal().projection (d) -> [d.y, d.x]
+    @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
     @stopListening()
-    @listenTo @model, "reset change edge:in:add edge:in:remove", @render
+    @listenTo @model, "reset add remove change:label", @render
     @_renderMarkupSkeleton()
 
   render: ->
@@ -41,7 +41,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
     selection = d3.select(group)
       .selectAll(".concept-node")
-      .data( data[1..], (datum) -> datum.id )
+      .data( data[1..], (datum) ->
+        # console.log "cid: #{datum.model.cid}"
+        datum.model.cid )
 
     selection.enter()
       .append("svg:g")

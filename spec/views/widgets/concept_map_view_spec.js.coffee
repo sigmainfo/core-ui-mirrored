@@ -71,11 +71,27 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     it "can be chained", ->
       @view.render().should.equal @view
 
-    it "is triggered by model changes", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "change"
-      @view.render.should.have.been.calledOnce
+    context "updates", ->
+      
+      beforeEach ->
+        @view.render = sinon.spy()
+        @view.initialize()
+
+      it "is triggered after a reset", ->
+        @view.model.trigger "reset"
+        @view.render.should.have.been.calledOnce
+
+      it "is triggered when a node was added", ->
+        @view.model.trigger "add"
+        @view.render.should.have.been.calledOnce
+
+      it "is triggered when a node was removed", ->
+        @view.model.trigger "remove"
+        @view.render.should.have.been.calledOnce
+
+      it "is triggered when a label changed", ->
+        @view.model.trigger "change:label"
+        @view.render.should.have.been.calledOnce
 
     context "nodes", ->
       
@@ -209,15 +225,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           parent:  box: -> height: 0, width: 0
           child_1: box: -> height: 0, width: 0
           child_2: box: -> height: 0, width: 0
-
-      it "can be chained", ->
-        @view.render().should.equal @view
-          
-      it "is triggered by model changes", ->
-        @view.render = sinon.spy()
-        @view.initialize()
-        @view.model.trigger "change"
-        @view.render.should.have.been.calledOnce
 
       it "renders newly added eges", ->
         @view.model.tree = ->

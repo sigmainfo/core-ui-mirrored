@@ -34,7 +34,6 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
             filter = true
             break
         continue if filter
-      # continue unless @edgesIn(model).length is 0
       edgesIn = @edgesIn model
       if edgesIn.length > 0
         keep = false
@@ -55,7 +54,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
       hit: hit
       expandedOut: true
       expandedIn: true
-    @reset attrs
+    @update attrs
 
   _removeSubnodes: (model, collection, options) ->
     subnodes = for edge in options.previousEdges when edge.source is model
