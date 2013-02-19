@@ -75,23 +75,31 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       
       beforeEach ->
         @view.render = sinon.spy()
-        @view.initialize()
+        @view.initialize renderInterval: 0
 
-      it "is triggered after a reset", ->
+      it "is triggered after a reset", (done) ->
         @view.model.trigger "reset"
-        @view.render.should.have.been.calledOnce
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
 
-      it "is triggered when a node was added", ->
+      it "is triggered when a node was added", (done) ->
         @view.model.trigger "add"
-        @view.render.should.have.been.calledOnce
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
 
-      it "is triggered when a node was removed", ->
+      it "is triggered when a node was removed", (done) ->
         @view.model.trigger "remove"
-        @view.render.should.have.been.calledOnce
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
 
-      it "is triggered when a label changed", ->
+      it "is triggered when a label changed", (done) ->
         @view.model.trigger "change:label"
-        @view.render.should.have.been.calledOnce
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
 
     context "nodes", ->
       
