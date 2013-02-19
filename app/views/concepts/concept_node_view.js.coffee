@@ -47,6 +47,11 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
         .classed("toggle-children", true)
         .attr("transform", "translate(#{box.width}, 0)")
         .on("click", (datum) => @toggleChildren() )
+
+    if @model.get("super_concept_ids")?.length > 0
+      @_renderToggle(@model.get "expandedIn")
+        .classed("toggle-parents", true)
+        .attr("transform", "translate(0, #{box.height}) rotate(180)")
     @
 
   box: ->
@@ -62,10 +67,9 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     w = @options.toggle.iconWidth
 
     bg = toggle.append("svg:path")
+      .attr("class", "bg")
       .attr("d", "m 0 0 l #{s - r} 0 a #{r} #{r} 0 0 1 #{r} #{r} l 0 #{s - 2 * r} a #{r} #{r} 0 0 1 #{-r} #{r} l #{r - s} 0 z")
       
-    # bg.attr("transform", "rotate(180, #{s / 2}, #{s / 2})") if pos < 0
-
     icon = toggle.append("svg:path")
       .attr("class", "icon")
       .attr("d", "M #{(s - w) / 2 } 7 l #{w} 0 m 0 3.5 l #{-w} 0")

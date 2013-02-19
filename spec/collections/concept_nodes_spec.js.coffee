@@ -57,64 +57,81 @@ describe "Coreon.Collections.ConceptNodes", ->
         should.exist @collection.get("hit_2")
 
   describe "remove()", ->
+
+    context "removing subnodes", ->
     
-    it "removes subnodes", ->
-      @collection.reset [
-        { _id: "node" }
-        { _id: "subnode_1", super_concept_ids: [ "node" ] }
-        { _id: "subnode_2", super_concept_ids: [ "node" ] }
-        { _id: "other" }
-      ], silent: true
-      @collection.remove "node"
-      @collection.should.have.length 1
-      @collection.at(0).should.have.property "id", "other"
+      it "removes subnodes", ->
+        @collection.reset [
+          { _id: "node" }
+          { _id: "subnode_1", super_concept_ids: [ "node" ] }
+          { _id: "subnode_2", super_concept_ids: [ "node" ] }
+          { _id: "other" }
+        ], silent: true
+        @collection.remove "node"
+        @collection.should.have.length 1
+        @collection.at(0).should.have.property "id", "other"
+        
+      it "removes subnodes recursively", ->
+        @collection.reset [
+          { _id: "node" }
+          { _id: "subnode", super_concept_ids: [ "node" ] }
+          { _id: "subnode_of_subnode", super_concept_ids: [ "subnode" ] }
+        ], silent: true
+        @collection.remove "node"
+        @collection.should.have.length 0
+
+      it "keeps nodes that belong to an expanded superconcept", ->
+        @collection.reset [
+          { _id: "supernode", sub_concept_ids: [ "subnode" ], expandedOut: true }
+          { _id: "subnode" }
+        ], silent: true
+        @collection.remove "subnode"
+        @collection.should.have.length 2
+        should.exist @collection.get "subnode"
+
+      it "removes nodes that belong to a collapsed superconcept", ->
+        @collection.reset [
+          { _id: "supernode", sub_concept_ids: [ "subnode" ], expandedOut: false }
+          { _id: "subnode" }
+        ], silent: true
+        @collection.remove "subnode"
+        @collection.should.have.length 1
+        should.not.exist @collection.get "subnode"
+
+      it "keeps subnodes that belong to another superconcept", ->
+        @collection.reset [
+          { _id: "super_1", sub_concept_ids: [ "subnode" ] }
+          { _id: "super_2", sub_concept_ids: [ "subnode" ] }
+          { _id: "subnode" }
+        ], silent: true
+        @collection.remove "super_1"
+        @collection.should.have.length 2
+        should.exist @collection.get "subnode"
+
+      it "removes subnodes with more than one parent connected to superconcept", ->
+        @collection.reset [
+          { _id: "super", sub_concept_ids: [ "subnode_1", "subnode_2" ] }
+          { _id: "subnode_1", sub_concept_ids: [ "multiparent" ] }
+          { _id: "subnode_2", sub_concept_ids: [ "multiparent" ] }
+          { _id: "multiparent" }
+        ], silent: true
+        @collection.remove "super"
+        @collection.should.have.length 0
+
+    context "updating expansion states", ->
       
-    it "removes subnodes recursively", ->
-      @collection.reset [
-        { _id: "node" }
-        { _id: "subnode", super_concept_ids: [ "node" ] }
-        { _id: "subnode_of_subnode", super_concept_ids: [ "subnode" ] }
-      ], silent: true
-      @collection.remove "node"
-      @collection.should.have.length 0
-
-    it "keeps nodes that belong to an expanded superconcept", ->
-      @collection.reset [
-        { _id: "supernode", sub_concept_ids: [ "subnode" ], expandedOut: true }
-        { _id: "subnode" }
-      ], silent: true
-      @collection.remove "subnode"
-      @collection.should.have.length 2
-      should.exist @collection.get "subnode"
-
-    it "removes nodes that belong to a collapsed superconcept", ->
-      @collection.reset [
-        { _id: "supernode", sub_concept_ids: [ "subnode" ], expandedOut: false }
-        { _id: "subnode" }
-      ], silent: true
-      @collection.remove "subnode"
-      @collection.should.have.length 1
-      should.not.exist @collection.get "subnode"
-
-    it "keeps subnodes that belong to another superconcept", ->
-      @collection.reset [
-        { _id: "super_1", sub_concept_ids: [ "subnode" ] }
-        { _id: "super_2", sub_concept_ids: [ "subnode" ] }
-        { _id: "subnode" }
-      ], silent: true
-      @collection.remove "super_1"
-      @collection.should.have.length 2
-      should.exist @collection.get "subnode"
-
-    it "removes subnodes with more than one parent connected to superconcept", ->
-      @collection.reset [
-        { _id: "super", sub_concept_ids: [ "subnode_1", "subnode_2" ] }
-        { _id: "subnode_1", sub_concept_ids: [ "multiparent" ] }
-        { _id: "subnode_2", sub_concept_ids: [ "multiparent" ] }
-        { _id: "multiparent" }
-      ], silent: true
-      @collection.remove "super"
-      @collection.should.have.length 0
+      it "collapses subnodes", ->
+        @collection.reset [
+          { _id: "node" }
+          { _id: "other", expandedIn: true }
+          { _id: "subnode_1", super_concept_ids: [ "node, other" ], expandedIn: true }
+          { _id: "subnode_2", super_concept_ids: [ "node, other" ], expandedIn: true }
+        ], silent: true
+        @collection.remove "node"
+        console.log  @collection.get("subnode_1")
+        @collection.get("subnode_1").get("expandedIn").should.be.false 
+        @collection.get("subnode_2").get("expandedIn").should.be.false 
+        @collection.get("other").get("expandedIn").should.be.true
       
   describe "focus()", ->
 

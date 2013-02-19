@@ -118,6 +118,45 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
         @view.render()
         should.not.exist @view.$(".toggle-children .icon").attr("transform") 
 
+    context "toggle for superconcepts", ->
+
+      beforeEach ->
+        @view.model.set "super_concept_ids", ["123"], silent: true
+      
+      it "renders toggle", ->
+        @view.render()
+        @view.$el.should.have ".toggle-parents"
+
+      it "positions toggle on left side of box", ->
+        @view.box = -> x: 0, y: 0, width: 50, height: 20
+        @view.render()
+        @view.$(".toggle-parents").attr("transform").should.equal "translate(0, 20) rotate(180)"
+      
+      it "does not create parents toggle for roots", ->
+        @view.model.set "super_concept_ids", [], silent: true
+        @view.render()
+        @view.$el.should.not.have ".toggle-parents"
+
+      it "classifies expanded toggle", ->
+        @view.model.set "expandedIn", true, silent: true
+        @view.render()
+        @view.$(".toggle-parents").attr("class").should.match /\bexpanded\b/
+
+      it "rotates icon for expanded toggle", ->
+        @view.model.set "expandedIn", true, silent: true
+        @view.render()
+        @view.$(".toggle-parents .icon").attr("transform").should.equal "rotate(90, 0, 0)" 
+        
+      it "does not classify collapsed toggle", ->
+        @view.model.set "expandedIn", false, silent: true
+        @view.render()
+        @view.$(".toggle-parents").attr("class").should.not.match /\bexpanded\b/
+
+      it "does not rotate icon for collapsed toggle", ->
+        @view.model.set "expandedIn", false, silent: true
+        @view.render()
+        should.not.exist @view.$(".toggle-parents .icon").attr("transform")
+
   describe "box()", ->
 
     it "defaults dimensions to zero", ->
@@ -151,6 +190,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.model.get("expandedOut").should.be.true
       @view.toggleChildren()
       @view.model.get("expandedOut").should.be.false
+
     
 
 
