@@ -22,8 +22,8 @@ describe "Coreon.Models.Concept", ->
       @model.get("properties").should.eql []
 
     it "has a empty term collection", ->
-      @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-      @model.get("terms").should.have.length 0
+      @model.terms.should.be.an.instanceof Coreon.Collections.Terms
+      @model.terms.should.have.length 0
 
     it "has empty sets for superconcept and subconcept ids", ->
       @model.get("super_concept_ids").should.eql []
@@ -41,39 +41,35 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "#abcdef"
 
         it "uses first English term", ->
-          @model.set "terms", [
-            {
-              lang: "fr"
-              value: "poésie"
-            }
-            {
-              lang: "en"
-              value: "poetry"
-            }
-          ], silent: true
-          @model.initialize()
+          @model.initialize {},
+            terms: [
+              {
+                lang: "fr"
+                value: "poésie"
+              }
+              {
+                lang: "en"
+                value: "poetry"
+              }
+            ]
           @model.get("label").should.equal "poetry"
 
         it "falls back to term in other language", ->
-          @model.set "terms", [
+          @model.initialize {}, terms:
             lang: "fr"
             value: "poésie"
-          ], silent: true
-          @model.initialize()
           @model.get("label").should.equal "poésie"
 
         it "is overwritten by property", ->
           @model.set {
-            terms: [
-              lang: "en"
-              value: "poetry"
-            ]
             properties: [
               key: "label"
               value: "My_label"
             ]
           }, silent: true
-          @model.initialize()
+          @model.initialize {}, terms:
+            lang: "en"
+            value: "poetry"
           @model.get("label").should.equal "My_label"
 
         it "escapes label value", ->
@@ -85,7 +81,7 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "&lt;script&gt;xss()&lt;&#x2F;script&gt;"
 
         it "handles term lang gracefully", ->
-          @model.set "terms", [
+          @model.initialize {}, terms: [
             {
               lang: "fr"
               value: "poésie"
@@ -94,17 +90,16 @@ describe "Coreon.Models.Concept", ->
               lang: "EN_US"
               value: "poetry"
             }
-          ], silent: true
-          @model.initialize()
+          ]
+          console.log @model.get("terms")
           @model.get("label").should.equal "poetry"
 
       context "on changes", ->
        
         it "updates label on term changes", ->
-          @model.set "terms", [
+          @model.terms.add
             lang: "en"
             value: "poetry"
-          ]
           @model.get("label").should.equal "poetry"
             
         it "updates label on property changes", ->

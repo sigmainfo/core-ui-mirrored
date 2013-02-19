@@ -46,10 +46,10 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
     it "creates search", ->
       @router.search "terms", "gun"
-      @screen.model.should.be.an.instanceof Coreon.Models.Search 
-      @screen.model.get("path").should.equal "concepts/search" 
-      @screen.model.get("query").should.equal "gun" 
-      @screen.model.get("target").should.equal "terms" 
+      @screen.model.should.be.an.instanceof Coreon.Models.Search
+      @screen.model.get("path").should.equal "concepts/search"
+      @screen.model.get("query").should.equal "gun"
+      @screen.model.get("target").should.equal "terms"
       @screen.collection.should.be @router.collection
 
     it "renders search results", ->
@@ -145,9 +145,9 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
     it "creates default term with query string", ->
       @router.create("gun")
-      @screen.model.get("terms").should.have.length 1
-      @screen.model.get("terms")[0].value.should.equal "gun"
-      @screen.model.get("terms")[0].lang.should.equal "en"
+      @screen.model.terms.should.have.length 1
+      @screen.model.terms.at(0).value.should.equal "gun"
+      @screen.model.terms.at(0).lang.should.equal "en"
 
 
 
