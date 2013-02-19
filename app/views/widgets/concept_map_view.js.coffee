@@ -41,9 +41,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
     selection = d3.select(group)
       .selectAll(".concept-node")
-      .data( data[1..], (datum) ->
-        # console.log "cid: #{datum.model.cid}"
-        datum.model.cid )
+      .data( data[1..], (datum) -> datum.model.cid )
 
     selection.enter()
       .append("svg:g")
@@ -52,13 +50,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
-        nodes[datum.id] = view.render()
+        nodes[datum.model.cid] = view.render()
       )
 
     selection.exit()
       .each( (datum) ->
-        nodes[datum.id].stopListening()
-        delete nodes[datum.id]
+        nodes[datum.model.cid].stopListening()
+        delete nodes[datum.model.cid]
       )
       .remove()
 
@@ -79,7 +77,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
     selection = d3.select(group)
       .selectAll(".concept-edge")
-      .data( data, (datum) -> "#{datum.source.id}->#{datum.target.id}" )
+      .data( data, (datum) -> "#{datum.source.model.cid}|#{datum.target.model.cid}" )
     
     selection.enter()
       .insert("svg:path", ".concept-node")
@@ -91,7 +89,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     selection
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
-        [sourceBox, targetBox] = ( nodes[datum.id].box() for datum in [source, target] )
+        [sourceBox, targetBox] = ( nodes[datum.model.cid].box() for datum in [source, target] )
         @stencil
           source:
             x: source.y + sourceBox.height / 2

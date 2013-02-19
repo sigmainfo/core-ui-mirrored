@@ -185,46 +185,42 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       context "updating view instances", ->
 
-        it "creates view for newly created node", ->
-          node = new Backbone.Model id: "node", label: "Node"
-          @view.model.tree = ->
+        beforeEach ->
+          @node = new Backbone.Model _id: "node", label: "Node"
+          @node.cid = "c123"
+          @view.model.tree = =>
             root:
               children: [
                 id: "node"
-                model: node
+                model: @node
               ]
             edges: []
+
+        it "creates view for newly created node", ->
           @view.render()
-          @view.nodes.should.have.property("node").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
-          @view.nodes.should.have.deep.property "node.el", @view.$(".concept-node").get(0)
-          @view.nodes.should.have.deep.property "node.model", node
+          @view.nodes.should.have.property("c123").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+          @view.nodes.should.have.deep.property "c123.el", @view.$(".concept-node").get(0)
+          @view.nodes.should.have.deep.property "c123.model", @node
 
         it "resolves view for removed nodes", ->
-          @view.model.tree = ->
-            root:
-              children: [
-                id: "node"
-                model: new Backbone.Model(id: "node_1", label: "Node 1")
-              ]
-            edges: []
           @view.render()
           spy = sinon.spy()
-          @view.nodes["node"].stopListening = spy
+          @view.nodes["c123"].stopListening = spy
           @view.model.tree = ->
             root:
               children: []
             edges: []
           @view.render()
           spy.should.have.been.calledOnce
-          should.not.exist @view.nodes["node"]
+          should.not.exist @view.nodes["c123"]
   
     context "edges", ->
 
       beforeEach ->
         @view.nodes =
-          parent:  box: -> height: 0, width: 0
-          child_1: box: -> height: 0, width: 0
-          child_2: box: -> height: 0, width: 0
+          c_parent:  box: -> height: 0, width: 0
+          c_child_1: box: -> height: 0, width: 0
+          c_child_2: box: -> height: 0, width: 0
 
       it "renders newly added eges", ->
         @view.model.tree = ->
@@ -232,12 +228,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             children: []
           edges: [
             {
-              source: { id: "parent",  x: 0, y: 0 }
-              target: { id: "child_1", x: 0, y: 0 }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
+              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1" } }
             }
             {
-              source: { id: "parent",  x: 0, y: 0 }
-              target: { id: "child_2", x: 0, y: 0 }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
+              target: { id: "child_2", x: 0, y: 0, model: { cid: "c_child_2" } }
             }
           ]
         @view.render()
@@ -249,8 +245,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           root: children: []
           edges: [
             {
-              source: { id: "parent",  x: 0, y: 0 }
-              target: { id: "child_1", x: 0, y: 0 }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
+              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1" } }
             }
           ]
         @view.render()
@@ -262,13 +258,13 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "renders curves from box to box", ->
         @view.nodes =
-          parent:  box: -> height: 30, width: 120
-          child_1: box: -> height: 20, width: 150
+          c_parent:  box: -> height: 30, width: 120
+          c_child_1: box: -> height: 20, width: 150
         @view.model.tree = ->
           root: children: []
           edges: [
-            source: { id: "parent",  x: 20, y: 25 }
-            target: { id: "child_1", x: 40, y: 55 }
+            source: { id: "parent",  x: 20, y: 25, model: { cid: "c_parent" } }
+            target: { id: "child_1", x: 40, y: 55, model: { cid: "c_child_1" } }
           ]
         @view.render()
         @view.$(".concept-edge").attr("d").should.match /M140,40.*40,70/
