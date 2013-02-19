@@ -3,7 +3,7 @@
 
 div.concept {
   margin-right: 270px;
-  min-width: 400px;
+  min-width: 200px;
   position: relative;
   
   h2 {
@@ -232,4 +232,107 @@ div.concept {
   }
   
   
+}
+
+@media all and (max-width: 799px) {
+  div.concept {
+    
+    h2 {
+      font-size: 1em;
+      line-height: 1.3em;
+      padding: 1px 6px 1px 16px;
+      margin-bottom: 6px;
+      margin-right: 0px;
+      background-color: white;
+      color: $bluecolor;
+      @include concept-icon;
+    }
+    
+    .system-info-toggle {
+      display: none;
+    }
+    .section-toggle {
+      margin: 2px 0 0px 0;
+    }
+    
+    .terms {
+      padding-top: 6px;
+      .section {
+        padding: 0;
+      }
+      
+      .term {
+          background: none;
+          border-top: 1px solid $greycolor;
+          &:first-child {
+            border: none;
+          }
+      }
+      .language {
+        @include dottedline;
+        padding-top: 1px;
+      }
+      .language:before {
+        content: none;
+      }
+      .term h4.value {
+        font-size: 1em;
+        padding: 0px 100px 0px 47px;
+      }
+/*      .properties {
+        display: none;
+      }*/
+      .properties {
+        font-size: 0.9em;
+        background: none;
+        .section-toggle {
+          position: absolute;
+          right: 0px;
+          top: -1px;
+        }
+        .section {
+          margin: 0;
+          padding-left: 44px;
+          border-top: 1px solid white;
+        }
+      }
+      
+    }
+    
+    .concept-tree {
+      display: none;
+    }
+    .properties {
+      font-size: 0.9em;
+    }
+    
+    table {
+      margin-left: 16px;
+
+      tr {
+        th, td {
+          display: block;
+          padding-top: 4px;
+          padding-bottom: 0;
+        }
+        th {
+          width: auto;
+          text-align:left;
+          float: left;
+        }
+        .value {
+          clear: both;
+          padding-bottom: 6px;
+        }
+      }
+      ul.index {
+        padding-bottom: 0px;
+        li {
+          padding-top: 0;
+          &.selected:before {
+          content: none};
+        }
+      }
+    }
+  }
 }
