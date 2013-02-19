@@ -54,8 +54,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
       hit: hit
       expandedOut: true
       expandedIn: true
-    # @update attrs
-    @reset attrs
+    @update attrs
 
   _removeSubnodes: (model, collection, options) ->
     subnodes = for edge in options.previousEdges when edge.source is model

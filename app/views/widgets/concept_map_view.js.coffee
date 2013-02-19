@@ -23,7 +23,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @layout = d3.layout.tree()
     @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
     @stopListening()
-    @listenTo @model, "reset add remove change:label", @render
+    @listenTo @model, "reset add remove change:label", _.debounce(@render, 100)
     @_renderMarkupSkeleton()
 
   render: ->
