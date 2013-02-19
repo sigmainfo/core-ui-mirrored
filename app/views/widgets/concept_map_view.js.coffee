@@ -15,7 +15,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   options:
     size: [200, 320]
-    offsetX: 120
+    padding: 22
+    offsetX: 100
 
 
   initialize: (options = {}) ->
@@ -60,10 +61,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       )
       .remove()
 
+    height = @options.size[0] - 2 * @options.padding
+
     selection
       .each( (datum) =>
-        datum.y = datum.x * @options.size[0]
-        datum.x = ( datum.depth - 1 ) * @options.offsetX
+        datum.y = datum.x * height + @options.padding
+        datum.x = ( datum.depth - 1 ) * @options.offsetX + @options.padding
       )
       .attr( "transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"

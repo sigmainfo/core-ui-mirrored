@@ -123,6 +123,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step '"weapon" should be the only node left' do
+    sleep 0.2
     nodes = page.all("#coreon-concept-map .concept-node")
     nodes.should have(1).item
     nodes.first.text.should == "weapon"
@@ -147,5 +148,9 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   step '"tool" should be connected to "weapon"' do
     @edges = collect_edges
     @edges.should include("tool -> weapon")
+  end
+
+  step '"tool" should be connected to "pen"' do
+    @edges.should include("tool -> pen")
   end
 end

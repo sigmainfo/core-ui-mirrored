@@ -147,6 +147,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         beforeEach ->
           @view.options.size    = [120, 150]
           @view.options.offsetX = 100
+          @view.options.padding = 10
         
         it "updates node coordinates", ->
           @view.layout.nodes = ->
@@ -170,12 +171,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           @view.render()
 
           datum1 = d3.select( @view.$(".concept-node").get(0) ).data()[0]
-          datum1.should.have.property "x", 200
-          datum1.should.have.property "y", 24
+          datum1.should.have.property "x", 2 * 100 + 10
+          datum1.should.have.property "y", (120 - 2 * 10) * 0.2 + 10
 
           datum2 = d3.select( @view.$(".concept-node").get(1) ).data()[0]
-          datum2.should.have.property "x", 400
-          datum2.should.have.property "y", 60
+          datum2.should.have.property "x", 4 * 100 + 10
+          datum2.should.have.property "y", (120 - 2 * 10) * 0.5 + 10
           
         it "moves nodes to new position", ->
           @view.layout.nodes = ->
@@ -189,7 +190,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
               }
             ]
           @view.render()
-          @view.$(".concept-node").should.have.attr "transform", "translate(200, 24)"
+          @view.$(".concept-node").should.have.attr "transform", "translate(210, 30)"
 
       context "updating view instances", ->
 

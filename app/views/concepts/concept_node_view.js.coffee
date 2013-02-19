@@ -52,6 +52,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       @_renderToggle(@model.get "expandedIn")
         .classed("toggle-parents", true)
         .attr("transform", "translate(0, #{box.height}) rotate(180)")
+        .on("click", (datum) => @toggleParents() )
     @
 
   box: ->
@@ -80,3 +81,6 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
   toggleChildren: ->
     @model.set "expandedOut", not @model.get "expandedOut"
+
+  toggleParents: ->
+    @model.set "expandedIn", not @model.get "expandedIn"

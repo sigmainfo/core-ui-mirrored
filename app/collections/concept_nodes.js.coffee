@@ -20,11 +20,12 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     @on "reset", @_spreadOutAll, @
     @on "change:#{@options.targetIds}", @_spreadOutSubnodes, @ 
     @on "change:#{@options.sourceIds}", @_spreadOutSupernodes, @
-    @on "change:expandedOut", @_toggleSubnodes, @
     @on "remove", @_collapseSupernodes, @
     @on "reset add", @_expandAll, @
     @on "change:#{@options.sourceIds}", @_expandSupernodes, @
     @on "change:#{@options.targetIds}", @_expandSubnodes, @ 
+    @on "change:expandedOut", @_toggleSubnodes, @
+    @on "change:expandedIn", @_toggleSupernodes, @
 
   remove: (models, options = {}) ->
     options.previousEdges = @edges()
@@ -91,17 +92,24 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     @_spreadOut(model, options) for model in @models
 
   _toggleSubnodes: (model, expanded, options) ->
-    targetIds = model.get(@options.targetIds)
+    targetIds = model.get @options.targetIds
     if expanded
       @_spreadOutSubnodes model, targetIds, options
     else
       @remove targetIds
 
+  _toggleSupernodes: (model, expanded, options) ->
+    sourceIds = model.get @options.sourceIds
+    if expanded
+      @_spreadOutSupernodes model, sourceIds, options
+    else
+      @focus model
+
   _collapseSupernodes: (model, collection, options) ->
     for edge in options.previousEdges
       if edge.source is model
         target = edge.target
-        target.set "expandedIn", false
+        target.set "expandedIn", false, silent: true
 
   _expandAll: (collection, options) ->
     for model in @models

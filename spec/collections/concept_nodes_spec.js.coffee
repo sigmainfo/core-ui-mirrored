@@ -432,3 +432,26 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.should.have.length 1
       should.not.exist @collection.get "subnode"
 
+  describe "on change:expandedIn", ->
+
+    it "expands parents when set to true", ->
+      @collection.reset [
+        _id: "node"
+        super_concept_ids: [ "supernode" ]
+        expandedIn: false
+      ], silent: true
+      @collection.get("node").set "expandedIn", true
+      @collection.should.have.length 2
+      should.exist @collection.get "supernode"
+
+    it "focuses node when set to false", ->
+      @collection.reset [
+        { _id: "node", super_concept_ids: [ "supernode" ], expandedIn: true }
+        { _id: "supernode", super_concept_ids: ["root"] }
+        { _id: "root" }
+      ], silent: true
+      @collection.get("node").set "expandedIn", false
+      @collection.should.have.length 1
+      should.not.exist @collection.get "supernode"
+      should.not.exist @collection.get "root"
+
