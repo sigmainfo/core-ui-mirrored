@@ -42,7 +42,7 @@ $edge-color: #bfc5c0;
           }
         }
 
-        &:hover {
+        a:hover {
           
           text {
             fill: $hover-color;
@@ -55,39 +55,34 @@ $edge-color: #bfc5c0;
         }
 
         .toggle {
-          fill: transparent;
+          fill: $edge-color;
+          
+          .icon {
+            stroke: white;
+            stroke-width: 2px;
+          }
 
           &:hover {
-            fill: $edge-color;
-
+            
             .icon {
-              stroke: white;
-            }
-
-            &:hover {
-              
-              .icon {
-                stroke: white;
-              }
+              stroke: $bluecolor;
             }
           }
 
           &.expanded {
-
-
+            fill: transparent;
             .icon {
               stroke: none;
             }
-          }
-          
-          .icon {
-            stroke: $edge-color;
-            stroke-width: 2px;
-
+            
             &:hover {
-              stroke: white;
+              fill: $edge-color;
+              .icon {
+                stroke: $bluecolor;
+              }
             }
           }
+          
         }
       }
 
