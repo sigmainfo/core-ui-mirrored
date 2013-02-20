@@ -14,9 +14,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
       else
         Coreon.Models.Concept.find options.id
 
-    @model.on "change"     , @render       , @
-    @model.on "hit:add"    , @_onHitAdd    , @
-    @model.on "hit:remove" , @_onHitRemove , @
+    @model.on "change", @render, @
 
   appendTo: (target) ->
     @delegateEvents()
@@ -30,13 +28,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   render: ->
-    @$el.toggleClass "hit", @model.hit()
+    @$el.toggleClass "hit", @model.has "hit"
     @$el.attr "href", "/concepts/#{@model.id}"
-    @$el.html @model.get("label")
+    @$el.html @model.escape "label"
     @
-
-  _onHitAdd: ->
-    @$el.addClass "hit"
-
-  _onHitRemove: ->
-    @$el.removeClass "hit"

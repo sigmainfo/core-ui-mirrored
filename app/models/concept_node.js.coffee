@@ -13,6 +13,7 @@ class Coreon.Models.ConceptNode extends Backbone.Model
     supernodeIds: []
 
   initialize: (attributes = {}, options = {}) ->
+    @stopListening()
     @concept = if options.concept?
       options.concept
     else if @id?

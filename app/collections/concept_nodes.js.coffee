@@ -54,12 +54,15 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     @remove @roots(models), except: models
 
   _resetFromHits: ->
+    model.set "hit", null for model in @models
     attrs = for hit in @hits.models
       _id: hit.id
       hit: hit
       expandedOut: true
       expandedIn: true
-    @update attrs
+    @reset attrs
+    # @update attrs
+  
 
   _removeSubnodes: (model, collection, options) ->
     subnodes = for edge in options.previousEdges when edge.source is model

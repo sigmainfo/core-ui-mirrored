@@ -75,14 +75,6 @@ describe "Coreon.Models.Concept", ->
           @model.initialize()
           @model.get("label").should.equal "My_label"
 
-        it "escapes label value", ->
-          @model.set "properties", [
-            key: "label"
-            value: "<script>xss()</script>"
-          ]
-          @model.initialize()
-          @model.get("label").should.equal "&lt;script&gt;xss()&lt;&#x2F;script&gt;"
-
         it "handles term lang gracefully", ->
           @model.set "terms", [
             {

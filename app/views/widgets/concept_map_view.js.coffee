@@ -14,7 +14,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   template: Coreon.Templates["widgets/concept_map"]
 
   options:
-    size: [400, 640]
+    size: [600, 640]
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20

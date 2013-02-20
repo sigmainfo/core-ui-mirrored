@@ -13,10 +13,14 @@ class Coreon.Models.Concept extends Backbone.Model
     super_concept_ids: []
     sub_concept_ids: []
     label: ""
+    hit: null
 
   initialize: ->
     @set "label", @_label(), silent: true
     @on "change:terms change:properties", @_updateLabel, @
+    if Coreon.application?.hits?
+      @listenTo Coreon.application.hits, "reset add remove", @_updateHit
+    @_updateHit()
  
   info: ->
     info = id: @id
@@ -26,14 +30,14 @@ class Coreon.Models.Concept extends Backbone.Model
       info[key] = value
     info
 
-  hit: ->
-    Coreon.application.hits.get(@id)?
+  _hit: ->
+    Coreon.application?.hits?.get @id
 
   _updateLabel: ->
     @set "label", @_label()
 
   _label: ->
-    _.escape( @_propLabel() or @_termLabel() or @id )
+    @_propLabel() or @_termLabel() or @id
 
   _propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
@@ -50,3 +54,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options
+
+  _updateHit: ->
+    @set "hit", @_hit()
