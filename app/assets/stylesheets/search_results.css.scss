@@ -7,7 +7,7 @@
   &>table {  
     border-spacing: 0;
     width: 100%;
-    min-width: 400px;
+    min-width: 200px;
     margin-bottom: 30px;
     position: relative;
     
@@ -74,11 +74,10 @@
     &.concepts {
       .super {
          width: 36%;
-          padding-right: 4px;
+         padding-right: 4px;
       }
-      td.label a{
+      td.label {
         font-size: 1.1em;
-        background-color: white;
       }
     }
 
@@ -162,6 +161,48 @@
         padding-top: 2px;
         background: none;
       }
+    }
+    
+  }
+  
+}
+
+@media all and (max-width: 599px) {
+  
+  .search-results-terms, .search-results-tnodes {
+    display: none;
+  }
+  
+  .search-results-concepts {
+    
+    h3 {
+      display: none;
+    }
+    
+    &>table { 
+      thead {
+        display: none;
+      }
+      
+      tr td {
+        padding: 1px 16px 1px 10px;
+        &:first-child {
+          padding-left: 16px;
+        }
+      }
+      
+      &.concepts {
+        .super {
+           display: none;
+        }
+        td.label {
+          font-size: 0.86em;
+        }
+      }
+    }
+    
+    .actions {
+      display: none;
     }
     
   }
