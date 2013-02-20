@@ -12,15 +12,19 @@ $edge-color: #bfc5c0;
     border-top: 1px solid rgba(white, 0.3);
     border-bottom: 1px solid rgba(black, 0.1);
     @include retina-stripes("white");
+    &:hover {
+      cursor:move;
+    };
     svg {
+      overflow: hidden;
 
       text {
-        font-size: 11px;
+        font: 11px 'DroidSans', Trebuchet MS, Lucida;
         fill: $greytext-color;
       }
 
       .concept-node {
-
+        cursor: pointer;
         circle {
           fill: none;
           stroke-width: 1.5px;
@@ -42,7 +46,6 @@ $edge-color: #bfc5c0;
           
           text {
             fill: $hover-color;
-            cursor: pointer;
           }
         }
 
@@ -70,6 +73,7 @@ $edge-color: #bfc5c0;
           }
 
           &.expanded {
+
 
             .icon {
               stroke: none;
