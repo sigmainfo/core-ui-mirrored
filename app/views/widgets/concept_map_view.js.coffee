@@ -107,11 +107,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @
 
   _renderEdges: ->
-    data = @model.tree().edges
-    views = @views
-
+    data = for edge in @model.tree().edges
+      continue unless @views[edge.source.model.cid]?
+      continue unless @views[edge.target.model.cid]?
+      edge
     selection = @group.selectAll(".concept-edge")
-      .data( data, (datum) -> "#{datum.source.model.cid}|#{datum.target.model.cid}" )
+      .data( data, (datum) ->
+        "#{datum.source.model.cid}|#{datum.target.model.cid}"
+      )
     
     selection.enter()
       .insert("svg:path", ".concept-node")
@@ -124,7 +127,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       # .transition()
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
-        [sourceBox, targetBox] = ( views[datum.model.cid].box() for datum in [source, target] )
+        [sourceBox, targetBox] = ( @views[datum.model.cid].box() for datum in [source, target] )
         @stencil
           source:
             x: source.y + sourceBox.height / 2
