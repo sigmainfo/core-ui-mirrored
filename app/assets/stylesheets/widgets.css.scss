@@ -3,10 +3,9 @@
 
 
 .widget {
-  background-color: $greycolor;
+  @include background(linear-gradient(lighten($greycolor, 4), darken($greycolor, 1)));
   position: relative;
   @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
-  @include background(linear-gradient(rgba(white, 0.3), rgba(white, 0)));
   
   .titlebar {
     background: rgba(30,80,80, 0.06) image-url("layout/stripes-white.png");
@@ -17,6 +16,49 @@
       color: $browncolor;
       font-size: 0.86em;
       padding: 1px 0 0 12px;
+      float: left;
+    }
+    .actions {
+      float: right;
+      a {
+        display: block;
+        float: left;
+        width: 20px;
+        height: 19px;
+        text-indent: -2000px;
+        overflow: hidden;
+        @include background(linear-gradient(lighten($greycolor, 8), darken($greycolor, 1)));
+        @include box-shadow(rgba(white, 0.6) 0px 1px 1px inset, rgba(black, 0.1) -1px 0px 1px inset);
+        
+        &:first-child {
+          border-left: 1px solid rgba(black, 0.1);
+        };
+        
+        &.zoom-in {
+          &:before {
+            @include before-icon;
+            background-position: 0 -300px;
+          };
+          &:hover {
+            &:before {
+              background-position: -50px -300px;
+            }
+          };
+        }
+        
+        &.zoom-out {
+          &:before {
+            @include before-icon;
+            background-position: 0 -250px;
+          };
+          &:hover {
+            &:before {
+              background-position: -50px -250px;
+            }
+          };
+        }
+        
+      }
     }
   }
 

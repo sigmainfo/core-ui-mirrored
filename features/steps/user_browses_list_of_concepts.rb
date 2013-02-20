@@ -58,6 +58,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   step 'I should be on the search result page for concepts with query "gun"' do
+    page.should have_css("#coreon-main .concept-list")
     current_path.should == "/concepts/search/gun"
   end
 

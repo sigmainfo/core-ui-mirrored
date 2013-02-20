@@ -15,33 +15,62 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   options:
     size: [200, 320]
-    offsetX: 120
+    scaleExtent: [0.5, 2]
+    scaleStep: 0.2
+    padding: 20
+    offsetX: 100
+    offsetY: 22
 
+  events:
+    "click .zoom-in":  "zoomIn"
+    "click .zoom-out": "zoomOut"
 
-  initialize: ->
-    @nodes = {}
+  initialize: (options = {}) ->
+    @views = {}
     @layout = d3.layout.tree()
-    @stencil = d3.svg.diagonal().projection (d) -> [d.y, d.x]
+    @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
+    @navigator = d3.behavior.zoom()
+      .scaleExtent(@options.scaleExtent)
+      .on("zoom", @_panAndZoom)
     @stopListening()
-    @listenTo @model, "reset change edge:in:add edge:in:remove", @render
+    @listenTo @model, "reset add remove change:label", _.debounce(@render, options.renderInterval ?= 100)
     @_renderMarkupSkeleton()
+    d3.select(@$("svg").get 0).call @navigator
 
   render: ->
     @_renderNodes()
     @_renderEdges()
     @
 
+  zoomIn: ->
+    zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
+    @navigator.scale zoom
+    @_panAndZoom()
+
+  zoomOut: ->
+    zoom = Math.max @options.scaleExtent[0], @navigator.scale() - @options.scaleStep
+    @navigator.scale zoom
+    @_panAndZoom()
+
+
   _renderMarkupSkeleton: ->
     @$el.html @template size: @options.size
 
   _renderNodes: ->
+    @layout.size [
+      @options.size[0]
+      @options.size[1] - 2 * @options.padding
+    ]
+    views = @views
     data = @layout.nodes @model.tree().root
-    group = @$("svg g.concept-map").get 0
-    nodes = @nodes
 
-    selection = d3.select(group)
-      .selectAll(".concept-node")
-      .data( data[1..], (datum) -> datum.id )
+    @navigator.translate([ @options.padding, 0 ])
+    @group = d3.select(@$("svg g.concept-map").get 0)
+      .attr("transform", "translate(#{@options.padding}, 0)")
+
+
+    selection = @group.selectAll(".concept-node")
+      .data( data[1..], (datum) -> datum.model.cid )
 
     selection.enter()
       .append("svg:g")
@@ -50,21 +79,28 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
-        nodes[datum.id] = view.render()
+        views[datum.model.cid] = view.render()
       )
 
     selection.exit()
       .each( (datum) ->
-        nodes[datum.id].stopListening()
-        delete nodes[datum.id]
+        views[datum.model.cid].stopListening()
+        delete views[datum.model.cid]
       )
       .remove()
 
+    minY = @options.offsetY
+    for datum in data
+      if datum.children?.length > 1
+        minY = Math.min minY, datum.children[1].x - datum.children[0].x
+    scaleY = @options.offsetY / minY
+
     selection
       .each( (datum) =>
-        datum.y = datum.x * @options.size[0]
+        datum.y = datum.x * scaleY
         datum.x = ( datum.depth - 1 ) * @options.offsetX
       )
+      # .transition()
       .attr( "transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"
       )
@@ -72,12 +108,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   _renderEdges: ->
     data = @model.tree().edges
-    group = @$("svg g.concept-map").get 0
-    nodes = @nodes
+    views = @views
 
-    selection = d3.select(group)
-      .selectAll(".concept-edge")
-      .data( data, (datum) -> "#{datum.source.id}->#{datum.target.id}" )
+    selection = @group.selectAll(".concept-edge")
+      .data( data, (datum) -> "#{datum.source.model.cid}|#{datum.target.model.cid}" )
     
     selection.enter()
       .insert("svg:path", ".concept-node")
@@ -87,9 +121,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .remove()
 
     selection
+      # .transition()
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
-        [sourceBox, targetBox] = ( nodes[datum.id].box() for datum in [source, target] )
+        [sourceBox, targetBox] = ( views[datum.model.cid].box() for datum in [source, target] )
         @stencil
           source:
             x: source.y + sourceBox.height / 2
@@ -100,3 +135,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       )
 
     @
+  
+  _panAndZoom: =>
+    @group?.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")

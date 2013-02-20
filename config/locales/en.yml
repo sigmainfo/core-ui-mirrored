@@ -85,3 +85,5 @@ en:
 
   concept-map:
     title: "Concept Map"
+    zoom-in: "Zoom in"
+    zoom-out: "Zoom out"

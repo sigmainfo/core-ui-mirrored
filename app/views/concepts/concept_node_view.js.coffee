@@ -7,6 +7,11 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
   Coreon.Modules.include @, Coreon.Helpers.Text
 
+  options:
+    toggle:
+      cornerRadius: 3
+      iconWidth: 7
+  
   initialize: ->
     @listenTo @model, "change", @render
 
@@ -36,50 +41,46 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     labelBox = label.node().getBBox()
     @bg.attr("width", labelBox.x + labelBox.width + 3)
 
+    box = @box()
+    if @model.get("sub_concept_ids")?.length > 0
+      @_renderToggle(@model.get "expandedOut")
+        .classed("toggle-children", true)
+        .attr("transform", "translate(#{box.width}, 0)")
+        .on("click", (datum) => @toggleChildren() )
+
+    if @model.get("super_concept_ids")?.length > 0
+      @_renderToggle(@model.get "expandedIn")
+        .classed("toggle-parents", true)
+        .attr("transform", "translate(0, #{box.height}) rotate(180)")
+        .on("click", (datum) => @toggleParents() )
     @
 
   box: ->
     if @bg? then @bg.node().getBBox() else x: 0, y: 0, height: 0, width: 0
 
+  _renderToggle: (expanded) ->
+    toggle = @svg.append("svg:g")
+      .attr("class", "toggle")
+      .classed("expanded", expanded)
 
-  #   @toggleHit()
+    s = @box().height
+    r = @options.toggle.cornerRadius
+    w = @options.toggle.iconWidth
 
-  #   bgBox = bg.node().getBBox()
-  #   if @model.get("sub_concept_ids").length > 0
-  #     @renderToggle("toggle-children", bgBox.height, bgBox.width, not @options.treeLeaf)
-  #       .on("click", (d) => @trigger "toggle:children", d)
-  #   if @model.get("super_concept_ids").length > 0
-  #     @renderToggle("toggle-parents", bgBox.height, -bgBox.height, not @options.treeRoot)
-  #       .on("click", (d) => @trigger "toggle:parents", d)
+    bg = toggle.append("svg:path")
+      .attr("class", "bg")
+      .attr("d", "m 0 0 l #{s - r} 0 a #{r} #{r} 0 0 1 #{r} #{r} l 0 #{s - 2 * r} a #{r} #{r} 0 0 1 #{-r} #{r} l #{r - s} 0 z")
+      
+    icon = toggle.append("svg:path")
+      .attr("class", "icon")
+      .attr("d", "M #{(s - w) / 2 } 7 l #{w} 0 m 0 3.5 l #{-w} 0")
 
+    icon.attr("transform", "rotate(90, #{s / 2}, #{s / 2})") if expanded
+    
+    toggle
 
-  # renderToggle: (name, size, pos, expanded) ->
-  #   r = 3
-  #   w = 7
+  toggleChildren: ->
+    @model.set "expandedOut", not @model.get "expandedOut"
 
-  #   className = "toggle #{name}"
-  #   className = className + " expanded" if expanded
-
-  #   toggle = @svg.append("svg:g")
-  #     .attr("class", className)
-  #     .attr("transform", "translate(#{pos}, 0)")
-
-  #   bg = toggle.append("svg:path")
-  #     .attr("d", "m 0 0 l #{size - r} 0 a #{r} #{r} 0 0 1 #{r} #{r} l 0 #{size - 2 * r} a #{r} #{r} 0 0 1 #{-r} #{r} l #{r - size} 0 z")
-  #     
-  #   bg.attr("transform", "rotate(180, #{size / 2}, #{size / 2})") if pos < 0
-
-  #   icon = toggle.append("svg:path")
-  #     .attr("class", "icon")
-  #     .attr("d", "M #{(size - w) / 2 } 7 l #{w} 0 m 0 3.5 l #{-w} 0")
-
-  #   icon.attr("transform", "rotate(90, #{size / 2}, #{size / 2})") if expanded
-  #   
-  #   toggle
-  #   
-
-  # toggleHit: ->
-  #   @svg.classed "hit", @model.hit()
-
-  # onToggleParents: =>
-  #   @trigger "toggle:parent"
+  toggleParents: ->
+    @model.set "expandedIn", not @model.get "expandedIn"
