@@ -3,10 +3,9 @@
 
 
 .widget {
-  background-color: $greycolor;
+  @include background(linear-gradient(lighten($greycolor, 4), darken($greycolor, 1)));
   position: relative;
   @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
-  @include background(linear-gradient(rgba(white, 0.3), rgba(white, 0)));
   
   .titlebar {
     background: rgba(30,80,80, 0.06) image-url("layout/stripes-white.png");
