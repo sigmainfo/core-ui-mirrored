@@ -18,7 +18,10 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
   render: ->
     @clear()
 
-    @svg.classed "hit", @model.has "hit"
+    @svg.classed("hit", @model.has "hit")
+    
+    title = @svg.append("svg:title")
+      .text(@model.get "label")
 
     a = @svg.append("svg:a")
       .attr("xlink:href", "/concepts/#{@model.id}")

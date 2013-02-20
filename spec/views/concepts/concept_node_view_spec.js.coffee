@@ -59,6 +59,12 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
         @view.render()
         @el.select("text").text().should.equal "Horticult…"
 
+      it "creates title element with full label", ->
+        @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true
+        @view.render()
+        @el.select("title").text().should.equal "Horticultural mulches made from cocoa shell waste"
+        
+
       it "renders circle", ->
         @view.render()
         @el.select("circle").attr("class").should.equal "bullet"
