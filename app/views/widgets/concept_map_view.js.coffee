@@ -15,17 +15,22 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   options:
     size: [200, 320]
+    scaleExtent: [0.5, 2]
+    scaleStep: 0.2
     padding: 20
     offsetX: 100
     offsetY: 22
 
+  events:
+    "click .zoom-in":  "zoomIn"
+    "click .zoom-out": "zoomOut"
 
   initialize: (options = {}) ->
     @views = {}
     @layout = d3.layout.tree()
     @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
     @navigator = d3.behavior.zoom()
-      .scaleExtent([0.5, 3])
+      .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.debounce(@render, options.renderInterval ?= 100)
@@ -36,6 +41,17 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_renderNodes()
     @_renderEdges()
     @
+
+  zoomIn: ->
+    zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
+    @navigator.scale zoom
+    @_panAndZoom()
+
+  zoomOut: ->
+    zoom = Math.max @options.scaleExtent[0], @navigator.scale() - @options.scaleStep
+    @navigator.scale zoom
+    @_panAndZoom()
+
 
   _renderMarkupSkeleton: ->
     @$el.html @template size: @options.size
@@ -119,7 +135,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       )
 
     @
-
+  
   _panAndZoom: =>
-    @group.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
-
+    @group?.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")

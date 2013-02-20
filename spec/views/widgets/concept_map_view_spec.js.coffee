@@ -287,3 +287,59 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           ]
         @view.render()
         @view.$(".concept-edge").attr("d").should.match /M140,40.*40,70/
+
+  describe "zoomIn()", ->
+  
+    it "is triggered by click on button", ->
+      @view.zoomIn = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".zoom-in").click()
+      @view.zoomIn.should.have.been.calledOnce
+
+    it "increments zoom factor", ->
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(1)
+      @view.zoomIn()
+      @view.navigator.scale().should.equal 1.5
+
+    it "does not extent max scale factor", ->
+      @view.options.scaleExtent = [0.5, 3]
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(2.7)
+      @view.zoomIn()
+      @view.navigator.scale().should.equal 3
+
+    it "applies zoom", ->
+      @view.navigator.scale(1)
+      @view.options.scaleStep = 0.5
+      @view.render()
+      @view.zoomIn()
+      @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
+      
+  describe "zoomOut()", ->
+  
+    it "is triggered by click on button", ->
+      @view.zoomOut = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".zoom-out").click()
+      @view.zoomOut.should.have.been.calledOnce
+
+    it "outcrements zoom factor", ->
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(1.7)
+      @view.zoomOut()
+      @view.navigator.scale().should.equal 1.2
+
+    it "does not extent min scale factor", ->
+      @view.options.scaleExtent = [0.5, 3]
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(0.7)
+      @view.zoomOut()
+      @view.navigator.scale().should.equal 0.5
+
+    it "applies zoom", ->
+      @view.navigator.scale(1)
+      @view.options.scaleStep = 0.5
+      @view.render()
+      @view.zoomIn()
+      @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
