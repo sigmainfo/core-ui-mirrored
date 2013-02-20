@@ -15,12 +15,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   options:
     size: [200, 320]
-    padding: 22
+    padding: 20
     offsetX: 100
+    offsetY: 22
 
 
   initialize: (options = {}) ->
-    @nodes = {}
+    @views = {}
     @layout = d3.layout.tree()
     @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
     @stopListening()
@@ -36,12 +37,17 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @$el.html @template size: @options.size
 
   _renderNodes: ->
+    @layout.size [
+      @options.size[0]
+      @options.size[1] - 2 * @options.padding
+    ]
+    views = @views
     data = @layout.nodes @model.tree().root
-    group = @$("svg g.concept-map").get 0
-    nodes = @nodes
 
-    selection = d3.select(group)
-      .selectAll(".concept-node")
+    group = d3.select(@$("svg g.concept-map").get 0)
+      .attr("transform", "translate(#{@options.padding}, 0)")
+
+    selection = group.selectAll(".concept-node")
       .data( data[1..], (datum) -> datum.model.cid )
 
     selection.enter()
@@ -51,23 +57,28 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         view = new Coreon.Views.Concepts.ConceptNodeView
           el: @
           model: datum.model
-        nodes[datum.model.cid] = view.render()
+        views[datum.model.cid] = view.render()
       )
 
     selection.exit()
       .each( (datum) ->
-        nodes[datum.model.cid].stopListening()
-        delete nodes[datum.model.cid]
+        views[datum.model.cid].stopListening()
+        delete views[datum.model.cid]
       )
       .remove()
 
-    height = @options.size[0] - 2 * @options.padding
+    minY = @options.offsetY
+    for datum in data
+      if datum.children?.length > 1
+        minY = Math.min minY, datum.children[1].x - datum.children[0].x
+    scaleY = @options.offsetY / minY
 
     selection
       .each( (datum) =>
-        datum.y = datum.x * height + @options.padding
-        datum.x = ( datum.depth - 1 ) * @options.offsetX + @options.padding
+        datum.y = datum.x * scaleY
+        datum.x = ( datum.depth - 1 ) * @options.offsetX
       )
+      # .transition()
       .attr( "transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"
       )
@@ -76,7 +87,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   _renderEdges: ->
     data = @model.tree().edges
     group = @$("svg g.concept-map").get 0
-    nodes = @nodes
+    views = @views
 
     selection = d3.select(group)
       .selectAll(".concept-edge")
@@ -90,9 +101,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .remove()
 
     selection
+      # .transition()
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
-        [sourceBox, targetBox] = ( nodes[datum.model.cid].box() for datum in [source, target] )
+        [sourceBox, targetBox] = ( views[datum.model.cid].box() for datum in [source, target] )
         @stencil
           source:
             x: source.y + sourceBox.height / 2

@@ -1,4 +1,3 @@
-@wip
 Feature: user browses concept graph
   In order to explore related concepts
   As a user browsing a selection of concepts
@@ -8,7 +7,7 @@ Feature: user browses concept graph
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
     And I am logged in
 
-  Scenario: explore single concept
+  Scenario: explore concept tree
     Given a concept "handgun"
     And this concept is narrower than "weapon"
     And this concept is broader than "pistol", "revolver"
@@ -44,3 +43,25 @@ Feature: user browses concept graph
     And "tool" should be connected to "pen"
     When I click to toggle the parents of "weapon"
     Then "weapon" should be the only node left
+  
+  Scenario: hit list
+    Given a concept "handgun"
+    And a concept "hand"
+    And a concept "handkerchief"
+    When I search for "hand"
+    Then I shoud see "handgun" displayed in the concept map
+    And I should see a node "hand"
+    And I should see a node "handkerch…"
+    And all nodes should be classified as hits
+  
+  @wip
+  Scenario: zoom and pan
+    Given a concept "handgun"
+    When I search for "handgun"
+    Then I shoud see "handgun" displayed in the concept map
+    When I click within the map
+    And I scroll down
+    Then "handgun" should be bigger
+    When I scroll up
+    Then "handgun" should be smaller
+    

@@ -157,28 +157,28 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
                 id: "node_1"
                 model: new Backbone.Model(id: "node_1", label: "Node 1")
                 depth: 3 
-                x: 0.2
-                y: 0.75
+                x: 27
+                y: 380
               }
               {
                 id: "node_2"
                 model: new Backbone.Model(id: "node_2", label: "Node 2")
                 depth: 5 
-                x: 0.5
-                y: 0.6
+                x: 154
+                y: 560
               }
             ]
           @view.render()
 
           datum1 = d3.select( @view.$(".concept-node").get(0) ).data()[0]
-          datum1.should.have.property "x", 2 * 100 + 10
-          datum1.should.have.property "y", (120 - 2 * 10) * 0.2 + 10
+          datum1.should.have.property "x", (3 - 1) * 100
+          datum1.should.have.property "y", 27
 
           datum2 = d3.select( @view.$(".concept-node").get(1) ).data()[0]
-          datum2.should.have.property "x", 4 * 100 + 10
-          datum2.should.have.property "y", (120 - 2 * 10) * 0.5 + 10
+          datum2.should.have.property "x", (5 - 1) * 100
+          datum2.should.have.property "y", 154
           
-        it "moves nodes to new position", ->
+        it "moves views to new position", ->
           @view.layout.nodes = ->
             [
               { id: "root" }
@@ -186,11 +186,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
                 id: "node_1"
                 model: new Backbone.Model(id: "node_1", label: "Node 1")
                 depth: 3 
-                x: 0.2
+                x: 30
               }
             ]
           @view.render()
-          @view.$(".concept-node").should.have.attr "transform", "translate(210, 30)"
+          @view.$(".concept-node").should.have.attr "transform", "translate(200, 30)"
 
       context "updating view instances", ->
 
@@ -207,26 +207,26 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
         it "creates view for newly created node", ->
           @view.render()
-          @view.nodes.should.have.property("c123").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
-          @view.nodes.should.have.deep.property "c123.el", @view.$(".concept-node").get(0)
-          @view.nodes.should.have.deep.property "c123.model", @node
+          @view.views.should.have.property("c123").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+          @view.views.should.have.deep.property "c123.el", @view.$(".concept-node").get(0)
+          @view.views.should.have.deep.property "c123.model", @node
 
-        it "resolves view for removed nodes", ->
+        it "resolves view for removed views", ->
           @view.render()
           spy = sinon.spy()
-          @view.nodes["c123"].stopListening = spy
+          @view.views["c123"].stopListening = spy
           @view.model.tree = ->
             root:
               children: []
             edges: []
           @view.render()
           spy.should.have.been.calledOnce
-          should.not.exist @view.nodes["c123"]
+          should.not.exist @view.views["c123"]
   
     context "edges", ->
 
       beforeEach ->
-        @view.nodes =
+        @view.views =
           c_parent:  box: -> height: 0, width: 0
           c_child_1: box: -> height: 0, width: 0
           c_child_2: box: -> height: 0, width: 0
@@ -266,7 +266,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.not.have ".concept-edge"
 
       it "renders curves from box to box", ->
-        @view.nodes =
+        @view.views =
           c_parent:  box: -> height: 30, width: 120
           c_child_1: box: -> height: 20, width: 150
         @view.model.tree = ->

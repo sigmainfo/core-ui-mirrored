@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class UserBrowsesConceptGraph < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
@@ -152,5 +154,36 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
 
   step '"tool" should be connected to "pen"' do
     @edges.should include("tool -> pen")
+  end
+
+  step 'a concept "hand"' do
+    @concept = create_concept_with_label "hand"
+  end
+
+  step 'a concept "handkerchief"' do
+    @concept = create_concept_with_label "handkerchief"
+  end
+
+  step 'I search for "hand"' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "hand"
+      find('input[type="submit"]').click
+    end
+  end
+
+  step 'I should see a node "hand"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "hand")
+  end
+
+  step 'I should see a node "handkerch…"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "handkerch…")
+  end
+
+  step 'all nodes should be classified as hits' do
+    page.all("#coreon-concept-map .concept-node.hit").size.should == 3
+  end
+
+  step 'I click on node "handgun"' do
+    page.find("#coreon-concept-map .concept-node a", text: "handgun").click
   end
 end
