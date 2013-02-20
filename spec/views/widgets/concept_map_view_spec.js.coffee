@@ -33,6 +33,16 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.have ".titlebar h4"
         @view.$(".titlebar h4").should.have.text "Concept Map"
 
+      it "renders zoom buttons", ->
+        I18n.t.withArgs("concept-map.zoom-in").returns "Zoom in"
+        I18n.t.withArgs("concept-map.zoom-out").returns "Zoom out"
+        @view.initialize()
+        @view.$el.should.have ".zoom-in"
+        @view.$(".zoom-in").should.have.text "Zoom in"
+        @view.$(".zoom-in").should.have.attr "title", "Zoom in"
+        @view.$(".zoom-out").should.have.text "Zoom out"
+        @view.$(".zoom-out").should.have.attr "title", "Zoom out"
+
       it "renders viewport", ->
         @view.options.size = [120, 150]
         @view.initialize() 

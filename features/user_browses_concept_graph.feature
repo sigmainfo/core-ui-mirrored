@@ -59,9 +59,8 @@ Feature: user browses concept graph
     Given a concept "handgun"
     When I search for "handgun"
     Then I shoud see "handgun" displayed in the concept map
-    When I click within the map
-    And I scroll down
+    When I click on "Zoom in"
     Then "handgun" should be bigger
-    When I scroll up
-    Then "handgun" should be smaller
+    When I click on "Zoom out"
+    Then "handgun" should have the original size again
     

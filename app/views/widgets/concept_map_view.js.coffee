@@ -24,9 +24,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @views = {}
     @layout = d3.layout.tree()
     @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
+    @navigator = d3.behavior.zoom()
+      .scaleExtent([0.5, 3])
+      .on("zoom", @_panAndZoom)
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.debounce(@render, options.renderInterval ?= 100)
     @_renderMarkupSkeleton()
+    d3.select(@$("svg").get 0).call @navigator
 
   render: ->
     @_renderNodes()
@@ -44,10 +48,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     views = @views
     data = @layout.nodes @model.tree().root
 
-    group = d3.select(@$("svg g.concept-map").get 0)
+    @navigator.translate([ @options.padding, 0 ])
+    @group = d3.select(@$("svg g.concept-map").get 0)
       .attr("transform", "translate(#{@options.padding}, 0)")
 
-    selection = group.selectAll(".concept-node")
+
+    selection = @group.selectAll(".concept-node")
       .data( data[1..], (datum) -> datum.model.cid )
 
     selection.enter()
@@ -86,11 +92,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   _renderEdges: ->
     data = @model.tree().edges
-    group = @$("svg g.concept-map").get 0
     views = @views
 
-    selection = d3.select(group)
-      .selectAll(".concept-edge")
+    selection = @group.selectAll(".concept-edge")
       .data( data, (datum) -> "#{datum.source.model.cid}|#{datum.target.model.cid}" )
     
     selection.enter()
@@ -115,3 +119,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       )
 
     @
+
+  _panAndZoom: =>
+    @group.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+

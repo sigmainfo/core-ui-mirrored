@@ -183,7 +183,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.all("#coreon-concept-map .concept-node.hit").size.should == 3
   end
 
-  step 'I click on node "handgun"' do
-    page.find("#coreon-concept-map .concept-node a", text: "handgun").click
+  step 'I click on "Zoom in"' do
+    page.find("#coreon-concept-map a", text: "Zoom in").click
   end
 end
