@@ -54,7 +54,6 @@ Feature: user browses concept graph
     And I should see a node "handkerch…"
     And all nodes should be classified as hits
   
-  @wip
   Scenario: zoom and pan
     Given a concept "handgun"
     When I search for "handgun"
