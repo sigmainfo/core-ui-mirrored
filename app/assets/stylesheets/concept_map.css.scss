@@ -40,6 +40,12 @@ $edge-color: #bfc5c0;
           text {
             fill: $bluecolor;
           }
+          
+          .background {
+
+            fill: white;
+            fill-opacity: 1;
+          }
         }
 
         a:hover {
@@ -52,6 +58,8 @@ $edge-color: #bfc5c0;
         .background {
 
           fill: white;
+          fill-opacity: 0.7;
+
         }
 
         .toggle {
