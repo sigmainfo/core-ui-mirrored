@@ -100,7 +100,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         datum.y = datum.x * scaleY
         datum.x = ( datum.depth - 1 ) * @options.offsetX
       )
-      # .transition()
       .attr( "transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"
       )
@@ -124,7 +123,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .remove()
 
     selection
-      # .transition()
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
         [sourceBox, targetBox] = ( @views[datum.model.cid].box() for datum in [source, target] )
