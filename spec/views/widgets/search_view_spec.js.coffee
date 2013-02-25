@@ -53,6 +53,12 @@ describe "Coreon.Views.SearchView", ->
 
     beforeEach ->
       Backbone.history = navigate: sinon.spy()
+      Coreon.application =
+        routers:
+          search_router:
+            search: sinon.spy()
+          concepts_router:
+            search: sinon.spy()
       @event =
         stopPropagation: sinon.spy()
         preventDefault: sinon.spy()
@@ -73,14 +79,32 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "search/foo", trigger: true
+      Backbone.history.navigate.should.have.been.calledWith "search/foo"
+
+    it "executes search", ->
+      @view.render()
+      @view.$('input[name="q"]').val "foo"
+      @view.submitHandler @event
+      Coreon.application.routers.search_router.search.should.have.been.calledOnce
+      Coreon.application.routers.search_router.search.should.have.been.calledWith "foo"
+      Coreon.application.routers.concepts_router.search.should.not.have.been.called
 
     it "navigates to concept search with type", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.searchType.getSelectedType = -> "terms"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "concepts/search/terms/foo", trigger: true
+      Backbone.history.navigate.should.have.been.calledWith "concepts/search/terms/foo"
+
+    it "executes concept search", ->
+      @view.render()
+      @view.$('input[name="q"]').val "foo"
+      @view.searchType.getSelectedType = -> "terms"
+      @view.submitHandler @event
+      Coreon.application.routers.concepts_router.search.should.have.been.calledOnce
+      Coreon.application.routers.concepts_router.search.should.have.been.calledWith "terms", "foo"
+      Coreon.application.routers.search_router.search.should.not.have.been.called
+      
 
   describe "#onClickedToFocus", ->
 
