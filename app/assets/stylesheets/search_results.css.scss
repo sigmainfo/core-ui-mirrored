@@ -2,7 +2,7 @@
 @import '_config';
 
 .search-results-terms, .search-results-concepts, .search-results-tnodes, .concept-list {
-  margin-right: 270px;
+  margin-right: 570px;
 
   &>table {  
     border-spacing: 0;
@@ -49,7 +49,7 @@
       }
 
       td, th {      
-      padding: 4px 16px 1px 2px;
+      padding: 3px 16px 2px 2px;
 
         &.lang {
           width: 14%;
@@ -78,7 +78,6 @@
       }
       td.label a{
         font-size: 1.1em;
-        background-color: white;
       }
     }
 
@@ -123,7 +122,7 @@
     tr {
       th {
         &:first-child{
-          text-indent: -4000px;
+          text-indent: -8000px;
 /*          overflow: hidden;*/
         }
       }
@@ -147,6 +146,9 @@
         border: none;
       }
     };
+    .terms td{
+      padding-bottom: 8px;
+    }
   }
 
   .concepts table{
@@ -160,6 +162,7 @@
       td, th {
         border: none;
         padding-top: 2px;
+        padding-bottom: 0;
         background: none;
       }
     }

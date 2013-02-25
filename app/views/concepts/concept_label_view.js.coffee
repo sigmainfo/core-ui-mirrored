@@ -8,16 +8,13 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
 
   className: "concept-label"
 
-  initialize: (idOrOptions) ->
-    switch typeof idOrOptions
-      when "string"
-        @model = Coreon.Models.Concept.find idOrOptions
-      when "object"
-        @model = idOrOptions.model
-
-    @model.on "change"     , @render       , @
-    @model.on "hit:add"    , @_onHitAdd    , @
-    @model.on "hit:remove" , @_onHitRemove , @
+  initialize: (options = {}) ->
+    @model =  if options.model?
+        options.model
+      else
+        Coreon.Models.Concept.find options.id
+      
+    @model.on "change", @render, @
 
   appendTo: (target) ->
     @delegateEvents()
@@ -31,13 +28,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   render: ->
-    @$el.toggleClass "hit", @model.hit()
+    @$el.toggleClass "hit", @model.has "hit"
     @$el.attr "href", "/concepts/#{@model.id}"
-    @$el.html @model.label()
+    @$el.html @model.escape "label"
     @
-
-  _onHitAdd: ->
-    @$el.addClass "hit"
-
-  _onHitRemove: ->
-    @$el.removeClass "hit"

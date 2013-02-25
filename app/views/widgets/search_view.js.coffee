@@ -35,10 +35,10 @@ class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
     event.stopPropagation()
     path = switch @searchType.getSelectedType()
       when "all"
-        "search?"
+        "search/"
       else
-        "concepts/search?t=#{@searchType.getSelectedType()}&"
-    path += @$('form').serialize()
+        "concepts/search/#{@searchType.getSelectedType()}/"
+    path += encodeURIComponent @$('input#coreon-search-query').val()
     Backbone.history.navigate path, trigger: true
 
   onClickedToFocus: (event) ->

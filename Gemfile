@@ -29,8 +29,7 @@ gem "rack-cors", require: "rack/cors"
 
 group :development do
   gem "thin"
-  gem "konacha", "~> 2.0.0"
-  gem 'pry'
+  gem "konacha", "~> 2.3.0"
   gem 'capistrano'
   gem 'capistrano-ext'
 end
@@ -38,10 +37,12 @@ end
 group :test do
   gem "spinach-rails"
   gem "launchy"
+  gem "rspec"
 end
 
 group :test, :development do
   gem "capybara-webkit"
   gem "rspec-rails", require: false
   gem "text"
+  gem "pry"
 end

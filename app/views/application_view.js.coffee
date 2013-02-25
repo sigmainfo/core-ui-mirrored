@@ -38,8 +38,8 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     @append "#coreon-main", @screen
 
   navigate: (event) ->
-    Backbone.history.navigate $(event.target).closest("a").attr("href"), trigger: true
     event.preventDefault()
+    Backbone.history.navigate $(event.target).closest("a").attr("href"), trigger: true
 
   clear: ->
     subviews = (view for view in @subviews when view isnt @header)

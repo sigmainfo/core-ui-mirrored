@@ -13,13 +13,8 @@ class UserSearchesRepository < Spinach::FeatureSteps
     end
   end
 
-  Then 'I should be on the search results page' do
-    current_path.should == "/search"
-  end
-
-  And 'I should see "poet" as the query string' do
-    require 'uri'
-    URI.parse(current_url).query.should =~ /\bq=poet\b/
+  Then 'I should be on the search results page for query "poet"' do
+    current_path.should == "/search/poet"
   end
 
   And 'I should see a listing of the search results' do
@@ -35,7 +30,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should see an error "Service is currently unavailable"' do
-    find("#coreon-notifications .error").should have_content "Service is currently unavailable"
+    page.should have_css("#coreon-notifications .error", text: "Service is currently unavailable")
   end
 
   Given 'my auth token is not valid' do

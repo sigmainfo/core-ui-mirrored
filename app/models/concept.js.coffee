@@ -7,27 +7,42 @@ class Coreon.Models.Concept extends Backbone.Model
 
   urlRoot: "concepts"
 
-  defaults:
+  defaults: ->
     properties: []
     terms: []
     super_concept_ids: []
     sub_concept_ids: []
+    label: ""
+    hit: null
 
-  label: ->
-    _.escape( @propLabel() or @termLabel() or @id )
-
+  initialize: ->
+    @set "label", @_label(), silent: true
+    @on "change:terms change:properties", @_updateLabel, @
+    if Coreon.application?.hits?
+      @listenTo Coreon.application.hits, "reset add remove", @_updateHit
+    @_updateHit()
+ 
   info: ->
-    internals = _(@defaults).keys()
-    internals.unshift @idAttribute
-    _(id: @id).extend _(@attributes).omit internals
+    info = id: @id
+    defaults = ( key for key, value of @defaults() )
+    defaults.push @idAttribute
+    for key, value of @attributes when key not in defaults
+      info[key] = value
+    info
 
-  hit: ->
-    Coreon.application.hits.get(@id)?
+  _hit: ->
+    Coreon.application?.hits?.get(@id) ? null
 
-  propLabel: ->
+  _updateLabel: ->
+    @set "label", @_label()
+
+  _label: ->
+    @_propLabel() or @_termLabel() or @id
+
+  _propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 
-  termLabel: ->
+  _termLabel: ->
     terms = @get "terms"
     label = null
     for term in terms
@@ -39,3 +54,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options
+
+  _updateHit: ->
+    @set "hit", @_hit()

@@ -120,7 +120,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   And 'it should have an English property "DEFINITION" with value "A portable firearm"' do
     @td = page.find("th", text: "DEFINITION").find :xpath, "parent::*/td"
     @td.find("ul.index li.selected").text.should == "EN"
-    @td.find("ul.values li").text.should == "A portable firearm"
+    @td.find("ul.values li", visible: true).text.should == "A portable firearm"
   end
 
   When 'I click on "de" for that property' do
@@ -128,7 +128,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'the value should have changed to "Tragbare Feuerwaffe"' do
-    @td.find("ul.values li").text.should == "Tragbare Feuerwaffe"
+    @td.find("ul.values li", visible: true).text.should == "Tragbare Feuerwaffe"
   end
 
   And 'it should have a property "NOTES" with value "Bitte überprüfen!!!"' do
@@ -197,12 +197,11 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   When 'I click the toggle "System Info" on the concept' do
-    page.execute_script "$('.notification .hide').click()"
-    page.find(:xpath, "//*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
+    page.find(:xpath, "//*[@class='concept']/*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
   end
 
   Then 'I should see "id" of the "handgun" concept' do
-    page.find(:xpath, "//th[text()='id']/following-sibling::td").should have_content(@handgun['_id'])
+    page.find(:xpath, "//*[@class='concept']/div[@class='system-info']//th[text()='id']/following-sibling::td[1]").should have_content(@handgun['_id'])
   end
 
   And 'I should see "AUTHOR" with value "William" for property "notes"' do

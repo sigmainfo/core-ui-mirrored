@@ -32,7 +32,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render.should.have.been.calledOnce
   
     it "renders label", ->
-      @view.model.label = -> "Handgun"
+      @view.model.set "label", "Handgun", silent: true
       @view.render()
       @view.$el.should.have "h2.label"
       @view.$("h2.label").should.have.text "Handgun"
@@ -52,12 +52,15 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("> .system-info td").eq(1).should.have.text "543"
 
     it "renders tree", ->
-      Coreon.application = hits: get: -> undefined
-      @view.model.set "super_concept_ids", ["1234"], silent: true
-      @view.render()
-      @view.$el.should.have ".concept-tree"
-      @view.$(".concept-tree").should.have ".super"
-      @view.$(".concept-tree .super li").eq(0).should.have.text "1234"
+      Coreon.application = hits: new Backbone.Collection
+      try
+        @view.model.set "super_concept_ids", ["1234"], silent: true
+        @view.render()
+        @view.$el.should.have ".concept-tree"
+        @view.$(".concept-tree").should.have ".super"
+        @view.$(".concept-tree .super li").eq(0).should.have.text "1234"
+      finally
+        Coreon.application = null
 
     it "renders tree only when applicable", ->
       @view.model.set

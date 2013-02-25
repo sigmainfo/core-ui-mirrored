@@ -9,8 +9,9 @@ Coreon.Modules.Accumulation =
     @collection().get(id) or @fetch(id)
 
   fetch: (id) ->
-    model = new @
-    model.set model.idAttribute, id, silent: true
+    attrs = {}
+    attrs[@::idAttribute] = id
+    model = new @ attrs
     @collection().add model
     model.fetch()
     model

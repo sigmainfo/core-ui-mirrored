@@ -6,13 +6,14 @@ $browncolor: #554f3c;
 $darkbrowncolor: #58513d;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
-$greytext-color: #908f89;
+$greytext-color: #989791;
 $beigecolor: #f1f4f0;
 $petrol: #5498b0;
 $error-color: #f25a5a;
 $notice-color: #6bc175;
 
-$widget-width: 320px;
+// $widget-width: 320px;
+$widget-width: 640px;
 
 @mixin submit-button {
   @include box-sizing(border-box);
@@ -85,7 +86,7 @@ $widget-width: 320px;
   background-image: image-url('layout/icons.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/icons@2x.png');
-      @include background-size(100px 250px);
+      @include background-size(100px 400px);
   } 
 }
 

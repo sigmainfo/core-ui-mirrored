@@ -21,13 +21,13 @@ describe "Coreon.Views.CompositeView", ->
     
     it "adds view to subviews", ->
       @view.add @subview
-      @view.subviews.should.have.length 1
+      @view.subviews.should.have.lengthOf 1
       @view.subviews[0].should.equal @subview
 
     it "adds view only once", ->
       @view.add @subview
       @view.add @subview
-      @view.subviews.should.have.length 1
+      @view.subviews.should.have.lengthOf 1
       @view.subviews[0].should.equal @subview
 
     it "takes multiple views simultaneously", ->

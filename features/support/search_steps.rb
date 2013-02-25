@@ -33,11 +33,10 @@ module SearchSteps
   end
 
   Then 'I should be on the search result page' do
-    current_path.should == "/search"
+    current_path.should =~ %r|^/search|
   end
 
   And 'I should see the query "poet" within the navigation' do
-    require 'uri'
-    URI.parse(current_url).query.should =~ /\bq=poet\b/
+    current_path.should =~ %r|/poet$|
   end
 end

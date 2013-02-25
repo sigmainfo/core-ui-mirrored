@@ -3,7 +3,7 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.join("..", "..", "config", "environment"), File.dirname(__FILE__))
 
-require "rspec"
+# require "rspec"
 require "net/http"
 require "./features/support/core-api"
   
@@ -19,8 +19,8 @@ Spinach.hooks.before_scenario do
   CoreAPI.purge! 
 
   # start server
-  include Capybara::DSL
-  visit "/"
+  # include Capybara::DSL
+  Capybara.current_session.visit "/"
 
   # Purge Users
   uri = URI.parse(CoreClient::Auth.url_for "users/purge")
@@ -42,7 +42,7 @@ Spinach.hooks.before_scenario do
   end
 
   # disable jQuery animations
-  page.execute_script "jQuery.fx.off = true"
+  Capybara.current_session.execute_script "jQuery.fx.off = true"
 end
 #
 # Spinach.config.save_and_open_page_on_failure = true

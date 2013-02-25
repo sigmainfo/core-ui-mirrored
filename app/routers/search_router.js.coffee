@@ -1,32 +1,32 @@
 #= require environment
-#= require backbone.queryparams
 #= require views/search/search_results_view 
 #= require models/search
 
 class Coreon.Routers.SearchRouter extends Backbone.Router
 
   routes:
-    "search": "search"
+    "search/:query": "search"
 
   initialize: (options) ->
     @[key] = value for key, value of options
 
-  search: (params) ->
+  search: (query) ->
+    
     @view.widgets.search.selector.hideHint()
-    @view.$("input#coreon-search-query").val params.q
+    @view.$("input#coreon-search-query").val decodeURIComponent(query)
 
     searches =
       terms: new Coreon.Models.Search
         path: "terms/search"
-        query: params.q
+        query: query
 
       concepts: new Coreon.Models.Search
         path: "concepts/search"
-        query: params.q
+        query: query
 
       tnodes: new Coreon.Models.Search
         path: "taxonomy_nodes/search"
-        query: params.q
+        query: query
 
     @searchResultsView = new Coreon.Views.Search.SearchResultsView
       models: searches
@@ -37,4 +37,4 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
     searches.concepts.fetch().done (data) =>
       Coreon.Models.Concept.upsert ( hit.result for hit in data.hits )
       idAttribute = Coreon.Models.Concept::idAttribute
-      @app.hits.update ( id: hit.result[idAttribute], score: hit.score for hit in data.hits ) 
+      @app.hits.reset ( id: hit.result[idAttribute], score: hit.score for hit in data.hits ) 

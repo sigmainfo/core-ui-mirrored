@@ -20,10 +20,10 @@ class Coreon.Views.Search.SearchResultsConceptsView extends Coreon.Views.Composi
     concepts = @extractConcepts(@model.get("hits")[0..9])
     @$el.html @template concepts: concepts, query: @model.query()
     @$("tbody td.label").append (index) ->
-      new Coreon.Views.Concepts.ConceptLabelView(concepts[index].id).render().$el
+      new Coreon.Views.Concepts.ConceptLabelView(id: concepts[index].id).render().$el
     @$("tbody td.super").append (index) ->
       for concept_id, index in concepts[index].super_concept_ids
-        new Coreon.Views.Concepts.ConceptLabelView(concept_id).render().el
+        new Coreon.Views.Concepts.ConceptLabelView(id: concept_id).render().el
     @
 
   extractConcepts: (hits) ->

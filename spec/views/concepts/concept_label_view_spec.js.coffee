@@ -9,7 +9,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       hit: -> false
     sinon.stub Coreon.Models.Concept, "find"
     Coreon.Models.Concept.find.withArgs("1234").returns @concept
-    @view = new Coreon.Views.Concepts.ConceptLabelView "1234"
+    @view = new Coreon.Views.Concepts.ConceptLabelView id: "1234"
 
   afterEach ->
     @view.destroy()
@@ -28,7 +28,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     
     it "gets model by id", ->
       Coreon.Models.Concept.find.withArgs("1234abcf").returns @concept
-      @view.initialize "1234abcf"
+      @view.initialize id: "1234abcf"
       @view.model.should.equal @concept
 
     it "sets model from options", ->
@@ -48,25 +48,25 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.$el.should.have.attr "href", "/concepts/1234"
 
     it "renders label", ->
-      @view.model.label = -> "Zitrone"
+      @view.model.set "label", "Zitrone", silent: true
       @view.render()
       @view.$el.should.have.text "Zitrone"
 
     it "is triggered on model changes", ->
       @view.render = sinon.spy()
-      @view.initialize()
+      @view.initialize model: new Backbone.Model
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
 
     it "classifies as hit when true", ->
-      @concept.hit = -> true
+      @concept.set "hit", new Backbone.Model, silent: true
       @view.render()
       @view.$el.should.have.class "hit"
   
     it "does not classify as hit when false", ->
-      @concept.hit = -> true
+      @concept.set "hit", new Backbone.Model, silent: true
       @view.render()
-      @concept.hit = -> false
+      @concept.set "hit", null
       @view.render()
       @view.$el.should.not.have.class "hit"
       
@@ -91,21 +91,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
 
     it "disposes events on model", ->
       @view.render = sinon.spy()
-      @view.initialize()
+      @view.initialize model: new Backbone.Model
       @view.destroy()
       @view.model.trigger "change"
       @view.render.should.not.have.been.called
-
-  describe ".hit", ->
-
-    it "is not set by default", ->
-      @view.$el.should.not.have.class "hit"
-    
-    it "gets set when added to current hits", ->
-      @concept.trigger "hit:add"
-      @view.$el.should.have.class "hit"
-
-    it "is removed when removed from current hits", ->
-      @view.$el.addClass "hit"
-      @concept.trigger "hit:remove"
-      @view.$el.should.not.have.class "hit"

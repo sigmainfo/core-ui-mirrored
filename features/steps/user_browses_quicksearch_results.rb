@@ -35,24 +35,23 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
 
   And 'the listing should contain "poet", "poetic", "poetisch", "poetise", "poetize", "poetry"' do
     sleep 0.3
-    # page.all(".terms tbody td:first").map(&:text).should == [ "poet", "poetisch", "poetry", "poetic", "poetize", "poetise" ]
     page.all(".terms tbody td:first").map(&:text).should == [ "poet", "poetisch", "poetic", "poetry", "poetize", "poetise" ]
   end
 
   And '"poetic" should have language "EN"' do
-    page.find("td", text: "poetic").find(:xpath, "following::td").text.should == "EN"
+    page.find("td", text: "poetic").find(:xpath, "following-sibling::td[1]").text.should == "EN"
   end
 
   And '"poetisch" should have language "DE"' do
-    page.find("td", text: "poetisch").find(:xpath, "following::td").text.should == "DE"
+    page.find("td", text: "poetisch").find(:xpath, "following-sibling::td[1]").text.should == "DE"
   end
 
   And '"poetize" should have concept "versify"' do
-    page.find("td", text: "poetize").all(:xpath, "following::td")[1].text.should == "versify"
+    page.find("td", text: "poetize").find(:xpath, "following-sibling::td[2]").text.should == "versify"
   end
 
   When 'I click on link to concept "versify"' do
-    click_link "versify"
+    page.find(".search-results-concepts a.concept-label", text: "versify").click
   end
 
   Then 'I should be on the page of concept "versify"' do
@@ -103,15 +102,15 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   And '"poem" should have the correct id' do
-    page.find("td", text: "poem").find(:xpath, "following::td[@class='id']").text.should == "50005aece3ba3f095c000004"
+    page.find("td", text: "poem").find(:xpath, "following-sibling::td[1][@class='id']").text.should == "50005aece3ba3f095c000004"
   end
 
   And '"poet" should have superconcept "poetry"' do
-    page.find(".search-results-concepts td", text: "poet").find(:xpath, "following::td[contains(@class, 'super')]").text.should == "poetry"
+    page.find(".search-results-concepts td", text: /^poet$/).find(:xpath, "following-sibling::td[1][contains(@class, 'super')]").text.should == "poetry"
   end
 
   When 'I click on link to concept "poetry"' do
-    page.find("a.concept-label", text: "poetry").click
+    page.find(".search-results-concepts td.label a.concept-label", text: "poetry").click
   end
 
   Then 'I should be on the concept page of "poetry"' do

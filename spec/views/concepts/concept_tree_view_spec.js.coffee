@@ -8,7 +8,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
     @model = new Coreon.Models.Concept _id: "123"
     @view = new Coreon.Views.Concepts.ConceptTreeView
       model: @model
-    Coreon.application = hits: get: -> undefined
+    Coreon.application = hits: new Backbone.Collection
 
   afterEach ->
     @view.destroy()
@@ -44,7 +44,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       @view.$(".section").should.have ".sub"
   
     it "renders label", ->
-      @view.model.label = -> "handgun"
+      @view.model.set "label", "handgun", silent: true
       @view.render()
       @view.$el.should.have ".self"
       @view.$(".self").should.have.text "handgun"

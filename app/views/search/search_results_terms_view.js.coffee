@@ -14,8 +14,10 @@ class Coreon.Views.Search.SearchResultsTermsView extends Coreon.Views.CompositeV
     @model.on "change", @render, @
 
   render: ->
-    terms = _(@model.get "hits").pluck("result")[0..9]
+    terms = (hit.result for hit in @model.get "hits")[0..9]
     @$el.html @template terms: terms
     @$("td.concept").append (index) ->
-      new Coreon.Views.Concepts.ConceptLabelView(terms[index].concept_id).render().$el
+      concept_id = terms[index].concept_id
+      view = new Coreon.Views.Concepts.ConceptLabelView id: concept_id
+      view.render().$el
     @

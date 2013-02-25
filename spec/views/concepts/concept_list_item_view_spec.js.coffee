@@ -18,7 +18,7 @@ describe "Coreon.Views.Concepts.ConceptListItemView", ->
   describe "#render", ->
 
     it "renders label", ->
-      @view.model.label = -> "My Concept"
+      @view.model.set "label", "My Concept"
       @view.render()
       @view.$el.should.have ".concept-label"
       @view.$(".concept-label").should.have.text "My Concept"
