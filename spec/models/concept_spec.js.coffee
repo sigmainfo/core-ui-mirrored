@@ -104,6 +104,36 @@ describe "Coreon.Models.Concept", ->
             value: "My Label"
           ]
           @model.get("label").should.equal "My Label"
+
+    describe "hit", ->
+       
+      beforeEach ->
+        @hits = new Backbone.Collection [ _id: "hit" ]
+        @hit = @hits.get "hit"
+        Coreon.application =
+          hits: @hits
+        @model.id = "hit"
+        @model.initialize()
+          
+      afterEach ->
+        Coreon.application = null
+      
+      it "gets hit from id", ->
+        @model.get("hit").should.equal @hit
+
+      it "updates hit on reset", ->
+        @hits.reset []
+        expect(@model.get "hit").to.be.null
+
+      it "updates hit on remove", ->
+        @hits.remove @hit
+        expect(@model.get "hit").to.be.null
+
+      it "updates hit when added", ->
+        @model.id = "foo"  
+        @hits.add _id: "foo"
+        hit = @hits.get "foo"
+        @model.get("hit").should.equal hit
         
   describe "info()", ->
     
@@ -126,19 +156,3 @@ describe "Coreon.Models.Concept", ->
         Coreon.application.sync.should.have.been.calledWith "read", @model
       finally
         Coreon.application = null
-
-  describe "hit()", ->
-
-    beforeEach ->
-      Coreon.application =
-        hits: new Coreon.Collections.Hits
-
-    afterEach ->
-      Coreon.application = null
-  
-    it "returns false when not within hits", ->
-      @model.hit().should.be.false
-
-    it "returns true when within hits", ->
-      Coreon.application.hits.add { id: @model.id }, silent: true
-      @model.hit().should.be.true

@@ -59,14 +59,14 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.render.should.have.been.calledOnce
 
     it "classifies as hit when true", ->
-      @concept.hit = -> true
+      @concept.set "hit", new Backbone.Model, silent: true
       @view.render()
       @view.$el.should.have.class "hit"
   
     it "does not classify as hit when false", ->
-      @concept.hit = -> true
+      @concept.set "hit", new Backbone.Model, silent: true
       @view.render()
-      @concept.hit = -> false
+      @concept.set "hit", null
       @view.render()
       @view.$el.should.not.have.class "hit"
       
@@ -95,17 +95,3 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.destroy()
       @view.model.trigger "change"
       @view.render.should.not.have.been.called
-
-  describe ".hit", ->
-
-    it "is not set by default", ->
-      @view.$el.should.not.have.class "hit"
-    
-    it "gets set when added to current hits", ->
-      @concept.trigger "hit:add"
-      @view.$el.should.have.class "hit"
-
-    it "is removed when removed from current hits", ->
-      @view.$el.addClass "hit"
-      @concept.trigger "hit:remove"
-      @view.$el.should.not.have.class "hit"

@@ -52,8 +52,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "defaults viewport dimensions", ->
         @view.initialize() 
-        @view.$("svg").attr("height").should.equal "200"
-        @view.$("svg").attr("width").should.equal "320"
+        @view.$("svg").attr("height").should.equal "600"
+        @view.$("svg").attr("width").should.equal "640"
 
     context "preparing graph rendering", ->
 

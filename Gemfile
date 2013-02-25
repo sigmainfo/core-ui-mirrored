@@ -30,7 +30,6 @@ gem "rack-cors", require: "rack/cors"
 group :development do
   gem "thin"
   gem "konacha", "~> 2.3.0"
-  gem 'pry'
   gem 'capistrano'
   gem 'capistrano-ext'
 end
@@ -45,4 +44,5 @@ group :test, :development do
   gem "capybara-webkit"
   gem "rspec-rails", require: false
   gem "text"
+  gem "pry"
 end

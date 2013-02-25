@@ -31,7 +31,7 @@ class Coreon.Models.Concept extends Backbone.Model
     info
 
   _hit: ->
-    Coreon.application?.hits?.get @id
+    Coreon.application?.hits?.get(@id) ? null
 
   _updateLabel: ->
     @set "label", @_label()

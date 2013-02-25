@@ -74,7 +74,8 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
   
   step 'I should see a node "weapon"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "weapon")
+    # use Nokogiri directly to fix matching of SVG nodes
+    Nokogiri::HTML(page.body).css(".concept-node text").map(&:text).should include("weapon")
   end
 
   step 'I should see a node "long gun"' do
@@ -128,7 +129,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     sleep 0.2
     nodes = page.all("#coreon-concept-map .concept-node")
     nodes.should have(1).item
-    nodes.first.text.should == "weapon"
+    Nokogiri::HTML(page.body).css(".concept-node text").first.text.should == "weapon"
   end
 
   step 'there should be no more connections' do
