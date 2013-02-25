@@ -40,7 +40,6 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     it "is cleared before rerendering", ->
       @view.render()
       @view.render()
-      console.log @el.selectAll("a")[0].should.have.length 1
 
     it "shortens lengthy labels", ->
       @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true

@@ -63,7 +63,6 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.render()
       @view.$el.should.have ".terms"
       @view.$('.terms').should.have ".create-term"
-      console.log @view.$('.create-term')
       @view.$('.create-term').should.have '.value'
       @view.$('.create-term').should.have '.language'
 

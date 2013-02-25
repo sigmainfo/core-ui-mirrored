@@ -13,3 +13,6 @@ describe "Coreon.Collections.Terms", ->
     @collection.add _id: "term"
     @collection.get("term").should.be.an.instanceof Coreon.Models.Term
 
+  #it "can be initialized" 
+
+

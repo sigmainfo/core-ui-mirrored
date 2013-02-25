@@ -19,11 +19,15 @@ class Coreon.Models.Concept extends Backbone.Model
   initialize: (attrs, options) ->
 
     # Terms als Collection nicht als Array reingeben.
-    console.log( "initialize() - TODO: Terms als Collection" )
     
-    @terms = new Coreon.Collections.Terms
+    @terms = options.terms if options?.terms?
+    @terms ?= new Coreon.Collections.Terms
+
     @listenTo @terms, 'all', @_processTermsEvent
-    @terms.reset options.terms if options?.terms?
+
+    #console.log( options.terms ) if options?.terms?
+    #@terms.reset options.terms if options?.terms?
+
     @set "label", @_label(), silent: true
     @on "change:terms change:properties", @_updateLabel, @
  

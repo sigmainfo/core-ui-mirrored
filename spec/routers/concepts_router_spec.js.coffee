@@ -146,8 +146,8 @@ describe "Coreon.Routers.ConceptsRouter", ->
     it "creates default term with query string", ->
       @router.create("gun")
       @screen.model.terms.should.have.length 1
-      @screen.model.terms.at(0).value.should.equal "gun"
-      @screen.model.terms.at(0).lang.should.equal "en"
+      @screen.model.terms.at(0).get("value").should.equal "gun"
+      @screen.model.terms.at(0).get("lang").should.equal "en"
 
 
 

@@ -42,7 +42,7 @@ describe "Coreon.Models.Concept", ->
 
         it "uses first English term", ->
           @model.initialize {},
-            terms: [
+            terms: new Coreon.Collections.Terms [
               {
                 lang: "fr"
                 value: "poésie"
@@ -55,7 +55,7 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "poetry"
 
         it "falls back to term in other language", ->
-          @model.initialize {}, terms:
+          @model.initialize {}, terms: new Coreon.Collections.Terms
             lang: "fr"
             value: "poésie"
           @model.get("label").should.equal "poésie"
@@ -67,7 +67,7 @@ describe "Coreon.Models.Concept", ->
               value: "My_label"
             ]
           }, silent: true
-          @model.initialize {}, terms:
+          @model.initialize {}, terms: new Coreon.Collections.Terms
             lang: "en"
             value: "poetry"
           @model.get("label").should.equal "My_label"
@@ -81,7 +81,7 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "&lt;script&gt;xss()&lt;&#x2F;script&gt;"
 
         it "handles term lang gracefully", ->
-          @model.initialize {}, terms: [
+          @model.initialize {}, terms: new Coreon.Collections.Terms [
             {
               lang: "fr"
               value: "poésie"
@@ -91,7 +91,6 @@ describe "Coreon.Models.Concept", ->
               value: "poetry"
             }
           ]
-          console.log @model.get("terms")
           @model.get("label").should.equal "poetry"
 
       context "on changes", ->
