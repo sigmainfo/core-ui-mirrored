@@ -230,9 +230,65 @@ div.concept {
       }
     }
   }
-  
-  
+   
 }
+
+@media all and (max-width: 999px) and (min-width: 800px) {
+  div.concept {
+    font-size: 0.9em;
+    
+    h2 {
+      font-size: 1.5em;
+      line-height: 1em;
+      padding: 2px 6px 3px 16px;
+      margin-bottom: 6px;
+      margin-right: 0px;
+      @include concept-icon;
+    }
+    
+    table {
+      margin-left: 0px;
+      tr td, tr th {
+        padding-top: 2px;
+        padding-bottom: 4px;
+      }
+      
+      tr th {
+        width: 69px;
+        padding-top: 3px;
+      }
+      ul.index {
+        padding-bottom: 4px;
+      }
+    }
+    
+    .terms {
+      .term h4.value {
+        font-size: 1.3em;
+        padding: 3px 100px 2px 67px;
+      }
+      .term >.system-info {
+        padding-left: 80px;
+        table {
+          margin-top: 2px;
+        }
+      }
+      .properties {
+        .section-toggle {
+          top: -1px;
+        }
+        .section {
+          margin: 0;
+          padding-left: 64px;
+        }
+      }
+    }
+    .system-info-toggle {
+      top: 5px;
+    }
+  }
+}
+
 
 @media all and (max-width: 799px) {
   div.concept {
@@ -243,8 +299,6 @@ div.concept {
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
       margin-right: 0px;
-      background-color: white;
-      color: $bluecolor;
       @include concept-icon;
     }
     
@@ -279,14 +333,11 @@ div.concept {
         font-size: 1em;
         padding: 0px 100px 0px 47px;
       }
-/*      .properties {
-        display: none;
-      }*/
+
       .properties {
         font-size: 0.9em;
         background: none;
         .section-toggle {
-          position: absolute;
           right: 0px;
           top: -1px;
         }

@@ -167,6 +167,59 @@
   
 }
 
+@media all and (max-width: 799px) and (min-width: 600px) {
+  
+  .search-results-tnodes {
+    display: none;
+  }
+  
+  .search-results-concepts, .search-results-terms {
+    
+    h3 {
+      top: 14px;
+      font-size: 0.86em;
+    }
+    
+    &>table { 
+      
+      margin-bottom: 4px;
+      thead {
+        display: none;
+      }
+      
+      tr td {
+        padding: 0px 16px 0px 10px;
+        &:first-child {
+          padding-left: 16px;
+        }
+      }
+      
+      &.concepts {
+        .super {
+           display: none;
+        }
+        td.label {
+          font-size: 0.86em;
+        }
+      }
+      &.terms {
+        font-size: 0.8em;
+        line-height: 1.8em;
+        .concept {
+          width: auto;
+          padding-right: 0;
+        }
+      }
+    }
+    
+    .actions {
+      display: none;
+    }
+    
+  }
+  
+}
+
 @media all and (max-width: 599px) {
   
   .search-results-terms, .search-results-tnodes {
