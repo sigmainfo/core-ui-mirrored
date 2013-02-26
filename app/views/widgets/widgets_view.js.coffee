@@ -15,10 +15,18 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     @map = new Coreon.Views.Widgets.ConceptMapView
       model: new Coreon.Collections.ConceptNodes( [], hits: @model.hits )
 
-  # setElement: (element, delegate) ->
-  #   super
-  #   @$el.resizable()
+  setElement: (element, delegate) ->
+    super
+    @$el.resizable
+      handles: "w"
+      containment: "document"
+      minWidth: 240
+      start: (event, ui) ->
+        ui.originalPosition.left = element.position().left
+      stop: (event, ui) ->
+        element.css("left", "auto")
 
   render: ->
-    @append @search, @map
+    @$el.append @search.render().$el
+    @$el.append @map.render().$el
     super

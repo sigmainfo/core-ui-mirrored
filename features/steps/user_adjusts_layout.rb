@@ -2,28 +2,30 @@ class Spinach::Features::UserAdjustsLayout < Spinach::FeatureSteps
 
   include AuthSteps
 
-  step 'the widgets column is set to its default width of 300px' do
-    pending 'step not implemented'
+  step 'the widgets column has a width of 300px' do
+    page.execute_script '$("#coreon-widgets").width(300);'
   end
 
-  step 'the concept map widget is set to its default height of 240px' do
-    pending 'step not implemented'
+  step 'the concept map widget has a height of 240px' do
+    page.execute_script '$("#coreon-concept-map").height(240);'
   end
 
   step 'I drag the resize handle of the widgets column to the left by 150px' do
-    pending 'step not implemented'
+    page.should have_css("#coreon-widgets .ui-resizable-w")
+    page.execute_script '$("#coreon-widgets .ui-resizable-w").simulate("mouseover").simulate("drag", {dx: -150});'
   end
 
   step 'I should see the widgets column being 450px wide' do
-    pending 'step not implemented'
+    page.evaluate_script('$("#coreon-widgets").width();').should == 450
   end
 
   step 'I should see the concept map widget keeping its height of 240px' do
-    pending 'step not implemented'
+    page.evaluate_script('$("#coreon-concept-map").height();').should == 240
   end
 
   step 'I drag the bottom resize handler of the concept map widget down by 50px' do
-    pending 'step not implemented'
+    page.should have_css("#coreon-concept-map .ui-resizable-s")
+    page.execute_script '$("#coreon-concept-map .ui-resizable-s").simulate("mouseover").simulate("drag", {dy: 50});'
   end
 
   step 'I should see the concept map widget being 290px high' do

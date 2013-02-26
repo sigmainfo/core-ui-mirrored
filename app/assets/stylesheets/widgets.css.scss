@@ -12,14 +12,17 @@
     @include retina-stripes("white");
     border-bottom: 1px solid rgba(black, 0.05);
     height: 19px;
+
     h4 {
       color: $browncolor;
       font-size: 0.86em;
       padding: 1px 0 0 12px;
       float: left;
     }
+
     .actions {
       float: right;
+
       a {
         display: block;
         float: left;
@@ -32,34 +35,38 @@
         
         &:first-child {
           border-left: 1px solid rgba(black, 0.1);
-        };
+        }
         
         &.zoom-in {
+
           &:before {
             @include before-icon;
             background-position: 0 -300px;
-          };
+          }
+
           &:hover {
+
             &:before {
               background-position: -50px -300px;
             }
-          };
+          }
         }
         
         &.zoom-out {
+
           &:before {
             @include before-icon;
             background-position: 0 -250px;
-          };
+          }
+
           &:hover {
+
             &:before {
               background-position: -50px -250px;
             }
-          };
+          }
         }
-        
       }
     }
   }
-
 }
