@@ -70,7 +70,7 @@ $widget-width: 640px;
 /*    margin-right: 5px;
     margin-bottom: 2px;*/
     border: 1px solid lighten($text-color, 20%);
-    @include border-radius(2px);
+    @include border-radius(4px);
   };  
 }
 
