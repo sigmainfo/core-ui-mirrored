@@ -47,10 +47,26 @@
   .ui-resizable-w {
     position: absolute;
     top: 0;
-    left: -5px;
-    width: 10px;
+    left: -7px;
+    width: 12px;
     height: 100%;
     cursor: w-resize;
+    &:before {
+      content:"";
+      display: block;
+      position: relative;
+      left: 7px;
+      height: 100%;
+      width: 5px;
+    };
+    &:hover {
+      &:before {
+      @include box-shadow(rgba(black, 0.1) -3px 0px 3px);
+      };
+    };
+  }
+  &.ui-resizable-resizing {
+    @include box-shadow(rgba(black, 0.4) -2px 0px 8px);
   }
 }
 
