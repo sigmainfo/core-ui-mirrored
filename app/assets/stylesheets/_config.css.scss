@@ -12,8 +12,7 @@ $petrol: #5498b0;
 $error-color: #f25a5a;
 $notice-color: #6bc175;
 
-// $widget-width: 320px;
-$widget-width: 640px;
+$widget-width: 320px;
 
 @mixin submit-button {
   @include box-sizing(border-box);
