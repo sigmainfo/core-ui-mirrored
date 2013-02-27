@@ -21,10 +21,12 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
       handles: "w"
       containment: "document"
       minWidth: 240
-      start: (event, ui) ->
-        ui.originalPosition.left = element.position().left
-      stop: (event, ui) ->
-        element.css("left", "auto")
+      start: (event, ui) =>
+        ui.originalPosition.left = @$el.position().left
+      resize: (event, ui) =>
+        @$("svg").attr "width", ui.size.width
+      stop: (event, ui) =>
+        @$el.css("left", "auto")
 
   render: ->
     @$el.append @search.render().$el

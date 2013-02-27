@@ -1,4 +1,5 @@
 #= require environment
+#= require jquery.ui.resizable
 #= require views/simple_view
 #= require templates/widgets/concept_map
 #= require d3
@@ -14,7 +15,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   template: Coreon.Templates["widgets/concept_map"]
 
   options:
-    size: [600, 640]
+    size: [240, 320]
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20
@@ -54,7 +55,17 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
 
   _renderMarkupSkeleton: ->
+    @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
     @$el.html @template size: @options.size
+    svgHeightOffset = null
+    @$el.resizable
+      handles: "s"
+      minHeight: 80
+      start: (event, ui) =>
+        svgHeightOffset = @$el.height() - $("svg").height()
+      resize: (event, ui) =>
+        svg = @$("svg")
+        @$("svg").attr "height", ui.size.height - svgHeightOffset
 
   _renderNodes: ->
     @layout.size [

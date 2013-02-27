@@ -56,7 +56,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.render()
       @view.$("#coreon-concept-map").size().should.equal 1
 
-  describe "resizing()", ->
+  describe "resizing", ->
 
     beforeEach ->
       $("#konacha").append @view.render().$el
@@ -69,6 +69,11 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.$el.width 320
       @handle.drag -47
       @view.$el.width().should.equal 367
+
+    it "syncs svg width", ->
+      @view.$el.width 320
+      @handle.drag -47
+      @view.$("svg").attr("width").should.equal "367"
 
     it "does not allow to reduce width below min width", ->
       @view.$el.width 320

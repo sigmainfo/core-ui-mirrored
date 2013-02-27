@@ -33,6 +33,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.have ".titlebar h4"
         @view.$(".titlebar h4").should.have.text "Concept Map"
 
+      it "renders titlebar only once", ->
+        @view.initialize()
+        @view.initialize()
+        @view.$(".titlebar").size().should.equal 1
+
       it "renders zoom buttons", ->
         I18n.t.withArgs("concept-map.zoom-in").returns "Zoom in"
         I18n.t.withArgs("concept-map.zoom-out").returns "Zoom out"
@@ -52,8 +57,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "defaults viewport dimensions", ->
         @view.initialize() 
-        @view.$("svg").attr("height").should.equal "600"
-        @view.$("svg").attr("width").should.equal "640"
+        @view.$("svg").attr("height").should.equal "240"
+        @view.$("svg").attr("width").should.equal "320"
+
+      it "creates resize handle", ->
+        @view.initialize()
+        @view.$el.should.have ".ui-resizable-s"
 
     context "preparing graph rendering", ->
 
@@ -343,3 +352,28 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render()
       @view.zoomIn()
       @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
+
+  describe "resizing", ->
+
+    beforeEach ->
+      $("#konacha").append @view.render().$el
+      @handle = @view.$(".ui-resizable-s")
+      @handle.drag = (deltaY) =>
+        @handle.simulate "mouseover"
+        @handle.simulate "drag", dy: deltaY
+
+    it "adjusts height when dragging resize handler", ->
+      @view.$el.height 240
+      @handle.drag 49
+      @view.$el.height().should.equal 289
+
+    it "syncs height of svg", ->
+      @view.$el.height 220
+      @view.$("svg").attr "height", 200
+      @handle.drag 55
+      @view.$("svg").attr("height").should.equal "255"
+
+    it "does not allow to reduce height below min height", ->
+      @view.$el.height 320
+      @handle.drag -300
+      @view.$el.height().should.equal 80
