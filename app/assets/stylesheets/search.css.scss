@@ -60,10 +60,6 @@
 /*  z-index: 1000;*/
   
   ul.options {
-    position: absolute;
-    right: 66px;
-    top: 38px;
-    width: $widget-width - 81px;
     list-style: none;
     background-color: $beigecolor;
     @include border-bottom-radius(6px);
