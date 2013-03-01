@@ -33,13 +33,15 @@ class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
   submitHandler: (event) ->
     event.preventDefault()
     event.stopPropagation()
-    path = switch @searchType.getSelectedType()
+    type = @searchType.getSelectedType()
+    query = encodeURIComponent @$('input#coreon-search-query').val()
+    switch type
       when "all"
-        "search/"
+        Backbone.history.navigate "search/#{query}"
+        Coreon.application.routers.search_router.search query
       else
-        "concepts/search/#{@searchType.getSelectedType()}/"
-    path += encodeURIComponent @$('input#coreon-search-query').val()
-    Backbone.history.navigate path, trigger: true
+        Backbone.history.navigate "concepts/search/#{type}/#{query}"
+        Coreon.application.routers.concepts_router.search type, query
 
   onClickedToFocus: (event) ->
     @$("input#coreon-search-query").focus()
