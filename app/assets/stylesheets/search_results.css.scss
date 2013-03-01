@@ -112,7 +112,7 @@
     text-align: right;
     min-width: 400px;
     
-    a {
+    .show-all {
       @include toggle;
     }
     
