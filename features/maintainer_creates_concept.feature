@@ -11,7 +11,7 @@ Feature: maintainer creates concept
   Scenario: create concept
     When I enter "gun" in the search field
     And I click the search button
-    Then I should see a button "CREATE CONCEPT"
+    Then I should see a button "Create Concept"
     And I click on the create concept link
     Then I should be on the create concept page for "gun"
     And I should see title "gun"

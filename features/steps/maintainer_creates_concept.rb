@@ -3,8 +3,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
 
-  step 'I should see a button "CREATE CONCEPT"' do
-    page.should have_css(".button", text: "CREATE CONCEPT")
+  step 'I should see a button "Create Concept"' do
+    page.should have_css(".button", text: "Create Concept")
   end
 
   step 'I click on the create concept link' do
