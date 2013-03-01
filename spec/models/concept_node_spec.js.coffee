@@ -45,6 +45,139 @@ describe "Coreon.Models.ConceptNode", ->
       it "defaults to false", ->
         expect( @node.get "expandedOut" ).to.be.false
 
+    describe "subnodeIds", ->
+
+      context "when expanded", ->
+
+        beforeEach ->
+          @node.set "expandedOut", true, silent: true
+
+        it "defaults to an empty array", ->
+          @node.get("subnodeIds").should.be.an.instanceof Array
+          @node.get("subnodeIds").should.have.length 0
+
+        it "keeps a copy of the sub_concept_ids", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ]
+          @node.get("subnodeIds").should.eql [ "subnode_1", "subnode_2" ]
+          @node.get("subnodeIds").should.not.equal @node.get("sub_concept_ids")
+
+      context "when collapsed", ->
+
+        beforeEach ->
+          @node.set "expandedOut", false, silent: true
+
+        it "always returns empty array", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ]
+          @node.get("subnodeIds").should.have.length 0
+
+      context "toggle state", ->
+        
+        it "returns sub_concept_ids after expanding", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ], silent: true
+          @node.get("subnodeIds").should.have.length 0
+          @node.set "expandedOut", true
+          @node.get("subnodeIds").should.have.length 2
+
+        it "returns empty set after collapsing", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ], silent: true
+          @node.set "expandedOut", true
+          @node.get("subnodeIds").should.have.length 2
+          @node.set "expandedOut", false
+          @node.get("subnodeIds").should.have.length 0
+          
+    describe "subnodeIds", ->
+
+      context "when expanded", ->
+
+        beforeEach ->
+          @node.set "expandedOut", true, silent: true
+
+        it "defaults to an empty array", ->
+          @node.get("subnodeIds").should.be.an.instanceof Array
+          @node.get("subnodeIds").should.have.length 0
+
+        it "keeps a copy of the sub_concept_ids", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ]
+          @node.get("subnodeIds").should.eql [ "subnode_1", "subnode_2" ]
+          @node.get("subnodeIds").should.not.equal @node.get("sub_concept_ids")
+
+        it "sets value on init", ->
+          node = new Coreon.Models.ConceptNode
+            sub_concept_ids: [ "subnode" ]
+            expandedOut: true
+          node.get("subnodeIds").should.have.deep.property "[0]", "subnode"
+
+      context "when collapsed", ->
+
+        beforeEach ->
+          @node.set "expandedOut", false, silent: true
+
+        it "always returns empty array", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ]
+          @node.get("subnodeIds").should.have.length 0
+
+      context "toggle state", ->
+        
+        it "returns sub_concept_ids after expanding", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ], silent: true
+          @node.get("subnodeIds").should.have.length 0
+          @node.set "expandedOut", true
+          @node.get("subnodeIds").should.have.length 2
+
+        it "returns empty set after collapsing", ->
+          @node.set "sub_concept_ids", [ "subnode_1", "subnode_2" ], silent: true
+          @node.set "expandedOut", true
+          @node.get("subnodeIds").should.have.length 2
+          @node.set "expandedOut", false
+          @node.get("subnodeIds").should.have.length 0
+
+    describe "supernodeIds", ->
+
+      context "when expanded", ->
+
+        beforeEach ->
+          @node.set "expandedIn", true, silent: true
+
+        it "defaults to an empty array", ->
+          @node.get("supernodeIds").should.be.an.instanceof Array
+          @node.get("supernodeIds").should.have.length 0
+
+        it "keeps a copy of the super_concept_ids", ->
+          @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ]
+          @node.get("supernodeIds").should.eql [ "supernode_1", "supernode_2" ]
+          @node.get("supernodeIds").should.not.equal @node.get("super_concept_ids")
+
+        it "sets value on init", ->
+          node = new Coreon.Models.ConceptNode
+            super_concept_ids: [ "supernode" ]
+            expandedIn: true
+          node.get("supernodeIds").should.have.deep.property "[0]", "supernode"
+
+      context "when collapsed", ->
+
+        beforeEach ->
+          @node.set "expandedIn", false, silent: true
+
+        it "always returns empty array", ->
+          @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ]
+          @node.get("supernodeIds").should.have.length 0
+
+      context "toggle state", ->
+        
+        it "returns super_concept_ids after expanding", ->
+          @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ], silent: true
+          @node.get("supernodeIds").should.have.length 0
+          @node.set "expandedIn", true
+          @node.get("supernodeIds").should.have.length 2
+
+        it "returns empty set after collapsing", ->
+          @node.set "super_concept_ids", [ "supernode_1", "supernode_2" ], silent: true
+          @node.set "expandedIn", true
+          @node.get("supernodeIds").should.have.length 2
+          @node.set "expandedIn", false
+          @node.get("supernodeIds").should.have.length 0
+        
+        
     context "derived from concept", ->
 
       beforeEach ->

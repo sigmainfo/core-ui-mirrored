@@ -43,6 +43,8 @@ Spinach.hooks.before_scenario do
 
   # disable jQuery animations
   Capybara.current_session.execute_script "jQuery.fx.off = true"
+  Capybara.current_session.driver.browser.manage.window.resize_to(1800, 1000)
 end
 #
 # Spinach.config.save_and_open_page_on_failure = true
+

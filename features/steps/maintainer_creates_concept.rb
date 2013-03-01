@@ -20,11 +20,11 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see an "Add Property" link' do
-    page.should have_css("h3.add_property", text: "Add property")
+    page.should have_css("h3.add_property", text: "Add Property")
   end
 
   step 'I should see an "Add Term" link' do
-    page.should have_css("h3.add_term", text: "Add term")
+    page.should have_css("h3.add_term", text: "Add Term")
   end
 
   step 'I should see a link to "create" the concept' do
@@ -35,21 +35,65 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".cancel", "Cancel")
   end
 
-#  step 'I should see an input for term value with "gun"' do
-  step 'I should see "gun" for "Value" within the first term' do
-    within ".term:first" do
-      find_field("Value").value.should == "gun"
+  step 'I should see an input for term value with "gun"' do
+    within ".create-term:first" do
+      find_field("Term Value").value.should == "gun"
     end
-#    find('.input.value input').value.should == "gun"
   end
 
-#  step 'I should see an input for term value with "gun"' do
-#    find('div.input.value input').value.should == "gun"
-#  end
+  step 'I should see an input "language" filled with the users search language' do
+    within ".create-term:first" do
+      find_field("Language").value.should == "en"
+    end
+  end
 
-#  And 'I click on the "cancel" link' do
-#    find('a.cancel').click
-#  end
+  step 'I should see a "Remove Term" link' do
+    within ".create-term:first" do
+      page.should have_css("h3.remove_term", text: "Remove Term")
+    end
+  end
+
+  step 'I should see an "Add Property" link for the term' do
+    within ".create-term:first" do
+      page.should have_css("h3.add_property", text: "Add Property")
+    end
+  end
+
+  step 'I enter "flower" into the term value field' do
+    within ".create-term:first" do
+      fill_in "Term Value", :with => 'flower'
+    end
+  end
+
+  step 'I should see title "flower"' do
+    page.should have_css("h2.label", text: "flower")
+  end
+
+  step 'I click on "Add Term"' do
+    find('h3.add_term').click
+  end
+
+  step 'I should see two new empty inputs for Term Value and Language' do
+    within ".create-term[2]" do
+      find_field("Term Value").value.should == ""
+      find_field("Language").value.should == ""
+    end
+  end
+
+  step 'I should see a "Remove Term" link for the new term' do
+    within ".create-term[2]" do
+      page.should have_css("h3.remove_term", text: "Remove Term")
+    end
+  end
   
+  step 'I click on "Remove Term"' do
+    within ".create-term[2]" do
+      find("h3.remove_term").click
+    end
+  end
+
+  step 'I should not see the term inputs anymore' do
+    page.should have_no_css(".create_term[2]")
+  end
 
 end

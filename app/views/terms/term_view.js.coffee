@@ -17,18 +17,13 @@ class Coreon.Views.Terms.TermView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.html @template
-      value: @options.term.value
-      info: @info(data: @data())
-    if @options.term.properties?.length
+      value: @options.term.get("value")
+      info: @info(data: @options.term.info())
+    if @options.term.get("properties")?.length
       @append new Coreon.Views.Properties.PropertiesView
-        properties: @options.term.properties
+        properties: @options.term.get("properties")
         collapsed: true
     super
-
-  data: ->
-    term = @options.term
-    idAttr = Coreon.Models.Concept::idAttribute
-    _(id: term[idAttr]).extend _(term).omit idAttr, "value", "lang", "properties"
 
   toggleInfo: (event) ->
     event.stopPropagation()

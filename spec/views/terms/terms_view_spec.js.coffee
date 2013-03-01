@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require views/terms/terms_view
+#= require collections/terms
 
 describe "Coreon.Views.Terms.TermsView", ->
 
@@ -19,7 +20,7 @@ describe "Coreon.Views.Terms.TermsView", ->
       @view.render().should.equal @view
 
     it "renders section for each language", ->
-      @view.model.set "terms", [
+      @view.model.set "terms", new Coreon.Collections.Terms [
         { value: "gun"     , lang: "en" }
         { value: "pistol"  , lang: "en" }
         { value: "Pistole" , lang: "de" }
@@ -29,4 +30,4 @@ describe "Coreon.Views.Terms.TermsView", ->
       @view.$(".language > .section-toggle").eq(0).should.have.text "en"
       @view.$(".language > .section-toggle").eq(1).should.have.text "de"
       @view.$(".language > .section").eq(0).should.contain "gun"
-    
+

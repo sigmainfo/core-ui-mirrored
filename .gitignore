@@ -5,3 +5,4 @@ tmp
 chromedriver.log
 .DS_Store
 .sass-cache
+stats

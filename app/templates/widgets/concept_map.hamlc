@@ -1,5 +1,8 @@
 .titlebar
   %h4= I18n.t "concept-map.title"
+  .actions
+    %a.zoom-in{href: "javascript: void(0)", title: I18n.t "concept-map.zoom-in"}= I18n.t "concept-map.zoom-in"
+    %a.zoom-out{href: "javascript: void(0)", title: I18n.t "concept-map.zoom-out"}= I18n.t "concept-map.zoom-out"
 .map
-  %svg{ width: @size[1], height: @size[0] }
+  %svg{ xmlns: "http://www.w3.org/2000/svg", version: "1.1", width: @size[1], height: @size[0] }
     %g.concept-map

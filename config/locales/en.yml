@@ -87,6 +87,19 @@ en:
 
   concept-map:
     title: "Concept Map"
+    zoom-in: "Zoom in"
+    zoom-out: "Zoom out"
+
+  create_concept:
+    add_property: "Add Property"
+    add_term: "Add Term"
+    create: "Create"
+    cancel: "Cancel"
+    
+  create_term:
+    value: "Term Value"
+    language: "Language"
+    remove_term: "Remove Term"
 
 #  create_properties:
 #    title: "Properties"

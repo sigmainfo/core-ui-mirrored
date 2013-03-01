@@ -10,23 +10,29 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
 
   template: Coreon.Templates["concepts/create_concept"]
 
-  #  events:
+  events:
+    'click .add_term': 'add_term'
   #  'click .create': 'create'
   #  'click .cancel': 'cancel'
 
-  #initialize: ->
-    # should model fire a update title event?
-    #  @listenTo @model, 'change:terms change:properties', @render_label
-    #super
+  initialize: ->
+    @listenTo @model, 'add:terms', @render
+    @listenTo @model, 'change:terms', @render_title
 
   render: ->
     @$el.html @template concept: @model
-
     @model.get("terms")?.each (term, index) =>
       term_view = new Coreon.Views.Terms.CreateTermView model: term
-      @$el.find('.terms').append term_view.render().$el
-
+      @$('.terms').append term_view.render().$el
     @
+
+  add_term: ->
+    @model.add_term()
+
+  render_title: ->
+    @$('h2.label').text @model.get('label')
+
+
 
 #    #    if @model.get("super_concept_ids")?.length + @model.get("sub_concept_ids")?.length > 0
 #    #  @$el.append new Coreon.Views.Concepts.ConceptTreeView model: @model

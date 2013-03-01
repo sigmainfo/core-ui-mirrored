@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class UserBrowsesConceptGraph < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
@@ -72,7 +74,8 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
   
   step 'I should see a node "weapon"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "weapon")
+    # use Nokogiri directly to fix matching of SVG nodes
+    Nokogiri::HTML(page.body).css(".concept-node text").map(&:text).should include("weapon")
   end
 
   step 'I should see a node "long gun"' do
@@ -123,9 +126,10 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step '"weapon" should be the only node left' do
+    sleep 0.2
     nodes = page.all("#coreon-concept-map .concept-node")
     nodes.should have(1).item
-    nodes.first.text.should == "weapon"
+    Nokogiri::HTML(page.body).css(".concept-node text").first.text.should == "weapon"
   end
 
   step 'there should be no more connections' do
@@ -147,5 +151,55 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   step '"tool" should be connected to "weapon"' do
     @edges = collect_edges
     @edges.should include("tool -> weapon")
+  end
+
+  step '"tool" should be connected to "pen"' do
+    @edges.should include("tool -> pen")
+  end
+
+  step 'a concept "hand"' do
+    @concept = create_concept_with_label "hand"
+  end
+
+  step 'a concept "handkerchief"' do
+    @concept = create_concept_with_label "handkerchief"
+  end
+
+  step 'I search for "hand"' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "hand"
+      find('input[type="submit"]').click
+    end
+  end
+
+  step 'I should see a node "hand"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "hand")
+  end
+
+  step 'I should see a node "handkerch…"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "handkerch…")
+  end
+
+  step 'all nodes should be classified as hits' do
+    page.all("#coreon-concept-map .concept-node.hit").size.should == 3
+  end
+
+  step 'I click on "Zoom in"' do
+    @orig = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
+    page.find("#coreon-concept-map a", text: "Zoom in").click
+  end
+
+  step '"handgun" should be bigger' do
+   box = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
+   box["height"].should > @orig["height"]
+  end
+
+  step 'I click on "Zoom out"' do
+    page.find("#coreon-concept-map a", text: "Zoom out").click
+  end
+
+  step '"handgun" should have the original size again' do
+    box = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
+    box["height"].should == @orig["height"]
   end
 end

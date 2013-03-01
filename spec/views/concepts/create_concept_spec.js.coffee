@@ -30,16 +30,16 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$('h2.label').should.have.text "gun"
 
     it "renders 'Add Property' link", ->
-      I18n.t.withArgs("create_properties.add").returns "Create Property"
+      I18n.t.withArgs("create_concept.add_property").returns "Add Property"
       @view.render()
       @view.$el.should.have "h3.add_property"
-      @view.$('h3.add_property').should.have.text "Create Property"
+      @view.$('h3.add_property').should.have.text "Add Property"
 
     it "renders 'Add Term' link", ->
-      I18n.t.withArgs("create_terms.add").returns "Create Term"
+      I18n.t.withArgs("create_concept.add_term").returns "Add Term"
       @view.render()
       @view.$el.should.have "h3.add_term"
-      @view.$('h3.add_term').should.have.text "Create Term"
+      @view.$('h3.add_term').should.have.text "Add Term"
 
     it "renders 'Create' button", ->
       I18n.t.withArgs("create_concept.create").returns "Create"
@@ -65,4 +65,41 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$('.terms').should.have ".create-term"
       @view.$('.create-term').should.have '.value'
       @view.$('.create-term').should.have '.language'
+
+    it "is triggered by add:terms", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "add:terms"
+      @view.render.should.have.been.calledOnce
+
+  describe "render_title()", ->
+
+    it "is triggered by change:terms", ->
+      @view.render_title = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "change:terms"
+      @view.render_title.should.have.been.calledOnce
+
+    it "renders title", ->
+      @view.render()
+      @view.model.set "label", "foobar", silent: true
+      @view.render_title()
+      @view.$('.label').text().should.eql "foobar"
+
+  describe "add_term()", ->
+
+    beforeEach ->
+      @view.render()
+
+    it "is triggered by click on add term", ->
+      @view.add_term = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add_term").click()
+      @view.add_term.should.have.been.calledOnce
+
+    it "calls add_term() on the model", ->
+      @view.model.add_term = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add_term").click()
+      @view.model.add_term.should.have.been.calledOnce
 

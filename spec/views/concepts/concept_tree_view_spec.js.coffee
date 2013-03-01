@@ -8,7 +8,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
     @model = new Coreon.Models.Concept _id: "123"
     @view = new Coreon.Views.Concepts.ConceptTreeView
       model: @model
-    Coreon.application = hits: get: -> undefined
+    Coreon.application = hits: new Backbone.Collection
 
   afterEach ->
     @view.destroy()

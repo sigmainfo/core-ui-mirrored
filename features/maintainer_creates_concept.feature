@@ -22,16 +22,18 @@ Feature: maintainer creates concept
     And I should see an input for term value with "gun"
     And I should see an input "language" filled with the users search language
     And I should see a "Remove Term" link
-    And I should see the "Broader and Narrower" section with only "gun"?
+    #And I should see the "Broader and Narrower" section with only "gun"?
     And I should see an "Add Property" link for the term
-    And I click on "Add Term"
+    When I enter "flower" into the term value field
+    Then I should see title "flower"
+    When I click on "Add Term"
     Then I should see two new empty inputs for Term Value and Language
-    And the input for Term Value should be selected
-    And there is a Remove Term link attached to the inputs
+    #And the input for Term Value should be selected
+    And I should see a "Remove Term" link for the new term
     When I click on "Remove Term"
     Then I should not see the term inputs anymore 
     When I click on "Add Term"
-    And I enter "Waffe" into the new Term Value input field
+    #HERE -> And I enter "Waffe" into the new Term Value input field
     And I click on "Add Property"
     Then I should see two new empty inputs for Property Key and Property Value
     And the input for Property Key should be selected

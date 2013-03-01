@@ -42,10 +42,9 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @app.hits.reset [ id: id ]
 
   create: (query) ->
-    screen = new Coreon.Views.Concepts.CreateConceptView
-      model: new Coreon.Models.Concept
-    screen.model.terms.add
-      lang: "en"
-      value: query
+    screen = new Coreon.Views.Concepts.CreateConceptView model:
+      new Coreon.Models.Concept terms:
+        lang: "en"
+        value: query
     @view.switch screen
 

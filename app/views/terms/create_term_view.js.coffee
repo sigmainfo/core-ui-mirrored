@@ -8,14 +8,22 @@ class Coreon.Views.Terms.CreateTermView extends Backbone.View
 
   template: Coreon.Templates["terms/create_term"]
 
+  events:
+    'change input': 'input_changed'
+#    'click .remove_term': 'remove_term'
+#
+
   render: ->
     @$el.empty()
     @$el.html @template term: @model, id: @model.cid
     @
 
-#  events:
-#    'click .remove_term': 'remove_term'
-#    'change .term input': 'input_changed'
+  input_changed: (event) ->
+    element = $(event.target)
+    [all, attr] = element[0].name.match /\[([^[]+)\]$/
+    @model.set attr, element[0].value
+
+
 #
 #    @$el.html @template term: @options.term, id: @options.id
 #    create_term_properties_view = new Coreon.Views.Properties.CreateTermPropertiesView model: @model, term_id: @options.id

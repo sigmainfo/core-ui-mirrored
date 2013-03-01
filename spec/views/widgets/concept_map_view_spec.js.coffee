@@ -33,6 +33,16 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.have ".titlebar h4"
         @view.$(".titlebar h4").should.have.text "Concept Map"
 
+      it "renders zoom buttons", ->
+        I18n.t.withArgs("concept-map.zoom-in").returns "Zoom in"
+        I18n.t.withArgs("concept-map.zoom-out").returns "Zoom out"
+        @view.initialize()
+        @view.$el.should.have ".zoom-in"
+        @view.$(".zoom-in").should.have.text "Zoom in"
+        @view.$(".zoom-in").should.have.attr "title", "Zoom in"
+        @view.$(".zoom-out").should.have.text "Zoom out"
+        @view.$(".zoom-out").should.have.attr "title", "Zoom out"
+
       it "renders viewport", ->
         @view.options.size = [120, 150]
         @view.initialize() 
@@ -42,8 +52,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "defaults viewport dimensions", ->
         @view.initialize() 
-        @view.$("svg").attr("height").should.equal "200"
-        @view.$("svg").attr("width").should.equal "320"
+        @view.$("svg").attr("height").should.equal "600"
+        @view.$("svg").attr("width").should.equal "640"
 
     context "preparing graph rendering", ->
 
@@ -71,11 +81,35 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     it "can be chained", ->
       @view.render().should.equal @view
 
-    it "is triggered by model changes", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "change"
-      @view.render.should.have.been.calledOnce
+    context "updates", ->
+      
+      beforeEach ->
+        @view.render = sinon.spy()
+        @view.initialize renderInterval: 0
+
+      it "is triggered after a reset", (done) ->
+        @view.model.trigger "reset"
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
+
+      it "is triggered when a node was added", (done) ->
+        @view.model.trigger "add"
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
+
+      it "is triggered when a node was removed", (done) ->
+        @view.model.trigger "remove"
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
+
+      it "is triggered when a label changed", (done) ->
+        @view.model.trigger "change:label"
+        _.defer =>
+          @view.render.should.have.been.calledOnce
+          done()
 
     context "nodes", ->
       
@@ -123,6 +157,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         beforeEach ->
           @view.options.size    = [120, 150]
           @view.options.offsetX = 100
+          @view.options.padding = 10
         
         it "updates node coordinates", ->
           @view.layout.nodes = ->
@@ -132,28 +167,28 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
                 id: "node_1"
                 model: new Backbone.Model(id: "node_1", label: "Node 1")
                 depth: 3 
-                x: 0.2
-                y: 0.75
+                x: 27
+                y: 380
               }
               {
                 id: "node_2"
                 model: new Backbone.Model(id: "node_2", label: "Node 2")
                 depth: 5 
-                x: 0.5
-                y: 0.6
+                x: 154
+                y: 560
               }
             ]
           @view.render()
 
           datum1 = d3.select( @view.$(".concept-node").get(0) ).data()[0]
-          datum1.should.have.property "x", 200
-          datum1.should.have.property "y", 24
+          datum1.should.have.property "x", (3 - 1) * 100
+          datum1.should.have.property "y", 27
 
           datum2 = d3.select( @view.$(".concept-node").get(1) ).data()[0]
-          datum2.should.have.property "x", 400
-          datum2.should.have.property "y", 60
+          datum2.should.have.property "x", (5 - 1) * 100
+          datum2.should.have.property "y", 154
           
-        it "moves nodes to new position", ->
+        it "moves views to new position", ->
           @view.layout.nodes = ->
             [
               { id: "root" }
@@ -161,63 +196,50 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
                 id: "node_1"
                 model: new Backbone.Model(id: "node_1", label: "Node 1")
                 depth: 3 
-                x: 0.2
+                x: 30
               }
             ]
           @view.render()
-          @view.$(".concept-node").should.have.attr "transform", "translate(200, 24)"
+          @view.$(".concept-node").should.have.attr "transform", "translate(200, 30)"
 
       context "updating view instances", ->
 
-        it "creates view for newly created node", ->
-          node = new Backbone.Model id: "node", label: "Node"
-          @view.model.tree = ->
+        beforeEach ->
+          @node = new Backbone.Model _id: "node", label: "Node"
+          @node.cid = "c123"
+          @view.model.tree = =>
             root:
               children: [
                 id: "node"
-                model: node
+                model: @node
               ]
             edges: []
-          @view.render()
-          @view.nodes.should.have.property("node").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
-          @view.nodes.should.have.deep.property "node.el", @view.$(".concept-node").get(0)
-          @view.nodes.should.have.deep.property "node.model", node
 
-        it "resolves view for removed nodes", ->
-          @view.model.tree = ->
-            root:
-              children: [
-                id: "node"
-                model: new Backbone.Model(id: "node_1", label: "Node 1")
-              ]
-            edges: []
+        it "creates view for newly created node", ->
+          @view.render()
+          @view.views.should.have.property("c123").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+          @view.views.should.have.deep.property "c123.el", @view.$(".concept-node").get(0)
+          @view.views.should.have.deep.property "c123.model", @node
+
+        it "resolves view for removed views", ->
           @view.render()
           spy = sinon.spy()
-          @view.nodes["node"].stopListening = spy
+          @view.views["c123"].stopListening = spy
           @view.model.tree = ->
             root:
               children: []
             edges: []
           @view.render()
           spy.should.have.been.calledOnce
-          should.not.exist @view.nodes["node"]
+          should.not.exist @view.views["c123"]
   
     context "edges", ->
 
       beforeEach ->
-        @view.nodes =
-          parent:  box: -> height: 0, width: 0
-          child_1: box: -> height: 0, width: 0
-          child_2: box: -> height: 0, width: 0
-
-      it "can be chained", ->
-        @view.render().should.equal @view
-          
-      it "is triggered by model changes", ->
-        @view.render = sinon.spy()
-        @view.initialize()
-        @view.model.trigger "change"
-        @view.render.should.have.been.calledOnce
+        @view.views =
+          c_parent:  box: -> height: 0, width: 0
+          c_child_1: box: -> height: 0, width: 0
+          c_child_2: box: -> height: 0, width: 0
 
       it "renders newly added eges", ->
         @view.model.tree = ->
@@ -225,12 +247,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             children: []
           edges: [
             {
-              source: { id: "parent",  x: 0, y: 0 }
-              target: { id: "child_1", x: 0, y: 0 }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
+              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1" } }
             }
             {
-              source: { id: "parent",  x: 0, y: 0 }
-              target: { id: "child_2", x: 0, y: 0 }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
+              target: { id: "child_2", x: 0, y: 0, model: { cid: "c_child_2" } }
             }
           ]
         @view.render()
@@ -242,8 +264,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           root: children: []
           edges: [
             {
-              source: { id: "parent",  x: 0, y: 0 }
-              target: { id: "child_1", x: 0, y: 0 }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
+              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1" } }
             }
           ]
         @view.render()
@@ -254,14 +276,70 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.not.have ".concept-edge"
 
       it "renders curves from box to box", ->
-        @view.nodes =
-          parent:  box: -> height: 30, width: 120
-          child_1: box: -> height: 20, width: 150
+        @view.views =
+          c_parent:  box: -> height: 30, width: 120
+          c_child_1: box: -> height: 20, width: 150
         @view.model.tree = ->
           root: children: []
           edges: [
-            source: { id: "parent",  x: 20, y: 25 }
-            target: { id: "child_1", x: 40, y: 55 }
+            source: { id: "parent",  x: 20, y: 25, model: { cid: "c_parent" } }
+            target: { id: "child_1", x: 40, y: 55, model: { cid: "c_child_1" } }
           ]
         @view.render()
         @view.$(".concept-edge").attr("d").should.match /M140,40.*40,70/
+
+  describe "zoomIn()", ->
+  
+    it "is triggered by click on button", ->
+      @view.zoomIn = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".zoom-in").click()
+      @view.zoomIn.should.have.been.calledOnce
+
+    it "increments zoom factor", ->
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(1)
+      @view.zoomIn()
+      @view.navigator.scale().should.equal 1.5
+
+    it "does not extent max scale factor", ->
+      @view.options.scaleExtent = [0.5, 3]
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(2.7)
+      @view.zoomIn()
+      @view.navigator.scale().should.equal 3
+
+    it "applies zoom", ->
+      @view.navigator.scale(1)
+      @view.options.scaleStep = 0.5
+      @view.render()
+      @view.zoomIn()
+      @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
+      
+  describe "zoomOut()", ->
+  
+    it "is triggered by click on button", ->
+      @view.zoomOut = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".zoom-out").click()
+      @view.zoomOut.should.have.been.calledOnce
+
+    it "outcrements zoom factor", ->
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(1.7)
+      @view.zoomOut()
+      @view.navigator.scale().should.equal 1.2
+
+    it "does not extent min scale factor", ->
+      @view.options.scaleExtent = [0.5, 3]
+      @view.options.scaleStep = 0.5
+      @view.navigator.scale(0.7)
+      @view.zoomOut()
+      @view.navigator.scale().should.equal 0.5
+
+    it "applies zoom", ->
+      @view.navigator.scale(1)
+      @view.options.scaleStep = 0.5
+      @view.render()
+      @view.zoomIn()
+      @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"

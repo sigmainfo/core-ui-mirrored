@@ -3,9 +3,9 @@
   .input
     %input{:type => "text", :id => "concept_terms_#{@id}_value", :name => "concept[terms][#{@id}][value]", :value => @term.get("value")}
 .language
-  %label{:for => "concept[terms][#{@id}][lang]"}= I18n.t "create_term.language"
+  %label{:for => "concept_terms_#{@id}_lang"}= I18n.t "create_term.language"
   .input
-    %input{:type => "text", :name => "concept[terms][#{@id}][lang]", :value => @term.get("lang")}
+    %input{:type => "text", :id => "concept_terms_#{@id}_lang", :name => "concept[terms][#{@id}][lang]", :value => @term.get("lang")}
 
-
--# .button.remove_term= I18n.t "create_term.remove"
+%h3.remove_term= I18n.t "create_term.remove_term"
+%h3.add_property= I18n.t "create_concept.add_property"
