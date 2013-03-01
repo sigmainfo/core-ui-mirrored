@@ -2,15 +2,33 @@
 @import 'compass/css3';
 
   .button {
-    float:right;
-    font-size: 1em;
-    color: $browncolor;
+    float: left;
+    font-size: 0.86em;
+    line-height: 1em;
+    padding: 3px 6px 3px 2px;
+    color: white;
+    display: inline-block;
+    background-color: $greencolor;
+    @include border-radius(4px);
+    @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 2px, false, inset);
+    &:before {
+      @include before-icon;
+      float: left;
+      height: 10px;
+      background-position: -3px -354px;
+    };
     &.collapsed {
       display:none;
     }
     &:hover {
       cursor: pointer;
+      color: white;
+      background-color: $button-color;
+      @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
     };
+  }
+  .search-results .button{    
+    margin-top: 6px;
   }
   .section
   {
