@@ -7,5 +7,5 @@
   .input
     %input{:type => "text", :id => "concept_terms_#{@id}_lang", :name => "concept[terms][#{@id}][lang]", :value => @term.get("lang")}
 
-%a.remove_term= I18n.t "create_term.remove_term"
-%a.add_term_property= I18n.t "create_concept.add_property"
+%a.remove_term.edit= I18n.t "create_term.remove_term"
+%a.add_term_property.edit= I18n.t "create_concept.add_property"

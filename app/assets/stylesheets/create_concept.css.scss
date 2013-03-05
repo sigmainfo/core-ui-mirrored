@@ -54,9 +54,10 @@ div.create-concept {
     }
   }
   
-  .add_property, .add_term, .remove_term, .remove_property {
+  a.edit {
     font-size: 0.9em;
     color:$greencolor;
+    display: block;
     
     &:before {
       @include before-icon;
@@ -89,7 +90,7 @@ div.create-concept {
 
   }
   
-  .terms .add_property {
+  .add_term_property {
     bottom: 10px;
     position: absolute;
     right: 10px;
