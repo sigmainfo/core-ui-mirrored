@@ -43,8 +43,10 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   create: (query) ->
     screen = new Coreon.Views.Concepts.CreateConceptView model:
-      new Coreon.Models.Concept terms:
-        lang: "en"
-        value: query
+      new Coreon.Models.Concept
+    screen.model.get("terms").push
+      lang: "en"
+      value: query
+      collection: screen.model.get("terms")
     @view.switch screen
 

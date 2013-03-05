@@ -36,31 +36,31 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see an input for term value with "gun"' do
-    within ".create-term:first" do
+    within ".create-term[3]" do
       find_field("Term Value").value.should == "gun"
     end
   end
 
   step 'I should see an input "language" filled with the users search language' do
-    within ".create-term:first" do
+    within ".create-term[3]" do
       find_field("Language").value.should == "en"
     end
   end
 
   step 'I should see a "Remove Term" link' do
-    within ".create-term:first" do
+    within ".create-term[3]" do
       page.should have_css("a.remove_term", text: "Remove Term")
     end
   end
 
   step 'I should see an "Add Property" link for the term' do
-    within ".create-term:first" do
+    within ".create-term[3]" do
       page.should have_css("a.add_term_property", text: "Add Property")
     end
   end
 
   step 'I enter "flower" into the term value field' do
-    within ".create-term:first" do
+    within ".create-term[3]" do
       fill_in "Term Value", :with => 'flower'
       fill_in "Language", :with => 'en'
     end
@@ -75,26 +75,26 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see two new empty inputs for Term Value and Language' do
-    within ".create-term[2]" do
+    within ".create-term[4]" do
       find_field("Term Value").value.should == ""
       find_field("Language").value.should == ""
     end
   end
 
   step 'I should see a "Remove Term" link for the new term' do
-    within ".create-term[2]" do
+    within ".create-term[4]" do
       page.should have_css "a.remove_term", text: "Remove Term"
     end
   end
   
   step 'I click on "Remove Term"' do
-    within ".create-term[2]" do
+    within ".create-term[4]" do
       find("a.remove_term").click
     end
   end
 
   step 'I should not see the term inputs anymore' do
-    page.should have_no_css(".create-term[2]")
+    page.should have_no_css(".create-term[4]")
   end
 
   step 'I click on "Add Property" link' do
@@ -110,7 +110,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I enter "label" as Property Key and "flowerpower" as Property Value' do
-    within ".create-property:first" do
+    within ".create-property[3]" do
       fill_in "Property Key", :with => 'label'
       fill_in "Property Value", :with => 'flowerpower'
     end
@@ -120,6 +120,16 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css "h2.label", text: "flower"
   end
 
+  step 'I click on the "Remove Property"' do
+    within ".concept > .properties" do
+      find("a.remove_property").click
+    end
+  end
 
+  step 'I should not see the property input anymore' do
+    within ".concept > .properties" do
+      page.should have_no_css(".create-property")
+    end
+  end
 
 end

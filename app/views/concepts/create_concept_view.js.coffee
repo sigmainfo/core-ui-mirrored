@@ -17,7 +17,7 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
   #  'click .cancel': 'cancel'
 
   initialize: ->
-    @listenTo @model, 'add:terms add:properties', @render
+    @listenTo @model, 'add:terms remove:terms add:properties remove:properties', @render
     @listenTo @model, 'change:terms', @render_title
 
   render: ->

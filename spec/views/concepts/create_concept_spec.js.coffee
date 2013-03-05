@@ -53,6 +53,11 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$el.should.have ".cancel"
       @view.$('.cancel').should.have.text "Cancel"
 
+    it "renders Terms headline", ->
+      I18n.t.withArgs("create_concept.terms").returns "Terms"
+      @view.render()
+      @view.$('.terms h3').should.have.text "Terms"
+
     it "renders Term", ->
       term =  new Backbone.Model
       term.set "value", "gun", silent: true
@@ -72,6 +77,17 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.model.trigger "add:terms"
       @view.render.should.have.been.calledOnce
 
+    it "is triggered by remove:terms", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "remove:terms"
+      @view.render.should.have.been.calledOnce
+
+    it "renders Properties headline", ->
+      I18n.t.withArgs("create_concept.properties").returns "Properties"
+      @view.render()
+      @view.$('.properties h3').should.have.text "Properties"
+
     it "renders Properties", ->
       @view.model.get = (attr) ->
         if attr is "properties"
@@ -87,6 +103,12 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.render = sinon.spy()
       @view.initialize()
       @view.model.trigger "add:properties"
+      @view.render.should.have.been.calledOnce
+
+    it "is triggered by remove:properties", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "remove:properties"
       @view.render.should.have.been.calledOnce
 
   describe "render_title()", ->

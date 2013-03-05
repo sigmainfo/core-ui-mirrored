@@ -91,6 +91,8 @@ en:
     zoom-out: "Zoom out"
 
   create_concept:
+    terms: "Terms"
+    properties: "Properties"
     add_property: "Add Property"
     add_term: "Add Term"
     create: "Create"

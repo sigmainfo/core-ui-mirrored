@@ -75,15 +75,22 @@ describe "Coreon.Models.Concept", ->
               value: "poetry"
             spy.should.have.been.calledOnce
 
-#        context "on remove terms", ->
-#
-#          it "triggers change:terms", ->
-#            @model.get("terms").add lang: "en", value: "poetry"
-#            spy = sinon.spy()
-#            @model.on "change:terms", spy
-#            @model.get("terms").pop()
-#            spy.should.have.been.calledOnce
-#
+        context "on remove terms", ->
+
+          it "triggers change:terms", ->
+            @model.get("terms").add lang: "en", value: "poetry"
+            spy = sinon.spy()
+            @model.on "change:terms", spy
+            @model.get("terms").pop()
+            spy.should.have.been.calledOnce
+
+          it "triggers remove:terms", ->
+            @model.get("terms").add lang: "en", value: "poetry"
+            spy = sinon.spy()
+            @model.on "remove:terms", spy
+            @model.get("terms").pop()
+            spy.should.have.been.calledOnce
+
         context "on change terms", ->
 
           it "triggers change:terms", ->

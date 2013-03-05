@@ -22,8 +22,6 @@ class Coreon.Views.Terms.CreateTermView extends Backbone.View
     @model.set attr, element[0].value
 
   remove_term: (event) ->
-    @$el.empty()
-    console.log @model.get "collection"
-    @model.get("collection")?.remove(@)
+    @model.get("collection")?.remove @model
 
 

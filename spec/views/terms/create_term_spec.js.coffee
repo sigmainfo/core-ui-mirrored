@@ -70,15 +70,16 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
 
   describe "changes on inputs", ->
 
-    it "triggers input_changed() on value change", ->
+    beforeEach ->
       @view.render()
+
+    it "triggers input_changed() on value change", ->
       @view.input_changed = sinon.spy()
       @view.delegateEvents()
       @view.$('.value input').trigger("change")
       @view.input_changed.should.have.been.called.once
 
     it "triggers input_changed() on language change", ->
-      @view.render()
       @view.input_changed = sinon.spy()
       @view.delegateEvents()
       @view.$('.language input').trigger("change")
@@ -86,23 +87,23 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
 
   describe "remove term", ->
 
-    it "trigger remove_term() on 'Remove Term' button click", ->
+    beforeEach ->
       @view.render()
+
+    it "trigger remove_term() on 'Remove Term' button click", ->
       @view.remove_term = sinon.spy()
       @view.delegateEvents()
       @view.$('.remove_term').click()
       @view.remove_term.should.have.been.called.once
 
-    it "empties html", ->
-      @view.render()
-      @view.$('.remove_term').click()
-      @view.el.innerHTML.should.eql ""
+      #it "empties html", ->
+      #@view.$('.remove_term').click()
+      #@view.el.innerHTML.should.eql ""
 
     it "removes itself from the collection", ->
-      @view.render()
       collection = new Backbone.Collection
       collection.push @view.model
-      @view.get = sinon.stub().returns collection
+      @view.model.get = sinon.stub().returns collection
       @view.$('.remove_term').click()
       collection.size().should.eql 0
 

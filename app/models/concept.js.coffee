@@ -65,6 +65,9 @@ class Coreon.Models.Concept extends Backbone.Model
       @trigger 'change:terms'
     else if e is "change"
       @trigger 'change:terms'
+    else if e is "remove"
+      @trigger 'remove:terms'
+      @trigger 'change:terms'
       
       #if e is "remove" or e is "change"
 

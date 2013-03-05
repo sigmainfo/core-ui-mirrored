@@ -36,7 +36,8 @@ Feature: maintainer creates concept
     Then I should see inputs for Property Key, Value and Language
     When I enter "label" as Property Key and "flowerpower" as Property Value
     Then I should see title "flowerpower"
-
+    When I click on the "Remove Property"
+    Then I should not see the property input anymore
 
     When I click on "Add Term"
     #HERE -> And I enter "Waffe" into the new Term Value input field
