@@ -1,15 +1,14 @@
-.property
-  .key
-    %label{:for => "concept_properties_#{@id}_key"}= I18n.t "create_property.key"
-    .input
-      %input{:type => "text", :id => "concept_properties_#{@id}_key", :name => "concept[properties][#{@id}][key]", :value => @property.key}
-  .value
-    %label{:for => "concept_properties_#{@id}_value"}= I18n.t "create_property.value"
-    .input
-      %input{:type => "text", :id => "concept_properties_#{@id}_value", :name => "concept[properties][#{@id}][value]", :value => @property.value}
-  .language
-    %label{:for => "concept_properties_#{@id}_lang"}= I18n.t "create_property.language"
-    .input
-      %input{:type => "text", :id => "concept_properties_#{@id}_lang", :name => "concept[properties][#{@id}][lang]", :value => @property.lang}
+.key
+  %label{:for => "concept_properties_#{@id}_key"}= I18n.t "create_property.key"
+  .input
+    %input{:type => "text", :id => "concept_properties_#{@id}_key", :name => "concept[properties][#{@id}][key]", :value => @property.key}
+.value
+  %label{:for => "concept_properties_#{@id}_value"}= I18n.t "create_property.value"
+  .input
+    %input{:type => "text", :id => "concept_properties_#{@id}_value", :name => "concept[properties][#{@id}][value]", :value => @property.value}
+.language
+  %label{:for => "concept_properties_#{@id}_lang"}= I18n.t "create_property.language"
+  .input
+    %input{:type => "text", :id => "concept_properties_#{@id}_lang", :name => "concept[properties][#{@id}][lang]", :value => @property.lang}
 
 %a.remove_property.edit= I18n.t "create_property.remove"

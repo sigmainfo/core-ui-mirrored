@@ -70,7 +70,7 @@ div.create-concept {
     }
   }
   
-  .create-term, .create-property .property {
+  .create-term, .create-property {
     position: relative;
     padding-bottom: 18px;
     margin-top: 30px;
@@ -79,9 +79,7 @@ div.create-concept {
       padding-top: 18px;
     }
   }
-  .create-property {
-    position: relative;
-  }
+
   
   .properties {
     position: relative;
