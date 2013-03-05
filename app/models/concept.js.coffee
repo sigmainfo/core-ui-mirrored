@@ -42,7 +42,14 @@ class Coreon.Models.Concept extends Backbone.Model
     @listenTo @get("terms"), 'all', @_processTermsEvent if super
 
   add_term: ->
-    @get("terms").push new Coreon.Models.Term
+    @get("terms").push new Coreon.Models.Term collection: @get("terms")
+
+  add_property : ->
+    @get("properties").push
+      key: ""
+      value: ""
+      lang: ""
+    @trigger("add:properties")
 
   info: ->
     info = id: @id

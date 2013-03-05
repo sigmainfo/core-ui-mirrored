@@ -1,6 +1,5 @@
 #= require spec_helper
 #= require views/terms/create_term_view
-# require models/term
 
 describe "Coreon.Views.Terms.CreateTermsView", ->
 
@@ -60,38 +59,51 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
     it "renders remove term link", ->
       I18n.t.withArgs("create_term.remove_term").returns "Remove Term"
       @view.render()
-      @view.$el.should.have "h3.remove_term"
-      @view.$('h3.remove_term').should.have.text "Remove Term"
+      @view.$el.should.have "a.remove_term"
+      @view.$('a.remove_term').should.have.text "Remove Term"
 
     it "renders add property link", ->
       I18n.t.withArgs("create_concept.add_property").returns "Add Property"
       @view.render()
-      @view.$el.should.have "h3.add_property"
-      @view.$('h3.add_property').should.have.text "Add Property"
+      @view.$el.should.have "a.add_term_property"
+      @view.$('a.add_term_property').should.have.text "Add Property"
 
   describe "changes on inputs", ->
 
-    it "trigger input_changed()", ->
+    it "triggers input_changed() on value change", ->
       @view.render()
       @view.input_changed = sinon.spy()
       @view.delegateEvents()
       @view.$('.value input').trigger("change")
       @view.input_changed.should.have.been.called.once
 
-    it "trigger change ", ->
+    it "triggers input_changed() on language change", ->
       @view.render()
       @view.input_changed = sinon.spy()
       @view.delegateEvents()
-      @view.$('.value input').trigger("change")
+      @view.$('.language input').trigger("change")
       @view.input_changed.should.have.been.called.once
 
+  describe "remove term", ->
 
-        # @view.fill_in "Term Value", "foobar"
-        #fill_in
+    it "trigger remove_term() on 'Remove Term' button click", ->
+      @view.render()
+      @view.remove_term = sinon.spy()
+      @view.delegateEvents()
+      @view.$('.remove_term').click()
+      @view.remove_term.should.have.been.called.once
 
-        #@view.$el
+    it "empties html", ->
+      @view.render()
+      @view.$('.remove_term').click()
+      @view.el.innerHTML.should.eql ""
 
-
-
+    it "removes itself from the collection", ->
+      @view.render()
+      collection = new Backbone.Collection
+      collection.push @view.model
+      @view.get = sinon.stub().returns collection
+      @view.$('.remove_term').click()
+      collection.size().should.eql 0
 
 

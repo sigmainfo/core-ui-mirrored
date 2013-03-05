@@ -258,4 +258,14 @@ describe "Coreon.Models.Concept", ->
       @model.add_term()
       @model.get("terms").size().should.be.eql 1
 
+    it "creates a term model with knows about its terms conncetion", ->
+      @model.add_term()
+      @model.get("terms").at(0).get("collection").should.eql @model.get("terms")
+
+  describe "add_property()", ->
+
+    it "creates a new empty property model", ->
+      @model.add_property()
+      @model.get("properties").length.should.be.eql 1
+
 

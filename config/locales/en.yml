@@ -101,6 +101,12 @@ en:
     language: "Language"
     remove_term: "Remove Term"
 
+  create_property:
+    key: "Property Key"
+    remove: "Remove Property"
+    value: "Property Value"
+    language: "Language"
+
 #  create_properties:
 #    title: "Properties"
 #    add: "Add property"

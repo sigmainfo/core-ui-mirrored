@@ -32,6 +32,12 @@ Feature: maintainer creates concept
     And I should see a "Remove Term" link for the new term
     When I click on "Remove Term"
     Then I should not see the term inputs anymore 
+    When I click on "Add Property" link 
+    Then I should see inputs for Property Key, Value and Language
+    When I enter "label" as Property Key and "flowerpower" as Property Value
+    Then I should see title "flowerpower"
+
+
     When I click on "Add Term"
     #HERE -> And I enter "Waffe" into the new Term Value input field
     And I click on "Add Property"

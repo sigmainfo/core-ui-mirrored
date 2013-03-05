@@ -32,14 +32,14 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
     it "renders 'Add Property' link", ->
       I18n.t.withArgs("create_concept.add_property").returns "Add Property"
       @view.render()
-      @view.$el.should.have "h3.add_property"
-      @view.$('h3.add_property').should.have.text "Add Property"
+      @view.$el.should.have "a.add_property"
+      @view.$('a.add_property').should.have.text "Add Property"
 
     it "renders 'Add Term' link", ->
       I18n.t.withArgs("create_concept.add_term").returns "Add Term"
       @view.render()
-      @view.$el.should.have "h3.add_term"
-      @view.$('h3.add_term').should.have.text "Add Term"
+      @view.$el.should.have "a.add_term"
+      @view.$('a.add_term').should.have.text "Add Term"
 
     it "renders 'Create' button", ->
       I18n.t.withArgs("create_concept.create").returns "Create"
@@ -72,6 +72,23 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.model.trigger "add:terms"
       @view.render.should.have.been.calledOnce
 
+    it "renders Properties", ->
+      @view.model.get = (attr) ->
+        if attr is "properties"
+          [ { lang : 'en', key: 'description', value: 'flowerz' } ]
+      @view.render()
+      @view.$el.should.have ".properties"
+      @view.$('.properties').should.have ".create-property"
+      @view.$('.create-property').should.have '.key'
+      @view.$('.create-property').should.have '.value'
+      @view.$('.create-property').should.have '.language'
+
+    it "is triggered by add:properties", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "add:properties"
+      @view.render.should.have.been.calledOnce
+
   describe "render_title()", ->
 
     it "is triggered by change:terms", ->
@@ -102,4 +119,22 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.delegateEvents()
       @view.$(".add_term").click()
       @view.model.add_term.should.have.been.calledOnce
+
+  describe "add_property()", ->
+
+    beforeEach ->
+      @view.render()
+
+    it "is triggered by click on add property", ->
+      @view.add_property = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add_property").click()
+      @view.add_property.should.have.been.calledOnce
+
+    it "calls add_property() on the model", ->
+      @view.model.add_property = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add_property").click()
+      @view.model.add_property.should.have.been.calledOnce
+
 

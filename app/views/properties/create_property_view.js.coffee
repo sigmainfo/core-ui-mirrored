@@ -22,6 +22,7 @@ class Coreon.Views.Properties.CreatePropertyView extends Backbone.View
   render: ->
     @$el.empty()
     @$el.html @template property: @options.property, id: @options.id, prefix: "concept[properties]"
+    @
 
   remove_property: (event) =>
     input = $(event.target)

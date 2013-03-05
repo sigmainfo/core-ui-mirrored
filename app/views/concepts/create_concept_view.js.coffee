@@ -1,8 +1,8 @@
 #= require environment
 #= require templates/concepts/create_concept
 #= require views/concepts/concept_tree_view
-#= require views/properties/create_properties_view
-#= require views/terms/create_terms_view
+#= require views/properties/create_property_view
+#= require views/terms/create_term_view
 
 class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
 
@@ -12,27 +12,34 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
 
   events:
     'click .add_term': 'add_term'
+    'click .add_property': 'add_property'
   #  'click .create': 'create'
   #  'click .cancel': 'cancel'
 
   initialize: ->
-    @listenTo @model, 'add:terms', @render
+    @listenTo @model, 'add:terms add:properties', @render
     @listenTo @model, 'change:terms', @render_title
 
   render: ->
     @$el.html @template concept: @model
-    @model.get("terms")?.each (term, index) =>
+    for term in @model.get("terms")?.models ? []
       term_view = new Coreon.Views.Terms.CreateTermView model: term
       @$('.terms').append term_view.render().$el
+    for property, index in @model.get("properties") ? []
+      property_view = new Coreon.Views.Properties.CreatePropertyView property: property, id: index, model: @concept
+      @$('.properties').append property_view.render().$el
     @
 
-  add_term: ->
+  add_term: (event) ->
+    event.stopPropagation()
     @model.add_term()
+
+  add_property: (event) ->
+    event.stopPropagation()
+    @model.add_property()
 
   render_title: ->
     @$('h2.label').text @model.get('label')
-
-
 
 #    #    if @model.get("super_concept_ids")?.length + @model.get("sub_concept_ids")?.length > 0
 #    #  @$el.append new Coreon.Views.Concepts.ConceptTreeView model: @model

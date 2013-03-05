@@ -1,7 +1,9 @@
 %h2.label= @concept.get("label")
-%h3.add_property= I18n.t "create_concept.add_property"
-%h3.add_term= I18n.t "create_concept.add_term"
 
+%a.add_property= I18n.t "create_concept.add_property"
+.properties
+
+%a.add_term= I18n.t "create_concept.add_term"
 .terms
 
 .footer
