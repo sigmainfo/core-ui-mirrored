@@ -33,7 +33,7 @@ div.concept {
   .terms {
     padding-top: 20px;
     
-    .language {
+    >.language {
       @include retina-separator;
       background-repeat: repeat-x;
       padding-top: 8px;
@@ -52,7 +52,6 @@ div.concept {
     }
     
     .term {
-/*      overflow: hidden;*/
       position: relative;
       @include dottedline;
       &:first-child {

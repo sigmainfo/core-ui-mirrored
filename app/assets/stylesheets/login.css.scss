@@ -23,6 +23,16 @@
     font: 1.6em Palatino;
   }
   
+  label {
+    display: block;
+    color: $browncolor;
+    padding-bottom: 5px;
+    padding-top: 35px;
+    abbr {
+      border: none;
+    }
+  }
+  
   .login {
     width: 520px;
     padding-bottom: 50px;

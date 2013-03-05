@@ -1,74 +1,126 @@
 @import '_config';
 @import 'compass/css3';
 
-  .button {
-    float: left;
-    font-size: 0.86em;
-    line-height: 1em;
-    padding: 3px 6px 3px 2px;
-    color: white;
-    display: inline-block;
-    background-color: $greencolor;
-    @include border-radius(4px);
-    @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 2px, false, inset);
+.button {
+  float: left;
+  font-size: 0.86em;
+  line-height: 1em;
+  padding: 3px 8px;
+  color: white;
+  display: inline-block;
+  @include edit-button;
+  &.create-concept {
+    padding-left: 2px;
+    margin-top: 6px;
     &:before {
       @include before-icon;
       float: left;
       height: 10px;
       background-position: -3px -354px;
     };
-    &.collapsed {
-      display:none;
+  }
+  
+  &.collapsed {
+    display:none;
+  }
+}
+
+div.create-concept {
+  
+  label {
+    color: $browncolor;
+    display: inline-block;
+    text-transform: uppercase;
+    text-align: right;
+    font-size: 0.8em;
+    float: left;
+    width: 100px;
+    padding-right: 20px;
+    padding-top: 5px;
+  }
+  
+  input {
+    height:24px;
+    width: 50%;
+  }
+
+  .create-term {
+    position: relative;
+    margin-top: 20px;
+    padding-bottom: 18px;
+    background-color: rgba($button-color, 0.1);
+    &>div {
+      padding-top: 18px;
     }
+  }
+  
+  .add_property, .add_term, .remove_term, .remove_property {
+    font-size: 0.9em;
+    color:$greencolor;
+    
+    &:before {
+      @include before-icon;
+      float: left;
+      margin-right: 5px;
+      background-position: -2px -351px;
+      @include edit-button;
+    };
     &:hover {
-      cursor: pointer;
-      color: white;
-      background-color: $button-color;
-      @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+      color: $button-color;
+      &:before {
+        background-color: $button-color;
+        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+      };
+    }
+  }
+  .remove_term {
+    width: 16px;
+    overflow: hidden;
+    text-indent: -5000px;
+    &:before {
+      background-position: -52px -351px;
     };
   }
-  .search-results .button{    
-    margin-top: 6px;
+  
+  .terms .remove_term {
+    top: 10px;
+    position: absolute;
+    right: 10px;
+
   }
-  .section
-  {
-    &.collapsed {
-      display:none;
+  
+  .terms .add_property {
+    bottom: 10px;
+    position: absolute;
+    right: 10px;
+  }
+  
+  .footer {
+    overflow: hidden;
+    background-color: darken(rgba($button-color, 0.2), 10);
+    margin-top:26px;
+    padding: 3px 10px;
+    
+    .button{
+      float: right;
+      margin: 6px;
+      &.create {
+        background-color: $button-color;
+        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+        @include retina-stripes(white);
+        &:after {
+          @include before-icon;
+          float: right;
+          height: 10px;
+          margin-left: 4px;
+          background-position: 0px -405px;
+        };
+        &:hover {
+          background-color: saturate($button-color, 10);
+        };
+      }
     }
+    
   }
-  .create-property .property, .create-term .term
-  {
-    margin-bottom: 4px;
-    background-color: #e0e7e1;
-  }
-  .create-property label
-  {
-    display: inline-block;
-    width: 200px;
-    padding: 10px;
-  }
-  .create-property .input
-  {
-    display:inline;
-    background-color:red;
-  }
-  .create-terms label
-  {
-    display: inline-block;
-    width: 200px;
-    padding: 10px;
-  }
-  .create-terms .input
-  {
-    display:inline;
-    background-color:red;
-  }
-  .create-term-properties
-  {
-    margin-left: 40px;
-  }
-  .footer
-  {
-    background-color: #3f3b2c;
-    margin-top:40px;
-  }
+  
+}
