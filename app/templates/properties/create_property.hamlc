@@ -12,4 +12,4 @@
     .input
       %input{:type => "text", :id => "concept_properties_#{@id}_lang", :name => "concept[properties][#{@id}][lang]", :value => @property.lang}
 
-%a.remove_property= I18n.t "create_property.remove"
+%a.remove_property.edit= I18n.t "create_property.remove"

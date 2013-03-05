@@ -105,6 +105,7 @@ $widget-width: 640px;
 
 @mixin retina-separator {
   background-image: image-url('layout/separator.png');
+  background-repeat: repeat-x;
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/separator@2x.png');
       @include background-size(4px 8px);
