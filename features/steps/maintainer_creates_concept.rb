@@ -113,11 +113,12 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     within ".create-property[3]" do
       fill_in "Property Key", :with => 'label'
       fill_in "Property Value", :with => 'flowerpower'
+      fill_in "Language", :with => 'en'
     end
   end
   
   step 'I should see title "flowerpower"' do
-    page.should have_css "h2.label", text: "flower"
+    page.should have_css "h2.label", text: "flowerpower"
   end
 
   step 'I click on the "Remove Property"' do

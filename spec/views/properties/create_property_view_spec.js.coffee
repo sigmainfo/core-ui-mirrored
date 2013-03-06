@@ -98,6 +98,13 @@ describe "Coreon.Views.Properties.CreatePropertyView", ->
         @view.$('.key input').trigger("change")
         spy.should.have.been.called.once
 
+      it "triggers no change:properties if key unchanged", ->
+        @view.model.get = sinon.stub().returns 42: { key: "description" }
+        spy = sinon.spy()
+        @view.model.on "change:properties", spy
+        @view.$('.key input').trigger("change")
+        spy.should.not.have.been.called
+
       it "saves to model", ->
         @view.model.get = sinon.stub().returns 42: {}
         @view.model.set = sinon.spy()
@@ -119,6 +126,13 @@ describe "Coreon.Views.Properties.CreatePropertyView", ->
         @view.model.on "change:properties", spy
         @view.$('.value input').trigger("change")
         spy.should.have.been.called.once
+
+      it "triggers no change:properties if value unchanged", ->
+        @view.model.get = sinon.stub().returns 42: { value: "flower" }
+        spy = sinon.spy()
+        @view.model.on "change:properties", spy
+        @view.$('.value input').trigger("change")
+        spy.should.not.have.been.called
 
       it "saves to model", ->
         @view.model.get = sinon.stub().returns 42: {}
@@ -142,6 +156,13 @@ describe "Coreon.Views.Properties.CreatePropertyView", ->
         @view.$('.language input').trigger("change")
         spy.should.have.been.called.once
 
+      it "triggers no change:properties if language unchanged", ->
+        @view.model.get = sinon.stub().returns 42: { lang: "en" }
+        spy = sinon.spy()
+        @view.model.on "change:properties", spy
+        @view.$('.language input').trigger("change")
+        spy.should.not.have.been.called
+
       it "saves to model", ->
         @view.model.get = sinon.stub().returns 42: {}
         @view.model.set = sinon.spy()
@@ -149,5 +170,35 @@ describe "Coreon.Views.Properties.CreatePropertyView", ->
         @view.$('.language input').trigger("change")
         @view.model.set.withArgs( "properties", { 42: { lang: "de" } } ).should.have.been.called.once
 
+  describe "remove property", ->
 
+    beforeEach ->
+      @view.render()
+
+    it "triggers remove_property() on 'Remove Property' button click", ->
+      @view.remove_property = sinon.spy()
+      @view.delegateEvents()
+      @view.$('.remove_property').click()
+      @view.remove_property.should.have.been.called.once
+
+    it "removes itself from the model", ->
+      @view.options.id = 1
+      properties =  [ "foo", @view.model, "bar" ]
+      @view.model.get = sinon.stub().returns properties
+      @view.$('.remove_property').click()
+      properties.should.eql [ "foo", "bar" ]
+
+    it "triggers change and remove events on the model", ->
+      @view.options.id = 1
+      properties =  [ "foo", @view.model, "bar" ]
+      @view.model.get = sinon.stub().returns properties
+      spy1 = sinon.spy()
+      spy2 = sinon.spy()
+      @view.model.on "change:properties", spy1
+      @view.model.on "remove:properties", spy2
+      @view.delegateEvents()
+      @view.$('.remove_property').click()
+      properties.should.eql [ "foo", "bar" ]
+      spy1.should.be.called.once
+      spy2.should.be.called.once
 

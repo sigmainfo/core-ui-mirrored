@@ -119,6 +119,12 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.model.trigger "change:terms"
       @view.render_title.should.have.been.calledOnce
 
+    it "is triggered by change:properties", ->
+      @view.render_title = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "change:properties"
+      @view.render_title.should.have.been.calledOnce
+
     it "renders title", ->
       @view.render()
       @view.model.set "label", "foobar", silent: true

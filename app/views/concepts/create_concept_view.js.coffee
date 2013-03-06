@@ -18,7 +18,7 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
 
   initialize: ->
     @listenTo @model, 'add:terms remove:terms add:properties remove:properties', @render
-    @listenTo @model, 'change:terms', @render_title
+    @listenTo @model, 'change:terms change:properties', @render_title
 
   render: ->
     @$el.html @template concept: @model
@@ -26,7 +26,7 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
       term_view = new Coreon.Views.Terms.CreateTermView model: term
       @$('.terms').append term_view.render().$el
     for property, index in @model.get("properties") ? []
-      property_view = new Coreon.Views.Properties.CreatePropertyView property: property, id: index, model: @concept
+      property_view = new Coreon.Views.Properties.CreatePropertyView property: property, id: index, model: @model
       @$('.properties').append property_view.render().$el
     @
 

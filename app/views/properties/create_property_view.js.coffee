@@ -8,27 +8,25 @@ class Coreon.Views.Properties.CreatePropertyView extends Backbone.View
   template: Coreon.Templates["properties/create_property"]
 
   events:
-    'click .remove_property': 'remove_property'
     'change input': 'input_changed'
+    'click .remove_property': 'remove_property'
   
   input_changed: (event) ->
     input = $(event.target)
     [all, key] = input[0].name.match /\[([^[]*)\]$/
     properties = @model.get "properties"
-    properties[@options.id][key] = input.val()
-    @model.set "properties", properties
-    @model.trigger "change:properties"
+    if properties[@options.id][key] != input.val()
+      properties[@options.id][key] = input.val()
+      @model.set "properties", properties
+      @model.trigger "change:properties"
 
   render: ->
     @$el.empty()
     @$el.html @template property: @options.property, id: @options.id, prefix: "concept[properties]"
     @
 
-  remove_property: (event) =>
-    input = $(event.target)
+  remove_property: (event) ->
     properties = @model.get "properties"
-    properties.splice input.attr("data-id"), 1
+    properties.splice @options.id, 1
     @model.set "properties", properties
-    @model.trigger "change:properties"
-    @$el.empty()
-
+    @model.trigger "change:properties remove:properties"

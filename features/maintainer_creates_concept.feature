@@ -30,6 +30,8 @@ Feature: maintainer creates concept
     Then I should see two new empty inputs for Term Value and Language
     #And the input for Term Value should be selected
     And I should see a "Remove Term" link for the new term
+    When I click on "Create"
+    Then I should see an error message
     When I click on "Remove Term"
     Then I should not see the term inputs anymore 
     When I click on "Add Property" link 
@@ -39,25 +41,25 @@ Feature: maintainer creates concept
     When I click on the "Remove Property"
     Then I should not see the property input anymore
 
-    When I click on "Add Term"
-    #HERE -> And I enter "Waffe" into the new Term Value input field
-    And I click on "Add Property"
-    Then I should see two new empty inputs for Property Key and Property Value
-    And the input for Property Key should be selected
-    And there is a Cancel link attached to the inputs
-    When I click on "Cancel"
-    Then I should not see the property inputs anymore 
-    When I fill in "something to kill with" into the new Property Value field
-    And I click on the "create" link
-    Then i should see error "Can't be blank" on term language
-    And i should see error "Can't be blank" on property key
-    When I fill in "DE" as language of the new term
-    And I fill in "description" as property key of the new property 
-    And I click on the "create" link
-    Then I should see the show concept page
-    And the concept should have title "gun"
-    And it should have german term "Waffe" and english term "gun"
-    And it should have property "description" with value "something to kill with"
+#    When I click on "Add Term"
+#    #HERE -> And I enter "Waffe" into the new Term Value input field
+#    And I click on "Add Property"
+#    Then I should see two new empty inputs for Property Key and Property Value
+#    And the input for Property Key should be selected
+#    And there is a Cancel link attached to the inputs
+#    When I click on "Cancel"
+#    Then I should not see the property inputs anymore 
+#    When I fill in "something to kill with" into the new Property Value field
+#    And I click on the "create" link
+#    Then i should see error "Can't be blank" on term language
+#    And i should see error "Can't be blank" on property key
+#    When I fill in "DE" as language of the new term
+#    And I fill in "description" as property key of the new property 
+#    And I click on the "create" link
+#    Then I should see the show concept page
+#    And the concept should have title "gun"
+#    And it should have german term "Waffe" and english term "gun"
+#    And it should have property "description" with value "something to kill with"
 
 #  Scenario: cancel create concept
 #    When I enter "gun" in the search field
