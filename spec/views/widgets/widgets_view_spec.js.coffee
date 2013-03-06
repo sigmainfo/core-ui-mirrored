@@ -63,7 +63,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @handle = @view.$(".ui-resizable-w")
       @handle.drag = (deltaX) =>
         @handle.simulate "mouseover"
-        @handle.simulate "drag", dx: deltaX
+        @handle.simulate "drag", dx: deltaX, moves: 1
 
     it "adjusts width when dragging resize handler", ->
       @view.$el.width 320
@@ -72,8 +72,10 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     it "syncs svg width", ->
       @view.$el.width 320
+      @view.map.resize = sinon.spy()
       @handle.drag -47
-      @view.$("svg").attr("width").should.equal "367"
+      @view.map.resize.should.have.been.calledOnce
+      @view.map.resize.should.have.been.calledWith 367, null
 
     it "does not allow to reduce width below min width", ->
       @view.$el.width 320

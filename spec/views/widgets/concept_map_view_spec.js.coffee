@@ -64,6 +64,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.initialize()
         @view.$el.should.have ".ui-resizable-s"
 
+
     context "preparing graph rendering", ->
 
       it "creates layout", ->
@@ -353,27 +354,40 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.zoomIn()
       @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
 
-  describe "resizing", ->
+  describe "resize()", ->
 
     beforeEach ->
+      @view.$el.width 160
+      @view.$el.height 120
+  
+    it "is triggered when resize handle is dragged", ->
       $("#konacha").append @view.render().$el
-      @handle = @view.$(".ui-resizable-s")
-      @handle.drag = (deltaY) =>
-        @handle.simulate "mouseover"
-        @handle.simulate "drag", dy: deltaY
+      handle = @view.$(".ui-resizable-s")
+      @view.resize = sinon.spy()
+      handle.simulate "mouseover"
+      handle.simulate "drag", dy: -24, moves: 1
+      @view.resize.should.have.been.calledOnce
+      @view.resize.should.have.been.calledWith null, 96
 
-    it "adjusts height when dragging resize handler", ->
-      @view.$el.height 240
-      @handle.drag 49
-      @view.$el.height().should.equal 289
+    it "adjusts el dimensions", ->
+      @view.resize 67, 116
+      @view.$el.height().should.equal 116
+      @view.$el.width().should.equal 67
 
-    it "syncs height of svg", ->
-      @view.$el.height 220
-      @view.$("svg").attr "height", 200
-      @handle.drag 55
-      @view.$("svg").attr("height").should.equal "255"
+    it "keeps height when null", ->
+      @view.resize 67, null
+      @view.$el.height().should.equal 120
+      @view.$el.width().should.equal 67
 
-    it "does not allow to reduce height below min height", ->
-      @view.$el.height 320
-      @handle.drag -300
-      @view.$el.height().should.equal 80
+    it "keeps width when null", ->
+      @view.resize null, 77
+      @view.$el.height().should.equal 77
+      @view.$el.width().should.equal 160
+
+    it "adjusts svg dimensions", ->
+      @view.$(".titlebar").height 15
+      @view.$(".map").css "border", "2px solid red"
+      @view.resize 200, 300
+      svg = @view.$("svg")
+      svg.should.have.attr "width", "200px"
+      svg.should.have.attr "height", "281px"

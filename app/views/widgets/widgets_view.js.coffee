@@ -24,7 +24,7 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
       start: (event, ui) =>
         ui.originalPosition.left = @$el.position().left
       resize: (event, ui) =>
-        @$("svg").attr "width", ui.size.width
+        @map.resize ui.size.width, null
       stop: (event, ui) =>
         @$el.css("left", "auto")
 

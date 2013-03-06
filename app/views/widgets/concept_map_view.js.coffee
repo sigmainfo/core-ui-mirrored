@@ -53,19 +53,26 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @navigator.scale zoom
     @_panAndZoom()
 
+  resize: (width, height) ->
+    svg = @$("svg")
+    if height?
+      @$el.height height
+      map = @$(".map")
+      border = map.outerHeight() - map.innerHeight()
+      svgHeight = height - @$(".titlebar").outerHeight() - border
+      svg.attr "height", "#{ svgHeight }px"
+    if width?
+      @$el.width width
+      svg.attr "width", "#{ width }px"
 
   _renderMarkupSkeleton: ->
     @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
     @$el.html @template size: @options.size
-    svgHeightOffset = null
     @$el.resizable
       handles: "s"
       minHeight: 80
-      start: (event, ui) =>
-        svgHeightOffset = @$el.height() - $("svg").height()
       resize: (event, ui) =>
-        svg = @$("svg")
-        @$("svg").attr "height", ui.size.height - svgHeightOffset
+        @resize null, ui.size.height
 
   _renderNodes: ->
     @layout.size [
