@@ -16,6 +16,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   options:
     size: [320, 240]
+    svgOffset: 22
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20
@@ -58,10 +59,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     svg = @$("svg")
     if height?
       @$el.height height
-      map = @$(".map")
-      border = map.outerHeight() - map.innerHeight()
-      svgHeight = height - @$(".titlebar").outerHeight() - border
-      svg.attr "height", "#{ svgHeight }px"
+      svg.attr "height", "#{ height - @options.svgOffset }px"
     if width?
       @$el.width width
       svg.attr "width", "#{ width }px"

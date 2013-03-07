@@ -50,9 +50,10 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "renders viewport", ->
         @view.options.size = [150, 120]
+        @view.options.svgOffset = 25
         @view.initialize() 
         @view.$el.should.have "svg"
-        @view.$("svg").attr("height").should.equal "120px"
+        @view.$("svg").attr("height").should.equal "95px"
         @view.$("svg").attr("width").should.equal "150px"
 
       it "creates resize handle", ->
@@ -395,9 +396,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.$el.width().should.equal 160
 
     it "adjusts svg dimensions", ->
-      @view.$(".titlebar").height 15
-      @view.$(".map").css "border", "2px solid red"
+      @view.options.svgOffset = 18
       @view.resize 200, 300
       svg = @view.$("svg")
       svg.should.have.attr "width", "200px"
-      svg.should.have.attr "height", "281px"
+      svg.should.have.attr "height", "282px"
