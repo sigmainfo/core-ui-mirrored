@@ -59,9 +59,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     svg = @$("svg")
     if height?
       @$el.height height
+      @_svgHeight = height - @options.svgOffset
       svg.attr "height", "#{ height - @options.svgOffset }px"
     if width?
       @$el.width width
+      @_svgWidth = width
       svg.attr "width", "#{ width }px"
 
   _renderMarkupSkeleton: ->
@@ -76,8 +78,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   _renderNodes: ->
     svg = @$("svg")
     @layout.size [
-      svg.height()
-      svg.width() - 2 * @options.padding
+      @_svgHeight
+      @_svgWidth - 2 * @options.padding
     ]
     views = @views
     data = @layout.nodes @model.tree().root

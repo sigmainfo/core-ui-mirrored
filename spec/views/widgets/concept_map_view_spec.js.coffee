@@ -164,15 +164,13 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           @view.options.padding = 10
 
         it "resizes layout", ->
-          $("#konacha").append @view.$el
           @view.options.padding = 15
-          @view.$("svg").attr
-            width:  "300px"
-            height: "200px"
+          @view.options.svgOffset = 18
+          @view.resize 300, 220
           @view.layout.size = sinon.stub().returns @view.layout
           @view.render()
           @view.layout.size.should.have.been.calledOnce
-          @view.layout.size.should.have.been.calledWith [ 200, 270 ]
+          @view.layout.size.should.have.been.calledWith [ 202, 270 ]
 
         it "passes tree to layout", ->
           @view.layout.nodes = sinon.stub().returns [ id: "root" ]
