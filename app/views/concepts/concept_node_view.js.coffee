@@ -39,7 +39,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     label = a.append("svg:text")
       .attr("x", 14)
       .attr("y", 13)
-      .text(@shorten @model.get("label"))
+      .text(@shorten @model.get("label"), 16)
     
     labelBox = label.node().getBBox()
     @bg.attr("width", labelBox.x + labelBox.width + 3)

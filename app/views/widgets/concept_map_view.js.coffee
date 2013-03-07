@@ -18,7 +18,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20
-    offsetX: 100
+    offsetX: 150
     offsetY: 22
 
   events:

@@ -35,35 +35,43 @@ $edge-color: #bfc5c0;
 
           circle {
             stroke: $text-color;
+            stroke-width: 1.6px;
           }
 
           text {
-            fill: $bluecolor;
+            fill: $text-color;
+/*            font: 13px 'DroidSansBold', Trebuchet MS, Lucida;*/
+            font-size: 14px;
           }
           
           .background {
-
             fill: white;
             fill-opacity: 1;
+            stroke: white;
+            stroke-width: 2px;
+            padding-right: 3px;
           }
         }
 
         a:hover {
           
           text {
-            fill: $hover-color;
+            fill: $bluecolor;
+          }
+          .background {
+            fill-opacity: 1;
           }
         }
 
         .background {
 
           fill: white;
-          fill-opacity: 0.7;
+          fill-opacity: 0.6;
 
         }
 
         .toggle {
-          fill: $edge-color;
+          fill: darken($edge-color, 10);
           
           .icon {
             stroke: white;
@@ -71,10 +79,8 @@ $edge-color: #bfc5c0;
           }
 
           &:hover {
-            
-            .icon {
-              stroke: $bluecolor;
-            }
+            fill: $bluecolor;
+
           }
 
           &.expanded {
@@ -84,9 +90,9 @@ $edge-color: #bfc5c0;
             }
             
             &:hover {
-              fill: $edge-color;
+              fill: $bluecolor;
               .icon {
-                stroke: $bluecolor;
+                stroke: white;
               }
             }
           }
