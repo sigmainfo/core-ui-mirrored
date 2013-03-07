@@ -49,21 +49,15 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$(".zoom-out").should.have.attr "title", "Zoom out"
 
       it "renders viewport", ->
-        @view.options.size = [120, 150]
+        @view.options.size = [150, 120]
         @view.initialize() 
         @view.$el.should.have "svg"
-        @view.$("svg").attr("height").should.equal "120"
-        @view.$("svg").attr("width").should.equal "150"
-
-      it "defaults viewport dimensions", ->
-        @view.initialize() 
-        @view.$("svg").attr("height").should.equal "240"
-        @view.$("svg").attr("width").should.equal "320"
+        @view.$("svg").attr("height").should.equal "120px"
+        @view.$("svg").attr("width").should.equal "150px"
 
       it "creates resize handle", ->
         @view.initialize()
         @view.$el.should.have ".ui-resizable-s"
-
 
     context "preparing graph rendering", ->
 
@@ -165,9 +159,25 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       context "updating positions", ->
 
         beforeEach ->
-          @view.options.size    = [120, 150]
           @view.options.offsetX = 100
           @view.options.padding = 10
+
+        it "resizes layout", ->
+          $("#konacha").append @view.$el
+          @view.options.padding = 15
+          @view.$("svg").attr
+            width:  "300px"
+            height: "200px"
+          @view.layout.size = sinon.stub().returns @view.layout
+          @view.render()
+          @view.layout.size.should.have.been.calledOnce
+          @view.layout.size.should.have.been.calledWith [ 200, 270 ]
+
+        it "passes tree to layout", ->
+          @view.layout.nodes = sinon.stub().returns [ id: "root" ]
+          @view.render()
+          @view.layout.nodes.should.have.been.calledOnce
+          @view.layout.nodes.should.have.been.calledWith @view.model.tree().root
         
         it "updates node coordinates", ->
           @view.layout.nodes = ->

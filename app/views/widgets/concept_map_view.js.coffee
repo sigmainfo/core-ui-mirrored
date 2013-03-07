@@ -15,7 +15,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   template: Coreon.Templates["widgets/concept_map"]
 
   options:
-    size: [240, 320]
+    size: [320, 240]
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20
@@ -36,6 +36,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.debounce(@render, options.renderInterval ?= 100)
     @_renderMarkupSkeleton()
+    @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
 
   render: ->
@@ -67,7 +68,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   _renderMarkupSkeleton: ->
     @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
-    @$el.html @template size: @options.size
+    @$el.html @template
     @$el.resizable
       handles: "s"
       minHeight: 80
@@ -75,9 +76,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
         @resize null, ui.size.height
 
   _renderNodes: ->
+    svg = @$("svg")
     @layout.size [
-      @options.size[0]
-      @options.size[1] - 2 * @options.padding
+      svg.height()
+      svg.width() - 2 * @options.padding
     ]
     views = @views
     data = @layout.nodes @model.tree().root
