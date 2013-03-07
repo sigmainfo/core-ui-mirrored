@@ -14,7 +14,7 @@ div.concept {
     margin-bottom: 12px;
     margin-right: 30px;
     background-color: white;
-    color: $text-color;
+    color: $hit-color;
     @include concept-icon;
     &:before {
       border: 2px solid lighten($text-color, 20%);

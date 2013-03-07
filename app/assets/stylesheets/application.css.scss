@@ -79,10 +79,10 @@
     color: $greytext-color;
 
    &.hit {
-     color: $bluecolor;
+     color: $hit-color;
 /*     @include single-box-shadow(rgba(black, 0.12), 1px, 1px, 2px, false);*/
      &:hover {
-       color: $hover-color;
+       color: $bluecolor;
      };
    }
  }
