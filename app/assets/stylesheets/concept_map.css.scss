@@ -55,7 +55,7 @@ $edge-color: #bfc5c0;
         a:hover {
           
           text {
-            fill: $bluecolor;
+            fill: $link-color;
           }
           .background {
             fill-opacity: 1;
@@ -70,15 +70,13 @@ $edge-color: #bfc5c0;
         }
 
         .toggle {
-          fill: darken($edge-color, 10);
-          fill-opacity: 0;
+          fill: transparent;
           .icon {
             stroke: darken($edge-color, 10);
             stroke-width: 2px;
           }
 
           &:hover {
-            fill: $bluecolor;
             .icon {
               stroke: $bluecolor;
             }
@@ -92,9 +90,8 @@ $edge-color: #bfc5c0;
             }
             
             &:hover {
-              fill: $bluecolor;
               .icon {
-                stroke: white;
+                stroke: $bluecolor;
               }
             }
           }
