@@ -25,7 +25,7 @@ describe "Coreon.Models.Session", ->
       @session.get("name").should.equal ""
       
   
-  describe "#initialize", ->
+  describe "initialize()", ->
     
     it "creates notifications", ->
       @session.notifications.should.be.an.instanceof Coreon.Collections.Notifications
@@ -34,7 +34,7 @@ describe "Coreon.Models.Session", ->
       @session.connections.should.be.an.instanceof Coreon.Collections.Connections
       @session.connections.session.should.equal @session
 
-  describe "#activate", ->
+  describe "activate()", ->
     
     beforeEach ->
       @xhr = sinon.useFakeXMLHttpRequest()
@@ -69,19 +69,21 @@ describe "Coreon.Models.Session", ->
       @request.respond 200, {"Content-Type": "application/json"}, '{"message": "Logged in"}'
       @session.onActivated.should.have.been.calledOnce
 
-  describe "#onActivated", ->
+  describe "onActivated()", ->
 
     beforeEach ->
       sinon.stub I18n, "t"
       @data =
         user:
-          name: ""
+          name: "JJ"
+        auth_token: "1234-xxx"
 
     afterEach ->
       I18n.t.restore()
 
     it "adjusts state", ->
       @session.onActivated @data
+      console.log @session
       @session.get("active").should.be.true
 
     it "stores user name and login", ->
@@ -89,14 +91,15 @@ describe "Coreon.Models.Session", ->
       @session.set "login", "w.blake"
       @session.onActivated @data
       @session.get("name").should.equal "William Blake"
-      localStorage.getItem("name").should.equal "William Blake"
-      localStorage.getItem("login").should.equal "w.blake"
+      session = JSON.parse localStorage.getItem "coreon-session"
+      session.should.have.property "name", "William Blake"
 
     it "sets auth token", ->
       @data.auth_token = "xxx-1234-abcd"
       @session.onActivated @data
       @session.get("token").should.equal "xxx-1234-abcd"
-      localStorage.getItem("token").should.equal "xxx-1234-abcd"
+      session = JSON.parse localStorage.getItem "coreon-session"
+      session.should.have.property "token", "xxx-1234-abcd"
 
     it "triggers event", ->
       spy = sinon.spy()
@@ -116,7 +119,7 @@ describe "Coreon.Models.Session", ->
       @session.onActivated @data
       @session.notifications.reset.should.have.been.calledOnce
 
-  describe "#reactivate", ->
+  describe "reactivate()", ->
     
     beforeEach ->
       @xhr = sinon.useFakeXMLHttpRequest()
@@ -149,13 +152,14 @@ describe "Coreon.Models.Session", ->
       @request.respond 200, {"Content-Type": "application/json"}, '{"message": "Logged in"}'
       @session.onReactivated.should.have.been.calledOnce
 
-  describe "#onReactivated", ->
+  describe "onReactivated()", ->
     
     it "updates session", ->
       @data.auth_token = "newsession-1234-abcd"
       @session.onReactivated @data
       @session.get("token").should.equal "newsession-1234-abcd"
-      localStorage.getItem("token").should.equal "newsession-1234-abcd"
+      session = JSON.parse localStorage.getItem "coreon-session"
+      session.should.have.property "token", "newsession-1234-abcd"
 
     it "triggers event", ->
       spy = sinon.spy()
@@ -163,7 +167,7 @@ describe "Coreon.Models.Session", ->
       @session.onReactivated @data
       spy.should.have.been.calledOnce
 
-  describe "#deactivate", ->
+  describe "deactivate()", ->
 
     beforeEach ->
       sinon.stub I18n, "t"
@@ -185,8 +189,7 @@ describe "Coreon.Models.Session", ->
           name: "Dead Man"
           token: "1234abcd-xxxx"
       @session.deactivate()
-      expect(localStorage.getItem "name").to.be.null
-      expect(localStorage.getItem "token").to.be.null
+      should.not.exist localStorage.getItem "coreon-session"
 
     it "triggers event", ->
       spy = sinon.spy()
@@ -205,36 +208,95 @@ describe "Coreon.Models.Session", ->
       @session.deactivate()
       @session.notifications.reset.should.have.been.calledOnce
 
-  describe "#sync", ->
+  describe "sync()", ->
     
-    describe "create, update", ->
+    describe "create", ->
       
-      it "stores login, name and session", ->
-        @session.save
+      it "stores attributes locally", ->
+        @session.set
           login: "nobody"
           name: "Dead Man"
           token: "1234abcd-xxxx"
         @session.sync "create", @session
-        localStorage.getItem("name").should.equal "Dead Man"
-        localStorage.getItem("token").should.equal "1234abcd-xxxx"
-        localStorage.getItem("login").should.equal "nobody"
+        session = JSON.parse localStorage.getItem("coreon-session")
+        should.exist session
+        session.should.have.property "login", "nobody"
+        session.should.have.property "name", "Dead Man"
+        session.should.have.property "token", "1234abcd-xxxx"
+
+      it "does not store active state", ->
+        @session.set
+          active: true
+          token: "1234abcd-xxxx"
+        @session.sync "create", @session
+        session = JSON.parse localStorage.getItem("coreon-session")
+        session.should.have.property "token", "1234abcd-xxxx"
+        session.should.not.have.property "active"
+
+      it "does not store API paths", ->
+        @session.set
+          token: "1234abcd-xxxx"
+          graph_root: "/graph/"
+          auth_root:  "/auth/"
+        @session.sync "create", @session
+        session = JSON.parse localStorage.getItem("coreon-session")
+        session.should.have.property "token", "1234abcd-xxxx"
+        session.should.not.have.property "graph_root"
+        session.should.not.have.property "auth_root"
+        
+        
+    describe "update", ->
+
+      beforeEach ->
+        @session.set
+          login: "nobody"
+          name: "Dead Man"
+          token: "1234abcd-xxxx"
+        @session.sync "create", @session
+    
+      it "updates attributes", ->
+        @session.set
+          token: "9999xxxx-abcd"
+        @session.sync "update", @session
+        session = JSON.parse localStorage.getItem("coreon-session")
+        should.exist session
+        session.should.have.property "token", "9999xxxx-abcd"
+
+      it "does not update active state", ->
+        @session.set
+          active: true
+        @session.sync "update", @session
+        session = JSON.parse localStorage.getItem("coreon-session")
+        session.should.not.have.property "active"
+
+      it "does not store API paths", ->
+        @session.set
+          graph_root: "/graph/"
+          auth_root:  "/auth/"
+        @session.sync "update", @session
+        session = JSON.parse localStorage.getItem("coreon-session")
+        session.should.not.have.property "graph_root"
+        session.should.not.have.property "auth_root"
 
     describe "read", ->
       
       it "updates values from store", ->
-        localStorage.setItem "name", "Jim Jarmusch"
-        localStorage.setItem "login", "nobody"
-        localStorage.setItem "token", "0987654321"
+        localStorage.setItem "coreon-session", JSON.stringify
+          name: "Jim Jarmusch"
+          login: "nobody"
+          token: "0987654321"
         @session.fetch()
         @session.get("name").should.equal "Jim Jarmusch"
         @session.get("login").should.equal "nobody"
         @session.get("token").should.equal "0987654321"
 
       it "syncs active state", ->
-        localStorage.setItem "token", "0987654321"
+        localStorage.setItem "coreon-session", JSON.stringify
+          token: "xxxxx-123456789"
         @session.fetch()
         @session.get("active").should.be.true
-        localStorage.removeItem "token"
+        localStorage.setItem "coreon-session", JSON.stringify
+          token: null
         @session.fetch()
         @session.get("active").should.be.false
 
@@ -246,11 +308,9 @@ describe "Coreon.Models.Session", ->
           session: "1234abcd-xxxx"
           login: "w.blake"
         @session.destroy()
-        expect(localStorage.getItem "name").to.be.null
-        expect(localStorage.getItem "token").to.be.null
-        expect(localStorage.getItem "login").to.be.null
+        should.not.exist localStorage.getItem "coreon-session"
 
-  describe "#onUnauthorized", ->
+  describe "onUnauthorized()", ->
 
     beforeEach ->
       @session.save
@@ -274,7 +334,7 @@ describe "Coreon.Models.Session", ->
       @session.onUnauthorized()
       spy.should.have.been.calledOnce
 
-  describe "#destroy", ->
+  describe "destroy()", ->
     
     it "destroys notifications", ->
       @session.notifications.destroy = sinon.spy()
@@ -292,6 +352,4 @@ describe "Coreon.Models.Session", ->
         session: "1234abcd-xxxx"
         login: "deadman"
       @session.destroy()
-      expect(localStorage.getItem "name").to.be.null
-      expect(localStorage.getItem "token").to.be.null
-      expect(localStorage.getItem "login").to.be.null
+      should.not.exist localStorage.getItem "coreon-session"

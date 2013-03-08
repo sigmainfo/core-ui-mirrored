@@ -40,7 +40,8 @@ describe "Coreon.Application", ->
       @app.session.get("graph_root").should.equal "/api/graph_root/"
 
     it "fetches session", ->
-      localStorage.setItem "token", "my-auth-token"
+      localStorage.setItem "coreon-session", JSON.stringify
+        token: "my-auth-token"
       @app.session.fetch = sinon.spy()
       @app.initialize()
       @app.session.get("token").should.equal "my-auth-token"
