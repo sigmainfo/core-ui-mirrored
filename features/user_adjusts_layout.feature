@@ -19,7 +19,3 @@ Feature: user adjusts layout
     Then I should see the concept map widget having its minimal height of 80px
     When I drag the resize handle of the widgets column to the right by 400px
     Then I should see the widgets column having a minimal width of 240px
-  
-  # TODO:
-  # Scenario: restore last session
-  # Scenario: responsive layout

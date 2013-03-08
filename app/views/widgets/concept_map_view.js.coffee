@@ -35,9 +35,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
     @stopListening()
-    @listenTo @model, "reset add remove change:label", _.debounce(@render, options.renderInterval ?= 100)
+    @listenTo @model, "reset add remove change:label", _.debounce(@render, 100)
     @_renderMarkupSkeleton()
-    @resize @options.size...
+    if session = Coreon.application?.session.get @id
+      @resize session.width, session.height
+    else
+      @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
 
   render: ->
@@ -65,6 +68,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       @$el.width width
       @_svgWidth = width
       svg.attr "width", "#{ width }px"
+    @saveLayout width: @$el.width(), height: @$el.height()
+    
+  saveLayout = (layout) -> 
+    if Coreon.application?
+      Coreon.application?.session.save @id, layout
+
+  saveLayout: _.debounce saveLayout, 500
 
   _renderMarkupSkeleton: ->
     @$el.resizable "destroy" if @$el.hasClass "ui-resizable"

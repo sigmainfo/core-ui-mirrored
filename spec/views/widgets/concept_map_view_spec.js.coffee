@@ -25,6 +25,14 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   describe "initialize()", ->
 
+    beforeEach ->
+      Coreon.application =
+        session:
+          get: (attr) ->
+
+    afterEach ->
+      Coreon.application = null
+
     context "rendering markup skeleton", ->
       
       it "renders titlebar", ->
@@ -81,6 +89,18 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         finally
           d3.svg.diagonal.restore()
 
+    context "restoring from session", ->
+      
+      it "restores dimensions", ->
+        Coreon.application.session.get = (attr) ->
+          if attr is "coreon-concept-map"
+            width: 123
+            height: 456
+        @view.resize = sinon.spy()
+        @view.initialize()
+        @view.resize.should.have.been.calledOnce
+        @view.resize.should.have.been.calledWith 123, 456
+
   describe "render()", ->
   
     it "can be chained", ->
@@ -89,32 +109,32 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     context "updates", ->
       
       beforeEach ->
+        @clock = sinon.useFakeTimers()
         @view.render = sinon.spy()
         @view.initialize renderInterval: 0
 
-      it "is triggered after a reset", (done) ->
+      afterEach ->
+        @clock.restore()
+
+      it "is triggered after a reset", ->
         @view.model.trigger "reset"
-        _.defer =>
-          @view.render.should.have.been.calledOnce
-          done()
+        @clock.tick 200
+        @view.render.should.have.been.calledOnce
 
-      it "is triggered when a node was added", (done) ->
+      it "is triggered when a node was added", ->
         @view.model.trigger "add"
-        _.defer =>
-          @view.render.should.have.been.calledOnce
-          done()
+        @clock.tick 200
+        @view.render.should.have.been.calledOnce
 
-      it "is triggered when a node was removed", (done) ->
+      it "is triggered when a node was removed", ->
         @view.model.trigger "remove"
-        _.defer =>
-          @view.render.should.have.been.calledOnce
-          done()
+        @clock.tick 200
+        @view.render.should.have.been.calledOnce
 
-      it "is triggered when a label changed", (done) ->
+      it "is triggered when a label changed", ->
         @view.model.trigger "change:label"
-        _.defer =>
-          @view.render.should.have.been.calledOnce
-          done()
+        @clock.tick 200
+        @view.render.should.have.been.calledOnce
 
     context "nodes", ->
       
@@ -366,8 +386,16 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "resize()", ->
 
     beforeEach ->
+      Coreon.application =
+        session:
+          save: sinon.spy()
+      @clock = sinon.useFakeTimers()
       @view.$el.width 160
       @view.$el.height 120
+
+    afterEach ->
+      Coreon.application = null
+      @clock.restore()
   
     it "is triggered when resize handle is dragged", ->
       $("#konacha").append @view.render().$el
@@ -399,3 +427,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       svg = @view.$("svg")
       svg.should.have.attr "width", "200px"
       svg.should.have.attr "height", "282px"
+
+    it "stores dimensions when finished", ->
+      @view.resize 123, 334
+      @clock.tick 1000
+      Coreon.application.session.save.should.have.been.calledOnce
+      Coreon.application.session.save.should.have.been.calledWith "coreon-concept-map",
+        width: 123
+        height: 334
