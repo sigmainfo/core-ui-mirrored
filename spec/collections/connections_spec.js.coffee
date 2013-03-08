@@ -5,8 +5,8 @@ describe "Coreon.Collections.Connections", ->
   
   beforeEach ->
     @connections = new Coreon.Collections.Connections
-    @connections.account = new Backbone.Model
-      session: "123-my-auth-token-xxx"
+    @connections.session = new Backbone.Model
+      token: "123-my-auth-token-xxx"
       graph_root: "https://graph.coreon.com/"
 
 
@@ -67,7 +67,7 @@ describe "Coreon.Collections.Connections", ->
       @request.url.should.equal "some/url"
 
     it "sets auth header", ->
-      @connections.account.set "session", "123-my-token-xxx"
+      @connections.session.set "token", "123-my-token-xxx"
       @connections.sync "read", @model, url: "some/url"
       @request.requestHeaders.should.have.property "X-Core-Session", "123-my-token-xxx"
 

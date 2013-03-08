@@ -4,6 +4,9 @@
   <title>core-ui</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application", charset: "utf-8" %>
+  <%- if Rails.env.test? %>
+    <%= javascript_include_tag "jquery.simulate.js", charset: "utf-8" %>
+  <%- end %>
 </head>
 <body>
 <%= yield %>

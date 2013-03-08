@@ -8,13 +8,14 @@ $edge-color: #bfc5c0;
   .map {
     line-height: 0;
     width: 100%;
-    height: 600px;//200px;
     border-top: 1px solid rgba(white, 0.3);
     border-bottom: 1px solid rgba(black, 0.1);
     @include retina-stripes("white");
+
     &:hover {
-      cursor:move;
-    };
+      cursor: move;
+    }
+
     svg {
       overflow: hidden;
 
@@ -101,6 +102,7 @@ $edge-color: #bfc5c0;
       }
     }
   }
+
 }
 
 

@@ -1,4 +1,5 @@
 #= require environment
+#= require jquery.ui.position
 #= require views/composite_view
 #= require templates/widgets/search_target_select
 #= require views/widgets/search_target_select_dropdown_view
@@ -26,6 +27,14 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Coreon.Views.Composite
   showDropdown: (event) ->
     $("#coreon-modal").append @dropdown.render().$el
     @dropdown.delegateEvents()
+    input = $("#coreon-search-query")
+    @dropdown.$(".options")
+      .width( input.outerWidth() - 1 )
+      .position(
+        my: "left+1 top"
+        at: "left bottom"
+        of: input
+      )
 
   hideHint: ->
     @$(".hint").hide()
