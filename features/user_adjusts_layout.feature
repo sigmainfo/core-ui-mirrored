@@ -7,7 +7,6 @@ Feature: user adjusts layout
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
     And I am logged in
 
-  @wip
   Scenario: drag to resize
     Given the widgets column has a width of 300px
     And the concept map widget has a height of 240px

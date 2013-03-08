@@ -4,10 +4,10 @@
 describe "Coreon.Views.Layout.FooterView", ->
   
   beforeEach ->
-    account = new Backbone.Model
-    account.connections = new Backbone.Collection
+    session = new Backbone.Model
+    session.connections = new Backbone.Collection
     @view = new Coreon.Views.Layout.FooterView
-      model: account
+      model: session
 
   it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView

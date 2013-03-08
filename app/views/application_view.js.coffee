@@ -16,20 +16,20 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
   initialize: ->
     super
     @header = new Coreon.Views.Layout.HeaderView
-      collection: @model.account.notifications
+      collection: @model.session.notifications
     @add @header
     @header.on "resize", @onResize, @
 
-    @model.account.on "activated"    , @activate    , @
-    @model.account.on "deactivated"  , @deactivate  , @
-    @model.account.on "unauthorized" , @reauthorize , @
-    @model.account.on "reactivated"  , @reactivate  , @
+    @model.session.on "activated"    , @activate    , @
+    @model.session.on "deactivated"  , @deactivate  , @
+    @model.session.on "unauthorized" , @reauthorize , @
+    @model.session.on "reactivated"  , @reactivate  , @
 
   render: ->
     @$el.html @template()
     @prepend "#coreon-top", @header
     super
-    if @model.account.get "active" then @activate() else @deactivate()
+    if @model.session.get "active" then @activate() else @deactivate()
     @
 
   switch: (screen) ->
@@ -46,31 +46,31 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     @destroy.apply @, subviews if subviews.length > 0
 
   activate: ->
-    if @model.account.get "active"
+    if @model.session.get "active"
       @clear()
       @widgets = new Coreon.Views.Widgets.WidgetsView
         model: @model
       @append "#coreon-top", @widgets.render()
       @footer = new Coreon.Views.Layout.FooterView
-        model: @model.account
+        model: @model.session
       @append @footer.render()
 
   deactivate: ->
     @clear()
     @login = new Coreon.Views.Account.LoginView
-      model: @model.account
+      model: @model.session
     @append "#coreon-main", @login.render()
 
   reauthorize: ->
     @destroy @prompt if @prompt
     @prompt = new Coreon.Views.Account.PasswordPromptView
-      model: @model.account
+      model: @model.session
     @append "#coreon-modal", @prompt.render()
     @$("#coreon-password-password").focus()
 
   reactivate: ->
     @destroy @prompt if @prompt
-    dropped = @model.account.connections.filter (connection) ->
+    dropped = @model.session.connections.filter (connection) ->
       connection.get("xhr").status == 403 
     connection.resume() for connection in dropped
 
@@ -79,4 +79,4 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
   destroy: (subviews...) ->
     super subviews...
-    @model.account.off null, null, @ if subviews.length is 0
+    @model.session.off null, null, @ if subviews.length is 0

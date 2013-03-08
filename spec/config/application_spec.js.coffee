@@ -31,19 +31,19 @@ describe "Coreon.Application", ->
       @app.initialize auth_root: "/repository/"
       @app.options.auth_root.should.equal "/repository/"
 
-    it "creates account", ->
+    it "creates session", ->
       @app.initialize
         auth_root  : "/api/auth_root/"
         graph_root : "/api/graph_root/"
-      @app.account.should.be.an.instanceof Coreon.Models.Account
-      @app.account.get("auth_root").should.equal "/api/auth_root/"
-      @app.account.get("graph_root").should.equal "/api/graph_root/"
+      @app.session.should.be.an.instanceof Coreon.Models.Session
+      @app.session.get("auth_root").should.equal "/api/auth_root/"
+      @app.session.get("graph_root").should.equal "/api/graph_root/"
 
-    it "fetches account", ->
-      localStorage.setItem "session", "my-auth-token"
-      @app.account.fetch = sinon.spy()
+    it "fetches session", ->
+      localStorage.setItem "token", "my-auth-token"
+      @app.session.fetch = sinon.spy()
       @app.initialize()
-      @app.account.get("session").should.equal "my-auth-token"
+      @app.session.get("token").should.equal "my-auth-token"
 
     it "creates current hits", ->
       @app.initialize()
@@ -88,10 +88,10 @@ describe "Coreon.Application", ->
 
   describe "#destroy", ->
 
-    it "logs out account", ->
-      @app.account.deactivate = sinon.spy()
+    it "logs out session", ->
+      @app.session.deactivate = sinon.spy()
       @app.destroy()
-      @app.account.deactivate.should.have.been.calledOnce
+      @app.session.deactivate.should.have.been.calledOnce
 
     it "clears global reference", ->
       @app.destroy()
@@ -99,7 +99,7 @@ describe "Coreon.Application", ->
 
   describe "#sync", ->
     
-    it "is a shortcut to account.connections.sync", ->
-      @app.account.connections.sync = sinon.spy()
+    it "is a shortcut to session.connections.sync", ->
+      @app.session.connections.sync = sinon.spy()
       @app.sync "read", "myModel", data: "myData"
-      @app.account.connections.sync.should.have.been.calledWith "read", "myModel", data: "myData"
+      @app.session.connections.sync.should.have.been.calledWith "read", "myModel", data: "myData"
