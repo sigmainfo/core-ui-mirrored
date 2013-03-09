@@ -90,15 +90,17 @@ describe "Coreon.Application", ->
 
     it "starts history", ->
       @app.start()
-      Backbone.history.start.should.have.been.calledWith pushState: true
+      Backbone.history.start.should.have.been.calledWithMatch pushState: true
 
     it "triggers route when logged when session is active", ->
       @app.session.set "active", true, silent: true
-      Backbone.history.start.should.have.been.calledWith silent: false
+      @app.start()
+      Backbone.history.start.should.have.been.calledWithMatch silent: false
 
     it "does not trigger route when session is inactive", ->
       @app.session.set "active", false, silent: true
-      Backbone.history.start.should.have.been.calledWith silent: true
+      @app.start()
+      Backbone.history.start.should.have.been.calledWithMatch silent: true
 
   describe "#destroy", ->
 

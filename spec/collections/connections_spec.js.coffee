@@ -72,9 +72,12 @@ describe "Coreon.Collections.Connections", ->
       @request.requestHeaders.should.have.property "X-Core-Session", "123-my-token-xxx"
 
     it "adds connection to collection", ->
-      jqXHR = @connections.sync "read", @model, data: "I'm not dead. Am I?"
+      options = data: "I'm not dead. Am I?"
+      jqXHR = @connections.sync "read", @model, options
       @connections.should.have.lengthOf 1 
       @connections.at(0).get("xhr").should.equal jqXHR 
       @connections.at(0).get("method").should.equal "read" 
       @connections.at(0).get("model").should.equal @model 
       @connections.at(0).get("options").should.have.property "data", "I'm not dead. Am I?"
+      @connections.at(0).get("options").should.not.equal options
+
