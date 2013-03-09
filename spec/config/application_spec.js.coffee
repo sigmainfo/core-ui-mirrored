@@ -53,6 +53,12 @@ describe "Coreon.Application", ->
 
   describe "#start", ->
 
+    beforeEach ->
+      sinon.stub Backbone.history, "start"
+
+    afterEach ->
+      Backbone.history.start.restore()
+
     it "can be chained", ->
       @app.start().should.equal @app
     
@@ -83,9 +89,18 @@ describe "Coreon.Application", ->
       @app.routers.concepts_router.app.should.equal @app
 
     it "starts history", ->
-      Backbone.history.start = sinon.spy()
       @app.start()
-      Backbone.history.start.should.have.been.calledWith pushState: true
+      Backbone.history.start.should.have.been.calledWithMatch pushState: true
+
+    it "triggers route when logged when session is active", ->
+      @app.session.set "active", true, silent: true
+      @app.start()
+      Backbone.history.start.should.have.been.calledWithMatch silent: false
+
+    it "does not trigger route when session is inactive", ->
+      @app.session.set "active", false, silent: true
+      @app.start()
+      Backbone.history.start.should.have.been.calledWithMatch silent: true
 
   describe "#destroy", ->
 

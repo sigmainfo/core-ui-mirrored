@@ -71,7 +71,7 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
   reactivate: ->
     @destroy @prompt if @prompt
     dropped = @model.session.connections.filter (connection) ->
-      connection.get("xhr").status == 403 
+      connection.get("xhr").status == 403
     connection.resume() for connection in dropped
 
   onResize: ->
