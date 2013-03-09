@@ -42,7 +42,7 @@ class Coreon.Application
         view: @view
         app: @
 
-    Backbone.history.start pushState: true
+    Backbone.history.start pushState: true, silent: not @session.get "active"
     @
 
   destroy: ->
