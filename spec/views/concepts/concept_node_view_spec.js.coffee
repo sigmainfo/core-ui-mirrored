@@ -57,7 +57,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       it "shortens lengthy labels", ->
         @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true
         @view.render()
-        @el.select("text").text().should.equal "Horticult…"
+        @el.select("text").text().should.equal "Horticultural mulch…"
 
       it "creates title element with full label", ->
         @view.model.set "label", "Horticultural mulches made from cocoa shell waste", silent: true
@@ -81,7 +81,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
           height: 20
         try
           @view.render()
-          @el.select(".background").attr("width").should.equal "113"
+          @el.select(".background").attr("width").should.equal "115"
         finally
           SVGTextElement::getBBox.restore()
 

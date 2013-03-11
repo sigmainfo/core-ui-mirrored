@@ -51,7 +51,7 @@ Feature: user browses concept graph
     When I search for "hand"
     Then I shoud see "handgun" displayed in the concept map
     And I should see a node "hand"
-    And I should see a node "handkerch…"
+    And I should see a node "handkerchief"
     And all nodes should be classified as hits
   
   Scenario: zoom and pan

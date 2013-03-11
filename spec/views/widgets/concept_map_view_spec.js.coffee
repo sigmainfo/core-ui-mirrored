@@ -286,12 +286,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
             children: []
           edges: [
             {
-              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
-              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1" } }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent", has: -> false } }
+              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1", has: -> false } }
             }
             {
-              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
-              target: { id: "child_2", x: 0, y: 0, model: { cid: "c_child_2" } }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent", has: -> false } }
+              target: { id: "child_2", x: 0, y: 0, model: { cid: "c_child_2", has: -> false } }
             }
           ]
         @view.render()
@@ -303,8 +303,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
           root: children: []
           edges: [
             {
-              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent" } }
-              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1" } }
+              source: { id: "parent",  x: 0, y: 0, model: { cid: "c_parent", has: -> false } }
+              target: { id: "child_1", x: 0, y: 0, model: { cid: "c_child_1", has: -> false } }
             }
           ]
         @view.render()
@@ -321,8 +321,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.model.tree = ->
           root: children: []
           edges: [
-            source: { id: "parent",  x: 20, y: 25, model: { cid: "c_parent" } }
-            target: { id: "child_1", x: 40, y: 55, model: { cid: "c_child_1" } }
+            source: { id: "parent",  x: 20, y: 25, model: { cid: "c_parent", has: -> false } }
+            target: { id: "child_1", x: 40, y: 55, model: { cid: "c_child_1", has: -> false } }
           ]
         @view.render()
         @view.$(".concept-edge").attr("d").should.match /M140,40.*40,70/

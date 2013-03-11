@@ -21,7 +21,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     scaleStep: 0.2
     padding: 20
     offsetX: 190
-    offsetY: 20
+    offsetY: 25
 
   events:
     "click .zoom-in":  "zoomIn"
@@ -156,6 +156,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
         [sourceBox, targetBox] = ( @views[datum.model.cid].box() for datum in [source, target] )
+        console.log @views[datum.model.cid].box()
         @stencil
           source:
             x: source.y + sourceBox.height / 2
