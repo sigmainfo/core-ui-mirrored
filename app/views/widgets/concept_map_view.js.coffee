@@ -20,8 +20,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20
-    offsetX: 100
-    offsetY: 22
+    offsetX: 190
+    offsetY: 20
 
   events:
     "click .zoom-in":  "zoomIn"
@@ -163,6 +163,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
           target:
             x: target.y + sourceBox.height / 2
             y: target.x
+      )
+      .classed( "hit", (datum) ->
+        datum.source.model.has("hit") and datum.target.model.has("hit")
       )
 
     @

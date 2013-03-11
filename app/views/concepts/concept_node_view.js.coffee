@@ -28,18 +28,18 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
     @bg = a.append("svg:rect")
       .attr("class", "background")
-      .attr("height", 17)
+      .attr("height", 16)
 
     a.append("svg:circle")
       .attr("class", "bullet")
       .attr("cx", 7)
-      .attr("cy", 9)
+      .attr("cy", 8)
       .attr("r", 2.5)
 
     label = a.append("svg:text")
       .attr("x", 14)
-      .attr("y", 13)
-      .text(@shorten @model.get("label"))
+      .attr("y", 12)
+      .text(@shorten @model.get("label"), 20)
     
     labelBox = label.node().getBBox()
     @bg.attr("width", labelBox.x + labelBox.width + 3)
