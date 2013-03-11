@@ -106,7 +106,7 @@ $edge-color: #bfc5c0;
         stroke-opacity: 0.7;
         
         &.hit {
-          stroke: $hit-color;
+          stroke: $text-color;
           stroke-opacity: 0.5;
         }
       }
