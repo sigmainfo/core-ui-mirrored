@@ -68,6 +68,24 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.initialize()
         @view.$el.should.have ".ui-resizable-s"
 
+      context "fixing filter rendering", ->
+
+        beforeEach ->
+          @originalDevicePixelRatio = window.devicePixelRatio
+
+        afterEach ->
+          window.devicePixelRatio = @originalDevicePixelRatio
+
+        it "increases filter resolution on retina displays", ->
+          window.devicePixelRatio = 2
+          @view.initialize()
+          d3.select(@view.$("svg defs #drop-shadow").get 0).attr("filterRes").should.equal "900"
+
+        it "keeps default on non-retina displays", ->
+          window.devicePixelRatio = 1
+          @view.initialize()
+          expect( d3.select(@view.$("svg defs #drop-shadow").get 0).attr("filterRes") ).to.be.null
+
     context "preparing graph rendering", ->
 
       it "creates layout", ->

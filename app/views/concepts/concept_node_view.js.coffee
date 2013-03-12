@@ -15,7 +15,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       height: 16
       radius: 2.5
     hit:
-     height: 20
+     height: 18
      radius: 3
   
   initialize: ->

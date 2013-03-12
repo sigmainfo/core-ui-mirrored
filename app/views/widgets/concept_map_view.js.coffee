@@ -35,7 +35,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
     @stopListening()
-    @listenTo @model, "reset add remove change:label", _.debounce(@render, 100)
+    @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
     if session = Coreon.application?.session.get @id
       @resize session.width, session.height
@@ -79,6 +79,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   _renderMarkupSkeleton: ->
     @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
     @$el.html @template
+    d3.select(@$("svg defs #drop-shadow").get 0).attr("filterRes", "900") if window.devicePixelRatio > 1
     @$el.resizable
       handles: "s"
       minHeight: 80
@@ -156,7 +157,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .attr("d", (datum) =>
         [source, target] = [datum.source, datum.target]
         [sourceBox, targetBox] = ( @views[datum.model.cid].box() for datum in [source, target] )
-        console.log @views[datum.model.cid].box()
         @stencil
           source:
             x: source.y + sourceBox.height / 2
