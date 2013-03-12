@@ -2,8 +2,6 @@
 
 class Coreon.Models.Hit extends Backbone.Model
 
-  idAttribute: "id"
-
   defaults:
     score: 0
 

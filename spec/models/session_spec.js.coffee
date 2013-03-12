@@ -83,7 +83,6 @@ describe "Coreon.Models.Session", ->
 
     it "adjusts state", ->
       @session.onActivated @data
-      console.log @session
       @session.get("active").should.be.true
 
     it "stores user name and login", ->
