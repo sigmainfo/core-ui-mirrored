@@ -79,6 +79,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   _renderMarkupSkeleton: ->
     @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
     @$el.html @template
+    if window.devicePixelRatio > 1 and navigator.userAgent.indexOf("Safari") > 0
+      d3.select(@$("svg #coreon-drop-shadow-filter").get 0).attr("filterRes", "1024")
     @$el.resizable
       handles: "s"
       minHeight: 80
