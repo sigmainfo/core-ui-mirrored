@@ -55,15 +55,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     box = @box()
 
     if @model.has "hit"
-
-      shadow = a.insert("svg:rect", ".background")
-        .attr("class", "shadow")
-        .attr("height", box.height )
-        .attr("width", box.width )
-        .attr("x", box.x + @options.dropShadow.offset )
-        .attr("y", box.y + @options.dropShadow.offset )
-        .attr("rx", @options.dropShadow.offset )
-        .attr("ry", @options.dropShadow.offset )
+      @bg.attr("filter", "url(#coreon-drop-shadow-filter)")
 
     if @model.get("sub_concept_ids")?.length > 0
       @_renderToggle(@model.get "expandedOut")
