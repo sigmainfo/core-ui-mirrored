@@ -15,8 +15,10 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       height: 16
       radius: 2.5
     hit:
-     height: 18
-     radius: 3
+      height: 18
+      radius: 3
+    dropShadow:
+      offset: 1
   
   initialize: ->
     @listenTo @model, "change", @render
@@ -24,11 +26,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
   render: ->
     @clear()
 
-    @svg
-      .classed("hit", @model.has "hit")
-      .attr("filter", (datum) =>
-        "url(#drop-shadow)" if @model.has "hit"
-      )
+    @svg.classed("hit", @model.has "hit")
     
     title = @svg.append("svg:title")
       .text(@model.get "label")
@@ -38,8 +36,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
     @bg = a.append("svg:rect")
       .attr("class", "background")
-      .attr("height", => @height()
-      )
+      .attr("height", @height() )
 
     a.append("svg:circle")
       .attr("class", "bullet")
@@ -51,12 +48,23 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       .attr("x", 14)
       .attr("y", @height() * 0.75 )
       .text(@shorten @model.get("label"), 20)
-
     
     labelBox = label.node().getBBox()
     @bg.attr("width", labelBox.x + labelBox.width + 5)
 
     box = @box()
+
+    if @model.has "hit"
+
+      shadow = a.insert("svg:rect", ".background")
+        .attr("class", "shadow")
+        .attr("height", box.height )
+        .attr("width", box.width )
+        .attr("x", box.x + @options.dropShadow.offset )
+        .attr("y", box.y + @options.dropShadow.offset )
+        .attr("rx", @options.dropShadow.offset )
+        .attr("ry", @options.dropShadow.offset )
+
     if @model.get("sub_concept_ids")?.length > 0
       @_renderToggle(@model.get "expandedOut")
         .classed("toggle-children", true)

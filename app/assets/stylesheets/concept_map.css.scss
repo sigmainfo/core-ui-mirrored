@@ -47,8 +47,14 @@ $edge-color: #bfc5c0;
           .background {
             fill: white;
             fill-opacity: 1;
-            stroke: white;
-            stroke-width: 2px;
+          }
+
+          .shadow {
+            fill: black;
+            fill-opacity: 0.2;
+            stroke: black;
+            stroke-width: 1.5px;
+            stroke-opacity: 0.1;
           }
         }
 
