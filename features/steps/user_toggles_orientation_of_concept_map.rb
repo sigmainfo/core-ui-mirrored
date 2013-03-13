@@ -40,10 +40,12 @@ class Spinach::Features::UserTogglesOrientationOfConceptMap < Spinach::FeatureSt
   end
 
   step '"handgun" should still be selected' do
-    pending 'step not implemented'
+    page.should have_css("#coreon-concept-map .concept-node.hit", text: "handgun")
   end
 
   step '"weapon" should be rendered above "handgun"' do
-    pending 'step not implemented'
+    weapon_position = get_position "weapon"
+    handgun_position = get_position "handgun"
+    weapon_position["top"].should < handgun_position["top"]
   end
 end
