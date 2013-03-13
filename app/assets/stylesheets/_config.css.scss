@@ -89,7 +89,7 @@ $widget-width: 320px;
   background-image: image-url('layout/icons.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/icons@2x.png');
-      @include background-size(100px 400px);
+      @include background-size(100px 500px);
   } 
 }
 
