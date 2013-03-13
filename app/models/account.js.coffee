@@ -62,7 +62,7 @@ class Coreon.Models.Account extends Backbone.Model
     @sync "delete", @
     @trigger "deactivated"
     @notifications.reset()
-    @message I18n.t("notifications.account.logout") 
+    @message I18n.t("notifications.account.logout")
 
   sync: (action, model, options)->
     fields = ["session", "login", "name"]

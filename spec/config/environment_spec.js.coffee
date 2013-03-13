@@ -36,3 +36,8 @@ describe "config/environment", ->
   it "configures models for use with Mongoid id field", ->
     model = new Backbone.Model _id: "1234"
     model.id.should.equal "1234"
+
+  it "sets Views prototpye for destroy() to call remove()", ->
+    Backbone.View::remove = sinon.spy()
+    Backbone.View::destroy()
+    Backbone.View::remove.should.have.been.calledOnce

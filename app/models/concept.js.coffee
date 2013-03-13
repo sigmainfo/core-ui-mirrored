@@ -22,9 +22,6 @@ class Coreon.Models.Concept extends Backbone.Model
     if Coreon.application?.hits?
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
     @_updateHit()
- 
-    #  toJSON: (options) ->
-    #{concept: _.clone(this.attributes)}
 
   set: (key, val, options) ->
     terms = if key == "terms" then val else key.terms
@@ -41,15 +38,40 @@ class Coreon.Models.Concept extends Backbone.Model
     @stopListening @get("terms") if @has "terms"
     @listenTo @get("terms"), 'all', @_processTermsEvent if super
 
-  add_term: ->
-    @get("terms").push new Coreon.Models.Term collection: @get("terms")
+  addTerm: ->
+    @get("terms").push new Coreon.Models.Term
 
-  add_property : ->
+  addProperty: ->
     @get("properties").push
       key: ""
       value: ""
       lang: ""
     @trigger("add:properties")
+
+  create: ->
+    @save null,
+      success: @onSuccess
+      error: @onError
+
+  onSuccess: (model, response, options) =>
+    Backbone.history.navigate "concepts/" + @get("_id"), replace: true, trigger: true
+
+  onError: (model, xhr, options) =>
+    console.log xhr.responseText
+    if xhr.status == 422
+      @validationFailure (JSON.parse xhr.responseText).errors ? nested_errors_on_terms: [], nested_errors_on_properties: []
+
+  validationFailure: (errors) ->
+      @trigger "validationFailure", errors
+      if errors.nested_errors_on_terms
+        for term_error, index in errors.nested_errors_on_terms when term_error
+          @get("terms").at( index ).validationFailure term_error
+      if errors.nested_errors_on_properties
+        for property_error, index in errors.nested_errors_on_properties when property_error
+          @trigger "validationFailure:property", index, property_error
+
+  toJSON: (options) ->
+    { concept: _.clone(this.attributes) }
 
   info: ->
     info = id: @id

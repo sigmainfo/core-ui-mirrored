@@ -78,6 +78,10 @@ describe "Coreon.Models.Connection", ->
       @request.respond 403, {}, ""
       @connection.message.should.not.have.been.called
 
+    it "does not create error message on 422", ->
+      @request.respond 422, {}, ""
+      @connection.message.should.not.have.been.called
+
     it "creates specific error when given", ->
       I18n.t.withArgs("errors.json.parse").returns "Could not parse JSON"
       @request.respond 444, {}, JSON.stringify

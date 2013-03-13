@@ -96,15 +96,56 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
       @view.$('.remove_term').click()
       @view.remove_term.should.have.been.called.once
 
-      #it "empties html", ->
-      #@view.$('.remove_term').click()
-      #@view.el.innerHTML.should.eql ""
-
     it "removes itself from the collection", ->
       collection = new Backbone.Collection
       collection.push @view.model
-      @view.model.get = sinon.stub().returns collection
       @view.$('.remove_term').click()
       collection.size().should.eql 0
+
+  describe "validationFailure()", ->
+
+    it "is triggered by validation error of the model", ->
+      @view.validationFailure = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "validationFailure", foo: "bar"
+      @view.validationFailure.withArgs( foo: "bar" ).should.have.been.calledOnce
+
+    it "sets class 'error' for term value on error", ->
+      @view.render()
+      @view.validationFailure value: ["error message"]
+      @view.$('.value .input').should.have.class "error"
+
+    it "sets class '.error' for term language on error", ->
+      @view.render()
+      @view.validationFailure lang: ["error message"]
+      @view.$('.language .input').should.have.class "error"
+
+    it "removes class '.error' from inputs on unrelated errors", ->
+      @view.render()
+      @view.$('.value .input').addClass 'error'
+      @view.$('.language .input').addClass 'error'
+      @view.validationFailure()
+      @view.$('.value .input').should.not.have.class "error"
+      @view.$('.language .input').should.not.have.class "error"
+
+    it "displays error string for term value on 'can't be blank' error", ->
+      I18n.t.withArgs("create_term.value_cant_be_blank").returns "Can't be blank"
+      @view.render()
+      @view.validationFailure value: ["can't be blank"]
+      @view.$('.value .error_message').should.have.text "Can't be blank"
+      @view.$('.language .error_message').should.not.have.text "Can't be blank"
+
+    it "displays error string for term language on 'can't be blank' error", ->
+      I18n.t.withArgs("create_term.language_cant_be_blank").returns "Can't be blank"
+      @view.render()
+      @view.validationFailure lang: ["can't be blank"]
+      @view.$('.language .error_message').should.have.text "Can't be blank"
+
+    it "removes error strings if error is not present anymore", ->
+      @view.render()
+      @view.validationFailure lang: ["can't be blank"], value: ["can't be blank"]
+      @view.validationFailure()
+      @view.$('.language .error_message').should.have.text ""
+      @view.$('.value .error_message').should.have.text ""
 
 

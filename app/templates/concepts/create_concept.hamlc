@@ -1,5 +1,7 @@
 %h2.label= @concept.get("label")
 
+.errors
+
 .properties
   %h3= I18n.t "create_concept.properties"
   %a.add_property.edit= I18n.t "create_concept.add_property"

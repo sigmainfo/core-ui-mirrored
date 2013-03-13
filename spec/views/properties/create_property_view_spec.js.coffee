@@ -202,3 +202,55 @@ describe "Coreon.Views.Properties.CreatePropertyView", ->
       spy1.should.be.called.once
       spy2.should.be.called.once
 
+  describe "validationFailure()", ->
+
+    it "is triggered by validationFailure:property event", ->
+      @view.validationFailure = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "validationFailure:property", 1, foo: "bar"
+      @view.validationFailure.withArgs( 1, foo: "bar" ).should.have.been.calledOnce
+
+    it "sets class 'error' for property key on error", ->
+      @view.render()
+      @view.validationFailure 42, key: ["error message"]
+      @view.$('.key .input').should.have.class "error"
+
+    it "sets class 'error' for property value on error", ->
+      @view.render()
+      @view.validationFailure 42, value: ["error message"]
+      @view.$('.value .input').should.have.class "error"
+
+    it "sets class 'error' for property language on error", ->
+      @view.render()
+      @view.validationFailure 42, lang: ["error message"]
+      @view.$('.language .input').should.have.class "error"
+
+    it "removes class '.error' from inputs on unrelated errors", ->
+      @view.render()
+      @view.$('.key .input').addClass 'error'
+      @view.$('.value .input').addClass 'error'
+      @view.$('.language .input').addClass 'error'
+      @view.validationFailure()
+      @view.$('.key .input').should.not.have.class "error"
+      @view.$('.value .input').should.not.have.class "error"
+      @view.$('.language .input').should.not.have.class "error"
+
+    it "displays error string for property key on 'can't be blank' error", ->
+      I18n.t.withArgs("create_property.key_cant_be_blank").returns "Can't be blank"
+      @view.render()
+      @view.validationFailure 42, key: ["can't be blank"]
+      @view.$('.key .error_message').should.have.text "Can't be blank"
+
+    it "displays error string for property value on 'can't be blank' error", ->
+      I18n.t.withArgs("create_property.value_cant_be_blank").returns "Can't be blank"
+      @view.render()
+      @view.validationFailure 42, value: ["can't be blank"]
+      @view.$('.value .error_message').should.have.text "Can't be blank"
+
+    it "removes error strings if error is not present anymore", ->
+      @view.render()
+      @view.validationFailure 42, key: ["can't be blank"], value: ["can't be blank"]
+      @view.validationFailure()
+      @view.$('.key .error_message').should.have.text ""
+      @view.$('.value .error_message').should.have.text ""
+

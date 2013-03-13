@@ -21,6 +21,8 @@ class Coreon.Models.Connection extends Backbone.Model
         @message I18n.t("errors.service.unavailable"), type: "error" 
       when 403
         @trigger "unauthorized"
+      when 422
+        @trigger "validationFailure"
       else
         error = code: "errors.generic"
         if xhr?.responseText?.length > 1

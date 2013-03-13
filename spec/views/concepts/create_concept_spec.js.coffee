@@ -111,58 +111,126 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.model.trigger "remove:properties"
       @view.render.should.have.been.calledOnce
 
-  describe "render_title()", ->
+  describe "renderTitle()", ->
 
     it "is triggered by change:terms", ->
-      @view.render_title = sinon.spy()
+      @view.renderTitle = sinon.spy()
       @view.initialize()
       @view.model.trigger "change:terms"
-      @view.render_title.should.have.been.calledOnce
+      @view.renderTitle.should.have.been.calledOnce
 
     it "is triggered by change:properties", ->
-      @view.render_title = sinon.spy()
+      @view.renderTitle = sinon.spy()
       @view.initialize()
       @view.model.trigger "change:properties"
-      @view.render_title.should.have.been.calledOnce
+      @view.renderTitle.should.have.been.calledOnce
 
     it "renders title", ->
       @view.render()
       @view.model.set "label", "foobar", silent: true
-      @view.render_title()
+      @view.renderTitle()
       @view.$('.label').text().should.eql "foobar"
 
-  describe "add_term()", ->
+  describe "addTerm()", ->
 
     beforeEach ->
       @view.render()
 
-    it "is triggered by click on add term", ->
-      @view.add_term = sinon.spy()
+    it "is triggered by click on 'add term'", ->
+      @view.addTerm = sinon.spy()
       @view.delegateEvents()
       @view.$(".add_term").click()
-      @view.add_term.should.have.been.calledOnce
+      @view.addTerm.should.have.been.calledOnce
 
-    it "calls add_term() on the model", ->
-      @view.model.add_term = sinon.spy()
+    it "calls addTerm() on the model", ->
+      @view.model.addTerm = sinon.spy()
       @view.delegateEvents()
       @view.$(".add_term").click()
-      @view.model.add_term.should.have.been.calledOnce
+      @view.model.addTerm.should.have.been.calledOnce
 
-  describe "add_property()", ->
+  describe "addProperty()", ->
 
     beforeEach ->
       @view.render()
 
-    it "is triggered by click on add property", ->
-      @view.add_property = sinon.spy()
+    it "is triggered by click on 'add property'", ->
+      @view.addProperty = sinon.spy()
       @view.delegateEvents()
       @view.$(".add_property").click()
-      @view.add_property.should.have.been.calledOnce
+      @view.addProperty.should.have.been.calledOnce
 
-    it "calls add_property() on the model", ->
-      @view.model.add_property = sinon.spy()
+    it "calls addProperty() on the model", ->
+      @view.model.addProperty = sinon.spy()
       @view.delegateEvents()
       @view.$(".add_property").click()
-      @view.model.add_property.should.have.been.calledOnce
+      @view.model.addProperty.should.have.been.calledOnce
+
+  describe "create()", ->
+
+    beforeEach ->
+      @view.render()
+
+    it "is triggered by click on 'create'", ->
+      @view.create = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".button.create").click()
+      @view.create.should.have.been.calledOnce
+
+    it "calls create() on the model", ->
+      @view.model.create = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".button.create").click()
+      @view.model.create.should.have.been.calledOnce
+
+  describe "cancel()", ->
+
+    beforeEach ->
+      @view.render()
+
+    it "is triggered by click on 'cancel'", ->
+      @view.cancel = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".button.cancel").click()
+      @view.cancel.should.have.been.calledOnce
+
+  describe "validationFailure()", ->
+
+    it "is triggered by validation error of the model", ->
+      @view.validationFailure = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "validationFailure"
+      @view.validationFailure.should.have.been.calledOnce
+
+    it "displays general error message", ->
+      I18n.t.withArgs("create_concept.validation_failure").returns "Validation Failure"
+      @view.render()
+      @view.validationFailure()
+      @view.$('.errors p').should.have.text "Validation Failure"
+
+    it "displays term error message", ->
+      I18n.t.withArgs("create_concept.validation_failure_terms").returns "Term Validation Failure"
+      @view.render()
+      @view.validationFailure terms: [ "error message" ]
+      @view.$('.errors li:first').should.have.text "Term Validation Failure"
+
+    it "displays property error message", ->
+      I18n.t.withArgs("create_concept.validation_failure_properties").returns "Property Validation Failure"
+      @view.render()
+      @view.validationFailure properties: [ "error message" ]
+      @view.$('.errors li:first').should.have.text "Property Validation Failure"
+
+    it "does not display error message on null errors", ->
+      @view.render()
+      @view.validationFailure
+        nested_errors_on_properties: [ null ]
+        nested_errors_on_terms: [ null ]
+      @view.$('.errors ul').should.have.text ""
+
+
+
+
+
+
+
 
 

@@ -97,17 +97,24 @@ en:
     add_term: "Add Term"
     create: "Create"
     cancel: "Cancel"
+    validation_failure: "Concept could not be saved."
+    validation_failure_terms: "Terms had errors."
+    validation_failure_properties: "Properties had errors."
     
   create_term:
     value: "Term Value"
     language: "Language"
     remove_term: "Remove Term"
+    value_cant_be_blank: "Please enter a Term Value."
+    language_cant_be_blank: "Please enter the Language of the Term."
 
   create_property:
     key: "Property Key"
     remove: "Remove Property"
     value: "Property Value"
     language: "Language"
+    key_cant_be_blank: "Please enter a Property Key."
+    value_cant_be_blank: "Please enter a Property Value."
 
 #  create_properties:
 #    title: "Properties"

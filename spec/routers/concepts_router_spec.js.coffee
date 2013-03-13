@@ -141,13 +141,18 @@ describe "Coreon.Routers.ConceptsRouter", ->
     it "switches to concept create view", ->
       @router.create()
       @screen.should.be.an.instanceof Coreon.Views.Concepts.CreateConceptView
+
+    it "creates a new concept", ->
+      @router.create()
       @screen.model.should.be.an.instanceof Coreon.Models.Concept
 
-    it "creates default term with query string", ->
+    it "creates a term with query string", ->
       @router.create("gun")
       @screen.model.get("terms").should.have.length 1
-      @screen.model.get("terms").at(0).get("value").should.equal "gun"
-      @screen.model.get("terms").at(0).get("lang").should.equal "en"
+      @screen.model.get("terms").at(0).toJSON().should.eql
+        value: "gun"
+        lang: "en"
+        properties: []
 
 
 

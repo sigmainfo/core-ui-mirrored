@@ -12,7 +12,7 @@ Feature: maintainer creates concept
     When I enter "gun" in the search field
     And I click the search button
     Then I should see a button "Create Concept"
-    And I click on the create concept link
+    When I click on the create concept link
     Then I should be on the create concept page for "gun"
     And I should see title "gun"
     And I should see an "Add Property" link
@@ -24,47 +24,35 @@ Feature: maintainer creates concept
     And I should see a "Remove Term" link
     #And I should see the "Broader and Narrower" section with only "gun"?
     And I should see an "Add Property" link for the term
-    When I enter "flower" into the term value field
+    When I enter "flower" into the term value field and "en" into the term language field
     Then I should see title "flower"
     When I click on "Add Term"
     Then I should see two new empty inputs for Term Value and Language
-    #And the input for Term Value should be selected
     And I should see a "Remove Term" link for the new term
     When I click on "Create"
-    Then I should see an error message
+    Then I should see a concept error message "Concept could not be saved" with "Terms had errors"
+    Then I should see term error messages "Please enter a Term Value" and "Please enter the Language of the Term"
     When I click on "Remove Term"
     Then I should not see the term inputs anymore 
     When I click on "Add Property" link 
     Then I should see inputs for Property Key, Value and Language
+    When I click on "Create"
+    Then I should see a concept error message "Concept could not be saved" with "Properties had errors"
+    Then I should see property error messages "Please enter a Property Key" and "Please enter a Property Value"
     When I enter "label" as Property Key and "flowerpower" as Property Value
     Then I should see title "flowerpower"
     When I click on the "Remove Property"
     Then I should not see the property input anymore
+    When I click on "Create"
+    Then I should be redirected to the concept page of the newly created concept
+    When I enter "flower" in the search field
+    And I click the search button
+    Then I should see a term "flower" with language "en"
 
-#    When I click on "Add Term"
-#    #HERE -> And I enter "Waffe" into the new Term Value input field
-#    And I click on "Add Property"
-#    Then I should see two new empty inputs for Property Key and Property Value
-#    And the input for Property Key should be selected
-#    And there is a Cancel link attached to the inputs
-#    When I click on "Cancel"
-#    Then I should not see the property inputs anymore 
-#    When I fill in "something to kill with" into the new Property Value field
-#    And I click on the "create" link
-#    Then i should see error "Can't be blank" on term language
-#    And i should see error "Can't be blank" on property key
-#    When I fill in "DE" as language of the new term
-#    And I fill in "description" as property key of the new property 
-#    And I click on the "create" link
-#    Then I should see the show concept page
-#    And the concept should have title "gun"
-#    And it should have german term "Waffe" and english term "gun"
-#    And it should have property "description" with value "something to kill with"
-
-#  Scenario: cancel create concept
-#    When I enter "gun" in the search field
-#    And I click the search button
-#    And I click on the create concept link
-#    Then I should be on the create concept page
-#    And I click on the "cancel" link
-#    Then I should see the empty search result page again
+  Scenario: cancel create concept
+    When I enter "gun" in the search field
+    And I click the search button
+    And I click on the create concept link
+    Then I should be on the create concept page for "gun"
+    When I click on the "Cancel" link
+    Then I should see the search result page again

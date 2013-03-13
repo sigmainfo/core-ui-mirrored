@@ -47,6 +47,5 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     screen.model.get("terms").push
       lang: "en"
       value: query
-      collection: screen.model.get("terms")
     @view.switch screen
 

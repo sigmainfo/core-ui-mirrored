@@ -214,28 +214,40 @@ describe "Coreon.Models.Concept", ->
         lang: "en"
         value: "poetry"
       @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql {lang: 'en', value: 'poetry', properties: []}
+      @model.get("terms").at(0).toJSON().should.be.eql
+        lang: 'en'
+        value: 'poetry'
+        properties: []
 
     it "handles json (as key-value)", ->
       @model.set "terms",
         lang: "en"
         value: "poetry"
       @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql {lang: 'en', value: 'poetry', properties: []}
+      @model.get("terms").at(0).toJSON().should.be.eql
+        lang: 'en'
+        value: 'poetry'
+        properties: []
 
     it "handles object (as hash)", ->
       @model.set "terms": new Coreon.Collections.Terms
         lang: "en"
         value: "poetry"
       @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql {lang: 'en', value: 'poetry', properties: []}
+      @model.get("terms").at(0).toJSON().should.be.eql
+        lang: 'en',
+        value: 'poetry',
+        properties: []
 
     it "handles object (as key-value)", ->
       @model.set "terms", new Coreon.Collections.Terms
         lang: "en"
         value: "poetry"
       @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql {lang: 'en', value: 'poetry', properties: []}
+      @model.get("terms").at(0).toJSON().should.be.eql
+        lang: 'en',
+        value: 'poetry',
+        properties: []
 
   describe "info()", ->
     
@@ -259,20 +271,131 @@ describe "Coreon.Models.Concept", ->
       finally
         Coreon.application = null
 
-  describe "add_term()", ->
+  describe "addTerm()", ->
 
     it "creates a new empty term model", ->
-      @model.add_term()
+      @model.addTerm()
       @model.get("terms").size().should.be.eql 1
 
-    it "creates a term model with knows about its terms conncetion", ->
-      @model.add_term()
-      @model.get("terms").at(0).get("collection").should.eql @model.get("terms")
+    it "creates a term model which knows about its terms conncetion", ->
+      @model.addTerm()
+      @model.get("terms").at(0).collection.should.eql @model.get("terms")
 
-  describe "add_property()", ->
+  describe "addProperty()", ->
 
     it "creates a new empty property model", ->
-      @model.add_property()
+      @model.addProperty()
       @model.get("properties").length.should.be.eql 1
 
+  describe "create()", ->
 
+    it "calls save()", ->
+      @model.save = sinon.spy()
+      @model.create()
+      @model.save.withArgs( null,
+        success: @model.onSuccess
+        error: @model.onError ).should.have.been.calledOnce
+
+  describe "toJSON()", ->
+
+    it "adds an outer hash with concept: as key", ->
+      JSON.stringify(@model.toJSON()).should.equal JSON.stringify concept: _.clone(@model.attributes)
+
+  describe "save()", ->
+
+    it "uses application sync with method 'update' if model exists", ->
+      Coreon.application = sync: sinon.spy()
+      try
+        @model.save()
+        Coreon.application.sync.should.have.been.calledWith "update", @model
+      finally
+        Coreon.application = null
+
+    it "uses application sync with method 'create' if model is new", ->
+      @model = new Coreon.Models.Concept
+      Coreon.application = sync: sinon.spy()
+      try
+        @model.save()
+        Coreon.application.sync.should.have.been.calledWith "create", @model
+      finally
+        Coreon.application = null
+
+  describe "onSuccess()", ->
+
+    it "is triggered by successfull save()", ->
+      @model.save = (data, opts) ->
+        opts.success()
+      @model.onSuccess = sinon.spy()
+      @model.create()
+      @model.onSuccess.should.have.been.calledOnce
+
+    it "navigates to concept view page", ->
+      Backbone.history.navigate = sinon.spy()
+      @model.set "_id", 42
+      @model.onSuccess()
+      Backbone.history.navigate.withArgs( "concepts/42", replace: true, trigger: true ).should.have.been.calledOnce
+
+  describe "onError()", ->
+
+    it "is triggered by save() error", ->
+      @model.save = (data, opts) ->
+        opts.error()
+      @model.onError = sinon.spy()
+      @model.create()
+      @model.onError.should.have.been.calledOnce
+
+    it "triggers validationFailure()", ->
+      @model.validationFailure = sinon.spy()
+      @model.onError @model,
+        status: 422
+        responseText: '{"errors": {"foo": "bar"}}'
+      @model.validationFailure.withArgs( foo: 'bar' ).should.have.been.calledOnce
+
+  describe "validationFailure()", ->
+
+    it "triggers validationFailure event", ->
+      spy = sinon.spy()
+      @model.on "validationFailure", spy
+      @model.validationFailure( foo: 'bar' )
+      spy.withArgs( foo: 'bar' ).should.have.been.calledOnce
+
+    it "triggers validationFailure() on term models with errors", ->
+      @model.get("terms").add value: "flower", lang: "en"
+      @model.get("terms").add value: "gum", lang: "en"
+      @model.get("terms").at(0).validationFailure = sinon.spy()
+      @model.get("terms").at(1).validationFailure = sinon.spy()
+      @model.validationFailure nested_errors_on_terms: [
+        value: ["can't be blank"],
+        null
+      ]
+      @model.get("terms").at(0).validationFailure.withArgs( value: ["can't be blank"] ).should.have.been.calledOnce
+      @model.get("terms").at(1).validationFailure.should.not.be.called
+
+    it "triggers validationFailure:property events", ->
+      spy = sinon.spy()
+      @model.on "validationFailure:property", spy
+      @model.validationFailure nested_errors_on_properties: [
+        null,
+        { foo: "bar" },
+        { foo: "baz" }
+      ]
+      spy.should.have.been.calledTwice
+      spy.withArgs( 1, foo: "bar" ).should.have.been.calledOnce
+      spy.withArgs( 2, foo: "baz" ).should.have.been.calledOnce
+
+
+
+#    it "on_error()", ->
+#      Coreon.application = new Coreon.Application
+#      @model.onError = sinon.spy()
+#      @server = sinon.fakeServer.create()
+#      try
+#        @model.save()
+#        @server.respond([422, {}, ""])
+#        @model.onError.should.have.been.calledOnce
+#      finally
+#        @server.restore()
+#        Coreon.application = null
+#
+#
+#)#

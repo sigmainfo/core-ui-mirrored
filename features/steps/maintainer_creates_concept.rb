@@ -53,15 +53,30 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     end
   end
 
+  step 'I click on "Create"' do
+    find(".button.create").click
+  end
+
+  step 'I should see a concept error message "Concept could not be saved" with "Terms had errors"' do
+    page.should have_css( ".errors p", text: "Concept could not be saved" )
+    page.should have_css( ".errors li", text: "Terms had errors" )
+  end
+  
+  step 'I should see term error messages "Please enter a Term Value" and "Please enter the Language of the Term"' do
+    page.should have_css( ".terms .value .error_message", text: "Please enter a Term Value" )
+    page.should have_css( ".terms .language .error_message", text: "Please enter the Language of the Term" )
+  end
+
   step 'I should see an "Add Property" link for the term' do
     within ".create-term[3]" do
       page.should have_css("a.add_term_property", text: "Add Property")
     end
   end
 
-  step 'I enter "flower" into the term value field' do
+  step 'I enter "flower" into the term value field and "en" into the term language field' do
     within ".create-term[3]" do
       fill_in "Term Value", :with => 'flower'
+      fill_in "Language", :with => 'en'
       fill_in "Language", :with => 'en'
     end
   end
@@ -79,6 +94,16 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
       find_field("Term Value").value.should == ""
       find_field("Language").value.should == ""
     end
+  end
+
+  step 'I should see a concept error message "Concept could not be saved" with "Properties had errors"' do
+    page.should have_css( ".errors p", text: "Concept could not be saved" )
+    page.should have_css( ".errors li", text: "Properties had errors" )
+  end
+  
+  step 'I should see property error messages "Please enter a Property Key" and "Please enter a Property Value"' do
+    page.should have_css( ".properties .key .error_message", text: "Please enter a Property Key" )
+    page.should have_css( ".properties .value .error_message", text: "Please enter a Property Value" )
   end
 
   step 'I should see a "Remove Term" link for the new term' do
@@ -131,6 +156,31 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     within ".concept > .properties" do
       page.should have_no_css(".create-property")
     end
+  end
+
+  step 'I should be redirected to the concept page of the newly created concept' do
+    sleep 0.2
+    current_path.should match "/concepts/[^/]+$"
+  end
+
+  When 'I enter "flower" in the search field' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "flower"
+    end
+  end
+
+  step 'I should see a term "flower" with language "en"' do
+    page.should have_css ".terms td.term.value", text: "flower"
+    page.should have_css ".terms td.lang", text: "EN"
+  end
+
+  step 'I click on the "Cancel" link' do
+    find(".button.cancel").click
+  end
+
+  step 'I should see the search result page again' do
+    sleep 0.1
+    current_path.should == "/search/gun"
   end
 
 end
