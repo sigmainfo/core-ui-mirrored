@@ -56,6 +56,13 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$(".zoom-out").should.have.text "Zoom out"
         @view.$(".zoom-out").should.have.attr "title", "Zoom out"
 
+      it "renders toggle button", ->
+        I18n.t.withArgs("concept-map.toggle-orientation").returns "Toggle orientation"
+        @view.initialize()
+        @view.$el.should.have ".toggle-orientation"
+        @view.$(".toggle-orientation").should.have.text "Toggle orientation"
+        @view.$(".toggle-orientation").should.have.attr "title", "Toggle orientation"
+
       it "renders viewport", ->
         @view.options.size = [150, 120]
         @view.options.svgOffset = 25
