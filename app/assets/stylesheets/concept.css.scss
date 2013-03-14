@@ -2,19 +2,19 @@
 @import 'compass/css3';
 
 div.concept {
-  margin-right: 570px;
-  min-width: 400px;
+  margin-right: 270px;
+  min-width: 200px;
   position: relative;
   
   h2 {
     display: inline-block;
-    font-size: 1.8em;
+    font-size: 1.9em;
     line-height: 1.4em;
     padding: 0px 10px 0px 20px;
     margin-bottom: 12px;
     margin-right: 30px;
     background-color: white;
-    color: $bluecolor;
+    color: $hit-color;
     @include concept-icon;
     &:before {
       border: 2px solid lighten($text-color, 20%);
@@ -228,6 +228,160 @@ div.concept {
       }
     }
   }
-  
-  
+   
+}
+
+@media all and (max-width: 999px) and (min-width: 800px) {
+  div.concept {
+    font-size: 0.9em;
+    
+    h2 {
+      font-size: 1.5em;
+      line-height: 1em;
+      padding: 2px 6px 3px 16px;
+      margin-bottom: 6px;
+      margin-right: 0px;
+      @include concept-icon;
+    }
+    
+    table {
+      margin-left: 0px;
+      tr td, tr th {
+        padding-top: 2px;
+        padding-bottom: 4px;
+      }
+      
+      tr th {
+        width: 69px;
+        padding-top: 3px;
+      }
+      ul.index {
+        padding-bottom: 4px;
+      }
+    }
+    
+    .terms {
+      .term h4.value {
+        font-size: 1.3em;
+        padding: 3px 100px 2px 67px;
+      }
+      .term >.system-info {
+        padding-left: 80px;
+        table {
+          margin-top: 2px;
+        }
+      }
+      .properties {
+        .section-toggle {
+          top: -1px;
+        }
+        .section {
+          margin: 0;
+          padding-left: 64px;
+        }
+      }
+    }
+    .system-info-toggle {
+      top: 5px;
+    }
+  }
+}
+
+
+@media all and (max-width: 799px) {
+  div.concept {
+    
+    h2 {
+      font-size: 1em;
+      line-height: 1.3em;
+      padding: 1px 6px 1px 16px;
+      margin-bottom: 6px;
+      margin-right: 0px;
+      @include concept-icon;
+    }
+    
+    .system-info-toggle {
+      display: none;
+    }
+    .section-toggle {
+      margin: 2px 0 0px 0;
+    }
+    
+    .terms {
+      padding-top: 6px;
+      .section {
+        padding: 0;
+      }
+      
+      .term {
+          background: none;
+          border-top: 1px solid $greycolor;
+          &:first-child {
+            border: none;
+          }
+      }
+      .language {
+        @include dottedline;
+        padding-top: 1px;
+      }
+      .language:before {
+        content: none;
+      }
+      .term h4.value {
+        font-size: 1em;
+        padding: 0px 100px 0px 47px;
+      }
+
+      .properties {
+        font-size: 0.9em;
+        background: none;
+        .section-toggle {
+          right: 0px;
+          top: -1px;
+        }
+        .section {
+          margin: 0;
+          padding-left: 44px;
+          border-top: 1px solid white;
+        }
+      }
+      
+    }
+    
+    .concept-tree {
+      display: none;
+    }
+    .properties {
+      font-size: 0.9em;
+    }
+    
+    table {
+      margin-left: 16px;
+
+      tr {
+        th, td {
+          display: block;
+          padding-top: 4px;
+          padding-bottom: 0;
+        }
+        th {
+          width: auto;
+          text-align:left;
+          float: left;
+        }
+        .value {
+          clear: both;
+          padding-bottom: 6px;
+        }
+      }
+      ul.index {
+        padding-bottom: 0px;
+        li {
+          padding-top: 0;
+          &.selected:before {
+          content: none};
+        }
+      }
+    }
+  }
 }

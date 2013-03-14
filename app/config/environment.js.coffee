@@ -9,7 +9,7 @@
 
 HAML.globals = -> Coreon.Helpers
 
-Backbone.Model::.idAttribute = "_id"
+Backbone.Model::idAttribute = "_id"
 _(Backbone.Model::).extend Coreon.Modules.Messages
 
 Backbone.View::destroy = ->

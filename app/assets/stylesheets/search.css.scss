@@ -13,7 +13,9 @@
   }
   
   #coreon-search-query {
-    width: $widget-width - 80px;
+/*    width: $widget-width - 80px;*/
+    width: 80%;
+    max-width: 400px;
     height: 28px;
     padding-left: 28px;
     @include single-box-shadow($text-color, 1px, 1px, 2px, false, inset);
@@ -59,10 +61,6 @@
 /*  z-index: 1000;*/
   
   ul.options {
-    position: absolute;
-    right: 66px;
-    top: 38px;
-    width: $widget-width - 81px;
     list-style: none;
     background-color: $beigecolor;
     @include border-bottom-radius(6px);

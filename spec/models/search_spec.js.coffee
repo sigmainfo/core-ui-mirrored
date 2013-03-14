@@ -53,7 +53,7 @@ describe "Coreon.Models.Search", ->
       @xhr.restore()
 
     it "creates request", ->
-      Coreon.application.account.set "graph_root", "https://graph.coreon.com/"
+      Coreon.application.session.set "graph_root", "https://graph.coreon.com/"
       @model.set
         path:  "terms/search"
         query: "poet"

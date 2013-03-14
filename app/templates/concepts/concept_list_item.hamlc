@@ -15,5 +15,5 @@
         - for lang, terms of @terms
           %tr
             %th= lang
-            %td.term= _(terms).pluck("value").join ", "
+            %td.term= _(terms).map( (term)-> term.get("value"); ).join ", "
 

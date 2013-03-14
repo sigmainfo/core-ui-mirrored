@@ -1,20 +1,22 @@
 $text-color: #3f3b2c;
-$bluecolor: #3da2e6;
-$darkerbluecolor: #6cb1d3;
-$hover-color: #5498b0;
+$hit-color: #3da2e6;
+/*$link-color: #5fba83;*/
+$link-color: #43aaa4;
+$petrol: #5498b0;
+$bluecolor: $petrol;
 $button-color: #73a254;
+$darkerbluecolor: #6cb1d3;
+$hover-color: #5fba83;
 $browncolor: #554f3c;
 $darkbrowncolor: #58513d;
 $greencolor: #717a53;
 $greycolor: #e0e7e1;
 $greytext-color: #989791;
 $beigecolor: #f1f4f0;
-$petrol: #5498b0;
 $error-color: #f25a5a;
 $notice-color: #6bc175;
 
-// $widget-width: 320px;
-$widget-width: 640px;
+$widget-width: 320px;
 
 @mixin submit-button {
   @include box-sizing(border-box);
@@ -83,7 +85,7 @@ $widget-width: 640px;
 /*    margin-right: 5px;
     margin-bottom: 2px;*/
     border: 1px solid lighten($text-color, 20%);
-    @include border-radius(2px);
+    @include border-radius(4px);
   };  
 }
 

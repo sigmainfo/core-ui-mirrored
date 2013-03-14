@@ -8,13 +8,14 @@ $edge-color: #bfc5c0;
   .map {
     line-height: 0;
     width: 100%;
-    height: 600px;//200px;
     border-top: 1px solid rgba(white, 0.3);
     border-bottom: 1px solid rgba(black, 0.1);
     @include retina-stripes("white");
+
     &:hover {
-      cursor:move;
-    };
+      cursor: move;
+    }
+
     svg {
       overflow: hidden;
 
@@ -35,46 +36,51 @@ $edge-color: #bfc5c0;
 
           circle {
             stroke: $text-color;
+            stroke-width: 1.6px;
           }
 
           text {
-            fill: $bluecolor;
+            fill: $hit-color;
+            font-size: 13px;
           }
           
           .background {
-
             fill: white;
             fill-opacity: 1;
+            stroke: white;
+            stroke-width: 2px;
           }
         }
 
         a:hover {
           
           text {
-            fill: $hover-color;
+            fill: $link-color;
+          }
+          .background {
+            fill-opacity: 1;
           }
         }
 
         .background {
 
           fill: white;
-          fill-opacity: 0.7;
+          fill-opacity: 0.6;
 
         }
 
         .toggle {
-          fill: $edge-color;
-          
+          fill: transparent;
           .icon {
-            stroke: white;
+            stroke: darken($edge-color, 10);
             stroke-width: 2px;
           }
 
           &:hover {
-            
             .icon {
               stroke: $bluecolor;
             }
+
           }
 
           &.expanded {
@@ -84,7 +90,6 @@ $edge-color: #bfc5c0;
             }
             
             &:hover {
-              fill: $edge-color;
               .icon {
                 stroke: $bluecolor;
               }
@@ -98,9 +103,16 @@ $edge-color: #bfc5c0;
         fill: none;
         stroke: $edge-color;
         stroke-width: 1.5px;
+        stroke-opacity: 0.7;
+        
+        &.hit {
+          stroke: $text-color;
+          stroke-opacity: 0.5;
+        }
       }
     }
   }
+
 }
 
 

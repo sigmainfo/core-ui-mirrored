@@ -11,6 +11,14 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     toggle:
       cornerRadius: 3
       iconWidth: 7
+    default:
+      height: 16
+      radius: 2.5
+    hit:
+      height: 18
+      radius: 3
+    dropShadow:
+      offset: 1
   
   initialize: ->
     @listenTo @model, "change", @render
@@ -28,23 +36,27 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
     @bg = a.append("svg:rect")
       .attr("class", "background")
-      .attr("height", 17)
+      .attr("height", @height() )
 
     a.append("svg:circle")
       .attr("class", "bullet")
       .attr("cx", 7)
-      .attr("cy", 9)
-      .attr("r", 2.5)
+      .attr("cy", @height() / 2)
+      .attr("r", @radius())
 
     label = a.append("svg:text")
       .attr("x", 14)
-      .attr("y", 13)
-      .text(@shorten @model.get("label"))
+      .attr("y", @height() * 0.75 )
+      .text(@shorten @model.get("label"), 20)
     
     labelBox = label.node().getBBox()
-    @bg.attr("width", labelBox.x + labelBox.width + 3)
+    @bg.attr("width", labelBox.x + labelBox.width + 5)
 
     box = @box()
+
+    if @model.has "hit"
+      @bg.attr("filter", "url(#coreon-drop-shadow-filter)")
+
     if @model.get("sub_concept_ids")?.length > 0
       @_renderToggle(@model.get "expandedOut")
         .classed("toggle-children", true)
@@ -60,6 +72,14 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
   box: ->
     if @bg? then @bg.node().getBBox() else x: 0, y: 0, height: 0, width: 0
+
+  height: ->
+    if @model.has "hit" then @options.hit.height else @options.default.height
+
+  radius: ->
+    if @model.has "hit" then @options.hit.radius else @options.default.radius
+
+
 
   _renderToggle: (expanded) ->
     toggle = @svg.append("svg:g")

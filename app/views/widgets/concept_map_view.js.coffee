@@ -1,4 +1,5 @@
 #= require environment
+#= require jquery.ui.resizable
 #= require views/simple_view
 #= require templates/widgets/concept_map
 #= require d3
@@ -14,12 +15,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   template: Coreon.Templates["widgets/concept_map"]
 
   options:
-    size: [600, 640]
+    size: [320, 240]
+    svgOffset: 22
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
     padding: 20
-    offsetX: 100
-    offsetY: 22
+    offsetX: 190
+    offsetY: 25
 
   events:
     "click .zoom-in":  "zoomIn"
@@ -33,8 +35,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
     @stopListening()
-    @listenTo @model, "reset add remove change:label", _.debounce(@render, options.renderInterval ?= 100)
+    @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
+    if session = Coreon.application?.session.get @id
+      @resize session.width, session.height
+    else
+      @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
 
   render: ->
@@ -52,14 +58,38 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @navigator.scale zoom
     @_panAndZoom()
 
+  resize: (width, height) ->
+    svg = @$("svg")
+    if height?
+      @$el.height height
+      @_svgHeight = height - @options.svgOffset
+      svg.attr "height", "#{ height - @options.svgOffset }px"
+    if width?
+      @$el.width width
+      @_svgWidth = width
+      svg.attr "width", "#{ width }px"
+    @saveLayout width: @$el.width(), height: @$el.height()
+    
+  saveLayout = (layout) -> 
+    if Coreon.application?
+      Coreon.application?.session.save @id, layout
+
+  saveLayout: _.debounce saveLayout, 500
 
   _renderMarkupSkeleton: ->
-    @$el.html @template size: @options.size
+    @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
+    @$el.html @template
+    @$el.resizable
+      handles: "s"
+      minHeight: 80
+      resize: (event, ui) =>
+        @resize null, ui.size.height
 
   _renderNodes: ->
+    svg = @$("svg")
     @layout.size [
-      @options.size[0]
-      @options.size[1] - 2 * @options.padding
+      @_svgHeight
+      @_svgWidth - 2 * @options.padding
     ]
     views = @views
     data = @layout.nodes @model.tree().root
@@ -133,6 +163,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
           target:
             x: target.y + sourceBox.height / 2
             y: target.x
+      )
+      .classed( "hit", (datum) ->
+        datum.source.model.has("hit") and datum.target.model.has("hit")
       )
 
     @

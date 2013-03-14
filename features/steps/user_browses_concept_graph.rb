@@ -176,8 +176,8 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: "hand")
   end
 
-  step 'I should see a node "handkerch…"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "handkerch…")
+  step 'I should see a node "handkerchief"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "handkerchief")
   end
 
   step 'all nodes should be classified as hits' do

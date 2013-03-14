@@ -1,8 +1,17 @@
 .titlebar
   %h4= I18n.t "concept-map.title"
   .actions
-    %a.zoom-in{href: "javascript: void(0)", title: I18n.t "concept-map.zoom-in"}= I18n.t "concept-map.zoom-in"
-    %a.zoom-out{href: "javascript: void(0)", title: I18n.t "concept-map.zoom-out"}= I18n.t "concept-map.zoom-out"
+    %a.zoom-in{  href: "javascript: void(0)", title: I18n.t "concept-map.zoom-in"  }= I18n.t "concept-map.zoom-in"
+    %a.zoom-out{ href: "javascript: void(0)", title: I18n.t "concept-map.zoom-out" }= I18n.t "concept-map.zoom-out"
 .map
-  %svg{ xmlns: "http://www.w3.org/2000/svg", version: "1.1", width: @size[1], height: @size[0] }
+  %svg{ xmlns: "http://www.w3.org/2000/svg", version: "1.1" }
+    %defs
+      %filter#coreon-drop-shadow-filter{ x: -0.25, y: -0.25, width: 1.5, height: 2 }
+        %feGaussianBlur{ in: "SourceAlpha", stdDeviation: 1 }
+        %feComponentTransfer
+          %feFuncA{ type: "linear", slope: 0.2 }
+        %feOffset{ dx: 2, dy: 2, result: "drop-shadow"}
+        %feMerge
+          %feMergeNode{ in: "drop-shadow" }
+          %feMergeNode{ in: "SourceGraphic" }
     %g.concept-map

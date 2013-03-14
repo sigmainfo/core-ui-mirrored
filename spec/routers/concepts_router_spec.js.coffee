@@ -46,10 +46,10 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
     it "creates search", ->
       @router.search "terms", "gun"
-      @screen.model.should.be.an.instanceof Coreon.Models.Search
-      @screen.model.get("path").should.equal "concepts/search"
-      @screen.model.get("query").should.equal "gun"
-      @screen.model.get("target").should.equal "terms"
+      @screen.model.should.be.an.instanceof Coreon.Models.ConceptSearch 
+      @screen.model.get("path").should.equal "concepts/search" 
+      @screen.model.get("query").should.equal "gun" 
+      @screen.model.get("target").should.equal "terms" 
       @screen.collection.should.be @router.collection
 
     it "renders search results", ->
@@ -67,48 +67,6 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @screen.should.be.an.instanceof Coreon.Views.Concepts.ConceptListView
       @screen.$el.should.have ".concept-list-item"
 
-    context "done", ->
-      
-      beforeEach ->
-        sinon.stub(Coreon.Views.Concepts, "ConceptListView").returns render: ->
-
-      afterEach ->
-        Coreon.Views.Concepts.ConceptListView.restore()
-        
-      it "updates concepts from results", ->
-        @router.search q: "poet"
-        @request.respond 200, {}, JSON.stringify
-          hits: [
-            {
-              score: 1.56
-              result:
-                _id: "1234"
-                properties: [
-                  { key: "label", value: "poet" }
-                ]
-                super_concept_ids: [
-                  "5047774cd19879479b000523"
-                  "5047774cd19879479b00002b"
-                ]
-            }
-          ]
-        concept = Coreon.Models.Concept.find "1234"
-        concept.get("properties").should.eql [{key: "label", value: "poet"}]
-        concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
-
-      it "updates current hits", ->
-        @router.app.hits.reset = sinon.spy()
-        @router.search q: "poet"
-        @request.respond 200, {}, JSON.stringify
-          hits: [
-            {
-              score: 1.56
-              result:
-                _id: "1234"
-            }
-          ]
-        @router.app.hits.reset.should.have.been.calledWith [ { id: "1234", score: 1.56 }]
-       
   describe "#show", ->
 
     beforeEach ->
@@ -131,7 +89,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
     it "updates selection", ->
       @router.app.hits.reset = sinon.spy()
       @router.show "123"
-      @router.app.hits.reset.should.have.been.calledWith [ id: "123" ]
+      @router.app.hits.reset.should.have.been.calledWith [ _id: "123" ]
 
   describe "#create", ->
 

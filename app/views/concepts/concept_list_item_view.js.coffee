@@ -13,11 +13,26 @@ class Coreon.Views.Concepts.ConceptListItemView extends Coreon.Views.CompositeVi
 
   render: () ->
     @clear()
-    terms = _(@model.terms)?.groupBy "lang" if @model.terms?.length > 0
+    #terms = _(@model.terms)?.groupBy "lang" if @model.get("terms")?.length > 0
+    terms = _( @model.get("terms")?.models ).groupBy (term) ->
+      term.get("lang")
+#    terms = {}
+#    if @model.get "terms"
+#      console.log @model.get "terms"
+#      for term in @model.get("terms")
+#        console.log term
+#        terms[ term.get "lang" ] = term
+
+    console.log terms
+
+    #terms = _(@model.get "terms")?.groupBy (term) ->
+    #term.get("lang")
+    #if @model.get("terms").length > 0
+
     @$el.html @template
       concept: @model
       definition: _(@model.get "properties")?.find (p) -> p.key == "definition"
-      terms: terms
+      terms: terms or null
     @renderLabel()
     @renderSuperconcepts() if @model.get "super_concept_ids"
     @

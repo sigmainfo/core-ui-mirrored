@@ -15,7 +15,7 @@ describe "Coreon.Modules.Messages", ->
       @notifications = new Backbone.Collection
 
       Coreon.application =
-        account:
+        session:
           notifications: @notifications
 
     afterEach ->
