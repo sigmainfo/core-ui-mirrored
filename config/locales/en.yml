@@ -59,6 +59,7 @@ en:
   concept:
     info: "System Info"
     tree: "Broader & Narrower"
+    new_concept: "<New Concept>"
 
   term:
     info: "System Info"

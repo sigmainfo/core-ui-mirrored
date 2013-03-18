@@ -11,12 +11,12 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     find('a.create-concept').click
   end
 
-  step 'I should be on the create concept page for "gun"' do
-    current_path.should == "/concepts/create/gun"
+  step 'I should be on the create concept page' do
+    current_path.should == "/concepts/create"
   end
 
-  step 'I should see title "gun"' do
-    page.should have_css("h2.label", text: "gun")
+  step 'I should see title "<New Concept>"' do
+    page.should have_css("h2.label", text: "<New Concept>")
   end
 
   step 'I should see an "Add Property" link' do
@@ -35,26 +35,26 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".cancel", "Cancel")
   end
 
-  step 'I should see an input for term value with "gun"' do
+  step 'I click on "Add Term"' do
+    find('a.add_term').click
+  end
+
+  step 'I should see two empty inputs for Term Value and Language' do
     within ".create-term[3]" do
-      find_field("Term Value").value.should == "gun"
+      find_field("Term Value").value.should == ""
+      find_field("Language").value.should == ""
     end
   end
 
-  step 'I should see an input "language" filled with the users search language' do
+  step 'I should see a "Remove Term" link for the new term' do
     within ".create-term[3]" do
-      find_field("Language").value.should == "en"
-    end
-  end
-
-  step 'I should see a "Remove Term" link' do
-    within ".create-term[3]" do
-      page.should have_css("a.remove_term", text: "Remove Term")
+      page.should have_css "a.remove_term", text: "Remove Term"
     end
   end
 
   step 'I click on "Create"' do
     find(".button.create").click
+    sleep 0.3
   end
 
   step 'I should see a concept error message "Concept could not be saved" with "Terms had errors"' do
@@ -66,32 +66,62 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css( ".terms .value .error_message", text: "Please enter a Term Value" )
     page.should have_css( ".terms .language .error_message", text: "Please enter the Language of the Term" )
   end
+#
 
-  step 'I should see an "Add Property" link for the term' do
+#  step 'I should see an input for term value with "gun"' do
+#    within ".create-term[3]" do
+#      find_field("Term Value").value.should == "gun"
+#    end
+#  end
+#
+#  step 'I should see an input "language" filled with the users search language' do
+#    within ".create-term[3]" do
+#      find_field("Language").value.should == "en"
+#    end
+#  end
+#
+#  step 'I should see a "Remove Term" link' do
+#    within ".create-term[3]" do
+#      page.should have_css("a.remove_term", text: "Remove Term")
+#    end
+#  end
+#
+#  step 'I should see an "Add Property" link for the term' do
+#    within ".create-term[3]" do
+#      page.should have_css("a.add_term_property", text: "Add Property")
+#    end
+#  end
+#
+#  step 'I enter "flower" into the term value field and "en" into the term language field' do
+#    within ".create-term[3]" do
+#      fill_in "Term Value", :with => 'flower'
+#      fill_in "Language", :with => 'en'
+#      fill_in "Language", :with => 'en'
+#    end
+#  end
+#
+#  step 'I should see title "flower"' do
+#    page.should have_css "h2.label", text: "flower"
+#  end
+  
+  step 'I click on "Remove Term"' do
     within ".create-term[3]" do
-      page.should have_css("a.add_term_property", text: "Add Property")
+      find("a.remove_term").click
     end
   end
 
-  step 'I enter "flower" into the term value field and "en" into the term language field' do
-    within ".create-term[3]" do
-      fill_in "Term Value", :with => 'flower'
-      fill_in "Language", :with => 'en'
-      fill_in "Language", :with => 'en'
-    end
+  step 'I should not see the term inputs anymore' do
+    page.should have_no_css(".create-term[3]")
   end
 
-  step 'I should see title "flower"' do
-    page.should have_css "h2.label", text: "flower"
+  step 'I click on "Add Property" link' do
+    find("a.add_property").click
   end
 
-  step 'I click on "Add Term"' do
-    find('a.add_term').click
-  end
-
-  step 'I should see two new empty inputs for Term Value and Language' do
-    within ".create-term[4]" do
-      find_field("Term Value").value.should == ""
+  step 'I should see inputs for Property Key, Value and Language' do
+    within ".properties" do
+      find_field("Property Key").value.should == ""
+      find_field("Property Value").value.should == ""
       find_field("Language").value.should == ""
     end
   end
@@ -105,32 +135,16 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css( ".properties .key .error_message", text: "Please enter a Property Key" )
     page.should have_css( ".properties .value .error_message", text: "Please enter a Property Value" )
   end
-
-  step 'I should see a "Remove Term" link for the new term' do
-    within ".create-term[4]" do
-      page.should have_css "a.remove_term", text: "Remove Term"
-    end
-  end
   
-  step 'I click on "Remove Term"' do
-    within ".create-term[4]" do
-      find("a.remove_term").click
+  step 'I click on the "Remove Property"' do
+    within ".properties" do
+      find("a.remove_property").click
     end
   end
 
-  step 'I should not see the term inputs anymore' do
-    page.should have_no_css(".create-term[4]")
-  end
-
-  step 'I click on "Add Property" link' do
-    find("a.add_property").click
-  end
-
-  step 'I should see inputs for Property Key, Value and Language' do
-    within ".concept > .properties" do
-      find_field("Property Key").value.should == ""
-      find_field("Property Value").value.should == ""
-      find_field("Language").value.should == ""
+  step 'I should not see the property input anymore' do
+    within ".properties" do
+      page.should have_no_css(".create-property")
     end
   end
 
@@ -141,20 +155,11 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
       fill_in "Language", :with => 'en'
     end
   end
-  
-  step 'I should see title "flowerpower"' do
-    page.should have_css "h2.label", text: "flowerpower"
-  end
 
-  step 'I click on the "Remove Property"' do
-    within ".concept > .properties" do
-      find("a.remove_property").click
-    end
-  end
-
-  step 'I should not see the property input anymore' do
-    within ".concept > .properties" do
-      page.should have_no_css(".create-property")
+  step 'I enter "flower" as Term Value and "en" as Term Language' do
+    within ".create-term[3]" do
+      fill_in "Term Value", :with => 'hippies'
+      fill_in "Language", :with => 'en'
     end
   end
 
@@ -169,9 +174,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     end
   end
 
-  step 'I should see a term "flower" with language "en"' do
-    page.should have_css ".terms td.term.value", text: "flower"
-    page.should have_css ".terms td.lang", text: "EN"
+  step 'I should see a term "flower" with language "en" and a property "label": "flowerpower"' do
+    page.should have_css ".concepts .concept-label", text: "flowerpower"
   end
 
   step 'I click on the "Cancel" link' do

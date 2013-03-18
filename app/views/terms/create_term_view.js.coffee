@@ -8,24 +8,18 @@ class Coreon.Views.Terms.CreateTermView extends Backbone.View
   template: Coreon.Templates["terms/create_term"]
 
   events:
-    'change input': 'input_changed'
     'click .remove_term': 'remove_term'
-
-  initialize: ->
-    @listenTo @model, 'validationFailure', @validationFailure
 
   render: ->
     @$el.empty()
-    @$el.html @template term: @model, id: @model.cid
+    @$el.html @template
+      id: @options.index
+      value: @value ? ""
+      language: @lang ? ""
     @
 
-  input_changed: (event) ->
-    element = $(event.target)
-    [all, attr] = element[0].name.match /\[([^[]+)\]$/
-    @model.set attr, element[0].value
-
-  remove_term: (event) ->
-    @model.collection?.remove @model
+  remove_term: ->
+    @remove()
 
   validationFailure: (errors) ->
     @$('.input').removeClass 'error'

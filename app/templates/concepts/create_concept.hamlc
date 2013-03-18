@@ -1,30 +1,32 @@
-%h2.label= @concept.get("label")
+%form#create_concept_form
 
-.errors
+  %h2.label= @concept.get("label")
 
-.properties
-  %h3= I18n.t "create_concept.properties"
-  %a.add_property.edit= I18n.t "create_concept.add_property"
+  .errors
 
-.terms
-  %h3= I18n.t "create_concept.terms"
-  %a.add_term.edit= I18n.t "create_concept.add_term"
+  .properties
+    %h3= I18n.t "create_concept.properties"
+    %a.add_property.edit= I18n.t "create_concept.add_property"
 
-.footer
-  .create.button= I18n.t "create_concept.create"
-  .cancel.button= I18n.t "create_concept.cancel"
+  .terms
+    %h3= I18n.t "create_concept.terms"
+    %a.add_term.edit= I18n.t "create_concept.add_term"
+
+  .footer
+    .create.button= I18n.t "create_concept.create"
+    .cancel.button= I18n.t "create_concept.cancel"
 
 
--#%div.input.value
--#  %input{:type => "text", :value => "gun"}
+  -#%div.input.value
+  -#  %input{:type => "text", :value => "gun"}
 
--#%h2.label= @concept.get("label") || I18n.t "create_concept.no_label"
--#%h4.system-info-toggle(title="System Info")= I18n.t "concept.info"
--#!= @info
--#
--#.properties
--#.terms
--#
--#.footer
--#  .create.button= I18n.t "create_concept.create"
--#  .cancel.button= I18n.t "create_concept.cancel"
+  -#%h2.label= @concept.get("label") || I18n.t "create_concept.no_label"
+  -#%h4.system-info-toggle(title="System Info")= I18n.t "concept.info"
+  -#!= @info
+  -#
+  -#.properties
+  -#.terms
+  -#
+  -#.footer
+  -#  .create.button= I18n.t "create_concept.create"
+  -#  .cancel.button= I18n.t "create_concept.cancel"

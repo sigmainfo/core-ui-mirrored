@@ -9,6 +9,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
   routes:
     "concepts/search/(:target/):query" : "search"
     "concepts/create(/:query)" : "create"
+    "concepts/create" : "create"
     "concepts/:id"    : "show"
 
   initialize: (options) ->
@@ -41,8 +42,9 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
   create: (query) ->
     screen = new Coreon.Views.Concepts.CreateConceptView model:
       new Coreon.Models.Concept
-    screen.model.get("terms").push
-      lang: "en"
-      value: query
+    if query
+      screen.model.get("terms").push
+        lang: "en"
+        value: query
     @view.switch screen
 

@@ -94,6 +94,23 @@ describe "Coreon.Routers.ConceptsRouter", ->
   describe "#create", ->
 
     it "is routed", ->
+      @router.routes.should.have.property "concepts/create", "create"
+
+    it "switches to concept create view", ->
+      @router.create()
+      @screen.should.be.an.instanceof Coreon.Views.Concepts.CreateConceptView
+
+    it "creates a new concept", ->
+      @router.create()
+      @screen.model.should.be.an.instanceof Coreon.Models.Concept
+
+    it "creates no term", ->
+      @router.create()
+      @screen.model.get("terms").should.have.length 0
+
+  describe "#create with query", ->
+
+    it "is routed", ->
       @router.routes.should.have.property "concepts/create(/:query)", "create"
 
     it "switches to concept create view", ->

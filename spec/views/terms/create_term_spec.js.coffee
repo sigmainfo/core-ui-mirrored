@@ -5,8 +5,8 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
-    @view = new Coreon.Views.Terms.CreateTermView
-      model: new Backbone.Model
+    @view = new Coreon.Views.Terms.CreateTermView index: 42
+    #      model: new Backbone.Model
 
   afterEach ->
     I18n.t.restore()
@@ -22,14 +22,22 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
     it "can be chained", ->
       @view.render().should.equal @view
 
+    it "renders empty term value by default", ->
+      @view.render()
+      @view.$el.should.have ".value"
+      @view.$('.value').should.have "input"
+      @view.$('.value input').val().should.equal ""
+      @view.$('.value input').attr('name').should.equal "concept[terms][42][value]"
+      @view.$('.value input').attr('id').should.equal "concept_terms_42_value"
+
     it "renders term value", ->
-      @view.model.set "value", "gun", silent: true
+      @view.value = "gun"
       @view.render()
       @view.$el.should.have ".value"
       @view.$('.value').should.have "input"
       @view.$('.value input').val().should.equal "gun"
-      @view.$('.value input').attr('name').should.equal "concept[terms][#{@view.model.cid}][value]"
-      @view.$('.value input').attr('id').should.equal "concept_terms_#{@view.model.cid}_value"
+      @view.$('.value input').attr('name').should.equal "concept[terms][42][value]"
+      @view.$('.value input').attr('id').should.equal "concept_terms_42_value"
 
     it "renders label for term value", ->
       I18n.t.withArgs("create_term.value").returns "Term Value"
@@ -37,16 +45,24 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
       @view.$el.should.have ".value"
       @view.$('.value').should.have "label"
       @view.$('.value label').should.have.text "Term Value"
-      @view.$('.value label').attr('for').should.equal "concept_terms_#{@view.model.cid}_value"
+      @view.$('.value label').attr('for').should.equal "concept_terms_42_value"
+
+    it "renders empty term language by default", ->
+      @view.render()
+      @view.$el.should.have ".language"
+      @view.$('.language').should.have "input"
+      @view.$('.language input').val().should.equal ""
+      @view.$('.language input').attr('name').should.equal "concept[terms][42][lang]"
+      @view.$('.language input').attr('id').should.equal "concept_terms_42_lang"
 
     it "renders term language", ->
-      @view.model.set "lang", "en", silent: true
+      @view.lang = "en"
       @view.render()
       @view.$el.should.have ".language"
       @view.$('.language').should.have "input"
       @view.$('.language input').val().should.equal "en"
-      @view.$('.language input').attr('name').should.equal "concept[terms][#{@view.model.cid}][lang]"
-      @view.$('.language input').attr('id').should.equal "concept_terms_#{@view.model.cid}_lang"
+      @view.$('.language input').attr('name').should.equal "concept[terms][42][lang]"
+      @view.$('.language input').attr('id').should.equal "concept_terms_42_lang"
 
     it "renders label for language", ->
       I18n.t.withArgs("create_term.language").returns "Language"
@@ -54,7 +70,7 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
       @view.$el.should.have ".language"
       @view.$('.language').should.have "label"
       @view.$('.language label').should.have.text "Language"
-      @view.$('.language label').attr('for').should.equal "concept_terms_#{@view.model.cid}_lang"
+      @view.$('.language label').attr('for').should.equal "concept_terms_42_lang"
 
     it "renders remove term link", ->
       I18n.t.withArgs("create_term.remove_term").returns "Remove Term"
@@ -68,23 +84,6 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
       @view.$el.should.have "a.add_term_property"
       @view.$('a.add_term_property').should.have.text "Add Property"
 
-  describe "changes on inputs", ->
-
-    beforeEach ->
-      @view.render()
-
-    it "triggers input_changed() on value change", ->
-      @view.input_changed = sinon.spy()
-      @view.delegateEvents()
-      @view.$('.value input').trigger("change")
-      @view.input_changed.should.have.been.called.once
-
-    it "triggers input_changed() on language change", ->
-      @view.input_changed = sinon.spy()
-      @view.delegateEvents()
-      @view.$('.language input').trigger("change")
-      @view.input_changed.should.have.been.called.once
-
   describe "remove term", ->
 
     beforeEach ->
@@ -96,19 +95,12 @@ describe "Coreon.Views.Terms.CreateTermsView", ->
       @view.$('.remove_term').click()
       @view.remove_term.should.have.been.called.once
 
-    it "removes itself from the collection", ->
-      collection = new Backbone.Collection
-      collection.push @view.model
+    it "removes itself", ->
+      @view.remove = sinon.spy()
       @view.$('.remove_term').click()
-      collection.size().should.eql 0
+      @view.remove.should.have.been.called.Once
 
   describe "validationFailure()", ->
-
-    it "is triggered by validation error of the model", ->
-      @view.validationFailure = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "validationFailure", foo: "bar"
-      @view.validationFailure.withArgs( foo: "bar" ).should.have.been.calledOnce
 
     it "sets class 'error' for term value on error", ->
       @view.render()

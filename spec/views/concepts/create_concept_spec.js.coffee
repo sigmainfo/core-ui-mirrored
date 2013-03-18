@@ -71,18 +71,6 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$('.create-term').should.have '.value'
       @view.$('.create-term').should.have '.language'
 
-    it "is triggered by add:terms", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "add:terms"
-      @view.render.should.have.been.calledOnce
-
-    it "is triggered by remove:terms", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "remove:terms"
-      @view.render.should.have.been.calledOnce
-
     it "renders Properties headline", ->
       I18n.t.withArgs("create_concept.properties").returns "Properties"
       @view.render()
@@ -99,38 +87,6 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$('.create-property').should.have '.value'
       @view.$('.create-property').should.have '.language'
 
-    it "is triggered by add:properties", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "add:properties"
-      @view.render.should.have.been.calledOnce
-
-    it "is triggered by remove:properties", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "remove:properties"
-      @view.render.should.have.been.calledOnce
-
-  describe "renderTitle()", ->
-
-    it "is triggered by change:terms", ->
-      @view.renderTitle = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "change:terms"
-      @view.renderTitle.should.have.been.calledOnce
-
-    it "is triggered by change:properties", ->
-      @view.renderTitle = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "change:properties"
-      @view.renderTitle.should.have.been.calledOnce
-
-    it "renders title", ->
-      @view.render()
-      @view.model.set "label", "foobar", silent: true
-      @view.renderTitle()
-      @view.$('.label').text().should.eql "foobar"
-
   describe "addTerm()", ->
 
     beforeEach ->
@@ -142,11 +98,15 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$(".add_term").click()
       @view.addTerm.should.have.been.calledOnce
 
-    it "calls addTerm() on the model", ->
+    it "appends new empty term view to term section", ->
       @view.model.addTerm = sinon.spy()
       @view.delegateEvents()
       @view.$(".add_term").click()
-      @view.model.addTerm.should.have.been.calledOnce
+      @view.$('.terms').should.have ".create-term"
+      @view.$('.create-term').should.have '.value'
+      @view.$('.create-term').should.have '.language'
+      @view.$('.create-term .value').should.have.value ''
+      @view.$('.create-term .language').should.have.value ''
 
   describe "addProperty()", ->
 
@@ -159,11 +119,17 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$(".add_property").click()
       @view.addProperty.should.have.been.calledOnce
 
-    it "calls addProperty() on the model", ->
+    it "appends new empty property to property section", ->
       @view.model.addProperty = sinon.spy()
       @view.delegateEvents()
       @view.$(".add_property").click()
-      @view.model.addProperty.should.have.been.calledOnce
+      @view.$('.properties').should.have ".create-property"
+      @view.$('.create-property').should.have '.key'
+      @view.$('.create-property').should.have '.value'
+      @view.$('.create-property').should.have '.language'
+      @view.$('.create-property .key').should.have.value ''
+      @view.$('.create-property .value').should.have.value ''
+      @view.$('.create-property .language').should.have.value ''
 
   describe "create()", ->
 
@@ -176,11 +142,35 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$(".button.create").click()
       @view.create.should.have.been.calledOnce
 
+    it "sets model to empty terms and properties by default", ->
+      @view.model.set = sinon.spy()
+      @view.model.create = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".button.create").click()
+      @view.model.set.withArgs( properties: [], terms: [] ).should.have.been.calledOnce
+
+    it "sets model with the json of its form", ->
+      @view.model.set = sinon.spy()
+      @view.model.create = sinon.spy()
+      @view.delegateEvents()
+      @view._formToJs = sinon.stub().returns properties: ["foo"], terms: ["bar"]
+      @view.create()
+      @view.model.set.withArgs( properties: ["foo"], terms: ["bar"] ).should.have.been.calledOnce
+
     it "calls create() on the model", ->
       @view.model.create = sinon.spy()
       @view.delegateEvents()
       @view.$(".button.create").click()
       @view.model.create.should.have.been.calledOnce
+
+    it "removes error messages", ->
+      @view.model.set = sinon.spy()
+      @view.model.create = sinon.spy()
+      @view.$('.input').addClass 'error'
+      @view.$('.error_message').html "errorz"
+      @view.create()
+      @view.$('.input').should.not.have.class 'error'
+      @view.$('.error_message').should.not.have.text "errorz"
 
   describe "cancel()", ->
 
@@ -226,11 +216,39 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
         nested_errors_on_terms: [ null ]
       @view.$('.errors ul').should.have.text ""
 
+    it "creates error messages in term sections", ->
+      I18n.t.withArgs("create_term.language_cant_be_blank").returns "Language can't be blank"
+      I18n.t.withArgs("create_term.value_cant_be_blank").returns "Value can't be blank"
+      @view.render()
+      @view.$('.add_term').click()
+      @view.$('.add_term').click()
+      @view.validationFailure terms: ["error"], nested_errors_on_terms: [ null,
+        value: ["can't be blank"],
+        lang: ["can't be blank"]
+      ]
+      @view.$('.create-term:eq(1) .value .input').should.have.class "error"
+      @view.$('.create-term:eq(1) .language .input').should.have.class "error"
+      @view.$('.create-term:eq(1) .language .error_message').should.have.text "Language can't be blank"
+      @view.$('.create-term:eq(1) .value .error_message').should.have.text "Value can't be blank"
 
-
-
-
-
+    it "creates error messages in properties sections", ->
+      I18n.t.withArgs("create_property.key_cant_be_blank").returns "Key can't be blank"
+      I18n.t.withArgs("create_property.language_cant_be_blank").returns "Language can't be blank"
+      I18n.t.withArgs("create_property.value_cant_be_blank").returns "Value can't be blank"
+      @view.render()
+      @view.$('.add_property').click()
+      @view.$('.add_property').click()
+      @view.validationFailure properties: ["error"], nested_errors_on_properties: [ null,
+        value: ["can't be blank"],
+        lang: ["can't be blank"]
+        key: ["can't be blank"]
+      ]
+      @view.$('.create-property:eq(1) .key .input').should.have.class "error"
+      @view.$('.create-property:eq(1) .value .input').should.have.class "error"
+      @view.$('.create-property:eq(1) .language .input').should.have.class "error"
+      @view.$('.create-property:eq(1) .key .error_message').should.have.text "Key can't be blank"
+      @view.$('.create-property:eq(1) .value .error_message').should.have.text "Value can't be blank"
+      @view.$('.create-property:eq(1) .language .error_message').should.have.text "Language can't be blank"
 
 
 

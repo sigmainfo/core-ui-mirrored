@@ -8,36 +8,24 @@ class Coreon.Views.Properties.CreatePropertyView extends Backbone.View
   template: Coreon.Templates["properties/create_property"]
 
   events:
-    'change input': 'input_changed'
     'click .remove_property': 'remove_property'
-
-  initialize: ->
-    @listenTo @model, 'validationFailure:property', @validationFailure
-  
-  input_changed: (event) ->
-    input = $(event.target)
-    [all, key] = input[0].name.match /\[([^[]*)\]$/
-    properties = @model.get "properties"
-    if properties[@options.id][key] != input.val()
-      properties[@options.id][key] = input.val()
-      @model.set "properties", properties
-      @model.trigger "change:properties"
 
   render: ->
     @$el.empty()
-    @$el.html @template property: @options.property, id: @options.id, prefix: "concept[properties]"
+    @$el.html @template
+      id: @options.index
+      key: @key
+      value: @value
+      lang: @lang
     @
 
-  remove_property: (event) ->
-    properties = @model.get "properties"
-    properties.splice @options.id, 1
-    @model.set "properties", properties
-    @model.trigger "change:properties remove:properties"
+  remove_property: ->
+    @remove()
 
-  validationFailure: (id, errors) ->
+  validationFailure: (index, errors) ->
     @$('.input').removeClass 'error'
     @$('.error_message').empty()
-    if @options.id == id
+    if @options.index == index
       if errors?.key?.length
         @$('.key .input').addClass 'error'
         if errors.key[0] is "can't be blank"

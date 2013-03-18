@@ -5,7 +5,11 @@
 describe "Coreon.Models.Concept", ->
 
   beforeEach ->
+    sinon.stub I18n, "t"
     @model = new Coreon.Models.Concept _id: "123"
+
+  afterEach ->
+    I18n.t.restore()
   
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
@@ -102,12 +106,22 @@ describe "Coreon.Models.Concept", ->
 
     describe "label", ->
 
-      context "when created", ->
+      context "when newly created", ->
 
-        it "defaults to id", ->
-          @model.id = "#abcdef"
+        it "defaults to <new concept>", ->
+          @model.isNew = sinon.stub().returns true
+          I18n.t.withArgs("concept.new_concept").returns "<new concept>"
+          @model.set terms: [
+              lang: "en"
+              value: "flower"
+            ], properties: [
+              key: "label"
+              value: "gun"
+            ]
           @model.initialize()
-          @model.get("label").should.equal "#abcdef"
+          @model.get("label").should.equal "<new concept>"
+
+      context "after save", ->
 
         it "uses first English term", ->
           @model.set terms: [
@@ -299,7 +313,10 @@ describe "Coreon.Models.Concept", ->
   describe "toJSON()", ->
 
     it "adds an outer hash with concept: as key", ->
-      JSON.stringify(@model.toJSON()).should.equal JSON.stringify concept: _.clone(@model.attributes)
+      JSON.stringify(@model.toJSON()).should.equal JSON.stringify( concept: _.omit @model.attributes, "label" )
+
+    it "ignores label attribute", ->
+      @model.toJSON().should.not.have.property "label"
 
   describe "save()", ->
 
@@ -359,43 +376,3 @@ describe "Coreon.Models.Concept", ->
       @model.validationFailure( foo: 'bar' )
       spy.withArgs( foo: 'bar' ).should.have.been.calledOnce
 
-    it "triggers validationFailure() on term models with errors", ->
-      @model.get("terms").add value: "flower", lang: "en"
-      @model.get("terms").add value: "gum", lang: "en"
-      @model.get("terms").at(0).validationFailure = sinon.spy()
-      @model.get("terms").at(1).validationFailure = sinon.spy()
-      @model.validationFailure nested_errors_on_terms: [
-        value: ["can't be blank"],
-        null
-      ]
-      @model.get("terms").at(0).validationFailure.withArgs( value: ["can't be blank"] ).should.have.been.calledOnce
-      @model.get("terms").at(1).validationFailure.should.not.be.called
-
-    it "triggers validationFailure:property events", ->
-      spy = sinon.spy()
-      @model.on "validationFailure:property", spy
-      @model.validationFailure nested_errors_on_properties: [
-        null,
-        { foo: "bar" },
-        { foo: "baz" }
-      ]
-      spy.should.have.been.calledTwice
-      spy.withArgs( 1, foo: "bar" ).should.have.been.calledOnce
-      spy.withArgs( 2, foo: "baz" ).should.have.been.calledOnce
-
-
-
-#    it "on_error()", ->
-#      Coreon.application = new Coreon.Application
-#      @model.onError = sinon.spy()
-#      @server = sinon.fakeServer.create()
-#      try
-#        @model.save()
-#        @server.respond([422, {}, ""])
-#        @model.onError.should.have.been.calledOnce
-#      finally
-#        @server.restore()
-#        Coreon.application = null
-#
-#
-#)#

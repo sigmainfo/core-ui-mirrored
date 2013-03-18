@@ -1,12 +1,12 @@
 .value
   %label{:for => "concept_terms_#{@id}_value"}= I18n.t "create_term.value"
   .input
-    %input{:type => "text", :id => "concept_terms_#{@id}_value", :name => "concept[terms][#{@id}][value]", :value => @term.get("value")}
+    %input{:type => "text", :id => "concept_terms_#{@id}_value", :name => "concept[terms][#{@id}][value]", :value => @value}
   .error_message
 .language
   %label{:for => "concept_terms_#{@id}_lang"}= I18n.t "create_term.language"
   .input
-    %input{:type => "text", :id => "concept_terms_#{@id}_lang", :name => "concept[terms][#{@id}][lang]", :value => @term.get("lang")}
+    %input{:type => "text", :id => "concept_terms_#{@id}_lang", :name => "concept[terms][#{@id}][lang]", :value => @language}
   .error_message
 
 %a.remove_term.edit= I18n.t "create_term.remove_term"

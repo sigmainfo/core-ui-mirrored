@@ -63,15 +63,9 @@ class Coreon.Models.Concept extends Backbone.Model
 
   validationFailure: (errors) ->
       @trigger "validationFailure", errors
-      if errors.nested_errors_on_terms
-        for term_error, index in errors.nested_errors_on_terms when term_error
-          @get("terms").at( index ).validationFailure term_error
-      if errors.nested_errors_on_properties
-        for property_error, index in errors.nested_errors_on_properties when property_error
-          @trigger "validationFailure:property", index, property_error
 
   toJSON: (options) ->
-    { concept: _.clone(this.attributes) }
+    concept: _.omit this.attributes, "label"
 
   info: ->
     info = id: @id
@@ -91,8 +85,6 @@ class Coreon.Models.Concept extends Backbone.Model
       @trigger 'remove:terms'
       @trigger 'change:terms'
       
-      #if e is "remove" or e is "change"
-
   hit: ->
     Coreon.application.hits.get(@id)?
 
@@ -103,7 +95,10 @@ class Coreon.Models.Concept extends Backbone.Model
     @set "label", @_label()
 
   _label: ->
-    @_propLabel() or @_termLabel() or @id
+    if @isNew()
+      I18n.t "concept.new_concept"
+    else
+      @_propLabel() or @_termLabel() or @id
 
   _propLabel: ->
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
