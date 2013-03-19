@@ -16,7 +16,7 @@ describe "Coreon.Modules.Accumulation", ->
     delete Coreon.Models.MyModel
 
   afterEach ->
-    Coreon.Models.MyModel.collection().reset() 
+    Coreon.Models.MyModel.collection().reset()
 
   describe "#collection", ->
 
@@ -29,6 +29,12 @@ describe "Coreon.Modules.Accumulation", ->
     it "has model class set to self", ->
       Coreon.Models.MyModel.collection().model.should.equal Coreon.Models.MyModel
 
+  describe "#create", ->
+
+    it "passes arguments to collection's create()", ->
+        Coreon.Models.MyModel.collection().create = sinon.spy()
+        Coreon.Models.MyModel.create "attr", foo: "bar"
+        Coreon.Models.MyModel.collection().create.should.have.been.calledOnce
 
   describe "#find", ->
 

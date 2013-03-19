@@ -5,6 +5,9 @@ Coreon.Modules.Accumulation =
   collection: ->
     @_collection ||= new Backbone.Collection null, model: @
 
+  create: (attributes, options = {}) ->
+    @collection().create attributes, options
+
   find: (id) ->
     @collection().get(id) or @fetch(id)
 
