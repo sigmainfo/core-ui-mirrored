@@ -9,6 +9,7 @@ div.concept {
   h2 {
     display: inline-block;
     font-size: 1.9em;
+    min-height: 1.4em;
     line-height: 1.4em;
     padding: 0px 10px 0px 20px;
     margin-bottom: 12px;
@@ -238,6 +239,7 @@ div.concept {
     h2 {
       font-size: 1.5em;
       line-height: 1em;
+      min-height: 1em;
       padding: 2px 6px 3px 16px;
       margin-bottom: 6px;
       margin-right: 0px;
@@ -309,6 +311,7 @@ div.concept {
     
     .terms {
       padding-top: 6px;
+              font-size: 0.9em;
       .section {
         padding: 0;
       }
@@ -320,7 +323,7 @@ div.concept {
             border: none;
           }
       }
-      .language {
+      &>.language {
         @include dottedline;
         padding-top: 1px;
       }
@@ -328,12 +331,11 @@ div.concept {
         content: none;
       }
       .term h4.value {
-        font-size: 1em;
+        font-size: 1.1em;
         padding: 0px 100px 0px 47px;
       }
 
       .properties {
-        font-size: 0.9em;
         background: none;
         .section-toggle {
           right: 0px;
