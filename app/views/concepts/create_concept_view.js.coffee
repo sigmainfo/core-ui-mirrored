@@ -27,6 +27,8 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
 
   render: ->
     @$el.html @template concept: @model
+    bn_view = new Coreon.Views.Concepts.ConceptTreeView model: @model
+    @$('.broader_narrower').html bn_view.render().$el
     for term in @model.get("terms")?.models ? []
       term_view = new Coreon.Views.Terms.CreateTermView index: @termCount, model: term
       @termCount += 1

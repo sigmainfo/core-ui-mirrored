@@ -4,7 +4,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   include SearchSteps
 
   step 'I should see a button "Create Concept"' do
-    page.should have_css(".button", text: "Create Concept")
+    page.should have_css ".button", text: "Create Concept"
   end
 
   step 'I click on the create concept link' do
@@ -16,23 +16,32 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see title "<New Concept>"' do
-    page.should have_css("h2.label", text: "<New Concept>")
+    page.should have_css "h2.label", text: "<New Concept>"
   end
 
   step 'I should see an "Add Property" link' do
-    page.should have_css("a.add_property", text: "Add Property")
+    page.should have_css "a.add_property", text: "Add Property"
   end
 
   step 'I should see an "Add Term" link' do
-    page.should have_css("a.add_term", text: "Add Term")
+    page.should have_css "a.add_term", text: "Add Term"
   end
 
   step 'I should see a link to "create" the concept' do
-    page.should have_css(".create", "Create")
+    page.should have_css ".create", "Create"
   end
 
   step 'I should see a link to "cancel" the creation of the concept' do
-    page.should have_css(".cancel", "Cancel")
+    page.should have_css ".cancel", "Cancel"
+  end
+
+  step 'I should see a broader narrower section with only a <New Concept>' do
+    within ".concept-tree" do
+      page.should have_css ".section-toggle", "Broader & Narrower"
+      page.should have_css ".self", "<New Concept>"
+      page.should have_css ".super", ""
+      page.should have_css ".sub", ""
+    end
   end
 
   step 'I click on "Add Term"' do
