@@ -30,9 +30,6 @@ class Coreon.Models.Concept extends Backbone.Model
       info[key] = value
     info
 
-  _hit: ->
-    Coreon.application?.hits?.get(@id) ? null
-
   _updateLabel: ->
     @set "label", @_label()
 
@@ -56,4 +53,4 @@ class Coreon.Models.Concept extends Backbone.Model
     Coreon.application.sync method, model, options
 
   _updateHit: ->
-    @set "hit", @_hit()
+    @set "hit", Coreon.application?.hits.findByResult(@)

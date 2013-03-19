@@ -11,10 +11,3 @@ describe "Coreon.Models.Hit", ->
 
   it "has a default score of 0", ->
     @hit.get("score").should.equal 0
-
-  describe "#validate", ->
-
-    it "enforces id", ->
-      @hit.isValid().should.be.true
-      @hit.id = null
-      @hit.isValid().should.be.false

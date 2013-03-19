@@ -5,7 +5,12 @@
 describe "Coreon.Models.Concept", ->
 
   beforeEach ->
+    Coreon.application = hits: new Backbone.Collection []
+    Coreon.application.hits.findByResult = -> null
     @model = new Coreon.Models.Concept _id: "123"
+
+  afterEach ->
+    Coreon.application = null
   
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
@@ -108,11 +113,14 @@ describe "Coreon.Models.Concept", ->
     describe "hit", ->
        
       beforeEach ->
-        @hits = new Backbone.Collection [ _id: "hit" ]
-        @hit = @hits.get "hit"
+        @hits = new Backbone.Collection [ _id: "hit", result: @model ]
+        @hit = @hits.at 0
+        @hits.findByResult = (result) =>
+          for hit in @hits.models
+            return hit if hit.get("result") is result
+          null
         Coreon.application =
           hits: @hits
-        @model.id = "hit"
         @model.initialize()
           
       afterEach ->
@@ -130,10 +138,10 @@ describe "Coreon.Models.Concept", ->
         expect(@model.get "hit").to.be.null
 
       it "updates hit when added", ->
-        @model.id = "foo"  
-        @hits.add _id: "foo"
-        hit = @hits.get "foo"
-        @model.get("hit").should.equal hit
+        other = new Backbone.Model 
+        @hits.add result: other
+        added = hit for hit in @hits.models when hit.get("result") is @model
+        @model.get("hit").should.equal added
         
   describe "info()", ->
     

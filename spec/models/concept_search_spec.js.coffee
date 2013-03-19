@@ -15,6 +15,7 @@ describe "Coreon.Models.ConceptSearch", ->
       Coreon.application =
         sync: ->
         hits: new Backbone.Collection
+      Coreon.application.hits.findByResult = -> null
       sinon.stub Coreon.Models.Search::, "fetch"
 
     afterEach ->
@@ -66,5 +67,4 @@ describe "Coreon.Models.ConceptSearch", ->
           ]
         @search.fetch()
         Coreon.application.hits.should.have.length 1
-        should.exist Coreon.application.hits.get "1234"
-      
+        Coreon.application.hits.at(0).get("result").should.have.property "id", "1234"
