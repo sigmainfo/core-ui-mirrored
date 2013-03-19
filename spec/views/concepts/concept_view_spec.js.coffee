@@ -62,12 +62,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       finally
         Coreon.application = null
 
-    it "renders tree only when applicable", ->
+    it "always renders tree", ->
       @view.model.set
         sub_concept_ids: []
         super_concept_ids: []
       @view.render()
-      @view.$el.should.not.have ".concept-tree"
+      @view.$el.should.have ".concept-tree"
 
     it "renders properties", ->
       @view.model.set "properties", [{key: "label", value: "handgun"}], silent: true

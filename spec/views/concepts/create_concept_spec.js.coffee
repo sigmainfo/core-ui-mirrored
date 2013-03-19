@@ -93,7 +93,7 @@ describe "Coreon.Views.Concepts.CreateConceptView", ->
       @view.$('.broader_narrower h3').should.have.text "B & N"
 
     it "renders Broader Narrower section", ->
-      @view.model.get = sinon.stub().returns "concept_label"
+      @view.model.set "label", "concept_label"
       @view.render()
       @view.$('.broader_narrower').should.have ".super"
       @view.$('.broader_narrower').should.have ".sub"
