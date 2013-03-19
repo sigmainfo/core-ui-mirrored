@@ -3,8 +3,7 @@
 #= require views/simple_view
 #= require templates/widgets/concept_map
 #= require d3
-#= require views/concepts/concept_node_view
-#= require models/hit
+#= require views/widgets/concept_map/left_to_right
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
@@ -19,18 +18,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     svgOffset: 22
     scaleExtent: [0.5, 2]
     scaleStep: 0.2
-    padding: 20
-    offsetX: 190
-    offsetY: 25
 
   events:
     "click .zoom-in":  "zoomIn"
     "click .zoom-out": "zoomOut"
 
   initialize: (options = {}) ->
-    @views = {}
-    @layout = d3.layout.tree()
-    @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
@@ -42,10 +35,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     else
       @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
+    @map = d3.select(@$("svg g.concept-map").get 0)
+    @renderStrategy = new Coreon.Views.Widgets.ConceptMap.LeftToRight @map
 
   render: ->
-    @_renderNodes()
-    @_renderEdges()
+    @renderStrategy.render @model.tree(), size: [@_svgWidth, @_svgHeight]
     @
 
   zoomIn: ->
@@ -85,90 +79,5 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       resize: (event, ui) =>
         @resize null, ui.size.height
 
-  _renderNodes: ->
-    svg = @$("svg")
-    @layout.size [
-      @_svgHeight
-      @_svgWidth - 2 * @options.padding
-    ]
-    views = @views
-    data = @layout.nodes @model.tree().root
-
-    @navigator.translate([ @options.padding, 0 ])
-    @group = d3.select(@$("svg g.concept-map").get 0)
-      .attr("transform", "translate(#{@options.padding}, 0)")
-
-
-    selection = @group.selectAll(".concept-node")
-      .data( data[1..], (datum) -> datum.model.cid )
-
-    selection.enter()
-      .append("svg:g")
-      .attr("class", "concept-node")
-      .each( (datum) ->
-        view = new Coreon.Views.Concepts.ConceptNodeView
-          el: @
-          model: datum.model
-        views[datum.model.cid] = view.render()
-      )
-
-    selection.exit()
-      .each( (datum) ->
-        views[datum.model.cid].stopListening()
-        delete views[datum.model.cid]
-      )
-      .remove()
-
-    minY = @options.offsetY
-    for datum in data
-      if datum.children?.length > 1
-        minY = Math.min minY, datum.children[1].x - datum.children[0].x
-    scaleY = @options.offsetY / minY
-
-    selection
-      .each( (datum) =>
-        datum.y = datum.x * scaleY
-        datum.x = ( datum.depth - 1 ) * @options.offsetX
-      )
-      .attr( "transform", (datum) ->
-        "translate(#{datum.x}, #{datum.y})"
-      )
-    @
-
-  _renderEdges: ->
-    data = for edge in @model.tree().edges
-      continue unless @views[edge.source.model.cid]?
-      continue unless @views[edge.target.model.cid]?
-      edge
-    selection = @group.selectAll(".concept-edge")
-      .data( data, (datum) ->
-        "#{datum.source.model.cid}|#{datum.target.model.cid}"
-      )
-    
-    selection.enter()
-      .insert("svg:path", ".concept-node")
-      .attr("class", "concept-edge")
-
-    selection.exit()
-      .remove()
-
-    selection
-      .attr("d", (datum) =>
-        [source, target] = [datum.source, datum.target]
-        [sourceBox, targetBox] = ( @views[datum.model.cid].box() for datum in [source, target] )
-        @stencil
-          source:
-            x: source.y + sourceBox.height / 2
-            y: source.x + sourceBox.width
-          target:
-            x: target.y + sourceBox.height / 2
-            y: target.x
-      )
-      .classed( "hit", (datum) ->
-        datum.source.model.has("hit") and datum.target.model.has("hit")
-      )
-
-    @
-  
   _panAndZoom: =>
-    @group?.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+    @map.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")

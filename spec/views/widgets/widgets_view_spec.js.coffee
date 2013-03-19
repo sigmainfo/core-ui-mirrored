@@ -63,7 +63,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     it "renders map", ->
       @view.render()
       @view.$el.should.have "#coreon-concept-map"
-      @view.map.render.should.have.been.calledOnce
+      @view.map.render.should.have.property "callCount", 1
 
     it "renders map only once", ->
       @view.render()
