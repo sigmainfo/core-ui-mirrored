@@ -303,10 +303,10 @@ describe "Coreon.Models.Concept", ->
 
   describe "create()", ->
 
-    it "calls save()", ->
-      @model.save = sinon.spy()
+    it "calls create() on the class", ->
+      Coreon.Models.Concept.create = sinon.spy()
       @model.create()
-      @model.save.withArgs( null,
+      Coreon.Models.Concept.create.withArgs( @model,
         success: @model.onSuccess
         error: @model.onError ).should.have.been.calledOnce
 
@@ -340,7 +340,7 @@ describe "Coreon.Models.Concept", ->
   describe "onSuccess()", ->
 
     it "is triggered by successfull save()", ->
-      @model.save = (data, opts) ->
+      Coreon.Models.Concept.create = (data, opts) ->
         opts.success()
       @model.onSuccess = sinon.spy()
       @model.create()
@@ -355,7 +355,7 @@ describe "Coreon.Models.Concept", ->
   describe "onError()", ->
 
     it "is triggered by save() error", ->
-      @model.save = (data, opts) ->
+      Coreon.Models.Concept.create = (data, opts) ->
         opts.error()
       @model.onError = sinon.spy()
       @model.create()

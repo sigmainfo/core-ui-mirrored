@@ -49,7 +49,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @trigger("add:properties")
 
   create: ->
-    @save null,
+    Coreon.Models.Concept.create @,
       success: @onSuccess
       error: @onError
 
