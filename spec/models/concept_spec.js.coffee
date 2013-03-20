@@ -6,10 +6,13 @@ describe "Coreon.Models.Concept", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+    Coreon.application = hits: new Backbone.Collection []
+    Coreon.application.hits.findByResult = -> null
     @model = new Coreon.Models.Concept _id: "123"
 
   afterEach ->
     I18n.t.restore()
+    Coreon.application = null
   
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
@@ -191,36 +194,39 @@ describe "Coreon.Models.Concept", ->
             value: "poetry"
           @model.get("label").should.equal "poetry"
 
-  describe "hit", ->
-     
-    beforeEach ->
-      @hits = new Backbone.Collection [ _id: "hit" ]
-      @hit = @hits.get "hit"
-      Coreon.application =
-        hits: @hits
-      @model.id = "hit"
-      @model.initialize()
+    describe "hit", ->
+       
+      beforeEach ->
+        @hits = new Backbone.Collection [ _id: "hit", result: @model ]
+        @hit = @hits.at 0
+        @hits.findByResult = (result) =>
+          for hit in @hits.models
+            return hit if hit.get("result") is result
+          null
+        Coreon.application =
+          hits: @hits
+        @model.initialize()
+          
+      afterEach ->
+        Coreon.application = null
+      
+      it "gets hit from id", ->
+        @model.get("hit").should.equal @hit
+
+      it "updates hit on reset", ->
+        @hits.reset []
+        expect(@model.get "hit").to.be.null
+
+      it "updates hit on remove", ->
+        @hits.remove @hit
+        expect(@model.get "hit").to.be.null
+
+      it "updates hit when added", ->
+        other = new Backbone.Model
+        @hits.add result: other
+        added = hit for hit in @hits.models when hit.get("result") is @model
+        @model.get("hit").should.equal added
         
-    afterEach ->
-      Coreon.application = null
-    
-    it "gets hit from id", ->
-      @model.get("hit").should.equal @hit
-
-    it "updates hit on reset", ->
-      @hits.reset []
-      expect(@model.get "hit").to.be.null
-
-    it "updates hit on remove", ->
-      @hits.remove @hit
-      expect(@model.get "hit").to.be.null
-
-    it "updates hit when added", ->
-      @model.id = "foo"
-      @hits.add _id: "foo"
-      hit = @hits.get "foo"
-      @model.get("hit").should.equal hit
-
   describe "set()", ->
 
     it "handles json (as hash)", ->

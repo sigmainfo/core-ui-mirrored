@@ -5,13 +5,13 @@
 class Coreon.Models.ConceptSearch extends Coreon.Models.Search
 
   fetch: (options = {}) ->
-    super.done (data) ->
-      results = []
-      hits    = []
-      for hit in data.hits
-        results.push hit.result
+    success = options.success
+    options.success = (model, response, options) ->
+      success arguments... if success?
+      hits = []
+      for hit in response.hits
         hits.push
-          _id: hit.result[Coreon.Models.Concept::idAttribute]
           score: hit.score
-      Coreon.Models.Concept.upsert results
+          result: Coreon.Models.Concept.upsert hit.result
       Coreon.application?.hits.reset hits
+    super options

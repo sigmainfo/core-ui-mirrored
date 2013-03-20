@@ -15,27 +15,27 @@ describe "Coreon.Models.ConceptSearch", ->
       Coreon.application =
         sync: ->
         hits: new Backbone.Collection
-      @promise =
-        done: ->
-      sinon.stub(Coreon.Models.Search::, "fetch").returns @promise
+      Coreon.application.hits.findByResult = -> null
+      sinon.stub Coreon.Models.Search::, "fetch"
 
     afterEach ->
       Coreon.application = null
       Coreon.Models.Search::fetch.restore()
 
     it "calls super", ->
-      callback = ->
-      @search.fetch success: callback
-      Coreon.Models.Search::fetch.should.have.been.calledWith success: callback
+      @search.fetch foo: "bar"
+      Coreon.Models.Search::fetch.should.have.been.calledWithMatch foo: "bar"
 
-    context "done", ->
+    context "success", ->
 
-      beforeEach ->
-        @promise.done = (@done) =>
-        @search.fetch()
-  
+      it "calls passed callback", ->
+        Coreon.Models.Search::fetch.yieldsTo "success", @search, hits: []
+        spy = sinon.spy()
+        @search.fetch success: spy
+        spy.should.have.been.calledOnce
+        
       it "updates concepts", ->
-        @done 
+        Coreon.Models.Search::fetch.yieldsTo "success", @search,
           hits: [
             {
               score: 1.56
@@ -50,13 +50,14 @@ describe "Coreon.Models.ConceptSearch", ->
                 ]
             }
           ]
+        @search.fetch()
         concept = Coreon.Models.Concept.find "1234"
         concept.get("properties").should.eql [{key: "label", value: "poet"}]
         concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
 
 
       it "updates current hits", ->
-        @done
+        Coreon.Models.Search::fetch.yieldsTo "success", @search,
           hits: [
             {
               score: 1.56
@@ -64,6 +65,6 @@ describe "Coreon.Models.ConceptSearch", ->
                 _id: "1234"
             }
           ]
+        @search.fetch()
         Coreon.application.hits.should.have.length 1
-        should.exist Coreon.application.hits.get "1234"
-      
+        Coreon.application.hits.at(0).get("result").should.have.property "id", "1234"

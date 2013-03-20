@@ -56,7 +56,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
   _resetFromHits: ->
     model.set "hit", null for model in @models
     attrs = for hit in @hits.models
-      _id: hit.id
+      _id: hit.get("result").id
       hit: hit
       expandedOut: true
       expandedIn: true

@@ -89,7 +89,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
     it "updates selection", ->
       @router.app.hits.reset = sinon.spy()
       @router.show "123"
-      @router.app.hits.reset.should.have.been.calledWith [ _id: "123" ]
+      @router.app.hits.reset.should.have.been.calledWith [ result: @concept ]
 
   describe "#create", ->
 
@@ -128,6 +128,3 @@ describe "Coreon.Routers.ConceptsRouter", ->
         value: "gun"
         lang: "en"
         properties: []
-
-
-

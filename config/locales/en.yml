@@ -90,6 +90,7 @@ en:
     title: "Concept Map"
     zoom-in: "Zoom in"
     zoom-out: "Zoom out"
+    toggle-orientation: "Toggle orientation"
 
   create_concept:
     terms: "Terms"
@@ -116,27 +117,3 @@ en:
     language: "Language"
     key_cant_be_blank: "Please enter a Property Key."
     value_cant_be_blank: "Please enter a Property Value."
-
-#  create_properties:
-#    title: "Properties"
-#    add: "Add property"
-#
-#  create_property:
-#    remove: "Remove property"
-#    property_key: "Property key"
-#    property_value: "Property value"
-#    language: "Language"
-#
-#  create_terms:
-#    add: "Add term"
-#
-#  create_term:
-#    remove: "Remove term"
-#    value: "Term value"
-#    language: "Language"
-#    add_property: "Add property"
-#
-#  create_concept:
-#    cancel: "Cancel"
-#    create: "Create"
-#    no_label: "[Label]"

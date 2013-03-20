@@ -11,3 +11,16 @@ describe "Coreon.Collections.Hits", ->
 
   it "uses Hit model", ->
     @hits.model.should.equal Coreon.Models.Hit
+
+  describe "findByResult", ->
+
+    beforeEach ->
+      @result = new Backbone.Model
+  
+    it "returns null when not found", ->
+      expect(@hits.findByResult @result).to.be.null
+
+    it "finds hit for result", ->
+      @hits.reset [ result: @result ], silent: true
+      @hits.findByResult(@result).get("result").should.equal @result
+    

@@ -34,10 +34,10 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     search.fetch()
 
   show: (id) ->
-    screen = new Coreon.Views.Concepts.ConceptView
-      model: Coreon.Models.Concept.find id
+    concept = Coreon.Models.Concept.find id
+    screen = new Coreon.Views.Concepts.ConceptView model: concept
     @view.switch screen
-    @app.hits.reset [ _id: id ]
+    @app.hits.reset [ result: concept ]
 
   create: (query) ->
     screen = new Coreon.Views.Concepts.CreateConceptView model:
@@ -47,4 +47,3 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
         lang: "en"
         value: query
     @view.switch screen
-

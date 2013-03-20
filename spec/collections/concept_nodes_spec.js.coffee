@@ -34,7 +34,8 @@ describe "Coreon.Collections.ConceptNodes", ->
     context "connecting hits", ->
         
       beforeEach ->
-        @hits = new Backbone.Collection [ _id: "hit" ]
+        @concept = new Backbone.Model _id: "hit"
+        @hits = new Backbone.Collection [ result: @concept ]
       
       it "assigns hits from options", ->
         @collection.initialize [], hits: @hits
@@ -43,7 +44,7 @@ describe "Coreon.Collections.ConceptNodes", ->
       it "resets from hits", ->
         @collection.initialize [], hits: @hits
         should.exist @collection.get("hit")
-        @collection.get("hit").get("hit").should.equal @hits.get "hit"
+        @collection.get("hit").get("hit").should.equal @hits.at(0)
 
       it "expands nodes from hits", ->
         @collection.initialize [], hits: @hits
@@ -52,9 +53,10 @@ describe "Coreon.Collections.ConceptNodes", ->
 
       it "is updated when hits are reset", ->
         @collection.initialize [], hits: @hits
-        @hits.reset [ _id: "hit_2" ]
+        other = new Backbone.Model _id: "other"
+        @hits.reset [ result: other ]
         @collection.should.have.length 1
-        should.exist @collection.get("hit_2")
+        @collection.at(0).should.have.property "id", "other"
 
   describe "remove()", ->
 

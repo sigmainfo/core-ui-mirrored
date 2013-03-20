@@ -53,6 +53,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     it "renders tree", ->
       Coreon.application = hits: new Backbone.Collection
+      Coreon.application.hits.findByResult = -> null
       try
         @view.model.set "super_concept_ids", ["1234"], silent: true
         @view.render()
