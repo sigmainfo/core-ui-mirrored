@@ -15,6 +15,7 @@ Feature: maintainer creates concept
     When I click on the create concept link
     Then I should be on the create concept page
     And I should see title "<New Concept>"
+    #And I should see the "Broader and Narrower" section with only "gun"?
     And I should see an "Add Property" link
     And I should see an "Add Term" link
     And I should see a link to "create" the concept
@@ -42,18 +43,7 @@ Feature: maintainer creates concept
     Then I should be redirected to the concept page of the newly created concept
     When I enter "flower" in the search field
     And I click the search button
-    Then I should see a term "flower" with language "en" and a property "label": "flowerpower"
-    
-
-    #And I should see an input for term value with "gun"
-    #And I should see an input "language" filled with the users search language
-    #And I should see a "Remove Term" link
-    #And I should see the "Broader and Narrower" section with only "gun"?
-    #And I should see an "Add Property" link for the term
-    #When I enter "flower" into the term value field and "en" into the term language field
-    #Then I should see title "flower"
-
-    #Then I should see title "flowerpower"
+    Then I should see a concept "flowerpower"
 
   Scenario: cancel create concept
     When I enter "gun" in the search field
