@@ -54,7 +54,8 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.find(".search-results-concepts .concept-label", text: "handgun").click
   end
 
-  step 'I shoud see "handgun" displayed in the concept map' do
+  step 'I should see "handgun" displayed in the concept map' do
+    sleep 4051
     page.should have_css("#coreon-concept-map .concept-node", text: "handgun")
   end
   

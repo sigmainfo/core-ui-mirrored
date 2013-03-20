@@ -20,7 +20,7 @@ Feature: user browses concept graph
     And it should be empty
     When I search for "handgun"
     And select "handgun" from the result list
-    Then I shoud see "handgun" displayed in the concept map
+    Then I should see "handgun" displayed in the concept map
     And I should see nodes for "pistol" and "revolver"
     And I should see a node "weapon"
     And I should see a node "long gun"

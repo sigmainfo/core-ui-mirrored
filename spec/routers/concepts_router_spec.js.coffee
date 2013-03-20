@@ -108,6 +108,11 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.create()
       @screen.model.get("terms").should.have.length 0
 
+    it "updates selection", ->
+      @router.app.hits.reset = sinon.spy()
+      @router.show "123"
+      @router.app.hits.reset.should.have.been.calledWith [ result: @screen.model ]
+
   describe "#create with query", ->
 
     it "is routed", ->
@@ -128,3 +133,8 @@ describe "Coreon.Routers.ConceptsRouter", ->
         value: "gun"
         lang: "en"
         properties: []
+
+    it "updates selection", ->
+      @router.app.hits.reset = sinon.spy()
+      @router.show "123"
+      @router.app.hits.reset.should.have.been.calledWith [ result: @screen.model ]

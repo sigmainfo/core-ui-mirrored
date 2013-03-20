@@ -47,3 +47,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
         lang: "en"
         value: query
     @view.switch screen
+    @app.hits.reset [ result: screen.model ]
+
+

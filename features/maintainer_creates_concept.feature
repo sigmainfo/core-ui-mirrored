@@ -15,7 +15,8 @@ Feature: maintainer creates concept
     When I click on the create concept link
     Then I should be on the create concept page
     And I should see title "<New Concept>"
-    #And I should see the "Broader and Narrower" section with only "gun"?
+    And I should see a new concept node "<New Concept>" within the concept map
+    And I should see "<New Concept>" being the current concept within the "Broader & Narrower" section
     And I should see an "Add Property" link
     And I should see an "Add Term" link
     And I should see a link to "create" the concept

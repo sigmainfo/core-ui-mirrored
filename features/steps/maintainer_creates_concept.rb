@@ -19,8 +19,9 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css "h2.label", text: "<New Concept>"
   end
 
-  #step 'I should see the "Broader and Narrower" section with only "gun"?' do
-  #end
+  step 'I should see a new concept node "<New Concept>" within the concept map' do
+    page.should have_css ".concept-node.new", text: "<New Concept>"
+  end
 
   step 'I should see an "Add Property" link' do
     page.should have_css "a.add_property", text: "Add Property"
@@ -38,7 +39,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css ".cancel", "Cancel"
   end
 
-  step 'I should see a broader narrower section with only a <New Concept>' do
+  step 'I should see "<New Concept>" being the current concept within the "Broader & Narrower" section' do
     within ".concept-tree" do
       page.should have_css ".section-toggle", "Broader & Narrower"
       page.should have_css ".self", "<New Concept>"
