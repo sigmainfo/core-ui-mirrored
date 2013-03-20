@@ -74,6 +74,12 @@ div.create-concept {
     }
   }
   
+  .concept-tree .section {
+    .self {
+      color: $button-color;
+    }
+  }
+  
   .create-term, .create-property {
     position: relative;
     padding-bottom: 18px;
