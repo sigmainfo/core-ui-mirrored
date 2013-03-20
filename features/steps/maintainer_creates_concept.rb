@@ -19,6 +19,9 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css "h2.label", text: "<New Concept>"
   end
 
+  #step 'I should see the "Broader and Narrower" section with only "gun"?' do
+  #end
+
   step 'I should see an "Add Property" link' do
     page.should have_css "a.add_property", text: "Add Property"
   end
@@ -75,43 +78,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css( ".terms .value .error_message", text: "Please enter a Term Value" )
     page.should have_css( ".terms .language .error_message", text: "Please enter the Language of the Term" )
   end
-#
-
-#  step 'I should see an input for term value with "gun"' do
-#    within ".create-term[3]" do
-#      find_field("Term Value").value.should == "gun"
-#    end
-#  end
-#
-#  step 'I should see an input "language" filled with the users search language' do
-#    within ".create-term[3]" do
-#      find_field("Language").value.should == "en"
-#    end
-#  end
-#
-#  step 'I should see a "Remove Term" link' do
-#    within ".create-term[3]" do
-#      page.should have_css("a.remove_term", text: "Remove Term")
-#    end
-#  end
-#
-#  step 'I should see an "Add Property" link for the term' do
-#    within ".create-term[3]" do
-#      page.should have_css("a.add_term_property", text: "Add Property")
-#    end
-#  end
-#
-#  step 'I enter "flower" into the term value field and "en" into the term language field' do
-#    within ".create-term[3]" do
-#      fill_in "Term Value", :with => 'flower'
-#      fill_in "Language", :with => 'en'
-#      fill_in "Language", :with => 'en'
-#    end
-#  end
-#
-#  step 'I should see title "flower"' do
-#    page.should have_css "h2.label", text: "flower"
-#  end
   
   step 'I click on "Remove Term"' do
     within ".create-term[3]" do
@@ -181,9 +147,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "flower"
     end
+    sleep 0.2
   end
 
-  step 'I should see a term "flower" with language "en" and a property "label": "flowerpower"' do
+  step 'I should see a concept "flowerpower"' do
     page.should have_css ".concepts .concept-label", text: "flowerpower"
   end
 
