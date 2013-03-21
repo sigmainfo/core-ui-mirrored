@@ -318,11 +318,19 @@ describe "Coreon.Models.Concept", ->
 
   describe "toJSON()", ->
 
-    it "adds an outer hash with concept: as key", ->
-      JSON.stringify(@model.toJSON()).should.equal JSON.stringify( concept: _.omit @model.attributes, "label" )
+    it "returns wrapped attributes hash", ->
+      @model.set
+        _id: "my-concept"
+        super_concept_ids: [ "super_1", "super_2" ]
+        sub_concept_ids: [ "sub_1", "sub_2" ]
+      json = @model.toJSON()
+      json.should.have.deep.property "concept._id", "my-concept"
+      json.should.have.deep.property("concept.super_concept_ids").that.eql [ "super_1", "super_2" ]
+      json.should.have.deep.property("concept.sub_concept_ids").that.eql [ "sub_1", "sub_2" ]
 
-    it "ignores label attribute", ->
-      @model.toJSON().should.not.have.property "label"
+    it "drops client-side attributes", ->
+      @model.toJSON().should.not.have.deep.property "concept.label"
+      @model.toJSON().should.not.have.deep.property "concept.hit"
 
   describe "save()", ->
 

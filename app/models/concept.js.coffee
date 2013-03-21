@@ -28,9 +28,9 @@ class Coreon.Models.Concept extends Backbone.Model
     return super if not terms
     if not terms.models
       if key == "terms"
-        return @get("terms").update terms, options
+        return @get("terms").set terms, options
       else if @has "terms"
-        @get("terms").update terms, options
+        @get("terms").set terms, options
         delete key.terms
         return super key, val, options
       else
@@ -57,7 +57,6 @@ class Coreon.Models.Concept extends Backbone.Model
     Backbone.history.navigate "concepts/" + @get("_id"), replace: true, trigger: true
 
   onError: (model, xhr, options) =>
-    console.log xhr.responseText
     if xhr.status == 422
       @validationFailure (JSON.parse xhr.responseText).errors ? nested_errors_on_terms: [], nested_errors_on_properties: []
 
@@ -65,7 +64,10 @@ class Coreon.Models.Concept extends Backbone.Model
       @trigger "validationFailure", errors
 
   toJSON: (options) ->
-    concept: _.omit this.attributes, "label"
+    serialized = {}
+    for key, value of @attributes when key not in ["hit", "label"]
+      serialized[key] = value
+    concept: serialized
 
   info: ->
     info = id: @id

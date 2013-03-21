@@ -6,6 +6,7 @@ Coreon.Modules.Accumulation =
     @_collection ||= new Backbone.Collection null, model: @
 
   create: (attributes, options = {}) ->
+    options.wait ?= true
     @collection().create attributes, options
 
   find: (id) ->
