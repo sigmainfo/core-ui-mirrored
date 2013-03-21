@@ -41,7 +41,6 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.model.get("concept").isNew = -> true
       @view.render()
       @el.select("a").attr("xlink:href").should.equal "javascript:void(0)"
-      
 
     it "classifies hit", ->
       @view.model.set "hit", { score: 1.5 },  silent: true
@@ -54,12 +53,12 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @el.classed("hit").should.be.false
 
     it "classifies new concept", ->
-      @view.model.isNew = -> true
+      @view.model.get("concept").isNew = -> true
       @view.render()
       @el.classed("new").should.be.true
 
     it "does not classify existing concept", ->
-      @view.model.isNew = -> false
+      @view.model.get("concept").isNew = -> false
       @view.render()
       @el.classed("new").should.be.false
       

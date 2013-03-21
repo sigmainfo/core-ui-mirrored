@@ -27,14 +27,14 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     @clear()
 
     @svg.classed "hit", @model.has "hit"
-    @svg.classed "new", @model.isNew()
+    @svg.classed "new", @model.get("concept").isNew()
     
     title = @svg.append("svg:title")
       .text(@model.get "label")
 
     a = @svg.append("svg:a")
       .attr("xlink:href", (datum) =>
-        if @model.isNew()
+        if @model.get("concept").isNew()
           "javascript:void(0)"
         else
           "/concepts/#{@model.id}"
