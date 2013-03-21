@@ -49,7 +49,7 @@ Feature: user browses concept graph
     And a concept "hand"
     And a concept "handkerchief"
     When I search for "hand"
-    Then I shoud see "handgun" displayed in the concept map
+    Then I should see "handgun" displayed in the concept map
     And I should see a node "hand"
     And I should see a node "handkerchief"
     And all nodes should be classified as hits
@@ -57,7 +57,7 @@ Feature: user browses concept graph
   Scenario: zoom and pan
     Given a concept "handgun"
     When I search for "handgun"
-    Then I shoud see "handgun" displayed in the concept map
+    Then I should see "handgun" displayed in the concept map
     When I click on "Zoom in"
     Then "handgun" should be bigger
     When I click on "Zoom out"

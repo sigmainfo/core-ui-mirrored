@@ -65,8 +65,6 @@ class Coreon.Views.Concepts.CreateConceptView extends Backbone.View
   create: (event) ->
     @_removeErrors()
     @model.set @_formToJs(), silent:true
-    #console.log JSON.stringify  @model.toJSON()
-    #Coreon.Models.collection.create @model
     @model.create()
 
   _formToJs: ->

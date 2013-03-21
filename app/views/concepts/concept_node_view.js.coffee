@@ -43,6 +43,9 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       .attr("cx", 7)
       .attr("cy", @height() / 2)
       .attr("r", @radius())
+    
+    unless @model.get("label")
+      console.log JSON.stringify @model
 
     label = a.append("svg:text")
       .attr("x", 14)

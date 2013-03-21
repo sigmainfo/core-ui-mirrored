@@ -17,6 +17,4 @@ class Coreon.Collections.Connections extends Backbone.Collection
     plain[key] = value for key, value of options
     jqXHR = Backbone.sync method, model, options
     @add xhr: jqXHR, method: method, model: model, options: plain
-    console.log method
-    #    console.log jqXHR.getAllResponseHeaders()
     jqXHR

@@ -43,8 +43,18 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.hits.should.equal @hits
     
       it "resets from hits", ->
+        @concept.id = "concept"
+        @collection.initialize [], hits: @hits
         @collection.should.have.length 1
         @collection.at(0).get("hit").should.equal @hit
+        @collection.at(0).should.have.property "id", "concept"
+
+      it "uses cid for hit on new concept", ->
+        @concept.cid = "c234"
+        @collection.initialize [], hits: @hits
+        @collection.should.have.length 1
+        @collection.at(0).should.have.property "id", "c234"
+        
 
       it "expands nodes from hits", ->
         @collection.at(0).get("expandedIn").should.be.true
