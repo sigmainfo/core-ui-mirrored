@@ -7,7 +7,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     svg = d3.select $("<svg>").appendTo("#konacha").get(0)
     @view = new Coreon.Views.Concepts.ConceptNodeView
       el: svg.append("g").node()
-      model: new Backbone.Model(label: "concept#123")
+      model: new Backbone.Model(label: "concept#123", concept: new Backbone.Model(_id: "concept#123") )
     @el = d3.select @view.el
 
   afterEach ->
@@ -37,6 +37,12 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.render()
       @el.select("a").attr("xlink:href").should.equal "/concepts/nobody"
 
+    it "does not render link for new concept", ->
+      @view.model.get("concept").isNew = -> true
+      @view.render()
+      @el.select("a").attr("xlink:href").should.equal "javascript:void(0)"
+      
+
     it "classifies hit", ->
       @view.model.set "hit", { score: 1.5 },  silent: true
       @view.render()
@@ -46,6 +52,17 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.model.set "hit", null,  silent: true
       @view.render()
       @el.classed("hit").should.be.false
+
+    it "classifies new concept", ->
+      @view.model.isNew = -> true
+      @view.render()
+      @el.classed("new").should.be.true
+
+    it "does not classify existing concept", ->
+      @view.model.isNew = -> false
+      @view.render()
+      @el.classed("new").should.be.false
+      
 
     context "label", ->
 
