@@ -50,8 +50,8 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           @strategy.render
             root:
               children: [
-                { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1") } #TODO: reduce dependencies
-                { id: "node_2", model: new Backbone.Model(id: "node_2", label: "Node 2") }
+                { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1")) } #TODO: reduce dependencies
+                { id: "node_2", model: new Backbone.Model(id: "node_2", label: "Node 2", concept: new Backbone.Model(_id: "node_2")) }
               ]
             edges: []
           @svg.find(".concept-node").should.have.lengthOf 2
@@ -60,7 +60,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           @strategy.render
             root:
               children: [
-                { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1") }
+                { id: "node_1", model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1")) }
               ]
             edges: []
           @strategy.render
@@ -100,14 +100,14 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
               { id: "root" }
               {
                 id: "node_1"
-                model: new Backbone.Model(id: "node_1", label: "Node 1")
+                model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1"))
                 depth: 3 
                 x: 27
                 y: 380
               }
               {
                 id: "node_2"
-                model: new Backbone.Model(id: "node_2", label: "Node 2")
+                model: new Backbone.Model(id: "node_2", label: "Node 2", concept: new Backbone.Model(_id: "node_2"))
                 depth: 5 
                 x: 154
                 y: 560
@@ -125,13 +125,13 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         it "preserves minimal y offset", ->
           node_1 =
             id: "node_1"
-            model: new Backbone.Model(id: "node_1", label: "Node 1")
+            model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1"))
             depth: 3 
             x: 0
             y: 0
           node_2 =
             id: "node_2"
-            model: new Backbone.Model(id: "node_2", label: "Node 2")
+            model: new Backbone.Model(id: "node_2", label: "Node 2", concept: new Backbone.Model(_id: "node_2"))
             depth: 3 
             x: 15
             y: 0
@@ -156,7 +156,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
               { id: "root" }
               {
                 id: "node_1"
-                model: new Backbone.Model(id: "node_1", label: "Node 1")
+                model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1"))
                 depth: 3 
                 x: 27
               }
@@ -167,7 +167,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       context "updating view instances", ->
 
         beforeEach ->
-          @node = new Backbone.Model _id: "node", label: "Node"
+          @node = new Backbone.Model _id: "node", label: "Node", concept: new Backbone.Model(_id: "node")
           @node.cid = "c123"
 
         it "creates view for newly created node", ->
