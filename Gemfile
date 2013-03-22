@@ -1,6 +1,11 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 3.2"
+if RUBY_VERSION =~ /1.9/
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
+
+gem "rails", "= 3.2.12" # Needed for i18n-js with ruby 1.9
 
 # Bundle edge Rails instead:
 # gem "rails", :git => "git://github.com/rails/rails.git"
