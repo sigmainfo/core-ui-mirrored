@@ -42,7 +42,7 @@ group :test do
 end
 
 group :test, :development do
-  gem "capybara-webkit"
+  gem "capybara"
   gem "rspec-rails", require: false
   gem "text"
   gem "pry"
