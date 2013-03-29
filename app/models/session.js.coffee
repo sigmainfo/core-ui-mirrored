@@ -1,6 +1,7 @@
 #= require environment
 #= require collections/notifications
 #= require collections/connections
+#= require models/ability
 
 class Coreon.Models.Session extends Backbone.Model
 
@@ -19,6 +20,7 @@ class Coreon.Models.Session extends Backbone.Model
     @notifications = new Coreon.Collections.Notifications
     @connections = new Coreon.Collections.Connections
     @connections.session = @
+    @ability = new Coreon.Models.Ability
 
     @on "change:token", @_updateActiveState, @
     @_updateActiveState()

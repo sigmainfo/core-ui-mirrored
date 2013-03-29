@@ -1,0 +1,3 @@
+.actions
+  - if Coreon.application?.session.ability.can "create", Coreon.Models.Concept
+    %a.button.create-concept{href: "/concepts/new"}= I18n.t "concept.new"

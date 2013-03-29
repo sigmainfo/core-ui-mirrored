@@ -27,7 +27,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
   it "is a Backbone router", ->
     @router.should.be.an.instanceof Backbone.Router
 
-  describe "#initialize", ->
+  describe "initialize()", ->
     
     it "takes options", ->
       concepts = new Backbone.Collection
@@ -38,8 +38,22 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.collection.should.equal concepts
       @router.view.should.equal view
 
-  #TODO: make this #index? 
-  describe "#search", ->
+  describe "root()", ->
+    
+    it "is routed", ->
+      @router.routes.should.have.property "", "root"
+
+    it "renders root screen", ->
+      @router.root()
+      @screen.should.be.an.instanceof Coreon.Views.Concepts.RootView
+
+    it "clears hits", ->
+      Coreon.application.hits.reset [ result: new Backbone.Model ]  
+      @router.root()
+      Coreon.application.hits.should.have.lengthOf 0
+    
+
+  describe "search()", ->
     
     it "is routed", ->
       @router.routes.should.have.property "concepts/search/(:target/):query", "search"
@@ -67,7 +81,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @screen.should.be.an.instanceof Coreon.Views.Concepts.ConceptListView
       @screen.$el.should.have ".concept-list-item"
 
-  describe "#show", ->
+  describe "show()", ->
 
     beforeEach ->
       sinon.stub Coreon.Models.Concept, "find"
@@ -91,10 +105,10 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.show "123"
       @router.app.hits.reset.should.have.been.calledWith [ result: @concept ]
 
-  describe "#create", ->
+  describe "create()", ->
 
     it "is routed", ->
-      @router.routes.should.have.property "concepts/create", "create"
+      @router.routes.should.have.property "concepts/new", "create"
 
     it "switches to concept create view", ->
       @router.create()
@@ -107,32 +121,6 @@ describe "Coreon.Routers.ConceptsRouter", ->
     it "creates no term", ->
       @router.create()
       @screen.model.get("terms").should.have.length 0
-
-    it "updates selection", ->
-      @router.app.hits.reset = sinon.spy()
-      @router.show "123"
-      @router.app.hits.reset.should.have.been.calledWith [ result: @screen.model ]
-
-  describe "#create with query", ->
-
-    it "is routed", ->
-      @router.routes.should.have.property "concepts/create(/:query)", "create"
-
-    it "switches to concept create view", ->
-      @router.create()
-      @screen.should.be.an.instanceof Coreon.Views.Concepts.CreateConceptView
-
-    it "creates a new concept", ->
-      @router.create()
-      @screen.model.should.be.an.instanceof Coreon.Models.Concept
-
-    it "creates a term with query string", ->
-      @router.create("gun")
-      @screen.model.get("terms").should.have.length 1
-      @screen.model.get("terms").at(0).toJSON().should.eql
-        value: "gun"
-        lang: "en"
-        properties: []
 
     it "updates selection", ->
       @router.app.hits.reset = sinon.spy()
