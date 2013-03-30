@@ -24,6 +24,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".concept h2", text: "<New concept>")
   end
 
+  step 'I should see a new concept node "<New concept>" within the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "<New concept>")
+  end
+
   step 'I do a search for "corpse"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "corpse"
