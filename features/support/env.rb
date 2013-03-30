@@ -6,9 +6,9 @@ require File.expand_path(File.join("..", "..", "config", "environment"), File.di
 require "net/http"
 require "./features/support/core-api"
   
-Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, :browser => :chrome)
-end
+# Capybara.register_driver :selenium do |app|
+#   Capybara::Selenium::Driver.new(app, :browser => :chrome)
+# end
 Capybara.default_driver = :selenium
 Capybara.default_wait_time = 2
 Capybara.server_port = 4000

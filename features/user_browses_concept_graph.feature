@@ -48,7 +48,8 @@ Feature: user browses concept graph
     Given a concept "handgun"
     And a concept "hand"
     And a concept "handkerchief"
-    When I search for "hand"
+    When I enter the application
+    And I search for "hand"
     Then I should see "handgun" displayed in the concept map
     And I should see a node "hand"
     And I should see a node "handkerchief"
@@ -56,7 +57,8 @@ Feature: user browses concept graph
   
   Scenario: zoom and pan
     Given a concept "handgun"
-    When I search for "handgun"
+    When I enter the application
+    And I search for "handgun"
     Then I should see "handgun" displayed in the concept map
     When I click on "Zoom in"
     Then "handgun" should be bigger
