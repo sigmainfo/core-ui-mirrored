@@ -1,4 +1,5 @@
 #= require environment
+#= require helpers/can
 #= require templates/concepts/root
 
 class Coreon.Views.Concepts.RootView extends Backbone.View
