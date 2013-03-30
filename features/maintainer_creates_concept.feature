@@ -104,3 +104,6 @@ Feature: maintainer creates concept
   #   Then I should not see "New concept"
   #   When I do a search for "corpse"
   #   Then I should not see "New concept"
+  #   When I visit "/concepts/new"
+  #   Then I should be on the previous page
+  #   And I should not see a "Create concept" button

@@ -16,6 +16,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.click_link "New concept"
   end
 
+  step 'I should be on the new concept page' do
+    page.current_path.should == "/concepts/new"
+  end
+
+  step 'I should see "<New concept>" within the title' do
+    page.should have_css(".concept h2", text: "<New concept>")
+  end
+
   step 'I do a search for "corpse"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "corpse"

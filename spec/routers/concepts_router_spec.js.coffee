@@ -19,10 +19,12 @@ describe "Coreon.Routers.ConceptsRouter", ->
             selector:
               hideHint: ->
       app: Coreon.application
+    Backbone.history.start()
 
   afterEach ->
     Coreon.application.destroy()
     @xhr.restore()
+    Backbone.history.stop()
 
   it "is a Backbone router", ->
     @router.should.be.an.instanceof Backbone.Router
@@ -41,7 +43,11 @@ describe "Coreon.Routers.ConceptsRouter", ->
   describe "root()", ->
     
     it "is routed", ->
-      @router.routes.should.have.property "", "root"
+      @router.root = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "/other"
+      @router.navigate "/", trigger: true
+      @router.root.should.have.been.calledOnce
 
     it "renders root screen", ->
       @router.root()
@@ -56,7 +62,18 @@ describe "Coreon.Routers.ConceptsRouter", ->
   describe "search()", ->
     
     it "is routed", ->
-      @router.routes.should.have.property "concepts/search/(:target/):query", "search"
+      @router.search = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "concepts/search/description/movie", trigger: true
+      @router.search.should.have.been.calledOnce
+      @router.search.should.have.been.calledWith "description", "movie"
+
+    it "is routed with target being optional", ->
+      @router.search = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "concepts/search/movie", trigger: true
+      @router.search.should.have.been.calledOnce
+      @router.search.should.have.been.calledWith null, "movie"
 
     it "creates search", ->
       @router.search "terms", "gun"
@@ -93,7 +110,17 @@ describe "Coreon.Routers.ConceptsRouter", ->
       Coreon.Models.Concept.find.restore()
     
     it "is routed", ->
-      @router.routes["concepts/:id"].should.equal "show"
+      @router.show = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "/concepts/507f191e810c19729de860ea", trigger: true
+      @router.show.should.have.been.calledOnce
+      @router.show.should.have.been.calledWith "507f191e810c19729de860ea"
+      
+    it "is not routed for ids not matching the format of a MongoDB ObjectId", ->
+      @router.show = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "/concepts/1234", trigger: true
+      @router.show.should.not.have.been.called
       
     it "renders concept details", ->
       @router.show "123"
@@ -101,28 +128,27 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @screen.model.should.equal @concept
 
     it "updates selection", ->
-      @router.app.hits.reset = sinon.spy()
+      @router.app.hits.reset []
       @router.show "123"
-      @router.app.hits.reset.should.have.been.calledWith [ result: @concept ]
+      @router.app.hits.should.have.lengthOf 1
+      @router.app.hits.at(0).get("result").should.equal @concept
 
-  describe "create()", ->
+  describe "new()", ->
 
     it "is routed", ->
-      @router.routes.should.have.property "concepts/new", "create"
+      @router.new = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "/concepts/new", trigger: true
+      @router.new.should.have.been.calledOnce
 
-    it "switches to concept create view", ->
-      @router.create()
-      @screen.should.be.an.instanceof Coreon.Views.Concepts.CreateConceptView
-
-    it "creates a new concept", ->
-      @router.create()
+    it "switches to new concept form", ->
+      @router.new()
+      @screen.should.be.an.instanceof Coreon.Views.Concepts.NewConceptView
       @screen.model.should.be.an.instanceof Coreon.Models.Concept
-
-    it "creates no term", ->
-      @router.create()
-      @screen.model.get("terms").should.have.length 0
+      @screen.model.isNew().should.be.true
 
     it "updates selection", ->
-      @router.app.hits.reset = sinon.spy()
-      @router.show "123"
-      @router.app.hits.reset.should.have.been.calledWith [ result: @screen.model ]
+      @router.app.hits.reset []
+      @router.new()
+      @router.app.hits.should.have.lengthOf 1
+      @router.app.hits.at(0).get("result").should.equal @screen.model

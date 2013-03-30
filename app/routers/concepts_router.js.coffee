@@ -1,17 +1,20 @@
 #= require environment
 #= require views/concepts/root_view
-#= require views/concepts/concept_list_view
 #= require views/concepts/concept_view
-#= require views/concepts/create_concept_view
+#= require views/concepts/new_concept_view
 #= require models/concept_search
+#= require views/concepts/concept_list_view
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
     ""                                 : "root"
-    "concepts/:id"                     : "show"
-    "concepts/new"                     : "create"
+    "concepts/new"                     : "new"
     "concepts/search/(:target/):query" : "search"
+
+  _bindRoutes: ->
+    super
+    @route /^concepts\/([0-9a-f]{24})$/, "show"
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -26,14 +29,13 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       model: concept
     @app.hits.reset [ result: concept ]
 
-  create: ->
-    screen = new Coreon.Views.Concepts.CreateConceptView model:
-      new Coreon.Models.Concept
-    @view.switch screen
-    @app.hits.reset [ result: screen.model ]
+  new: ->
+    concept = new Coreon.Models.Concept
+    @view.switch new Coreon.Views.Concepts.NewConceptView
+      model:concept
+    @app.hits.reset [ result: concept ]
 
   search: (target, query) ->
-
     @view.widgets.search.selector.hideHint()
     @view.$("input#coreon-search-query").val decodeURIComponent(query)
 
@@ -42,11 +44,9 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       query: query
       target: target
 
-    results = new Coreon.Views.Concepts.ConceptListView
+    @view.switch new Coreon.Views.Concepts.ConceptListView
       model: search
       collection: @collection
-    
-    @view.switch results
 
     search.fetch()
 
