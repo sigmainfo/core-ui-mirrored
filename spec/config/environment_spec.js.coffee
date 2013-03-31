@@ -4,31 +4,32 @@
 describe "config/environment", ->
 
   it "loads core dependencies", ->
-    lib.should.exist for lib in [jQuery, _, Backbone, HAML]
+    lib for lib in [jQuery, _, Backbone, HAML]
 
   it "prepares translations", ->
-    I18n.should.exist
-    I18n.translations.should.exist
+    should.exist I18n
+    should.exist I18n.translations
     I18n.translations.en.date.day_names[0].should.equal "Sunday"
 
   it "prepares namespaces", ->
-    Coreon.should.exist
+    should.exist Coreon
 
-    Coreon.Models.should.exist
-    Coreon.Collections.should.exist
-    Coreon.Modules.should.exist
-    Coreon.Helpers.should.exist
-    Coreon.Routers.should.exist
-    Coreon.Data.should.exist
+    should.exist Coreon.Models
+    should.exist Coreon.Collections
+    should.exist Coreon.Modules
+    should.exist Coreon.Helpers
+    should.exist Coreon.Routers
+    should.exist Coreon.Data
 
-    Coreon.Views.should.exist
-    Coreon.Views.Layout.should.exist
-    Coreon.Views.Widgets.should.exist
-    Coreon.Views.Account.should.exist
-    Coreon.Views.Search.should.exist
-    Coreon.Views.Concepts.should.exist
-    Coreon.Views.Properties.should.exist
-    Coreon.Views.Terms.should.exist
+    should.exist Coreon.Views
+    should.exist Coreon.Views.Layout
+    should.exist Coreon.Views.Widgets
+    should.exist Coreon.Views.Account
+    should.exist Coreon.Views.Search
+    should.exist Coreon.Views.Concepts
+    should.exist Coreon.Views.Concepts.Shared
+    should.exist Coreon.Views.Properties
+    should.exist Coreon.Views.Terms
 
   it "makes helpers available to template context", ->
     HAML.globals().should.equal Coreon.Helpers

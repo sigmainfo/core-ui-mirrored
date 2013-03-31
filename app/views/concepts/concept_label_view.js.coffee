@@ -9,9 +9,9 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
   className: "concept-label"
 
   initialize: (options = {}) ->
-    @model =  if options.model?
+    @model = if options.model?
         options.model
-      else
+      else #TODO: remove, too much magic
         Coreon.Models.Concept.find options.id
       
     @model.on "change", @render, @

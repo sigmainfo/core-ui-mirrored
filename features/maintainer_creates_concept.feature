@@ -14,10 +14,11 @@ Feature: maintainer creates concept
     And I click on "New concept"
     Then I should be on the new concept page
     And I should see "<New concept>" within the title
-    And I should see a new concept node "<New concept>" within the concept map
     And I should see a section "Broader & Narrower"
     And I should see "<New concept>" being the current selection
     And I should see "Repository" within the list of broader concepts
+    And I should see a new concept node "<New concept>" within the concept map
+    And it should be narrower then "Repository"
     When I click "Create concept"
     Then I should be on the show concept page
     And I should see the id of the newly created concept within the title
