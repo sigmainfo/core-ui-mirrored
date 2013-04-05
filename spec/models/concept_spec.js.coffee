@@ -280,17 +280,6 @@ describe "Coreon.Models.Concept", ->
         author: "Nobody"
       }
 
-
-  describe "fetch()", ->
-
-    it "uses application sync", ->
-      Coreon.application = sync: sinon.spy()
-      try
-        @model.fetch()
-        Coreon.application.sync.should.have.been.calledWith "read", @model
-      finally
-        Coreon.application = null
-
   describe "addTerm()", ->
 
     it "creates a new empty term model", ->

@@ -6,7 +6,7 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
   
   beforeEach ->
     Coreon.application = new Coreon.Application
-    Coreon.application.sync = sinon.spy()
+    Coreon.application.sync = sinon.stub().returns done: ->
     Coreon.application.session.ability.can = sinon.stub()
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Search.SearchResultsConceptsView model: new Backbone.Model(hits: [])
@@ -22,7 +22,7 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
   it "creates container", ->
     @view.$el.should.have.class "search-results-concepts"
 
-  describe "#render", ->
+  describe "render()", ->
 
     it "is chainable", ->
       @view.render().should.equal @view

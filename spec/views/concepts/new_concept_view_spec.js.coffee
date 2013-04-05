@@ -56,6 +56,23 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.render()
         $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
 
+    context "form", ->
+
+      it "renders submit button", ->
+        I18n.t.withArgs("concept.create").returns "Create concept"
+        @view.render()
+        @view.$el.should.have "form"
+        @view.$el.should.have 'form input[type="submit"]'
+        @view.$('form input[type="submit"]').should.have.attr "value", "Create concept"
+
+      it "renders a cancel button", ->
+        I18n.t.withArgs("concept.cancel").returns "Cancel"
+        @view.render()
+        @view.$el.should.have "a.cancel"
+        @view.$("a.cancel").should.have.attr "href", "javascript:void(0)"
+        @view.$("a.cancel").should.have.text "Cancel"
+        
+
   describe "remove()", ->
 
     beforeEach ->

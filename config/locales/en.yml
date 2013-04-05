@@ -62,6 +62,8 @@ en:
     broader_and_narrower: "Broader & Narrower"
     new_concept: "<New concept>"
     new: "New concept"
+    create: "Create concept"
+    cancel: "Cancel"
 
   term:
     info: "System Info"

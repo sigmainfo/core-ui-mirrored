@@ -17,7 +17,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   render: ->
     @$el.html @template concept: @model
     @broaderAndNarrower.render() unless @_wasRendered
-    @$el.append @broaderAndNarrower.$el
+    @$("form").before @broaderAndNarrower.$el
     @_wasRendered = true
     @
 

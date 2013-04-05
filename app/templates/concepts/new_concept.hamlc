@@ -1,1 +1,4 @@
 != @render "concepts/caption", label: @concept.get "label"
+%form
+  %a.cancel{href: "javascript:void(0)"}= I18n.t "concept.cancel"
+  %input{type: "submit", value: I18n.t "concept.create"}

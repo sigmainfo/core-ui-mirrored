@@ -16,6 +16,8 @@ Coreon.Modules.Accumulation =
     attrs = {}
     attrs[@::idAttribute] = id
     model = new @ attrs
+    model.blank = true
+    model.once "sync", @_fetched
     @collection().add model
     model.fetch()
     model
@@ -29,3 +31,8 @@ Coreon.Modules.Accumulation =
   _upsert: (attributes) ->
     model = @find attributes[@::idAttribute]
     model.set attributes
+
+  _fetched: (model) ->
+    if model.blank
+      model.blank = false
+      model.trigger "nonblank"

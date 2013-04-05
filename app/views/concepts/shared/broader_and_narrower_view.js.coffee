@@ -20,7 +20,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @narrower = []
     @$el.html @template()
     @listenTo @model, "change:label", @renderSelf
-    @listenTo @model, "change:super_concept_ids", @renderBroader
+    @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
   render: ->
@@ -34,8 +34,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   renderBroader: ->
     @clearBroader()
-    @broader = @renderConcepts @$(".broader ul"), @model.get "super_concept_ids"
-    if @broader.length is 0
+    super_concept_ids = @model.get "super_concept_ids"
+    if super_concept_ids.length > 0
+      @broader = @renderConcepts @$(".broader ul"), super_concept_ids
+    else unless @model.blank
       @$(".broader ul").html "<li>#{@repositoryLabel()}</li>"
 
   renderNarrower: ->

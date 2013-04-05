@@ -24,10 +24,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".concept h2", text: "<New concept>")
   end
 
-  step 'I should see a new concept node "<New concept>" within the concept map' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "<New concept>")
-  end
-
   step 'I should see a section "Broader & Narrower"' do
     page.should have_css("section h3", text: "Broader & Narrower")
   end
@@ -38,6 +34,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I should see "Repository" within the list of broader concepts' do
     page.should have_css(".broader-and-narrower .broader li", text: "Repository")
+  end
+
+  step 'I should see a new concept node "<New concept>" within the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "<New concept>")
+  end
+
+  step 'I click "Create concept"' do
+    page.click_button "Create concept"
   end
 
   step 'I do a search for "corpse"' do

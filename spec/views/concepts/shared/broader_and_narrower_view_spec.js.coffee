@@ -91,7 +91,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.render()
         @view.model.set "label", "wha happen!"
         @view.$(".self").should.have.text "wha happen!"
-        
 
     context "broader", ->
 
@@ -137,13 +136,30 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.broader.should.have.lengthOf 1
         ( $.contains @view.el, @view.broader[0].el ).should.be.true
 
-      it "renders repository node when root", ->
-        I18n.t.withArgs("repository.label").returns "Repository"
-        @view.model.set "super_concept_ids", [], silent: true
-        @view.render()
-        @view.$(".broader ul").should.have "li a.repository-label"
-        @view.$(".broader .repository-label").should.have.attr "href", "/"
-        @view.$(".broader .repository-label").should.have.text "Repository"
+      context "with empty super concepts list", ->
+        
+        beforeEach ->
+          @view.model.set "super_concept_ids", [], silent: true
+
+        it "renders repository node", ->
+          I18n.t.withArgs("repository.label").returns "Repository"
+          @view.render()
+          @view.$(".broader ul").should.have "li a.repository-label"
+          @view.$(".broader .repository-label").should.have.attr "href", "/"
+          @view.$(".broader .repository-label").should.have.text "Repository"
+
+        it "does not render repository when blank", ->
+          @view.model.blank = true
+          @view.render()
+          @view.$(".broader ul").should.not.have "li .repository-label"
+
+        it "rerenders on blank state change", ->
+          @view.model.blank = true
+          @view.render()
+          @view.model.blank = false
+          @view.model.trigger "nonblank"
+          @view.$(".broader ul").should.have "li .repository-label"
+          
 
     context "narrower", ->
 

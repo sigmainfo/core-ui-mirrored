@@ -19,9 +19,9 @@ class Coreon.Models.Concept extends Backbone.Model
   initialize: (attrs, options) ->
     @set "label", @_label(), silent: true
     @on "change:terms change:properties", @_updateLabel, @
+    @_updateHit()
     if Coreon.application?.hits?
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
-    @_updateHit()
 
   set: (key, val, options) ->
     terms = if key == "terms" then val else key.terms
@@ -90,6 +90,9 @@ class Coreon.Models.Concept extends Backbone.Model
   _updateLabel: ->
     @set "label", @_label()
 
+  _updateHit: ->
+    @set "hit", Coreon.application?.hits.findByResult(@)
+
   _label: ->
     if @isNew()
       I18n.t "concept.new_concept"
@@ -110,6 +113,3 @@ class Coreon.Models.Concept extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options
-
-  _updateHit: ->
-    @set "hit", Coreon.application?.hits.findByResult(@)

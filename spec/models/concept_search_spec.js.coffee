@@ -14,6 +14,7 @@ describe "Coreon.Models.ConceptSearch", ->
     beforeEach ->
       Coreon.application =
         sync: ->
+          done: ->
         hits: new Backbone.Collection
       Coreon.application.hits.findByResult = -> null
       sinon.stub Coreon.Models.Search::, "fetch"
