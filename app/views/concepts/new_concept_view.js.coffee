@@ -1,5 +1,6 @@
 #= require environment
 #= require helpers/render
+#= require helpers/form_for
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require views/concepts/shared/broader_and_narrower_view

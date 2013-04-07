@@ -1,0 +1,3 @@
+%form{class: @form.className}
+  != @form.yield()
+  != @render "forms/actions", submit: @form.submit, cancel: I18n.t("form.cancel")

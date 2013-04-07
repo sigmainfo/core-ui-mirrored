@@ -63,7 +63,6 @@ en:
     new_concept: "<New concept>"
     new: "New concept"
     create: "Create concept"
-    cancel: "Cancel"
 
   term:
     info: "System Info"
@@ -73,6 +72,9 @@ en:
 
   repository:
     label: "Repository"
+
+  form:
+    cancel: "Cancel"
 
   notification:
     label:

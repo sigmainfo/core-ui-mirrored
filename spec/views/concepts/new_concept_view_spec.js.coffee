@@ -66,12 +66,11 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$('form input[type="submit"]').should.have.attr "value", "Create concept"
 
       it "renders a cancel button", ->
-        I18n.t.withArgs("concept.cancel").returns "Cancel"
+        I18n.t.withArgs("form.cancel").returns "Cancel"
         @view.render()
         @view.$el.should.have "a.cancel"
-        @view.$("a.cancel").should.have.attr "href", "javascript:void(0)"
+        @view.$("a.cancel").should.have.attr "href", "javascript:history.back()"
         @view.$("a.cancel").should.have.text "Cancel"
-        
 
   describe "remove()", ->
 
