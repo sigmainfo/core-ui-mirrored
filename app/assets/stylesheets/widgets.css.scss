@@ -66,6 +66,21 @@
             }
           }
         }
+        
+        &.toggle-orientation {
+
+          &:before {
+            @include before-icon;
+            background-position: 0 -450px;
+          }
+
+          &:hover {
+
+            &:before {
+              background-position: -50px -450px;
+            }
+          }
+        }
       }
     }
   }
