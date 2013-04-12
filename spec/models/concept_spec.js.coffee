@@ -296,15 +296,6 @@ describe "Coreon.Models.Concept", ->
       @model.addProperty()
       @model.get("properties").length.should.be.eql 1
 
-  describe "create()", ->
-
-    it "calls create() on the class", ->
-      Coreon.Models.Concept.create = sinon.spy()
-      @model.create()
-      Coreon.Models.Concept.create.withArgs( @model,
-        success: @model.onSuccess
-        error: @model.onError ).should.have.been.calledOnce
-
   describe "toJSON()", ->
 
     it "returns wrapped attributes hash", ->
@@ -339,43 +330,3 @@ describe "Coreon.Models.Concept", ->
         Coreon.application.sync.should.have.been.calledWith "create", @model
       finally
         Coreon.application = null
-
-  describe "onSuccess()", ->
-
-    it "is triggered by successfull save()", ->
-      Coreon.Models.Concept.create = (data, opts) ->
-        opts.success()
-      @model.onSuccess = sinon.spy()
-      @model.create()
-      @model.onSuccess.should.have.been.calledOnce
-
-    it "navigates to concept view page", ->
-      Backbone.history.navigate = sinon.spy()
-      @model.set "_id", 42
-      @model.onSuccess()
-      Backbone.history.navigate.withArgs( "concepts/42", replace: true, trigger: true ).should.have.been.calledOnce
-
-  describe "onError()", ->
-
-    it "is triggered by save() error", ->
-      Coreon.Models.Concept.create = (data, opts) ->
-        opts.error()
-      @model.onError = sinon.spy()
-      @model.create()
-      @model.onError.should.have.been.calledOnce
-
-    it "triggers validationFailure()", ->
-      @model.validationFailure = sinon.spy()
-      @model.onError @model,
-        status: 422
-        responseText: '{"errors": {"foo": "bar"}}'
-      @model.validationFailure.withArgs( foo: 'bar' ).should.have.been.calledOnce
-
-  describe "validationFailure()", ->
-
-    it "triggers validationFailure event", ->
-      spy = sinon.spy()
-      @model.on "validationFailure", spy
-      @model.validationFailure( foo: 'bar' )
-      spy.withArgs( foo: 'bar' ).should.have.been.calledOnce
-

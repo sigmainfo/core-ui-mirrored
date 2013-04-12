@@ -44,6 +44,20 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.click_button "Create concept"
   end
 
+  step 'I should be on the show concept page' do
+    page.should have_no_css(".concept.new")
+    page.current_path.should =~ %r|^/concepts/[0-9a-f]{24}$| 
+    @id = current_path.split("/").last
+  end
+
+  step 'I should see the id of the newly created concept within the title' do
+    page.should have_css(".label", text: @id)
+  end
+
+  step 'I should see a new concept node with the id of the newly created concept within the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: @id)
+  end
+
   step 'I do a search for "corpse"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "corpse"

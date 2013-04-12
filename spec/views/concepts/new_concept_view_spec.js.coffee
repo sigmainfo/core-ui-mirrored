@@ -72,6 +72,52 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$("a.cancel").should.have.attr "href", "javascript:history.back()"
         @view.$("a.cancel").should.have.text "Cancel"
 
+  describe "create()", ->
+
+    beforeEach ->
+      @event = $.Event "submit"
+      sinon.stub Backbone.history, "navigate"
+      @promise =
+        done: (@done) =>
+      @view.model.save = sinon.stub().returns @promise
+      @view.render()
+    
+    afterEach ->
+      Backbone.history.navigate.restore()
+
+    it "is triggered on form submit", ->
+      @view.create = sinon.spy()
+      @view.delegateEvents()
+      @view.$("form").trigger @event
+      @view.create.should.have.been.calledOne
+      @view.create.should.have.been.calledWith @event
+
+    it "pevents default action", ->
+      @view.create @event
+      @event.isDefaultPrevented().should.be.true
+
+    context "success", ->
+
+      beforeEach ->
+        collection = new Backbone.Collection
+        sinon.stub Coreon.Models.Concept, "collection", -> collection
+        @view.model.url = -> ""
+
+      afterEach ->
+        Coreon.Models.Concept.collection.restore()
+      
+      it "accumulates newly created model", ->
+        @view.create @event
+        @view.model.id = "1234abcdef"
+        @done()
+        Coreon.Models.Concept.collection().get("1234abcdef").should.equal @view.model
+        
+      it "redirects to show concept page", ->
+        @view.model.url = -> "concepts/1234abcdef"
+        @view.create @event
+        @done()
+        Backbone.history.navigate.should.have.been.calledWith "concepts/1234abcdef", trigger: true
+
   describe "remove()", ->
 
     beforeEach ->

@@ -22,10 +22,6 @@ Feature: maintainer creates concept
     Then I should be on the show concept page
     And I should see the id of the newly created concept within the title
     And I should see a new concept node with the id of the newly created concept within the concept map
-    And I should see this node being a child of the repository root node
-    And I should see a section "Broader & Narrower"
-    And I should see the id of the newly created concept being the current selection
-    And I should see "Repository" within the list of broader concepts
 
   # Scenario: add property
   #   Given I have maintainer privileges

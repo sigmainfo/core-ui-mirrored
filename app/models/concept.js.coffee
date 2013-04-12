@@ -48,21 +48,6 @@ class Coreon.Models.Concept extends Backbone.Model
       lang: ""
     @trigger("add:properties")
 
-  create: ->
-    Coreon.Models.Concept.create @,
-      success: @onSuccess
-      error: @onError
-
-  onSuccess: (model, response, options) =>
-    Backbone.history.navigate "concepts/" + @get("_id"), replace: true, trigger: true
-
-  onError: (model, xhr, options) =>
-    if xhr.status == 422
-      @validationFailure (JSON.parse xhr.responseText).errors ? nested_errors_on_terms: [], nested_errors_on_properties: []
-
-  validationFailure: (errors) ->
-      @trigger "validationFailure", errors
-
   toJSON: (options) ->
     serialized = {}
     for key, value of @attributes when key not in ["hit", "label"]
