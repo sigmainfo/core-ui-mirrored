@@ -72,6 +72,22 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$("a.cancel").should.have.attr "href", "javascript:history.back()"
         @view.$("a.cancel").should.have.text "Cancel"
 
+    context "properties", ->
+      
+      it "renders section with title", ->
+        I18n.t.withArgs("properties.title").returns "Properties"
+        @view.render()
+        @view.$el.should.have ".properties"
+        @view.$(".properties").should.match "section"
+        @view.$el.should.have ".properties h3"
+        @view.$("section.properties h3").should.have.text "Properties"
+
+      it "renders link for adding a property", ->
+        I18n.t.withArgs("properties.add").returns "Add Property"
+        @view.render()
+        @view.$el.should.have "a.add-property"
+        @view.$("a.add-property").should.have.text "Add Property"
+        
   describe "create()", ->
 
     beforeEach ->

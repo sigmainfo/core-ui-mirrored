@@ -60,3 +60,17 @@ describe "Coreon.Helpers.form_for()", ->
       form = $(markup)
       form.should.have 'input[type="submit"]'
       form.find('input[type="submit"]').should.have.value "Update Model"
+
+  describe "fields_for", ->
+  
+    it "delegates to field for helper", ->
+      sinon.stub Coreon.Helpers, "fields_for"
+      try
+        block = ->
+        @helper "my_model", @model, ->
+          @form.fields_for "properties", block
+        Coreon.Helpers.fields_for.should.have.been.calledWith "properties", @model, block
+      finally
+        Coreon.Helpers.fields_for.restore()
+      
+    

@@ -1,2 +1,6 @@
 != @render "concepts/caption", label: @concept.get "label"
 != @form_for "concept", @concept, ->
+  != @form.fields_for "properties", ->
+    %h3= I18n.t "properties.title"
+    .actions
+      %a.add-property{href: "javascript:void(0)"}= I18n.t "properties.add"

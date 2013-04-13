@@ -1,0 +1,2 @@
+%section{class: @form.className}
+  != @form.yield()

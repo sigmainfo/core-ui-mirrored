@@ -58,6 +58,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: @id)
   end
 
+  step 'I click "Add property"' do
+    page.click_link "Add property"
+  end
+
   step 'I do a search for "corpse"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "corpse"

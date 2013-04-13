@@ -69,6 +69,7 @@ en:
   
   properties:
     title: "Properties"
+    add: "Add property"
 
   repository:
     label: "Repository"

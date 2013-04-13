@@ -23,20 +23,20 @@ Feature: maintainer creates concept
     And I should see the id of the newly created concept within the title
     And I should see a new concept node with the id of the newly created concept within the concept map
 
-  # Scenario: add property
-  #   Given I have maintainer privileges
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   And I click "Add property"
-  #   Then I should see a set of property inputs with labels "Key", "Value", "Language"
-  #   When I click "Remove property" within the set
-  #   Then I should not see a set of property inputs anymore
-  #   When I click "Add property"
-  #   And I fill "Key" with "label"
-  #   And I fill "Value" with "dead man"
-  #   And I click "Create concept"
-  #   Then I should see "dead man" within the title
-  #   And I should see a property "label" with value "dead man"
+  Scenario: add property
+    Given I have maintainer privileges
+    When I visit the start page
+    And I click on "New concept"
+    And I click "Add property"
+    Then I should see a set of property inputs with labels "Key", "Value", "Language"
+    When I click "Remove property" within the set
+    Then I should not see a set of property inputs anymore
+    When I click "Add property"
+    And I fill "Key" with "label"
+    And I fill "Value" with "dead man"
+    And I click "Create concept"
+    Then I should see "dead man" within the title
+    And I should see a property "label" with value "dead man"
 
   # Scenario: add term
   #   Given I have maintainer privileges
