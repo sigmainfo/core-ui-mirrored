@@ -180,6 +180,10 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "poetry"
 
       context "on changes", ->
+
+        it "updates label on id attribute changes", ->
+          @model.set "_id", "abc123"
+          @model.get("label").should.equal "abc123"
             
         it "updates label on property changes", ->
           @model.set "properties", [
@@ -188,11 +192,12 @@ describe "Coreon.Models.Concept", ->
           ]
           @model.get("label").should.equal "My Label"
      
-        it "updates label on term change", ->
+        it "updates label on term changes", ->
           @model.get("terms").add
             lang: "en"
             value: "poetry"
           @model.get("label").should.equal "poetry"
+          
 
     describe "hit", ->
        

@@ -18,7 +18,7 @@ class Coreon.Models.Concept extends Backbone.Model
 
   initialize: (attrs, options) ->
     @set "label", @_label(), silent: true
-    @on "change:terms change:properties", @_updateLabel, @
+    @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
     @_updateHit()
     if Coreon.application?.hits?
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
