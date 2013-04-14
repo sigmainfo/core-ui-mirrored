@@ -71,6 +71,11 @@ en:
     title: "Properties"
     add: "Add property"
 
+  property:
+    key: "Key"
+    value: "Value"
+    lang: "Language"
+
   repository:
     label: "Repository"
 

@@ -62,6 +62,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.click_link "Add property"
   end
 
+  step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
+    within(".property") do
+      page.should have_field("Key")
+      page.should have_field("Value")
+      page.should have_field("Language")
+    end
+  end
+
   step 'I do a search for "corpse"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "corpse"

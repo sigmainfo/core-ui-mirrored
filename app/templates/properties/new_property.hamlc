@@ -1,0 +1,4 @@
+%fieldset.property
+  != @input "property", "key", null, scope: "concept[properties][]", index: @index, required: true
+  != @input "property", "value", null, scope: "concept[properties][]", index: @index, required: true
+  != @input "property", "lang", null, scope: "concept[properties][]", index: @index
