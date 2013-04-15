@@ -91,8 +91,13 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
   describe "addProperty()", ->
 
     beforeEach ->
+      sinon.stub Coreon.Helpers, "input", (name, attr, model, options) ->
+        "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
       @event = $.Event "click"
       @view.render()
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
     
     it "is triggered by click on action", ->
       @view.addProperty = sinon.spy()
@@ -102,51 +107,28 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.addProperty.should.have.been.calledWith @event
 
     it "appends property input set", ->
-      I18n.t.withArgs("property.key").returns "Key"
-      I18n.t.withArgs("property.value").returns "Value"
-      I18n.t.withArgs("property.lang").returns "Language"
-
       @view.addProperty @event
-      @view.$el.should.have ".properties fieldset.property"
-
-      @view.$el.should.have ".property .key"
-      key = @view.$(".property .key")
-      key.should.have.class "required"
-      @view.$el.should.have ".property .key input"
-      keyInput = @view.$(".property .key input")
-      keyInput.should.have.attr "type", "text"
-      keyInput.should.have.attr "name", "concept[properties][0][key]"
-      @view.$el.should.have ".property .key label"
-      keyLabel = @view.$(".property .key label")
-      keyLabel.should.have.text "Key"
-
-      @view.$el.should.have ".property .value"
-      value = @view.$(".property .value")
-      value.should.have.class "required"
-      @view.$el.should.have ".property .value input"
-      valueInput = @view.$(".property .value input")
-      valueInput.should.have.attr "type", "text"
-      valueInput.should.have.attr "name", "concept[properties][0][value]"
-      @view.$el.should.have ".property .value label"
-      valueLabel = @view.$(".property .value label")
-      valueLabel.should.have.text "Value"
-
-      @view.$el.should.have ".property .lang"
-      lang = @view.$(".property .lang")
-      lang.should.not.have.class "required"
-      @view.$el.should.have ".property .lang input"
-      langInput = @view.$(".property .lang input")
-      langInput.should.have.attr "type", "text"
-      langInput.should.have.attr "name", "concept[properties][0][lang]"
-      @view.$el.should.have ".property .lang label"
-      langLabel = @view.$(".property .lang label")
-      langLabel.should.have.text "Language"
+      @view.$el.should.have '.properties .property input[id="property-0-key"]'
+      @view.$el.should.have '.properties .property input[id="property-0-value"]'
+      @view.$el.should.have '.properties .property input[id="property-0-lang"]'
 
     it "enumerates appended property input sets", ->
       @view.addProperty @event
       @view.addProperty @event
-      @view.$el.should.have 'input[name="concept[properties][0][key]"]'
-      @view.$el.should.have 'input[name="concept[properties][1][key]"]'
+      @view.$el.should.have '.properties .property input[id="property-0-key"]'
+      @view.$el.should.have '.properties .property input[id="property-1-key"]'
+
+    it "uses nested scope", ->
+      @view.addProperty @event
+      @view.$el.should.have '.properties .property input[name="concept[properties][][key]"]'
+      @view.$el.should.have '.properties .property input[name="concept[properties][][value]"]'
+      @view.$el.should.have '.properties .property input[name="concept[properties][][lang]"]'
+
+    it "requires key and value inputs", ->
+      @view.addProperty @event
+      @view.$('.properties .property input[id="property-0-key"]').should.have.attr "required"
+      @view.$('.properties .property input[id="property-0-value"]').should.have.attr "required"
+      @view.$('.properties .property input[id="property-0-lang"]').should.not.have.attr "required"
         
   describe "create()", ->
 
