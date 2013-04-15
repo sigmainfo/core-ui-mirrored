@@ -178,9 +178,14 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.create.should.have.been.calledOne
       @view.create.should.have.been.calledWith @event
 
-    it "pevents default action", ->
+    it "prevents default action", ->
       @view.create @event
       @event.isDefaultPrevented().should.be.true
+
+    it "updates model from form", ->
+      @view.$(".properties").append '<input name="concept[properties][0][key]" value="label"/>'
+      @view.create @event
+      @view.model.save.should.have.been.calledWith properties: [key: "label"]
 
     context "success", ->
 
