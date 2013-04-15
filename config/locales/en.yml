@@ -75,6 +75,7 @@ en:
     key: "Key"
     value: "Value"
     lang: "Language"
+    remove: "Remove property"
 
   repository:
     label: "Repository"

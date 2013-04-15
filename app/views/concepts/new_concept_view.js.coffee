@@ -16,8 +16,9 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   property: Coreon.Templates["properties/new_property"]
 
   events:
-    "click  a.add-property" : "addProperty"
-    "submit form"           : "create"
+    "click  a.add-property"    : "addProperty"
+    "click  a.remove-property" : "removeProperty"
+    "submit form"              : "create"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -34,6 +35,9 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   addProperty: (event) ->
     @propCount += 1
     @$(".properties").append @property index: @propCount - 1
+
+  removeProperty: (event) ->
+    $(event.target).closest(".property").remove()
 
   create: (event) ->
     event.preventDefault()

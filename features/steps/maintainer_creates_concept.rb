@@ -62,6 +62,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.click_link "Add property"
   end
 
+  step 'I click "Remove property" within the set' do
+    page.click_link "Remove property"
+  end
+
+  step 'I should not see a set of property inputs anymore' do
+    page.should have_no_css(".property")
+  end
+
   step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
     within(".property") do
       page.should have_field("Key")

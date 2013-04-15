@@ -1,4 +1,6 @@
 %fieldset.property
+  .actions
+    %a.remove-property{href: "javascript:void(0)"}= I18n.t "property.remove"
   != @input "property", "key", null, scope: "concept[properties][]", index: @index, required: true
   != @input "property", "value", null, scope: "concept[properties][]", index: @index, required: true
   != @input "property", "lang", null, scope: "concept[properties][]", index: @index

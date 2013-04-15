@@ -129,6 +129,34 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.$('.properties .property input[id="property-0-key"]').should.have.attr "required"
       @view.$('.properties .property input[id="property-0-value"]').should.have.attr "required"
       @view.$('.properties .property input[id="property-0-lang"]').should.not.have.attr "required"
+
+    it "renders remove link", ->
+      I18n.t.withArgs("property.remove").returns "Remove property"
+      @view.addProperty @event
+      @view.$el.should.have ".property a.remove-property"
+      @view.$(".property a.remove-property").should.have.text "Remove property"
+
+  describe "removeProperty()", ->
+    
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
+      @event = $.Event "click"
+      @view.render()
+      @view.addProperty @event
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+
+    it "is triggered by click on remove action", ->
+      @view.removeProperty = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".property a.remove-property").trigger @event
+      @view.removeProperty.should.have.been.calledOnce
+
+    it "removes property input set", ->
+      @event.target = @view.$(".remove-property").get(0)
+      @view.removeProperty @event
+      @view.$el.should.not.have ".property"
         
   describe "create()", ->
 
