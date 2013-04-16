@@ -3,8 +3,8 @@
 #= require helpers/render
 #= require helpers/fields_for
 #= require templates/forms/_form_for
-#= require templates/forms/_actions
-
+#= require templates/forms/_submit
+#
 class Form extends Coreon.Lib.FormContext
 
   template: Coreon.Templates["forms/form_for"]
