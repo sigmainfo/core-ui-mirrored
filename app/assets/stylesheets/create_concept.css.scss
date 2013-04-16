@@ -25,7 +25,25 @@
   }
 }
 
-div.create-concept {
+form.create {
+  
+  fieldset {
+    position: relative;
+    border: 0;
+    padding-bottom: 18px;
+    margin-top: 30px;
+    background-color: darken(rgba($button-color, 0.08), 12);
+    &>div {
+      padding-top: 18px;
+    }
+    .actions {
+      padding-top: 0;
+    }
+    input {
+      height:24px;
+      width: 40%;
+    }
+  }
   
   label {
     color: $browncolor;
@@ -38,6 +56,54 @@ div.create-concept {
     padding-right: 20px;
     padding-top: 5px;
   }
+  
+  >.actions {
+    overflow: hidden;
+    background-color: darken(rgba($button-color, 0.18), 15);
+    margin-top:26px;
+    padding: 3px 10px;
+    
+    .cancel {
+      float: right;
+      margin: 6px;
+      font-size: 0.86em;
+      line-height: 1em;
+      padding: 3px 8px;
+      color: white;
+      display: inline-block;
+      @include edit-button;
+    }
+    
+    input[type="submit"]{
+      float: right;
+      margin: 6px;
+      font-size: 0.86em;
+      line-height: 1em;
+      padding: 3px 8px;
+      color: white;
+      display: inline-block;
+      border: 0;
+      @include edit-button;
+      background-color: $button-color;
+      @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+      @include retina-stripes(white);
+      &:after {
+        @include before-icon;
+        float: right;
+        height: 10px;
+        margin-left: 4px;
+        background-position: 0px -405px;
+      };
+      &:hover {
+        background-color: saturate($button-color, 10);
+      };
+    }
+    
+  }
+  
+}
+
+div.concept.new {
   
   h2 {
     color: $button-color;
@@ -55,11 +121,6 @@ div.create-concept {
     };
   }
   
-  input {
-    height:24px;
-    width: 40%;
-  }
-  
   .terms {
     position: relative;
     @include retina-separator;
@@ -74,21 +135,13 @@ div.create-concept {
     }
   }
   
-  .concept-tree .section {
+  .broader-and-narrower {
     .self {
       color: $button-color;
     }
   }
   
-  .create-term, .create-property {
-    position: relative;
-    padding-bottom: 18px;
-    margin-top: 30px;
-    background-color: darken(rgba($button-color, 0.08), 12);
-    &>div {
-      padding-top: 18px;
-    }
-  }
+
 
   
   .properties {
@@ -96,13 +149,13 @@ div.create-concept {
     @include dottedline;
     padding: 3px 0 30px 0;
     
-    a.add_property {
+    a.add-property {
       top: 6px;
     }
   }
 
   
-  a.edit {
+  .actions a {
     font-size: 0.9em;
     color:$greencolor;
     display: block;
@@ -124,7 +177,7 @@ div.create-concept {
       };
     }
   }
-  a.remove_term, a.remove_property {
+  a.remove-term, a.remove-property {
     width: 16px;
     overflow: hidden;
     text-indent: -5000px;
@@ -132,36 +185,6 @@ div.create-concept {
     &:before {
       background-position: -52px -351px;
     };
-  }
-  
-  
-  
-  .footer {
-    overflow: hidden;
-    background-color: darken(rgba($button-color, 0.18), 15);
-    margin-top:26px;
-    padding: 3px 10px;
-    
-    .button{
-      float: right;
-      margin: 6px;
-      &.create {
-        background-color: $button-color;
-        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-        @include retina-stripes(white);
-        &:after {
-          @include before-icon;
-          float: right;
-          height: 10px;
-          margin-left: 4px;
-          background-position: 0px -405px;
-        };
-        &:hover {
-          background-color: saturate($button-color, 10);
-        };
-      }
-    }
-    
   }
   
 }
