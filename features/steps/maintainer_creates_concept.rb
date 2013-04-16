@@ -24,8 +24,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".concept h2", text: "<New concept>")
   end
 
-  step 'I should see a section "Broader & Narrower"' do
-    page.should have_css("section h3", text: "Broader & Narrower")
+  step 'I should see a section "BROADER & NARROWER"' do
+    page.should have_css("section h3", text: "BROADER & NARROWER")
   end
 
   step 'I should see "<New concept>" being the current selection' do
