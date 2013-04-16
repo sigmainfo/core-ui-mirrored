@@ -31,7 +31,7 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
     @
 
   renderValues: (props) ->
-    if props.length == 1 and not props[0].lang?
+    if props.length == 1 and not props[0].lang
       @renderProperty props[0]
     else
       @selector

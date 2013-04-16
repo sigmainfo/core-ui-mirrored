@@ -42,7 +42,8 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
   create: (event) ->
     event.preventDefault()
-    attrs = @$("form").serializeJSON().concept
+    attrs = @$("form").serializeJSON().concept or {}
+    @$("form").find("input,button").attr("disabled", true)
     @model.save(attrs)
       .done =>
         Coreon.Models.Concept.collection().add @model

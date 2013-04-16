@@ -182,6 +182,10 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.create @event
       @event.isDefaultPrevented().should.be.true
 
+    it "disables button to prevent second click", ->
+      @view.create @event
+      @view.$('button[type="submit"]').should.be.disabled
+
     it "updates model from form", ->
       @view.$(".properties").append '<input name="concept[properties][0][key]" value="label"/>'
       @view.create @event

@@ -50,15 +50,17 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       .attr("cy", @height() / 2)
       .attr("r", @radius())
     
-    unless @model.get("label")
-      console.log JSON.stringify @model
-
     label = a.append("svg:text")
       .attr("x", 14)
       .attr("y", @height() * 0.73 )
       .text(@shorten @model.get("label"), 20)
     
-    labelBox = label.node().getBBox()
+    labelBox =
+      try
+        label.node().getBBox()
+      catch e
+        x: 0, y: 0, height: 0, width: 0
+
     @bg.attr("width", labelBox.x + labelBox.width + 5)
 
     box = @box()
@@ -80,15 +82,16 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     @
 
   box: ->
-    if @bg? then @bg.node().getBBox() else x: 0, y: 0, height: 0, width: 0
+    try
+      @bg.node().getBBox()
+    catch e
+      x: 0, y: 0, height: 0, width: 0
 
   height: ->
     if @model.has "hit" then @options.hit.height else @options.default.height
 
   radius: ->
     if @model.has "hit" then @options.hit.radius else @options.default.radius
-
-
 
   _renderToggle: (expanded) ->
     toggle = @svg.append("svg:g")

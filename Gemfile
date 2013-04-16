@@ -42,6 +42,7 @@ end
 
 group :test do
   gem "spinach-rails"
+  gem "selenium-webdriver"
   gem "launchy"
   gem "rspec"
 end

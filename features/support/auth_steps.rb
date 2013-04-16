@@ -16,7 +16,7 @@ module AuthSteps
   Given 'I am logged in' do
     page.execute_script "Coreon.application.session.deactivate();"
     page.execute_script "Coreon.application.session.activate('#{@me.login}', '#{@me_password}');"
-    page.should  have_css("a.logout")
+    page.should have_css("#coreon-footer")
     CoreAPI.session = page.evaluate_script "Coreon.application.session.get('token')"
   end
 
