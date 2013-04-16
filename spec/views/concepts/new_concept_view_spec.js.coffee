@@ -62,8 +62,8 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         I18n.t.withArgs("concept.create").returns "Create concept"
         @view.render()
         @view.$el.should.have "form"
-        @view.$el.should.have 'form input[type="submit"]'
-        @view.$('form input[type="submit"]').should.have.attr "value", "Create concept"
+        @view.$el.should.have 'form button[type="submit"]'
+        @view.$('form button[type="submit"]').should.have.text "Create concept"
 
       it "renders a cancel button", ->
         I18n.t.withArgs("form.cancel").returns "Cancel"

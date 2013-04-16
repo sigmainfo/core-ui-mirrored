@@ -42,8 +42,8 @@ describe "Coreon.Helpers.form_for()", ->
       I18n.t.withArgs("model.create").returns "Create Model"
       markup = @helper "model", @model, ->
       form = $(markup)
-      form.should.have 'input[type="submit"]'
-      form.find('input[type="submit"]').should.have.value "Create Model"
+      form.should.have 'button[type="submit"]'
+      form.find('button[type="submit"]').should.have.text "Create Model"
 
   context "existing model", ->
 
@@ -58,8 +58,8 @@ describe "Coreon.Helpers.form_for()", ->
       I18n.t.withArgs("model.update").returns "Update Model"
       markup = @helper "model", @model, ->
       form = $(markup)
-      form.should.have 'input[type="submit"]'
-      form.find('input[type="submit"]').should.have.value "Update Model"
+      form.should.have 'button[type="submit"]'
+      form.find('button[type="submit"]').should.have.text "Update Model"
 
   describe "fields_for", ->
   
