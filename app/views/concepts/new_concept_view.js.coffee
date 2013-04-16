@@ -7,6 +7,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
+#= require jquery.serializeJSON
 
 class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
@@ -41,7 +42,8 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
   create: (event) ->
     event.preventDefault()
-    @model.save()
+    attrs = @$("form").serializeJSON().concept
+    @model.save(attrs)
       .done =>
         Coreon.Models.Concept.collection().add @model
         Backbone.history.navigate @model.url(), trigger: true

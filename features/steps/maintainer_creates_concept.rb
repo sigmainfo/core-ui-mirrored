@@ -58,6 +58,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: @id)
   end
 
+  step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
+    within(".property") do
+      page.should have_field("Key")
+      page.should have_field("Value")
+      page.should have_field("Language")
+    end
+  end
+
   step 'I click "Add property"' do
     page.click_link "Add property"
   end
@@ -70,12 +78,12 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_no_css(".property")
   end
 
-  step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
-    within(".property") do
-      page.should have_field("Key")
-      page.should have_field("Value")
-      page.should have_field("Language")
-    end
+  step 'I fill "Key" with "label"' do
+    page.fill_in "Key", with: "label"
+  end
+
+  step 'I fill "Value" with "dead man"' do
+    page.fill_in "Value", with: "dead man"
   end
 
   step 'I do a search for "corpse"' do
