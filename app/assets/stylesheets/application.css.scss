@@ -78,12 +78,7 @@
 .repository-label {
   @include concept-icon;
   display: inline-block;
-  padding: 0px 3px 0px 14px;
-
-  &.hit {
-    color: $hit-color;
-    &:hover {
-      color: $bluecolor;
-    };
-  }
+  padding: 0px 6px 0px 14px;
+  background-color: rgba($greycolor, 0.4);
+  @include border-radius(8px);
  }
