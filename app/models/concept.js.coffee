@@ -1,20 +1,26 @@
 #= require environment
+#= require modules/helpers
 #= require modules/accumulation
-#= require collections/terms
+#= require modules/embeds_many
+#= require models/term
 
 class Coreon.Models.Concept extends Backbone.Model
 
-  _(@).extend Coreon.Modules.Accumulation
+  Coreon.Modules.extend @, Coreon.Modules.Accumulation
+  Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
+
+  @embedsMany "properties"
+  @embedsMany "terms", model: Coreon.Models.Term
 
   urlRoot: "concepts"
 
   defaults: ->
     properties: []
+    terms: []
     super_concept_ids: []
     sub_concept_ids: []
     label: ""
     hit: null
-    terms: new Coreon.Collections.Terms
 
   initialize: (attrs, options) ->
     @set "label", @_label(), silent: true
@@ -22,31 +28,6 @@ class Coreon.Models.Concept extends Backbone.Model
     @_updateHit()
     if Coreon.application?.hits?
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
-
-  set: (key, val, options) ->
-    terms = if key == "terms" then val else key.terms
-    return super if not terms
-    if not terms.models
-      if key == "terms"
-        return @get("terms").set terms, options
-      else if @has "terms"
-        @get("terms").set terms, options
-        delete key.terms
-        return super key, val, options
-      else
-        key.terms = new Coreon.Collections.Terms terms
-    @stopListening @get("terms") if @has "terms"
-    @listenTo @get("terms"), 'all', @_processTermsEvent if super
-
-  addTerm: ->
-    @get("terms").push new Coreon.Models.Term
-
-  addProperty: ->
-    @get("properties").push
-      key: ""
-      value: ""
-      lang: ""
-    @trigger("add:properties")
 
   toJSON: (options) ->
     serialized = {}
@@ -62,16 +43,6 @@ class Coreon.Models.Concept extends Backbone.Model
       info[key] = value
     info
 
-  _processTermsEvent: (e, a, x, z) ->
-    if e is "add"
-      @trigger 'add:terms'
-      @trigger 'change:terms'
-    else if e is "change"
-      @trigger 'change:terms'
-    else if e is "remove"
-      @trigger 'remove:terms'
-      @trigger 'change:terms'
-      
   _updateLabel: ->
     @set "label", @_label()
 
@@ -88,12 +59,12 @@ class Coreon.Models.Concept extends Backbone.Model
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 
   _termLabel: ->
-    label = null
-    for term in @get("terms")?.models
-      if term.get("lang").match /^en/i
-        label = term.get("value")
+    terms = @get "terms"
+    for term in terms
+      if term.lang.match /^en/i
+        label = term.value
         break
-    label ?= @get("terms")?.at(0)?.get("value")
+    label ?= terms[0]?.value
     label
 
   sync: (method, model, options = {}) ->

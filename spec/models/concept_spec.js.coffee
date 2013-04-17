@@ -25,87 +25,15 @@ describe "Coreon.Models.Concept", ->
 
   context "defaults", ->
 
-    it "has an empty set of properties", ->
+    it "has an empty set for relations", ->
       @model.get("properties").should.eql []
-
-    it "has a empty term collection", ->
-      @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-      @model.get("terms").should.have.length 0
+      @model.get("terms").should.eql []
 
     it "has empty sets for superconcept and subconcept ids", ->
       @model.get("super_concept_ids").should.eql []
       @model.get("sub_concept_ids").should.eql []
 
   describe "attributes", ->
-
-    describe "terms", ->
-
-      describe "initialization", ->
-
-        it "can be created from json construtor argument", ->
-          @model = new Coreon.Models.Concept _id: "123", terms:
-            lang: "en"
-            value: "poetry"
-          @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-          @model.get("terms").should.have.length 1
-          @model.get("terms").at(0).should.be.an.instanceof Coreon.Models.Term
-          @model.get("terms").at(0).get("lang").should.eql "en"
-          @model.get("terms").at(0).get("value").should.eql "poetry"
-
-        it "can be created from object construtor argument", ->
-          @model = new Coreon.Models.Concept _id: "123", terms: new Coreon.Collections.Terms
-            lang: "en"
-            value: "poetry"
-          @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-          @model.get("terms").should.have.length 1
-          @model.get("terms").at(0).should.be.an.instanceof Coreon.Models.Term
-          @model.get("terms").at(0).get("lang").should.eql "en"
-          @model.get("terms").at(0).get("value").should.eql "poetry"
-
-      describe "events", ->
-
-        context "on add terms", ->
-
-          it "triggers change:terms", ->
-            spy = sinon.spy()
-            @model.on "change:terms", spy
-            @model.get("terms").add
-              lang: "en"
-              value: "poetry"
-            spy.should.have.been.calledOnce
-
-          it "triggers add:terms", ->
-            spy = sinon.spy()
-            @model.on "add:terms", spy
-            @model.get("terms").add
-              lang: "en"
-              value: "poetry"
-            spy.should.have.been.calledOnce
-
-        context "on remove terms", ->
-
-          it "triggers change:terms", ->
-            @model.get("terms").add lang: "en", value: "poetry"
-            spy = sinon.spy()
-            @model.on "change:terms", spy
-            @model.get("terms").pop()
-            spy.should.have.been.calledOnce
-
-          it "triggers remove:terms", ->
-            @model.get("terms").add lang: "en", value: "poetry"
-            spy = sinon.spy()
-            @model.on "remove:terms", spy
-            @model.get("terms").pop()
-            spy.should.have.been.calledOnce
-
-        context "on change terms", ->
-
-          it "triggers change:terms", ->
-            @model.get("terms").add lang: "en", value: "poetry"
-            spy = sinon.spy()
-            @model.on "change:terms", spy
-            @model.get("terms").at(0).set "value", "poetics"
-            spy.should.have.been.calledOnce
 
     describe "label", ->
 
@@ -145,9 +73,10 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "poetry"
 
         it "falls back to term in other language", ->
-          @model.set terms:
+          @model.set terms: [
             lang: "fr"
             value: "poésie"
+          ]
           @model.initialize()
           @model.get("label").should.equal "poésie"
 
@@ -193,9 +122,10 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "My Label"
      
         it "updates label on term changes", ->
-          @model.get("terms").add
+          @model.set "terms", [
             lang: "en"
             value: "poetry"
+          ]
           @model.get("label").should.equal "poetry"
           
 
@@ -231,48 +161,19 @@ describe "Coreon.Models.Concept", ->
         @hits.add result: other
         added = hit for hit in @hits.models when hit.get("result") is @model
         @model.get("hit").should.equal added
-        
-  describe "set()", ->
 
-    it "handles json (as hash)", ->
-      @model.set "terms":
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en'
-        value: 'poetry'
-        properties: []
-
-    it "handles json (as key-value)", ->
-      @model.set "terms",
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en'
-        value: 'poetry'
-        properties: []
-
-    it "handles object (as hash)", ->
-      @model.set "terms": new Coreon.Collections.Terms
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en',
-        value: 'poetry',
-        properties: []
-
-    it "handles object (as key-value)", ->
-      @model.set "terms", new Coreon.Collections.Terms
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en',
-        value: 'poetry',
-        properties: []
+  describe "properties()", ->
+    
+    it "syncs with attr", ->
+      @model.set "properties", [key: "label"]
+      @model.properties().at(0).get("key").should.equal "label"
+      
+  describe "terms()", ->
+  
+    it "syncs with attr", ->
+      @model.set "terms", [value: "dead", lang: "en"]
+      @model.terms().at(0).should.be.an.instanceof Coreon.Models.Term
+      @model.terms().at(0).get("value").should.equal "dead"
 
   describe "info()", ->
     
@@ -284,22 +185,6 @@ describe "Coreon.Models.Concept", ->
         id: "abcd1234"
         author: "Nobody"
       }
-
-  describe "addTerm()", ->
-
-    it "creates a new empty term model", ->
-      @model.addTerm()
-      @model.get("terms").size().should.be.eql 1
-
-    it "creates a term model which knows about its terms conncetion", ->
-      @model.addTerm()
-      @model.get("terms").at(0).collection.should.eql @model.get("terms")
-
-  describe "addProperty()", ->
-
-    it "creates a new empty property model", ->
-      @model.addProperty()
-      @model.get("properties").length.should.be.eql 1
 
   describe "toJSON()", ->
 

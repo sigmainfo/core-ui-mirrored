@@ -52,6 +52,9 @@ Feature: maintainer creates concept
   #   And I click "Create concept"
   #   Then I should see "corpse" within the title
   #   And I should see an English term "corpse"
+  
+  # TODO:
+  # Scenario: add term with property
 
   # Scenario: validation errors
   #   Given I have maintainer privileges

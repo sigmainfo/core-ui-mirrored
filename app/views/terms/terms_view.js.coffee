@@ -7,7 +7,7 @@ class Coreon.Views.Terms.TermsView extends Coreon.Views.CompositeView
   className: "terms"
 
   render: ->
-    terms = _( @model.get("terms")?.models ).groupBy (term) ->
+    terms = _( @model.terms().models ).groupBy (term) ->
       term.get("lang")
     langs = (lang for lang of terms)
     for lang in langs

@@ -13,7 +13,7 @@ class Coreon.Views.Concepts.ConceptListItemView extends Coreon.Views.CompositeVi
 
   render: () ->
     @clear()
-    terms = _( @model.get("terms")?.models ).groupBy (term) ->
+    terms = _( @model.terms().models ).groupBy (term) ->
       term.get("lang")
 
     @$el.html @template

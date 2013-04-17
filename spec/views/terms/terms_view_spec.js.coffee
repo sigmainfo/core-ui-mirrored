@@ -7,6 +7,7 @@ describe "Coreon.Views.Terms.TermsView", ->
   beforeEach ->
     @view = new Coreon.Views.Terms.TermsView
       model: new Backbone.Model
+    @view.model.terms = -> new Coreon.Collections.Terms
 
   it "is a composite view", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
@@ -20,7 +21,7 @@ describe "Coreon.Views.Terms.TermsView", ->
       @view.render().should.equal @view
 
     it "renders section for each language", ->
-      @view.model.set "terms", new Coreon.Collections.Terms [
+      @view.model.terms = -> new Coreon.Collections.Terms [
         { value: "gun"     , lang: "en" }
         { value: "pistol"  , lang: "en" }
         { value: "Pistole" , lang: "de" }
