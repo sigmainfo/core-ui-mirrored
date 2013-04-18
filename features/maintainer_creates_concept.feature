@@ -52,7 +52,7 @@ Feature: maintainer creates concept
     And I fill "Value" with "corpse"
     And I fill "Language" with "en"
     And I click "Create concept"
-    #Then I should see "corpse" within the title
+    Then I should see "corpse" within the title
     Then I should see an English term "corpse"
   # TODO:
   # Scenario: add term with property

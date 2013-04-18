@@ -127,7 +127,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see an English term "corpse"' do
-    binding.pry
     page.should have_css(".terms .language.en .term h4", text: "corpse")
   end
 
