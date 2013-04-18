@@ -95,6 +95,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.find(:xpath, "//th[text() = 'label']/following-sibling::td").text.should == "dead man"
   end
 
+  step 'client-side validation is turned off' do
+    page.execute_script '$("form").attr("novalidate", true)'
+  end
+
+  step 'I should see an error summary' do
+    page.should have_css("form.errors")
+  end
+
   step 'I do a search for "corpse"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "corpse"

@@ -61,6 +61,14 @@ describe "Coreon.Helpers.form_for()", ->
       form.should.have 'button[type="submit"]'
       form.find('button[type="submit"]').should.have.text "Update Model"
 
+  context "validation errors", ->
+
+    it "renders error summary", ->
+      @model.errors = -> {}
+      markup = @helper "model", @model, ->
+      form = $(markup)
+      form.should.have ".errors"
+
   describe "fields_for", ->
   
     it "delegates to field for helper", ->

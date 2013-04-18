@@ -1,4 +1,3 @@
-@wip
 Feature: maintainer creates concept
   In order to make information available in context of a not yet existent concept
   As a maintainer that is adding data to the repository
@@ -56,27 +55,29 @@ Feature: maintainer creates concept
   # TODO:
   # Scenario: add term with property
 
-  # Scenario: validation errors
-  #   Given I have maintainer privileges
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   And I click "Add property"
-  #   And I click "Add term"
-  #   And I fill "Value" of term with "corpse"
-  #   And I click "Create concept"
-  #   Then I should see an error summary
-  #   And this summary should contain "Concept could not be created:"
-  #   And this summary should contain "2 errors on properties"
-  #   And this summary should contain "1 error on terms"
-  #   And I should see error "can't be blank" for property input "Key"
-  #   And I should see error "can't be blank" for property input "Value"
-  #   And I should see error "can't be blank" for term input "Language"
-  #   When I click "Remove property"
-  #   And I fill "Language" of term with "en"
-  #   And I click "Create concept"
-  #   Then I should be on the new concept page
-  #   And I should not see an error summary
-  #   But I should see message 'Successfully created concept "corpse".'
+  @wip
+  Scenario: validation errors
+    Given I have maintainer privileges
+    When I visit the start page
+    And I click on "New concept"
+    And client-side validation is turned off
+    And I click "Add property"
+    # And I click "Add term"
+    # And I fill "Value" of term with "corpse"
+    And I click "Create concept"
+    Then I should see an error summary
+    And this summary should contain "Concept could not be created:"
+    And this summary should contain "2 errors on properties"
+    And this summary should contain "1 error on terms"
+    And I should see error "can't be blank" for property input "Key"
+    And I should see error "can't be blank" for property input "Value"
+    And I should see error "can't be blank" for term input "Language"
+    When I click "Remove property"
+    And I fill "Language" of term with "en"
+    And I click "Create concept"
+    Then I should be on the new concept page
+    And I should not see an error summary
+    But I should see message 'Successfully created concept "corpse".'
 
   # Scenario: cancel creation
   #   Given I have maintainer privileges

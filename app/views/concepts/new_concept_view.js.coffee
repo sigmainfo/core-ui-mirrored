@@ -48,6 +48,8 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
       .done =>
         Coreon.Models.Concept.collection().add @model
         Backbone.history.navigate @model.url(), trigger: true
+      .fail =>
+        @render()
 
   remove: ->
     @broaderAndNarrower.remove()

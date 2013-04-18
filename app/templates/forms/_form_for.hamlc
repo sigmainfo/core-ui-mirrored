@@ -1,3 +1,5 @@
 %form{class: @form.className}
+  - if @form.errors?
+    .errors
   != @form.yield()
   != @render "forms/submit", submit: @form.submit, cancel: I18n.t("form.cancel")

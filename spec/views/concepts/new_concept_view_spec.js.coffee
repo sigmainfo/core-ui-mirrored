@@ -164,7 +164,8 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @event = $.Event "submit"
       sinon.stub Backbone.history, "navigate"
       @promise =
-        done: (@done) =>
+        done: (@done) => @promise
+        fail: (@fail) => @promise
       @view.model.save = sinon.stub().returns @promise
       @view.render()
     
@@ -212,6 +213,14 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.create @event
         @done()
         Backbone.history.navigate.should.have.been.calledWith "concepts/1234abcdef", trigger: true
+
+    context "error", ->
+
+      it "renders error summary", ->
+        @view.create @event
+        @view.model.errors = -> {}
+        @fail()
+        @view.$el.should.have "form .errors"
 
   describe "remove()", ->
 

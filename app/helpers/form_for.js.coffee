@@ -11,9 +11,10 @@ class Form extends Coreon.Lib.FormContext
 
   constructor: (@name, @model, context, block) ->
     super context, block
-    @action = if model.isNew() then "create" else "update"
+    @action = if @model.isNew() then "create" else "update"
     @className = "#{ name.replace /_/g, '-' } #{@action}"
     @submit = I18n.t "#{@name}.#{@action}"
+    @errors = @model?.errors?()
 
   fields_for: (attribute, block) ->
     Coreon.Helpers.fields_for attribute, @model, block
