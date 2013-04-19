@@ -66,16 +66,35 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     end
   end
 
+  step 'I should see a set of term inputs with labels "Value", "Language"' do
+    within(".term") do
+      page.should have_field("Value")
+      page.should have_field("Language")
+    end
+  end
+
   step 'I click "Add property"' do
     page.click_link "Add property"
+  end
+
+  step 'I click "Add term"' do
+    page.click_link "Add term"
   end
 
   step 'I click "Remove property" within the set' do
     page.click_link "Remove property"
   end
 
+  step 'I click "Remove term" within the set' do
+    page.click_link "Remove term"
+  end
+
   step 'I should not see a set of property inputs anymore' do
     page.should have_no_css(".property")
+  end
+
+  step 'I should not see a set of term inputs anymore' do
+    page.should have_no_css(".term")
   end
 
   step 'I fill "Key" with "label"' do
@@ -86,8 +105,20 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.fill_in "Value", with: "dead man"
   end
 
+  step 'I fill "Value" with "corpse"' do
+    page.fill_in "Value", with: "corpse"
+  end
+
+  step 'I fill "Language" with "en"' do
+    page.fill_in "Language", with: "en"
+  end
+
   step 'I should see "dead man" within the title' do
     page.should have_css(".concept h2", text: "dead man")
+  end
+
+  step 'I should see "corpse" within the title' do
+    page.should have_css(".concept h2", text: "corpse")
   end
 
   step 'I should see a property "LABEL" with value "dead man"' do
@@ -101,6 +132,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I should see an error summary' do
     page.should have_css("form.errors")
+  end
+
+  step 'I should see an English term "corpse"' do
+    page.should have_css(".terms .language.en .term h4", text: "corpse")
   end
 
   step 'I do a search for "corpse"' do

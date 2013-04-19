@@ -7,3 +7,8 @@ chromedriver.log
 .sass-cache
 stats
 TODO
+
+# vim stuff
+.*.swp
+.*.swp
+Session.vim

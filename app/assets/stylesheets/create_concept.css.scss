@@ -45,14 +45,10 @@ form.create {
       label {
         color: $browncolor;
       }
-      input {
-        background-color: white;
-      }
     }
     input {
       height:24px;
       width: 40%;
-      background-color: rgba(white, 0.5);
     }
   }
   
@@ -113,9 +109,8 @@ div.concept.new {
   
   h3 {
     @include toggle;
-    padding: 0;
+    padding: 0 7px 0 5px;
     margin: 2px 0 5px 0;
-    padding-right: 7px;
     color: $browncolor;
     background: rgba($greencolor, 0.08);
     &:before {

@@ -32,26 +32,28 @@ Feature: maintainer creates concept
     Then I should not see a set of property inputs anymore
     When I click "Add property"
     And I fill "Key" with "label"
+    # maybe use 'I fill "Value" of property with "dead man"'
     And I fill "Value" with "dead man"
     And I click "Create concept"
     Then I should see "dead man" within the title
     And I should see a property "label" with value "dead man"
 
-  # Scenario: add term
-  #   Given I have maintainer privileges
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   And I click "Add term"
-  #   Then I should see a set of term inputs with labels "Value", "Language"
-  #   When I click "Remove term" within the set
-  #   Then I should not see a set of term inputs anymore
-  #   When I click "Add term"
-  #   And I fill "Value" with "corpse"
-  #   And I fill "Language" with "en"
-  #   And I click "Create concept"
-  #   Then I should see "corpse" within the title
-  #   And I should see an English term "corpse"
-  
+  Scenario: add term
+    Given I have maintainer privileges
+    When I visit the start page
+    And I click on "New concept"
+    And I click "Add term"
+    Then I should see a set of term inputs with labels "Value", "Language"
+    When I click "Remove term" within the set
+    Then I should not see a set of term inputs anymore
+    When I click "Add term"
+    # maybe use 'I fill "Value" of term with "corpse"'
+    And I fill "Value" with "corpse"
+    And I fill "Language" with "en"
+    And I click "Create concept"
+    Then I should see "corpse" within the title
+    Then I should see an English term "corpse"
+
   # TODO:
   # Scenario: add term with property
 

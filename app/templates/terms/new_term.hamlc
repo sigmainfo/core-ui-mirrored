@@ -1,0 +1,6 @@
+%fieldset.term
+  .actions
+    %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.remove"
+  != @input "term", "value", null, scope: "concept[terms][]", index: @index, required: true
+  != @input "term", "lang", null, scope: "concept[terms][]", index: @index, required: true
+
