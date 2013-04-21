@@ -9,6 +9,7 @@
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
 #= require jquery.serializeJSON
+#= require modules/messages
 
 class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
@@ -28,10 +29,11 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
-    @propCount = 0
     @termCount = 0
 
   render: ->
+    @propCount = if @model.has("properties") then @model.get("properties").length else 0
+    @termCount = if @model.has("terms") then @model.get("terms").length else 0
     @$el.html @template concept: @model
     @broaderAndNarrower.render() unless @_wasRendered
     @$("form").before @broaderAndNarrower.$el
@@ -55,7 +57,10 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   create: (event) ->
     event.preventDefault()
     attrs = @$("form").serializeJSON().concept or {}
+    attrs.properties ?= []
+    attrs.terms ?= []
     @$("form").find("input,button").attr("disabled", true)
+    #TODO: use success and error callbacks to resume from options on reauth
     @model.save(attrs)
       .done =>
         Coreon.Models.Concept.collection().add @model

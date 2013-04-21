@@ -2,12 +2,15 @@
 #= require modules/helpers
 #= require modules/accumulation
 #= require modules/embeds_many
+#= require modules/remote_validation
 #= require models/term
 
 class Coreon.Models.Concept extends Backbone.Model
 
   Coreon.Modules.extend @, Coreon.Modules.Accumulation
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
+
+  Coreon.Modules.include @, Coreon.Modules.RemoteValidation
 
   @embedsMany "properties"
   @embedsMany "terms", model: Coreon.Models.Term
@@ -28,6 +31,8 @@ class Coreon.Models.Concept extends Backbone.Model
     @_updateHit()
     if Coreon.application?.hits?
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
+    @remoteValidationOn()
+    @once "sync", @syncMessage, @ if @isNew()
 
   toJSON: (options) ->
     serialized = {}
@@ -69,3 +74,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options
+
+  syncMessage: ->
+    @message I18n.t("concept.sync.create", label: @get "label"), type: "info"

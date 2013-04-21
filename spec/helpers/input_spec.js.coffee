@@ -85,3 +85,17 @@ describe "Coreon.Helpers.input()", ->
       input = $(markup)
       label = input.find "label"
       label.should.have.text "Foo"
+
+  context "errors", ->
+    
+    it "renders errors", ->
+      markup = @helper "property", "propValue", null, errors: [ "can't be blank" ]
+      input = $(markup)
+      error = input.find ".error"
+      console.log error
+      error.should.have.text "can't be blank"
+
+    it "classifies input with error", ->
+      markup = @helper "model", "attrName", null, errors: [ "can't be blank" ]
+      input = $(markup)
+      input.should.have.class "error"

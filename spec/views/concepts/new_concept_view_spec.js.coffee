@@ -1,3 +1,4 @@
+#
 #= require spec_helper
 #= require views/concepts/new_concept_view
 
@@ -9,6 +10,8 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @broaderAndNarrower = new Backbone.View options
     @view = new Coreon.Views.Concepts.NewConceptView
       model: new Backbone.Model
+    @view.model.properties = -> new Backbone.Collection
+    @view.model.terms = -> new Backbone.Collection
 
   afterEach ->
     I18n.t.restore()
@@ -88,6 +91,21 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$el.should.have "a.add-property"
         @view.$("a.add-property").should.have.text "Add Property"
 
+      it "renders inputs for existing properties", ->
+        @view.model.properties = ->
+          models: [
+            new Backbone.Model key: "label"
+          ]
+        @view.model.errors = ->
+          nested_errors_on_properties: [
+            value: "can't be blank"
+          ]
+        @view.render()
+        @view.$el.should.have 'form .properties .property .key input[type="text"]'
+        @view.$('form .property .key input').should.have.value "label"
+        @view.$('form .property .value').should.have ".error"
+        @view.$('form .property .value .error').should.have.text "can't be blank"
+
   describe "addProperty()", ->
 
     beforeEach ->
@@ -113,10 +131,12 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.$el.should.have '.properties .property input[id="property-0-lang"]'
 
     it "enumerates appended property input sets", ->
+      @view.model.set "properties", [{}, {}], silent: true
+      @view.render()
       @view.addProperty @event
       @view.addProperty @event
-      @view.$el.should.have '.properties .property input[id="property-0-key"]'
-      @view.$el.should.have '.properties .property input[id="property-1-key"]'
+      @view.$el.should.have '.properties .property input[id="property-2-key"]'
+      @view.$el.should.have '.properties .property input[id="property-3-key"]'
 
     it "uses nested scope", ->
       @view.addProperty @event
@@ -189,8 +209,13 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
 
     it "updates model from form", ->
       @view.$(".properties").append '<input name="concept[properties][0][key]" value="label"/>'
+      @view.$(".terms").append '<input name="concept[terms][0][value]" value="foo"/>'
       @view.create @event
-      @view.model.save.should.have.been.calledWith properties: [key: "label"]
+      @view.model.save.should.have.been.calledWith properties: [ key: "label" ], terms: [ value: "foo" ]
+
+    it "deletes empty properties and terms", ->
+      @view.create @event
+      @view.model.save.should.have.been.calledWith properties: [], terms: []
 
     context "success", ->
 

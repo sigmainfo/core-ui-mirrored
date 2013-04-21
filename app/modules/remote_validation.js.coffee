@@ -4,20 +4,23 @@ copyTo = (errors, other) ->
   if other
     for attr, attrErrors of other
       errors[attr] ?= []
-      for error in attrErrors
-        errors[attr].push error unless error in errors[attr]
+      unless attr.indexOf("nested_errors_on_") is 0
+        for error in attrErrors
+          errors[attr].push error unless error in errors[attr]
+      else
+        for error, index in attrErrors
+          errors[attr][index] ?= {}
+          copyTo errors[attr][index], error
 
 onError = (model, xhr, options) ->
   response = JSON.parse(xhr.responseText).errors
-  @remoteError = {}
-  nested = {}
+  remoteError = {}
+  hasErrors = no
   for attr, attrErrors of response
-    if attr.indexOf("nested_errors_on") is 0
-      nested[attr[17..]] = attrErrors
-    else
-      @remoteError[attr] = attrErrors
-  for attr, attrErrors of nested
-    @remoteError[attr] = attrErrors
+    unless attrErrors.length is 0
+      hasErrors = true
+      remoteError[attr] = attrErrors 
+  @remoteError = if hasErrors then remoteError else null
 
 onSync = ->
   @remoteError = null
@@ -29,6 +32,10 @@ Coreon.Modules.RemoteValidation =
   remoteValidationOn: ->
     @on "error", onError, @
     @on "sync", onSync, @
+
+  remoteValidationOff: ->
+    @off "error", onError, @
+    @off "sync", onSync, @
 
   errors: ->
     if @remoteError? and @validationError?

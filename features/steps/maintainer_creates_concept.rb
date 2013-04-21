@@ -13,7 +13,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I click on "New concept"' do
-    page.click_link "New concept"
+    click_link "New concept"
   end
 
   step 'I should be on the new concept page' do
@@ -41,7 +41,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I click "Create concept"' do
-    page.click_button "Create concept"
+    click_button "Create concept"
   end
 
   step 'I should be on the show concept page' do
@@ -74,19 +74,19 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I click "Add property"' do
-    page.click_link "Add property"
+    click_link "Add property"
   end
 
   step 'I click "Add term"' do
-    page.click_link "Add term"
+    click_link "Add term"
   end
 
   step 'I click "Remove property" within the set' do
-    page.click_link "Remove property"
+    click_link "Remove property"
   end
 
   step 'I click "Remove term" within the set' do
-    page.click_link "Remove term"
+    click_link "Remove term"
   end
 
   step 'I should not see a set of property inputs anymore' do
@@ -98,19 +98,19 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I fill "Key" with "label"' do
-    page.fill_in "Key", with: "label"
+    fill_in "Key", with: "label"
   end
 
   step 'I fill "Value" with "dead man"' do
-    page.fill_in "Value", with: "dead man"
+    fill_in "Value", with: "dead man"
   end
 
   step 'I fill "Value" with "corpse"' do
-    page.fill_in "Value", with: "corpse"
+    fill_in "Value", with: "corpse"
   end
 
   step 'I fill "Language" with "en"' do
-    page.fill_in "Language", with: "en"
+    fill_in "Language", with: "en"
   end
 
   step 'I should see "dead man" within the title' do
@@ -130,8 +130,50 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.execute_script '$("form").attr("novalidate", true)'
   end
 
+  step 'I fill "Value" of term with "corpse"' do
+    within(".term") do
+      fill_in "Value", with: "corpse"
+    end
+  end
+
   step 'I should see an error summary' do
-    page.should have_css("form.errors")
+    page.should have_css("form .errors")
+  end
+
+  step 'this summary should contain "Failed to create concept:"' do
+    page.find("form .errors").should have_content("Failed to create concept:")
+  end
+
+  step 'this summary should contain "2 errors on properties"' do
+    page.find("form .errors").should have_content("2 errors on properties")
+  end
+
+  step 'this summary should contain "1 error on terms"' do
+    page.find("form .errors").should have_content("1 error on terms")
+  end
+
+  step 'I should see error "can\'t be blank" for property input "Key"' do
+    page.should have_css(".property .key .error", text: "can\'t be blank")
+  end
+
+  step 'I should see error "can\'t be blank" for property input "Value"' do
+    page.should have_css(".property .value .error", text: "can\'t be blank")
+  end
+
+  step 'I should see error "can\'t be blank" for term input "Language"' do
+    page.should have_css(".term .lang .error", text: "can\'t be blank")
+  end
+
+  step 'I click "Remove property"' do
+    click_link "Remove property"
+  end
+
+  step 'I fill "Language" of term with "en"' do
+    fill_in "Language", with: "en"
+  end
+  
+  step 'I should not see an error summary' do
+    page.should have_no_css("form .errors")
   end
 
   step 'I should see an English term "corpse"' do
@@ -143,6 +185,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
       fill_in "coreon-search-query", with: "corpse"
       find('input[type="submit"]').click
     end
+  end
+
+  step 'I should see message \'Successfully created concept "corpse".\'' do
+    page.should have_css(".notification", text: 'Successfully created concept "corpse".')
   end
 
   step 'I do not have maintainer privileges' do

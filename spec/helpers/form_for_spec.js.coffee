@@ -64,21 +64,22 @@ describe "Coreon.Helpers.form_for()", ->
   context "validation errors", ->
 
     it "renders error summary", ->
+      I18n.t.withArgs("form.errors.summary.create", name: "model").returns "Failed to create model:"
+      @model.isNew = -> true
       @model.errors = -> {}
       markup = @helper "model", @model, ->
       form = $(markup)
       form.should.have ".errors"
+      form.find(".errors *:first-child").should.have.text "Failed to create model:"
 
-  describe "fields_for", ->
-  
-    it "delegates to field for helper", ->
-      sinon.stub Coreon.Helpers, "fields_for"
-      try
-        block = ->
-        @helper "my_model", @model, ->
-          @form.fields_for "properties", block
-        Coreon.Helpers.fields_for.should.have.been.calledWith "properties", @model, block
-      finally
-        Coreon.Helpers.fields_for.restore()
-      
-    
+    it "renders error count for attrs", ->
+      I18n.t.withArgs("form.errors.attribute", name: "properties", count: 3).returns "3 errors on properties"
+      @model.errors = -> 
+        properties: ["are invalid"],
+        nested_errors_on_properties: [
+          { value: ["can't be foo", "can't be bar"] }
+          { key:   ["can't be baz"] }
+        ]
+      markup = @helper "model", @model, ->
+      form = $(markup)
+      form.find(".errors li").should.contain "3 errors on properties"

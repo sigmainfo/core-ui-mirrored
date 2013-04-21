@@ -220,3 +220,14 @@ describe "Coreon.Models.Concept", ->
         Coreon.application.sync.should.have.been.calledWith "create", @model
       finally
         Coreon.application = null
+
+    it "creates notification on successful sync", ->
+      I18n.t.withArgs("concept.sync.create", label: "dead man").returns 'Successfully created concept "dead man"'
+      @model.isNew = -> true
+      @model.initialize()
+      @model.set "label", "dead man", silent: true
+      @model.message = sinon.spy()
+      @model.trigger "sync" 
+      @model.trigger "sync" 
+      @model.message.should.have.been.calledOnce
+      @model.message.should.have.been.calledWith 'Successfully created concept "dead man"'

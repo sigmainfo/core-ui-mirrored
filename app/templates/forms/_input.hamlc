@@ -1,3 +1,5 @@
 %div{class: @className}
   %label{for: @inputId}= @label
   %input{type: @type, name: @inputName, id: @inputId, value: @value, required: @required}
+  - for error in @errors
+    %p.error= error

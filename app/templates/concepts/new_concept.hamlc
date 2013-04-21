@@ -1,10 +1,15 @@
 != @render "concepts/caption", label: @concept.get "label"
 != @form_for "concept", @concept, ->
-  != @form.fields_for "properties", ->
+  %section.properties
     %h3= I18n.t "properties.title"
     .actions
       %a.add-property{href: "javascript:void(0)"}= I18n.t "properties.add"
-  != @form.fields_for "terms", ->
+    - for property, index in @concept.properties().models
+      != @render "properties/new_property", index: index, property: property, errors: @concept.errors().nested_errors_on_properties?[index]
+  %section.terms
     %h3= I18n.t "terms.title"
     .actions
       %a.add-term{href: "javascript:void(0)"}= I18n.t "terms.add"
+    - for term, index in @concept.terms().models
+      != @render "terms/new_term", index: index, term: term, errors: @concept.errors().nested_errors_on_terms?[index]
+

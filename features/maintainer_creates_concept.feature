@@ -32,7 +32,6 @@ Feature: maintainer creates concept
     Then I should not see a set of property inputs anymore
     When I click "Add property"
     And I fill "Key" with "label"
-    # maybe use 'I fill "Value" of property with "dead man"'
     And I fill "Value" with "dead man"
     And I click "Create concept"
     Then I should see "dead man" within the title
@@ -47,7 +46,6 @@ Feature: maintainer creates concept
     When I click "Remove term" within the set
     Then I should not see a set of term inputs anymore
     When I click "Add term"
-    # maybe use 'I fill "Value" of term with "corpse"'
     And I fill "Value" with "corpse"
     And I fill "Language" with "en"
     And I click "Create concept"
@@ -64,11 +62,12 @@ Feature: maintainer creates concept
     And I click on "New concept"
     And client-side validation is turned off
     And I click "Add property"
-    # And I click "Add term"
-    # And I fill "Value" of term with "corpse"
+    And I click "Add term"
+    And I fill "Value" of term with "corpse"
+    # TODO: nested property on term
     And I click "Create concept"
     Then I should see an error summary
-    And this summary should contain "Concept could not be created:"
+    And this summary should contain "Failed to create concept:"
     And this summary should contain "2 errors on properties"
     And this summary should contain "1 error on terms"
     And I should see error "can't be blank" for property input "Key"
