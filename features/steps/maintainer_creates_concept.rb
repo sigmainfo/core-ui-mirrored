@@ -176,6 +176,22 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_no_css("form .errors")
   end
 
+  step 'I click "Cancel"' do
+    click_link "Cancel"
+  end 
+
+  step 'I should be on the start page again' do
+    page.current_path.should == "/"
+  end
+
+  step 'I should not see "<New concept>"' do
+    page.should have_no_content("<New concept>")
+  end
+
+  step 'I should see link "New concept"' do
+    page.should have_link("New concept")
+  end
+
   step 'I should see an English term "corpse"' do
     page.should have_css(".terms .language.en .term h4", text: "corpse")
   end

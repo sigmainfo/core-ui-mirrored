@@ -87,7 +87,7 @@ Feature: maintainer creates concept
     When I click "Cancel"
     Then I should be on the start page again
     And I should not see "<New concept>"
-    But I should see "New concept"
+    But I should see link "New concept"
   
   # Scenario: term from recent search
   #   Given I have maintainer privileges
