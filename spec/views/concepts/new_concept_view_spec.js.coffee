@@ -217,6 +217,12 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.create @event
       @view.model.save.should.have.been.calledWith properties: [], terms: []
 
+    it "does not set deleted properties", ->
+      @view.$(".properties").append '<input name="concept[properties][2][key]" value="label"/>'
+      @view.$(".terms").append '<input name="concept[terms][1][value]" value="foo"/>'
+      @view.create @event
+      @view.model.save.should.have.been.calledWith properties: [ key: "label" ], terms: [ value: "foo" ]
+
     context "success", ->
 
       beforeEach ->

@@ -55,7 +55,6 @@ Feature: maintainer creates concept
   # TODO:
   # Scenario: add term with property
 
-  @wip
   Scenario: validation errors
     Given I have maintainer privileges
     When I visit the start page
@@ -80,14 +79,15 @@ Feature: maintainer creates concept
     And I should not see an error summary
     But I should see message 'Successfully created concept "corpse".'
 
-  # Scenario: cancel creation
-  #   Given I have maintainer privileges
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   When I click "Cancel"
-  #   Then I should be on the start page again
-  #   And I should not see "<New concept>"
-  #   But I should see "New concept"
+  @wip
+  Scenario: cancel creation
+    Given I have maintainer privileges
+    When I visit the start page
+    And I click on "New concept"
+    When I click "Cancel"
+    Then I should be on the start page again
+    And I should not see "<New concept>"
+    But I should see "New concept"
   
   # Scenario: term from recent search
   #   Given I have maintainer privileges

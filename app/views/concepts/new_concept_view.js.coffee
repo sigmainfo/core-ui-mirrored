@@ -56,9 +56,10 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
   create: (event) ->
     event.preventDefault()
-    attrs = @$("form").serializeJSON().concept or {}
-    attrs.properties ?= []
-    attrs.terms ?= []
+    data = @$("form").serializeJSON().concept or {}
+    attrs = {}
+    attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
+    attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
     @$("form").find("input,button").attr("disabled", true)
     #TODO: use success and error callbacks to resume from options on reauth
     @model.save(attrs)
