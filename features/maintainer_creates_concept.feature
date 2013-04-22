@@ -79,7 +79,6 @@ Feature: maintainer creates concept
     And I should not see an error summary
     But I should see message 'Successfully created concept "corpse".'
 
-  @wip
   Scenario: cancel creation
     Given I have maintainer privileges
     When I visit the start page
@@ -89,22 +88,23 @@ Feature: maintainer creates concept
     And I should not see "<New concept>"
     But I should see link "New concept"
   
-  # Scenario: term from recent search
-  #   Given I have maintainer privileges
-  #   When I do a search for "corpse"
-  #   And I click on "New concept"
-  #   Then I should be on the new concept page
-  #   And I should see "<New concept>" within the title
-  #   And I should see a set of term inputs
-  #   And I should see "corpse" for "Value"
-  #   And I should see "en" for "Language"
+  Scenario: term from recent search
+    Given I have maintainer privileges
+    When I do a search for "corpse"
+    And I click on "New concept"
+    Then I should be on the new concept page
+    And I should see "<New concept>" within the title
+    And I should see a set of term inputs
+    And I should see "corpse" for "Value"
+    And I should see "en" for "Language"
 
-  # Scenario: not a maintainer
-  #   Given I do not have maintainer privileges
-  #   When I visit the start page
-  #   Then I should not see "New concept"
-  #   When I do a search for "corpse"
-  #   Then I should not see "New concept"
-  #   When I visit "/concepts/new"
-  #   Then I should be on the previous page
-  #   And I should not see a "Create concept" button
+  @wip
+  Scenario: not a maintainer
+    Given I do not have maintainer privileges
+    When I visit the start page
+    Then I should not see "New concept"
+    When I do a search for "corpse"
+    Then I should not see "New concept"
+    When I visit "/concepts/new"
+    Then I should be on the previous page
+    And I should not see a "Create concept" button

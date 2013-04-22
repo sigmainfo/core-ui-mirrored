@@ -8,9 +8,9 @@
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
-    ""                                 : "root"
-    "concepts/new"                     : "new"
-    "concepts/search/(:target/):query" : "search"
+    ""                                  : "root"
+    "concepts/new(/terms/:lang/:value)" : "new"
+    "concepts/search/(:target/):query"  : "search"
 
   _bindRoutes: ->
     super
@@ -29,10 +29,12 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       model: concept
     @app.hits.reset [ result: concept ]
 
-  new: ->
-    concept = new Coreon.Models.Concept
+  new: (lang, value) ->
+    attrs = {}
+    attrs.terms = [ lang: lang, value: value ] if value?
+    concept = new Coreon.Models.Concept attrs
     @view.switch new Coreon.Views.Concepts.NewConceptView
-      model:concept
+      model: concept
     @app.hits.reset [ result: concept ]
 
   search: (target, query) ->

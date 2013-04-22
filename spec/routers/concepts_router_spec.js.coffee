@@ -141,11 +141,24 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.navigate "/concepts/new", trigger: true
       @router.new.should.have.been.calledOnce
 
+    it "is routed with additional params", ->
+      @router.new = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "/concepts/new/terms/de/waffe", trigger: true
+      @router.new.should.have.been.calledOnce
+      @router.new.should.have.been.calledWith "de", "waffe"
+
     it "switches to new concept form", ->
       @router.new()
       @screen.should.be.an.instanceof Coreon.Views.Concepts.NewConceptView
       @screen.model.should.be.an.instanceof Coreon.Models.Concept
       @screen.model.isNew().should.be.true
+
+    it "populates terms from params", ->
+      @router.new "de", "waffe"
+      @screen.model.terms().should.have.lengthOf 1
+      @screen.model.terms().at(0).get("lang").should.equal "de"
+      @screen.model.terms().at(0).get("value").should.equal "waffe"
 
     it "updates selection", ->
       @router.app.hits.reset []

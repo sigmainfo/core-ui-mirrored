@@ -17,7 +17,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the new concept page' do
-    page.current_path.should == "/concepts/new"
+    page.current_path.should =~ %r|^/concepts/new|
   end
 
   step 'I should see "<New concept>" within the title' do
@@ -201,6 +201,18 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
       fill_in "coreon-search-query", with: "corpse"
       find('input[type="submit"]').click
     end
+  end
+
+  step 'I should see a set of term inputs' do
+    page.should have_css("form .term input")
+  end
+
+  step 'I should see "corpse" for "Value"' do
+    page.should have_field("Value", with: "corpse")
+  end
+
+  step 'I should see "en" for "Language"' do
+    page.should have_field("Language", with: "en")
   end
 
   step 'I should see message \'Successfully created concept "corpse".\'' do

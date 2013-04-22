@@ -10,7 +10,7 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
     Coreon.application.session.ability.can = sinon.stub()
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Search.SearchResultsConceptsView model: new Backbone.Model(hits: [])
-    @view.model.query = -> "q=foo"
+    @view.model.query = -> "foo"
 
   afterEach ->
     Coreon.application.destroy()
@@ -95,9 +95,10 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
   
       it "renders link to new concept form", ->
         I18n.t.withArgs("concept.new").returns "New concept"
+        @view.model.query = -> "poet"
         @view.render()
-        @view.$el.should.have 'a[href="/concepts/new"]'
-        @view.$('a[href="/concepts/new"]').should.have.text "New concept"
+        @view.$el.should.have 'a[href="/concepts/new/terms/en/poet"]'
+        @view.$('a[href="/concepts/new/terms/en/poet"]').should.have.text "New concept"
 
 
     context "without maintainer privileges", ->
