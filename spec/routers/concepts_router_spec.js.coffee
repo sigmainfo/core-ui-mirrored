@@ -135,6 +135,12 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
   describe "new()", ->
 
+    beforeEach ->
+      sinon.stub(Coreon.application.session.ability, "can").returns true
+
+    afterEach ->
+      Coreon.application.session.ability.can.restore()
+
     it "is routed", ->
       @router.new = sinon.spy()
       @router._bindRoutes()
@@ -165,3 +171,10 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.new()
       @router.app.hits.should.have.lengthOf 1
       @router.app.hits.at(0).get("result").should.equal @screen.model
+
+    it "redirects to start page when not able to create a concept", ->
+      Coreon.application.session.ability.can
+        .withArgs("create", Coreon.Models.Concept).returns false
+      @router.new()
+      console.log @screen
+      @screen.should.be.an.instanceof Coreon.Views.Concepts.RootView

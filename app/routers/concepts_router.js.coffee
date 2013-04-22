@@ -30,12 +30,15 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @app.hits.reset [ result: concept ]
 
   new: (lang, value) ->
-    attrs = {}
-    attrs.terms = [ lang: lang, value: value ] if value?
-    concept = new Coreon.Models.Concept attrs
-    @view.switch new Coreon.Views.Concepts.NewConceptView
-      model: concept
-    @app.hits.reset [ result: concept ]
+    if Coreon.application?.session.ability.can "create", Coreon.Models.Concept
+      attrs = {}
+      attrs.terms = [ lang: lang, value: value ] if value?
+      concept = new Coreon.Models.Concept attrs
+      @view.switch new Coreon.Views.Concepts.NewConceptView
+        model: concept
+      @app.hits.reset [ result: concept ]
+    else
+      Backbone.history.navigate "/", trigger: true
 
   search: (target, query) ->
     @view.widgets.search.selector.hideHint()

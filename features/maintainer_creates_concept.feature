@@ -98,13 +98,12 @@ Feature: maintainer creates concept
     And I should see "corpse" for "Value"
     And I should see "en" for "Language"
 
-  @wip
   Scenario: not a maintainer
     Given I do not have maintainer privileges
     When I visit the start page
-    Then I should not see "New concept"
+    Then I should not see link "New concept"
     When I do a search for "corpse"
-    Then I should not see "New concept"
+    Then I should not see link "New concept"
     When I visit "/concepts/new"
-    Then I should be on the previous page
-    And I should not see a "Create concept" button
+    Then I should be on the start page
+    And I should not see link "New concept"

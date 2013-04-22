@@ -223,7 +223,15 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.execute_script 'Coreon.application.session.ability.set("role", "user");'
   end
 
-  step 'I should not see "New concept"' do
+  step 'I should not see link "New concept"' do
     page.should have_no_link("New concept")
+  end
+
+  step 'I visit "/concepts/new"' do
+    visit "/concepts/new"
+  end
+
+  step 'I should be on the start page' do
+    page.current_path.should == "/"
   end
 end
