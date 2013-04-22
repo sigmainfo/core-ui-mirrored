@@ -178,6 +178,76 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.removeProperty @event
       @view.$el.should.not.have ".property"
         
+
+  describe "addTerm()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input", (name, attr, model, options) ->
+        "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
+      @event = $.Event "click"
+      @view.render()
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+    
+    it "is triggered by click on action", ->
+      @view.addTerm = sinon.spy()
+      @view.delegateEvents() 
+      @view.$("a.add-term").trigger @event
+      @view.addTerm.should.have.been.calledOnce
+      @view.addTerm.should.have.been.calledWith @event
+
+    it "appends term input set", ->
+      @view.addTerm @event
+      @view.$el.should.have '.terms .term input[id="term-0-value"]'
+      @view.$el.should.have '.terms .term input[id="term-0-lang"]'
+
+    it "enumerates appended term input sets", ->
+      @view.model.set "terms", [{}, {}], silent: true
+      @view.render()
+      @view.addTerm @event
+      @view.addTerm @event
+      @view.$el.should.have '.terms .term input[id="term-2-value"]'
+      @view.$el.should.have '.terms .term input[id="term-3-value"]'
+
+    it "uses nested scope", ->
+      @view.addTerm @event
+      @view.$el.should.have '.terms .term input[name="concept[terms][][value]"]'
+      @view.$el.should.have '.terms .term input[name="concept[terms][][lang]"]'
+
+    it "requires key and value inputs", ->
+      @view.addTerm @event
+      @view.$('.terms .term input[id="term-0-value"]').should.have.attr "required"
+      @view.$('.terms .term input[id="term-0-lang"]').should.have.attr "required"
+
+    it "renders remove link", ->
+      I18n.t.withArgs("term.remove").returns "Remove term"
+      @view.addTerm @event
+      @view.$el.should.have ".term a.remove-term"
+      @view.$(".term a.remove-term").should.have.text "Remove term"
+
+  describe "removeTerm()", ->
+    
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
+      @event = $.Event "click"
+      @view.render()
+      @view.addTerm @event
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+
+    it "is triggered by click on remove action", ->
+      @view.removeTerm = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".term a.remove-term").trigger @event
+      @view.removeTerm.should.have.been.calledOnce
+
+    it "removes term input set", ->
+      @event.target = @view.$(".remove-term").get(0)
+      @view.removeTerm @event
+      @view.$el.should.not.have ".term"
+        
   describe "create()", ->
 
     beforeEach ->
