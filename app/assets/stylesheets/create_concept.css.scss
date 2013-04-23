@@ -123,8 +123,11 @@ div.concept.new {
     @include retina-separator;
     padding-top: 10px;
     
-    a.add_term {
+    a.add-term {
       top: 14px;
+    }
+    .term {
+      background-image: none;
     }
     
     a.add_term_property {
@@ -143,7 +146,6 @@ div.concept.new {
   
   .properties {
     position: relative;
-    @include dottedline;
     padding: 3px 0 30px 0;
     
     a.add-property {
