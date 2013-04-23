@@ -6,10 +6,11 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
   
   beforeEach ->
     Coreon.application = new Coreon.Application
-    Coreon.application.sync = sinon.spy()
+    Coreon.application.sync = sinon.stub().returns done: ->
+    Coreon.application.session.ability.can = sinon.stub()
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Search.SearchResultsConceptsView model: new Backbone.Model(hits: [])
-    @view.model.query = -> "q=foo"
+    @view.model.query = -> "foo"
 
   afterEach ->
     Coreon.application.destroy()
@@ -21,7 +22,7 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
   it "creates container", ->
     @view.$el.should.have.class "search-results-concepts"
 
-  describe "#render", ->
+  describe "render()", ->
 
     it "is chainable", ->
       @view.render().should.equal @view
@@ -87,12 +88,25 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
       @view.$("a.show-all").should.have.text "Show all"
       @view.$("a.show-all").should.have.attr "href", "/concepts/search/gun"
 
-    it "renders button to create concept", ->
-      I18n.t.withArgs("search.concepts.create").returns "Create concept"
-      @view.model.query = -> "gun"
-      @view.render()
-      @view.$el.should.have "a.create-concept"
-      @view.$("a.create-concept").should.have.text "Create concept"
-      @view.$("a.create-concept").should.have.attr "href", "/concepts/create"
-      @view.$("a.create-concept").should.have.class "button"
+    context "with maintainer privileges", ->
+    
+      beforeEach ->
+        Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Concept).returns true
+  
+      it "renders link to new concept form", ->
+        I18n.t.withArgs("concept.new").returns "New concept"
+        @view.model.query = -> "poet"
+        @view.render()
+        @view.$el.should.have 'a[href="/concepts/new/terms/en/poet"]'
+        @view.$('a[href="/concepts/new/terms/en/poet"]').should.have.text "New concept"
+
+
+    context "without maintainer privileges", ->
+    
+      beforeEach ->
+        Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Concept).returns false
+  
+      it "renders link to new concept form", ->
+        @view.render()
+        @view.$el.should.not.have 'a[href="/concepts/new"]'
 

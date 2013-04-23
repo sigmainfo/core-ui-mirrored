@@ -5,9 +5,10 @@ describe "Coreon.Views.Concepts.ConceptListItemView", ->
   
   beforeEach ->
     @view = new Coreon.Views.Concepts.ConceptListItemView
-      model: _(new Backbone.Model terms: []).extend
+      model: _(new Backbone.Model ).extend
         label: -> "Concept123"
         hit: -> false
+        terms: -> new Backbone.Collection
 
   it "is a Coreon view", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView

@@ -18,7 +18,7 @@ describe "Coreon.Modules.Accumulation", ->
   afterEach ->
     Coreon.Models.MyModel.collection().reset()
 
-  describe "#collection", ->
+  describe "collection()", ->
 
     it "is a Backbone collection", ->
       Coreon.Models.MyModel.collection().should.be.an.instanceof Backbone.Collection
@@ -29,16 +29,23 @@ describe "Coreon.Modules.Accumulation", ->
     it "has model class set to self", ->
       Coreon.Models.MyModel.collection().model.should.equal Coreon.Models.MyModel
 
-  describe "#create", ->
+  describe "create()", ->
 
     it "passes arguments to collection's create()", ->
         Coreon.Models.MyModel.collection().create = sinon.spy()
         Coreon.Models.MyModel.create "attr", foo: "bar"
         Coreon.Models.MyModel.collection().create.should.have.been.calledOnce
 
-  describe "#find", ->
+  describe "find()", ->
 
     context "on unknown model", ->
+
+      beforeEach ->
+        Coreon.Models.MyModel.collection().on "add", (model) ->
+          model.fetch = sinon.stub()
+
+      afterEach ->
+        Coreon.Models.MyModel.collection().off "add"
       
       it "returns new model instance", ->
         model = Coreon.Models.MyModel.find "123"
@@ -49,11 +56,24 @@ describe "Coreon.Modules.Accumulation", ->
         Coreon.Models.MyModel.collection().get("123").should.equal model
 
       it "fetches model", ->
-        Coreon.Models.MyModel.collection().on "add", (model) =>
-          model.fetch = sinon.spy()
         model = Coreon.Models.MyModel.find "123"
         model.fetch.should.have.been.calledOnce
-        
+
+      it "updates blank state on model", ->
+        model = Coreon.Models.MyModel.find "123"
+        model.blank.should.be.true
+
+      it "updates blank state on successful sync", ->
+        model = Coreon.Models.MyModel.find "123"
+        model.trigger "sync", model
+        model.blank.should.be.false
+
+      it "triggers event when no longer blank", ->
+        spy = sinon.spy()
+        model = Coreon.Models.MyModel.find "123"
+        model.on "nonblank", spy
+        model.trigger "sync", model
+        spy.should.have.been.calledOnce
 
     context "on already loaded model", ->
 
@@ -62,7 +82,7 @@ describe "Coreon.Modules.Accumulation", ->
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123").should.equal model
 
-  describe "#upsert", ->
+  describe "upsert()", ->
 
     beforeEach ->
       @original = new Coreon.Models.MyModel

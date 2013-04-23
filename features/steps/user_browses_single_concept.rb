@@ -9,7 +9,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   def section_for(name)
-    find :xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']/following-sibling::*[contains(@class, 'section')]"
+    find :xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']/following-sibling::*[contains(@class, 'section')]", visible: false
   end
 
   Given 'a concept with label "handgun"' do

@@ -15,19 +15,14 @@ describe "Coreon.Models.ConceptNode", ->
     @node.should.be.an.instanceof Backbone.Model
 
   describe "initialize()", ->
-
-    it "assigns concept from options when given", ->
-      concept = new Backbone.Model _id: "123"
-      @node.initialize {}, concept: concept
-      @node.concept.should.equal concept
-
-    it "assigns concept from id attribute", ->
-      concept = new Backbone.Model _id: "123"
-      Coreon.Models.Concept.find.withArgs("123").returns concept
-      @node.id = "123"
+  
+    it "sets concept from id", ->
+      concept = new Backbone.Model
+      Coreon.Models.Concept.find.withArgs("concept").returns concept
+      @node.id = "concept"
       @node.initialize()
-      @node.concept.should.equal concept
-
+      @node.get("concept").should.equal concept
+      
   describe "attributes", ->
   
     describe "hit", ->
@@ -181,14 +176,15 @@ describe "Coreon.Models.ConceptNode", ->
     context "derived from concept", ->
 
       beforeEach ->
-        @concept = new Backbone.Model id: 123
-        @node.initialize {}, concept: @concept
-      
+        @concept = new Backbone.Model
+
       it "passes thru attribute from concept", ->
+        @node.set "concept", @concept
         @concept.set "label", "concept #123", silent: true
         @node.get("label").should.equal "concept #123"
 
       it "triggers concept change events", ->
+        @node.set "concept", @concept
         spy = sinon.spy()
         @node.on "all", spy
         @concept.set "foo", "bar", myOption: true
@@ -197,7 +193,24 @@ describe "Coreon.Models.ConceptNode", ->
         spy.secondCall.should.have.been.calledWith "change", @node, myOption: true
 
       it "does not trigger other concept events", ->
+        @node.set "concept", @concept
         spy = sinon.spy()
         @node.on "all", spy
         @concept.destroy()
         spy.should.not.have.been.called
+
+      it "updates id from concept", ->
+        @concept.set "_id", "abcde"
+        @node.set "concept", @concept
+        @node.id.should.equal "abcde"
+        
+      it "updates id together with concept", ->
+        @node.set "concept", @concept
+        @concept.set "_id", "abcde"
+        @node.id.should.equal "abcde"
+        
+
+      it "falls back to cid when updating id from concept", ->
+        @concept.cid = "c123"
+        @node.set "concept", @concept
+        @node.id.should.equal "c123"

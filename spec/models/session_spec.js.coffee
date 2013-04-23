@@ -34,6 +34,11 @@ describe "Coreon.Models.Session", ->
       @session.connections.should.be.an.instanceof Coreon.Collections.Connections
       @session.connections.session.should.equal @session
 
+    it "creates ability", ->
+      should.exist @session.ability
+      @session.ability.should.be.an.instanceof Coreon.Models.Ability
+      
+
   describe "activate()", ->
     
     beforeEach ->

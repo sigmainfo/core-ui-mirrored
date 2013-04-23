@@ -1,22 +1,46 @@
 #= require environment
-#= require views/concepts/concept_list_view
+#= require views/concepts/root_view
 #= require views/concepts/concept_view
-#= require views/concepts/create_concept_view
+#= require views/concepts/new_concept_view
 #= require models/concept_search
+#= require views/concepts/concept_list_view
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
-    "concepts/search/(:target/):query" : "search"
-    "concepts/create(/:query)" : "create"
-    "concepts/create" : "create"
-    "concepts/:id"    : "show"
+    ""                                  : "root"
+    "concepts/new(/terms/:lang/:value)" : "new"
+    "concepts/search/(:target/):query"  : "search"
+
+  _bindRoutes: ->
+    super
+    @route /^concepts\/([0-9a-f]{24})$/, "show"
 
   initialize: (options) ->
     @[key] = value for key, value of options
 
-  search: (target, query) ->
+  root: ->
+    @view.switch new Coreon.Views.Concepts.RootView
+    @app.hits.reset []
 
+  show: (id) ->
+    concept = Coreon.Models.Concept.find id
+    @view.switch new Coreon.Views.Concepts.ConceptView
+      model: concept
+    @app.hits.reset [ result: concept ]
+
+  new: (lang, value) ->
+    if Coreon.application?.session.ability.can "create", Coreon.Models.Concept
+      attrs = {}
+      attrs.terms = [ lang: lang, value: value ] if value?
+      concept = new Coreon.Models.Concept attrs
+      @view.switch new Coreon.Views.Concepts.NewConceptView
+        model: concept
+      @app.hits.reset [ result: concept ]
+    else
+      Backbone.history.navigate "/", trigger: true
+
+  search: (target, query) ->
     @view.widgets.search.selector.hideHint()
     @view.$("input#coreon-search-query").val decodeURIComponent(query)
 
@@ -25,25 +49,9 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       query: query
       target: target
 
-    results = new Coreon.Views.Concepts.ConceptListView
+    @view.switch new Coreon.Views.Concepts.ConceptListView
       model: search
       collection: @collection
-    
-    @view.switch results
 
     search.fetch()
 
-  show: (id) ->
-    concept = Coreon.Models.Concept.find id
-    screen = new Coreon.Views.Concepts.ConceptView model: concept
-    @view.switch screen
-    @app.hits.reset [ result: concept ]
-
-  create: (query) ->
-    screen = new Coreon.Views.Concepts.CreateConceptView model:
-      new Coreon.Models.Concept
-    if query
-      screen.model.get("terms").push
-        lang: "en"
-        value: query
-    @view.switch screen

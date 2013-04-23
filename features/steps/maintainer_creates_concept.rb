@@ -3,164 +3,261 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
 
-  step 'I should see a button "Create Concept"' do
-    page.should have_css ".button", text: "Create Concept"
+  step 'I have maintainer privileges' do
+    page.execute_script 'Coreon.application.session.ability.set("role", "maintainer");'
   end
 
-  step 'I click on the create concept link' do
-    find('a.create-concept').click
+  step 'I visit the start page' do
+    page.execute_script 'Backbone.history.navigate("/other");'
+    page.execute_script 'Backbone.history.navigate("/", {trigger: true});'
   end
 
-  step 'I should be on the create concept page' do
-    current_path.should == "/concepts/create"
+  step 'I click on "New concept"' do
+    click_link "New concept"
   end
 
-  step 'I should see title "<New Concept>"' do
-    page.should have_css "h2.label", text: "<New Concept>"
+  step 'I should be on the new concept page' do
+    page.current_path.should =~ %r|^/concepts/new|
   end
 
-  #step 'I should see the "Broader and Narrower" section with only "gun"?' do
-  #end
-
-  step 'I should see an "Add Property" link' do
-    page.should have_css "a.add_property", text: "Add Property"
+  step 'I should see "<New concept>" within the title' do
+    page.should have_css(".concept h2", text: "<New concept>")
   end
 
-  step 'I should see an "Add Term" link' do
-    page.should have_css "a.add_term", text: "Add Term"
+  step 'I should see a section "BROADER & NARROWER"' do
+    page.should have_css("section h3", text: "BROADER & NARROWER")
   end
 
-  step 'I should see a link to "create" the concept' do
-    page.should have_css ".create", "Create"
+  step 'I should see "<New concept>" being the current selection' do
+    page.should have_css(".broader-and-narrower .self", text: "<New concept>")
   end
 
-  step 'I should see a link to "cancel" the creation of the concept' do
-    page.should have_css ".cancel", "Cancel"
+  step 'I should see "Repository" within the list of broader concepts' do
+    page.should have_css(".broader-and-narrower .broader li", text: "Repository")
   end
 
-  step 'I should see a broader narrower section with only a <New Concept>' do
-    within ".concept-tree" do
-      page.should have_css ".section-toggle", "Broader & Narrower"
-      page.should have_css ".self", "<New Concept>"
-      page.should have_css ".super", ""
-      page.should have_css ".sub", ""
+  step 'I should see a new concept node "<New concept>" within the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "<New concept>")
+  end
+
+  step 'I click "Create concept"' do
+    click_button "Create concept"
+  end
+
+  step 'I should be on the show concept page' do
+    page.should have_no_css(".concept.new")
+    page.current_path.should =~ %r|^/concepts/[0-9a-f]{24}$| 
+    @id = current_path.split("/").last
+  end
+
+  step 'I should see the id of the newly created concept within the title' do
+    page.should have_css(".label", text: @id)
+  end
+
+  step 'I should see a new concept node with the id of the newly created concept within the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: @id)
+  end
+
+  step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
+    within(".property") do
+      page.should have_field("Key")
+      page.should have_field("Value")
+      page.should have_field("Language")
     end
   end
 
-  step 'I click on "Add Term"' do
-    find('a.add_term').click
-  end
-
-  step 'I should see two empty inputs for Term Value and Language' do
-    within ".create-term[3]" do
-      find_field("Term Value").value.should == ""
-      find_field("Language").value.should == ""
+  step 'I should see a set of term inputs with labels "Value", "Language"' do
+    within(".term") do
+      page.should have_field("Value")
+      page.should have_field("Language")
     end
   end
 
-  step 'I should see a "Remove Term" link for the new term' do
-    within ".create-term[3]" do
-      page.should have_css "a.remove_term", text: "Remove Term"
+  step 'I click "Add property"' do
+    click_link "Add property"
+  end
+
+  step 'I click "Add term"' do
+    click_link "Add term"
+  end
+
+  step 'I click "Remove property" within the set' do
+    click_link "Remove property"
+  end
+
+  step 'I click "Remove term" within the set' do
+    click_link "Remove term"
+  end
+
+  step 'I should not see a set of property inputs anymore' do
+    page.should have_no_css(".property")
+  end
+
+  step 'I should not see a set of term inputs anymore' do
+    page.should have_no_css(".term")
+  end
+
+  step 'I fill "Key" with "label"' do
+    fill_in "Key", with: "label"
+  end
+
+  step 'I fill "Value" with "dead man"' do
+    fill_in "Value", with: "dead man"
+  end
+
+  step 'I fill "Value" with "corpse"' do
+    fill_in "Value", with: "corpse"
+  end
+
+  step 'I fill "Language" with "en"' do
+    fill_in "Language", with: "en"
+  end
+
+  step 'I should see "dead man" within the title' do
+    page.should have_css(".concept h2", text: "dead man")
+  end
+
+  step 'I should see "corpse" within the title' do
+    page.should have_css(".concept h2", text: "corpse")
+  end
+
+  step 'I should see a property "LABEL" with value "dead man"' do
+    page.should have_css(".properties th", text: "LABEL")
+    page.find(:xpath, "//th[text() = 'label']/following-sibling::td").text.should == "dead man"
+  end
+
+  step 'I click "Add property" within the term input set' do
+    within "form .term" do
+      click_link "Add property"
     end
   end
 
-  step 'I click on "Create"' do
-    find(".button.create").click
-    sleep 0.3
+  step 'I fill "Key" with "source" within the term property input set' do
+    within ".term .property" do
+      fill_in "Key", with: "source"
+    end
   end
 
-  step 'I should see a concept error message "Concept could not be saved" with "Terms had errors"' do
-    page.should have_css( ".errors p", text: "Concept could not be saved" )
-    page.should have_css( ".errors li", text: "Terms had errors" )
+  step 'I click "PROPERTIES" within term' do
+    page.find(".term .section-toggle", text:"PROPERTIES").click
+  end
+
+  step 'I should see a property "source" with value "Wikipedia"' do
+   page.find(:css, ".term").find(:xpath, '//th[text()="source"]/following-sibling::td').text.should == "Wikipedia"
+  end
+
+  step 'I fill "Value" with "Wikipedia" within the term property input set' do
+    within ".term .property" do
+      fill_in "Value", with: "Wikipedia"
+    end
+  end
+
+  step 'client-side validation is turned off' do
+    page.execute_script '$("form").attr("novalidate", true)'
+  end
+
+  step 'I fill "Value" of term with "corpse"' do
+    within(".term") do
+      fill_in "Value", with: "corpse"
+    end
+  end
+
+  step 'I should see an error summary' do
+    page.should have_css("form .error-summary")
+  end
+
+  step 'this summary should contain "Failed to create concept:"' do
+    page.find("form .error-summary").should have_content("Failed to create concept:")
+  end
+
+  step 'this summary should contain "2 errors on properties"' do
+    page.find("form .error-summary").should have_content("2 errors on properties")
+  end
+
+  step 'this summary should contain "1 error on terms"' do
+    page.find("form .error-summary").should have_content("1 error on terms")
+  end
+
+  step 'I should see error "can\'t be blank" for property input "Key"' do
+    page.should have_css(".property .key .error-message", text: "can\'t be blank")
+  end
+
+  step 'I should see error "can\'t be blank" for property input "Value"' do
+    page.should have_css(".property .value .error-message", text: "can\'t be blank")
+  end
+
+  step 'I should see error "can\'t be blank" for term input "Language"' do
+    page.should have_css(".term .lang .error-message", text: "can\'t be blank")
+  end
+
+  step 'I click "Remove property"' do
+    click_link "Remove property"
+  end
+
+  step 'I fill "Language" of term with "en"' do
+    fill_in "Language", with: "en"
   end
   
-  step 'I should see term error messages "Please enter a Term Value" and "Please enter the Language of the Term"' do
-    page.should have_css( ".terms .value .error_message", text: "Please enter a Term Value" )
-    page.should have_css( ".terms .language .error_message", text: "Please enter the Language of the Term" )
-  end
-  
-  step 'I click on "Remove Term"' do
-    within ".create-term[3]" do
-      find("a.remove_term").click
-    end
+  step 'I should not see an error summary' do
+    page.should have_no_css("form .error-summary")
   end
 
-  step 'I should not see the term inputs anymore' do
-    page.should have_no_css(".create-term[3]")
+  step 'I click "Cancel"' do
+    click_link "Cancel"
+  end 
+
+  step 'I should be on the start page again' do
+    page.current_path.should == "/"
   end
 
-  step 'I click on "Add Property" link' do
-    find("a.add_property").click
+  step 'I should not see "<New concept>"' do
+    page.should have_no_content("<New concept>")
   end
 
-  step 'I should see inputs for Property Key, Value and Language' do
-    within ".properties" do
-      find_field("Property Key").value.should == ""
-      find_field("Property Value").value.should == ""
-      find_field("Language").value.should == ""
-    end
+  step 'I should see link "New concept"' do
+    page.should have_link("New concept")
   end
 
-  step 'I should see a concept error message "Concept could not be saved" with "Properties had errors"' do
-    page.should have_css( ".errors p", text: "Concept could not be saved" )
-    page.should have_css( ".errors li", text: "Properties had errors" )
-  end
-  
-  step 'I should see property error messages "Please enter a Property Key" and "Please enter a Property Value"' do
-    page.should have_css( ".properties .key .error_message", text: "Please enter a Property Key" )
-    page.should have_css( ".properties .value .error_message", text: "Please enter a Property Value" )
-  end
-  
-  step 'I click on the "Remove Property"' do
-    within ".properties" do
-      find("a.remove_property").click
-    end
+  step 'I should see an English term "corpse"' do
+    page.should have_css(".terms .language.en .term h4", text: "corpse")
   end
 
-  step 'I should not see the property input anymore' do
-    within ".properties" do
-      page.should have_no_css(".create-property")
-    end
-  end
-
-  step 'I enter "label" as Property Key and "flowerpower" as Property Value' do
-    within ".create-property[3]" do
-      fill_in "Property Key", :with => 'label'
-      fill_in "Property Value", :with => 'flowerpower'
-      fill_in "Language", :with => 'en'
-    end
-  end
-
-  step 'I enter "flower" as Term Value and "en" as Term Language' do
-    within ".create-term[3]" do
-      fill_in "Term Value", :with => 'hippies'
-      fill_in "Language", :with => 'en'
-    end
-  end
-
-  step 'I should be redirected to the concept page of the newly created concept' do
-    sleep 0.2
-    current_path.should match "/concepts/[^/]+$"
-  end
-
-  When 'I enter "flower" in the search field' do
+  step 'I do a search for "corpse"' do
     within "#coreon-search" do
-      fill_in "coreon-search-query", with: "flower"
+      fill_in "coreon-search-query", with: "corpse"
+      find('input[type="submit"]').click
     end
-    sleep 0.2
   end
 
-  step 'I should see a concept "flowerpower"' do
-    page.should have_css ".concepts .concept-label", text: "flowerpower"
+  step 'I should see a set of term inputs' do
+    page.should have_css("form .term input")
   end
 
-  step 'I click on the "Cancel" link' do
-    find(".button.cancel").click
+  step 'I should see "corpse" for "Value"' do
+    page.should have_field("Value", with: "corpse")
   end
 
-  step 'I should see the search result page again' do
-    sleep 0.1
-    current_path.should == "/search/gun"
+  step 'I should see "en" for "Language"' do
+    page.should have_field("Language", with: "en")
   end
 
+  step 'I should see message \'Successfully created concept "corpse".\'' do
+    page.should have_css(".notification", text: 'Successfully created concept "corpse".')
+  end
+
+  step 'I do not have maintainer privileges' do
+    page.execute_script 'Coreon.application.session.ability.set("role", "user");'
+  end
+
+  step 'I should not see link "New concept"' do
+    page.should have_no_link("New concept")
+  end
+
+  step 'I visit "/concepts/new"' do
+    visit "/concepts/new"
+  end
+
+  step 'I should be on the start page' do
+    page.current_path.should == "/"
+  end
 end

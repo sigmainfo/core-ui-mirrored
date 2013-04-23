@@ -25,87 +25,15 @@ describe "Coreon.Models.Concept", ->
 
   context "defaults", ->
 
-    it "has an empty set of properties", ->
+    it "has an empty set for relations", ->
       @model.get("properties").should.eql []
-
-    it "has a empty term collection", ->
-      @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-      @model.get("terms").should.have.length 0
+      @model.get("terms").should.eql []
 
     it "has empty sets for superconcept and subconcept ids", ->
       @model.get("super_concept_ids").should.eql []
       @model.get("sub_concept_ids").should.eql []
 
   describe "attributes", ->
-
-    describe "terms", ->
-
-      describe "initialization", ->
-
-        it "can be created from json construtor argument", ->
-          @model = new Coreon.Models.Concept _id: "123", terms:
-            lang: "en"
-            value: "poetry"
-          @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-          @model.get("terms").should.have.length 1
-          @model.get("terms").at(0).should.be.an.instanceof Coreon.Models.Term
-          @model.get("terms").at(0).get("lang").should.eql "en"
-          @model.get("terms").at(0).get("value").should.eql "poetry"
-
-        it "can be created from object construtor argument", ->
-          @model = new Coreon.Models.Concept _id: "123", terms: new Coreon.Collections.Terms
-            lang: "en"
-            value: "poetry"
-          @model.get("terms").should.be.an.instanceof Coreon.Collections.Terms
-          @model.get("terms").should.have.length 1
-          @model.get("terms").at(0).should.be.an.instanceof Coreon.Models.Term
-          @model.get("terms").at(0).get("lang").should.eql "en"
-          @model.get("terms").at(0).get("value").should.eql "poetry"
-
-      describe "events", ->
-
-        context "on add terms", ->
-
-          it "triggers change:terms", ->
-            spy = sinon.spy()
-            @model.on "change:terms", spy
-            @model.get("terms").add
-              lang: "en"
-              value: "poetry"
-            spy.should.have.been.calledOnce
-
-          it "triggers add:terms", ->
-            spy = sinon.spy()
-            @model.on "add:terms", spy
-            @model.get("terms").add
-              lang: "en"
-              value: "poetry"
-            spy.should.have.been.calledOnce
-
-        context "on remove terms", ->
-
-          it "triggers change:terms", ->
-            @model.get("terms").add lang: "en", value: "poetry"
-            spy = sinon.spy()
-            @model.on "change:terms", spy
-            @model.get("terms").pop()
-            spy.should.have.been.calledOnce
-
-          it "triggers remove:terms", ->
-            @model.get("terms").add lang: "en", value: "poetry"
-            spy = sinon.spy()
-            @model.on "remove:terms", spy
-            @model.get("terms").pop()
-            spy.should.have.been.calledOnce
-
-        context "on change terms", ->
-
-          it "triggers change:terms", ->
-            @model.get("terms").add lang: "en", value: "poetry"
-            spy = sinon.spy()
-            @model.on "change:terms", spy
-            @model.get("terms").at(0).set "value", "poetics"
-            spy.should.have.been.calledOnce
 
     describe "label", ->
 
@@ -145,9 +73,10 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "poetry"
 
         it "falls back to term in other language", ->
-          @model.set terms:
+          @model.set terms: [
             lang: "fr"
             value: "poésie"
+          ]
           @model.initialize()
           @model.get("label").should.equal "poésie"
 
@@ -180,6 +109,10 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "poetry"
 
       context "on changes", ->
+
+        it "updates label on id attribute changes", ->
+          @model.set "_id", "abc123"
+          @model.get("label").should.equal "abc123"
             
         it "updates label on property changes", ->
           @model.set "properties", [
@@ -188,11 +121,13 @@ describe "Coreon.Models.Concept", ->
           ]
           @model.get("label").should.equal "My Label"
      
-        it "updates label on term change", ->
-          @model.get("terms").add
+        it "updates label on term changes", ->
+          @model.set "terms", [
             lang: "en"
             value: "poetry"
+          ]
           @model.get("label").should.equal "poetry"
+          
 
     describe "hit", ->
        
@@ -226,48 +161,19 @@ describe "Coreon.Models.Concept", ->
         @hits.add result: other
         added = hit for hit in @hits.models when hit.get("result") is @model
         @model.get("hit").should.equal added
-        
-  describe "set()", ->
 
-    it "handles json (as hash)", ->
-      @model.set "terms":
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en'
-        value: 'poetry'
-        properties: []
-
-    it "handles json (as key-value)", ->
-      @model.set "terms",
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en'
-        value: 'poetry'
-        properties: []
-
-    it "handles object (as hash)", ->
-      @model.set "terms": new Coreon.Collections.Terms
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en',
-        value: 'poetry',
-        properties: []
-
-    it "handles object (as key-value)", ->
-      @model.set "terms", new Coreon.Collections.Terms
-        lang: "en"
-        value: "poetry"
-      @model.get("terms").should.have.length 1
-      @model.get("terms").at(0).toJSON().should.be.eql
-        lang: 'en',
-        value: 'poetry',
-        properties: []
+  describe "properties()", ->
+    
+    it "syncs with attr", ->
+      @model.set "properties", [key: "label"]
+      @model.properties().at(0).get("key").should.equal "label"
+      
+  describe "terms()", ->
+  
+    it "syncs with attr", ->
+      @model.set "terms", [value: "dead", lang: "en"]
+      @model.terms().at(0).should.be.an.instanceof Coreon.Models.Term
+      @model.terms().at(0).get("value").should.equal "dead"
 
   describe "info()", ->
     
@@ -280,49 +186,21 @@ describe "Coreon.Models.Concept", ->
         author: "Nobody"
       }
 
-
-  describe "fetch()", ->
-
-    it "uses application sync", ->
-      Coreon.application = sync: sinon.spy()
-      try
-        @model.fetch()
-        Coreon.application.sync.should.have.been.calledWith "read", @model
-      finally
-        Coreon.application = null
-
-  describe "addTerm()", ->
-
-    it "creates a new empty term model", ->
-      @model.addTerm()
-      @model.get("terms").size().should.be.eql 1
-
-    it "creates a term model which knows about its terms conncetion", ->
-      @model.addTerm()
-      @model.get("terms").at(0).collection.should.eql @model.get("terms")
-
-  describe "addProperty()", ->
-
-    it "creates a new empty property model", ->
-      @model.addProperty()
-      @model.get("properties").length.should.be.eql 1
-
-  describe "create()", ->
-
-    it "calls create() on the class", ->
-      Coreon.Models.Concept.create = sinon.spy()
-      @model.create()
-      Coreon.Models.Concept.create.withArgs( @model,
-        success: @model.onSuccess
-        error: @model.onError ).should.have.been.calledOnce
-
   describe "toJSON()", ->
 
-    it "adds an outer hash with concept: as key", ->
-      JSON.stringify(@model.toJSON()).should.equal JSON.stringify( concept: _.omit @model.attributes, "label" )
+    it "returns wrapped attributes hash", ->
+      @model.set
+        _id: "my-concept"
+        super_concept_ids: [ "super_1", "super_2" ]
+        sub_concept_ids: [ "sub_1", "sub_2" ]
+      json = @model.toJSON()
+      json.should.have.deep.property "concept._id", "my-concept"
+      json.should.have.deep.property("concept.super_concept_ids").that.eql [ "super_1", "super_2" ]
+      json.should.have.deep.property("concept.sub_concept_ids").that.eql [ "sub_1", "sub_2" ]
 
-    it "ignores label attribute", ->
-      @model.toJSON().should.not.have.property "label"
+    it "drops client-side attributes", ->
+      @model.toJSON().should.not.have.deep.property "concept.label"
+      @model.toJSON().should.not.have.deep.property "concept.hit"
 
   describe "save()", ->
 
@@ -343,42 +221,13 @@ describe "Coreon.Models.Concept", ->
       finally
         Coreon.application = null
 
-  describe "onSuccess()", ->
-
-    it "is triggered by successfull save()", ->
-      Coreon.Models.Concept.create = (data, opts) ->
-        opts.success()
-      @model.onSuccess = sinon.spy()
-      @model.create()
-      @model.onSuccess.should.have.been.calledOnce
-
-    it "navigates to concept view page", ->
-      Backbone.history.navigate = sinon.spy()
-      @model.set "_id", 42
-      @model.onSuccess()
-      Backbone.history.navigate.withArgs( "concepts/42", replace: true, trigger: true ).should.have.been.calledOnce
-
-  describe "onError()", ->
-
-    it "is triggered by save() error", ->
-      Coreon.Models.Concept.create = (data, opts) ->
-        opts.error()
-      @model.onError = sinon.spy()
-      @model.create()
-      @model.onError.should.have.been.calledOnce
-
-    it "triggers validationFailure()", ->
-      @model.validationFailure = sinon.spy()
-      @model.onError @model,
-        status: 422
-        responseText: '{"errors": {"foo": "bar"}}'
-      @model.validationFailure.withArgs( foo: 'bar' ).should.have.been.calledOnce
-
-  describe "validationFailure()", ->
-
-    it "triggers validationFailure event", ->
-      spy = sinon.spy()
-      @model.on "validationFailure", spy
-      @model.validationFailure( foo: 'bar' )
-      spy.withArgs( foo: 'bar' ).should.have.been.calledOnce
-
+    it "creates notification on successful sync", ->
+      I18n.t.withArgs("concept.sync.create", label: "dead man").returns 'Successfully created concept "dead man"'
+      @model.isNew = -> true
+      @model.initialize()
+      @model.set "label", "dead man", silent: true
+      @model.message = sinon.spy()
+      @model.trigger "sync" 
+      @model.trigger "sync" 
+      @model.message.should.have.been.calledOnce
+      @model.message.should.have.been.calledWith 'Successfully created concept "dead man"'

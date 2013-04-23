@@ -12,5 +12,6 @@ HAML.globals = -> Coreon.Helpers
 Backbone.Model::idAttribute = "_id"
 _(Backbone.Model::).extend Coreon.Modules.Messages
 
+# Quickfix to make plain Backbone views behave like SimpleView
 Backbone.View::destroy = ->
   @remove()

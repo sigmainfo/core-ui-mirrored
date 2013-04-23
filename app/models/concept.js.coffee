@@ -1,71 +1,44 @@
 #= require environment
+#= require modules/helpers
 #= require modules/accumulation
-#= require collections/terms
+#= require modules/embeds_many
+#= require modules/remote_validation
+#= require models/term
 
 class Coreon.Models.Concept extends Backbone.Model
 
-  _(@).extend Coreon.Modules.Accumulation
+  Coreon.Modules.extend @, Coreon.Modules.Accumulation
+  Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
+
+  Coreon.Modules.include @, Coreon.Modules.RemoteValidation
+
+  @embedsMany "properties"
+  @embedsMany "terms", model: Coreon.Models.Term
 
   urlRoot: "concepts"
 
   defaults: ->
     properties: []
+    terms: []
     super_concept_ids: []
     sub_concept_ids: []
     label: ""
     hit: null
-    terms: new Coreon.Collections.Terms
 
   initialize: (attrs, options) ->
     @set "label", @_label(), silent: true
-    @on "change:terms change:properties", @_updateLabel, @
+    @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
+    @_updateHit()
     if Coreon.application?.hits?
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
-    @_updateHit()
-
-  set: (key, val, options) ->
-    terms = if key == "terms" then val else key.terms
-    return super if not terms
-    if not terms.models
-      if key == "terms"
-        return @get("terms").update terms, options
-      else if @has "terms"
-        @get("terms").update terms, options
-        delete key.terms
-        return super key, val, options
-      else
-        key.terms = new Coreon.Collections.Terms terms
-    @stopListening @get("terms") if @has "terms"
-    @listenTo @get("terms"), 'all', @_processTermsEvent if super
-
-  addTerm: ->
-    @get("terms").push new Coreon.Models.Term
-
-  addProperty: ->
-    @get("properties").push
-      key: ""
-      value: ""
-      lang: ""
-    @trigger("add:properties")
-
-  create: ->
-    Coreon.Models.Concept.create @,
-      success: @onSuccess
-      error: @onError
-
-  onSuccess: (model, response, options) =>
-    Backbone.history.navigate "concepts/" + @get("_id"), replace: true, trigger: true
-
-  onError: (model, xhr, options) =>
-    console.log xhr.responseText
-    if xhr.status == 422
-      @validationFailure (JSON.parse xhr.responseText).errors ? nested_errors_on_terms: [], nested_errors_on_properties: []
-
-  validationFailure: (errors) ->
-      @trigger "validationFailure", errors
+    @remoteValidationOn()
+    @once "sync", @syncMessage, @ if @isNew()
 
   toJSON: (options) ->
-    concept: _.omit this.attributes, "label"
+    serialized = {}
+    for key, value of @attributes when key not in ["hit", "label"]
+      serialized[key] = value
+    concept: serialized
 
   info: ->
     info = id: @id
@@ -75,18 +48,11 @@ class Coreon.Models.Concept extends Backbone.Model
       info[key] = value
     info
 
-  _processTermsEvent: (e, a, x, z) ->
-    if e is "add"
-      @trigger 'add:terms'
-      @trigger 'change:terms'
-    else if e is "change"
-      @trigger 'change:terms'
-    else if e is "remove"
-      @trigger 'remove:terms'
-      @trigger 'change:terms'
-      
   _updateLabel: ->
     @set "label", @_label()
+
+  _updateHit: ->
+    @set "hit", Coreon.application?.hits.findByResult(@)
 
   _label: ->
     if @isNew()
@@ -98,16 +64,16 @@ class Coreon.Models.Concept extends Backbone.Model
     _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
 
   _termLabel: ->
-    label = null
-    for term in @get("terms")?.models
-      if term.get("lang").match /^en/i
-        label = term.get("value")
+    terms = @get "terms"
+    for term in terms
+      if term.lang.match /^en/i
+        label = term.value
         break
-    label ?= @get("terms")?.at(0)?.get("value")
+    label ?= terms[0]?.value
     label
 
   sync: (method, model, options = {}) ->
     Coreon.application.sync method, model, options
 
-  _updateHit: ->
-    @set "hit", Coreon.application?.hits.findByResult(@)
+  syncMessage: ->
+    @message I18n.t("concept.sync.create", label: @get "label"), type: "info"

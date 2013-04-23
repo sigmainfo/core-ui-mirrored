@@ -15,8 +15,8 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       height: 16
       radius: 2.5
     hit:
-      height: 18
-      radius: 3
+      height: 20
+      radius: 2.8
     dropShadow:
       offset: 1
   
@@ -26,13 +26,19 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
   render: ->
     @clear()
 
-    @svg.classed("hit", @model.has "hit")
+    @svg.classed "hit", @model.has "hit"
+    @svg.classed "new", @model.get("concept").isNew()
     
     title = @svg.append("svg:title")
       .text(@model.get "label")
 
     a = @svg.append("svg:a")
-      .attr("xlink:href", "/concepts/#{@model.id}")
+      .attr("xlink:href", (datum) =>
+        if @model.get("concept").isNew()
+          "javascript:void(0)"
+        else
+          "/concepts/#{@model.id}"
+      )
 
     @bg = a.append("svg:rect")
       .attr("class", "background")
@@ -43,13 +49,18 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
       .attr("cx", 7)
       .attr("cy", @height() / 2)
       .attr("r", @radius())
-
+    
     label = a.append("svg:text")
       .attr("x", 14)
-      .attr("y", @height() * 0.75 )
+      .attr("y", @height() * 0.73 )
       .text(@shorten @model.get("label"), 20)
     
-    labelBox = label.node().getBBox()
+    labelBox =
+      try
+        label.node().getBBox()
+      catch e
+        x: 0, y: 0, height: 0, width: 0
+
     @bg.attr("width", labelBox.x + labelBox.width + 5)
 
     box = @box()
@@ -71,15 +82,16 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     @
 
   box: ->
-    if @bg? then @bg.node().getBBox() else x: 0, y: 0, height: 0, width: 0
+    try
+      @bg.node().getBBox()
+    catch e
+      x: 0, y: 0, height: 0, width: 0
 
   height: ->
     if @model.has "hit" then @options.hit.height else @options.default.height
 
   radius: ->
     if @model.has "hit" then @options.hit.radius else @options.default.radius
-
-
 
   _renderToggle: (expanded) ->
     toggle = @svg.append("svg:g")

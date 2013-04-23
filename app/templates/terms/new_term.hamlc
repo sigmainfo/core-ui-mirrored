@@ -1,0 +1,9 @@
+%fieldset.term
+  .actions
+    %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.remove"
+  != @input "term", "value", @term, scope: "concept[terms][]", index: @index, required: true, errors: @errors?.value
+  != @input "term", "lang", @term, scope: "concept[terms][]", index: @index, required: true, errors: @errors?.lang
+  %section.properties
+    .actions
+      %a.add-property{href: "javascript:void(0)", "data-scope": "concept[terms][#{@index}][properties][]"}= I18n.t "properties.add"
+

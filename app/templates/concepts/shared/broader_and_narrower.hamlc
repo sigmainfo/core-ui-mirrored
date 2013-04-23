@@ -1,0 +1,7 @@
+%h3= I18n.t "concept.broader_and_narrower"
+%div
+  .broader
+    %ul
+  .self
+  .narrower
+    %ul

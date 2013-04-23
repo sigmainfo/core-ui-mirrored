@@ -33,13 +33,13 @@ class Coreon.Application
     @view.render()
 
     @routers =
-      search_router: new Coreon.Routers.SearchRouter
-        view: @view
-        concepts: @concepts
-        app: @
       concepts_router: new Coreon.Routers.ConceptsRouter
         collection: @concepts
         view: @view
+        app: @
+      search_router: new Coreon.Routers.SearchRouter
+        view: @view
+        concepts: @concepts
         app: @
 
     Backbone.history.start pushState: true, silent: not @session.get "active"

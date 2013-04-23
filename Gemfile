@@ -42,12 +42,13 @@ end
 
 group :test do
   gem "spinach-rails"
+  gem "selenium-webdriver"
   gem "launchy"
   gem "rspec"
 end
 
 group :test, :development do
-  gem "capybara-webkit"
+  gem "capybara-webkit", "~>0.14.2"
   gem "rspec-rails", require: false
   gem "text"
   gem "pry"

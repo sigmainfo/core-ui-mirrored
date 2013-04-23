@@ -19,7 +19,7 @@ describe "Coreon.Application", ->
   it "enforces single instance", ->
     (-> new Coreon.Application).should.throw "Coreon application does already exist"
   
-  describe "#initialize", ->
+  describe "initialize()", ->
     
     it "sets default options", ->
       @app.options.should.eql
@@ -51,7 +51,7 @@ describe "Coreon.Application", ->
       @app.hits.should.be.an.instanceof Coreon.Collections.Hits
       @app.hits.length.should.equal 0
 
-  describe "#start", ->
+  describe "start()", ->
 
     beforeEach ->
       sinon.stub Backbone.history, "start"
@@ -102,7 +102,7 @@ describe "Coreon.Application", ->
       @app.start()
       Backbone.history.start.should.have.been.calledWithMatch silent: true
 
-  describe "#destroy", ->
+  describe "destroy()", ->
 
     it "logs out session", ->
       @app.session.deactivate = sinon.spy()
@@ -113,7 +113,7 @@ describe "Coreon.Application", ->
       @app.destroy()
       Coreon.should.not.have.property "application"
 
-  describe "#sync", ->
+  describe "sync()", ->
     
     it "is a shortcut to session.connections.sync", ->
       @app.session.connections.sync = sinon.spy()
