@@ -1,6 +1,6 @@
 %form{class: @form.className, novalidate: true}
   - if @form.errors?
-    .errors
+    .error-summary
       %p= I18n.t "form.errors.summary.#{@form.action}", name: @form.name
       %ul
         - for attr, count of @form.errorCounts

@@ -103,8 +103,40 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.render()
         @view.$el.should.have 'form .properties .property .key input[type="text"]'
         @view.$('form .property .key input').should.have.value "label"
-        @view.$('form .property .value').should.have ".error"
-        @view.$('form .property .value .error').should.have.text "can't be blank"
+        @view.$('form .property .value').should.have ".error-message"
+        @view.$('form .property .value .error-message').should.have.text "can't be blank"
+
+    context "terms", ->
+      
+      it "renders section with title", ->
+        I18n.t.withArgs("terms.title").returns "Terms"
+        @view.render()
+        @view.$el.should.have ".terms"
+        @view.$(".terms").should.match "section"
+        @view.$el.should.have ".terms h3"
+        @view.$("section.terms h3").should.have.text "Terms"
+
+      it "renders link for adding a term", ->
+        I18n.t.withArgs("terms.add").returns "Add term"
+        @view.render()
+        @view.$el.should.have "a.add-term"
+        @view.$("a.add-term").should.have.text "Add term"
+
+      it "renders inputs for existing terms", ->
+        @view.model.terms = ->
+          models: [
+            new Backbone.Model lang: "de"
+          ]
+        @view.model.errors = ->
+          nested_errors_on_terms: [
+            value: "can't be blank"
+          ]
+        @view.render()
+        @view.$el.should.have 'form .terms .term .lang input[type="text"]'
+        @view.$('form .term .lang input').should.have.value "de"
+        @view.$('form .term .value').should.have ".error-message"
+        @view.$('form .term .value .error-message').should.have.text "can't be blank"
+      
 
   describe "addProperty()", ->
 
@@ -321,7 +353,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.create @event
         @view.model.errors = -> {}
         @fail()
-        @view.$el.should.have "form .errors"
+        @view.$el.should.have "form .error-summary"
 
   describe "remove()", ->
 

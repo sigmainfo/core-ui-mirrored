@@ -52,8 +52,23 @@ Feature: maintainer creates concept
     Then I should see "corpse" within the title
     Then I should see an English term "corpse"
 
-  # TODO:
-  # Scenario: add term with property
+  @wip
+  Scenario: add term with property
+    Given I have maintainer privileges
+    When I visit the start page
+    And I click on "New concept"
+    And I click "Add term"
+    And I fill "Value" with "corpse"
+    And I fill "Language" with "en"
+    And I click "Add property" within the term input set
+    Then I should see a set of property inputs with labels "Key", "Value", "Language"
+    When I click "Remove property"
+    Then I should not see a set of property inputs anymore
+    When I click "Add property" within the term input set
+    And I fill "Key" with "source" within the term property input set
+    And I fill "Value" with "Wikipedia" within the term property input set
+    And I click "Create concept"
+    Then I should see a property "source" with value "Wikipedia" for term "corpse"
 
   Scenario: validation errors
     Given I have maintainer privileges

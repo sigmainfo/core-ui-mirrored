@@ -91,8 +91,7 @@ describe "Coreon.Helpers.input()", ->
     it "renders errors", ->
       markup = @helper "property", "propValue", null, errors: [ "can't be blank" ]
       input = $(markup)
-      error = input.find ".error"
-      console.log error
+      error = input.find ".error-message"
       error.should.have.text "can't be blank"
 
     it "classifies input with error", ->

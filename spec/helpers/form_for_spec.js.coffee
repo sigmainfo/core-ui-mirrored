@@ -69,8 +69,8 @@ describe "Coreon.Helpers.form_for()", ->
       @model.errors = -> {}
       markup = @helper "model", @model, ->
       form = $(markup)
-      form.should.have ".errors"
-      form.find(".errors *:first-child").should.have.text "Failed to create model:"
+      form.should.have ".error-summary"
+      form.find(".error-summary *:first-child").should.have.text "Failed to create model:"
 
     it "renders error count for attrs", ->
       I18n.t.withArgs("form.errors.attribute", name: "properties", count: 3).returns "3 errors on properties"
@@ -82,4 +82,4 @@ describe "Coreon.Helpers.form_for()", ->
         ]
       markup = @helper "model", @model, ->
       form = $(markup)
-      form.find(".errors li").should.contain "3 errors on properties"
+      form.find(".error-summary li").should.contain "3 errors on properties"

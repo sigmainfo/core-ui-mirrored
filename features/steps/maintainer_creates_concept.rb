@@ -137,31 +137,31 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see an error summary' do
-    page.should have_css("form .errors")
+    page.should have_css("form .error-summary")
   end
 
   step 'this summary should contain "Failed to create concept:"' do
-    page.find("form .errors").should have_content("Failed to create concept:")
+    page.find("form .error-summary").should have_content("Failed to create concept:")
   end
 
   step 'this summary should contain "2 errors on properties"' do
-    page.find("form .errors").should have_content("2 errors on properties")
+    page.find("form .error-summary").should have_content("2 errors on properties")
   end
 
   step 'this summary should contain "1 error on terms"' do
-    page.find("form .errors").should have_content("1 error on terms")
+    page.find("form .error-summary").should have_content("1 error on terms")
   end
 
   step 'I should see error "can\'t be blank" for property input "Key"' do
-    page.should have_css(".property .key .error", text: "can\'t be blank")
+    page.should have_css(".property .key .error-message", text: "can\'t be blank")
   end
 
   step 'I should see error "can\'t be blank" for property input "Value"' do
-    page.should have_css(".property .value .error", text: "can\'t be blank")
+    page.should have_css(".property .value .error-message", text: "can\'t be blank")
   end
 
   step 'I should see error "can\'t be blank" for term input "Language"' do
-    page.should have_css(".term .lang .error", text: "can\'t be blank")
+    page.should have_css(".term .lang .error-message", text: "can\'t be blank")
   end
 
   step 'I click "Remove property"' do
@@ -173,7 +173,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
   
   step 'I should not see an error summary' do
-    page.should have_no_css("form .errors")
+    page.should have_no_css("form .error-summary")
   end
 
   step 'I click "Cancel"' do
