@@ -126,6 +126,32 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.find(:xpath, "//th[text() = 'label']/following-sibling::td").text.should == "dead man"
   end
 
+  step 'I click "Add property" within the term input set' do
+    within "form .term" do
+      click_link "Add property"
+    end
+  end
+
+  step 'I fill "Key" with "source" within the term property input set' do
+    within ".term .property" do
+      fill_in "Key", with: "source"
+    end
+  end
+
+  step 'I click "PROPERTIES" within term' do
+    page.find(".term .section-toggle", text:"PROPERTIES").click
+  end
+
+  step 'I should see a property "source" with value "Wikipedia"' do
+   page.find(:css, ".term").find(:xpath, '//th[text()="source"]/following-sibling::td').text.should == "Wikipedia"
+  end
+
+  step 'I fill "Value" with "Wikipedia" within the term property input set' do
+    within ".term .property" do
+      fill_in "Value", with: "Wikipedia"
+    end
+  end
+
   step 'client-side validation is turned off' do
     page.execute_script '$("form").attr("novalidate", true)'
   end

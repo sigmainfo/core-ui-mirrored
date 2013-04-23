@@ -52,7 +52,6 @@ Feature: maintainer creates concept
     Then I should see "corpse" within the title
     Then I should see an English term "corpse"
 
-  @wip
   Scenario: add term with property
     Given I have maintainer privileges
     When I visit the start page
@@ -68,7 +67,8 @@ Feature: maintainer creates concept
     And I fill "Key" with "source" within the term property input set
     And I fill "Value" with "Wikipedia" within the term property input set
     And I click "Create concept"
-    Then I should see a property "source" with value "Wikipedia" for term "corpse"
+    And I click "PROPERTIES" within term
+    Then I should see a property "source" with value "Wikipedia"
 
   Scenario: validation errors
     Given I have maintainer privileges

@@ -29,7 +29,6 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
-    @termCount = 0
 
   render: ->
     @propCount = if @model.has("properties") then @model.get("properties").length else 0
@@ -42,7 +41,10 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
   addProperty: (event) ->
     @propCount += 1
-    @$(".properties").append @property index: @propCount - 1
+    $target = $(event.target)
+    $target.closest(".properties").append @property
+      index: @propCount - 1
+      scope: $target.data "scope" 
 
   removeProperty: (event) ->
     $(event.target).closest(".property").remove()
@@ -61,7 +63,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
     attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
     @$("form").find("input,button").attr("disabled", true)
-    #TODO: use success and error callbacks to resume from options on reauth
+    #TODO: resume promises on reauth
     @model.save(attrs)
       .done =>
         Coreon.Models.Concept.collection().add @model

@@ -90,6 +90,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.render()
         @view.$el.should.have "a.add-property"
         @view.$("a.add-property").should.have.text "Add Property"
+        @view.$("a.add-property").should.have.data "scope", "concept[properties][]"
 
       it "renders inputs for existing properties", ->
         @view.model.properties = ->
@@ -136,7 +137,15 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$('form .term .lang input').should.have.value "de"
         @view.$('form .term .value').should.have ".error-message"
         @view.$('form .term .value .error-message').should.have.text "can't be blank"
-      
+
+      it "renders link for adding property", ->
+        I18n.t.withArgs("properties.add").returns "Add property"
+        @view.model.terms = -> models: [ new Backbone.Model ]
+        @view.model.errors = ->
+        @view.render()
+        @view.$el.should.have "form .term a.add-property"
+        @view.$("form .term a.add-property").should.have.text "Add property"
+        @view.$("form .term a.add-property").should.have.data "scope", "concept[terms][0][properties][]"
 
   describe "addProperty()", ->
 
@@ -145,6 +154,8 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
       @event = $.Event "click"
       @view.render()
+      $("#konacha").append @view.$el
+      @event.target = @view.$(".add-property").get(0)
 
     afterEach ->
       Coreon.Helpers.input.restore()
@@ -165,6 +176,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     it "enumerates appended property input sets", ->
       @view.model.set "properties", [{}, {}], silent: true
       @view.render()
+      @event.target = @view.$(".add-property").get(0)
       @view.addProperty @event
       @view.addProperty @event
       @view.$el.should.have '.properties .property input[id="property-2-key"]'
@@ -194,7 +206,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
       @event = $.Event "click"
       @view.render()
-      @view.addProperty @event
+      @view.$(".properties").append @view.property index: 0
 
     afterEach ->
       Coreon.Helpers.input.restore()
@@ -202,6 +214,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     it "is triggered by click on remove action", ->
       @view.removeProperty = sinon.spy()
       @view.delegateEvents()
+      console.log @view.$(".property a.remove-property").length
       @view.$(".property a.remove-property").trigger @event
       @view.removeProperty.should.have.been.calledOnce
 
@@ -209,7 +222,6 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @event.target = @view.$(".remove-property").get(0)
       @view.removeProperty @event
       @view.$el.should.not.have ".property"
-        
 
   describe "addTerm()", ->
 

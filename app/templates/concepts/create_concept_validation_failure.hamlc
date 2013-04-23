@@ -1,2 +1,0 @@
-%p= I18n.t "create_concept.validation_failure"
-%ul
