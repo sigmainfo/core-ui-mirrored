@@ -295,7 +295,7 @@ div.concept {
     font-size: 0.9em;
     
     h2 {
-      font-size: 1.1em;
+      font-size: 1.2em;
       line-height: 1.3em;
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
@@ -317,7 +317,7 @@ div.concept {
         padding: 0;
       }
       
-      .term {
+      div.term {
           background: none;
           border-top: 1px solid $greycolor;
           &:first-child {
