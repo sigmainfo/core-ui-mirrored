@@ -69,6 +69,18 @@ describe "Coreon.Helpers.input()", ->
       tag.should.have.attr "name", "concept[properties][3][key]"
       tag.should.have.attr "id", "concept-properties-3-key"
 
+  context "textarea tag", ->
+    
+    it "renders textarea", ->
+      @model.set "attrName", "foo bar baz", silent: true
+      markup = @helper "model", "attrName", @model, type: "textarea"
+      input = $(markup)
+      input.should.have "textarea"
+      tag = input.find "textarea"
+      tag.should.have.attr "name", "model[attrName]"
+      tag.should.have.attr "id", "model-attr-name"
+      tag.should.have.text "foo bar baz"
+
   context "label tag", ->
     
     it "renders label tag", ->
