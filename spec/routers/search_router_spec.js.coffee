@@ -75,3 +75,10 @@ describe "Coreon.Routers.SearchRouter", ->
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.terms.model
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.concepts.model
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.tnodes.model
+
+    it "decodes queries", ->
+      @router.search "h%C3%A4schen"
+      @router.searchResultsView.terms.model.get("query").should.equal "häschen"
+      @router.searchResultsView.concepts.model.get("query").should.equal "häschen"
+      @router.searchResultsView.tnodes.model.get("query").should.equal "häschen"
+      

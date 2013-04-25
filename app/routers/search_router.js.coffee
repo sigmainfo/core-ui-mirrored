@@ -12,9 +12,11 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
     @[key] = value for key, value of options
 
   search: (query) ->
+
+    query = decodeURIComponent(query)
     
     @view.widgets.search.selector.hideHint()
-    @view.$("input#coreon-search-query").val decodeURIComponent(query)
+    @view.$("input#coreon-search-query").val query
 
     searches =
       terms: new Coreon.Models.Search
