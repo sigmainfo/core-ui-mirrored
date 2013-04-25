@@ -63,13 +63,12 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
     attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
     @$("form").find("input,button").attr("disabled", true)
-    #TODO: resume promises on reauth
-    @model.save(attrs)
-      .done =>
+    @model.save attrs,
+      success: =>
         Coreon.Models.Concept.collection().add @model
         Backbone.history.navigate @model.url(), trigger: true
-      .fail =>
-        @render()
+      error: =>
+        @model.once "error", @render, @
 
   remove: ->
     @broaderAndNarrower.remove()

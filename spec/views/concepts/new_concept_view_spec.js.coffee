@@ -297,10 +297,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     beforeEach ->
       @event = $.Event "submit"
       sinon.stub Backbone.history, "navigate"
-      @promise =
-        done: (@done) => @promise
-        fail: (@fail) => @promise
-      @view.model.save = sinon.stub().returns @promise
+      @view.model.save = sinon.stub()
       @view.render()
     
     afterEach ->
@@ -343,28 +340,30 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         collection = new Backbone.Collection
         sinon.stub Coreon.Models.Concept, "collection", -> collection
         @view.model.url = -> ""
+        @view.model.save.yieldsTo "success"
 
       afterEach ->
         Coreon.Models.Concept.collection.restore()
       
       it "accumulates newly created model", ->
-        @view.create @event
         @view.model.id = "1234abcdef"
-        @done()
+        @view.create @event
         Coreon.Models.Concept.collection().get("1234abcdef").should.equal @view.model
         
       it "redirects to show concept page", ->
         @view.model.url = -> "concepts/1234abcdef"
         @view.create @event
-        @done()
         Backbone.history.navigate.should.have.been.calledWith "concepts/1234abcdef", trigger: true
 
     context "error", ->
 
+      beforeEach ->
+        @view.model.save.yieldsTo "error"
+
       it "renders error summary", ->
         @view.create @event
         @view.model.errors = -> {}
-        @fail()
+        @view.model.trigger "error"
         @view.$el.should.have "form .error-summary"
 
   describe "remove()", ->
