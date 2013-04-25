@@ -129,8 +129,8 @@ div.concept.new {
     
     &:before {
       @include before-icon;
-      float: left;
-      margin-right: 5px;
+      float: right;
+      margin-left: 7px;
       background-position: -2px -351px;
       @include edit-button;
     };
@@ -143,9 +143,9 @@ div.concept.new {
     }
   }
   a.remove-term, a.remove-property {
-    width: 16px;
+/*    width: 16px;
     overflow: hidden;
-    text-indent: -5000px;
+    text-indent: -5000px;*/
     top: 10px;
     &:before {
       background-position: -52px -351px;
@@ -205,6 +205,14 @@ div.concept.new {
     
     .submit {
       font-size: 1.1em;
+    }
+    
+    .terms {
+      .properties {
+          fieldset {
+            padding-left: 40px;
+          }
+      }
     }
   }
   
