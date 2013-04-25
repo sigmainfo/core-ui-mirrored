@@ -31,7 +31,6 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
       model: @model
 
   render: ->
-    @propCount = if @model.has("properties") then @model.get("properties").length else 0
     @termCount = if @model.has("terms") then @model.get("terms").length else 0
     @$el.html @template concept: @model
     @broaderAndNarrower.render() unless @_wasRendered
@@ -40,11 +39,16 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     @
 
   addProperty: (event) ->
-    @propCount += 1
     $target = $(event.target)
-    $target.closest(".properties").append @property
-      index: @propCount - 1
-      scope: $target.data "scope" 
+    $properties = $target.closest(".properties")
+    console.log $properties.find("input:last").attr("name")
+    nextIndex = if name = $properties.find("input:last").attr("name")
+      name.match(/\[(\d+)\]\[[^\]]+\]$/)[1] * 1 + 1
+    else
+      0
+    $properties.append @property
+      index: nextIndex
+      scope: $target.data "scope"
 
   removeProperty: (event) ->
     $(event.target).closest(".property").remove()

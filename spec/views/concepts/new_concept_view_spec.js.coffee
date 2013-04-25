@@ -12,6 +12,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       model: new Backbone.Model
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
+    @view.model.errors = -> null
 
   afterEach ->
     I18n.t.restore()
@@ -108,6 +109,12 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$('form .property .value .error-message').should.have.text "can't be blank"
 
     context "terms", ->
+
+      beforeEach ->
+        @term = new Backbone.Model
+        @term.properties = -> models: []
+        @term.errors = -> null
+        @view.model.terms = => models: []
       
       it "renders section with title", ->
         I18n.t.withArgs("terms.title").returns "Terms"
@@ -124,10 +131,8 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.$("a.add-term").should.have.text "Add term"
 
       it "renders inputs for existing terms", ->
-        @view.model.terms = ->
-          models: [
-            new Backbone.Model lang: "de"
-          ]
+        @term.set lang: "de", silent: true
+        @view.model.terms = => models: [ @term ]
         @view.model.errors = ->
           nested_errors_on_terms: [
             value: "can't be blank"
@@ -140,12 +145,29 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
 
       it "renders link for adding property", ->
         I18n.t.withArgs("properties.add").returns "Add property"
-        @view.model.terms = -> models: [ new Backbone.Model ]
+        @view.model.terms = => models: [ @term ]
         @view.model.errors = ->
         @view.render()
         @view.$el.should.have "form .term a.add-property"
         @view.$("form .term a.add-property").should.have.text "Add property"
         @view.$("form .term a.add-property").should.have.data "scope", "concept[terms][0][properties][]"
+
+
+      it "renders inputs for term properties", ->
+        @term.properties = -> models: [ new Backbone.Model key: "label" ]
+        @view.model.terms = => models: [ @term ]
+        @view.model.errors = ->
+          nested_errors_on_terms: [
+            nested_errors_on_properties: [
+              value: [ "can't be blank" ]
+            ]    
+          ]
+        @view.render()
+        @view.$el.should.have 'form .terms .term .property .key input[type="text"]'
+        @view.$('form .term .property .key input').should.have.value "label"
+        @view.$('form .term .property .key input').should.have.attr "name", "concept[terms][0][properties][0][key]"
+        @view.$('form .term .property .value').should.have ".error-message"
+        @view.$('form .term .property .value .error-message').should.have.text "can't be blank"
 
   describe "addProperty()", ->
 
@@ -174,13 +196,9 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.$el.should.have '.properties .property input[id="property-0-lang"]'
 
     it "enumerates appended property input sets", ->
-      @view.model.set "properties", [{}, {}], silent: true
-      @view.render()
-      @event.target = @view.$(".add-property").get(0)
+      @view.$(".properties").append '<input name="concept[properties][4][key]"/>'
       @view.addProperty @event
-      @view.addProperty @event
-      @view.$el.should.have '.properties .property input[id="property-2-key"]'
-      @view.$el.should.have '.properties .property input[id="property-3-key"]'
+      @view.$el.should.have '.properties .property input[id="property-5-key"]'
 
     it "uses nested scope", ->
       @view.addProperty @event
@@ -214,7 +232,6 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     it "is triggered by click on remove action", ->
       @view.removeProperty = sinon.spy()
       @view.delegateEvents()
-      console.log @view.$(".property a.remove-property").length
       @view.$(".property a.remove-property").trigger @event
       @view.removeProperty.should.have.been.calledOnce
 
@@ -330,6 +347,11 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     it "deletes empty properties and terms", ->
       @view.create @event
       @view.model.save.should.have.been.calledWith properties: [], terms: []
+
+    it "updates nested properties on terms", ->
+      @view.$(".terms").append '<input name="concept[terms][0][properties][0][key]" value="source"/>'
+      @view.create @event
+      @view.model.save.should.have.been.calledWith properties: [], terms: [ properties: [ key: "source" ] ]
 
     it "does not set deleted properties", ->
       @view.$(".properties").append '<input name="concept[properties][2][key]" value="label"/>'

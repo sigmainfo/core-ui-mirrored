@@ -81,6 +81,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     click_link "Add term"
   end
 
+  step 'I click "Remove property"' do
+    click_link "Remove property"
+  end
+
   step 'I click "Remove property" within the set' do
     click_link "Remove property"
   end
@@ -156,9 +160,27 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.execute_script '$("form").attr("novalidate", true)'
   end
 
-  step 'I fill "Value" of term with "corpse"' do
-    within(".term") do
+  step 'I fill "Value" of property with "corpse"' do
+    within ".property" do
       fill_in "Value", with: "corpse"
+    end
+  end
+
+  step 'I fill "Value" of term with "corpse"' do
+    within ".term" do
+      fill_in "Value", with: "corpse"
+    end
+  end
+
+  step 'I click "Add property" within term set' do
+    within ".term" do
+      click_link "Add property"
+    end
+  end
+
+  step 'I fill in "Key" with "source" for term property' do
+    within ".term .property" do
+      fill_in "Key", with: "source"
     end
   end
 
@@ -170,12 +192,12 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.find("form .error-summary").should have_content("Failed to create concept:")
   end
 
-  step 'this summary should contain "2 errors on properties"' do
-    page.find("form .error-summary").should have_content("2 errors on properties")
+  step 'this summary should contain "1 error on properties"' do
+    page.find("form .error-summary").should have_content("1 error on properties")
   end
 
-  step 'this summary should contain "1 error on terms"' do
-    page.find("form .error-summary").should have_content("1 error on terms")
+  step 'this summary should contain "2 errors on terms"' do
+    page.find("form .error-summary").should have_content("2 errors on terms")
   end
 
   step 'I should see error "can\'t be blank" for property input "Key"' do
@@ -190,12 +212,26 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".term .lang .error-message", text: "can\'t be blank")
   end
 
-  step 'I click "Remove property"' do
-    click_link "Remove property"
+  step 'I should see error "can\'t be blank" for term property input "Value"' do
+    page.should have_css(".term .property .value .error-message", text: "can\'t be blank")
+  end
+
+  step 'I click "Remove property" within properties of concept' do
+    within "form > .properties" do
+      click_link "Remove property"
+    end
+  end
+
+  step 'I click "Remove property" within properties of term' do
+    within ".term .properties" do
+      click_link "Remove property"
+    end
   end
 
   step 'I fill "Language" of term with "en"' do
-    fill_in "Language", with: "en"
+    within ".term > .lang" do
+      fill_in "Language", with: "en"
+    end
   end
   
   step 'I should not see an error summary' do
