@@ -9,7 +9,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   Coreon.Modules.extend @, Coreon.Modules.Accumulation
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
-
   Coreon.Modules.include @, Coreon.Modules.RemoteValidation
 
   @embedsMany "properties"

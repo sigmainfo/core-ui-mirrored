@@ -28,6 +28,7 @@ gem "jquery-ui-rails"
 gem "rack-cors", require: "rack/cors"
 
 group :development do
+  gem "thin"
   gem "konacha"
   gem 'capistrano'
   gem 'capistrano-ext'
