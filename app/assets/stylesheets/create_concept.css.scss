@@ -31,7 +31,7 @@ form.create {
     position: relative;
     border: 0;
     padding-top: 18px;
-    margin-top: 30px;
+    margin-bottom: 26px;
     background-color: darken(rgba($button-color, 0.1), 12);
     div.input {
       padding-bottom: 18px;
@@ -65,9 +65,10 @@ form.create {
   }
   .submit {
     text-align: right;
+    clear: both;
     overflow: hidden;
     background-color: darken(rgba($button-color, 0.18), 15);
-    margin-top:26px;
+    margin-top:36px;
     padding: 3px 10px;
     
     .cancel {
@@ -127,9 +128,13 @@ div.concept.new {
   .actions a {
     font-size: 0.9em;
     color:$greencolor;
-    display: block;
-    position: absolute;
-    right: 10px;
+    display: inline-block;
+    margin-right: 10px;
+    float: right;
+    position: relative;
+    top: -14px;
+/*    position: absolute;
+    right: 10px;*/
     
     &:before {
       @include before-icon;
@@ -150,7 +155,9 @@ div.concept.new {
 /*    width: 16px;
     overflow: hidden;
     text-indent: -5000px;*/
+    position: absolute;
     top: 10px;
+    right: 0;
     &:before {
       background-position: -52px -351px;
     };
@@ -161,7 +168,7 @@ div.concept.new {
     padding: 3px 0 30px 0;
     
     a.add-property {
-      top: 6px;
+/*      top: 6px;*/
     }
   }
   
@@ -171,7 +178,7 @@ div.concept.new {
     padding-top: 10px;
     
     a.add-term {
-      top: 14px;
+/*      top: 14px;*/
     }
     .term {
       background-image: none;
@@ -180,6 +187,8 @@ div.concept.new {
     .properties {
         padding:0;
         a.add-property {
+          position: absolute;
+          right: 0;
           top: -32px;
         }
 
