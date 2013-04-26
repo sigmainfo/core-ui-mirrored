@@ -46,6 +46,10 @@ form.create {
       height:24px;
       width: 40%;
     }
+    textarea {
+      width: 65%;
+      height: 50px;
+    }
   }
   
   label {
@@ -238,7 +242,7 @@ div.concept.new {
         };
       }
       
-      input {
+      input, textarea {
         width: 80%;
       }
     }

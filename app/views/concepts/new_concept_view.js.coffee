@@ -41,12 +41,11 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   addProperty: (event) ->
     $target = $(event.target)
     $properties = $target.closest(".properties")
-    console.log $properties.find("input:last").attr("name")
     nextIndex = if name = $properties.find("input:last").attr("name")
       name.match(/\[(\d+)\]\[[^\]]+\]$/)[1] * 1 + 1
     else
       0
-    $properties.find(".actions").before @property
+    $properties.children(".actions").before @property
       index: nextIndex
       scope: $target.data "scope"
 
@@ -55,7 +54,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
   addTerm: (event) ->
     @termCount += 1
-    @$(".terms .actions").before @term index: @termCount - 1
+    @$(".terms > .actions").before @term index: @termCount - 1
 
   removeTerm: (event) ->
     $(event.target).closest(".term").remove()
