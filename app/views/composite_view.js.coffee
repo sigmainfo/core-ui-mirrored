@@ -1,7 +1,7 @@
 #= require environment
 #= require views/simple_view
 
-class Coreon.Views.CompositeView extends Coreon.Views.SimpleView 
+class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
 
   initialize: ->
     super
@@ -46,7 +46,8 @@ class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
       subviews = @subviews
       super
     for subview in subviews
-      subview.destroy()
+      subview.remove()
+      subview.destroy() if subview.destroy
       @drop subview
 
   clear: ->

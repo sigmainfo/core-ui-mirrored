@@ -1,5 +1,10 @@
 require File.expand_path('../boot', __FILE__)
 
+if RUBY_VERSION =~ /1.9/
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
+
 # Pick the frameworks you want:
 # require "active_record/railtie"
 require "action_controller/railtie"

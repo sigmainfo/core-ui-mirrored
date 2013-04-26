@@ -4,16 +4,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
-
-  def collect_edges
-    page.evaluate_script <<-JS
-      $("#coreon-concept-map .concept-edge").map( function() {
-        source = this.__data__.source.model.get("label");
-        target = this.__data__.target.model.get("label");
-        return source + " -> " + target;
-      }).get();
-    JS
-  end
+  include EdgesHelpers
 
   step 'a concept "handgun"' do
     @concept = create_concept_with_label "handgun"
@@ -63,7 +54,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.find(".search-results-concepts .concept-label", text: "handgun").click
   end
 
-  step 'I shoud see "handgun" displayed in the concept map' do
+  step 'I should see "handgun" displayed in the concept map' do
     page.should have_css("#coreon-concept-map .concept-node", text: "handgun")
   end
   
@@ -176,8 +167,8 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: "hand")
   end
 
-  step 'I should see a node "handkerch…"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "handkerch…")
+  step 'I should see a node "handkerchief"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "handkerchief")
   end
 
   step 'all nodes should be classified as hits' do

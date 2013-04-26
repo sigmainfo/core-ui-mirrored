@@ -1,0 +1,4 @@
+.submit
+  - if @cancel?
+    %a.cancel{href: "javascript:history.back()"}= @cancel
+  %button{type: "submit"}= @submit

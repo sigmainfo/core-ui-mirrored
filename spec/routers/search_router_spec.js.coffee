@@ -59,7 +59,7 @@ describe "Coreon.Routers.SearchRouter", ->
 
     it "creates concepts search", ->
       @router.search "poet"
-      @router.searchResultsView.concepts.model.should.be.an.instanceof Coreon.Models.Search
+      @router.searchResultsView.concepts.model.should.be.an.instanceof Coreon.Models.ConceptSearch
       @router.searchResultsView.concepts.model.get("path").should.equal "concepts/search"
       @router.searchResultsView.concepts.model.get("query").should.equal "poet"
 
@@ -76,52 +76,9 @@ describe "Coreon.Routers.SearchRouter", ->
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.concepts.model
       Coreon.application.sync.should.have.been.calledWith "read", @router.searchResultsView.tnodes.model
 
-    context "done", ->
+    it "decodes queries", ->
+      @router.search "h%C3%A4schen"
+      @router.searchResultsView.terms.model.get("query").should.equal "häschen"
+      @router.searchResultsView.concepts.model.get("query").should.equal "häschen"
+      @router.searchResultsView.tnodes.model.get("query").should.equal "häschen"
       
-      beforeEach ->
-        sinon.stub(Coreon.Views.Search, "SearchResultsView").returns render: ->
-
-      afterEach ->
-        Coreon.Views.Search.SearchResultsView.restore()
-        
-      it "updates concepts from results", ->
-        @router.search "poet"
-        @request.respond 200, {}, JSON.stringify
-          hits: [
-            {
-              score: 1.56
-              result:
-                _id: "1234"
-                properties: [
-                  { key: "label", value: "poet" }
-                ]
-                super_concept_ids: [
-                  "5047774cd19879479b000523"
-                  "5047774cd19879479b00002b"
-                ]
-            }
-          ]
-        concept = Coreon.Models.Concept.find "1234"
-        concept.get("properties").should.eql [{key: "label", value: "poet"}]
-        concept.get("super_concept_ids").should.eql ["5047774cd19879479b000523", "5047774cd19879479b00002b"]
-
-      it "updates current hits", ->
-        @router.app.hits.reset = sinon.spy()
-        @router.search "poet"
-        @request.respond 200, {}, JSON.stringify
-          hits: [
-            {
-              score: 1.56
-              result:
-                _id: "1234"
-            }
-          ]
-        @router.app.hits.reset.should.have.been.calledWith [ { id: "1234", score: 1.56 }]
-       
-
-    it "restores search input", ->
-      spy = sinon.spy()
-      sinon.stub(@router.view, "$").withArgs("input#coreon-search-query").returns val: spy
-      @router.search "poet"
-      @router.view.widgets.search.selector.hideHint.should.have.been.calledOnce
-      spy.should.have.been.calledWith "poet"

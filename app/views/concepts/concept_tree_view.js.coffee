@@ -14,10 +14,12 @@ class Coreon.Views.Concepts.ConceptTreeView extends Coreon.Views.Layout.SectionV
   render: ->
     super
     @$(".section").html @template concept: @model
-    for id in @model.get "super_concept_ids"
-      @$(".super").append @concept(id)
-    for id in @model.get "sub_concept_ids"
-      @$(".sub").append @concept(id)
+    if @model.get("super_concept_ids")
+      for id in @model.get("super_concept_ids")
+        @$(".super").append @concept(id)
+    if @model.get("sub_concept_ids")
+      for id in @model.get("sub_concept_ids")
+        @$(".sub").append @concept(id)
     @
 
   concept: (id) ->

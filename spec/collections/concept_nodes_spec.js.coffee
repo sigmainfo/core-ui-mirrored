@@ -34,27 +34,37 @@ describe "Coreon.Collections.ConceptNodes", ->
     context "connecting hits", ->
         
       beforeEach ->
-        @hits = new Backbone.Collection [ _id: "hit" ]
+        @concept = new Backbone.Model
+        @hit = new Backbone.Model result: @concept
+        @hits = new Backbone.Collection [ @hit ]
+        @collection.initialize [], hits: @hits
       
       it "assigns hits from options", ->
-        @collection.initialize [], hits: @hits
         @collection.hits.should.equal @hits
     
       it "resets from hits", ->
+        @concept.id = "concept"
         @collection.initialize [], hits: @hits
-        should.exist @collection.get("hit")
-        @collection.get("hit").get("hit").should.equal @hits.get "hit"
+        @collection.should.have.length 1
+        @collection.at(0).get("hit").should.equal @hit
+        @collection.at(0).should.have.property "id", "concept"
+
+      it "uses cid for hit on new concept", ->
+        @concept.cid = "c234"
+        @collection.initialize [], hits: @hits
+        @collection.should.have.length 1
+        @collection.at(0).should.have.property "id", "c234"
+        
 
       it "expands nodes from hits", ->
-        @collection.initialize [], hits: @hits
-        @collection.get("hit").get("expandedIn").should.be.true
-        @collection.get("hit").get("expandedOut").should.be.true
+        @collection.at(0).get("expandedIn").should.be.true
+        @collection.at(0).get("expandedOut").should.be.true
 
       it "is updated when hits are reset", ->
-        @collection.initialize [], hits: @hits
-        @hits.reset [ _id: "hit_2" ]
+        other = new Backbone.Model
+        @hits.reset [ result: other ]
         @collection.should.have.length 1
-        should.exist @collection.get("hit_2")
+        @collection.at(0).get("concept").should.equal other
 
   describe "remove()", ->
 

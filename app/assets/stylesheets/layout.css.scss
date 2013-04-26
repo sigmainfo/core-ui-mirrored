@@ -5,7 +5,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
 }
 
 #coreon-header {
@@ -34,6 +34,7 @@
   width: $widget-width;
   background-color: $greycolor;
   @include box-shadow(rgba(black, 0.3) -2px 0px 4px);
+
   &:after {
     content:"";
     display: block;
@@ -41,11 +42,35 @@
     height: 12px;
     @include background(linear-gradient(rgba(white, 0.3), rgba(white, 0)));
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.1) -1px -1px 1px inset);
-  };
-  
+  }
+
+  .ui-resizable-w {
+    position: absolute;
+    top: 0;
+    left: -7px;
+    width: 12px;
+    height: 100%;
+    cursor: w-resize;
+    &:before {
+      content:"";
+      display: block;
+      position: relative;
+      left: 7px;
+      height: 100%;
+      width: 5px;
+    };
+    &:hover {
+      &:before {
+      @include box-shadow(rgba(black, 0.1) -3px 0px 3px);
+      };
+    };
+  }
+  &.ui-resizable-resizing {
+    @include box-shadow(rgba(black, 0.4) -2px 0px 8px);
+  }
 }
 
 #coreon-main {
-  padding: 0 100px 60px 10%;
+  padding: 0 100px 60px 5%;
   margin-top: 60px;
 }

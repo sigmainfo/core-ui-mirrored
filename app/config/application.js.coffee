@@ -1,5 +1,5 @@
 #= require environment
-#= require models/account
+#= require models/session
 #= require collections/hits
 #= require views/application_view
 #= require routers/search_router
@@ -18,8 +18,8 @@ class Coreon.Application
       auth_root  : "/api/auth/"
       graph_root : "/api/graph/"
       
-    @account = new Coreon.Models.Account _(@options).pick "auth_root", "graph_root"
-    @account.fetch()
+    @session = new Coreon.Models.Session _(@options).pick "auth_root", "graph_root"
+    @session.fetch()
 
     @hits = new Coreon.Collections.Hits
 
@@ -33,21 +33,21 @@ class Coreon.Application
     @view.render()
 
     @routers =
-      search_router: new Coreon.Routers.SearchRouter
-        view: @view
-        concepts: @concepts
-        app: @
       concepts_router: new Coreon.Routers.ConceptsRouter
         collection: @concepts
         view: @view
         app: @
+      search_router: new Coreon.Routers.SearchRouter
+        view: @view
+        concepts: @concepts
+        app: @
 
-    Backbone.history.start pushState: true
+    Backbone.history.start pushState: true, silent: not @session.get "active"
     @
 
   destroy: ->
-    @account.deactivate()
+    @session.deactivate()
     delete Coreon.application
 
   sync: (method, model, options) ->
-    @account.connections.sync method, model, options
+    @session.connections.sync method, model, options

@@ -45,7 +45,6 @@ describe "Coreon.Views.Search.SearchResultsTnodesView", ->
           ]
       ]
       @view.render()
-      # console.log @view.model
       @view.$(".tnodes tbody tr:first td").eq(0).should.have.text "poet"
 
     it "renders top 10 tnodes only", ->

@@ -25,6 +25,8 @@ en:
         hint: "Search concepts by terms"
         label: "Concepts by Terms"
     submit: "Search"
+    concepts:
+      create: "Create Concept"
     
     results:
       terms:
@@ -57,12 +59,45 @@ en:
   concept:
     info: "System Info"
     tree: "Broader & Narrower"
+    broader_and_narrower: "Broader & Narrower"
+    new_concept: "<New concept>"
+    new: "New concept"
+    create: "Create concept"
+    sync:
+      create: 'Successfully created concept "{{label}}".'
 
   term:
     info: "System Info"
-  
+    value: "Value"
+    lang: "Language"
+    remove: "Remove term"
+
+  terms:
+    title: "Terms"
+    add: "Add term"
+
   properties:
     title: "Properties"
+    add: "Add property"
+
+  property:
+    key: "Key"
+    value: "Value"
+    lang: "Language"
+    remove: "Remove property"
+
+  repository:
+    label: "Repository"
+
+  form:
+    cancel: "Cancel"
+    errors:
+      summary:
+        create: "Failed to create {{name}}:"
+        update: "Failed to save {{name}}:"
+      attribute:
+        one: "1 error on {{name}}"
+        other: "{{count}} errors on {{name}}"
 
   notification:
     label:
@@ -87,3 +122,4 @@ en:
     title: "Concept Map"
     zoom-in: "Zoom in"
     zoom-out: "Zoom out"
+    toggle-orientation: "Toggle orientation"

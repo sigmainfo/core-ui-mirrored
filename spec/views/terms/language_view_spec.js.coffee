@@ -1,13 +1,14 @@
 #= require spec_helper
 #= require views/terms/language_view
 #= require views/layout/section_view
+#= require models/term
 
 describe "Coreon.Views.Terms.LanguageView", ->
 
   beforeEach ->
     @view = new Coreon.Views.Terms.LanguageView
       lang: "en"
-      terms: []
+      terms: new Backbone.Collection
 
   it "is a section view", ->
     @view.should.be.an.instanceof Coreon.Views.Layout.SectionView
@@ -48,9 +49,10 @@ describe "Coreon.Views.Terms.LanguageView", ->
 
     it "renders terms", ->
       @view.options.terms = [
-        { value: "pistol" }
-        { value: "revolver" }
+        new Coreon.Models.Term value: "pistol"
+        new Coreon.Models.Term value: "revolver"
       ]
       @view.render()
       @view.$(".term").length.should.equal 2
       @view.$(".term").eq(0).should.contain "pistol"
+

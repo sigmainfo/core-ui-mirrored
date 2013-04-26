@@ -18,14 +18,14 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
   it "creates container", ->
     @view.$el.should.have.id "coreon-search-target-select"
 
-  describe "#initialize", ->
+  describe "initialize()", ->
     
     it "creates dropdown", ->
       @view.dropdown.should.be.an.instanceof Coreon.Views.Widgets.SearchTargetSelectDropdownView 
       @view.dropdown.model.should.equal @view.model
       @view.subviews.should.eql [@view.dropdown]
 
-  describe "#render", ->
+  describe "render()", ->
 
     it "is chainable", ->
       @view.render().should.equal @view
@@ -50,10 +50,12 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.render.should.have.been.calledOnce
       
 
-  describe "#showDropdown", ->
+  describe "showDropdown()", ->
 
     beforeEach ->
       @event = jQuery.Event "click"
+      $("#konacha").append $('<div id="coreon-modal">')
+      $("#konacha").append $('<input id="coreon-search-query">')
       @view.render()
     
     it "is triggered by click on toggle", ->
@@ -63,13 +65,29 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.showDropdown.should.have.been.calledWith @event
     
     it "renders dropdown as an overlay", ->
-      $("#konacha").append $('<div id="coreon-modal">')
       @view.dropdown.delegateEvents = sinon.spy()
       @view.$(".toggle").trigger @event
       $("#coreon-modal").should.have "#coreon-search-target-select-dropdown"
       @view.dropdown.delegateEvents.should.have.been.calledOnce
 
-  describe "#onFocus", ->
+    it "adjusts width and position to match query input", ->
+      input = $("#coreon-search-query")
+      input.css
+        position: "absolute"
+        top: 10
+        left: 25
+        width: 200
+        height: 20
+        padding: 5
+        margin: 30
+        border: "2px solid red"
+      @view.$(".toggle").trigger @event
+      list = @view.dropdown.$ ".options"
+      list.width().should.equal 213
+      list.position().should.have.property "left", 56
+      list.position().should.have.property "top", 74
+
+  describe "onFocus()", ->
 
     beforeEach ->
       @event = jQuery.Event "click"
@@ -92,7 +110,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.onFocus @event
       spy.should.have.been.calledOnce
 
-  describe "#hideHint", ->
+  describe "hideHint()", ->
 
     beforeEach ->
       @view.render().$el.appendTo $("#konacha")
@@ -101,7 +119,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.hideHint()
       @view.$(".hint").should.not.be.visible
     
-  describe "#revealHint", ->
+  describe "revealHint()", ->
 
     beforeEach ->
       @view.render().$el.appendTo $("#konacha")

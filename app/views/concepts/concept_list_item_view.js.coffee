@@ -13,7 +13,9 @@ class Coreon.Views.Concepts.ConceptListItemView extends Coreon.Views.CompositeVi
 
   render: () ->
     @clear()
-    terms = _(@model.get "terms")?.groupBy "lang" if @model.get("terms").length > 0
+    terms = _( @model.terms().models ).groupBy (term) ->
+      term.get("lang")
+
     @$el.html @template
       concept: @model
       definition: _(@model.get "properties")?.find (p) -> p.key == "definition"

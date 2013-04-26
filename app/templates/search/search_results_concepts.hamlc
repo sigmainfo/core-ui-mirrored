@@ -11,3 +11,5 @@
         %td.super.concept
 %p.actions
   %a.show-all{href: "/concepts/search/#{@query}"}= I18n.t "search.results.concepts.show_all"
+  - if @can "create", Coreon.Models.Concept
+    %a.button.create-concept{href: "/concepts/new/terms/en/#{@query}"}= I18n.t "concept.new"

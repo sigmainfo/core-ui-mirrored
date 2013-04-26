@@ -53,6 +53,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     it "renders tree", ->
       Coreon.application = hits: new Backbone.Collection
+      Coreon.application.hits.findByResult = -> null
       try
         @view.model.set "super_concept_ids", ["1234"], silent: true
         @view.render()
@@ -62,12 +63,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       finally
         Coreon.application = null
 
-    it "renders tree only when applicable", ->
+    it "always renders tree", ->
       @view.model.set
         sub_concept_ids: []
         super_concept_ids: []
       @view.render()
-      @view.$el.should.not.have ".concept-tree"
+      @view.$el.should.have ".concept-tree"
 
     it "renders properties", ->
       @view.model.set "properties", [{key: "label", value: "handgun"}], silent: true

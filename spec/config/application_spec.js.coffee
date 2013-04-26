@@ -19,7 +19,7 @@ describe "Coreon.Application", ->
   it "enforces single instance", ->
     (-> new Coreon.Application).should.throw "Coreon application does already exist"
   
-  describe "#initialize", ->
+  describe "initialize()", ->
     
     it "sets default options", ->
       @app.options.should.eql
@@ -31,26 +31,33 @@ describe "Coreon.Application", ->
       @app.initialize auth_root: "/repository/"
       @app.options.auth_root.should.equal "/repository/"
 
-    it "creates account", ->
+    it "creates session", ->
       @app.initialize
         auth_root  : "/api/auth_root/"
         graph_root : "/api/graph_root/"
-      @app.account.should.be.an.instanceof Coreon.Models.Account
-      @app.account.get("auth_root").should.equal "/api/auth_root/"
-      @app.account.get("graph_root").should.equal "/api/graph_root/"
+      @app.session.should.be.an.instanceof Coreon.Models.Session
+      @app.session.get("auth_root").should.equal "/api/auth_root/"
+      @app.session.get("graph_root").should.equal "/api/graph_root/"
 
-    it "fetches account", ->
-      localStorage.setItem "session", "my-auth-token"
-      @app.account.fetch = sinon.spy()
+    it "fetches session", ->
+      localStorage.setItem "coreon-session", JSON.stringify
+        token: "my-auth-token"
+      @app.session.fetch = sinon.spy()
       @app.initialize()
-      @app.account.get("session").should.equal "my-auth-token"
+      @app.session.get("token").should.equal "my-auth-token"
 
     it "creates current hits", ->
       @app.initialize()
       @app.hits.should.be.an.instanceof Coreon.Collections.Hits
       @app.hits.length.should.equal 0
 
-  describe "#start", ->
+  describe "start()", ->
+
+    beforeEach ->
+      sinon.stub Backbone.history, "start"
+
+    afterEach ->
+      Backbone.history.start.restore()
 
     it "can be chained", ->
       @app.start().should.equal @app
@@ -82,24 +89,33 @@ describe "Coreon.Application", ->
       @app.routers.concepts_router.app.should.equal @app
 
     it "starts history", ->
-      Backbone.history.start = sinon.spy()
       @app.start()
-      Backbone.history.start.should.have.been.calledWith pushState: true
+      Backbone.history.start.should.have.been.calledWithMatch pushState: true
 
-  describe "#destroy", ->
+    it "triggers route when logged when session is active", ->
+      @app.session.set "active", true, silent: true
+      @app.start()
+      Backbone.history.start.should.have.been.calledWithMatch silent: false
 
-    it "logs out account", ->
-      @app.account.deactivate = sinon.spy()
+    it "does not trigger route when session is inactive", ->
+      @app.session.set "active", false, silent: true
+      @app.start()
+      Backbone.history.start.should.have.been.calledWithMatch silent: true
+
+  describe "destroy()", ->
+
+    it "logs out session", ->
+      @app.session.deactivate = sinon.spy()
       @app.destroy()
-      @app.account.deactivate.should.have.been.calledOnce
+      @app.session.deactivate.should.have.been.calledOnce
 
     it "clears global reference", ->
       @app.destroy()
       Coreon.should.not.have.property "application"
 
-  describe "#sync", ->
+  describe "sync()", ->
     
-    it "is a shortcut to account.connections.sync", ->
-      @app.account.connections.sync = sinon.spy()
+    it "is a shortcut to session.connections.sync", ->
+      @app.session.connections.sync = sinon.spy()
       @app.sync "read", "myModel", data: "myData"
-      @app.account.connections.sync.should.have.been.calledWith "read", "myModel", data: "myData"
+      @app.session.connections.sync.should.have.been.calledWith "read", "myModel", data: "myData"

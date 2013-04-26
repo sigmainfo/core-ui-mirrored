@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require views/terms/term_view
+#= require models/term
 
 describe "Coreon.Views.Terms.TermView", ->
 
@@ -7,7 +8,8 @@ describe "Coreon.Views.Terms.TermView", ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Terms.TermView
       term:
-        value: "pistol"
+        new Coreon.Models.Term
+          value: "pistol"
 
   afterEach ->
     I18n.t.restore()
@@ -24,14 +26,14 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.render().should.equal @view
 
     it "renders value", ->
-      @view.options.term.value = "gat"
+      @view.options.term.set "value", "gat"
       @view.render()
       @view.$el.should.have "h4.value"
       @view.$("h4.value").should.have.text "gat"
 
     it "renders properties", ->
       I18n.t.withArgs("properties.title").returns "Properties"
-      @view.options.term.properties = [
+      @view.options.term.set "properties", [
         { key: "foo", value: "bar" }
       ]
       @view.render()
@@ -42,15 +44,15 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.$(".section table th").eq(0).should.have.text "foo"
 
     it "renders properties only when not empty", ->
-      @view.options.term.properties = []
+      @view.options.term.set "properties", []
       @view.render()
       @view.$el.should.not.have ".properties"
 
     it "renders system info", ->
       I18n.t.withArgs("term.info").returns "Term Info"
       $("#konacha").append @view.$el
-      @view.options.term._id = "abcd1234"
-      @view.options.term.source = "http://iate.europa.eu"
+      @view.options.term.set "_id", "abcd1234"
+      @view.options.term.set "source", "http://iate.europa.eu"
       @view.render()
       @view.$el.should.have ".system-info-toggle"
       @view.$(".system-info-toggle").should.have.text "Term Info"
