@@ -31,7 +31,6 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
       model: @model
 
   render: ->
-    @propCount = if @model.has("properties") then @model.get("properties").length else 0
     @termCount = if @model.has("terms") then @model.get("terms").length else 0
     @$el.html @template concept: @model
     @broaderAndNarrower.render() unless @_wasRendered
@@ -40,18 +39,22 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     @
 
   addProperty: (event) ->
-    @propCount += 1
     $target = $(event.target)
-    $target.closest(".properties").append @property
-      index: @propCount - 1
-      scope: $target.data "scope" 
+    $properties = $target.closest(".properties")
+    nextIndex = if name = $properties.find("input:last").attr("name")
+      name.match(/\[(\d+)\]\[[^\]]+\]$/)[1] * 1 + 1
+    else
+      0
+    $properties.children(".actions").before @property
+      index: nextIndex
+      scope: $target.data "scope"
 
   removeProperty: (event) ->
     $(event.target).closest(".property").remove()
 
   addTerm: (event) ->
     @termCount += 1
-    @$(".terms").append @term index: @termCount - 1
+    @$(".terms > .actions").before @term index: @termCount - 1
 
   removeTerm: (event) ->
     $(event.target).closest(".term").remove()
@@ -63,13 +66,12 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
     attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
     @$("form").find("input,button").attr("disabled", true)
-    #TODO: resume promises on reauth
-    @model.save(attrs)
-      .done =>
+    @model.save attrs,
+      success: =>
         Coreon.Models.Concept.collection().add @model
         Backbone.history.navigate @model.url(), trigger: true
-      .fail =>
-        @render()
+      error: =>
+        @model.once "error", @render, @
 
   remove: ->
     @broaderAndNarrower.remove()

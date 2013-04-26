@@ -1,6 +1,12 @@
 #= require environment
+#= require modules/helpers
+#= require modules/embeds_many
 
 class Coreon.Models.Term extends Backbone.Model
+
+  Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
+  
+  @embedsMany "properties"
 
   defaults: ->
     properties: []
@@ -15,11 +21,6 @@ class Coreon.Models.Term extends Backbone.Model
     for key, value of @attributes when key not in defaults
       info[key] = value
     info
-
-  toJSON: (options) ->
-    json = _.clone this.attributes
-    delete json.concept_id if not json.concept_id
-    json
 
   validationFailure: (errors) ->
     @trigger "validationFailure", errors

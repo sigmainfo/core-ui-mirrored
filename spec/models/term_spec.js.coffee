@@ -34,21 +34,11 @@ describe "Coreon.Models.Term", ->
         id: "abcd1234"
         author: "Nobody"
 
-  describe "toJSON()", ->
-
-    it "adds an outer hash with term: as key", ->
-      @model.set "concept_id", 1
-      @model.toJSON().should.eql
-        properties: []
-        value: ""
-        lang: ""
-        concept_id: 1
-
-    it "filters out empty concept_ids", ->
-      @model.toJSON().should.eql
-        properties: []
-        value: ""
-        lang: ""
+  describe "properties()", ->
+    
+    it "syncs with attr", ->
+      @model.set "properties", [key: "label"]
+      @model.properties().at(0).get("key").should.equal "label"
 
   describe "validationFailure()", ->
 
