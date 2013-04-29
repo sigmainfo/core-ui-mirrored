@@ -1,0 +1,64 @@
+# encoding: utf-8
+class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
+  include AuthSteps
+  include EditSteps 
+  include Api::Graph::Factory
+
+  step 'a concept "top hat" exists' do
+    @concept = create_concept properties: [
+      { key: "label", value: "top hat" }
+    ]
+  end
+
+  step 'I am on the show concept page of this concept' do
+    visit "/concepts/#{@concept['_id']}"
+  end
+
+  step 'I click "Add term"' do
+    click_link "Add term"
+  end
+
+  step 'I should see a set of term inputs with labels "Value", "Language"' do
+    pending 'step not implemented'
+  end
+
+  step 'I fill in "Value" with "high hat" within term inputs' do
+    pending 'step not implemented'
+  end
+
+  step 'I fill in "Language" with "en" within term inputs' do
+    pending 'step not implemented'
+  end
+
+  step 'I click "Add property" within term inputs' do
+    pending 'step not implemented'
+  end
+
+  step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
+    pending 'step not implemented'
+  end
+
+  step 'I fill in "Key" with "status"' do
+    pending 'step not implemented'
+  end
+
+  step 'I fill in "Value" with "pending"' do
+    pending 'step not implemented'
+  end
+
+  step 'I click "Create term"' do
+    pending 'step not implemented'
+  end
+
+  step 'I should see a term "high hat" within language "EN"' do
+    pending 'step not implemented'
+  end
+
+  step 'I should see a property "status" for the term with value "pending"' do
+    pending 'step not implemented'
+  end
+
+  step 'I should see a message \'Successfully created term "high hat".\'' do
+    pending 'step not implemented'
+  end
+end

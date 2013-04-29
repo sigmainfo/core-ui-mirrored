@@ -2,10 +2,8 @@
 class MaintainerCreatesConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
+  include EditSteps
 
-  step 'I have maintainer privileges' do
-    page.execute_script 'Coreon.application.session.ability.set("role", "maintainer");'
-  end
 
   step 'I visit the start page' do
     page.execute_script 'Backbone.history.navigate("/other");'
