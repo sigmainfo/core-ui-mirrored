@@ -133,8 +133,6 @@ div.concept.new {
     float: right;
     position: relative;
     top: -14px;
-/*    position: absolute;
-    right: 10px;*/
     
     &:before {
       @include before-icon;
@@ -181,13 +179,11 @@ div.concept.new {
     .properties {
         padding:0;
         a.add-property {
-          position: absolute;
-          top: -30px;
-          right: 0px;
+          top: 6px;
         }
         &>.actions {
-          position: relative;
-/*          border-top: 1px solid white;*/
+          border-top: 1px solid white;
+          height: 30px;
         }
 
         fieldset {
@@ -258,14 +254,6 @@ div.concept.new {
       .properties {
           padding:0;
           padding-top: 10px;
-          a.add-property {
-            position: relative;
-            top: 6px;
-          }
-          &>.actions {
-            position: relative;
-            height: 30px;
-          }
 
           fieldset {
             padding-left: 40px;
