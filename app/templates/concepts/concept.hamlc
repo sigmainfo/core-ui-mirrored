@@ -1,3 +1,5 @@
 != @render "concepts/caption", label: @concept.get "label"
-%h4.system-info-toggle(title="System Info")= I18n.t "concept.info"
-!= @info
+%h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
+!= @render "shared/info", data: @concept.info()
+- if @concept.get("properties")?.length > 0
+  != @render "properties/properties", properties: @concept.propertiesByKey()

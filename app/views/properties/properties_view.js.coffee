@@ -3,7 +3,7 @@
 #= require templates/properties/properties
 #= require templates/properties/property
 #= require templates/properties/selector
-#= require templates/layout/info
+#= require templates/shared/info
 #= require models/concept
 
 class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.SectionView
@@ -14,7 +14,7 @@ class Coreon.Views.Properties.PropertiesView extends Coreon.Views.Layout.Section
 
   template: Coreon.Templates["properties/properties"]
   property: Coreon.Templates["properties/property"]
-  info:     Coreon.Templates["layout/info"]
+  info:     Coreon.Templates["shared/info"]
   selector: Coreon.Templates["properties/selector"]
 
   events:

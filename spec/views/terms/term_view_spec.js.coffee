@@ -26,7 +26,7 @@ describe "Coreon.Views.Terms.TermView", ->
       @view.render().should.equal @view
 
     it "renders value", ->
-      @view.options.term.set "value", "gat"
+      @view.options.term.set "value", "gat", silent: true
       @view.render()
       @view.$el.should.have "h4.value"
       @view.$("h4.value").should.have.text "gat"

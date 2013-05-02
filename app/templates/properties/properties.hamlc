@@ -1,5 +1,17 @@
-%table
-  - for key in @keys
-    %tr
-      %th= key
-      %td 
+%section.properties
+  %h3= I18n.t "properties.title"
+  %table
+    - for key, properties of @properties
+      %tr
+        %th= key
+        %td
+          - if properties.length is 1 and not properties[0].get("lang")
+            .value= properties[0].get "value"
+          - else
+            %ul.index
+              - for property, index in properties
+                %li{"data-index": index }= property.get("lang") or index + 1
+            %ul.values
+              - for property in properties
+                %li= property.get "value"
+          != @render "shared/info", data: properties[0].info()

@@ -5,11 +5,11 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   include Api::Graph::Factory
 
   def click_on_toggle(name)
-    find(:xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']").click
+    find("section *:first-child", text: name).click
   end
 
   def section_for(name)
-    find :xpath, "//*[contains(@class, 'section-toggle') and text() = '#{name}']/following-sibling::*[contains(@class, 'section')]", visible: false
+    find("section *:first-child", text: name).find(:xpath, "following-sibling::*[1]", visible: false)
   end
 
   Given 'a concept with label "handgun"' do
@@ -98,19 +98,19 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see the section "BROADER & NARROWER"' do
-    page.should have_css("h3.section-toggle", text: "BROADER & NARROWER")
+    page.should have_css("section h3", text: "BROADER & NARROWER")
   end
 
   And 'this section should display "pistol" as being narrower' do
-    page.should have_css(".sub .concept-label", text: "pistol")
+    page.should have_css(".narrower .concept-label", text: "pistol")
   end
 
   And 'it should display "revolver" as being narrower' do
-    page.should have_css(".sub .concept-label", text: "revolver")
+    page.should have_css(".narrower .concept-label", text: "revolver")
   end
 
   And 'it should display "weapon" as being broader' do
-    page.should have_css(".super .concept-label", text: "weapon")
+    page.should have_css(".broader .concept-label", text: "weapon")
   end
 
   And 'I should see the section "PROPERTIES"' do
@@ -168,7 +168,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   When 'I click on the toggle of the locale "EN"' do
-    click_on_toggle "en"
+    click_on_toggle "EN"
   end
 
   Then 'the locale should be hidden' do
@@ -181,15 +181,15 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   When 'I click on the toggle "BROADER & NARROWER"' do
     page.execute_script "$('.notification .hide').click()"
-    click_on_toggle "Broader & Narrower"
+    click_on_toggle "BROADER & NARROWER"
   end
 
-  Then 'the concept tree should be hidden' do
-    section_for("Broader & Narrower").should_not be_visible
+  Then 'the section "BROADER & NARROWER" should be hidden' do
+    section_for("BROADER & NARROWER").should_not be_visible
   end
 
   When 'I click on the toggle "PROPERTIES"' do
-    click_on_toggle "Properties"
+    click_on_toggle "PROPERTIES"
   end
 
   Then 'the concept properties should be hidden' do

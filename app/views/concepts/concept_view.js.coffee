@@ -3,8 +3,8 @@
 #= require helpers/render
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
-#= require templates/layout/info
-#= require views/concepts/concept_tree_view
+#= require templates/shared/info
+#= require views/concepts/shared/broader_and_narrower_view
 #= require views/properties/properties_view
 #= require views/terms/terms_view
 
@@ -13,24 +13,30 @@ class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
   className: "concept"
 
   template: Coreon.Templates["concepts/concept"]
-  info: Coreon.Templates["layout/info"]
 
   events:
-    "click .system-info-toggle:not(.terms *)": "toggleInfo"
+    "click .system-info-toggle:not(.terms *)" : "toggleInfo"
+    "click section *:first-child"             : "toggleSection"
 
   initialize: ->
     super
+    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
+      model: @model
     @model.on "change", @render, @
 
   render: ->
-    @clear()
-    @$el.html @template concept: @model, info: @info(data: @model.info())
-    @append new Coreon.Views.Concepts.ConceptTreeView model: @model
-    if @model.get("properties")?.length > 0
-      @append new Coreon.Views.Properties.PropertiesView model: @model
+    @$el.html @template concept: @model
+    @broaderAndNarrower.render() unless @_wasRendered
+    @$el.children(".system-info").after @broaderAndNarrower.$el
+
     if @model.get("terms")?.length > 0
       @append new Coreon.Views.Terms.TermsView model: @model
+
+    @_wasRendered = true
     super
 
   toggleInfo: ->
     @$(".system-info").not(".terms *").slideToggle()
+
+  toggleSection: (event) ->
+    $(event.target).next().slideToggle()
