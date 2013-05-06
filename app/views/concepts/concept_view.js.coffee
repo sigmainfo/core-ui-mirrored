@@ -14,7 +14,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   events:
     "click .system-info-toggle:not(.terms *)" : "toggleInfo"
-    "click section *:first-child"             : "toggleSection"
+    "click section > *:first-child"           : "toggleSection"
     "click .properties .index li"             : "selectProperty"
 
   initialize: ->
@@ -40,4 +40,4 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     $target = $ event.target
     container = $target.closest ".properties"
     container.find("li.selected").removeClass "selected"
-    container.find(".values li").eq($target.data "index").add($target).addClass "selected"
+    container.find(".values > li").eq($target.data "index").add($target).addClass "selected"
