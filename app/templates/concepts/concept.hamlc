@@ -1,3 +1,5 @@
+%a.edit-concept( href="javascript:void(0)" )= I18n.t "concept.edit"
+%br
 != @render "concepts/caption", label: @concept.get "label"
 %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
 != @render "concepts/info", data: @concept.info()
