@@ -191,33 +191,47 @@ div.concept {
     overflow: hidden;
     list-style: none;
   }
+  ul.values {
+    li {
+      display: none;
+      &.selected {
+        display: block;
+      }
+    }
+  }
   
   ul.index {
-    padding-bottom: 10px;
+    padding-bottom: 16px;
+    padding-top: 4px;
   
     li {
       position: relative;
       float: left;
       text-transform: uppercase;
       font-size: 0.8em;
-      padding-top: 1px;
+      line-height: 1.2em;
+      padding: 0 10px;
+      border-left: 1px solid $browncolor;
+      cursor: pointer;
+      color: $link-color;
+      height: 11px;
       
-      a {
-        padding: 0 10px;
-        border-left: 1px solid $browncolor;
-      }
+      &:hover {
+        color: $hover-color;
+      };
 
-      &:first-child a{
+      &:first-child {
         border:none;
         padding-left: 0;
       }
       
       &.selected  {
+        color: $text-color;
 
         &:before {
           @include before-icon;
           position: absolute;
-          bottom: -5px;
+          bottom: -10px;
           left: 10px;
           background-position: -04px -100px;
         }
@@ -226,10 +240,6 @@ div.concept {
           &:before {
             left: 0;
           };
-        }
-
-        a {
-          color: $browncolor;
         }
       }
     }
@@ -260,10 +270,10 @@ div.concept {
       
       tr th {
         width: 69px;
-        padding-top: 3px;
       }
       ul.index {
-        padding-bottom: 4px;
+        padding-bottom: 12px;
+        height: 9px;
       }
     }
     
@@ -376,7 +386,7 @@ div.concept {
           text-align:left;
           float: left;
         }
-        .value {
+        .values, .value {
           clear: both;
           padding-bottom: 6px;
         }
