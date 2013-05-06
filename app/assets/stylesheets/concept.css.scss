@@ -26,7 +26,7 @@ div.concept {
     };
   }
   
-  .broader-and-narrower, .concept-tree, .properties {
+  .broader-and-narrower, .properties {
     @include dottedline;
   }
 
@@ -88,7 +88,10 @@ div.concept {
     }
   }
   
-  .section-toggle {
+  
+  // kill section-toggle or h3?
+  
+  .section-toggle, section h3 {
     @include toggle;
     padding: 0;
     margin: 6px 0 5px 0;
@@ -355,7 +358,7 @@ div.concept {
       
     }
     
-    .concept-tree {
+    .broader-and-narrower {
       display: none;
     }
     .properties {
