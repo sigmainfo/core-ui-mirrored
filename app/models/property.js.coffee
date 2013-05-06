@@ -6,4 +6,7 @@ class Coreon.Models.Property extends Backbone.Model
 
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
 
-  defaults: -> {}
+  defaults: ->
+    key: ""
+    value: ""
+    lang: ""

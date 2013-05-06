@@ -13,9 +13,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   template: Coreon.Templates["concepts/concept"]
 
   events:
-    "click .system-info-toggle:not(.terms *)" : "toggleInfo"
-    "click section > *:first-child"           : "toggleSection"
-    "click .properties .index li"             : "selectProperty"
+    "click .system-info-toggle"     : "toggleInfo"
+    "click section > *:first-child" : "toggleSection"
+    "click .properties .index li"   : "selectProperty"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
@@ -28,8 +28,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @_wasRendered = true
     @
 
-  toggleInfo: ->
-    @$(".system-info").not(".terms *").slideToggle()
+  toggleInfo: (event )->
+    $target = $(event.target)
+    $target.next(".system-info")
+      .add( $target.siblings(".properties").find ".system-info" )
+      .slideToggle()
 
   toggleSection: (event) ->
     $target = $(event.target)
