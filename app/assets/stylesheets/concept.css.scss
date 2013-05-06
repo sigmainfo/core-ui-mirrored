@@ -89,9 +89,7 @@ div.concept {
   }
   
   
-  // kill section-toggle or h3?
-  
-  .section-toggle, section h3 {
+  section h3 {
     @include toggle;
     padding: 0;
     margin: 6px 0 5px 0;
