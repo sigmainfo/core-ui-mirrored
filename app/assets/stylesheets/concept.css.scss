@@ -270,10 +270,10 @@ div.concept {
       
       tr th {
         width: 69px;
-        padding-top: 3px;
       }
       ul.index {
-        padding-bottom: 4px;
+        padding-bottom: 12px;
+        height: 9px;
       }
     }
     
@@ -386,7 +386,7 @@ div.concept {
           text-align:left;
           float: left;
         }
-        .value {
+        .values, .value {
           clear: both;
           padding-bottom: 6px;
         }
