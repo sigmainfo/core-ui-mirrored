@@ -41,6 +41,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   selectProperty: (event) ->
     $target = $ event.target
-    container = $target.closest ".properties"
+    container = $target.closest "td"
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq($target.data "index").add($target).addClass "selected"

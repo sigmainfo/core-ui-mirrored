@@ -358,7 +358,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     beforeEach ->
       @event = $.Event "click"
       @view.$el.append '''
-        <div class="properties">
+        <table class="properties">
+          <td>
             <ul class="index">
               <li data-index="0" class="selected">1</li>
               <li data-index="1">2</li>
@@ -367,7 +368,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
               <li class="selected">foo</li>
               <li>bar</li>
             </ul>
-        </div>
+          </td>
+        </table>
         '''
       @tab = @view.$(".index li").eq(1)
       @event.target = @tab[0]
