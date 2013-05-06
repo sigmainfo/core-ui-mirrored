@@ -1,6 +1,5 @@
 #= require spec_helper
 #= require views/concepts/concept_view
-#= require models/concept
 
 describe "Coreon.Views.Concepts.ConceptView", ->
 
@@ -8,27 +7,27 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     sinon.stub I18n, "t"
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", (options) =>
       @broaderAndNarrower = new Backbone.View options
+    @concept = new Backbone.Model
+    @concept.info = -> {}
     @view = new Coreon.Views.Concepts.ConceptView
-      model: new Coreon.Models.Concept
-    sinon.stub Coreon.Models.Concept, "find", (id) -> new Coreon.Models.Concept _id: id
+      model: @concept
 
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
-    Coreon.Models.Concept.find.restore()
 
-  it "is a composite view", ->
-    @view.should.be.an.instanceof Coreon.Views.CompositeView
+  it "is a Backbone view", ->
+    @view.should.be.an.instanceof Backbone.View
 
   it "creates container", ->
-    @view.$el.should.match ".concept"
+    @view.$el.should.match ".concept.show"
 
   describe "initialize()", ->
   
     it "creates view for broader & narrower section", ->
       should.exist @view.broaderAndNarrower
       @view.broaderAndNarrower.should.equal @broaderAndNarrower
-      @view.broaderAndNarrower.should.have.property "model", @view.model
+      @view.broaderAndNarrower.should.have.property "model", @concept
 
   describe "render()", ->
 
@@ -38,19 +37,20 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "is triggered by model change", ->
       @view.render = sinon.spy()
       @view.initialize()
-      @view.model.trigger "change"
+      @concept.trigger "change"
       @view.render.should.have.been.calledOnce
   
     it "renders label", ->
-      @view.model.set "label", "Handgun", silent: true
+      @concept.set "label", "Handgun", silent: true
       @view.render()
       @view.$el.should.have "h2.label"
       @view.$("h2.label").should.have.text "Handgun"
 
     it "renders system info", ->
       I18n.t.withArgs("concept.info").returns "System Info"
-      @view.model.id = "123"
-      @view.model.set "legacy_id", "543", silent: true
+      @concept.info = ->
+        id: "123"
+        legacy_id: "543"
       @view.render()
       @view.$el.should.have "> .system-info-toggle"
       @view.$("> .system-info-toggle").should.have.text "System Info"
@@ -65,7 +65,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       Coreon.application = hits: new Backbone.Collection
       Coreon.application.hits.findByResult = -> null
       try
-        @view.model.set "super_concept_ids", ["1234"], silent: true
+        @concept.set "super_concept_ids", ["1234"], silent: true
         @view.initialize()
         @view.broaderAndNarrower.render = sinon.spy()
         @view.render()
@@ -75,7 +75,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         Coreon.application = null
 
     it "always renders tree", ->
-      @view.model.set
+      @concept.set
         sub_concept_ids: []
         super_concept_ids: []
       @view.render()
@@ -84,14 +84,14 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     context "properties", ->
 
       beforeEach ->
-        sinon.stub Coreon.Templates, "shared/info"
+        sinon.stub Coreon.Templates, "concepts/info"
         @property = new Backbone.Model key: "label", value: "top hat"
         @property.info = -> {}
-        @view.model.set "properties", [ key: "label", value: "top hat" ], silent: true
-        @view.model.propertiesByKey = => label: [ @property ]
+        @concept.set "properties", [ key: "label", value: "top hat" ], silent: true
+        @concept.propertiesByKey = => label: [ @property ]
 
       afterEach ->
-        Coreon.Templates["shared/info"].restore()
+        Coreon.Templates["concepts/info"].restore()
       
       it "renders section", ->
         I18n.t.withArgs("properties.title").returns "Properties"
@@ -102,12 +102,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$(".properties h3").should.have.text "Properties"
 
       it "renders section only when applicable", ->
-        @view.model.set "properties", [], silent: true
+        @concept.set "properties", [], silent: true
         @view.render()
         @view.$el.should.not.have ".properties"
 
       it "renders properties table", ->
-        @view.model.propertiesByKey = => label: [ @property ]
+        @concept.propertiesByKey = => label: [ @property ]
         @view.render()
         @view.$(".properties").should.have "table tr"
         @view.$(".properties table tr").should.have "th"
@@ -120,7 +120,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$(".properties table td .value").should.have.text "top hat"
 
       it "renders system info", ->
-        Coreon.Templates["shared/info"].withArgs(data: id: "1234567890").returns '<div class="system-info">id: 1234567890</div>'
+        Coreon.Templates["concepts/info"].withArgs(data: id: "1234567890")
+          .returns '<div class="system-info">id: 1234567890</div>'
         @property.info = -> id: "1234567890"
         @view.render()
         @view.$(".properties").should.have "table tr td .system-info"
@@ -131,20 +132,20 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         prop1.info = -> {}
         prop2 = new Backbone.Model value: "cylinder"
         prop2.info = -> {}
-        @view.model.propertiesByKey = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKey = -> label: [ prop1, prop2 ]
         @view.render()
         @view.$(".properties").should.have "table tr td ul.values"
-        @view.$(".properties ul.values").should.have "li"
-        @view.$(".properties ul.values li").should.have.lengthOf 2
-        @view.$(".properties ul.values li").eq(0).should.have.text "top hat"
-        @view.$(".properties ul.values li").eq(1).should.have.text "cylinder"
+        @view.$(".properties ul.values").should.have "li .value"
+        @view.$(".properties ul.values li .value").should.have.lengthOf 2
+        @view.$(".properties ul.values li .value").eq(0).should.have.text "top hat"
+        @view.$(".properties ul.values li .value").eq(1).should.have.text "cylinder"
 
       it "renders index for list", ->
         prop1 = new Backbone.Model value: "top hat"
         prop1.info = -> {}
         prop2 = new Backbone.Model value: "cylinder"
         prop2.info = -> {}
-        @view.model.propertiesByKey = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKey = -> label: [ prop1, prop2 ]
         @view.render()
         @view.$(".properties").should.have "table tr td ul.index"
         @view.$(".properties ul.index").should.have "li"
@@ -160,7 +161,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         prop2 = new Backbone.Model value: "Zylinderhut", lang: "de"
         
         prop2.info = -> {}
-        @view.model.propertiesByKey = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKey = -> label: [ prop1, prop2 ]
         @view.render()
         @view.$(".properties ul.index li").eq(0).should.have.text "en"
         @view.$(".properties ul.index li").eq(1).should.have.text "de"
@@ -171,32 +172,108 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$(".properties").should.have "table tr td ul.index"
         @view.$(".properties ul.index li").eq(0).should.have.text "de"
 
-      it "marks first item as being selected", ->
+      it "renders system info in list", ->
+        Coreon.Templates["concepts/info"].withArgs(data: id: "1234567890")
+          .returns '<div class="system-info">id: 1234567890</div>'
+        @property.set "lang", "de", silent: true
+        @property.info = -> id: "1234567890"
         @view.render()
-        
+        @view.$(".properties .values li").should.have ".system-info"
+
+      it "marks first item as being selected", ->
+        prop1 = new Backbone.Model value: "top hat"
+        prop1.info = -> {}
+        prop2 = new Backbone.Model value: "cylinder"
+        prop2.info = -> {}
+        @concept.propertiesByKey = -> label: [ prop1, prop2 ]
+        @view.render()
+        @view.$(".properties ul.index li").eq(0).should.have.class "selected"
+        @view.$(".properties ul.values li").eq(0).should.have.class "selected"
+        @view.$(".properties ul.index li").eq(1).should.not.have.class "selected"
+        @view.$(".properties ul.values li").eq(1).should.not.have.class "selected"
+
     context "terms", ->
 
-      it "renders terms", ->
-        @view.model.set "terms", [
-          { lang: "de", value: "Puffe", properties: [] }
-        ], silent: true
+      beforeEach ->
+        sinon.stub Coreon.Templates, "concepts/info"
+
+      afterEach ->
+        Coreon.Templates["concepts/info"].restore()
+
+      beforeEach ->
+        @concept.set "terms", [ lang: "de", value: "top head" ], silent: true
+        @term = new Backbone.Model value: "top head" 
+        @term.info = -> {}
+        @concept.termsByLang = => de: [ @term ]
+
+      it "renders container", ->
         @view.render()
         @view.$el.should.have ".terms"
-        @view.$(".terms").should.have ".section"
-        @view.$(".terms .value").should.have.text "Puffe"
 
-      it "renders terms only when applicable", ->
-        @view.model.set "terms", [], silent: true
+      it "renders section for languages", ->
+        term1 = new Backbone.Model
+        term1.info = -> {}
+        term2 = new Backbone.Model
+        term2.info = -> {}
+        @concept.termsByLang = ->
+          de: [ term1 ]
+          en: [ term2 ]
         @view.render()
-        @view.$el.should.not.have ".terms"
+        @view.$el.should.have ".terms section.language"
+        @view.$("section.language").should.have.lengthOf 2
+        @view.$("section.language").eq(0).should.have.class "de"
+        @view.$("section.language").eq(1).should.have.class "en"
 
+      it "renders caption for language", ->
+        @concept.termsByLang = => hu: [ @term ]
+        @view.render()
+        @view.$(".language").should.have "h3"
+        @view.$(".language h3").should.have.text "hu"
+
+      it "renders terms", ->
+        @term.set "value", "top hat", silent: true
+        @concept.termsByLang = => hu: [ @term ]
+        @view.render()
+        @view.$(".language").should.have ".term"
+        @view.$(".term").should.have ".value"
+        @view.$(".term .value").should.have.text "top hat"
+
+      it "renders system info for of term", ->
+        @term.info = -> id: "#1234"
+        Coreon.Templates["concepts/info"].withArgs(data: id: "#1234")
+          .returns '<div class="system-info">id: #1234</div>'
+        @view.render()
+        @view.$(".term").should.have ".system-info"
+
+      it "renders term properties", ->
+        @term.set "properties", [ source: "Wikipedia" ], silent: true
+        property = new Backbone.Model source: "Wikipedia" 
+        @term.propertiesByKey = -> source: [ property ]
+        sinon.stub Coreon.Templates, "concepts/properties"
+        try
+          Coreon.Templates["concepts/properties"].withArgs(collapsed: true, properties: source: [ property ])
+            .returns '<ul class="properties collapsed"></ul>'
+          @view.render()
+          @view.$(".term").should.have ".properties"
+        finally
+          Coreon.Templates["concepts/properties"].restore()
+        
+      it "collapses properties by default", ->
+        @term.set "properties", [ source: "Wikipedia" ], silent: true
+        property = new Backbone.Model source: "Wikipedia"
+        property.info = -> {}
+        @term.propertiesByKey = -> source: [ property ]
+        @view.render()
+        @view.$(".term .properties").should.have.class "collapsed"
+        @view.$(".term .properties table").should.have.css "display", "none"
 
   describe "toggleInfo()", ->
 
     beforeEach ->
-      @view.model.set "terms", [
-        { lang: "de", value: "Puffe" }
-      ], silent: true
+      @term = new Backbone.Model value: "Puffe"
+      @term.info = -> {}
+      @concept.set "terms", [ lang: "de", value: "Puffe" ], silent: true
+      @concept.termsByLang = => de: [ @term ]
       @view.render()
   
     it "is triggered by click on system info toggle", ->
@@ -206,7 +283,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.toggleInfo.should.have.been.calledOnce
 
     it "toggles system info", ->
-      $("#konacha").append(@view.$el)
+      $("#konacha").append @view.$el
       @view.$(".system-info").should.be.hidden
       @view.toggleInfo()
       @view.$(".system-info").should.be.visible
@@ -214,7 +291,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$(".system-info").should.be.hidden
 
     it "does not toggle system info for terms", ->
-      $("#konacha").append(@view.$el)
+      $("#konacha").append @view.$el
+      @view.$el.append '''
+        <div class="terms">
+          <div class="system-info" style="display: none">id: 1234</div>
+        </div>
+        '''
       @view.$(".terms .system-info").should.be.hidden
       @view.toggleInfo()
       @view.$(".terms .system-info").should.be.hidden
@@ -244,3 +326,44 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("section div").should.be.hidden
       @view.toggleSection @event
       @view.$("section div").should.be.visible
+
+    it "toggles state of section", ->
+      @event.target = @view.$("h3").get(0)
+      @view.toggleSection @event
+      @view.$("section").should.have.class "collapsed"
+      @view.toggleSection @event
+      @view.$("section").should.not.have.class "collapsed"
+
+  describe "selectProperty()", ->
+
+    beforeEach ->
+      @event = $.Event "click"
+      @view.$el.append '''
+        <div class="properties">
+            <ul class="index">
+              <li data-index="0" class="selected">1</li>
+              <li data-index="1">2</li>
+            </ul>
+            <ul class="values">
+              <li class="selected">foo</li>
+              <li>bar</li>
+            </ul>
+        </div>
+        '''
+      @tab = @view.$(".index li").eq(1)
+      @event.target = @tab[0]
+
+    it "is triggered by click on selector", ->
+      @view.selectProperty = sinon.spy()
+      @view.delegateEvents()
+      @tab.trigger @event
+      @view.selectProperty.should.have.been.calledOnce
+      @view.selectProperty.should.have.been.calledWith @event
+
+    it "updates selection", ->
+      @view.selectProperty @event
+      @view.$(".index li").eq(1).should.have.class "selected"
+      @view.$(".index li").eq(0).should.not.have.class "selected"
+      @view.$(".values li").eq(1).should.have.class "selected"
+      @view.$(".values li").eq(0).should.not.have.class "selected"
+

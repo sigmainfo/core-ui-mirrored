@@ -9,7 +9,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   def section_for(name)
-    find("section *:first-child", text: name).find(:xpath, "following-sibling::*[1]", visible: false)
+    find("section *:first-child", text: name).find(:xpath, "./following-sibling::*[1]", visible: false)
   end
 
   Given 'a concept with label "handgun"' do
@@ -114,21 +114,21 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see the section "PROPERTIES"' do
-    page.should have_css("h3.section-toggle", text: "PROPERTIES")
+    page.should have_css("section h3", text: "PROPERTIES")
   end
 
   And 'it should have an English property "DEFINITION" with value "A portable firearm"' do
     @td = page.find("th", text: "DEFINITION").find :xpath, "parent::*/td"
     @td.find("ul.index li.selected").text.should == "EN"
-    @td.find("ul.values li", visible: true).text.should == "A portable firearm"
+    @td.find("ul.values li.selected").text.should == "A portable firearm"
   end
 
-  When 'I click on "de" for that property' do
-    @td.find("ul.index li a", text: "DE").click
+  When 'I click on "DE" for that property' do
+    @td.find("ul.index li", text: "DE").click
   end
 
   Then 'the value should have changed to "Tragbare Feuerwaffe"' do
-    @td.find("ul.values li", visible: true).text.should == "Tragbare Feuerwaffe"
+    @td.find("ul.values li.selected").text.should == "Tragbare Feuerwaffe"
   end
 
   And 'it should have a property "NOTES" with value "Bitte überprüfen!!!"' do
@@ -137,8 +137,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see a section for locale "EN"' do
-    page.should have_css("h3.section-toggle", text: "EN")
-    @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and text()='en']/following-sibling::div[contains(@class, 'section')]"
+    page.should have_css("section.language.en h3", text: "EN")
+    @lang = page.find("section.language.en ul")
   end
 
   And 'it shoud have the following terms "gun", "firearm", "shot gun", "musket"' do
@@ -148,8 +148,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see a section for locale "DE"' do
-    page.should have_css("h3.section-toggle", text: "DE")
-    @lang = page.find :xpath, "//h3[contains(@class, 'section-toggle') and text()='de']/following-sibling::div[contains(@class, 'section')]"
+    page.should have_css("section.language.de h3", text: "DE")
+    @lang = page.find("section.language.de ul")
   end
 
   And 'it shoud have the following terms "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
@@ -159,7 +159,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   When 'I click on toggle "PROPERTIES" of term "Schusswaffe"' do
-    page.find(:xpath, "//*[contains(@class, 'value') and text() = 'Schusswaffe']/following-sibling::*[contains(@class, 'properties')]/*[contains(@class, 'section-toggle')]").click
+    page.find(".term .value", text: "Schusswaffe").find(:xpath, "./following-sibling::section[contains(@class, 'properties')]/h3").click
   end
 
   Then 'I should see property "GENDER" with value "f"' do
@@ -172,7 +172,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'the locale should be hidden' do
-    section_for("en").should_not be_visible
+    section_for("EN").should_not be_visible
   end
 
   Then 'I should see the term "gun"' do
@@ -193,19 +193,20 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'the concept properties should be hidden' do
-    section_for("Properties").should_not be_visible
+    section_for("PROPERTIES").should_not be_visible
   end
 
   When 'I click the toggle "System Info" on the concept' do
-    page.find(:xpath, "//*[@class='concept']/*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
+    page.find(".concept > *", text: "System Info").click
   end
 
   Then 'I should see "id" of the "handgun" concept' do
-    page.find(:xpath, "//*[@class='concept']/div[@class='system-info']//th[text()='id']/following-sibling::td[1]").should have_content(@handgun['_id'])
+    page.find(".concept > .system-info").find(:xpath, ".//th[text()='id']/following-sibling::td[1]").should have_content(@handgun["_id"])
   end
 
-  And 'I should see "AUTHOR" with value "William" for property "notes"' do
-    page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td//li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("William")
+  And 'I should see "author" with value "William" for property "NOTES"' do
+    page.find(".concept > .properties th", text: "NOTES").find(:xpath, "./following-sibling::td[1]//th[text()='author']/following-sibling::td[1]").should have_content("William")
+    # page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td//li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("William")
   end
 
   When 'I click on index item "2" for property "notes"' do

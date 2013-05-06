@@ -1,4 +1,3 @@
-#
 #= require spec_helper
 #= require views/concepts/new_concept_view
 

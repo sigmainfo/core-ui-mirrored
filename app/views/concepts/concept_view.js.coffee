@@ -1,42 +1,43 @@
 #= require environment
-#= require views/composite_view
 #= require helpers/render
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
-#= require templates/shared/info
+#= require templates/concepts/_info
+#= require templates/concepts/_properties
 #= require views/concepts/shared/broader_and_narrower_view
-#= require views/properties/properties_view
-#= require views/terms/terms_view
 
-class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
+class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
-  className: "concept"
+  className: "concept show"
 
   template: Coreon.Templates["concepts/concept"]
 
   events:
     "click .system-info-toggle:not(.terms *)" : "toggleInfo"
     "click section *:first-child"             : "toggleSection"
+    "click .properties .index li"             : "selectProperty"
 
   initialize: ->
-    super
-    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
-      model: @model
-    @model.on "change", @render, @
+    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
+    @listenTo @model, "change", @render
 
   render: ->
     @$el.html @template concept: @model
     @broaderAndNarrower.render() unless @_wasRendered
     @$el.children(".system-info").after @broaderAndNarrower.$el
-
-    if @model.get("terms")?.length > 0
-      @append new Coreon.Views.Terms.TermsView model: @model
-
     @_wasRendered = true
-    super
+    @
 
   toggleInfo: ->
     @$(".system-info").not(".terms *").slideToggle()
 
   toggleSection: (event) ->
-    $(event.target).next().slideToggle()
+    $target = $(event.target)
+    $target.closest("section").toggleClass "collapsed"
+    $target.next().slideToggle()
+
+  selectProperty: (event) ->
+    $target = $ event.target
+    container = $target.closest ".properties"
+    container.find("li.selected").removeClass "selected"
+    container.find(".values li").eq($target.data "index").add($target).addClass "selected"

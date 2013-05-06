@@ -2,17 +2,23 @@
 #= require modules/helpers
 #= require modules/accumulation
 #= require modules/embeds_many
-#= require modules/remote_validation
 #= require models/term
+#= require models/property
+#= require modules/system_info
+#= require modules/properties_by_key
+#= require modules/remote_validation
 
 class Coreon.Models.Concept extends Backbone.Model
 
   Coreon.Modules.extend @, Coreon.Modules.Accumulation
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
-  Coreon.Modules.include @, Coreon.Modules.RemoteValidation
 
-  @embedsMany "properties"
+  @embedsMany "properties", model: Coreon.Models.Property
   @embedsMany "terms", model: Coreon.Models.Term
+
+  Coreon.Modules.include @, Coreon.Modules.SystemInfo
+  Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
+  Coreon.Modules.include @, Coreon.Modules.RemoteValidation
 
   urlRoot: "concepts"
 
@@ -33,19 +39,19 @@ class Coreon.Models.Concept extends Backbone.Model
     @remoteValidationOn()
     @once "sync", @syncMessage, @ if @isNew()
 
+  termsByLang: ->
+    terms = {}
+    for term in @terms().models
+      lang = term.get "lang"
+      terms[lang] ?= []
+      terms[lang].push term
+    terms
+
   toJSON: (options) ->
     serialized = {}
     for key, value of @attributes when key not in ["hit", "label"]
       serialized[key] = value
     concept: serialized
-
-  info: ->
-    info = id: @id
-    defaults = ( key for key, value of @defaults() )
-    defaults.push @idAttribute
-    for key, value of @attributes when key not in defaults
-      info[key] = value
-    info
 
   _updateLabel: ->
     @set "label", @_label()
@@ -72,7 +78,7 @@ class Coreon.Models.Concept extends Backbone.Model
     label
 
   sync: (method, model, options = {}) ->
-    Coreon.application.sync method, model, options
+    Coreon.application?.sync method, model, options
 
   syncMessage: ->
     @message I18n.t("concept.sync.create", label: @get "label"), type: "info"

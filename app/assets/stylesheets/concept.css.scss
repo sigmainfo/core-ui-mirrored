@@ -205,12 +205,14 @@ div.concept {
         padding: 0 10px;
         border-left: 1px solid $browncolor;
       }
+
       &:first-child a{
         border:none;
         padding-left: 0;
       }
       
       &.selected  {
+
         &:before {
           @include before-icon;
           position: absolute;
@@ -218,11 +220,13 @@ div.concept {
           left: 10px;
           background-position: -04px -100px;
         }
+
         &:first-child {
           &:before {
             left: 0;
           };
         }
+
         a {
           color: $browncolor;
         }

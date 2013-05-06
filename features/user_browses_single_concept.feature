@@ -32,14 +32,13 @@ Feature: user browses single concept
     When I click on "de" for that property
     Then the value should have changed to "Tragbare Feuerwaffe"
     And it should have a property "notes" with value "Bitte überprüfen!!!"
-    And I should see a section for locale "en"
+    And I should see a section for locale "EN"
     And it shoud have the following terms "gun", "firearm", "shot gun", "musket"
-    And I should see a section for locale "de"
+    And I should see a section for locale "DE"
     And it shoud have the following terms "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
-    When I click on toggle "Properties" of term "Schusswaffe"
+    When I click on toggle "PROPERTIES" of term "Schusswaffe"
     Then I should see property "gender" with value "f"
 
-  @wip
   Scenario: toggle sections
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
@@ -48,15 +47,16 @@ Feature: user browses single concept
     When I enter "gun" in the search field
     And I click the search button
     And I click on the label "handgun"
-    # When I click on the toggle of the locale "en"
-    # Then the locale should be hidden
-    # When I click on the toggle of the locale "en"
-    # Then I should see the term "gun"
+    When I click on the toggle of the locale "EN"
+    Then the locale should be hidden
+    When I click on the toggle of the locale "EN"
+    Then I should see the term "gun"
     When I click on the toggle "BROADER & NARROWER"
     Then the section "BROADER & NARROWER" should be hidden
     When I click on the toggle "PROPERTIES"
     Then the concept properties should be hidden
 
+  @wip
   Scenario: browse system info
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"

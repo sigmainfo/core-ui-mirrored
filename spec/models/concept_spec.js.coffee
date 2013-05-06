@@ -166,6 +166,7 @@ describe "Coreon.Models.Concept", ->
     
     it "syncs with attr", ->
       @model.set "properties", [key: "label"]
+      @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
       @model.properties().at(0).get("key").should.equal "label"
       
   describe "terms()", ->
@@ -176,15 +177,46 @@ describe "Coreon.Models.Concept", ->
       @model.terms().at(0).get("value").should.equal "dead"
 
   describe "info()", ->
-    
+
     it "returns hash with system info attributes", ->
-      @model.set
+      @model.set {
         _id: "abcd1234"
         author: "Nobody"
-      @model.info().should.eql {
+        terms : [ "foo", "bar" ]
+      }, silent: true
+      @model.info().should.eql
         id: "abcd1234"
         author: "Nobody"
-      }
+
+  describe "propertiesByKey()", ->
+
+    it "returns empty hash when empty", ->
+      @model.properties = -> models: []
+      @model.propertiesByKey().should.eql {}
+
+    it "returns properties grouped by key", ->
+      prop1 = new Backbone.Model key: "label"
+      prop2 = new Backbone.Model key: "definition"
+      prop3 = new Backbone.Model key: "definition"
+      @model.properties = -> models: [ prop1, prop2, prop3 ]
+      @model.propertiesByKey().should.eql
+        label: [ prop1 ]
+        definition: [ prop2, prop3 ]
+
+  describe "termsByLang()", ->
+
+    it "returns empty hash when empty", ->
+      @model.terms = -> models: []
+      @model.termsByLang().should.eql {}
+
+    it "returns terms grouped by lang", ->
+      term1 = new Backbone.Model lang: "en"
+      term2 = new Backbone.Model lang: "de"
+      term3 = new Backbone.Model lang: "de"
+      @model.terms = -> models: [ term1, term2, term3 ]
+      @model.termsByLang().should.eql
+        en: [ term1 ]
+        de: [ term2, term3 ]
 
   describe "toJSON()", ->
 
