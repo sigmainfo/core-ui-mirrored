@@ -197,7 +197,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   When 'I click the toggle "System Info" on the concept' do
-    page.find(".concept > *", text: "System Info").click
+    page.find(".concept > .system-info-toggle", text: "System Info").click
   end
 
   Then 'I should see "id" of the "handgun" concept' do
@@ -206,11 +206,10 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   And 'I should see "author" with value "William" for property "NOTES"' do
     page.find(".concept > .properties th", text: "NOTES").find(:xpath, "./following-sibling::td[1]//th[text()='author']/following-sibling::td[1]").should have_content("William")
-    # page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td//li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("William")
   end
 
-  When 'I click on index item "2" for property "notes"' do
-    page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td/ul[@class='index']/li/a[@data-index='1']").click
+  When 'I click on index item "2" for property "NOTES"' do
+    page.find(".concept > .properties th", text: "NOTES").find(:xpath, "./following-sibling::td[1]//ul[@class='index']/li[@data-index='1']").click
   end
 
   Then 'I should see "author" with value "Nobody" for property "notes"' do
@@ -232,8 +231,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     info.should have_css("td", text: "543")
   end
 
-  When 'I click on the toggle "Properties" for this term' do
-    page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'properties']/*[contains(@class, 'section-toggle')]").click
+  When 'I click on the toggle "PROPERTIES" for this term' do
+    page.find(".term .value", text: "shot gun").find(:xpath, "./following-sibling::section[contains(@class, 'properties')]/h3", text: "PROPERTIES").click
   end
 
   Then 'I should see "author" with value "Mr. Blake" for property "parts of speach"' do
