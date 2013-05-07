@@ -11,7 +11,7 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I am on the show concept page of this concept' do
-    visit "/concepts/#{@concept['_id']}"
+    page.execute_script "Backbone.history.navigate('concepts/#{@concept['_id']}', { trigger: true })"
   end
 
   step 'I click "Add term"' do
@@ -19,15 +19,22 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I should see a set of term inputs with labels "Value", "Language"' do
-    pending 'step not implemented'
+    within ".term.create" do
+      page.should have_field "Value"
+      page.should have_field "Language"
+    end
   end
 
   step 'I fill in "Value" with "high hat" within term inputs' do
-    pending 'step not implemented'
+    within ".term.create" do
+      fill_in "Value", with: "high hat"
+    end
   end
 
   step 'I fill in "Language" with "en" within term inputs' do
-    pending 'step not implemented'
+    within ".term.create" do
+      fill_in "Language", with: "en"
+    end
   end
 
   step 'I click "Add property" within term inputs' do

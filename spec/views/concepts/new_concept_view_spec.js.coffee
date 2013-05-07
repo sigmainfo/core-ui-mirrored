@@ -121,9 +121,8 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         I18n.t.withArgs("terms.title").returns "Terms"
         @view.render()
         @view.$el.should.have ".terms"
-        @view.$(".terms").should.match "section"
         @view.$el.should.have ".terms h3"
-        @view.$("section.terms h3").should.have.text "Terms"
+        @view.$(".terms h3").should.have.text "Terms"
 
       it "renders link for adding a term", ->
         I18n.t.withArgs("terms.add").returns "Add term"

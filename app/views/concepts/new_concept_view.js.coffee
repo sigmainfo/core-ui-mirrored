@@ -5,7 +5,7 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
-#= require templates/terms/new_term
+#= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
 #= require jquery.serializeJSON
@@ -21,7 +21,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   template: Coreon.Templates["concepts/new_concept"]
 
   @nestedFieldsFor "properties", name: "property"
-  @nestedFieldsFor "terms"
+  @nestedFieldsFor "terms", template: Coreon.Templates["concepts/new_term"]
 
   events:
     "click  a.add-property"    : "addProperty"

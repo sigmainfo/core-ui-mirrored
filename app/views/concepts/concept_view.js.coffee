@@ -1,9 +1,13 @@
 #= require environment
 #= require helpers/render
+#= require helpers/can
+#= require helpers/form_for
+#= require helpers/input
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
+#= require templates/terms/new_term
 #= require views/concepts/shared/broader_and_narrower_view
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
@@ -11,11 +15,13 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   className: "concept show"
 
   template: Coreon.Templates["concepts/concept"]
+  term:     Coreon.Templates["terms/new_term"]
 
   events:
     "click .system-info-toggle"     : "toggleInfo"
     "click section > *:first-child" : "toggleSection"
     "click .properties .index li"   : "selectProperty"
+    "click .add-term"               : "addTerm"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
@@ -44,3 +50,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     container = $target.closest "td"
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq($target.data "index").add($target).addClass "selected"
+
+  addTerm: ->
+    @new_term = new Coreon.Models.Term
+    $terms = @$(".terms")
+    $terms.find(".edit").hide()
+    $terms.append @term term: @new_term

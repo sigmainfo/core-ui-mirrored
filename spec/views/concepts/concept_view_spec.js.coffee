@@ -31,6 +31,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
   describe "render()", ->
 
+    beforeEach ->
+      Coreon.application = session: ability: can: sinon.stub()
+
+    afterEach ->
+      Coreon.application = null    
+
     it "can be chained", ->
       @view.render().should.equal @view
 
@@ -62,17 +68,14 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("> .system-info td").eq(1).should.have.text "543"
 
     it "renders tree", ->
-      Coreon.application = hits: new Backbone.Collection
+      Coreon.application.hits = new Backbone.Collection
       Coreon.application.hits.findByResult = -> null
-      try
-        @concept.set "super_concept_ids", ["1234"], silent: true
-        @view.initialize()
-        @view.broaderAndNarrower.render = sinon.spy()
-        @view.render()
-        @view.broaderAndNarrower.render.should.have.been.calledOnce
-        $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
-      finally
-        Coreon.application = null
+      @concept.set "super_concept_ids", ["1234"], silent: true
+      @view.initialize()
+      @view.broaderAndNarrower.render = sinon.spy()
+      @view.render()
+      @view.broaderAndNarrower.render.should.have.been.calledOnce
+      $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
 
     it "always renders tree", ->
       @concept.set
@@ -266,6 +269,26 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.render()
         @view.$(".term .properties").should.have.class "collapsed"
         @view.$(".term .properties > *:nth-child(2)").should.have.css "display", "none"
+      
+      context "with edit privileges", ->
+        
+        beforeEach ->
+          Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
+
+        it "renders add term link", ->
+          I18n.t.withArgs("term.new").returns "Add term"
+          @view.render()
+          @view.$(".terms").should.have ".edit a.add-term"
+          @view.$(".add-term").should.have.text "Add term"
+
+      context "without edit privileges", ->
+        
+        beforeEach ->
+          Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns false
+
+        it "does not render add term link", ->
+          @view.render()
+          @view.$el.should.not.have ".add-term"
 
   describe "toggleInfo()", ->
 
@@ -388,3 +411,44 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$(".values li").eq(1).should.have.class "selected"
       @view.$(".values li").eq(0).should.not.have.class "selected"
 
+  describe "addTerm()", ->
+    
+    beforeEach ->
+      Coreon.application = session: ability: can: -> true
+      @view.render()
+
+    afterEach ->
+      Coreon.application = null    
+
+    it "is triggered by click on add-term link", ->
+      @view.addTerm = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add-term").click()
+      @view.addTerm.should.have.been.calledOnce
+
+    it "renders form", ->
+      I18n.t.withArgs("term.create").returns "Create term"
+      I18n.t.withArgs("form.cancel").returns "Cancel"
+      @view.addTerm()
+      @view.$el.should.have ".terms form.term.create"
+      @view.$("form.term.create").should.have 'button[type="submit"]'
+      @view.$('form.term.create button[type="submit"]').should.have.text "Create term"
+      @view.$("form.term.create").should.have ".cancel"
+      @view.$("form.term.create .cancel").should.have.text "Cancel"
+
+    it "hides add-term link", ->
+      I18n.t.withArgs("term.new").returns "Add term"
+      $("#konacha").append @view.render().$el
+      @view.addTerm()
+      @view.$(".terms .edit .add-term").should.be.hidden
+
+    it "renders inputs", ->
+      I18n.t.withArgs("term.value").returns "Value"
+      I18n.t.withArgs("term.lang").returns "Language"
+      @view.addTerm()
+      @view.$el.should.have 'form.term.create .value input'
+      @view.$el.should.have 'form.term.create .value label'
+      @view.$('form.term.create .value label').should.have.text "Value"
+      @view.$el.should.have 'form.term.create .lang input'
+      @view.$el.should.have 'form.term.create .lang label'
+      @view.$('form.term.create .lang label').should.have.text "Language"

@@ -70,6 +70,8 @@ en:
     info: "System Info"
     value: "Value"
     lang: "Language"
+    new: "Add term"
+    create: "Create term"
     remove: "Remove term"
 
   terms:

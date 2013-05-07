@@ -65,18 +65,3 @@ Feature: maintainer adds term
   #   Then I should see a set of term inputs with labels "Value", "Language"
   #   And these term inputs should be empty
   #   And I should not see property inputs
-
-  # Scenario: multiple terms
-  #   Given I have maintainer privileges
-  #   And I am on the show concept page of this concept
-  #   # When I click "Edit concept" 
-  #   When I click "Add term" twice
-  #   Then I should see 2 sets of term inputs with labels "Value", "Language"
-  #   When I fill in "Value" with "high hat" within first set of term inputs
-  #   And I fill in "Language" with "en" within first set of term inputs
-  #   And I fill in "Value" with "beaver hat" within second set of term inputs
-  #   And I fill in "Language" with "en" within second set of term inputs
-  #   And I click "Create terms"
-  #   Then I should see a term "high hat" within language "EN"
-  #   And I should see a term "beaver hat" within language "EN"
-  #   And I should see a message 'Successfully created 2 terms.'
