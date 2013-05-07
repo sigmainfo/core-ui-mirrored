@@ -19,6 +19,7 @@
       background-position: -3px -354px;
     };
   }
+
   &.edit-concept {
     padding-left: 6px;
     position: absolute;
@@ -35,7 +36,7 @@
 }
 
 form.create {
-  
+
   fieldset {
     position: relative;
     border: 0;
@@ -45,7 +46,7 @@ form.create {
     div.input {
       padding-bottom: 18px;
     }
-    
+
     &>.required  {
       label {
         color: $browncolor;
@@ -60,7 +61,7 @@ form.create {
       height: 50px;
     }
   }
-  
+
   label {
     color: $greytext-color;
     display: inline-block;
@@ -77,38 +78,39 @@ form.create {
     clear: both;
     overflow: hidden;
     background-color: darken(rgba($button-color, 0.18), 15);
-    margin-top:36px;
+    margin-top:60px;
     padding: 3px 10px;
-    
+
     .cancel {
       @extend .button;
       margin: 6px;
-      padding: 4px 8px 2px 8px;
+      padding: 5px 8px 3px 8px;
       float: none;
+      font-size: 1em;
     }
-    
+
       button {
         @extend .cancel;
         @include box-sizing(content-box);
         border: 0;
-        padding-bottom: 3px;
+        padding-bottom: 4px;
         background-color: $button-color;
         @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
         @include retina-stripes(white);
         &:after {
           @include before-icon;
           float: right;
-          height: 10px;
+          height: 12px;
           margin-left: 4px;
-          background-position: 0px -405px;
+          background-position: 0px -404px;
         };
         &:hover {
           background-color: saturate($button-color, 10);
         };
       }
-    
+
   }
-  
+
 }
 
 /*// FIX FEATURE TESTS
@@ -117,27 +119,29 @@ div.concept section  h3 {
 }*/
 
 div.concept.new {
-  
+
   h2 {
     color: $button-color;
   }
-  
+
   h3 {
-    padding: 0 7px 0 5px;
+    @include toggle;
+    padding: 0px 7px 0 5px;
     margin: 2px 0 5px 0;
     color: $browncolor;
+
     background: rgba($greencolor, 0.08);
     &:before {
       content: none;
     };
   }
-  
+
   .broader-and-narrower {
     .self {
       color: $button-color;
     }
   }
-  
+
   .actions a {
     font-size: 0.9em;
     color:$greencolor;
@@ -145,12 +149,14 @@ div.concept.new {
     margin-right: 10px;
     float: right;
     position: relative;
-    top: -14px;
-    
+    top: -10px;
+
     &:before {
       @include before-icon;
-      float: right;
-      margin-left: 7px;
+/*      float: right;
+      margin-left: 7px;*/
+      float: left;
+      margin-right: 5px;
       background-position: -2px -351px;
       @include edit-button;
     };
@@ -173,12 +179,13 @@ div.concept.new {
       background-position: -52px -351px;
     };
   }
-  
+
   .properties {
     position: relative;
-    padding: 3px 0 30px 0;
+/*    padding: 3px 0 50px 0;*/
+    padding-bottom: 50px;
   }
-  
+
   .terms {
     position: relative;
     @include retina-separator;
@@ -187,13 +194,16 @@ div.concept.new {
     .term {
       background-image: none;
     }
-    
+
     .properties {
         padding:0;
         a.add-property {
-          position: absolute;
-          right: 0;
-          top: -32px;
+          top: 6px;
+        }
+        &>.actions {
+          margin: 0;
+          border-top: 1px solid white;
+          height: 30px;
         }
 
         fieldset {
@@ -203,9 +213,9 @@ div.concept.new {
           background-color: rgba(white, 0.3);
         }
     }
-    
+
   }
-  
+
 }
 
 @media all and (max-width: 999px) and (min-width: 800px) {
@@ -215,15 +225,15 @@ div.concept.new {
       width: 90px;
       padding-right: 10px;
     }
-    
+
     .error-message {
       padding-left: 100px;
     }
-    
+
     .submit {
       font-size: 1.1em;
     }
-    
+
     .terms {
       .properties {
           fieldset {
@@ -232,11 +242,10 @@ div.concept.new {
       }
     }
   }
-  
 }
 
 @media all and (max-width: 799px) {
-  
+
   div.concept.new  {
 
     label {
@@ -244,7 +253,7 @@ div.concept.new {
       text-align: left;
       float: none;
     }
-    
+
     fieldset {
       margin-top: 16px;
       div.input {
@@ -254,7 +263,7 @@ div.concept.new {
           padding-bottom: 18px;
         };
       }
-      
+
       input, textarea {
         width: 80%;
       }
@@ -263,30 +272,25 @@ div.concept.new {
     .terms {
       .properties {
           padding:0;
-          padding-top: 34px;
-          a.add-property {
-            top: 6px;
-          }
+          padding-top: 10px;
 
           fieldset {
             padding-left: 40px;
           }
       }
     }
-    
+
     .submit {
       font-size: 1.1em;
     }
-    
+
     .error-message {
       padding-left: 0px;
       width:auto;
     }
-    
+
     .broader-and-narrower {
       display: none;
     }
   }
-  
 }
-  

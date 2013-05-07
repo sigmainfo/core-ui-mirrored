@@ -265,42 +265,61 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @term.propertiesByKey = -> source: [ property ]
         @view.render()
         @view.$(".term .properties").should.have.class "collapsed"
-        @view.$(".term .properties table").should.have.css "display", "none"
+        @view.$(".term .properties > *:nth-child(2)").should.have.css "display", "none"
 
   describe "toggleInfo()", ->
 
     beforeEach ->
-      @term = new Backbone.Model value: "Puffe"
-      @term.info = -> {}
-      @concept.set "terms", [ lang: "de", value: "Puffe" ], silent: true
-      @concept.termsByLang = => de: [ @term ]
-      @view.render()
+      @view.$el.append """
+        <section>
+          <h3 class="system-info-toggle" id="outer-trigger">INFO</h3>
+          <div class="system-info">foo</div>
+          <ul class="properties">
+            <div class="system-info">bar</div>
+          </ul>
+          <div class="terms">
+            <h3 class="system-info-toggle" id="inner-trigger">INFO</h3>
+            <div class="system-info">baz</div>
+            <ul class="properties">
+              <div class="system-info">bar</div>
+            </ul>
+          </div>
+        </section>
+        """
+      @event = $.Event()
+      $("#konacha").append @view.$el
   
     it "is triggered by click on system info toggle", ->
       @view.toggleInfo = sinon.spy()
       @view.delegateEvents()
-      @view.$(".system-info-toggle").click()
+      @view.$("#outer-trigger").click()
       @view.toggleInfo.should.have.been.calledOnce
 
-    it "toggles system info", ->
-      $("#konacha").append @view.$el
-      @view.$(".system-info").should.be.hidden
-      @view.toggleInfo()
-      @view.$(".system-info").should.be.visible
-      @view.toggleInfo()
-      @view.$(".system-info").should.be.hidden
+    it "toggles outer system info", ->
+      @event.target = @view.$ "#outer-trigger"
+      @view.toggleInfo @event
+      @view.$("section > .system-info").should.be.hidden
+      @view.$("section .properties .system-info").should.be.hidden
+      @view.$("section .terms .system-info").should.be.visible
+      @view.$("section .terms .properties .system-info").should.be.visible
+      @view.toggleInfo @event
+      @view.$("section > .system-info").should.be.visible
+      @view.$("section .properties .system-info").should.be.visible
+      @view.$("section .terms .system-info").should.be.visible
+      @view.$("section .terms .properties .system-info").should.be.visible
 
-    it "does not toggle system info for terms", ->
-      $("#konacha").append @view.$el
-      @view.$el.append '''
-        <div class="terms">
-          <div class="system-info" style="display: none">id: 1234</div>
-        </div>
-        '''
-      @view.$(".terms .system-info").should.be.hidden
-      @view.toggleInfo()
-      @view.$(".terms .system-info").should.be.hidden
-
+    it "toggles inner system info", ->
+      @event.target = @view.$ "#inner-trigger"
+      @view.toggleInfo @event
+      @view.$("section .terms .system-info").should.be.hidden
+      @view.$("section .terms .properties .system-info").should.be.hidden
+      @view.$("section > .system-info").should.be.visible
+      @view.$("section .properties .system-info").should.be.visible
+      @view.toggleInfo @event
+      @view.$("section .terms .system-info").should.be.visible
+      @view.$("section .terms .properties .system-info").should.be.visible
+      @view.$("section > .system-info").should.be.visible
+      @view.$("section .properties .system-info").should.be.visible
 
   describe "toggleSection()", ->
 
@@ -339,7 +358,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     beforeEach ->
       @event = $.Event "click"
       @view.$el.append '''
-        <div class="properties">
+        <table class="properties">
+          <td>
             <ul class="index">
               <li data-index="0" class="selected">1</li>
               <li data-index="1">2</li>
@@ -348,7 +368,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
               <li class="selected">foo</li>
               <li>bar</li>
             </ul>
-        </div>
+          </td>
+        </table>
         '''
       @tab = @view.$(".index li").eq(1)
       @event.target = @tab[0]

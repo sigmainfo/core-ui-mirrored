@@ -29,89 +29,6 @@ div.concept {
   .broader-and-narrower, .properties {
     @include dottedline;
   }
-
-  
-  .terms {
-    padding-top: 20px;
-    
-    >.language {
-      @include retina-separator;
-      padding-top: 8px;
-      min-height: 19px;
-      
-      >.section-toggle {
-        margin: 1px 0;
-        position: absolute;
-        z-index: 1;
-      }
-      
-    }
-    
-    .section {
-      padding: 0 0 2px 0;
-    }
-    
-    .term {
-      position: relative;
-      @include dottedline;
-      &:first-child {
-        background: none;
-      };
-
-      h4.value {
-        font: 1.4em Palatino;
-        padding: 12px 100px 6px 97px;
-        &:before {
-          content:"»\00a0";
-          font-size: 1.3em;
-        };
-      }
-      >.system-info {
-        padding-left: 116px;
-        table {
-          margin-top: 2px;
-        }
-      }
-    }
-    .properties {
-      background: none;
-      .section-toggle {
-        position: absolute;
-        right: 20px;
-        top: 9px;
-      }
-      .section {
-        margin: 0;
-        padding-left: 116px;
-        border-top: 1px solid $greycolor;
-      }
-    }
-  }
-  
-  
-  // kill section-toggle or h3?
-  
-  .section-toggle, section h3 {
-    @include toggle;
-    padding: 0;
-    margin: 6px 0 5px 0;
-    padding-right: 7px;
-    color: $browncolor;
-    background: rgba($greencolor, 0.08);
-    &:before {
-      @include rotate(0deg);
-      background-position: -50px -103px;
-    };
-    &:hover {
-      cursor: pointer;
-    };
-    &.collapsed {
-      &:before {
-        @include rotate(-90deg);
-        background-position: -53px -103px;
-      };
-    }
-  }
   
   .system-info-toggle {
     display: block;
@@ -129,6 +46,7 @@ div.concept {
       background-position: -51px -201px;
     };
   }
+  
   .system-info {
     line-height: 12px;
     
@@ -193,33 +111,47 @@ div.concept {
     overflow: hidden;
     list-style: none;
   }
+  ul.values {
+    li {
+      display: none;
+      &.selected {
+        display: block;
+      }
+    }
+  }
   
   ul.index {
-    padding-bottom: 10px;
+    padding-bottom: 16px;
+    padding-top: 4px;
   
     li {
       position: relative;
       float: left;
       text-transform: uppercase;
       font-size: 0.8em;
-      padding-top: 1px;
+      line-height: 1.2em;
+      padding: 0 10px;
+      border-left: 1px solid $browncolor;
+      cursor: pointer;
+      color: $link-color;
+      height: 11px;
       
-      a {
-        padding: 0 10px;
-        border-left: 1px solid $browncolor;
-      }
+      &:hover {
+        color: $hover-color;
+      };
 
-      &:first-child a{
+      &:first-child {
         border:none;
         padding-left: 0;
       }
       
       &.selected  {
+        color: $text-color;
 
         &:before {
           @include before-icon;
           position: absolute;
-          bottom: -5px;
+          bottom: -10px;
           left: 10px;
           background-position: -04px -100px;
         }
@@ -229,10 +161,87 @@ div.concept {
             left: 0;
           };
         }
+      }
+    }
+  }
+  
+  .terms {
+    padding-top: 20px;
+    
+    section.language {
+      @include retina-separator;
+      padding-top: 8px;
+      min-height: 19px;
+      
+      &>h3 {
+        margin: 1px 0;
+        position: absolute;
+        z-index: 1;
+      }    
+    }
+    
+    ul {
+      list-style: none;
+    }
+    
+    .term {
+      position: relative;
+      @include dottedline;
+      &:first-child {
+        background: none;
+      };
 
-        a {
-          color: $browncolor;
+      h4.value {
+        font: 1.4em Palatino;
+        padding: 12px 100px 6px 97px;
+        &:before {
+          content:"»\00a0";
+          font-size: 1.3em;
+        };
+      }
+      >.system-info {
+        padding-left: 116px;
+        table {
+          margin-top: 2px;
         }
+      }
+    }
+    .properties {
+      background: none;
+      h3 {
+        position: absolute;
+        right: 20px;
+        top: 9px;
+      }
+      &>div {
+        margin-left: 112px;
+        border-top: 1px solid $greycolor;
+      }
+    }
+  }
+  
+  &.show {
+    section {
+      h3 {
+        @include toggle;
+        padding: 0;
+        margin: 6px 0 5px 0;
+        padding-right: 7px;
+        color: $browncolor;
+        background: rgba($greencolor, 0.08);
+        &:before {
+          @include rotate(0deg);
+          background-position: -50px -103px;
+        };
+        &:hover {
+          cursor: pointer;
+        };
+      }
+      &.collapsed h3 {
+        &:before {
+          @include rotate(-90deg);
+          background-position: -53px -103px;
+        };
       }
     }
   }
@@ -262,10 +271,10 @@ div.concept {
       
       tr th {
         width: 69px;
-        padding-top: 3px;
       }
       ul.index {
-        padding-bottom: 4px;
+        padding-bottom: 12px;
+        height: 9px;
       }
     }
     
@@ -281,12 +290,11 @@ div.concept {
         }
       }
       .properties {
-        .section-toggle {
+        h3 {
           top: -1px;
         }
-        .section {
-          margin: 0;
-          padding-left: 64px;
+        &>div {
+          margin-left: 64px;
         }
       }
     }
@@ -313,7 +321,7 @@ div.concept {
     .system-info-toggle {
       display: none;
     }
-    .section-toggle {
+    section h3 {
       margin: 2px 0 0px 0;
     }
     
@@ -345,13 +353,12 @@ div.concept {
 
       .properties {
         background: none;
-        .section-toggle {
+        h3 {
           right: 0px;
           top: -1px;
         }
-        .section {
-          margin: 0;
-          padding-left: 44px;
+        &>div {
+          margin-left: 44px;
           border-top: 1px solid white;
         }
       }
@@ -378,7 +385,7 @@ div.concept {
           text-align:left;
           float: left;
         }
-        .value {
+        .values, .value {
           clear: both;
           padding-bottom: 6px;
         }

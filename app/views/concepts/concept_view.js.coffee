@@ -14,7 +14,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   template: Coreon.Templates["concepts/concept"]
 
   events:
-    "click .system-info-toggle:not(.terms *)"      : "toggleInfo"
+    "click .system-info-toggle"                    : "toggleInfo"
     "click section > *:first-child"                : "toggleSection"
     "click .properties .index li"                  : "selectProperty"
     "click .edit-concept"                          : "toggleEditMode"
@@ -31,8 +31,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @_wasRendered = true
     @
 
-  toggleInfo: ->
-    @$(".system-info").not(".terms *").slideToggle()
+  toggleInfo: (event )->
+    $target = $(event.target)
+    $target.next(".system-info")
+      .add( $target.siblings(".properties").find ".system-info" )
+      .slideToggle()
 
   toggleSection: (event) ->
     $target = $(event.target)
@@ -41,7 +44,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   selectProperty: (event) ->
     $target = $ event.target
-    container = $target.closest ".properties"
+    container = $target.closest "td"
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq($target.data "index").add($target).addClass "selected"
 
