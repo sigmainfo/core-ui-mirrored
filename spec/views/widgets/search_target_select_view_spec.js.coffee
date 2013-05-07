@@ -84,8 +84,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.$(".toggle").trigger @event
       list = @view.dropdown.$ ".options"
       list.width().should.equal 213
-      list.position().should.have.property "left", 56
-      list.position().should.have.property "top", 74
+      list.position().should.have.property("left").closeTo(56, 0.5)
+      list.position().should.have.property("top").closeTo(74, 0.5)
 
   describe "onFocus()", ->
 
