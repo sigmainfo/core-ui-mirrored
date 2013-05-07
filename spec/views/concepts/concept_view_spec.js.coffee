@@ -265,7 +265,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @term.propertiesByKey = -> source: [ property ]
         @view.render()
         @view.$(".term .properties").should.have.class "collapsed"
-        @view.$(".term .properties table").should.have.css "display", "none"
+        @view.$(".term .properties > *:nth-child(2)").should.have.css "display", "none"
 
   describe "toggleInfo()", ->
 
