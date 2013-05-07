@@ -30,30 +30,6 @@ div.concept {
     @include dottedline;
   }
   
-  section {
-    h3 {
-      @include toggle;
-      padding: 0;
-      margin: 6px 0 5px 0;
-      padding-right: 7px;
-      color: $browncolor;
-      background: rgba($greencolor, 0.08);
-      &:before {
-        @include rotate(0deg);
-        background-position: -50px -103px;
-      };
-      &:hover {
-        cursor: pointer;
-      };
-    }
-    &.collapsed h3 {
-      &:before {
-        @include rotate(-90deg);
-        background-position: -53px -103px;
-      };
-    }
-  }
-  
   .system-info-toggle {
     display: block;
     width: 18px;   
@@ -240,6 +216,32 @@ div.concept {
       &>div {
         margin-left: 112px;
         border-top: 1px solid $greycolor;
+      }
+    }
+  }
+  
+  &.show {
+    section {
+      h3 {
+        @include toggle;
+        padding: 0;
+        margin: 6px 0 5px 0;
+        padding-right: 7px;
+        color: $browncolor;
+        background: rgba($greencolor, 0.08);
+        &:before {
+          @include rotate(0deg);
+          background-position: -50px -103px;
+        };
+        &:hover {
+          cursor: pointer;
+        };
+      }
+      &.collapsed h3 {
+        &:before {
+          @include rotate(-90deg);
+          background-position: -53px -103px;
+        };
       }
     }
   }
