@@ -1,36 +1,46 @@
 #= require environment
-#= require views/composite_view
 #= require helpers/render
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
-#= require templates/layout/info
-#= require views/concepts/concept_tree_view
-#= require views/properties/properties_view
-#= require views/terms/terms_view
+#= require templates/concepts/_info
+#= require templates/concepts/_properties
+#= require views/concepts/shared/broader_and_narrower_view
 
-class Coreon.Views.Concepts.ConceptView extends Coreon.Views.CompositeView
+class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
-  className: "concept"
+  className: "concept show"
 
   template: Coreon.Templates["concepts/concept"]
-  info: Coreon.Templates["layout/info"]
 
   events:
-    "click .system-info-toggle:not(.terms *)": "toggleInfo"
+    "click .system-info-toggle"     : "toggleInfo"
+    "click section > *:first-child" : "toggleSection"
+    "click .properties .index li"   : "selectProperty"
 
   initialize: ->
-    super
-    @model.on "change", @render, @
+    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
+    @listenTo @model, "change", @render
 
   render: ->
-    @clear()
-    @$el.html @template concept: @model, info: @info(data: @model.info())
-    @append new Coreon.Views.Concepts.ConceptTreeView model: @model
-    if @model.get("properties")?.length > 0
-      @append new Coreon.Views.Properties.PropertiesView model: @model
-    if @model.get("terms")?.length > 0
-      @append new Coreon.Views.Terms.TermsView model: @model
-    super
+    @$el.html @template concept: @model
+    @broaderAndNarrower.render() unless @_wasRendered
+    @$el.children(".system-info").after @broaderAndNarrower.$el
+    @_wasRendered = true
+    @
 
-  toggleInfo: ->
-    @$(".system-info").not(".terms *").slideToggle()
+  toggleInfo: (event )->
+    $target = $(event.target)
+    $target.next(".system-info")
+      .add( $target.siblings(".properties").find ".system-info" )
+      .slideToggle()
+
+  toggleSection: (event) ->
+    $target = $(event.target)
+    $target.closest("section").toggleClass "collapsed"
+    $target.next().slideToggle()
+
+  selectProperty: (event) ->
+    $target = $ event.target
+    container = $target.closest "td"
+    container.find("li.selected").removeClass "selected"
+    container.find(".values > li").eq($target.data "index").add($target).addClass "selected"

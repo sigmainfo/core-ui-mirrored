@@ -1,3 +1,18 @@
 != @render "concepts/caption", label: @concept.get "label"
-%h4.system-info-toggle(title="System Info")= I18n.t "concept.info"
-!= @info
+%h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
+!= @render "concepts/info", data: @concept.info()
+- if @concept.get("properties")?.length > 0
+  != @render "concepts/properties", properties: @concept.propertiesByKey()
+- if @concept.get("terms")?.length > 0
+  .terms
+    - for lang, terms of @concept.termsByLang()
+      %section.language{class: lang}
+        %h3= lang
+        %ul
+          - for term in terms
+            %li.term
+              %h4.value= term.get "value"
+              %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
+              != @render "concepts/info", data: term.info()
+              - if term.get("properties")?.length > 0
+                != @render "concepts/properties", properties: term.propertiesByKey(), collapsed: true

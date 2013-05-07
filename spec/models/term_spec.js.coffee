@@ -23,29 +23,38 @@ describe "Coreon.Models.Term", ->
     it "has an empty concept_id attribure", ->
       @model.get("lang").should.eql ""
 
-  describe "info()", ->
-    
-    it "returns hash with system info attributes", ->
-      @model.set
-        _id: "abcd1234"
-        author: "Nobody"
-        value: "something"
-      @model.info().should.eql
-        id: "abcd1234"
-        author: "Nobody"
-
   describe "properties()", ->
     
     it "syncs with attr", ->
       @model.set "properties", [key: "label"]
+      @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
       @model.properties().at(0).get("key").should.equal "label"
 
-  describe "validationFailure()", ->
+  describe "info()", ->
 
-    it "triggers validationFailure event", ->
-      spy = sinon.spy()
-      @model.on "validationFailure", spy
-      @model.validationFailure( foo: "bar" )
-      spy.withArgs( foo: "bar" ).should.have.been.calledOnce
+    it "returns hash with system info attributes", ->
+      @model.set {
+        _id: "abcd1234"
+        author: "Nobody"
+        properties : [ "foo", "bar" ]
+      }, silent: true
+      @model.info().should.eql
+        id: "abcd1234"
+        author: "Nobody"
+
+  describe "propertiesByKey()", ->
+
+    it "returns empty hash when empty", ->
+      @model.properties = -> models: []
+      @model.propertiesByKey().should.eql {}
+
+    it "returns properties grouped by key", ->
+      prop1 = new Backbone.Model key: "label"
+      prop2 = new Backbone.Model key: "definition"
+      prop3 = new Backbone.Model key: "definition"
+      @model.properties = -> models: [ prop1, prop2, prop3 ]
+      @model.propertiesByKey().should.eql
+        label: [ prop1 ]
+        definition: [ prop2, prop3 ]
 
 

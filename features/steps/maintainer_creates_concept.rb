@@ -143,7 +143,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I click "PROPERTIES" within term' do
-    page.find(".term .section-toggle", text:"PROPERTIES").click
+    page.find(".term h3", text:"PROPERTIES").click
   end
 
   step 'I should see a property "source" with value "Wikipedia"' do
