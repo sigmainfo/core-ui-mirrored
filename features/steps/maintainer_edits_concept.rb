@@ -20,14 +20,11 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
     click_link "Edit concept"
   end
 
-  step 'I should be on the edit concept page' do
-    page.current_path.should =~ %r|^/concepts/#{@concept["_id"]}/edit$|
-  end
-
-  step 'I should be on the show concept page' do
-    page.current_path.should =~ %r|^/concepts/#{@concept["_id"]}$|
-  end
-
   step 'I should see edit buttons' do
+    page.find(".concept .edit-properties").should be_visible
+  end
+
+  step 'I should not see edit buttons' do
+    page.find(".concept .edit-properties").should_not be_visible
   end
 end

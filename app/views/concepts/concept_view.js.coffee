@@ -14,24 +14,22 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   template: Coreon.Templates["concepts/concept"]
 
   events:
-    "click .system-info-toggle:not(.terms *)" : "toggleInfo"
-    "click section > *:first-child"           : "toggleSection"
-    "click .properties .index li"             : "selectProperty"
-    "click .edit-concept": "toggleEditMode"
+    "click .system-info-toggle:not(.terms *)"      : "toggleInfo"
+    "click section > *:first-child"                : "toggleSection"
+    "click .properties .index li"                  : "selectProperty"
+    "click .edit-concept"                          : "toggleEditMode"
+    "click concept > .properties .edit-properties" : "editConceptProperties"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
     @listenTo @model, "change", @render
 
   render: ->
-    if @editMode
-      null
-    else
-      @$el.html @template concept: @model
-      @broaderAndNarrower.render() unless @_wasRendered
-      @$el.children(".system-info").after @broaderAndNarrower.$el
-      @_wasRendered = true
-      @
+    @$el.html @template concept: @model, editMode: @editMode
+    @broaderAndNarrower.render() unless @_wasRendered
+    @$el.children(".system-info").after @broaderAndNarrower.$el
+    @_wasRendered = true
+    @
 
   toggleInfo: ->
     @$(".system-info").not(".terms *").slideToggle()
@@ -49,4 +47,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   toggleEditMode: ->
     @editMode = !@editMode
+    if @editMode
+      @$el.removeClass("show").addClass("edit")
+    else
+      @$el.removeClass("edit").addClass("show")
+
     @render()
+
+  editConceptProperties: ->

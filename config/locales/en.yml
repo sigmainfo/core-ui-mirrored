@@ -80,6 +80,7 @@ en:
   properties:
     title: "Properties"
     add: "Add property"
+    edit: "Edit properties"
 
   property:
     key: "Key"

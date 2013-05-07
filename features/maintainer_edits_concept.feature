@@ -13,8 +13,6 @@ Feature: maintainer edits concept
     Given I have maintainer privileges
     When I visit the page of this concept
     And I click "Edit concept"
-    Then I should be on the edit concept page
     And I should see edit buttons
     When I click "Edit concept"
-    Then I should be on the show concept page
     And I should not see edit buttons

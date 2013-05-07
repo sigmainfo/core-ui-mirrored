@@ -367,3 +367,35 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$(".values li").eq(1).should.have.class "selected"
       @view.$(".values li").eq(0).should.not.have.class "selected"
 
+  describe "toggleEditMode()", ->
+
+    beforeEach ->
+      @view.editMode = no
+      @view.render()
+
+    it "is triggered by click on edit mode toggle", ->
+      @view.toggleEditMode = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".edit-concept").click()
+      @view.toggleEditMode.should.have.been.calledOnce
+
+    it "toggles edit mode value", ->
+      @view.editMode.should.be.false
+      @view.$(".edit-concept").click()
+      @view.editMode.should.be.true
+
+    it "rerenders the view", ->
+      @view.render = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".edit-concept").click()
+      @view.render.should.have.been.calledOnce
+
+    it "renders with show class when edit mode is off", ->
+      @view.$el.should.have.class "show"
+      @view.$el.should.not.have.class "edit"
+
+    it "renders with edit class when edit mode is on", ->
+      @view.toggleEditMode()
+      @view.$el.should.have.class "edit"
+      @view.$el.should.not.have.class "show"
+

@@ -1,5 +1,8 @@
 %section.properties{class: "collapsed" if @collapsed}
   %h3= I18n.t "properties.title"
+  .edit
+    %a.edit-properties( href="javascript:void(0)" )= I18n.t "properties.edit"
+
   %table{style: "display: none" if @collapsed}
     - for key, properties of @properties
       %tr
