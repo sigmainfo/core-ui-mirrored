@@ -19,9 +19,18 @@
       background-position: -3px -354px;
     };
   }
-  
-  &.collapsed {
-    display:none;
+  &.edit-concept {
+    padding-left: 6px;
+    position: absolute;
+    right: 0;
+    top:-15px;
+    text-transform: uppercase;
+    &:before {
+      @include before-icon;
+      float: left;
+      height: 12px;
+      background-position: -54px -504px;
+    };
   }
 }
 
@@ -102,10 +111,10 @@ form.create {
   
 }
 
-// FIX FEATURE TESTS
+/*// FIX FEATURE TESTS
 div.concept section  h3 {
   text-transform: uppercase;
-}
+}*/
 
 div.concept.new {
   
@@ -114,7 +123,6 @@ div.concept.new {
   }
   
   h3 {
-    @include toggle;
     padding: 0 7px 0 5px;
     margin: 2px 0 5px 0;
     color: $browncolor;
@@ -138,8 +146,6 @@ div.concept.new {
     float: right;
     position: relative;
     top: -14px;
-/*    position: absolute;
-    right: 10px;*/
     
     &:before {
       @include before-icon;
@@ -171,20 +177,13 @@ div.concept.new {
   .properties {
     position: relative;
     padding: 3px 0 30px 0;
-    
-    a.add-property {
-/*      top: 6px;*/
-    }
   }
   
   .terms {
     position: relative;
     @include retina-separator;
     padding-top: 10px;
-    
-    a.add-term {
-/*      top: 14px;*/
-    }
+
     .term {
       background-image: none;
     }
