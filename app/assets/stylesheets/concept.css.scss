@@ -220,7 +220,7 @@ div.concept {
     }
   }
   
-  &.show {
+  &.show, &.edit {
     section {
       h3 {
         @include toggle;
@@ -367,8 +367,6 @@ div.concept {
     
     .broader-and-narrower {
       display: none;
-    }
-    .properties {
     }
     
     table {
