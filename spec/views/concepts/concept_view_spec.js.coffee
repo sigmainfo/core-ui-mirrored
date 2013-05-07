@@ -361,6 +361,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("section *:first-child").first().click()
       @view.toggleSection.should.have.been.calledOnce
     
+    it "is not triggered for section within a form", ->
+      @view.toggleSection = sinon.spy()
+      @view.delegateEvents()
+      @view.$("section").wrap "<form>"
+      @view.$("section *:first-child").first().click()
+      @view.toggleSection.should.not.have.been.called
+
     it "toggles visibility of section content", ->
       $("#konacha").append @view.$el
       @event.target = @view.$("h3").get(0)
@@ -447,8 +454,27 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       I18n.t.withArgs("term.lang").returns "Language"
       @view.addTerm()
       @view.$el.should.have 'form.term.create .value input'
+      @view.$('form.term.create .value input').should.have.attr "required"
       @view.$el.should.have 'form.term.create .value label'
       @view.$('form.term.create .value label').should.have.text "Value"
       @view.$el.should.have 'form.term.create .lang input'
+      @view.$('form.term.create .lang input').should.have.attr "required"
       @view.$el.should.have 'form.term.create .lang label'
       @view.$('form.term.create .lang label').should.have.text "Language"
+
+    context "properties", ->
+      
+      it "renders section with title", ->
+        I18n.t.withArgs("properties.title").returns "Properties"
+        @view.addTerm()
+        @view.$("form.term.create").should.have "section.properties"
+        @view.$("form.term.create .properties").should.have "h3:first-child"
+        @view.$("form.term.create .properties h3").should.have.text "Properties"
+
+      it "renders link for adding a property", ->
+        I18n.t.withArgs("properties.add").returns "Add Property"
+        @view.addTerm()
+        @view.$("form.term.create .properties").should.have ".edit a.add-property"
+        @view.$("form.term.create .add-property").should.have.text "Add Property"
+
+  describe "addProperty()", ->

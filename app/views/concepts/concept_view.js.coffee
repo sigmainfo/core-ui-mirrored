@@ -18,10 +18,10 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   term:     Coreon.Templates["terms/new_term"]
 
   events:
-    "click .system-info-toggle"     : "toggleInfo"
-    "click section > *:first-child" : "toggleSection"
-    "click .properties .index li"   : "selectProperty"
-    "click .add-term"               : "addTerm"
+    "click .system-info-toggle"                 : "toggleInfo"
+    "click section:not(form *) > *:first-child" : "toggleSection"
+    "click .properties .index li"               : "selectProperty"
+    "click .add-term"                           : "addTerm"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model

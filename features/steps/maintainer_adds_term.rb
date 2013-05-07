@@ -20,8 +20,8 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
 
   step 'I should see a set of term inputs with labels "Value", "Language"' do
     within ".term.create" do
-      page.should have_field "Value"
-      page.should have_field "Language"
+      page.should have_field("Value")
+      page.should have_field("Language")
     end
   end
 
@@ -38,11 +38,17 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I click "Add property" within term inputs' do
-    pending 'step not implemented'
+    within ".term.create" do
+      click_link "Add property"
+    end
   end
 
   step 'I should see a set of property inputs with labels "Key", "Value", "Language"' do
-    pending 'step not implemented'
+    within ".term.create .property" do
+      page.should have_field("Key")
+      page.should have_field("Value")
+      page.should have_field("Language")
+    end
   end
 
   step 'I fill in "Key" with "status"' do

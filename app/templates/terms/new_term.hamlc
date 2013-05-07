@@ -1,3 +1,7 @@
 != @form_for "term", @term, ->
-  != @form.input "value"
-  != @form.input "lang"
+  != @form.input "value", required: true
+  != @form.input "lang", required: true
+  %section.properties
+    %h3= I18n.t "properties.title"
+    .edit
+      %a.add-property{href: "javascript:void(0)"}= I18n.t "properties.add"
