@@ -29,81 +29,24 @@ div.concept {
   .broader-and-narrower, .properties {
     @include dottedline;
   }
-
   
-  .terms {
-    padding-top: 20px;
-    
-    >.language {
-      @include retina-separator;
-      padding-top: 8px;
-      min-height: 19px;
-      
-      >.section-toggle {
-        margin: 1px 0;
-        position: absolute;
-        z-index: 1;
-      }
-      
-    }
-    
-    .section {
-      padding: 0 0 2px 0;
-    }
-    
-    .term {
-      position: relative;
-      @include dottedline;
-      &:first-child {
-        background: none;
+  section {
+    h3 {
+      @include toggle;
+      padding: 0;
+      margin: 6px 0 5px 0;
+      padding-right: 7px;
+      color: $browncolor;
+      background: rgba($greencolor, 0.08);
+      &:before {
+        @include rotate(0deg);
+        background-position: -50px -103px;
       };
-
-      h4.value {
-        font: 1.4em Palatino;
-        padding: 12px 100px 6px 97px;
-        &:before {
-          content:"»\00a0";
-          font-size: 1.3em;
-        };
-      }
-      >.system-info {
-        padding-left: 116px;
-        table {
-          margin-top: 2px;
-        }
-      }
+      &:hover {
+        cursor: pointer;
+      };
     }
-    .properties {
-      background: none;
-      .section-toggle {
-        position: absolute;
-        right: 20px;
-        top: 9px;
-      }
-      .section {
-        margin: 0;
-        padding-left: 116px;
-        border-top: 1px solid $greycolor;
-      }
-    }
-  }
-  
-  
-  section h3 {
-    @include toggle;
-    padding: 0;
-    margin: 6px 0 5px 0;
-    padding-right: 7px;
-    color: $browncolor;
-    background: rgba($greencolor, 0.08);
-    &:before {
-      @include rotate(0deg);
-      background-position: -50px -103px;
-    };
-    &:hover {
-      cursor: pointer;
-    };
-    &.collapsed {
+    &.collapsed h3 {
       &:before {
         @include rotate(-90deg);
         background-position: -53px -103px;
@@ -127,6 +70,7 @@ div.concept {
       background-position: -51px -201px;
     };
   }
+  
   .system-info {
     line-height: 12px;
     
@@ -244,6 +188,61 @@ div.concept {
       }
     }
   }
+  
+  .terms {
+    padding-top: 20px;
+    
+    section.language {
+      @include retina-separator;
+      padding-top: 8px;
+      min-height: 19px;
+      
+      &>h3 {
+        margin: 1px 0;
+        position: absolute;
+        z-index: 1;
+      }    
+    }
+    
+    ul {
+      list-style: none;
+    }
+    
+    .term {
+      position: relative;
+      @include dottedline;
+      &:first-child {
+        background: none;
+      };
+
+      h4.value {
+        font: 1.4em Palatino;
+        padding: 12px 100px 6px 97px;
+        &:before {
+          content:"»\00a0";
+          font-size: 1.3em;
+        };
+      }
+      >.system-info {
+        padding-left: 116px;
+        table {
+          margin-top: 2px;
+        }
+      }
+    }
+    .properties {
+      background: none;
+      h3 {
+        position: absolute;
+        right: 20px;
+        top: 9px;
+      }
+      &>div {
+        margin-left: 112px;
+        border-top: 1px solid $greycolor;
+      }
+    }
+  }
    
 }
 
@@ -289,12 +288,11 @@ div.concept {
         }
       }
       .properties {
-        .section-toggle {
+        h3 {
           top: -1px;
         }
-        .section {
-          margin: 0;
-          padding-left: 64px;
+        &>div {
+          margin-left: 64px;
         }
       }
     }
@@ -321,7 +319,7 @@ div.concept {
     .system-info-toggle {
       display: none;
     }
-    .section-toggle {
+    section h3 {
       margin: 2px 0 0px 0;
     }
     
@@ -353,13 +351,12 @@ div.concept {
 
       .properties {
         background: none;
-        .section-toggle {
+        h3 {
           right: 0px;
           top: -1px;
         }
-        .section {
-          margin: 0;
-          padding-left: 44px;
+        &>div {
+          margin-left: 44px;
           border-top: 1px solid white;
         }
       }
