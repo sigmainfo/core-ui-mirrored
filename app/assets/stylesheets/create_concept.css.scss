@@ -126,10 +126,6 @@ div.concept.new {
       content: none;
     };
   }
-  .terms h3 {
-        font-size: 1.1em;
-        padding-top: 2px;
-  }
   
   .broader-and-narrower {
     .self {
@@ -196,6 +192,7 @@ div.concept.new {
           top: 6px;
         }
         &>.actions {
+          margin: 0;
           border-top: 1px solid white;
           height: 30px;
         }
