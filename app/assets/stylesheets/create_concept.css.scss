@@ -133,7 +133,7 @@ div.concept.new {
     }
   }
   
-  .actions a {
+  .edit a {
     font-size: 0.9em;
     color:$greencolor;
     display: inline-block;
@@ -192,7 +192,7 @@ div.concept.new {
         a.add-property {
           top: 6px;
         }
-        &>.actions {
+        &>.edit {
           margin: 0;
           border-top: 1px solid white;
           height: 30px;
@@ -209,6 +209,71 @@ div.concept.new {
   }
   
 }
+
+//only for this feature
+div.concept.show {
+  .terms .edit {
+     @include retina-separator;
+     height:20px;
+  }
+  
+  form.create.term {
+    position: relative;
+    border: 0;
+    padding-top: 28px;
+    margin-bottom: 26px;
+    background-color: darken(rgba($button-color, 0.1), 12);
+    @include retina-separator;
+    div.input {
+      padding-bottom: 18px;
+    }
+    
+    &>.required  {
+      label {
+        color: $browncolor;
+      }
+    }
+    input {
+      height:24px;
+      width: 40%;
+    }
+    textarea {
+      width: 65%;
+      height: 50px;
+    }
+    
+    .submit {
+      margin-top: 1px;
+    }
+  }
+    .edit a {
+      font-size: 0.9em;
+      color:$greencolor;
+      display: inline-block;
+      margin-right: 10px;
+      float: right;
+      position: relative;
+      top: 20px;
+
+      &:before {
+        @include before-icon;
+  /*      float: right;
+        margin-left: 7px;*/
+        float: left;
+        margin-right: 5px;
+        background-position: -2px -351px;
+        @include edit-button;
+      };
+      &:hover {
+        color: $button-color;
+        &:before {
+          background-color: $button-color;
+          @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+        };
+      }
+    }
+}
+
 
 @media all and (max-width: 999px) and (min-width: 800px) {
   div.concept.new  {
