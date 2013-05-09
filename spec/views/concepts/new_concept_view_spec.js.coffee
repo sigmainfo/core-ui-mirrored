@@ -8,7 +8,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", (options) =>
       @broaderAndNarrower = new Backbone.View options
     @view = new Coreon.Views.Concepts.NewConceptView
-      model: new Backbone.Model
+      model: new Backbone.Model properties: [], terms: []
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
@@ -87,10 +87,12 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
 
       it "renders link for adding a property", ->
         I18n.t.withArgs("properties.add").returns "Add Property"
+        @view.model.set "properties", [ {}, {}, {} ]
         @view.render()
         @view.$el.should.have "a.add-property"
         @view.$("a.add-property").should.have.text "Add Property"
         @view.$("a.add-property").should.have.data "scope", "concept[properties][]"
+        @view.$("a.add-property").should.have.data "index", 3
 
       it "renders inputs for existing properties", ->
         @view.model.properties = ->
@@ -195,9 +197,11 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.$el.should.have '.properties .property input[id="property-0-lang"]'
 
     it "enumerates appended property input sets", ->
-      @view.$(".properties").append '<input name="concept[properties][4][key]"/>'
+      @view.$("a.add-property").attr "data-index", 5
+      @view.addProperty @event
       @view.addProperty @event
       @view.$el.should.have '.properties .property input[id="property-5-key"]'
+      @view.$el.should.have '.properties .property input[id="property-6-key"]'
 
     it "uses nested scope", ->
       @view.addProperty @event
@@ -223,7 +227,11 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
       @event = $.Event "click"
       @view.render()
-      @view.$(".properties").append @view.property index: 0
+      @view.$(".properties").append '''
+        <fieldset class="property">
+          <a class="remove-property">Remove property</a>
+        </fieldset>
+        '''
 
     afterEach ->
       Coreon.Helpers.input.restore()
@@ -244,8 +252,9 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     beforeEach ->
       sinon.stub Coreon.Helpers, "input", (name, attr, model, options) ->
         "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
-      @event = $.Event "click"
       @view.render()
+      @event = $.Event "click"
+      @event.target = @view.$("a.add-term")[0]
 
     afterEach ->
       Coreon.Helpers.input.restore()
@@ -265,6 +274,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     it "enumerates appended term input sets", ->
       @view.model.set "terms", [{}, {}], silent: true
       @view.render()
+      @event.target = @view.$("a.add-term")[0]
       @view.addTerm @event
       @view.addTerm @event
       @view.$el.should.have '.terms .term input[id="term-2-value"]'
@@ -290,9 +300,13 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     
     beforeEach ->
       sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
+      @view.$el.append '''
+        <fieldset class="term">
+          <a class="remove-term">Remove term</a>
+        </fieldset
+      '''
       @event = $.Event "click"
-      @view.render()
-      @view.addTerm @event
+      @event.target = @view.$("a.remove-term")[0]
 
     afterEach ->
       Coreon.Helpers.input.restore()
