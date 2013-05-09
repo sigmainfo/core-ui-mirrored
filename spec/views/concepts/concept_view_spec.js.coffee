@@ -478,3 +478,26 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$("form.term.create .add-property").should.have.text "Add Property"
 
   describe "addProperty()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <section class="properties">
+          <h3>PROPERTIES</h3>
+          <div class="edit">
+            <a class="add-property">Add property</a>
+          </div>
+        </section>
+        '''
+      @event = $.Event()
+      @trigger = @view.$(".add-property")
+      @event.target = @trigger[0]
+
+    it "is triggered by click on add property link", ->
+      @view.addProperty = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add-property").click()
+      @view.addProperty.should.have.been.calledOnce
+
+    it "inserts property inputs", ->
+      @view.addProperty @event
+      @view.$el.should.have ".property"

@@ -51,16 +51,20 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     end
   end
 
-  step 'I fill in "Key" with "status"' do
-    pending 'step not implemented'
+  step 'I fill in "Key" with "status" within property inputs' do
+    within ".term.create .property" do
+      fill_in "Key", with: "status"
+    end
   end
 
-  step 'I fill in "Value" with "pending"' do
-    pending 'step not implemented'
+  step 'I fill in "Value" with "pending" within property inputs' do
+    within ".term.create .property" do
+      fill_in "Value", with: "pending"
+    end
   end
 
   step 'I click "Create term"' do
-    pending 'step not implemented'
+    click_button "Create term"
   end
 
   step 'I should see a term "high hat" within language "EN"' do

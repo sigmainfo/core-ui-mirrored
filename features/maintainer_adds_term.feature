@@ -19,8 +19,8 @@ Feature: maintainer adds term
     And I fill in "Language" with "en" within term inputs
     And I click "Add property" within term inputs
     Then I should see a set of property inputs with labels "Key", "Value", "Language"
-    When I fill in "Key" with "status"
-    And I fill in "Value" with "pending"
+    When I fill in "Key" with "status" within property inputs
+    And I fill in "Value" with "pending" within property inputs
     When I click "Create term"
     Then I should see a term "high hat" within language "EN"
     And I should see a property "status" for the term with value "pending"

@@ -8,20 +8,28 @@
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
 #= require templates/terms/new_term
+#= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
+#= require modules/helpers
+#= require modules/nested_fields_for
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
+
+  Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
 
   className: "concept show"
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
 
+  @nestedFieldsFor "properties", name: "property"
+
   events:
     "click .system-info-toggle"                 : "toggleInfo"
     "click section:not(form *) > *:first-child" : "toggleSection"
     "click .properties .index li"               : "selectProperty"
     "click .add-term"                           : "addTerm"
+    "click .add-property"                       : "addProperty"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
