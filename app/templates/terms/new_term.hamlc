@@ -4,4 +4,4 @@
   %section.properties
     %h3= I18n.t "properties.title"
     .edit
-      %a.add-property{href: "javascript:void(0)"}= I18n.t "properties.add"
+      %a.add-property{href: "javascript:void(0)", "data-scope": "term[properties][]"}= I18n.t "properties.add"

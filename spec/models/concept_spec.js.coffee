@@ -21,7 +21,7 @@ describe "Coreon.Models.Concept", ->
     Coreon.Models.Concept.find.should.equal Coreon.Modules.Accumulation.find
 
   it "has an URL root", ->
-    @model.urlRoot.should.equal "concepts"
+    @model.urlRoot.should.equal "/concepts"
 
   context "defaults", ->
 
@@ -171,10 +171,14 @@ describe "Coreon.Models.Concept", ->
       
   describe "terms()", ->
   
-    it "syncs with attr", ->
+    it "creates terms from attr", ->
       @model.set "terms", [value: "dead", lang: "en"]
       @model.terms().at(0).should.be.an.instanceof Coreon.Models.Term
       @model.terms().at(0).get("value").should.equal "dead"
+
+    it "updates attr from terms", ->
+      @model.terms().reset [ value: "dead", lang: "en", properties: [] ]
+      @model.get("terms").should.eql [ value: "dead", lang: "en", properties: [] ]
 
   describe "info()", ->
 
@@ -233,6 +237,11 @@ describe "Coreon.Models.Concept", ->
     it "drops client-side attributes", ->
       @model.toJSON().should.not.have.deep.property "concept.label"
       @model.toJSON().should.not.have.deep.property "concept.hit"
+
+    it "does not create wrapper for terms", ->
+      @model.terms().reset [ { value: "hat" }, { value: "top hat" } ]
+      @model.toJSON().should.have.deep.property "concept.terms[0].value", "hat"
+      @model.toJSON().should.have.deep.property "concept.terms[1].value", "top hat"
 
   describe "save()", ->
 

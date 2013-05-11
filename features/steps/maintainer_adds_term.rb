@@ -68,14 +68,26 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I should see a term "high hat" within language "EN"' do
-    pending 'step not implemented'
+    page.should have_css(".language.en .term .value", text: "high hat")
   end
 
-  step 'I should see a property "status" for the term with value "pending"' do
-    pending 'step not implemented'
+  step 'I click "PROPERTIES" within term' do
+    within ".language.en .term" do
+      find("h3", text: "PROPERTIES").click
+    end
+  end
+
+  step 'I should see a property "STATUS" for the term with value "pending"' do
+    within ".language.en .term .properties" do
+      find("th", text: "STATUS").find(:xpath, "./following-sibling::td[1]").should have_text("pending")
+    end
   end
 
   step 'I should see a message \'Successfully created term "high hat".\'' do
+    page.should have_css(".notification", text: 'Successfully created term "high hat".')
+  end
+
+  step 'I should not see "Create term"' do
     pending 'step not implemented'
   end
 end

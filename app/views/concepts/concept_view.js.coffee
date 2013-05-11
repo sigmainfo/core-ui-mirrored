@@ -12,6 +12,7 @@
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
 #= require modules/nested_fields_for
+#= require jquery.serializeJSON
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
@@ -30,9 +31,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click .properties .index li"               : "selectProperty"
     "click .add-term"                           : "addTerm"
     "click .add-property"                       : "addProperty"
+    "submit form.term.create"                   : "createTerm"
 
   initialize: ->
-    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: @model
+    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
+      model: @model
     @listenTo @model, "change", @render
 
   render: ->
@@ -42,25 +45,36 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @_wasRendered = true
     @
 
-  toggleInfo: (event )->
-    $target = $(event.target)
-    $target.next(".system-info")
-      .add( $target.siblings(".properties").find ".system-info" )
+  toggleInfo: (event) ->
+    target = $ event.target
+    target.next(".system-info")
+      .add( target.siblings(".properties").find ".system-info" )
       .slideToggle()
 
   toggleSection: (event) ->
-    $target = $(event.target)
-    $target.closest("section").toggleClass "collapsed"
-    $target.next().slideToggle()
+    target = $(event.target)
+    target.closest("section").toggleClass "collapsed"
+    target.next().slideToggle()
 
   selectProperty: (event) ->
-    $target = $ event.target
-    container = $target.closest "td"
+    target = $ event.target
+    container = target.closest "td"
     container.find("li.selected").removeClass "selected"
-    container.find(".values > li").eq($target.data "index").add($target).addClass "selected"
+    container.find(".values > li").eq(target.data "index").add(target)
+      .addClass "selected"
 
   addTerm: ->
-    @new_term = new Coreon.Models.Term
-    $terms = @$(".terms")
-    $terms.find(".edit").hide()
-    $terms.append @term term: @new_term
+    terms = @$(".terms")
+    terms.find(".edit").hide()
+    terms.append @term term: new Coreon.Models.Term
+
+  createTerm: (event) ->
+    event.preventDefault()
+    target = $ event.target
+    data = target.serializeJSON().term or {}
+    data.concept_id = @model.id
+    data.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
+    target.find("input,button").attr "disabled", true
+    @model.terms().create data, wait: true

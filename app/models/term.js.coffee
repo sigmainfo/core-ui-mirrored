@@ -19,3 +19,14 @@ class Coreon.Models.Term extends Backbone.Model
     value: ""
     lang: ""
     concept_id: ""
+
+  urlRoot: ->
+    "/concepts/#{@get "concept_id"}/terms"
+
+  toJSON: ->
+    json = {}
+    json[attr] = value for attr, value of super when attr isnt "concept_id"
+    term: json
+    
+  sync: (method, model, options = {}) ->
+    Coreon.application?.sync method, model, options

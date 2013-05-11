@@ -23,8 +23,10 @@ Feature: maintainer adds term
     And I fill in "Value" with "pending" within property inputs
     When I click "Create term"
     Then I should see a term "high hat" within language "EN"
-    And I should see a property "status" for the term with value "pending"
+    When I click "PROPERTIES" within term
+    Then I should see a property "STATUS" for the term with value "pending"
     And I should see a message 'Successfully created term "high hat".'
+    And I should not see "Create term"
 
   # Scenario: validation errors
   #   Given I have maintainer privileges

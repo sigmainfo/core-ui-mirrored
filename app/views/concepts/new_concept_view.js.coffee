@@ -46,8 +46,12 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     event.preventDefault()
     data = @$("form").serializeJSON().concept or {}
     attrs = {}
-    attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
-    attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
+    attrs.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
+    attrs.terms = if data.terms?
+      term for term in data.terms when term?
+    else []
     @$("form").find("input,button").attr("disabled", true)
     @model.save attrs,
       success: =>

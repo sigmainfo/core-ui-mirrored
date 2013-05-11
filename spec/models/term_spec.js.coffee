@@ -23,6 +23,22 @@ describe "Coreon.Models.Term", ->
     it "has an empty concept_id attribure", ->
       @model.get("lang").should.eql ""
 
+  describe "urlRoot()", ->
+    
+    it "is constructed from concept id", ->
+      @model.set "concept_id", "4567asdf"
+      @model.urlRoot().should.equal "/concepts/4567asdf/terms"
+
+  describe "toJSON()", ->
+    
+    it "wraps term", ->
+      @model.set "value", "foo", silent: true
+      @model.toJSON().should.have.deep.property "term.value", "foo"
+      
+    it "skips concept_id", ->
+      @model.toJSON().term.should.not.have.property "concept_id"
+      console.log @model.toJSON()
+
   describe "properties()", ->
     
     it "syncs with attr", ->

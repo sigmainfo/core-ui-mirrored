@@ -476,6 +476,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.addTerm()
         @view.$("form.term.create .properties").should.have ".edit a.add-property"
         @view.$("form.term.create .add-property").should.have.text "Add Property"
+        @view.$("form.term.create .add-property").should.have.data "scope", "term[properties][]"
 
   describe "addProperty()", ->
 
@@ -488,7 +489,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           </div>
         </section>
         '''
-      @event = $.Event()
+      @event = $.Event "click"
       @trigger = @view.$(".add-property")
       @event.target = @trigger[0]
 
@@ -501,3 +502,66 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "inserts property inputs", ->
       @view.addProperty @event
       @view.$el.should.have ".property"
+
+  describe "removeProperty()", ->
+  
+    
+
+  describe "createTerm()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <form class="term create">
+          <div class="submit">
+            <button type="submit">Create term</button>
+          </div>
+        </form>
+        '''
+      @event = $.Event "submit"
+      @trigger = @view.$("form")
+      @event.target = @trigger[0]
+      terms = new Backbone.Collection
+      terms.create = sinon.stub()
+      @view.model.terms = -> terms
+
+    it "is triggered by submit", ->
+      @view.createTerm = sinon.spy()
+      @view.delegateEvents()
+      @view.$("form").submit()
+      @view.createTerm.should.have.been.calledOnce
+
+    it "prevents default", ->
+      @event.preventDefault = sinon.spy()
+      @view.createTerm @event
+      @event.preventDefault.should.have.been.calledOnce
+
+    it "disables button to prevent second click", ->
+      @view.createTerm @event
+      @view.$('form.term.create button[type="submit"]').should.be.disabled
+
+    it "creates term", ->
+      @view.model.id = "3456ghj"
+      @view.createTerm @event
+      @view.model.terms().create.should.have.been.calledOnce
+      @view.model.terms().create.firstCall.args[0].should.have.property "concept_id", "3456ghj"
+
+    it "updates term from form", ->
+      @view.$("form.term.create").prepend '''
+        <input type="text" name="term[value]" value="high hat"/>
+        <input type="text" name="term[lang]" value="en"/>
+        '''
+      @view.createTerm @event
+      @view.model.terms().create.firstCall.args[0].should.have.property "value", "high hat"
+      @view.model.terms().create.firstCall.args[0].should.have.property "lang", "en"
+
+    it "cleans up properties", ->
+      @view.$("form.term.create").prepend '''
+        <input type="text" name="term[properties][3][key]" value="status"/>
+        '''
+      @view.createTerm @event
+      @view.model.terms().create.firstCall.args[0].should.have.property("properties").with.lengthOf 1
+      @view.model.terms().create.firstCall.args[0].properties[0].should.have.property "key", "status"
+
+    it "deletes previously set properties when empty", ->
+      @view.createTerm @event
+      @view.model.terms().create.firstCall.args[0].should.have.property("properties").that.eql []
