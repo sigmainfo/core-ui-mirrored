@@ -4,8 +4,12 @@
 describe "Coreon.Models.Term", ->
 
   beforeEach ->
+    sinon.stub I18n, "t"
     @model = new Coreon.Models.Term
   
+  afterEach ->
+    I18n.t.restore()
+
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
 
@@ -73,4 +77,33 @@ describe "Coreon.Models.Term", ->
         label: [ prop1 ]
         definition: [ prop2, prop3 ]
 
+  describe "save()", ->
+    
+    beforeEach ->
+      Coreon.application = sync: (method, model, options = {}) -> 
+        model.id = "1234"
+        options.success?()
+      @model.message = sinon.spy()
 
+    afterEach ->
+      Coreon.application = null
+
+    it "creates message on first save", ->
+      I18n.t.withArgs("term.created", value: "high hat").returns 'Successfully created term "high hat"'
+      @model.save "value", "high hat"
+      @model.save "value", "beaver hat"
+      @model.message.should.have.been.calledOnce
+      @model.message.should.have.been.calledWith 'Successfully created term "high hat"'
+
+    it "only creates message on new models", ->
+      @model.isNew = -> false
+      @model.save "value", "high hat"
+      @model.message.should.not.have.been.called
+
+    it "triggers custom event", ->
+      spy = sinon.spy()
+      @model.on "create", spy
+      @model.save "value", "high hat"
+      @model.save "value", "beaver hat"
+      spy.should.have.been.calledOnce
+      spy.should.have.been.calledWith @model, @model.id

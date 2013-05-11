@@ -63,8 +63,7 @@ en:
     new_concept: "<New concept>"
     new: "New concept"
     create: "Create concept"
-    sync:
-      create: 'Successfully created concept "{{label}}".'
+    created: 'Successfully created concept "{{label}}".'
 
   term:
     info: "System Info"
@@ -73,10 +72,12 @@ en:
     new: "Add term"
     create: "Create term"
     remove: "Remove term"
+    created: 'Successfully created term "{{value}}".'
 
   terms:
     title: "Terms"
     add: "Add term"
+
 
   properties:
     title: "Properties"

@@ -78,7 +78,9 @@ class Coreon.Models.Concept extends Backbone.Model
     label
 
   sync: (method, model, options = {}) ->
+    @once "sync", @onCreate, @ if method is "create"
     Coreon.application?.sync method, model, options
 
-  syncMessage: ->
-    @message I18n.t("concept.sync.create", label: @get "label"), type: "info"
+  onCreate: ->
+    @trigger "create", @, @.id
+    @message I18n.t("concept.created", label: @get "label"), type: "info"

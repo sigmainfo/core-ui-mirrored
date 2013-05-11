@@ -88,6 +88,6 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I should not see "Create term"' do
-    pending 'step not implemented'
+    page.should have_no_button("Create term")
   end
 end

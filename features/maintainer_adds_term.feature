@@ -8,7 +8,6 @@ Feature: maintainer adds term
     And I am logged in
     And a concept "top hat" exists
   
-  @wip
   Scenario: add term
     Given I have maintainer privileges
     And I am on the show concept page of this concept
@@ -28,27 +27,28 @@ Feature: maintainer adds term
     And I should see a message 'Successfully created term "high hat".'
     And I should not see "Create term"
 
-  # Scenario: validation errors
-  #   Given I have maintainer privileges
-  #   And I am on the show concept page of this concept
-  #   # When I click "Edit concept"
-  #   When I click "Add term"
-  #   And client-side validation is turned off
-  #   And I fill in "Value" with "high hat" within term inputs
-  #   And I click "Add property" within term inputs
-  #   And I fill in "Value" with "pending"
-  #   And I click "Create term"
-  #   Then I should see an error summary
-  #   And this summary should contain "Failed to create term:"
-  #   And this summary should contain "1 error on properties"
-  #   And I should see error "can't be blank" for term input "Language"
-  #   And I should see error "can't be blank" for property input "Key" within term inputs
-  #   When I click "Remove property" within term inputs
-  #   And I fill in "Language" with "en" within term inputs
-  #   And I click "Create term"
-  #   Then I should see a term "high hat" within language "EN"
-  #   And I should not see an error summary
-  #   But I should see a message 'Successfully created term "high hat".'
+  @wip
+  Scenario: validation errors
+    Given I have maintainer privileges
+    And I am on the show concept page of this concept
+    # When I click "Edit concept"
+    When I click "Add term"
+    And client-side validation is turned off
+    And I fill in "Value" with "high hat" within term inputs
+    And I click "Add property" within term inputs
+    And I fill in "Value" with "pending"
+    And I click "Create term"
+    Then I should see an error summary
+    And this summary should contain "Failed to create term:"
+    And this summary should contain "1 error on properties"
+    And I should see error "can't be blank" for term input "Language"
+    And I should see error "can't be blank" for property input "Key" within term inputs
+    When I click "Remove property" within term inputs
+    And I fill in "Language" with "en" within term inputs
+    And I click "Create term"
+    Then I should see a term "high hat" within language "EN"
+    And I should not see an error summary
+    But I should see a message 'Successfully created term "high hat".'
 
   # Scenario: cancel adding term
   #   Given I have maintainer privileges

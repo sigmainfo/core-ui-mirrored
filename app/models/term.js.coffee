@@ -27,6 +27,14 @@ class Coreon.Models.Term extends Backbone.Model
     json = {}
     json[attr] = value for attr, value of super when attr isnt "concept_id"
     term: json
+
+  save: ->
+    super
     
   sync: (method, model, options = {}) ->
+    @once "sync", @onCreate, @ if method is "create"
     Coreon.application?.sync method, model, options
+
+  onCreate: ->
+    @trigger "create", @, @.id
+    @message I18n.t("term.created", value: @get "value"), type: "info"
