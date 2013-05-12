@@ -505,7 +505,29 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
   describe "removeProperty()", ->
   
-    
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
+      @event = $.Event "click"
+      @view.render()
+      @view.$el.append '''
+        <fieldset class="property">
+          <a class="remove-property">Remove property</a>
+        </fieldset>
+        '''
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+
+    it "is triggered by click on remove action", ->
+      @view.removeProperty = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".property a.remove-property").trigger @event
+      @view.removeProperty.should.have.been.calledOnce
+
+    it "removes property input set", ->
+      @event.target = @view.$(".remove-property").get(0)
+      @view.removeProperty @event
+      @view.$el.should.not.have ".property"
 
   describe "createTerm()", ->
 
@@ -565,3 +587,44 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "deletes previously set properties when empty", ->
       @view.createTerm @event
       @view.model.terms().create.firstCall.args[0].should.have.property("properties").that.eql []
+
+    context "error", ->
+
+      beforeEach ->
+        @term = new Backbone.Model
+        @term.errors = -> {}
+        sinon.stub Coreon.Models, "Term", => @term
+        @view.model.terms().create = (attrs, options = {}) =>
+          options.error @term
+          @term.trigger "error", @term
+
+      afterEach ->
+        Coreon.Models.Term.restore()
+
+      it "rerenders form with errors", ->
+        @view.createTerm @event
+        @view.$el.should.have("form.term.create")
+        @view.$("form.term.create").should.have.lengthOf 1
+        @view.$("form.term.create").should.have ".error-summary"
+
+      it "renders properties within form", ->
+        @term.set "properties", [ key: "status" ], silent: true
+        @term.properties = -> models: [ new Backbone.Model key: "status" ]
+        @view.createTerm @event
+        @view.$("form.term.create").should.have ".property"
+        @view.$("form.term.create .property").should.have.lengthOf 1
+
+      it "renders errors on properties", ->
+        @term.set "properties", [ key: "status" ], silent: true
+        @term.properties = -> models: [ new Backbone.Model key: "status" ]
+        @term.errors = -> { nested_errors_on_properties: [ value: ["can't be blank"] ] }
+        @view.createTerm @event
+        @view.$("form.term.create .property").should.have ".error-message"
+        @view.$("form.term.create .property .error-message").should.have.text "can't be blank"
+        
+
+      it "increases index on add property link", ->
+        @term.set "properties", [ key: "status" ], silent: true
+        @term.properties = -> models: [ new Backbone.Model key: "status" ]
+        @view.createTerm @event
+        @view.$("form.term.create .add-property").should.have.data "index", 1        

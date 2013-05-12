@@ -39,7 +39,7 @@ class Form extends Coreon.Lib.FormContext
     @errors = @model?.errors?()
     @errorCounts = errorCounts @errors if @errors?
   
-  input: (attr, options) ->
+  input: (attr, options = {}) ->
     Coreon.Helpers.input @name, attr, @model, options
 
 Coreon.Helpers.form_for = (name, model, block) ->

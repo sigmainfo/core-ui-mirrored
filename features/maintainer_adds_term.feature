@@ -27,7 +27,6 @@ Feature: maintainer adds term
     And I should see a message 'Successfully created term "high hat".'
     And I should not see "Create term"
 
-  @wip
   Scenario: validation errors
     Given I have maintainer privileges
     And I am on the show concept page of this concept
@@ -36,7 +35,7 @@ Feature: maintainer adds term
     And client-side validation is turned off
     And I fill in "Value" with "high hat" within term inputs
     And I click "Add property" within term inputs
-    And I fill in "Value" with "pending"
+    And I fill in "Value" with "pending" within property inputs
     And I click "Create term"
     Then I should see an error summary
     And this summary should contain "Failed to create term:"
@@ -50,20 +49,21 @@ Feature: maintainer adds term
     And I should not see an error summary
     But I should see a message 'Successfully created term "high hat".'
 
-  # Scenario: cancel adding term
-  #   Given I have maintainer privileges
-  #   And I am on the show concept page of this concept
-  #   # When I click "Edit concept" 
-  #   When I click "Add term"
-  #   And I fill in "Value" with "high hat" within term inputs
-  #   And I fill in "Language" with "en" within term inputs
-  #   And I click "Add property" within term inputs
-  #   And I fill in "Key" with "status"
-  #   And I fill in "Value" with "pending"
-  #   When I click "Cancel"
-  #   Then I should no term inputs anymore
-  #   And I should not see a term "high hat"
-  #   When I click "Add term"
-  #   Then I should see a set of term inputs with labels "Value", "Language"
-  #   And these term inputs should be empty
-  #   And I should not see property inputs
+  @wip
+  Scenario: cancel adding term
+    Given I have maintainer privileges
+    And I am on the show concept page of this concept
+    # When I click "Edit concept" 
+    When I click "Add term"
+    And I fill in "Value" with "high hat" within term inputs
+    And I fill in "Language" with "en" within term inputs
+    And I click "Add property" within term inputs
+    And I fill in "Key" with "status"
+    And I fill in "Value" with "pending"
+    When I click "Cancel"
+    Then I should no term inputs anymore
+    And I should not see a term "high hat"
+    When I click "Add term"
+    Then I should see a set of term inputs with labels "Value", "Language"
+    And these term inputs should be empty
+    And I should not see property inputs

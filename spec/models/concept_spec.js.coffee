@@ -290,3 +290,11 @@ describe "Coreon.Models.Concept", ->
         @model.save "label", "nobody"
         spy.should.have.been.calledOnce
         spy.should.have.been.calledWith @model, @model.id
+
+  describe "errors()", ->
+
+    it "collects remote validation errors", ->
+      @model.trigger "error", @model,
+        responseText: '{"errors":{"foo":["must be bar"]}}'
+      @model.errors().should.eql
+        foo: ["must be bar"]

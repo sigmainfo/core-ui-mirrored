@@ -146,14 +146,16 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       it "renders link for adding property", ->
         I18n.t.withArgs("properties.add").returns "Add property"
         @view.model.terms = => models: [ @term ]
+        @term.set "properties", [ key: "status" ], silent: true
         @view.model.errors = ->
         @view.render()
         @view.$el.should.have "form .term a.add-property"
         @view.$("form .term a.add-property").should.have.text "Add property"
         @view.$("form .term a.add-property").should.have.data "scope", "concept[terms][0][properties][]"
-
+        @view.$("form .term a.add-property").should.have.data "index", 1
 
       it "renders inputs for term properties", ->
+        @term.set "properties", [ key: "label" ], silent: true
         @term.properties = -> models: [ new Backbone.Model key: "label" ]
         @view.model.terms = => models: [ @term ]
         @view.model.errors = ->

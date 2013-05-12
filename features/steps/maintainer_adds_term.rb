@@ -1,7 +1,7 @@
 # encoding: utf-8
 class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   include AuthSteps
-  include EditSteps 
+  include EditSteps
   include Api::Graph::Factory
 
   step 'a concept "top hat" exists' do
@@ -89,5 +89,39 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
 
   step 'I should not see "Create term"' do
     page.should have_no_button("Create term")
+  end
+
+  step 'this summary should contain "Failed to create term:"' do
+    within "form.create.term" do
+      page.find(".error-summary").should have_content("Failed to create term:")
+    end
+  end
+
+  step 'this summary should contain "1 error on properties"' do
+    within "form.create.term" do
+      page.find(".error-summary").should have_content("1 error on properties")
+    end
+  end
+
+  step 'I should see error "can\'t be blank" for term input "Language"' do
+    within "form.create.term > .lang" do
+      page.find_field("Language").find(:xpath, './following-sibling::*[contains(@class, "error-message")]').should have_content("can't be blank")
+    end
+  end
+
+  step 'I should see error "can\'t be blank" for property input "Key" within term inputs' do
+    within "form.create.term .property" do
+      page.find_field("Key").find(:xpath, './following-sibling::*[contains(@class, "error-message")]').should have_content("can't be blank")
+    end
+  end
+
+  step 'I click "Remove property" within term inputs' do
+    within "form.create.term" do
+      click_link "Remove property"
+    end
+  end
+
+  step 'I should not see an error summary' do
+    page.should have_no_css(".error-summary") 
   end
 end

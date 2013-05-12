@@ -31,6 +31,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click .properties .index li"               : "selectProperty"
     "click .add-term"                           : "addTerm"
     "click .add-property"                       : "addProperty"
+    "click .remove-property"                    : "removeProperty"
     "submit form.term.create"                   : "createTerm"
 
   initialize: ->
@@ -77,4 +78,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       property for property in data.properties when property?
     else []
     target.find("input,button").attr "disabled", true
-    @model.terms().create data, wait: true
+    @model.terms().create data,
+      wait: true
+      error: (model, xhr, options) =>
+        model.once "error", =>
+          @$("form.term.create").replaceWith @term term: model

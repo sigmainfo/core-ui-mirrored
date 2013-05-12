@@ -4,6 +4,7 @@
 #= require models/property
 #= require modules/system_info
 #= require modules/properties_by_key
+#= require modules/remote_validation
 
 class Coreon.Models.Term extends Backbone.Model
 
@@ -13,6 +14,7 @@ class Coreon.Models.Term extends Backbone.Model
 
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
   Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
+  Coreon.Modules.include @, Coreon.Modules.RemoteValidation
 
   defaults: ->
     properties: []
@@ -22,6 +24,9 @@ class Coreon.Models.Term extends Backbone.Model
 
   urlRoot: ->
     "/concepts/#{@get "concept_id"}/terms"
+
+  initialize: ->
+    @remoteValidationOn()
 
   toJSON: ->
     json = {}

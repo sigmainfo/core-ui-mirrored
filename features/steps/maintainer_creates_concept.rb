@@ -141,7 +141,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I click "PROPERTIES" within term' do
-    page.find(".term h3", text:"PROPERTIES").click
+    page.find(".language .term h3", text:"PROPERTIES").click
   end
 
   step 'I should see a property "source" with value "Wikipedia"' do
@@ -154,9 +154,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     end
   end
 
-  step 'client-side validation is turned off' do
-    page.execute_script '$("form").attr("novalidate", true)'
-  end
 
   step 'I fill "Value" of property with "corpse"' do
     within ".property" do
@@ -180,10 +177,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     within ".term .property" do
       fill_in "Key", with: "source"
     end
-  end
-
-  step 'I should see an error summary' do
-    page.should have_css("form .error-summary")
   end
 
   step 'this summary should contain "Failed to create concept:"' do
