@@ -628,3 +628,51 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
         @view.createTerm @event
         @view.$("form.term.create .add-property").should.have.data "index", 1        
+
+  describe "cancel()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <div>
+          <form class="term create">
+            <div class="submit">
+              <a class="cancel" href="javascript:history.back()">Cancel</a>
+              <button type="submit">Create term</button>
+            </div>
+          </form>
+          <div class="edit" style="display:none">
+            <a class="add-term" ref="javascript:void(0)">Add term</a>
+          </div>
+        </div>
+        '''
+      @event = $.Event "click"
+      @trigger = @view.$("form a.cancel")
+      @event.target = @trigger[0]
+    
+    it "is triggered by click on cancel link", ->
+      @view.cancel = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.cancel.should.have.been.calledOnce
+
+    it "prevents default action", ->
+      @event.preventDefault = sinon.spy()
+      @view.cancel @event
+      @event.preventDefault.should.have.been.calledOnce
+    
+    it "removes wrapping form", ->
+      @view.$el.append '''
+        <form class="other"></form>
+      '''
+      @view.cancel @event
+      @view.$el.should.not.have "form.term.create"
+      @view.$el.should.have "form.other"
+
+    it "shows related edit actions", ->
+      $("#konacha").append @view.$el
+      @view.cancel @event
+      console.log @view.$el.html()
+      @view.$(".edit a.add-term").should.be.visible
+      
+      
+    

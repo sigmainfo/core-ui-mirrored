@@ -49,7 +49,6 @@ Feature: maintainer adds term
     And I should not see an error summary
     But I should see a message 'Successfully created term "high hat".'
 
-  @wip
   Scenario: cancel adding term
     Given I have maintainer privileges
     And I am on the show concept page of this concept
@@ -58,11 +57,11 @@ Feature: maintainer adds term
     And I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs
     And I click "Add property" within term inputs
-    And I fill in "Key" with "status"
-    And I fill in "Value" with "pending"
+    When I fill in "Key" with "status" within property inputs
+    And I fill in "Value" with "pending" within property inputs
     When I click "Cancel"
-    Then I should no term inputs anymore
-    And I should not see a term "high hat"
+    Then I should not see "Create term"
+    And I should not see "high hat"
     When I click "Add term"
     Then I should see a set of term inputs with labels "Value", "Language"
     And these term inputs should be empty

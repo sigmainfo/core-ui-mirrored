@@ -26,13 +26,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click .system-info-toggle"                 : "toggleInfo"
-    "click section:not(form *) > *:first-child" : "toggleSection"
-    "click .properties .index li"               : "selectProperty"
-    "click .add-term"                           : "addTerm"
-    "click .add-property"                       : "addProperty"
-    "click .remove-property"                    : "removeProperty"
-    "submit form.term.create"                   : "createTerm"
+    "click  .system-info-toggle"                 : "toggleInfo"
+    "click  section:not(form *) > *:first-child" : "toggleSection"
+    "click  .properties .index li"               : "selectProperty"
+    "click  .add-term"                           : "addTerm"
+    "click  .add-property"                       : "addProperty"
+    "click  .remove-property"                    : "removeProperty"
+    "submit form.term.create"                    : "createTerm"
+    "click  form a.cancel"                       : "cancel"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -83,3 +84,10 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       error: (model, xhr, options) =>
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
+
+  cancel: (event) ->
+    event.preventDefault()
+    form = $(event.target).closest "form"
+    form.siblings(".edit").show()
+    form.remove()
+

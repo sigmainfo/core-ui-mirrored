@@ -124,4 +124,24 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   step 'I should not see an error summary' do
     page.should have_no_css(".error-summary") 
   end
+  
+  step 'I click "Cancel"' do
+    click_link "Cancel"
+  end
+
+  step 'I should not see "high hat"' do
+    page.should have_no_content("high hat")
+  end
+
+  step 'these term inputs should be empty' do
+    within "form.term.create" do
+      page.all("input,textarea").each { |input| input.value.should be_empty }
+    end
+  end
+
+  step 'I should not see property inputs' do
+    within "form.term.create" do
+      page.should have_no_css(".property input")
+    end
+  end
 end
