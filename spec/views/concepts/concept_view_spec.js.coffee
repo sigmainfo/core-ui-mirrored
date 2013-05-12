@@ -31,6 +31,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
   describe "render()", ->
 
+    beforeEach ->
+      Coreon.application = session: ability: can: sinon.stub()
+
+    afterEach ->
+      Coreon.application = null    
+
     it "can be chained", ->
       @view.render().should.equal @view
 
@@ -62,17 +68,14 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("> .system-info td").eq(1).should.have.text "543"
 
     it "renders tree", ->
-      Coreon.application = hits: new Backbone.Collection
+      Coreon.application.hits = new Backbone.Collection
       Coreon.application.hits.findByResult = -> null
-      try
-        @concept.set "super_concept_ids", ["1234"], silent: true
-        @view.initialize()
-        @view.broaderAndNarrower.render = sinon.spy()
-        @view.render()
-        @view.broaderAndNarrower.render.should.have.been.calledOnce
-        $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
-      finally
-        Coreon.application = null
+      @concept.set "super_concept_ids", ["1234"], silent: true
+      @view.initialize()
+      @view.broaderAndNarrower.render = sinon.spy()
+      @view.render()
+      @view.broaderAndNarrower.render.should.have.been.calledOnce
+      $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
 
     it "always renders tree", ->
       @concept.set
@@ -266,6 +269,26 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.render()
         @view.$(".term .properties").should.have.class "collapsed"
         @view.$(".term .properties > *:nth-child(2)").should.have.css "display", "none"
+      
+      context "with edit privileges", ->
+        
+        beforeEach ->
+          Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
+
+        it "renders add term link", ->
+          I18n.t.withArgs("term.new").returns "Add term"
+          @view.render()
+          @view.$(".terms").should.have ".edit a.add-term"
+          @view.$(".add-term").should.have.text "Add term"
+
+      context "without edit privileges", ->
+        
+        beforeEach ->
+          Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns false
+
+        it "does not render add term link", ->
+          @view.render()
+          @view.$el.should.not.have ".add-term"
 
   describe "toggleInfo()", ->
 
@@ -338,6 +361,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("section *:first-child").first().click()
       @view.toggleSection.should.have.been.calledOnce
     
+    it "is not triggered for section within a form", ->
+      @view.toggleSection = sinon.spy()
+      @view.delegateEvents()
+      @view.$("section").wrap "<form>"
+      @view.$("section *:first-child").first().click()
+      @view.toggleSection.should.not.have.been.called
+
     it "toggles visibility of section content", ->
       $("#konacha").append @view.$el
       @event.target = @view.$("h3").get(0)
@@ -388,3 +418,261 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$(".values li").eq(1).should.have.class "selected"
       @view.$(".values li").eq(0).should.not.have.class "selected"
 
+  describe "addTerm()", ->
+    
+    beforeEach ->
+      Coreon.application = session: ability: can: -> true
+      @view.render()
+
+    afterEach ->
+      Coreon.application = null    
+
+    it "is triggered by click on add-term link", ->
+      @view.addTerm = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add-term").click()
+      @view.addTerm.should.have.been.calledOnce
+
+    it "renders form", ->
+      I18n.t.withArgs("term.create").returns "Create term"
+      I18n.t.withArgs("form.cancel").returns "Cancel"
+      @view.addTerm()
+      @view.$el.should.have ".terms form.term.create"
+      @view.$("form.term.create").should.have 'button[type="submit"]'
+      @view.$('form.term.create button[type="submit"]').should.have.text "Create term"
+      @view.$("form.term.create").should.have ".cancel"
+      @view.$("form.term.create .cancel").should.have.text "Cancel"
+
+    it "hides add-term link", ->
+      I18n.t.withArgs("term.new").returns "Add term"
+      $("#konacha").append @view.render().$el
+      @view.addTerm()
+      @view.$(".terms .edit .add-term").should.be.hidden
+
+    it "renders inputs", ->
+      I18n.t.withArgs("term.value").returns "Value"
+      I18n.t.withArgs("term.lang").returns "Language"
+      @view.addTerm()
+      @view.$el.should.have 'form.term.create .value input'
+      @view.$('form.term.create .value input').should.have.attr "required"
+      @view.$el.should.have 'form.term.create .value label'
+      @view.$('form.term.create .value label').should.have.text "Value"
+      @view.$el.should.have 'form.term.create .lang input'
+      @view.$('form.term.create .lang input').should.have.attr "required"
+      @view.$el.should.have 'form.term.create .lang label'
+      @view.$('form.term.create .lang label').should.have.text "Language"
+
+    context "properties", ->
+      
+      it "renders section with title", ->
+        I18n.t.withArgs("properties.title").returns "Properties"
+        @view.addTerm()
+        @view.$("form.term.create").should.have "section.properties"
+        @view.$("form.term.create .properties").should.have "h3:first-child"
+        @view.$("form.term.create .properties h3").should.have.text "Properties"
+
+      it "renders link for adding a property", ->
+        I18n.t.withArgs("properties.add").returns "Add Property"
+        @view.addTerm()
+        @view.$("form.term.create .properties").should.have ".edit a.add-property"
+        @view.$("form.term.create .add-property").should.have.text "Add Property"
+        @view.$("form.term.create .add-property").should.have.data "scope", "term[properties][]"
+
+  describe "addProperty()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <section class="properties">
+          <h3>PROPERTIES</h3>
+          <div class="edit">
+            <a class="add-property">Add property</a>
+          </div>
+        </section>
+        '''
+      @event = $.Event "click"
+      @trigger = @view.$(".add-property")
+      @event.target = @trigger[0]
+
+    it "is triggered by click on add property link", ->
+      @view.addProperty = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".add-property").click()
+      @view.addProperty.should.have.been.calledOnce
+
+    it "inserts property inputs", ->
+      @view.addProperty @event
+      @view.$el.should.have ".property"
+
+  describe "removeProperty()", ->
+  
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
+      @event = $.Event "click"
+      @view.render()
+      @view.$el.append '''
+        <fieldset class="property">
+          <a class="remove-property">Remove property</a>
+        </fieldset>
+        '''
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+
+    it "is triggered by click on remove action", ->
+      @view.removeProperty = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".property a.remove-property").trigger @event
+      @view.removeProperty.should.have.been.calledOnce
+
+    it "removes property input set", ->
+      @event.target = @view.$(".remove-property").get(0)
+      @view.removeProperty @event
+      @view.$el.should.not.have ".property"
+
+  describe "createTerm()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <form class="term create">
+          <div class="submit">
+            <button type="submit">Create term</button>
+          </div>
+        </form>
+        '''
+      @event = $.Event "submit"
+      @trigger = @view.$("form")
+      @event.target = @trigger[0]
+      terms = new Backbone.Collection
+      terms.create = sinon.stub()
+      @view.model.terms = -> terms
+
+    it "is triggered by submit", ->
+      @view.createTerm = sinon.spy()
+      @view.delegateEvents()
+      @view.$("form").submit()
+      @view.createTerm.should.have.been.calledOnce
+
+    it "prevents default", ->
+      @event.preventDefault = sinon.spy()
+      @view.createTerm @event
+      @event.preventDefault.should.have.been.calledOnce
+
+    it "disables button to prevent second click", ->
+      @view.createTerm @event
+      @view.$('form.term.create button[type="submit"]').should.be.disabled
+
+    it "creates term", ->
+      @view.model.id = "3456ghj"
+      @view.createTerm @event
+      @view.model.terms().create.should.have.been.calledOnce
+      @view.model.terms().create.firstCall.args[0].should.have.property "concept_id", "3456ghj"
+
+    it "updates term from form", ->
+      @view.$("form.term.create").prepend '''
+        <input type="text" name="term[value]" value="high hat"/>
+        <input type="text" name="term[lang]" value="en"/>
+        '''
+      @view.createTerm @event
+      @view.model.terms().create.firstCall.args[0].should.have.property "value", "high hat"
+      @view.model.terms().create.firstCall.args[0].should.have.property "lang", "en"
+
+    it "cleans up properties", ->
+      @view.$("form.term.create").prepend '''
+        <input type="text" name="term[properties][3][key]" value="status"/>
+        '''
+      @view.createTerm @event
+      @view.model.terms().create.firstCall.args[0].should.have.property("properties").with.lengthOf 1
+      @view.model.terms().create.firstCall.args[0].properties[0].should.have.property "key", "status"
+
+    it "deletes previously set properties when empty", ->
+      @view.createTerm @event
+      @view.model.terms().create.firstCall.args[0].should.have.property("properties").that.eql []
+
+    context "error", ->
+
+      beforeEach ->
+        @term = new Backbone.Model
+        @term.errors = -> {}
+        sinon.stub Coreon.Models, "Term", => @term
+        @view.model.terms().create = (attrs, options = {}) =>
+          options.error @term
+          @term.trigger "error", @term
+
+      afterEach ->
+        Coreon.Models.Term.restore()
+
+      it "rerenders form with errors", ->
+        @view.createTerm @event
+        @view.$el.should.have("form.term.create")
+        @view.$("form.term.create").should.have.lengthOf 1
+        @view.$("form.term.create").should.have ".error-summary"
+
+      it "renders properties within form", ->
+        @term.set "properties", [ key: "status" ], silent: true
+        @term.properties = -> models: [ new Backbone.Model key: "status" ]
+        @view.createTerm @event
+        @view.$("form.term.create").should.have ".property"
+        @view.$("form.term.create .property").should.have.lengthOf 1
+
+      it "renders errors on properties", ->
+        @term.set "properties", [ key: "status" ], silent: true
+        @term.properties = -> models: [ new Backbone.Model key: "status" ]
+        @term.errors = -> { nested_errors_on_properties: [ value: ["can't be blank"] ] }
+        @view.createTerm @event
+        @view.$("form.term.create .property").should.have ".error-message"
+        @view.$("form.term.create .property .error-message").should.have.text "can't be blank"
+        
+
+      it "increases index on add property link", ->
+        @term.set "properties", [ key: "status" ], silent: true
+        @term.properties = -> models: [ new Backbone.Model key: "status" ]
+        @view.createTerm @event
+        @view.$("form.term.create .add-property").should.have.data "index", 1        
+
+  describe "cancel()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <div>
+          <form class="term create">
+            <div class="submit">
+              <a class="cancel" href="javascript:history.back()">Cancel</a>
+              <button type="submit">Create term</button>
+            </div>
+          </form>
+          <div class="edit" style="display:none">
+            <a class="add-term" ref="javascript:void(0)">Add term</a>
+          </div>
+        </div>
+        '''
+      @event = $.Event "click"
+      @trigger = @view.$("form a.cancel")
+      @event.target = @trigger[0]
+    
+    it "is triggered by click on cancel link", ->
+      @view.cancel = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.cancel.should.have.been.calledOnce
+
+    it "prevents default action", ->
+      @event.preventDefault = sinon.spy()
+      @view.cancel @event
+      @event.preventDefault.should.have.been.calledOnce
+    
+    it "removes wrapping form", ->
+      @view.$el.append '''
+        <form class="other"></form>
+      '''
+      @view.cancel @event
+      @view.$el.should.not.have "form.term.create"
+      @view.$el.should.have "form.other"
+
+    it "shows related edit actions", ->
+      $("#konacha").append @view.$el
+      @view.cancel @event
+      console.log @view.$el.html()
+      @view.$(".edit a.add-term").should.be.visible
+      
+      
+    

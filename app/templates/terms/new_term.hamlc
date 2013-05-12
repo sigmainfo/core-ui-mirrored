@@ -1,11 +1,10 @@
-%fieldset.term
-  .actions
-    %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.remove"
-  != @input "term", "value", @term, scope: "concept[terms][]", index: @index, required: true, errors: @errors?.value
-  != @input "term", "lang", @term, scope: "concept[terms][]", index: @index, required: true, errors: @errors?.lang
+!= @form_for "term", @term, ->
+  != @form.input "value", required: true
+  != @form.input "lang", required: true
   %section.properties
-    .actions
-      %a.add-property{href: "javascript:void(0)", "data-scope": "concept[terms][#{@index}][properties][]"}= I18n.t "properties.add"
-    - if @term?
+    %h3= I18n.t "properties.title"
+    - if @term.get("properties")?.length > 0
       - for property, index in @term.properties().models
-        != @render "properties/new_property", index: index, property: property, scope: "concept[terms][#{@index}][properties][]", errors: @errors?.nested_errors_on_properties?[index]
+        != @render "properties/new_property", index: index, property: property, scope: "term[properties][]", errors: @term.errors()?.nested_errors_on_properties?[index]
+    .edit
+      %a.add-property{href: "javascript:void(0)", "data-scope": "term[properties][]", "data-index": @term.get("properties")?.length}= I18n.t "properties.add"

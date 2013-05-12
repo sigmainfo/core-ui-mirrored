@@ -5,7 +5,7 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
-#= require templates/terms/new_term
+#= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
 #= require jquery.serializeJSON
@@ -21,7 +21,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
   template: Coreon.Templates["concepts/new_concept"]
 
   @nestedFieldsFor "properties", name: "property"
-  @nestedFieldsFor "terms"
+  @nestedFieldsFor "terms", template: Coreon.Templates["concepts/new_term"]
 
   events:
     "click  a.add-property"    : "addProperty"
@@ -46,8 +46,12 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     event.preventDefault()
     data = @$("form").serializeJSON().concept or {}
     attrs = {}
-    attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
-    attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
+    attrs.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
+    attrs.terms = if data.terms?
+      term for term in data.terms when term?
+    else []
     @$("form").find("input,button").attr("disabled", true)
     @model.save attrs,
       success: =>

@@ -110,3 +110,10 @@ describe "Coreon.Helpers.input()", ->
       markup = @helper "model", "attrName", null, errors: [ "can't be blank" ]
       input = $(markup)
       input.should.have.class "error"
+
+    it "extracts errors from model", ->
+      @model.errors = -> attrName: [ "can't be blank" ]
+      markup = @helper "model", "attrName", @model 
+      input = $(markup)
+      error = input.find ".error-message"
+      error.should.have.text "can't be blank"

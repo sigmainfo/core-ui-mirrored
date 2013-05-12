@@ -12,7 +12,7 @@ class Coreon.Collections.Connections extends Backbone.Collection
   sync: (method, model, options = {}) ->
     options.headers ?= {}
     options.headers["X-Core-Session"] = @session.get "token"
-    options.url ?= @session.get("graph_root") + _(model).result("url")
+    options.url ?= @session.get("graph_root")[..-2] + _(model).result("url")
     plain = {}
     plain[key] = value for key, value of options
     jqXHR = Backbone.sync method, model, options

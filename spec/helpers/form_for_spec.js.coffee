@@ -83,3 +83,16 @@ describe "Coreon.Helpers.form_for()", ->
       markup = @helper "model", @model, ->
       form = $(markup)
       form.find(".error-summary li").should.contain "3 errors on properties"
+
+  describe "input()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input"
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+    
+    it "delegates call to input helper", ->
+      @helper "model", @model, -> @form.input "label", required: true
+      Coreon.Helpers.input.should.have.been.calledOnce
+      Coreon.Helpers.input.should.have.been.calledWith "model", "label", @model, required: true
