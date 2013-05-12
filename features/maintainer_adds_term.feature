@@ -1,7 +1,7 @@
 Feature: maintainer adds term
-  In order to make terms available in context of a concept
-  As a maintainer adding data to the repository
-  I want to add one or more terms to an existing concept
+  In order to make a new term available in context of a concept
+  As a maintainer updating data in the repository
+  I want to add a term to an existing concept
 
   Background:
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
