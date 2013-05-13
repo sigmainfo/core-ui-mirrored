@@ -63,6 +63,7 @@ form.create {
      
      .properties {
          padding:0;
+         position: relative;
          a.add-property {
            top: 6px;
          }
@@ -77,6 +78,20 @@ form.create {
            margin:0;
            padding-left: 100px;
            background-color: rgba(white, 0.3);
+         }
+         h3 {
+           @include toggle;
+           padding: 0px 7px 0 5px;
+           margin: 2px 0 0 0;
+           color: $browncolor;
+
+           background: rgba(white, 0.3);
+           &:before {
+             content: none;
+           };
+           position: relative;
+           left: 0;
+           top: 0px;
          }
      }
 
@@ -210,6 +225,11 @@ form.create {
       &:before {
         background-position: -52px -351px;
       };
+    }
+    .terms a.remove-property {
+      width: 16px;
+      overflow: hidden;
+      text-indent: -2000px;
     }
     a.edit-properties {
       width: 16px;
