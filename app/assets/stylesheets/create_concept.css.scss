@@ -49,76 +49,10 @@ div.concept.new {
 
 }
 
-@media all and (max-width: 999px) and (min-width: 800px) {
-  div.concept.new  {
-
-    label {
-      width: 90px;
-      padding-right: 10px;
-    }
-
-    .error-message {
-      padding-left: 100px;
-    }
-
-    .submit {
-      font-size: 1.1em;
-    }
-
-    .terms {
-      .properties {
-          fieldset {
-            padding-left: 40px;
-          }
-      }
-    }
-  }
-}
 
 @media all and (max-width: 799px) {
-
+  
   div.concept.new  {
-
-    label {
-      padding-top: 0;
-      text-align: left;
-      float: none;
-    }
-
-    fieldset {
-      margin-top: 16px;
-      div.input {
-        padding-left: 18px;
-        padding-bottom: 10px;
-        &:last-child {
-          padding-bottom: 18px;
-        };
-      }
-
-      input, textarea {
-        width: 80%;
-      }
-    }
-
-    .terms {
-      .properties {
-          padding:0;
-          padding-top: 10px;
-
-          fieldset {
-            padding-left: 40px;
-          }
-      }
-    }
-
-    .submit {
-      font-size: 1.1em;
-    }
-
-    .error-message {
-      padding-left: 0px;
-      width:auto;
-    }
 
     .broader-and-narrower {
       display: none;

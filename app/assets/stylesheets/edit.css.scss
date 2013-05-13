@@ -24,7 +24,6 @@
   }
   &.create-concept {
     @extend .big;
-    margin-top: 6px;
   }
 
   &.edit-concept {
@@ -191,7 +190,7 @@ form.create {
 }
 
 
-.concept.edit, .concept.new, .concept.show  {
+.concept  {
     .edit a {
       font-size: 0.9em;
       color:$greencolor;
@@ -244,6 +243,78 @@ form.create {
   .edit .add-term {
     top: 20px;
   }
+}
+
+@media all and (max-width: 999px) and (min-width: 800px) {
+  div.concept  {
+
+    label {
+      width: 90px;
+      padding-right: 10px;
+    }
+
+    .error-message {
+      padding-left: 100px;
+    }
+
+    .submit {
+      font-size: 1.1em;
+    }
+
+    .terms {
+      .properties {
+          fieldset {
+            padding-left: 40px;
+          }
+      }
+    }
+  }
+}
+
+@media all and (max-width: 799px) {
+
+  div.concept {
+
+    label {
+      padding-top: 0;
+      text-align: left;
+      float: none;
+    }
+
+    .create {
+      .properties {
+          padding-top: 10px;
+
+          fieldset {
+            padding-left: 40px;
+          }
+      }
+      fieldset, &.term {
+        div.input {
+          padding-left: 18px;
+          padding-bottom: 10px;
+          &:last-child {
+            padding-bottom: 18px;
+          };
+        }
+
+        input, textarea {
+          width: 80%;
+        }
+      }
+    }
+
+    .submit {
+      font-size: 1.1em;
+    }
+
+    .error-message {
+      padding-left: 0px;
+      width:auto;
+    }
+
+  }
+  
 }
 
 
