@@ -1,120 +1,18 @@
 @import '_config';
 @import 'compass/css3';
 
-.button {
-  float: left;
-  font-size: 0.86em;
-  line-height: 1em;
-  padding: 3px 8px;
-  color: white;
-  display: inline-block;
-  @include edit-button;
-  &.create-concept {
-    padding-left: 2px;
-    margin-top: 6px;
-    &:before {
-      @include before-icon;
-      float: left;
-      height: 10px;
-      background-position: -3px -354px;
-    };
-  }
-  
-  
-  &.collapsed {
-    display:none;
-  }
-}
 
-form.create {
-  
-  fieldset {
-    position: relative;
-    border: 0;
-    padding-top: 18px;
-    margin-bottom: 26px;
-    background-color: darken(rgba($button-color, 0.1), 12);
-    div.input {
-      padding-bottom: 18px;
-    }
-    
-    &>.required  {
-      label {
-        color: $browncolor;
-      }
-    }
-    input {
-      height:24px;
-      width: 40%;
-    }
-    textarea {
-      width: 65%;
-      height: 50px;
-    }
-  }
-  
-  label {
-    color: $greytext-color;
-    display: inline-block;
-    text-transform: uppercase;
-    text-align: right;
-    font-size: 0.8em;
-    float: left;
-    width: 100px;
-    padding-right: 20px;
-    padding-top: 5px;
-  }
-  .submit {
-    text-align: right;
-    clear: both;
-    overflow: hidden;
-    background-color: darken(rgba($button-color, 0.18), 15);
-    margin-top:60px;
-    padding: 3px 10px;
-    
-    .cancel {
-      @extend .button;
-      margin: 6px;
-      padding: 5px 8px 3px 8px;
-      float: none;
-      font-size: 1em;
-    }
-    
-      button {
-        @extend .cancel;
-        @include box-sizing(content-box);
-        border: 0;
-        padding-bottom: 4px;
-        background-color: $button-color;
-        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-        @include retina-stripes(white);
-        &:after {
-          @include before-icon;
-          float: right;
-          height: 12px;
-          margin-left: 4px;
-          background-position: 0px -404px;
-        };
-        &:hover {
-          background-color: saturate($button-color, 10);
-        };
-      }
-    
-  }
-  
-}
-
-// FIX FEATURE TESTS
+/*// FIX FEATURE TESTS
 div.concept section  h3 {
   text-transform: uppercase;
-}
+}*/
 
 div.concept.new {
-  
+
   h2 {
     color: $button-color;
   }
-  
+
   h3 {
     @include toggle;
     padding: 0px 7px 0 5px;
@@ -126,73 +24,34 @@ div.concept.new {
       content: none;
     };
   }
-  
+
   .broader-and-narrower {
     .self {
       color: $button-color;
     }
   }
-  
-  .edit a {
-    font-size: 0.9em;
-    color:$greencolor;
-    display: inline-block;
-    margin-right: 10px;
-    float: right;
-    position: relative;
-    top: -10px;
-    
-    &:before {
-      @include before-icon;
-/*      float: right;
-      margin-left: 7px;*/
-      float: left;
-      margin-right: 5px;
-      background-position: -2px -351px;
-      @include edit-button;
-    };
-    &:hover {
-      color: $button-color;
-      &:before {
-        background-color: $button-color;
-        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-      };
-    }
-  }
-  a.remove-term, a.remove-property {
-/*    width: 16px;
-    overflow: hidden;
-    text-indent: -5000px;*/
-    position: absolute;
-    top: 10px;
-    right: 0;
-    &:before {
-      background-position: -52px -351px;
-    };
-  }
-  
+
   .properties {
     position: relative;
 /*    padding: 3px 0 50px 0;*/
     padding-bottom: 50px;
-    
   }
-  
+
   .terms {
     position: relative;
     @include retina-separator;
     padding-top: 10px;
-    
+
     .term {
       background-image: none;
     }
-    
+
     .properties {
         padding:0;
         a.add-property {
           top: 6px;
         }
-        &>.edit {
+        &>.actions {
           margin: 0;
           border-top: 1px solid white;
           height: 30px;
@@ -205,75 +64,10 @@ div.concept.new {
           background-color: rgba(white, 0.3);
         }
     }
-    
+
   }
-  
+
 }
-
-//only for this feature
-div.concept.show {
-  .terms .edit {
-     @include retina-separator;
-     height:20px;
-  }
-  
-  form.create.term {
-    position: relative;
-    border: 0;
-    padding-top: 28px;
-    margin-bottom: 26px;
-    background-color: darken(rgba($button-color, 0.1), 12);
-    @include retina-separator;
-    div.input {
-      padding-bottom: 18px;
-    }
-    
-    &>.required  {
-      label {
-        color: $browncolor;
-      }
-    }
-    input {
-      height:24px;
-      width: 40%;
-    }
-    textarea {
-      width: 65%;
-      height: 50px;
-    }
-    
-    .submit {
-      margin-top: 1px;
-    }
-  }
-    .edit a {
-      font-size: 0.9em;
-      color:$greencolor;
-      display: inline-block;
-      margin-right: 10px;
-      float: right;
-      position: relative;
-      top: 20px;
-
-      &:before {
-        @include before-icon;
-  /*      float: right;
-        margin-left: 7px;*/
-        float: left;
-        margin-right: 5px;
-        background-position: -2px -351px;
-        @include edit-button;
-      };
-      &:hover {
-        color: $button-color;
-        &:before {
-          background-color: $button-color;
-          @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-        };
-      }
-    }
-}
-
 
 @media all and (max-width: 999px) and (min-width: 800px) {
   div.concept.new  {
@@ -282,15 +76,15 @@ div.concept.show {
       width: 90px;
       padding-right: 10px;
     }
-    
+
     .error-message {
       padding-left: 100px;
     }
-    
+
     .submit {
       font-size: 1.1em;
     }
-    
+
     .terms {
       .properties {
           fieldset {
@@ -299,11 +93,10 @@ div.concept.show {
       }
     }
   }
-  
 }
 
 @media all and (max-width: 799px) {
-  
+
   div.concept.new  {
 
     label {
@@ -311,7 +104,7 @@ div.concept.show {
       text-align: left;
       float: none;
     }
-    
+
     fieldset {
       margin-top: 16px;
       div.input {
@@ -321,7 +114,7 @@ div.concept.show {
           padding-bottom: 18px;
         };
       }
-      
+
       input, textarea {
         width: 80%;
       }
@@ -337,20 +130,18 @@ div.concept.show {
           }
       }
     }
-    
+
     .submit {
       font-size: 1.1em;
     }
-    
+
     .error-message {
       padding-left: 0px;
       width:auto;
     }
-    
+
     .broader-and-narrower {
       display: none;
     }
   }
-  
 }
-  
