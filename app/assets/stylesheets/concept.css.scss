@@ -183,29 +183,31 @@ div.concept {
     ul {
       list-style: none;
     }
-    
-    .term {
-      position: relative;
-      @include dottedline;
-      &:first-child {
-        background: none;
-      };
 
-      h4.value {
-        font: 1.4em Palatino;
-        padding: 12px 100px 6px 97px;
-        &:before {
-          content:"»\00a0";
-          font-size: 1.3em;
-        };
-      }
-      >.system-info {
-        padding-left: 116px;
-        table {
-          margin-top: 2px;
-        }
+  }
+  
+  .term {
+    position: relative;
+    @include dottedline;
+    &:first-child {
+      background: none;
+    };
+
+    h4.value {
+      font: 1.4em Palatino;
+      padding: 12px 100px 6px 97px;
+      &:before {
+        content:"»\00a0";
+        font-size: 1.3em;
+      };
+    }
+    >.system-info {
+      padding-left: 116px;
+      table {
+        margin-top: 2px;
       }
     }
+    
     .properties {
       background: none;
       h3 {
@@ -219,6 +221,7 @@ div.concept {
       }
     }
   }
+
   
   &.show, &.edit {
     section {

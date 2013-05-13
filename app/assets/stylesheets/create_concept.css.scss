@@ -33,7 +33,6 @@ div.concept.new {
 
   .properties {
     position: relative;
-/*    padding: 3px 0 50px 0;*/
     padding-bottom: 50px;
   }
 
@@ -44,25 +43,6 @@ div.concept.new {
 
     .term {
       background-image: none;
-    }
-
-    .properties {
-        padding:0;
-        a.add-property {
-          top: 6px;
-        }
-        &>.actions {
-          margin: 0;
-          border-top: 1px solid white;
-          height: 30px;
-        }
-
-        fieldset {
-          border-top: 1px solid white;
-          margin:0;
-          padding-left: 100px;
-          background-color: rgba(white, 0.3);
-        }
     }
 
   }
