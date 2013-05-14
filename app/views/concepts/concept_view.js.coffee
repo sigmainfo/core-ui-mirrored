@@ -75,7 +75,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   addTerm: ->
     terms = @$(".terms")
-    terms.find(".edit").hide()
+    terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
   createTerm: (event) ->

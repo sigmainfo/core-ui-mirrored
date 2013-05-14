@@ -191,7 +191,7 @@ form.create {
     }
   }
   
-  .term {
+  .language .term {
     .edit {
       height: 18px;
     }
@@ -286,7 +286,7 @@ form.create {
     }
   }
   .concept.edit, .concept.show {
-    .term {
+    .language .term {
       .edit {
         height: 24px;
       }
@@ -312,7 +312,7 @@ form.create {
       float: none;
     }
 
-    .create {
+    .create, .update {
       .properties {
           padding-top: 10px;
 
@@ -346,11 +346,12 @@ form.create {
 
   }
   .concept.edit, .concept.show {
-    .term {
+    .language .term {
       .edit {
         height: 24px;
         .remove-term {
           top: 5px;
+          margin-right: 0;
           width: 16px;
           overflow: hidden;
           text-indent: -2000px;
