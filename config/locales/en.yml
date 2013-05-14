@@ -64,6 +64,9 @@ en:
     new: "New concept"
     create: "Create concept"
     created: 'Successfully created concept "{{label}}".'
+    delete: "Delete concept"
+    confirm_delete: "This concept including all terms will be deleted permanently."
+    deleted: 'Successfully deleted concept "{{label}}".'
 
   term:
     info: "System Info"
@@ -71,9 +74,9 @@ en:
     lang: "Language"
     new: "Add term"
     create: "Create term"
+    created: 'Successfully created term "{{value}}".'
     delete: "Remove term"
     confirm_delete: "This term will be deleted permanently."
-    created: 'Successfully created term "{{value}}".'
     deleted: 'Successfully deleted term "{{value}}".'
 
   terms:

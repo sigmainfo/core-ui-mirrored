@@ -84,6 +84,27 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
       $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
 
+
+    context "with edit privileges", ->
+      
+      beforeEach ->
+        Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns true
+
+      it "renders delete concept link", ->
+        I18n.t.withArgs("concept.delete").returns "Delete concept"
+        @view.render()
+        @view.$el.should.have ".edit a.delete"
+        @view.$("a.delete").should.have.text "Delete concept"
+
+    context "without edit privileges", ->
+      
+      beforeEach ->
+        Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns false
+
+      it "does not render delete concept link", ->
+        @view.render()
+        @view.$el.should.not.have "a.delete"
+
     context "properties", ->
 
       beforeEach ->
@@ -729,7 +750,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.removeTerm @event
       @view.$(".term").should.have.class "delete"
 
-    it "positions confirmation dialog relative to trigger", ->
+    xit "positions confirmation dialog relative to trigger", ->
       @trigger.css
         position: "absolute"
         top: "300px"

@@ -7,7 +7,7 @@ Feature: maintainer deletes concept
   Background:
     Given my name is "William Blake" with login "Nobody" and password "se7en!"
     And I am logged in
-    And a concept "beaver hat" exists
+    And a concept with an English term "beaver hat" exists
   
   Scenario: remove concept
     Given I have maintainer privileges
