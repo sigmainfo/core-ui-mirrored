@@ -9,6 +9,7 @@
 #= require templates/concepts/_properties
 #= require templates/terms/new_term
 #= require templates/properties/new_property
+#= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
 #= require modules/nested_fields_for
@@ -59,7 +60,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   toggleSection: (event) ->
     target = $(event.target)
     target.closest("section").toggleClass "collapsed"
-    target.next().slideToggle()
+    target.siblings().not(".edit").slideToggle()
 
   selectProperty: (event) ->
     target = $ event.target
