@@ -99,12 +99,13 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form.siblings(".edit").show()
     form.remove()
 
-  removeTerm: (event) ->
+  removeTerm: (event) =>
     trigger = $(event.target)
     term = trigger.closest ".term"
     modal = $("#coreon-modal")
     shim = $ @confirm()
     dialog = shim.find ".confirm"
+    model = @model.terms().get trigger.data "id"
 
     term.addClass "delete"
     shim.appendTo modal
@@ -114,10 +115,21 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       of: trigger
 
     cancel = ->
+      $(document).off "keydown.coreon.confirm"
       term.removeClass "delete"
       modal.empty()
 
+    destroy = (event) ->
+      $(document).off "keydown.coreon.confirm"
+      event.stopPropagation()
+      modal.empty()
+      term.remove()
+      model.destroy()
+
     shim.click cancel
-    $(document).keydown (event) ->
-      cancel() if event.keyCode is KEYCODE.esc
+    dialog.click destroy
+    $(document).on "keydown.coreon.confirm", (event) ->
+      switch event.keyCode
+        when KEYCODE.esc   then cancel event
+        when KEYCODE.enter then destroy event
 

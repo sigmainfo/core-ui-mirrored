@@ -44,6 +44,8 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
   end
 
   step 'I should not see "beaver hat"' do
-    pending 'step not implemented'
+    within ".concept" do
+      page.should have_no_content("beaver hat")
+    end
   end
 end

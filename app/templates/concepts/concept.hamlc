@@ -6,14 +6,14 @@
 .terms
   - if @concept.get("terms")?.length > 0
     - for lang, terms of @concept.termsByLang()
-      %section.language{class: lang.toLowerCase()}
+      %section.language{class: lang}
         %h3= lang
         %ul
           - for term in terms
             %li.term
               - if @can "delete", Coreon.Models.Term
                 .edit
-                  %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.delete"
+                  %a.remove-term{href: "javascript:void(0)", "data-id": term.id}= I18n.t "term.delete"
               %h4.value= term.get "value"
               %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
               != @render "concepts/info", data: term.info()
