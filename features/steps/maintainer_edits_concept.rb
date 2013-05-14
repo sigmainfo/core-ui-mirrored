@@ -21,10 +21,10 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
   end
 
   step 'I should see edit buttons' do
-    page.find(".concept .edit-properties").should be_visible
+    page.should have_css(".concept .properties .edit-properties")
   end
 
   step 'I should not see edit buttons' do
-    page.find(".concept .edit-properties").should_not be_visible
+    page.should have_no_css(".concept .properties .edit-properties")
   end
 end

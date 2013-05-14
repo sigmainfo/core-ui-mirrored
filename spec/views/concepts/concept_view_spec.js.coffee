@@ -7,8 +7,15 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     sinon.stub I18n, "t"
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", (options) =>
       @broaderAndNarrower = new Backbone.View options
+
+    @property = new Backbone.Model key: "label", value: "top hat"
+    @property.info = -> {}
+
     @concept = new Backbone.Model
     @concept.info = -> {}
+    @concept.set "properties", [ @property ], silent: true
+    @concept.propertiesByKey = => label: [ @property ]
+
     @view = new Coreon.Views.Concepts.ConceptView
       model: @concept
 
@@ -88,10 +95,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       beforeEach ->
         sinon.stub Coreon.Templates, "concepts/info"
-        @property = new Backbone.Model key: "label", value: "top hat"
-        @property.info = -> {}
-        @concept.set "properties", [ key: "label", value: "top hat" ], silent: true
-        @concept.propertiesByKey = => label: [ @property ]
 
       afterEach ->
         Coreon.Templates["concepts/info"].restore()
@@ -254,8 +257,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @term.propertiesByKey = -> source: [ property ]
         sinon.stub Coreon.Templates, "concepts/properties"
         try
-          Coreon.Templates["concepts/properties"].withArgs(collapsed: true, properties: source: [ property ])
-            .returns '<ul class="properties collapsed"></ul>'
+          Coreon.Templates["concepts/properties"].withArgs(
+            properties: @term.propertiesByKey(),
+            collapsed: true,
+            noEditButton: true
+          ).returns '<ul class="properties collapsed"></ul>'
           @view.render()
           @view.$(".term").should.have ".properties"
         finally
@@ -386,7 +392,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   describe "selectProperty()", ->
 
     beforeEach ->
-      @event = $.Event "click"
       @view.$el.append '''
         <table class="properties">
           <td>
@@ -402,6 +407,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         </table>
         '''
       @tab = @view.$(".index li").eq(1)
+
+      @event = $.Event "click"
       @event.target = @tab[0]
 
     it "is triggered by click on selector", ->
@@ -450,6 +457,45 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$el.should.have.class "edit"
       @view.$el.should.not.have.class "show"
 
+  describe "editConceptProperties()", ->
+
+    beforeEach ->
+      @concept.properties = -> models: []
+      @view.editMode = yes
+      @view.editProperties = no
+      @view.render()
+
+    it "is triggered by click on edit-properties toggle", ->
+      @view.editConceptProperties = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".edit-properties").click()
+      @view.editConceptProperties.should.have.been.calledOnce
+
+    it "toggles edit properties value", ->
+      @view.editProperties.should.be.false
+      @view.$(".edit-properties").click()
+      @view.editProperties.should.be.true
+
+    it "rerenders the view", ->
+      @view.render = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".edit-properties").click()
+      @view.render.should.have.been.calledOnce
+
+    it "renders properties template in edit mode", ->
+      @view.editMode = yes
+      @view.editProperties = no
+      @view.render()
+      @view.$el.should.have("section.properties")
+      @view.$el.should.not.have("section.edit")
+
+    it "renders properties edit template in edit properties mode", ->
+      @view.editMode = yes
+      @view.editProperties = yes
+      @view.render()
+      @view.$el.should.have("section.properties.edit")
+
+
   describe "addTerm()", ->
 
     beforeEach ->
@@ -457,7 +503,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
 
     afterEach ->
-      Coreon.application = null    
+      Coreon.application = null
 
     it "is triggered by click on add-term link", ->
       @view.addTerm = sinon.spy()
@@ -703,6 +749,5 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "shows related edit actions", ->
       $("#konacha").append @view.$el
       @view.cancel @event
-      console.log @view.$el.html()
       @view.$(".edit a.add-term").should.be.visible
 

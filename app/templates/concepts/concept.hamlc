@@ -3,8 +3,10 @@
 %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
 != @render "concepts/info", data: @concept.info()
 
-- if @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties: @concept.propertiesByKey()
+- if @editMode and @editProperties
+  != @render "concepts/edit_properties", concept: @concept, editToggle: yes
+- else if @editMode or @concept.get("properties")?.length > 0
+  != @render "concepts/properties", properties: @concept.propertiesByKey(), editToggle: yes
 
 .terms
   - if @concept.get("terms")?.length > 0

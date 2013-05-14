@@ -7,6 +7,7 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
+#= require templates/concepts/_edit_properties
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require templates/properties/new_property
@@ -21,6 +22,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   className: "concept show"
   editMode: no
+  editProperties: no
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
@@ -28,16 +30,16 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click .edit-concept"                          : "toggleEditMode"
-    "click concept > .properties .edit-properties" : "editConceptProperties"
-    "click  .system-info-toggle"                 : "toggleInfo"
-    "click  section:not(form *) > *:first-child" : "toggleSection"
-    "click  .properties .index li"               : "selectProperty"
-    "click  .add-term"                           : "addTerm"
-    "click  .add-property"                       : "addProperty"
-    "click  .remove-property"                    : "removeProperty"
-    "submit form.term.create"                    : "createTerm"
-    "click  form a.cancel"                       : "cancel"
+    "click  .edit-concept"                          : "toggleEditMode"
+    "click  *:not(.terms) .edit-properties"         : "editConceptProperties"
+    "click  .system-info-toggle"                    : "toggleInfo"
+    "click  section:not(form *) > *:first-child"    : "toggleSection"
+    "click  .properties .index li"                  : "selectProperty"
+    "click  .add-term"                              : "addTerm"
+    "click  .add-property"                          : "addProperty"
+    "click  .remove-property"                       : "removeProperty"
+    "submit form.term.create"                       : "createTerm"
+    "click  form a.cancel"                          : "cancel"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -45,7 +47,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @listenTo @model, "change", @render
 
   render: ->
-    @$el.html @template concept: @model, editMode: @editMode
+    @$el.html @template concept: @model, editMode: @editMode, editProperties: @editProperties
     @broaderAndNarrower.render() unless @_wasRendered
     @$el.children(".system-info").after @broaderAndNarrower.$el
     @_wasRendered = true
@@ -66,7 +68,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     target = $ event.target
     container = target.closest "td"
     container.find("li.selected").removeClass "selected"
-    container.find(".values > li").eq($target.data "index").add($target).addClass "selected"
+    container.find(".values > li").eq(target.data "index").add(target)
+      .addClass "selected"
 
   toggleEditMode: ->
     @editMode = !@editMode
@@ -78,8 +81,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @render()
 
   editConceptProperties: ->
-    container.find(".values > li").eq(target.data "index").add(target)
-      .addClass "selected"
+    @editProperties = !@editProperties
+    @render()
 
   addTerm: ->
     terms = @$(".terms")
