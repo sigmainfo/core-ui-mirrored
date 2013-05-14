@@ -6,8 +6,8 @@
 - if @concept.get("properties")?.length > 0
   != @render "concepts/properties", properties: @concept.propertiesByKey()
 
-- if @concept.get("terms")?.length > 0
-  .terms
+.terms
+  - if @concept.get("terms")?.length > 0
     - for lang, terms of @concept.termsByLang()
       %section.language{class: lang}
         %h3= lang
@@ -19,3 +19,6 @@
               != @render "concepts/info", data: term.info()
               - if term.get("properties")?.length > 0
                 != @render "concepts/properties", properties: term.propertiesByKey(), collapsed: true
+  - if @can "create", Coreon.Models.Term
+    .edit
+      %a.add-term{href: "javascript:void(0)"}= I18n.t "term.new"

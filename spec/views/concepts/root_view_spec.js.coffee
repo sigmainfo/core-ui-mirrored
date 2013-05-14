@@ -35,7 +35,6 @@ describe "Coreon.Views.Concepts.RootView", ->
         @view.$el.should.have 'a[href="/concepts/new"]'
         @view.$('a[href="/concepts/new"]').should.have.text "New concept"
 
-
     context "without maintainer privileges", ->
     
       beforeEach ->

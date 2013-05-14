@@ -24,7 +24,6 @@
   }
   &.create-concept {
     @extend .big;
-    margin-top: 6px;
   }
 
   &.edit-concept {
@@ -40,14 +39,142 @@
   }
 }
 
-.concept.show {
+
+form.create {
+
+   &.term, fieldset {
+     position: relative;
+     border: 0;
+     padding-top: 18px;
+     margin-bottom: 26px;
+     background-color: darken(rgba($button-color, 0.1), 12);
+   }
+   &.term {
+     @include retina-separator;
+     padding-top: 28px;
+   }
+
+   &.term, .term {
+
+     .submit {
+       margin-top: 1px;
+     }
+     
+     .properties {
+         padding:0;
+         position: relative;
+         a.add-property {
+           top: 6px;
+         }
+         &>.edit {
+           margin: 0;
+           border-top: 1px solid white;
+           height: 30px;
+         }
+
+         fieldset {
+           border-top: 1px solid white;
+           margin:0;
+           padding-left: 100px;
+           background-color: rgba(white, 0.3);
+         }
+         h3 {
+           @include toggle;
+           padding: 0px 7px 0 5px;
+           margin: 2px 0 0 0;
+           color: $browncolor;
+
+           background: rgba(white, 0.3);
+           &:before {
+             content: none;
+           };
+           position: relative;
+           left: 0;
+           top: 0px;
+         }
+     }
+
+   }
+
+   div.input {
+     padding-bottom: 18px;
+
+     &.required  {
+       label {
+         color: $browncolor;
+       }
+     }
+   }
+
+   input {
+     height:24px;
+     width: 40%;
+   }
+   textarea {
+     width: 65%;
+     height: 50px;
+   }
+
+   label {
+     color: $greytext-color;
+     display: inline-block;
+     text-transform: uppercase;
+     text-align: right;
+     font-size: 0.8em;
+     float: left;
+     width: 100px;
+     padding-right: 20px;
+     padding-top: 5px;
+   }
+   .submit {
+     text-align: right;
+     clear: both;
+     overflow: hidden;
+     background-color: darken(rgba($button-color, 0.18), 15);
+     margin-top:60px;
+     padding: 3px 10px;
+
+     .cancel {
+       @extend .button;
+       margin: 6px;
+       padding: 5px 8px 3px 8px;
+       float: none;
+       font-size: 1em;
+     }
+
+       button {
+         @extend .cancel;
+         @include box-sizing(content-box);
+         border: 0;
+         padding-bottom: 4px;
+         background-color: $button-color;
+         @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+         @include retina-stripes(white);
+         &:after {
+           @include before-icon;
+           float: right;
+           height: 12px;
+           margin-left: 4px;
+           background-position: 0px -404px;
+         };
+         &:hover {
+           background-color: saturate($button-color, 10);
+         };
+       }
+
+   }
+
+ }
+// for edit mode
+/*.concept.show {
   .edit {
     display: none;
   }
 
-}
+}*/
 
-.concept.edit {
+// remove concept show later
+.concept.edit, .concept.show {
   .button.edit-concept {
     background-color: $beigecolor;
     color: $greencolor;
@@ -55,11 +182,16 @@
       background-position: -4px -504px;
     };
   }
+  
+  .terms >.edit {
+    @include retina-separator;
+    height:20px;
+  }
 }
 
 
-.concept.edit, .concept.new  {
-    .actions a, .edit a {
+.concept  {
+    .edit a {
       font-size: 0.9em;
       color:$greencolor;
       display: inline-block;
@@ -93,6 +225,11 @@
         background-position: -52px -351px;
       };
     }
+    .terms a.remove-property {
+      width: 16px;
+      overflow: hidden;
+      text-indent: -2000px;
+    }
     a.edit-properties {
       width: 16px;
       overflow: hidden;
@@ -102,81 +239,83 @@
       };
     }
 }
-
-form.create {
-
-  fieldset {
-    position: relative;
-    border: 0;
-    padding-top: 18px;
-    margin-bottom: 26px;
-    background-color: darken(rgba($button-color, 0.1), 12);
-    div.input {
-      padding-bottom: 18px;
-    }
-
-    &>.required  {
-      label {
-        color: $browncolor;
-      }
-    }
-    input {
-      height:24px;
-      width: 40%;
-    }
-    textarea {
-      width: 65%;
-      height: 50px;
-    }
+.concept.show {
+  .edit .add-term {
+    top: 20px;
   }
-
-  label {
-    color: $greytext-color;
-    display: inline-block;
-    text-transform: uppercase;
-    text-align: right;
-    font-size: 0.8em;
-    float: left;
-    width: 100px;
-    padding-right: 20px;
-    padding-top: 5px;
-  }
-  .submit {
-    text-align: right;
-    clear: both;
-    overflow: hidden;
-    background-color: darken(rgba($button-color, 0.18), 15);
-    margin-top:60px;
-    padding: 3px 10px;
-
-    .cancel {
-      @extend .button;
-      margin: 6px;
-      padding: 5px 8px 3px 8px;
-      float: none;
-      font-size: 1em;
-    }
-
-      button {
-        @extend .cancel;
-        @include box-sizing(content-box);
-        border: 0;
-        padding-bottom: 4px;
-        background-color: $button-color;
-        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-        @include retina-stripes(white);
-        &:after {
-          @include before-icon;
-          float: right;
-          height: 12px;
-          margin-left: 4px;
-          background-position: 0px -404px;
-        };
-        &:hover {
-          background-color: saturate($button-color, 10);
-        };
-      }
-
-  }
-
 }
+
+@media all and (max-width: 999px) and (min-width: 800px) {
+  div.concept  {
+
+    label {
+      width: 90px;
+      padding-right: 10px;
+    }
+
+    .error-message {
+      padding-left: 100px;
+    }
+
+    .submit {
+      font-size: 1.1em;
+    }
+
+    .terms {
+      .properties {
+          fieldset {
+            padding-left: 40px;
+          }
+      }
+    }
+  }
+}
+
+@media all and (max-width: 799px) {
+
+  div.concept {
+
+    label {
+      padding-top: 0;
+      text-align: left;
+      float: none;
+    }
+
+    .create {
+      .properties {
+          padding-top: 10px;
+
+          fieldset {
+            padding-left: 40px;
+          }
+      }
+      fieldset, &.term {
+        div.input {
+          padding-left: 18px;
+          padding-bottom: 10px;
+          &:last-child {
+            padding-bottom: 18px;
+          };
+        }
+
+        input, textarea {
+          width: 80%;
+        }
+      }
+    }
+
+    .submit {
+      font-size: 1.1em;
+    }
+
+    .error-message {
+      padding-left: 0px;
+      width:auto;
+    }
+
+  }
+  
+}
+
+
+

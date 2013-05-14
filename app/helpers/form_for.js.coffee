@@ -1,6 +1,7 @@
 #= require environment
 #= require lib/form_context
 #= require helpers/render
+#= require helpers/input
 #= require templates/forms/_form_for
 #= require templates/forms/_submit
 
@@ -37,6 +38,9 @@ class Form extends Coreon.Lib.FormContext
     @submit = I18n.t "#{@name}.#{@action}"
     @errors = @model?.errors?()
     @errorCounts = errorCounts @errors if @errors?
+  
+  input: (attr, options = {}) ->
+    Coreon.Helpers.input @name, attr, @model, options
 
 Coreon.Helpers.form_for = (name, model, block) ->
   (new Form name, model, @, block).render()

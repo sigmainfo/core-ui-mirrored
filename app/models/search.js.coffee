@@ -6,7 +6,7 @@ class Coreon.Models.Search extends Backbone.Model
     hits: []
 
   url: ->
-    @get "path"
+    "/#{@get 'path'}"
 
   params: ->
     params = "search[query]": @get "query"

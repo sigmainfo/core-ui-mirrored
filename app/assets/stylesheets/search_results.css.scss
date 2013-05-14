@@ -110,11 +110,15 @@
     display: block;
     text-align: right;
     min-width: 400px;
-    
     .show-all {
       @include toggle;
     }
     
+  }
+  
+  .edit {
+    position: absolute;
+    padding-top: 6px;
   }
 
   table {  

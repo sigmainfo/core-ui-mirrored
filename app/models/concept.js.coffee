@@ -2,7 +2,7 @@
 #= require modules/helpers
 #= require modules/accumulation
 #= require modules/embeds_many
-#= require models/term
+#= require collections/terms
 #= require models/property
 #= require modules/system_info
 #= require modules/properties_by_key
@@ -14,13 +14,13 @@ class Coreon.Models.Concept extends Backbone.Model
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
 
   @embedsMany "properties", model: Coreon.Models.Property
-  @embedsMany "terms", model: Coreon.Models.Term
+  @embedsMany "terms", collection: Coreon.Collections.Terms
 
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
   Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
   Coreon.Modules.include @, Coreon.Modules.RemoteValidation
 
-  urlRoot: "concepts"
+  urlRoot: "/concepts"
 
   editUrl: ->
     "#{@url()}/edit"
@@ -74,14 +74,16 @@ class Coreon.Models.Concept extends Backbone.Model
   _termLabel: ->
     terms = @get "terms"
     for term in terms
-      if term.lang.match /^en/i
+      if term.lang?.match /^en/i
         label = term.value
         break
     label ?= terms[0]?.value
     label
 
   sync: (method, model, options = {}) ->
+    @once "sync", @onCreate, @ if method is "create"
     Coreon.application?.sync method, model, options
 
-  syncMessage: ->
-    @message I18n.t("concept.sync.create", label: @get "label"), type: "info"
+  onCreate: ->
+    @trigger "create", @, @.id
+    @message I18n.t("concept.created", label: @get "label"), type: "info"

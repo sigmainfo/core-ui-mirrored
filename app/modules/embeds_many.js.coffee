@@ -5,8 +5,10 @@ createRelation = (model, attr) ->
   options = {}
   options.model = relation.model if relation.model?
   collection = new relation.collection model.get(attr), options
-  model.on "change:#{attr}", -> collection.set model.get attr
-  collection.on "all", -> model.set attr, collection.toJSON(), silent: true
+  model.on "change:#{attr}", (model, value, options = {}) ->
+    collection.set model.get attr unless options.internal 
+  collection.on "all", ->
+    model.set attr, collection.toJSON(), internal: true
   collection
 
 Coreon.Modules.EmbedsMany =

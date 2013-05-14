@@ -12,7 +12,9 @@ describe "Coreon.Collections.Terms", ->
   it "creates Term models", ->
     @collection.add _id: "term"
     @collection.get("term").should.be.an.instanceof Coreon.Models.Term
+  
+  describe "toJSON()", ->
 
-  #it "can be initialized" 
-
-
+    it "strips wrapping objects from terms", ->
+      @collection.reset [ value: "high hat", lang: "de", properties: [] ]
+      @collection.toJSON().should.eql [ value: "high hat", lang: "de", properties: [] ]
