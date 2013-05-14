@@ -393,13 +393,19 @@ div.concept {
         background: none;
         h3 {
           right: 0px;
-          top: -1px;
         }
         &>div {
           margin-left: 44px;
           border-top: 1px solid white;
         }
       }  
+    }
+  }
+  div.concept {
+    .language .properties {
+      h3 {
+        top: -1px;
+      }
     }
   }
 }
