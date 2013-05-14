@@ -21,11 +21,17 @@
     p {
       padding: 20px;
       display: inline-block;  
+
+    }
+    .message {
+      padding-right: 70px; 
     }
     .ok {
-      float: right;
       font-size: 1.4em;
-      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
       background-color: $button-color;
       border-left: 1px solid rgba(black, 0.2);
       @include border-right-radius(6px);
