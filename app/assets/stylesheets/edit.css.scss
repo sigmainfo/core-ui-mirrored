@@ -186,10 +186,9 @@ form.create {
   .terms >.edit {
     @include retina-separator;
     height:20px;
-  }
-  
-  .edit .add-term {
-    top: 20px;
+    .add-term {
+      top: 20px;
+    }
   }
   
   .term.delete {
