@@ -100,15 +100,17 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     term = trigger.closest ".term"
     modal = $("#coreon-modal")
     confirm = $ @confirm()
+    dialog = confirm.find ".confirm"
 
     term.addClass "delete"
-
     confirm.appendTo modal
-    confirm.position
+    dialog.position
       my: "center bottom"
       to: "left top"
       of: trigger
 
-    confirm.click ->
+    cancel = ->
       term.removeClass "delete"
       modal.empty()
+
+    confirm.click cancel
