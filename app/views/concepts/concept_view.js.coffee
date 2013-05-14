@@ -16,6 +16,10 @@
 #= require jquery.serializeJSON
 #= require jquery.ui.position
 
+KEYCODE =
+  esc: 27
+  enter: 13
+
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
@@ -99,11 +103,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     trigger = $(event.target)
     term = trigger.closest ".term"
     modal = $("#coreon-modal")
-    confirm = $ @confirm()
-    dialog = confirm.find ".confirm"
+    shim = $ @confirm()
+    dialog = shim.find ".confirm"
 
     term.addClass "delete"
-    confirm.appendTo modal
+    shim.appendTo modal
     dialog.position
       my: "center bottom"
       to: "left top"
@@ -113,4 +117,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       term.removeClass "delete"
       modal.empty()
 
-    confirm.click cancel
+    shim.click cancel
+    $(document).keydown (event) ->
+      cancel() if event.keyCode is KEYCODE.esc
+

@@ -15,19 +15,19 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
   end
 
   step 'I click "Remove term" within term "beaver hat"' do
-    page.find(".term .value", text: "beaver hat").find(:xpath, './parent::*').find(".edit a", text: "Remove term")
+    page.find(".term .value", text: "beaver hat").find(:xpath, './parent::*').find(".edit a", text: "Remove term").click
   end
 
   step 'I should see a confirmation dialog "This term will be deleted permanently."' do
-    pending 'step not implemented'
+    page.should have_css(".confirm .message", text: "This term will be deleted permanently.")
   end
 
   step 'I click outside the dialog' do
-    pending 'step not implemented'
+    page.find(".modal-shim").click
   end
 
   step 'I should not see a confirmation dialog' do
-    pending 'step not implemented'
+    page.should have_no_css(".confirm")
   end
 
   step 'I should still see the English term "beaver hat"' do

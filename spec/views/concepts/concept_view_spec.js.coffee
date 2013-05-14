@@ -748,4 +748,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       it "unmarks term for deletion", ->
         $(".modal-shim").click()
         @view.$(".term").should.not.have.class "delete"
+
+      it "cancels on escape key", ->
+        keypress= $.Event "keydown"
+        keypress.keyCode = 27
+        $(document).trigger keypress
+        $("#coreon-modal").should.be.empty
+        @view.$(".term").should.not.have.class "delete"
+        
         
