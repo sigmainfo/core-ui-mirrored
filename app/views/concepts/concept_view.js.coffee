@@ -110,28 +110,32 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     term.addClass "delete"
     shim.appendTo modal
 
-    dialog.position
-      my: "center bottom"
-      at: "left+2 top-12"
-      of: trigger
-      collision: "none"
+    position = ->
+      dialog.position
+        my: "center bottom"
+        at: "left+2 top-12"
+        of: trigger
+        collision: "none"
 
     cancel = ->
-      $(document).off "keydown.coreon.confirm"
+      $(window).off ".coreon.confirm"
       term.removeClass "delete"
       modal.empty()
 
     destroy = (event) ->
-      $(document).off "keydown.coreon.confirm"
+      $(window).off ".coreon.confirm"
       event.stopPropagation()
       modal.empty()
       term.remove()
       model.destroy()
 
-    shim.click cancel
-    dialog.click destroy
-    $(document).on "keydown.coreon.confirm", (event) ->
+    position()
+    $(window).on "scroll.coreon.confirm resize.coreon.confirm", position
+
+    $(window).on "keydown.coreon.confirm", (event) ->
       switch event.keyCode
         when KEYCODE.esc   then cancel event
         when KEYCODE.enter then destroy event
 
+    shim.click cancel
+    dialog.click destroy

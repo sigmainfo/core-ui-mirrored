@@ -732,13 +732,14 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "positions confirmation dialog relative to trigger", ->
       @trigger.css
         position: "absolute"
-        top: 300
-        left: 500
-        width: 100
-        height: 50
+        top: "300px"
+        left: "500px"
+        width: "100px"
+        height: "50px"
       @view.removeTerm @event
-      $("#coreon-modal .confirm").position().top.should.be.closeTo 200, 5
-      $("#coreon-modal .confirm").position().left.should.be.closeTo 275, 5
+      dialog = $("#coreon-modal .confirm")
+      $("#coreon-modal .confirm").position().top.should.be.closeTo 225, 15
+      $("#coreon-modal .confirm").position().left.should.be.closeTo 275, 15
 
     context "cancel", ->
 
