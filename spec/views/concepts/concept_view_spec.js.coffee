@@ -284,10 +284,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
         it "renders remove term links", ->
           I18n.t.withArgs("term.delete").returns "Remove term"
-          @view.model.set "terms", [ lang: "de", value: "top head" ], silent: true
+          @term.id = "56789fghj"
           @view.render()
           @view.$(".term").should.have ".edit a.remove-term"
           @view.$(".term a.remove-term").should.have.text "Remove term"
+          @view.$(".term a.remove-term").should.have.data "id", "56789fghj"
 
       context "without edit privileges", ->
         
@@ -635,7 +636,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.createTerm @event
         @view.$("form.term.create .property").should.have ".error-message"
         @view.$("form.term.create .property .error-message").should.have.text "can't be blank"
-        
 
       it "increases index on add property link", ->
         @term.set "properties", [ key: "status" ], silent: true
@@ -698,11 +698,15 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$el.append '''
         <li class="term">
           <div class="edit">
-            <a class="remove-term" href="javascript:void(0)">Remove term</a>
-          </div>
+            <a class="remove-term" data-id="518d2569edc797ef6d000008" href="javascript:void(0)">Remove term</a>
+          </divoutput>
           <h4 class="value">beaver hat</h4>
         </li>
         '''
+      term = new Backbone.Model _id: "518d2569edc797ef6d000008"
+      term.destroy = sinon.spy()
+      terms = new Backbone.Collection [ term ]
+      @view.model.terms = -> terms
       @event = $.Event "click"
       @trigger = @view.$("a.remove-term")
       @event.target = @trigger[0]
@@ -756,4 +760,45 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         $("#coreon-modal").should.be.empty
         @view.$(".term").should.not.have.class "delete"
         
+    context "destroy", ->
+
+      beforeEach ->
+        @view.removeTerm @event
+
+      it "stops propagation", ->
+        event = $.Event "click"
+        event.stopPropagation = sinon.spy()
+        $(".confirm").trigger event
+        event.stopPropagation.should.have.been.calledOnce
         
+      it "removes dialog", ->
+        $(".confirm").click()
+        $("#coreon-modal").should.be.empty
+        
+      it "removes term from listing", ->
+        li = @view.$(".term")[0]
+        @view.$el.append '''
+        <li class="term">
+          <div class="edit">
+            <a class="remove-term" href="javascript:void(0)">Remove term</a>
+          </divoutput>
+          <h4 class="value">beaver hat</h4>
+        </li>
+        '''
+        $(".confirm").click()
+        $.contains(@view.$el[0], li).should.be.false
+        @view.$(".term").should.have.lengthOf 1
+      
+      it "destroys model", ->
+        term = @view.model.terms().at 0
+        $(".confirm").click()
+        term.destroy.should.have.been.calledOnce
+
+      it "destroys on return key", ->
+        keypress= $.Event "keydown"
+        keypress.keyCode = 13
+        term = @view.model.terms().at 0
+        $(document).trigger keypress
+        $("#coreon-modal").should.be.empty
+        @view.$(".term").should.have.lengthOf 0
+        term.destroy.should.have.been.calledOnce

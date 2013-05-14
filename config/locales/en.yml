@@ -74,6 +74,7 @@ en:
     delete: "Remove term"
     confirm_delete: "This term will be deleted permanently."
     created: 'Successfully created term "{{value}}".'
+    deleted: 'Successfully deleted term "{{value}}".'
 
   terms:
     title: "Terms"

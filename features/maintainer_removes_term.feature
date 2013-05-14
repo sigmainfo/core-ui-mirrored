@@ -1,4 +1,3 @@
-@wip
 Feature: maintainer removes term
   In order to make a term no longer available
   As a maintainer editing data in the repository
