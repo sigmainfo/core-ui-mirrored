@@ -109,10 +109,12 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     term.addClass "delete"
     shim.appendTo modal
+
     dialog.position
       my: "center bottom"
-      to: "left top"
+      at: "left+2 top-12"
       of: trigger
+      collision: "none"
 
     cancel = ->
       $(document).off "keydown.coreon.confirm"

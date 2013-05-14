@@ -729,16 +729,16 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.removeTerm @event
       @view.$(".term").should.have.class "delete"
 
-    xit "positions confirmation dialog relative to trigger", ->
+    it "positions confirmation dialog relative to trigger", ->
       @trigger.css
         position: "absolute"
         top: 300
-        left: 400
+        left: 500
         width: 100
         height: 50
       @view.removeTerm @event
-      console.log $("#coreon-modal .confirm").position()
-      $("#coreon-modal .confirm").position().should.have.property "left", 100
+      $("#coreon-modal .confirm").position().top.should.be.closeTo 200, 5
+      $("#coreon-modal .confirm").position().left.should.be.closeTo 275, 5
 
     context "cancel", ->
 
