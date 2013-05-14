@@ -292,7 +292,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @view.$('.terms .term input[id="term-0-lang"]').should.have.attr "required"
 
     it "renders remove link", ->
-      I18n.t.withArgs("term.remove").returns "Remove term"
+      I18n.t.withArgs("term.delete").returns "Remove term"
       @view.addTerm @event
       @view.$el.should.have ".term a.remove-term"
       @view.$(".term a.remove-term").should.have.text "Remove term"

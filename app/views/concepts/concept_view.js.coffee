@@ -7,12 +7,18 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
+#= require templates/concepts/_confirm
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require jquery.serializeJSON
+#= require jquery.ui.position
+
+KEYCODE =
+  esc: 27
+  enter: 13
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
@@ -22,6 +28,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
+  confirm:  Coreon.Templates["concepts/confirm"]
 
   @nestedFieldsFor "properties", name: "property"
 
@@ -34,6 +41,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .remove-property"                    : "removeProperty"
     "submit form.term.create"                    : "createTerm"
     "click  form a.cancel"                       : "cancel"
+    "click  .remove-term"                        : "removeTerm"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -90,4 +98,40 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form = $(event.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
+
+  removeTerm: (event) =>
+    trigger = $(event.target)
+    term = trigger.closest ".term"
+    modal = $("#coreon-modal")
+    shim = $ @confirm()
+    dialog = shim.find ".confirm"
+    model = @model.terms().get trigger.data "id"
+
+    term.addClass "delete"
+    shim.appendTo modal
+
+    dialog.position
+      my: "center bottom"
+      at: "left+2 top-12"
+      of: trigger
+      collision: "none"
+
+    cancel = ->
+      $(document).off "keydown.coreon.confirm"
+      term.removeClass "delete"
+      modal.empty()
+
+    destroy = (event) ->
+      $(document).off "keydown.coreon.confirm"
+      event.stopPropagation()
+      modal.empty()
+      term.remove()
+      model.destroy()
+
+    shim.click cancel
+    dialog.click destroy
+    $(document).on "keydown.coreon.confirm", (event) ->
+      switch event.keyCode
+        when KEYCODE.esc   then cancel event
+        when KEYCODE.enter then destroy event
 

@@ -274,6 +274,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
+          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns true
 
         it "renders add term link", ->
           I18n.t.withArgs("term.new").returns "Add term"
@@ -281,14 +282,28 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           @view.$(".terms").should.have ".edit a.add-term"
           @view.$(".add-term").should.have.text "Add term"
 
+        it "renders remove term links", ->
+          I18n.t.withArgs("term.delete").returns "Remove term"
+          @term.id = "56789fghj"
+          @view.render()
+          @view.$(".term").should.have ".edit a.remove-term"
+          @view.$(".term a.remove-term").should.have.text "Remove term"
+          @view.$(".term a.remove-term").should.have.data "id", "56789fghj"
+
       context "without edit privileges", ->
         
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns false
+          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns false
 
         it "does not render add term link", ->
           @view.render()
           @view.$el.should.not.have ".add-term"
+
+        it "does not render remove term link", ->
+          @view.model.set "terms", [ lang: "de", value: "top head" ], silent: true
+          @view.render()
+          @view.$(".term").should.not.have "a.remove-term"
 
   describe "toggleInfo()", ->
 
@@ -621,7 +636,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.createTerm @event
         @view.$("form.term.create .property").should.have ".error-message"
         @view.$("form.term.create .property .error-message").should.have.text "can't be blank"
-        
 
       it "increases index on add property link", ->
         @term.set "properties", [ key: "status" ], silent: true
@@ -671,8 +685,120 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "shows related edit actions", ->
       $("#konacha").append @view.$el
       @view.cancel @event
-      console.log @view.$el.html()
       @view.$(".edit a.add-term").should.be.visible
       
+  describe "removeTerm()", ->
+
+    beforeEach ->
+      $("#konacha")
+        .append(@view.$el)
+        .append '''
+        <div id="coreon-modal"></div>
+        '''
+      @view.$el.append '''
+        <li class="term">
+          <div class="edit">
+            <a class="remove-term" data-id="518d2569edc797ef6d000008" href="javascript:void(0)">Remove term</a>
+          </divoutput>
+          <h4 class="value">beaver hat</h4>
+        </li>
+        '''
+      term = new Backbone.Model _id: "518d2569edc797ef6d000008"
+      term.destroy = sinon.spy()
+      terms = new Backbone.Collection [ term ]
+      @view.model.terms = -> terms
+      @event = $.Event "click"
+      @trigger = @view.$("a.remove-term")
+      @event.target = @trigger[0]
+
+    it "is triggered by click on remove term link", ->
+      @view.removeTerm = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.removeTerm.should.have.been.calledOnce
+
+    it "renders confirmation dialog", ->
+      I18n.t.withArgs("term.confirm_delete").returns "This term will be deleted permanently."
+      I18n.t.withArgs("confirm.ok").returns "OK"
+      @view.removeTerm @event
+      $("#coreon-modal").should.have ".modal-shim .confirm" 
+      $("#coreon-modal .confirm .message").should.have.text "This term will be deleted permanently."
+      $("#coreon-modal .confirm .ok").should.have.text "OK"
+
+    it "marks term for deletetion", ->
+      @view.removeTerm @event
+      @view.$(".term").should.have.class "delete"
+
+    it "positions confirmation dialog relative to trigger", ->
+      @trigger.css
+        position: "absolute"
+        top: 300
+        left: 500
+        width: 100
+        height: 50
+      @view.removeTerm @event
+      $("#coreon-modal .confirm").position().top.should.be.closeTo 200, 5
+      $("#coreon-modal .confirm").position().left.should.be.closeTo 275, 5
+
+    context "cancel", ->
+
+      beforeEach ->
+        @view.removeTerm @event
+
+      it "removes dialog", ->
+        $(".modal-shim").click()
+        $("#coreon-modal").should.be.empty
+
+      it "unmarks term for deletion", ->
+        $(".modal-shim").click()
+        @view.$(".term").should.not.have.class "delete"
+
+      it "cancels on escape key", ->
+        keypress= $.Event "keydown"
+        keypress.keyCode = 27
+        $(document).trigger keypress
+        $("#coreon-modal").should.be.empty
+        @view.$(".term").should.not.have.class "delete"
+        
+    context "destroy", ->
+
+      beforeEach ->
+        @view.removeTerm @event
+
+      it "stops propagation", ->
+        event = $.Event "click"
+        event.stopPropagation = sinon.spy()
+        $(".confirm").trigger event
+        event.stopPropagation.should.have.been.calledOnce
+        
+      it "removes dialog", ->
+        $(".confirm").click()
+        $("#coreon-modal").should.be.empty
+        
+      it "removes term from listing", ->
+        li = @view.$(".term")[0]
+        @view.$el.append '''
+        <li class="term">
+          <div class="edit">
+            <a class="remove-term" href="javascript:void(0)">Remove term</a>
+          </divoutput>
+          <h4 class="value">beaver hat</h4>
+        </li>
+        '''
+        $(".confirm").click()
+        $.contains(@view.$el[0], li).should.be.false
+        @view.$(".term").should.have.lengthOf 1
       
-    
+      it "destroys model", ->
+        term = @view.model.terms().at 0
+        $(".confirm").click()
+        term.destroy.should.have.been.calledOnce
+
+      it "destroys on return key", ->
+        keypress= $.Event "keydown"
+        keypress.keyCode = 13
+        term = @view.model.terms().at 0
+        $(document).trigger keypress
+        $("#coreon-modal").should.be.empty
+        @view.$(".term").should.have.lengthOf 0
+        term.destroy.should.have.been.calledOnce

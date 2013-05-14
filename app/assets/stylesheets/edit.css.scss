@@ -186,6 +186,28 @@ form.create {
   .terms >.edit {
     @include retina-separator;
     height:20px;
+    .add-term {
+      top: 20px;
+    }
+  }
+  
+  .term {
+    .edit {
+      height: 18px;
+    }
+    .properties h3 {
+      top: 28px;
+    }
+    .system-info-toggle {
+      top: 34px;
+    }
+    
+  }
+  
+  .term.delete {
+    .value, .properties {
+      @include opacity(0.4);
+    }
   }
 }
 
@@ -202,8 +224,6 @@ form.create {
 
       &:before {
         @include before-icon;
-  /*      float: right;
-        margin-left: 7px;*/
         float: left;
         margin-right: 5px;
         background-position: -2px -351px;
@@ -219,7 +239,7 @@ form.create {
     }
     a.remove-term, a.remove-property {
       position: absolute;
-      top: 10px;
+      top: 8px;
       right: 0;
       &:before {
         background-position: -52px -351px;
@@ -239,11 +259,7 @@ form.create {
       };
     }
 }
-.concept.show {
-  .edit .add-term {
-    top: 20px;
-  }
-}
+
 
 @media all and (max-width: 999px) and (min-width: 800px) {
   div.concept  {
@@ -268,6 +284,21 @@ form.create {
           }
       }
     }
+  }
+  .concept.edit, .concept.show {
+    .term {
+      .edit {
+        height: 24px;
+      }
+      .properties h3 {
+        top: 24px;
+      }
+      .system-info-toggle {
+        top: 30px;
+      }
+
+    }
+    
   }
 }
 
@@ -313,6 +344,24 @@ form.create {
       width:auto;
     }
 
+  }
+  .concept.edit, .concept.show {
+    .term {
+      .edit {
+        height: 24px;
+        .remove-term {
+          top: 5px;
+          width: 16px;
+          overflow: hidden;
+          text-indent: -2000px;
+        }
+      }
+      .properties h3 {
+        top: 24px;
+      }
+
+    }
+    
   }
   
 }
