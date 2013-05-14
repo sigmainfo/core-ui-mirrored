@@ -721,7 +721,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       $("#coreon-modal .confirm .message").should.have.text "This term will be deleted permanently."
       $("#coreon-modal .confirm .ok").should.have.text "OK"
 
-    it "positions confirmation dialog relative to trigger", ->
+    it "marks term for deletetion", ->
+      @view.removeTerm @event
+      @view.$(".term").should.have.class "delete"
+
+    xit "positions confirmation dialog relative to trigger", ->
       @trigger.css
         position: "absolute"
         top: 300
@@ -731,3 +735,17 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.removeTerm @event
       console.log $("#coreon-modal .confirm").position()
       $("#coreon-modal .confirm").position().should.have.property "left", 100
+
+    context "cancel", ->
+
+      beforeEach ->
+        @view.removeTerm @event
+
+      it "removes dialog", ->
+        $(".modal-shim").click()
+        $("#coreon-modal").should.be.empty
+
+      it "unmarks term for deletion", ->
+        $(".modal-shim").click()
+        @view.$(".term").should.not.have.class "delete"
+        

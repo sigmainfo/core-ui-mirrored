@@ -97,11 +97,18 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   removeTerm: (event) ->
     trigger = $(event.target)
-    $(@confirm())
-      .appendTo($("#coreon-modal"))
-      .position(
-        my: "center bottom"
-        to: "left top"
-        of: trigger
-      )
+    term = trigger.closest ".term"
+    modal = $("#coreon-modal")
+    confirm = $ @confirm()
 
+    term.addClass "delete"
+
+    confirm.appendTo modal
+    confirm.position
+      my: "center bottom"
+      to: "left top"
+      of: trigger
+
+    confirm.click ->
+      term.removeClass "delete"
+      modal.empty()
