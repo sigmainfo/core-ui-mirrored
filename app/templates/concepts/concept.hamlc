@@ -6,7 +6,7 @@
 .terms
   - if @concept.get("terms")?.length > 0
     - for lang, terms of @concept.termsByLang()
-      %section.language{class: lang}
+      %section.language{class: lang.toLowerCase()}
         %h3= lang
         %ul
           - for term in terms

@@ -12,9 +12,8 @@
     display: block;
     background-color: $greencolor;
     @include border-radius(6px);
-
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset, rgba(black, 0.4) 2px 2px 5px);
-    @include retina-stripes(white);
+    @include background(linear-gradient(lighten($greencolor, 6), $greencolor));
     min-width: 300px;
     width: 50%;
     max-width: 450px;
@@ -22,33 +21,42 @@
     p {
       padding: 20px;
       display: inline-block;  
+
+    }
+    .message {
+      padding-right: 70px; 
     }
     .ok {
-      float: right;
       font-size: 1.4em;
-      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
       background-color: $button-color;
       border-left: 1px solid rgba(black, 0.2);
       @include border-right-radius(6px);
       @include retina-stripes(white);
-      @include box-shadow(rgba(white, 0.2) 1px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset);
-      
+      @include box-shadow(rgba(white, 0.2) 1px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset);      
     }
+    
     &:before {
       content: "";
       display: block;
       position: absolute;
-      bottom: -12px;
+      bottom: -6px;
       left: 50%;
-      width: 12px;
-      height: 12px;
-      @include retina-stripes(white);
-      @include rotate(45deg);
-      background-color: $greencolor;
+      width:12px; 
+    	height:12px;
+    	background-color: $greencolor;
+      @include box-shadow(rgba(black, 0.4) 1px -1px 1px inset, rgba(black, 0.4) -2px 2px 2px);      
+    	@include rotate(-45deg);
     }
     
     &:hover {
-      background-color: $button-color;
+      @include background(linear-gradient(lighten($button-color, 6), $button-color));
+      &:before {
+        background-color: $button-color;
+      };
     }
   }
   

@@ -187,6 +187,16 @@ form.create {
     @include retina-separator;
     height:20px;
   }
+  
+  .edit .add-term {
+    top: 20px;
+  }
+  
+  .term.delete {
+    .value, .properties {
+      @include opacity(0.4);
+    }
+  }
 }
 
 
@@ -239,11 +249,7 @@ form.create {
       };
     }
 }
-.concept.show {
-  .edit .add-term {
-    top: 20px;
-  }
-}
+
 
 @media all and (max-width: 999px) and (min-width: 800px) {
   div.concept  {
