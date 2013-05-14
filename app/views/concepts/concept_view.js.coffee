@@ -7,12 +7,14 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
+#= require templates/concepts/_confirm
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require jquery.serializeJSON
+#= require jquery.ui.position
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
@@ -22,6 +24,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
+  confirm:  Coreon.Templates["concepts/confirm"]
 
   @nestedFieldsFor "properties", name: "property"
 
@@ -34,6 +37,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .remove-property"                    : "removeProperty"
     "submit form.term.create"                    : "createTerm"
     "click  form a.cancel"                       : "cancel"
+    "click  .remove-term"                        : "removeTerm"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -90,4 +94,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form = $(event.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
+
+  removeTerm: (event) ->
+    trigger = $(event.target)
+    $(@confirm())
+      .appendTo($("#coreon-modal"))
+      .position(
+        my: "center bottom"
+        to: "left top"
+        of: trigger
+      )
 

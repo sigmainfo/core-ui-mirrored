@@ -11,6 +11,9 @@
         %ul
           - for term in terms
             %li.term
+              - if @can "delete", Coreon.Models.Term
+                .edit
+                  %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.delete"
               %h4.value= term.get "value"
               %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
               != @render "concepts/info", data: term.info()

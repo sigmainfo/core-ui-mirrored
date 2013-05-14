@@ -274,6 +274,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
+          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns true
 
         it "renders add term link", ->
           I18n.t.withArgs("term.new").returns "Add term"
@@ -281,14 +282,27 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           @view.$(".terms").should.have ".edit a.add-term"
           @view.$(".add-term").should.have.text "Add term"
 
+        it "renders remove term links", ->
+          I18n.t.withArgs("term.delete").returns "Remove term"
+          @view.model.set "terms", [ lang: "de", value: "top head" ], silent: true
+          @view.render()
+          @view.$(".term").should.have ".edit a.remove-term"
+          @view.$(".term a.remove-term").should.have.text "Remove term"
+
       context "without edit privileges", ->
         
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns false
+          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns false
 
         it "does not render add term link", ->
           @view.render()
           @view.$el.should.not.have ".add-term"
+
+        it "does not render remove term link", ->
+          @view.model.set "terms", [ lang: "de", value: "top head" ], silent: true
+          @view.render()
+          @view.$(".term").should.not.have "a.remove-term"
 
   describe "toggleInfo()", ->
 
@@ -671,8 +685,49 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "shows related edit actions", ->
       $("#konacha").append @view.$el
       @view.cancel @event
-      console.log @view.$el.html()
       @view.$(".edit a.add-term").should.be.visible
       
-      
-    
+  describe "removeTerm()", ->
+
+    beforeEach ->
+      $("#konacha")
+        .append(@view.$el)
+        .append '''
+        <div id="coreon-modal"></div>
+        '''
+      @view.$el.append '''
+        <li class="term">
+          <div class="edit">
+            <a class="remove-term" href="javascript:void(0)">Remove term</a>
+          </div>
+          <h4 class="value">beaver hat</h4>
+        </li>
+        '''
+      @event = $.Event "click"
+      @trigger = @view.$("a.remove-term")
+      @event.target = @trigger[0]
+
+    it "is triggered by click on remove term link", ->
+      @view.removeTerm = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.removeTerm.should.have.been.calledOnce
+
+    it "renders confirmation dialog", ->
+      I18n.t.withArgs("term.confirm_delete").returns "This term will be deleted permanently."
+      I18n.t.withArgs("confirm.ok").returns "OK"
+      @view.removeTerm @event
+      $("#coreon-modal").should.have ".modal-shim .confirm" 
+      $("#coreon-modal .confirm .message").should.have.text "This term will be deleted permanently."
+      $("#coreon-modal .confirm .ok").should.have.text "OK"
+
+    it "positions confirmation dialog relative to trigger", ->
+      @trigger.css
+        position: "absolute"
+        top: 300
+        left: 400
+        width: 100
+        height: 50
+      @view.removeTerm @event
+      console.log $("#coreon-modal .confirm").position()
+      $("#coreon-modal .confirm").position().should.have.property "left", 100
