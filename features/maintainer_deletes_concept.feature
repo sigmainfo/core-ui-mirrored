@@ -1,4 +1,3 @@
-@wip
 Feature: maintainer deletes concept
   In order to make a concept no longer available
   As a maintainer editing data in the repository

@@ -7,28 +7,24 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
-#= require templates/concepts/_confirm
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
 #= require modules/nested_fields_for
+#= require modules/confirmation
 #= require jquery.serializeJSON
-#= require jquery.ui.position
-
-KEYCODE =
-  esc: 27
-  enter: 13
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
 
+  Coreon.Modules.include @, Coreon.Modules.Confirmation
+
   className: "concept show"
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
-  confirm:  Coreon.Templates["concepts/confirm"]
 
   @nestedFieldsFor "properties", name: "property"
 
@@ -101,84 +97,23 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form.remove()
 
   removeTerm: (event) =>
-    trigger = $(event.target)
-    term = trigger.closest ".term"
-    modal = $("#coreon-modal")
-    shim = $ @confirm message: I18n.t "term.confirm_delete"
-    dialog = shim.find ".confirm"
+    trigger = $ event.target
+    container = trigger.closest ".term"
     model = @model.terms().get trigger.data "id"
-
-    term.addClass "delete"
-    shim.appendTo modal
-
-    position = ->
-      dialog.position
-        my: "center bottom"
-        at: "left+2 top-12"
-        of: trigger
-        collision: "none flip"
-
-    cancel = ->
-      $(window).off ".coreon.confirm"
-      term.removeClass "delete"
-      modal.empty()
-
-    destroy = (event) ->
-      $(window).off ".coreon.confirm"
-      event.stopPropagation()
-      modal.empty()
-      term.remove()
-      model.destroy()
-
-    position()
-    $(window).on "scroll.coreon.confirm resize.coreon.confirm", position
-
-    $(window).on "keydown.coreon.confirm", (event) ->
-      switch event.keyCode
-        when KEYCODE.esc   then cancel event
-        when KEYCODE.enter then destroy event
-
-    shim.click cancel
-    dialog.click destroy
+    @confirm
+      trigger: trigger
+      container: container
+      message: I18n.t "term.confirm_delete"
+      action: ->
+        container.remove()
+        model.destroy()
 
   delete: (event) ->
-    trigger = $(event.target)
-    container = trigger.closest ".concept"
-    modal = $("#coreon-modal")
-    shim = $ @confirm message: I18n.t "concept.confirm_delete"
-    dialog = shim.find ".confirm"
-    model = @model
-
-    container.addClass "delete"
-    shim.appendTo modal
-
-    position = ->
-      console.log "POS"
-      dialog.position
-        my: "center bottom"
-        at: "left+2 top-12"
-        of: trigger
-        collision: "none flip"
-
-    cancel = ->
-      $(window).off ".coreon.confirm"
-      container.removeClass "delete"
-      modal.empty()
-
-    destroy = (event) ->
-      $(window).off ".coreon.confirm"
-      event.stopPropagation()
-      modal.empty()
-      model.destroy()
-      Backbone.history.navigate "/", trigger: true
-
-    position()
-    $(window).on "scroll.coreon.confirm resize.coreon.confirm", position
-
-    $(window).on "keydown.coreon.confirm", (event) ->
-      switch event.keyCode
-        when KEYCODE.esc   then cancel event
-        when KEYCODE.enter then destroy event
-
-    shim.click cancel
-    dialog.click destroy
+    trigger = $ event.target
+    @confirm
+      trigger: trigger
+      container: trigger.closest ".concept"
+      message: I18n.t "concept.confirm_delete"
+      action: =>
+        @model.destroy()
+        Backbone.history.navigate "/", trigger: true

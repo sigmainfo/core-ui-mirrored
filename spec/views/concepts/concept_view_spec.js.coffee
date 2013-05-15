@@ -732,6 +732,9 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @trigger = @view.$("a.remove-term")
       @event.target = @trigger[0]
 
+    afterEach ->
+      $(window).off ".coreon.confirm"
+
     it "is triggered by click on remove term link", ->
       @view.removeTerm = sinon.spy()
       @view.delegateEvents()
