@@ -14,12 +14,12 @@
     @include border-radius(6px);
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset, rgba(black, 0.4) 2px 2px 5px);
     @include background(linear-gradient(lighten($greencolor, 6), $greencolor));
-    min-width: 300px;
+    min-width: 220px;
     width: 50%;
-    max-width: 450px;
+    max-width: 400px;
     color: white;
     p {
-      padding: 20px;
+      padding: 15px;
       display: inline-block;  
 
     }
@@ -50,6 +50,14 @@
     	background-color: $greencolor;
       @include box-shadow(rgba(black, 0.4) 1px -1px 1px inset, rgba(black, 0.3) -2px 2px 2px);      
     	@include rotate(-45deg);
+    }
+    
+    &.flipped {
+      &:before {
+        top: -6px;
+        background-color: lighten($greencolor, 6);
+        @include box-shadow(rgba(white, 0.2) -1px 1px 1px inset);
+      };
     }
     
     &:hover {
