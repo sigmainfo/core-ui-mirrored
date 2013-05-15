@@ -42,6 +42,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "submit form.term.create"                    : "createTerm"
     "click  form a.cancel"                       : "cancel"
     "click  .remove-term"                        : "removeTerm"
+    "click  .delete"                             : "delete"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -103,7 +104,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     trigger = $(event.target)
     term = trigger.closest ".term"
     modal = $("#coreon-modal")
-    shim = $ @confirm()
+    shim = $ @confirm message: I18n.t "term.confirm_delete"
     dialog = shim.find ".confirm"
     model = @model.terms().get trigger.data "id"
 
@@ -115,7 +116,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         my: "center bottom"
         at: "left+2 top-12"
         of: trigger
-        collision: "none"
+        collision: "none flip"
 
     cancel = ->
       $(window).off ".coreon.confirm"
@@ -128,6 +129,48 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       modal.empty()
       term.remove()
       model.destroy()
+
+    position()
+    $(window).on "scroll.coreon.confirm resize.coreon.confirm", position
+
+    $(window).on "keydown.coreon.confirm", (event) ->
+      switch event.keyCode
+        when KEYCODE.esc   then cancel event
+        when KEYCODE.enter then destroy event
+
+    shim.click cancel
+    dialog.click destroy
+
+  delete: (event) ->
+    trigger = $(event.target)
+    container = trigger.closest ".concept"
+    modal = $("#coreon-modal")
+    shim = $ @confirm message: I18n.t "concept.confirm_delete"
+    dialog = shim.find ".confirm"
+    model = @model
+
+    container.addClass "delete"
+    shim.appendTo modal
+
+    position = ->
+      console.log "POS"
+      dialog.position
+        my: "center bottom"
+        at: "left+2 top-12"
+        of: trigger
+        collision: "none flip"
+
+    cancel = ->
+      $(window).off ".coreon.confirm"
+      container.removeClass "delete"
+      modal.empty()
+
+    destroy = (event) ->
+      $(window).off ".coreon.confirm"
+      event.stopPropagation()
+      modal.empty()
+      model.destroy()
+      Backbone.history.navigate "/", trigger: true
 
     position()
     $(window).on "scroll.coreon.confirm resize.coreon.confirm", position

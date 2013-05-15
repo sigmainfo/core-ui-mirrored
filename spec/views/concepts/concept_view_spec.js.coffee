@@ -750,17 +750,21 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.removeTerm @event
       @view.$(".term").should.have.class "delete"
 
-    xit "positions confirmation dialog relative to trigger", ->
-      @trigger.css
-        position: "absolute"
-        top: "300px"
-        left: "500px"
-        width: "100px"
-        height: "50px"
-      @view.removeTerm @event
-      dialog = $("#coreon-modal .confirm")
-      $("#coreon-modal .confirm").position().top.should.be.closeTo 225, 15
-      $("#coreon-modal .confirm").position().left.should.be.closeTo 275, 15
+    # it "positions confirmation dialog relative to trigger", ->
+    #   @trigger.css
+    #     position: "absolute"
+    #     top:    100
+    #     left:   200
+    #     width:  120
+    #     height: 50
+    #   @view.removeTerm @event
+    #   dialog = $("#coreon-modal .confirm")
+    #   dialog.css
+    #     width: 180
+    #     height: 30
+    #   $(window).scroll()
+    #   dialog.position().top.should.be.closeTo 62, 10
+    #   dialog.position().left.should.be.closeTo 50, 10
 
     context "cancel", ->
 
@@ -824,3 +828,114 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         $("#coreon-modal").should.be.empty
         @view.$(".term").should.have.lengthOf 0
         term.destroy.should.have.been.calledOnce
+
+  describe "delete()", ->
+
+    beforeEach ->
+      $("#konacha")
+        .append(@view.$el)
+        .append '''
+        <div id="coreon-modal"></div>
+        '''
+      @view.$el.append '''
+        <div class="concept">
+          <a class="delete" href="javascript:void(0)">Delete concept</a>
+        </div>
+        '''
+      @trigger = @view.$("a.delete")
+      @event = $.Event "click"
+      @event.target = @trigger[0]
+
+    afterEach ->
+      $(window).off ".coreon.confirm"
+
+    it "is triggered by click on remove concept link", ->
+      @view.delete = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".delete").trigger @event
+      @view.delete.should.have.been.calledOnce
+
+    it "renders confirmation dialog", ->
+      I18n.t.withArgs("concept.confirm_delete").returns "This concept will be deleted permanently."
+      I18n.t.withArgs("confirm.ok").returns "OK"
+      @view.delete @event
+      $("#coreon-modal").should.have ".modal-shim .confirm" 
+      $("#coreon-modal .confirm .message").should.have.text "This concept will be deleted permanently."
+      $("#coreon-modal .confirm .ok").should.have.text "OK"
+
+    it "marks concept for deletetion", ->
+      @view.delete @event
+      @view.$(".concept").should.have.class "delete"
+
+    # it "positions confirmation dialog relative to trigger", ->
+    #   @trigger.css
+    #     position: "absolute"
+    #     top:    100
+    #     left:   200
+    #     width:  120
+    #     height: 50
+    #   @view.delete @event
+    #   dialog = $("#coreon-modal .confirm")
+    #   dialog.css
+    #     width: 180
+    #     height: 30
+    #   $(window).scroll()
+    #   dialog.position().top.should.be.closeTo 62, 10
+    #   dialog.position().left.should.be.closeTo 50, 10
+
+    context "cancel", ->
+
+      beforeEach ->
+        @view.delete @event
+
+      it "removes dialog", ->
+        $(".modal-shim").click()
+        $("#coreon-modal").should.be.empty
+
+      it "unmarks term for deletion", ->
+        $(".modal-shim").click()
+        @view.$(".concept").should.not.have.class "delete"
+
+      it "cancels on escape key", ->
+        keypress= $.Event "keydown"
+        keypress.keyCode = 27
+        $(document).trigger keypress
+        $("#coreon-modal").should.be.empty
+        @view.$(".concept").should.not.have.class "delete"
+
+    context "destroy", ->
+
+      beforeEach ->
+        @history = Backbone.history
+        Backbone.history = navigate: sinon.spy()
+        @view.model.destroy = sinon.spy()
+        @view.delete @event
+
+      afterEach ->
+        Backbone.history = @history
+
+      it "stops propagation", ->
+        event = $.Event "click"
+        event.stopPropagation = sinon.spy()
+        $(".confirm").trigger event
+        event.stopPropagation.should.have.been.calledOnce
+        
+      it "removes dialog", ->
+        $(".confirm").click()
+        $("#coreon-modal").should.be.empty
+        
+      it "redirects to repository root", ->
+        $(".confirm").click()
+        Backbone.history.navigate.should.have.been.calledWith "/", trigger: true
+      
+      it "destroys model", ->
+        $(".confirm").click()
+        @view.model.destroy.should.have.been.calledOnce
+
+      it "destroys on return key", ->
+        keypress= $.Event "keydown"
+        keypress.keyCode = 13
+        $(document).trigger keypress
+        $("#coreon-modal").should.be.empty
+        Backbone.history.navigate.should.have.been.calledWith "/", trigger: true
+        @view.model.destroy.should.have.been.calledOnce

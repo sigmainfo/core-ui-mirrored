@@ -19,38 +19,32 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see a confirmation dialog "This concept including all terms will be deleted permanently."' do
-    pending 'step not implemented'
+    page.should have_css(".confirm .message", text: "This concept including all terms will be deleted permanently.")
   end
 
-  step 'I click outside the dialog' do
-    pending 'step not implemented'
-  end
-
-  step 'I should not see a confirmation dialog' do
-    pending 'step not implemented'
-  end
 
   step 'I should still be on the show concept page' do
-    pending 'step not implemented'
-  end
-
-  step 'I click "OK" within the dialog' do
-    pending 'step not implemented'
+    page.current_path.should == "/concepts/#{@concept['_id']}"
   end
 
   step 'I should be on the repository root page' do
-    pending 'step not implemented'
+    page.current_path.should == "/"
   end
 
   step 'I should see a message \'Successfully deleted concept "beaver hat".\'' do
-    pending 'step not implemented'
+    page.should have_css(".notification", text: 'Successfully deleted concept "beaver hat".')
   end
 
   step 'I search for "hat"' do
-    pending 'step not implemented'
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "hat"
+      find('input[type="submit"]').click
+    end
   end
 
   step 'I should not see "beaver hat"' do
-    pending 'step not implemented'
+    within ".search-results-concepts" do
+      page.should have_no_content("beaver hat")
+    end
   end
 end

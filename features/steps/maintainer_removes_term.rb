@@ -22,21 +22,8 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
     page.should have_css(".confirm .message", text: "This term will be deleted permanently.")
   end
 
-  step 'I click outside the dialog' do
-    page.execute_script '$(".modal-shim").css({height: 300})'
-    page.find(".modal-shim").click
-  end
-
-  step 'I should not see a confirmation dialog' do
-    page.should have_no_css(".confirm")
-  end
-
   step 'I should still see the English term "beaver hat"' do
     page.should have_css(".term .value", text: "beaver hat")
-  end
-
-  step 'I click "OK" within the dialog' do
-    page.find(".confirm p", text: "OK").click
   end
 
   step 'I should see a message \'Successfully deleted term "beaver hat".\'' do
