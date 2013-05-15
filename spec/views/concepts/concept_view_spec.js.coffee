@@ -733,7 +733,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @trigger[0]
 
     afterEach ->
-      $(window).off ".coreon.confirm"
+      $(window).off ".coreonConfirm"
 
     it "is triggered by click on remove term link", ->
       @view.removeTerm = sinon.spy()
@@ -743,66 +743,26 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     it "renders confirmation dialog", ->
       I18n.t.withArgs("term.confirm_delete").returns "This term will be deleted permanently."
-      I18n.t.withArgs("confirm.ok").returns "OK"
       @view.removeTerm @event
-      $("#coreon-modal").should.have ".modal-shim .confirm" 
       $("#coreon-modal .confirm .message").should.have.text "This term will be deleted permanently."
-      $("#coreon-modal .confirm .ok").should.have.text "OK"
 
     it "marks term for deletetion", ->
       @view.removeTerm @event
       @view.$(".term").should.have.class "delete"
-
-    # it "positions confirmation dialog relative to trigger", ->
-    #   @trigger.css
-    #     position: "absolute"
-    #     top:    100
-    #     left:   200
-    #     width:  120
-    #     height: 50
-    #   @view.removeTerm @event
-    #   dialog = $("#coreon-modal .confirm")
-    #   dialog.css
-    #     width: 180
-    #     height: 30
-    #   $(window).scroll()
-    #   dialog.position().top.should.be.closeTo 62, 10
-    #   dialog.position().left.should.be.closeTo 50, 10
 
     context "cancel", ->
 
       beforeEach ->
         @view.removeTerm @event
 
-      it "removes dialog", ->
-        $(".modal-shim").click()
-        $("#coreon-modal").should.be.empty
-
       it "unmarks term for deletion", ->
         $(".modal-shim").click()
         @view.$(".term").should.not.have.class "delete"
 
-      it "cancels on escape key", ->
-        keypress= $.Event "keydown"
-        keypress.keyCode = 27
-        $(document).trigger keypress
-        $("#coreon-modal").should.be.empty
-        @view.$(".term").should.not.have.class "delete"
-        
     context "destroy", ->
 
       beforeEach ->
         @view.removeTerm @event
-
-      it "stops propagation", ->
-        event = $.Event "click"
-        event.stopPropagation = sinon.spy()
-        $(".confirm").trigger event
-        event.stopPropagation.should.have.been.calledOnce
-        
-      it "removes dialog", ->
-        $(".confirm").click()
-        $("#coreon-modal").should.be.empty
         
       it "removes term from listing", ->
         li = @view.$(".term")[0]
@@ -823,15 +783,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         $(".confirm").click()
         term.destroy.should.have.been.calledOnce
 
-      it "destroys on return key", ->
-        keypress= $.Event "keydown"
-        keypress.keyCode = 13
-        term = @view.model.terms().at 0
-        $(document).trigger keypress
-        $("#coreon-modal").should.be.empty
-        @view.$(".term").should.have.lengthOf 0
-        term.destroy.should.have.been.calledOnce
-
   describe "delete()", ->
 
     beforeEach ->
@@ -850,7 +801,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @trigger[0]
 
     afterEach ->
-      $(window).off ".coreon.confirm"
+      $(window).off ".coreonConfirm"
 
     it "is triggered by click on remove concept link", ->
       @view.delete = sinon.spy()
@@ -860,50 +811,20 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     it "renders confirmation dialog", ->
       I18n.t.withArgs("concept.confirm_delete").returns "This concept will be deleted permanently."
-      I18n.t.withArgs("confirm.ok").returns "OK"
       @view.delete @event
-      $("#coreon-modal").should.have ".modal-shim .confirm" 
       $("#coreon-modal .confirm .message").should.have.text "This concept will be deleted permanently."
-      $("#coreon-modal .confirm .ok").should.have.text "OK"
 
     it "marks concept for deletetion", ->
       @view.delete @event
       @view.$(".concept").should.have.class "delete"
-
-    # it "positions confirmation dialog relative to trigger", ->
-    #   @trigger.css
-    #     position: "absolute"
-    #     top:    100
-    #     left:   200
-    #     width:  120
-    #     height: 50
-    #   @view.delete @event
-    #   dialog = $("#coreon-modal .confirm")
-    #   dialog.css
-    #     width: 180
-    #     height: 30
-    #   $(window).scroll()
-    #   dialog.position().top.should.be.closeTo 62, 10
-    #   dialog.position().left.should.be.closeTo 50, 10
 
     context "cancel", ->
 
       beforeEach ->
         @view.delete @event
 
-      it "removes dialog", ->
-        $(".modal-shim").click()
-        $("#coreon-modal").should.be.empty
-
       it "unmarks term for deletion", ->
         $(".modal-shim").click()
-        @view.$(".concept").should.not.have.class "delete"
-
-      it "cancels on escape key", ->
-        keypress= $.Event "keydown"
-        keypress.keyCode = 27
-        $(document).trigger keypress
-        $("#coreon-modal").should.be.empty
         @view.$(".concept").should.not.have.class "delete"
 
     context "destroy", ->
@@ -916,16 +837,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       afterEach ->
         Backbone.history = @history
-
-      it "stops propagation", ->
-        event = $.Event "click"
-        event.stopPropagation = sinon.spy()
-        $(".confirm").trigger event
-        event.stopPropagation.should.have.been.calledOnce
-        
-      it "removes dialog", ->
-        $(".confirm").click()
-        $("#coreon-modal").should.be.empty
         
       it "redirects to repository root", ->
         $(".confirm").click()
@@ -933,12 +844,4 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       
       it "destroys model", ->
         $(".confirm").click()
-        @view.model.destroy.should.have.been.calledOnce
-
-      it "destroys on return key", ->
-        keypress= $.Event "keydown"
-        keypress.keyCode = 13
-        $(document).trigger keypress
-        $("#coreon-modal").should.be.empty
-        Backbone.history.navigate.should.have.been.calledWith "/", trigger: true
         @view.model.destroy.should.have.been.calledOnce
