@@ -14,11 +14,14 @@
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
 #= require modules/nested_fields_for
+#= require modules/confirmation
 #= require jquery.serializeJSON
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
+
+  Coreon.Modules.include @, Coreon.Modules.Confirmation
 
   className: "concept show"
   editMode: no
@@ -30,16 +33,18 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click  .edit-concept"                          : "toggleEditMode"
-    "click  *:not(.terms) .edit-properties"         : "editConceptProperties"
-    "click  .system-info-toggle"                    : "toggleInfo"
-    "click  section:not(form *) > *:first-child"    : "toggleSection"
-    "click  .properties .index li"                  : "selectProperty"
-    "click  .add-term"                              : "addTerm"
-    "click  .add-property"                          : "addProperty"
-    "click  .remove-property"                       : "removeProperty"
-    "submit form.term.create"                       : "createTerm"
-    "click  form a.cancel"                          : "cancel"
+    "click  .edit-concept"                       : "toggleEditMode"
+    "click  *:not(.terms) .edit-properties"      : "editConceptProperties"
+    "click  .system-info-toggle"                 : "toggleInfo"
+    "click  section:not(form *) > *:first-child" : "toggleSection"
+    "click  .properties .index li"               : "selectProperty"
+    "click  .add-term"                           : "addTerm"
+    "click  .add-property"                       : "addProperty"
+    "click  .remove-property"                    : "removeProperty"
+    "submit form.term.create"                    : "createTerm"
+    "click  form a.cancel"                       : "cancel"
+    "click  .remove-term"                        : "removeTerm"
+    "click  .edit .delete"                       : "delete"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -86,7 +91,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   addTerm: ->
     terms = @$(".terms")
-    terms.find(".edit").hide()
+    terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
   createTerm: (event) ->
@@ -110,3 +115,24 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form.siblings(".edit").show()
     form.remove()
 
+  removeTerm: (event) =>
+    trigger = $ event.target
+    container = trigger.closest ".term"
+    model = @model.terms().get trigger.data "id"
+    @confirm
+      trigger: trigger
+      container: container
+      message: I18n.t "term.confirm_delete"
+      action: ->
+        container.remove()
+        model.destroy()
+
+  delete: (event) ->
+    trigger = $ event.target
+    @confirm
+      trigger: trigger
+      container: trigger.closest ".concept"
+      message: I18n.t "concept.confirm_delete"
+      action: =>
+        @model.destroy()
+        Backbone.history.navigate "/", trigger: true

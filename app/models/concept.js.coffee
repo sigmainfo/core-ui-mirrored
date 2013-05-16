@@ -41,6 +41,7 @@ class Coreon.Models.Concept extends Backbone.Model
       @listenTo Coreon.application.hits, "reset add remove", @_updateHit
     @remoteValidationOn()
     @once "sync", @syncMessage, @ if @isNew()
+    @once "destroy", @onDestroy, @
 
   termsByLang: ->
     terms = {}
@@ -87,3 +88,6 @@ class Coreon.Models.Concept extends Backbone.Model
   onCreate: ->
     @trigger "create", @, @.id
     @message I18n.t("concept.created", label: @get "label"), type: "info"
+
+  onDestroy: ->
+    @message I18n.t("concept.deleted", label: @get "label"), type: "info"

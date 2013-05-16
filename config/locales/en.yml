@@ -65,6 +65,9 @@ en:
     edit: "Edit concept"
     create: "Create concept"
     created: 'Successfully created concept "{{label}}".'
+    delete: "Delete concept"
+    confirm_delete: "This concept including all terms will be deleted permanently."
+    deleted: 'Successfully deleted concept "{{label}}".'
 
   term:
     info: "System Info"
@@ -72,8 +75,10 @@ en:
     lang: "Language"
     new: "Add term"
     create: "Create term"
-    remove: "Remove term"
     created: 'Successfully created term "{{value}}".'
+    delete: "Remove term"
+    confirm_delete: "This term will be deleted permanently."
+    deleted: 'Successfully deleted term "{{value}}".'
 
   terms:
     title: "Terms"
@@ -128,3 +133,6 @@ en:
     zoom-in: "Zoom in"
     zoom-out: "Zoom out"
     toggle-orientation: "Toggle orientation"
+
+  confirm:
+    ok: "OK"

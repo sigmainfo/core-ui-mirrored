@@ -186,6 +186,37 @@ form.create, form.update{
   .terms >.edit {
     @include retina-separator;
     height:20px;
+    .add-term {
+      top: 20px;
+    }
+  }
+  
+  .language .term {
+    .edit {
+      height: 18px;
+    }
+    .properties h3 {
+      top: 28px;
+    }
+    .system-info-toggle {
+      top: 34px;
+    }
+    
+  }
+  
+  .term.delete {
+    .value, .properties {
+      @include opacity(0.4);
+    }
+  }
+}
+
+.concept.delete {
+  &>* {
+    @include opacity(0.4);
+  }
+  &>.edit {
+      @include opacity(1);
   }
 }
 
@@ -202,8 +233,6 @@ form.create, form.update{
 
       &:before {
         @include before-icon;
-  /*      float: right;
-        margin-left: 7px;*/
         float: left;
         margin-right: 5px;
         background-position: -2px -351px;
@@ -217,13 +246,16 @@ form.create, form.update{
         };
       }
     }
-    a.remove-term, a.remove-property {
+    a.remove-term, a.remove-property, , a.delete {
       position: absolute;
-      top: 10px;
+      top: 8px;
       right: 0;
       &:before {
         background-position: -52px -351px;
       };
+    }
+    a.delete {
+      top:-18px;
     }
     .terms a.remove-property {
       width: 16px;
@@ -239,11 +271,7 @@ form.create, form.update{
       };
     }
 }
-.concept.show {
-  .edit .add-term {
-    top: 20px;
-  }
-}
+
 
 @media all and (max-width: 999px) and (min-width: 800px) {
   div.concept  {
@@ -269,6 +297,21 @@ form.create, form.update{
       }
     }
   }
+  .concept.edit, .concept.show {
+    .language .term {
+      .edit {
+        height: 24px;
+      }
+      .properties h3 {
+        top: 24px;
+      }
+      .system-info-toggle {
+        top: 30px;
+      }
+
+    }
+    
+  }
 }
 
 @media all and (max-width: 799px) {
@@ -281,7 +324,7 @@ form.create, form.update{
       float: none;
     }
 
-    .create {
+    .create, .update {
       .properties {
           padding-top: 10px;
 
@@ -313,6 +356,25 @@ form.create, form.update{
       width:auto;
     }
 
+  }
+  .concept.edit, .concept.show {
+    .language .term {
+      .edit {
+        height: 24px;
+        .remove-term {
+          top: 5px;
+          margin-right: 0;
+          width: 16px;
+          overflow: hidden;
+          text-indent: -2000px;
+        }
+      }
+      .properties h3 {
+        top: 24px;
+      }
+
+    }
+    
   }
   
 }

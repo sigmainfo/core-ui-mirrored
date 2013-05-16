@@ -91,6 +91,27 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
       $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
 
+
+    context "with edit privileges", ->
+      
+      beforeEach ->
+        Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns true
+
+      it "renders delete concept link", ->
+        I18n.t.withArgs("concept.delete").returns "Delete concept"
+        @view.render()
+        @view.$el.should.have ".edit a.delete"
+        @view.$("a.delete").should.have.text "Delete concept"
+
+    context "without edit privileges", ->
+      
+      beforeEach ->
+        Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns false
+
+      it "does not render delete concept link", ->
+        @view.render()
+        @view.$el.should.not.have "a.delete"
+
     context "properties", ->
 
       beforeEach ->
@@ -280,6 +301,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
+          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns true
 
         it "renders add term link", ->
           I18n.t.withArgs("term.new").returns "Add term"
@@ -287,14 +309,28 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           @view.$(".terms").should.have ".edit a.add-term"
           @view.$(".add-term").should.have.text "Add term"
 
+        it "renders remove term links", ->
+          I18n.t.withArgs("term.delete").returns "Remove term"
+          @term.id = "56789fghj"
+          @view.render()
+          @view.$(".term").should.have ".edit a.remove-term"
+          @view.$(".term a.remove-term").should.have.text "Remove term"
+          @view.$(".term a.remove-term").should.have.data "id", "56789fghj"
+
       context "without edit privileges", ->
         
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns false
+          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns false
 
         it "does not render add term link", ->
           @view.render()
           @view.$el.should.not.have ".add-term"
+
+        it "does not render remove term link", ->
+          @view.model.set "terms", [ lang: "de", value: "top head" ], silent: true
+          @view.render()
+          @view.$(".term").should.not.have "a.remove-term"
 
   describe "toggleInfo()", ->
 
@@ -700,7 +736,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$("form.term.create .property").should.have ".error-message"
         @view.$("form.term.create .property .error-message").should.have.text "can't be blank"
 
-
       it "increases index on add property link", ->
         @term.set "properties", [ key: "status" ], silent: true
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
@@ -751,3 +786,140 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.cancel @event
       @view.$(".edit a.add-term").should.be.visible
 
+  describe "removeTerm()", ->
+
+    beforeEach ->
+      $("#konacha")
+        .append(@view.$el)
+        .append '''
+        <div id="coreon-modal"></div>
+        '''
+      @view.$el.append '''
+        <li class="term">
+          <div class="edit">
+            <a class="remove-term" data-id="518d2569edc797ef6d000008" href="javascript:void(0)">Remove term</a>
+          </divoutput>
+          <h4 class="value">beaver hat</h4>
+        </li>
+        '''
+      term = new Backbone.Model _id: "518d2569edc797ef6d000008"
+      term.destroy = sinon.spy()
+      terms = new Backbone.Collection [ term ]
+      @view.model.terms = -> terms
+      @event = $.Event "click"
+      @trigger = @view.$("a.remove-term")
+      @event.target = @trigger[0]
+
+    afterEach ->
+      $(window).off ".coreonConfirm"
+
+    it "is triggered by click on remove term link", ->
+      @view.removeTerm = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.removeTerm.should.have.been.calledOnce
+
+    it "renders confirmation dialog", ->
+      I18n.t.withArgs("term.confirm_delete").returns "This term will be deleted permanently."
+      @view.removeTerm @event
+      $("#coreon-modal .confirm .message").should.have.text "This term will be deleted permanently."
+
+    it "marks term for deletetion", ->
+      @view.removeTerm @event
+      @view.$(".term").should.have.class "delete"
+
+    context "cancel", ->
+
+      beforeEach ->
+        @view.removeTerm @event
+
+      it "unmarks term for deletion", ->
+        $(".modal-shim").click()
+        @view.$(".term").should.not.have.class "delete"
+
+    context "destroy", ->
+
+      beforeEach ->
+        @view.removeTerm @event
+        
+      it "removes term from listing", ->
+        li = @view.$(".term")[0]
+        @view.$el.append '''
+        <li class="term">
+          <div class="edit">
+            <a class="remove-term" href="javascript:void(0)">Remove term</a>
+          </divoutput>
+          <h4 class="value">beaver hat</h4>
+        </li>
+        '''
+        $(".confirm").click()
+        $.contains(@view.$el[0], li).should.be.false
+        @view.$(".term").should.have.lengthOf 1
+      
+      it "destroys model", ->
+        term = @view.model.terms().at 0
+        $(".confirm").click()
+        term.destroy.should.have.been.calledOnce
+
+  describe "delete()", ->
+
+    beforeEach ->
+      $("#konacha")
+        .append(@view.$el)
+        .append '''
+        <div id="coreon-modal"></div>
+        '''
+      @view.$el.append '''
+        <div class="concept">
+          <a class="delete" href="javascript:void(0)">Delete concept</a>
+        </div>
+        '''
+      @trigger = @view.$("a.delete")
+      @event = $.Event "click"
+      @event.target = @trigger[0]
+
+    afterEach ->
+      $(window).off ".coreonConfirm"
+
+    it "is triggered by click on remove concept link", ->
+      @view.delete = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".delete").trigger @event
+      @view.delete.should.have.been.calledOnce
+
+    it "renders confirmation dialog", ->
+      I18n.t.withArgs("concept.confirm_delete").returns "This concept will be deleted permanently."
+      @view.delete @event
+      $("#coreon-modal .confirm .message").should.have.text "This concept will be deleted permanently."
+
+    it "marks concept for deletetion", ->
+      @view.delete @event
+      @view.$(".concept").should.have.class "delete"
+
+    context "cancel", ->
+
+      beforeEach ->
+        @view.delete @event
+
+      it "unmarks term for deletion", ->
+        $(".modal-shim").click()
+        @view.$(".concept").should.not.have.class "delete"
+
+    context "destroy", ->
+
+      beforeEach ->
+        @history = Backbone.history
+        Backbone.history = navigate: sinon.spy()
+        @view.model.destroy = sinon.spy()
+        @view.delete @event
+
+      afterEach ->
+        Backbone.history = @history
+        
+      it "redirects to repository root", ->
+        $(".confirm").click()
+        Backbone.history.navigate.should.have.been.calledWith "/", trigger: true
+      
+      it "destroys model", ->
+        $(".confirm").click()
+        @view.model.destroy.should.have.been.calledOnce

@@ -4,10 +4,10 @@
 
 describe "Coreon.Modules.SystemInfo", ->
 
-  before -> class Coreon.Models.MyModel extends Backbone.Model
-    Coreon.Modules.include @, Coreon.Modules.SystemInfo
-    
-    defaults: -> {}
+  before ->
+    class Coreon.Models.MyModel extends Backbone.Model
+      Coreon.Modules.include @, Coreon.Modules.SystemInfo
+      defaults: -> {}
 
   after ->
     delete Coreon.Models.MyModel

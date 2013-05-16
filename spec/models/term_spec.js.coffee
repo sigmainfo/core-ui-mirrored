@@ -41,7 +41,6 @@ describe "Coreon.Models.Term", ->
       
     it "skips concept_id", ->
       @model.toJSON().term.should.not.have.property "concept_id"
-      console.log @model.toJSON()
 
   describe "properties()", ->
     
@@ -115,3 +114,23 @@ describe "Coreon.Models.Term", ->
         responseText: '{"errors":{"foo":["must be bar"]}}'
       @model.errors().should.eql
         foo: ["must be bar"]
+
+  describe "onDestroy()", ->
+
+    beforeEach ->
+      @model.message = sinon.spy()
+
+    it "is triggered when model was destroyed", ->
+      @model.onDestroy = sinon.spy()
+      @model.initialize()
+      @model.trigger "destroy"
+      @model.onDestroy.should.have.been.calledOnce
+      @model.onDestroy.should.have.been.calledOn @model
+  
+    it "creates message", ->
+      I18n.t.withArgs("term.deleted", value: "high hat").returns 'Successfully deleted term "high hat".'
+      @model.set "value", "high hat", silent: true
+      @model.onDestroy()
+      @model.message.should.have.been.calledOnce
+      @model.message.should.have.been.calledWith 'Successfully deleted term "high hat".'
+       

@@ -298,3 +298,22 @@ describe "Coreon.Models.Concept", ->
         responseText: '{"errors":{"foo":["must be bar"]}}'
       @model.errors().should.eql
         foo: ["must be bar"]
+
+  describe "onDestroy()", ->
+
+    beforeEach ->
+      @model.message = sinon.spy()
+
+    it "is triggered when model was destroyed", ->
+      @model.onDestroy = sinon.spy()
+      @model.initialize()
+      @model.trigger "destroy"
+      @model.onDestroy.should.have.been.calledOnce
+      @model.onDestroy.should.have.been.calledOn @model
+  
+    it "creates message", ->
+      I18n.t.withArgs("concept.deleted", label: "high hat").returns 'Successfully deleted concept "high hat".'
+      @model.set "label", "high hat", silent: true
+      @model.onDestroy()
+      @model.message.should.have.been.calledOnce
+      @model.message.should.have.been.calledWith 'Successfully deleted concept "high hat".'
