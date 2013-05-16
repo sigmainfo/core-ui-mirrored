@@ -13,6 +13,7 @@ Coreon.Modules.NestedFieldsFor =
       container = $(event.target).closest(".#{options.className}")
       if container.find('input[type=hidden][name*=_id]').length > 0
         container.addClass("delete")
+        $(event.target).remove()
       else
         container.remove()
 
