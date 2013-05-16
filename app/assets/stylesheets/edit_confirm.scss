@@ -9,29 +9,28 @@
   
   .confirm {
     @include box-sizing(border-box);
-    display: block;
+    display: table;
     background-color: $greencolor;
     @include border-radius(6px);
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset, rgba(black, 0.4) 2px 2px 5px);
     @include background(linear-gradient(lighten($greencolor, 6), $greencolor));
     min-width: 220px;
-    width: 50%;
+    width: 30%;
     max-width: 400px;
     color: white;
     p {
       padding: 15px;
-      display: inline-block;  
-
+      display: table-cell;
+      vertical-align: middle;
     }
+    
     .message {
-      padding-right: 70px; 
+/*      padding-right: 70px; */
     }
+    
     .ok {
       font-size: 1.4em;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
+      text-align: center;
       background-color: $button-color;
       border-left: 1px solid rgba(black, 0.2);
       @include border-right-radius(6px);

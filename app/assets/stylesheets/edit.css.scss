@@ -211,6 +211,15 @@ form.create {
   }
 }
 
+.concept.delete {
+  &>* {
+    @include opacity(0.4);
+  }
+  &>.edit {
+      @include opacity(1);
+  }
+}
+
 
 .concept  {
     .edit a {
