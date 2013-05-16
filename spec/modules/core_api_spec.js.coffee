@@ -196,3 +196,9 @@ describe "Coreon.Modules.CoreAPI", ->
         Coreon.application.session.set "token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "beef48548969b046148ba2d2361930c02"
+  
+    context "with valid session", ->
+      
+      it "delegates to Backbone.sync", ->
+        @sync "create", @model, data: browser: "Google Chrome"
+        Backbone.sync.should.have.been.calledWith "create", @model
