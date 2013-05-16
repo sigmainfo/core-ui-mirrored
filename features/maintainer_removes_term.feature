@@ -19,6 +19,6 @@ Feature: maintainer removes term
     And I should still see the English term "beaver hat"
     When I click "Remove term" within term "beaver hat"
     And I click "OK" within the dialog
-    Then I should see a message 'Successfully deleted concept "beaver hat".'
+    Then I should see a message 'Successfully deleted term "beaver hat".'
     And I should not see a confirmation dialog
     And I should not see "beaver hat"
