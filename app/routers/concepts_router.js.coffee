@@ -15,7 +15,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
   _bindRoutes: ->
     super
     @route /^concepts\/([0-9a-f]{24})$/,       "show"
-    @route /^concepts\/([0-9a-f]{24})\/edit$/, "edit"
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -40,13 +39,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       @app.hits.reset [ result: concept ]
     else
       Backbone.history.navigate "/", trigger: true
-
-  edit: (id) ->
-    #TODO: if Coreon.application?.session.ability.can "edit", Coreon.Models.Concept
-    concept = Coreon.Models.Concept.find id
-    @view.switch new Coreon.Views.Concepts.EditConceptView
-      model: concept
-    @app.hits.reset [ result: concept ]
 
   search: (target, query) ->
     @view.widgets.search.selector.hideHint()
