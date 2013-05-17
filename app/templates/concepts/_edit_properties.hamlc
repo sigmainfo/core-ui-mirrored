@@ -1,9 +1,6 @@
 != @form_for "concept", @concept, ->
   %section.properties.edit{class: "collapsed" if @collapsed}
     %h3= I18n.t "properties.title"
-    -if @editToggle
-      .edit
-        %a.edit-properties( href="javascript:void(0)" )= I18n.t "properties.edit"
 
     - for property, index in @concept.properties().models
       != @render "properties/new_property", index: index, property: property, scope: "concept[properties][]", errors: @concept.errors()?.nested_errors_on_properties?[index]
