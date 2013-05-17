@@ -29,9 +29,9 @@
   &.edit-concept {
     @extend .big;
     padding-left: 6px;
-    position: absolute;
-    right: 0;
-    top:-15px;
+    float: right;
+    position: relative;
+    top: -16px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -164,7 +164,63 @@ form.create, form.update{
 
    }
 
- }
+}
+ 
+ 
+.concept  {
+     .edit a {
+       font-size: 0.9em;
+       color:$greencolor;
+       display: inline-block;
+       margin-right: 10px;
+       float: right;
+       position: relative;
+       top: -10px;
+
+       &:before {
+         @include before-icon;
+         float: left;
+         margin-right: 5px;
+         background-position: -2px -351px;
+         @include edit-button;
+       };
+       &:hover {
+         color: $button-color;
+         &:before {
+           background-color: $button-color;
+           @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+         };
+       }
+     }
+     a.remove-term, a.remove-property, a.delete {
+       &:before {
+         background-position: -52px -351px;
+       };
+     }
+     a.remove-term, a.remove-property {
+       position: absolute;
+       top: 8px;
+       right: 0;
+     }
+     a.delete {
+       float: right;
+       top: -16px;
+     }
+     .terms a.remove-property {
+       width: 16px;
+       overflow: hidden;
+       text-indent: -2000px;
+     }
+     a.edit-properties {
+       width: 16px;
+       overflow: hidden;
+       text-indent: -5000px;
+       &:before {
+         background-position: -52px -502px;
+       };
+     }
+}
+
 // for edit mode
 .concept.show {
   .edit {
@@ -173,8 +229,7 @@ form.create, form.update{
 
 }
 
-// remove concept show later
-.concept.edit, .concept.show {
+.concept.edit {
   .button.edit-concept {
     background-color: $beigecolor;
     color: $greencolor;
@@ -221,58 +276,6 @@ form.create, form.update{
 }
 
 
-.concept  {
-    .edit a {
-      font-size: 0.9em;
-      color:$greencolor;
-      display: inline-block;
-      margin-right: 10px;
-      float: right;
-      position: relative;
-      top: -10px;
-
-      &:before {
-        @include before-icon;
-        float: left;
-        margin-right: 5px;
-        background-position: -2px -351px;
-        @include edit-button;
-      };
-      &:hover {
-        color: $button-color;
-        &:before {
-          background-color: $button-color;
-          @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-        };
-      }
-    }
-    a.remove-term, a.remove-property, , a.delete {
-      position: absolute;
-      top: 8px;
-      right: 0;
-      &:before {
-        background-position: -52px -351px;
-      };
-    }
-    a.delete {
-      top:-18px;
-    }
-    .terms a.remove-property {
-      width: 16px;
-      overflow: hidden;
-      text-indent: -2000px;
-    }
-    a.edit-properties {
-      width: 16px;
-      overflow: hidden;
-      text-indent: -5000px;
-      &:before {
-        background-position: -52px -502px;
-      };
-    }
-}
-
-
 @media all and (max-width: 999px) and (min-width: 800px) {
   div.concept  {
 
@@ -297,7 +300,7 @@ form.create, form.update{
       }
     }
   }
-  .concept.edit, .concept.show {
+  .concept.edit {
     .language .term {
       .edit {
         height: 24px;
@@ -325,7 +328,7 @@ form.create, form.update{
     }
 
     .create, .update {
-      .properties {
+      &.term .properties, .term .properties {
           padding-top: 10px;
 
           fieldset {
@@ -357,7 +360,7 @@ form.create, form.update{
     }
 
   }
-  .concept.edit, .concept.show {
+  .concept.edit {
     .language .term {
       .edit {
         height: 24px;
