@@ -68,6 +68,7 @@ en:
     delete: "Delete concept"
     confirm_delete: "This concept including all terms will be deleted permanently."
     deleted: 'Successfully deleted concept "{{label}}".'
+    update: "Save concept"
 
   term:
     info: "System Info"
