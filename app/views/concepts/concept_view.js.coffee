@@ -46,6 +46,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form a.cancel"                       : "cancel"
     "click  .remove-term"                        : "removeTerm"
     "click  .edit .delete"                       : "delete"
+    "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -86,7 +87,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     @render()
 
-  toggleEditConceptProperties: ->
+  toggleEditConceptProperties: (evt)->
+    evt.preventDefault()
     @editProperties = !@editProperties
     @render()
 
