@@ -34,13 +34,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   events:
     "click  .edit-concept"                       : "toggleEditMode"
-    "click  *:not(.terms) .edit-properties"      : "editConceptProperties"
+    "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
     "click  .properties .index li"               : "selectProperty"
     "click  .add-term"                           : "addTerm"
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
+    "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
     "click  form a.cancel"                       : "cancel"
     "click  .remove-term"                        : "removeTerm"
@@ -85,7 +86,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     @render()
 
-  editConceptProperties: ->
+  toggleEditConceptProperties: ->
     @editProperties = !@editProperties
     @render()
 
@@ -93,6 +94,31 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms = @$(".terms")
     terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
+
+  updateConceptProperties: (event) ->
+    event.preventDefault()
+    target = $ event.target
+    data = target.serializeJSON() or {}
+    target.find("input,textarea,button").attr "disabled", true
+
+    commit = =>
+      @model.save data.concept,
+        wait: true
+        success: => @toggleEditConceptProperties()
+        error: => @model.once "error", @render, @
+
+    elements_to_delete = target.find(".property.delete")
+    if elements_to_delete.length > 0
+      @confirm
+        trigger: target
+        container: target.closest ".concept"
+        message: I18n.t "concept.confirm_delete"
+        action: =>
+          commit()
+    else
+      commit()
+
+
 
   createTerm: (event) ->
     event.preventDefault()
@@ -102,7 +128,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
-    target.find("input,button").attr "disabled", true
+    target.find("input,textarea,button").attr "disabled", true
     @model.terms().create data,
       wait: true
       error: (model, xhr, options) =>
