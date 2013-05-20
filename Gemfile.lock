@@ -1,6 +1,6 @@
 GIT
   remote: git@devel.spom.net:core-client.git
-  revision: e01e43954d8a50ce0cd942c29e883e905719d520
+  revision: 328a2b3a3c0050e50113af374b8c4efba18e8f21
   specs:
     core_client (0.0.3)
       rails (>= 3.2)
