@@ -10,8 +10,8 @@ class UserSignsIn < Spinach::FeatureSteps
     page.should have_no_css("#coreon-footer")
   end
 
-  When 'I fill in "Login" with "Nobody"' do
-    fill_in "Login", with: "Nobody"
+  When 'I fill in "Email" with "nobody@blake.com"' do
+    fill_in "Email", with: "nobody@blake.com"
   end
 
   And 'fill in "Password" with "se7en!"' do
@@ -35,8 +35,8 @@ class UserSignsIn < Spinach::FeatureSteps
     fill_in "Password", with: "ei8ht?"
   end
 
-  And 'should see an error "Invalid login or password"' do
-    find("#coreon-notifications .error").should have_content "Invalid login or password"
+  And 'should see an error "Invalid email or password"' do
+    find("#coreon-notifications .error").should have_content "Invalid email or password"
   end
 
   Given 'the authentication service is not available' do

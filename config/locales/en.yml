@@ -5,7 +5,7 @@ en:
   account:
     logout: "Log out"
     login:
-      login: "Login"
+      email: "Email"
       password: "Password"
       submit: "Log in"
     status: "Logged in as {{name}}"
@@ -122,7 +122,7 @@ en:
   errors:
     generic: "An error occured."
     login:
-      failed: "Invalid login or password."
+      failed: "Invalid email or password."
     service:
       unavailable: "Service is currently unavailable."
 
