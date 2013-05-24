@@ -21,7 +21,7 @@ describe "Coreon.Models.Session", ->
       @session.get("auth_root").should.equal "/api/auth/"
       @session.get("graph_root").should.equal "/api/graph/"
 
-    it "has no user name or login", ->
+    it "has no user name or email", ->
       @session.get("name").should.equal ""
       
   
@@ -48,25 +48,25 @@ describe "Coreon.Models.Session", ->
     afterEach ->
       @xhr.restore()
 
-    it "sets login on model", ->
-      @session.activate("Nobody", "se7en!")
-      @session.get("login").should.equal "Nobody"
+    it "sets email on model", ->
+      @session.activate("nobody@blake.com", "se7en!")
+      @session.get("email").should.equal "nobody@blake.com"
 
 
     it "calls auth service with credentials", ->
       @session.set "auth_root", "https://api.coreon.com/auth/"
-      @session.activate("Nobody", "se7en!")
+      @session.activate("nobody@blake.com", "se7en!")
       @request.url.should.equal "https://api.coreon.com/auth/login"
       @request.method.should.equal "POST"
       @request.requestHeaders["Accept"].should.contain "application/json"
-      @request.requestBody.should.equal "login=Nobody&password=se7en!"
+      @request.requestBody.should.equal "email=nobody%40blake.com&password=se7en!"
 
     it "adds connection for request", ->
-      @session.activate("Nobody", "se7en!")
+      @session.activate("nobody@blake.com", "se7en!")
       @session.connections.length.should.equal 1
       @session.connections.first().get("xhr").should.respondTo "abort"
       @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").data.login.should.equal "Nobody"
+      @session.connections.first().get("options").data.email.should.equal "nobody@blake.com"
 
     it "triggers callback on success", ->
       @session.onActivated = sinon.spy()
@@ -90,9 +90,9 @@ describe "Coreon.Models.Session", ->
       @session.onActivated @data
       @session.get("active").should.be.true
 
-    it "stores user name and login", ->
+    it "stores user name and email", ->
       @data.user.name = "William Blake"
-      @session.set "login", "w.blake"
+      @session.set "email", "w.blake@blake.com"
       @session.onActivated @data
       @session.get("name").should.equal "William Blake"
       session = JSON.parse localStorage.getItem "coreon-session"
@@ -135,20 +135,20 @@ describe "Coreon.Models.Session", ->
     it "calls auth service with credentials", ->
       @session.set
         auth_root: "https://api.coreon.com/auth/"
-        login: "Nobody"
+        email: "nobody@blake.com"
       @session.reactivate "se7en!"
       @request.url.should.equal "https://api.coreon.com/auth/login"
       @request.method.should.equal "POST"
       @request.requestHeaders["Accept"].should.contain "application/json"
-      @request.requestBody.should.equal "login=Nobody&password=se7en!"
+      @request.requestBody.should.equal "email=nobody%40blake.com&password=se7en!"
 
     it "adds connection for request", ->
-      @session.set "login", "Nobody"
+      @session.set "email", "nobody@blake.com"
       @session.reactivate "se7en!"
       @session.connections.length.should.equal 1
       @session.connections.first().get("xhr").should.respondTo "abort"
       @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").data.login.should.equal "Nobody"
+      @session.connections.first().get("options").data.email.should.equal "nobody@blake.com"
 
     it "triggers callback on success", ->
       @session.onReactivated = sinon.spy()
@@ -218,13 +218,13 @@ describe "Coreon.Models.Session", ->
       
       it "stores attributes locally", ->
         @session.set
-          login: "nobody"
+          email: "nobody@dead.man"
           name: "Dead Man"
           token: "1234abcd-xxxx"
         @session.sync "create", @session
         session = JSON.parse localStorage.getItem("coreon-session")
         should.exist session
-        session.should.have.property "login", "nobody"
+        session.should.have.property "email", "nobody@dead.man"
         session.should.have.property "name", "Dead Man"
         session.should.have.property "token", "1234abcd-xxxx"
 
@@ -253,7 +253,7 @@ describe "Coreon.Models.Session", ->
 
       beforeEach ->
         @session.set
-          login: "nobody"
+          email: "nobody@dead.man"
           name: "Dead Man"
           token: "1234abcd-xxxx"
         @session.sync "create", @session
@@ -287,11 +287,11 @@ describe "Coreon.Models.Session", ->
       it "updates values from store", ->
         localStorage.setItem "coreon-session", JSON.stringify
           name: "Jim Jarmusch"
-          login: "nobody"
+          email: "nobody@jarmusch.com"
           token: "0987654321"
         @session.fetch()
         @session.get("name").should.equal "Jim Jarmusch"
-        @session.get("login").should.equal "nobody"
+        @session.get("email").should.equal "nobody@jarmusch.com"
         @session.get("token").should.equal "0987654321"
 
       it "syncs active state", ->
@@ -310,7 +310,7 @@ describe "Coreon.Models.Session", ->
         @session.save
           name: "Dead Man"
           session: "1234abcd-xxxx"
-          login: "w.blake"
+          email: "w.blake@blake.com"
         @session.destroy()
         should.not.exist localStorage.getItem "coreon-session"
 
@@ -320,7 +320,7 @@ describe "Coreon.Models.Session", ->
       @session.save
         name: "Dead Man"
         session: "1234abcd-xxxx"
-        login: "deadman"
+        email: "deadman@blake.com"
     
     it "is triggered by errors on connections", ->
       @session.onUnauthorized = sinon.spy()
@@ -354,6 +354,6 @@ describe "Coreon.Models.Session", ->
       @session.save
         name: "Dead Man"
         session: "1234abcd-xxxx"
-        login: "deadman"
+        email: "deadman@blake.com"
       @session.destroy()
       should.not.exist localStorage.getItem "coreon-session"

@@ -1,7 +1,7 @@
 %h1.logo coreon
 %form.login
-  %label{for: "coreon-login-login"}= I18n.t "account.login.login"
-  %input#coreon-login-login{type: "text", name: "login[login]", required: true}
+  %label{for: "coreon-login-email"}= I18n.t "account.login.email"
+  %input#coreon-login-email{type: "text", name: "login[email]", required: true}
 
   %label{for: "coreon-login-password"}= I18n.t "account.login.password"
   %input#coreon-login-password{type: "password", name: "login[password]", required: true}

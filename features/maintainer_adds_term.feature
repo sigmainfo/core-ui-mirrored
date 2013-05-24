@@ -4,7 +4,7 @@ Feature: maintainer adds term
   I want to add a term to an existing concept
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
     And a concept "top hat" exists
   

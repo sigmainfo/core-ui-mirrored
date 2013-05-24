@@ -4,7 +4,7 @@ Feature: user browses single concept
   I want to see all terms, properties, edges and meta data of the concept
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
   # Scenario: show details

@@ -25,14 +25,14 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.$("input[type='submit']").should.have.attr "value", I18n.t "account.login.submit"
       @view.$("input[type='submit']").should.be.disabled
 
-    it "renders input for login", ->
+    it "renders input for email", ->
       @view.render()
-      @view.$el.should.have "label[for='coreon-login-login']"
-      @view.$("label[for='coreon-login-login']").should.contain I18n.t "account.login.login"
-      @view.$el.should.have "input[id='coreon-login-login']"
-      @view.$("input[id='coreon-login-login']").should.have.attr "type", "text"
-      @view.$("input[id='coreon-login-login']").should.have.attr "name", "login[login]"
-      @view.$("input[id='coreon-login-login']").should.have.attr "required"
+      @view.$el.should.have "label[for='coreon-login-email']"
+      @view.$("label[for='coreon-login-email']").should.contain I18n.t "account.login.email"
+      @view.$el.should.have "input[id='coreon-login-email']"
+      @view.$("input[id='coreon-login-email']").should.have.attr "type", "text"
+      @view.$("input[id='coreon-login-email']").should.have.attr "name", "login[email]"
+      @view.$("input[id='coreon-login-email']").should.have.attr "required"
 
     it "renders input for password", ->
       @view.render()
@@ -50,14 +50,14 @@ describe "Coreon.Views.Account.LoginView", ->
 
     it "enables submit button when inputs are not empty", ->
       @view.$("input[type='submit']").prop "disabled", true
-      @view.$("#coreon-login-login").val "foo"
+      @view.$("#coreon-login-email").val "foo@bar.com"
       @view.$("#coreon-login-password").val "bar"
       @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.not.be.disabled
       
     it "disables submit button when login is empty", ->
       @view.$("input[type='submit']").prop "disabled", false
-      @view.$("#coreon-login-login").val ""
+      @view.$("#coreon-login-email").val ""
       @view.$("#coreon-login-password").val "bar"
       @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.be.disabled
@@ -65,14 +65,14 @@ describe "Coreon.Views.Account.LoginView", ->
 
     it "disables submit button when password is empty", ->
       @view.$("input[type='submit']").prop "disabled", false
-      @view.$("#coreon-login-login").val "foo"
+      @view.$("#coreon-login-email").val "foo@bar.com"
       @view.$("#coreon-login-password").val ""
       @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.be.disabled
 
     it "updates state on paste", ->
       @view.$("input[type='submit']").prop "disabled", true
-      @view.$("#coreon-login-login").val "foo"
+      @view.$("#coreon-login-email").val "foo@bar.com"
       @view.$("#coreon-login-password").val "bar"
       @view.$("#coreon-login-password").trigger "paste"
       @view.$("input[type='submit']").should.not.be.disabled
@@ -93,9 +93,9 @@ describe "Coreon.Views.Account.LoginView", ->
 
     it "authenticates account", ->
       @view.model.activate = sinon.spy()
-      @view.$("#coreon-login-login").val "nobody"
+      @view.$("#coreon-login-email").val "nobody@blake.com"
       @view.$("#coreon-login-password").val "se7en"
       @view.$("form").trigger @event
-      @view.model.activate.should.have.been.calledWith "nobody", "se7en"
+      @view.model.activate.should.have.been.calledWith "nobody@blake.com", "se7en"
 
       
