@@ -66,7 +66,8 @@ en:
     create: "Create concept"
     created: 'Successfully created concept "{{label}}".'
     delete: "Delete concept"
-    confirm_delete: "This concept including all terms will be deleted permanently."
+    confirm_delete: "This concept including all terms will be deleted permanently!"
+    confirm_update: "Saving the concept will delete {{n}} properties permanently!"
     deleted: 'Successfully deleted concept "{{label}}".'
     update: "Save concept"
 
@@ -101,6 +102,7 @@ en:
     label: "Repository"
 
   form:
+    reset: "Reset"
     cancel: "Cancel"
     errors:
       summary:

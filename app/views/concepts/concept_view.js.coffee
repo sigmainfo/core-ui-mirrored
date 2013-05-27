@@ -43,7 +43,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .remove-property"                    : "removeProperty"
     "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
-    "click  form a.cancel"                       : "cancel"
+    "click  form a.cancel"                       : "cancelForm"
+    "click  form a.reset"                        : "resetForm"
     "click  .remove-term"                        : "removeTerm"
     "click  .edit .delete"                       : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
@@ -60,19 +61,19 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @_wasRendered = true
     @
 
-  toggleInfo: (event) ->
-    target = $ event.target
+  toggleInfo: (evt) ->
+    target = $ evt.target
     target.next(".system-info")
       .add( target.siblings(".properties").find ".system-info" )
       .slideToggle()
 
-  toggleSection: (event) ->
-    target = $(event.target)
+  toggleSection: (evt) ->
+    target = $(evt.target)
     target.closest("section").toggleClass "collapsed"
     target.siblings().not(".edit").slideToggle()
 
-  selectProperty: (event) ->
-    target = $ event.target
+  selectProperty: (evt) ->
+    target = $ evt.target
     container = target.closest "td"
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq(target.data "index").add(target)
@@ -88,7 +89,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @render()
 
   toggleEditConceptProperties: (evt)->
-    evt.preventDefault()
+    evt.preventDefault() if evt?
     @editProperties = !@editProperties
     @render()
 
@@ -97,9 +98,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
-  updateConceptProperties: (event) ->
-    event.preventDefault()
-    target = $ event.target
+  updateConceptProperties: (evt) ->
+    evt.preventDefault()
+    target = $ evt.target
     data = target.serializeJSON() or {}
     target.find("input,textarea,button").attr "disabled", true
 
@@ -114,17 +115,15 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       @confirm
         trigger: target
         container: target.closest ".concept"
-        message: I18n.t "concept.confirm_delete"
+        message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
         action: =>
           commit()
     else
       commit()
 
-
-
-  createTerm: (event) ->
-    event.preventDefault()
-    target = $ event.target
+  createTerm: (evt) ->
+    evt.preventDefault()
+    target = $ evt.target
     data = target.serializeJSON().term or {}
     data.concept_id = @model.id
     data.properties = if data.properties?
@@ -137,14 +136,26 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
 
-  cancel: (event) ->
-    event.preventDefault()
-    form = $(event.target).closest "form"
+  cancelForm: (evt) ->
+    evt.preventDefault()
+    form = $(evt.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
 
-  removeTerm: (event) =>
-    trigger = $ event.target
+  resetForm: (evt) ->
+    console.log "resetForm"
+    evt.preventDefault()
+    target = $(evt.target)
+    form = target.closest "form"
+    form[0].reset()
+    for p in form.find(".property")
+      p = $(p)
+      p.remove() unless p.find('input[type=hidden][name*=_id]').length > 0
+      p.removeClass("delete") if p.hasClass("delete")
+      p.find("input,textarea,button").attr "disabled", false
+
+  removeTerm: (evt) =>
+    trigger = $ evt.target
     container = trigger.closest ".term"
     model = @model.terms().get trigger.data "id"
     @confirm
@@ -155,8 +166,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         container.remove()
         model.destroy()
 
-  delete: (event) ->
-    trigger = $ event.target
+  delete: (evt) ->
+    trigger = $ evt.target
     @confirm
       trigger: trigger
       container: trigger.closest ".concept"

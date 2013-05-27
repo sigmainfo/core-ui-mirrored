@@ -5,6 +5,10 @@ module EditSteps
     page.execute_script 'Coreon.application.session.ability.set("role", "maintainer");'
   end
 
+  step 'I do not have maintainer privileges' do
+    page.execute_script 'Coreon.application.session.ability.set("role", "user");'
+  end
+
   step 'client-side validation is turned off' do
     page.execute_script '$("form").attr("novalidate", true)'
   end

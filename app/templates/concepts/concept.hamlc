@@ -1,6 +1,7 @@
-%a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
-- if @can "delete", Coreon.Models.Concept
-  .edit
+- if @can "edit", Coreon.Models.Concept
+  %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
+.edit
+  - if @can "delete", Coreon.Models.Concept
     %a.delete{href: "javascript:void(0)"}= I18n.t "concept.delete"
 
 != @render "concepts/caption", label: @concept.get "label"

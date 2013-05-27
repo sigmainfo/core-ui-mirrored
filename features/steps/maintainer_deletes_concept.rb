@@ -19,7 +19,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see a confirmation dialog "This concept including all terms will be deleted permanently."' do
-    page.should have_css(".confirm .message", text: "This concept including all terms will be deleted permanently.")
+    page.should have_css(".confirm .message", text: "This concept including all terms will be deleted permanently!")
   end
 
 
