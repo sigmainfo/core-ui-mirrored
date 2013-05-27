@@ -6,7 +6,7 @@ if RUBY_VERSION =~ /1.9/
 end
 
 gem "rails", "= 3.2.12" # Needed for i18n-js with ruby 1.9
-if true
+if false
   gem 'core_client', path: '../core-client'
 else
   gem 'core_client', git: 'git@devel.spom.net:core-client.git'

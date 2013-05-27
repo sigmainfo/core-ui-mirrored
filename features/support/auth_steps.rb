@@ -7,7 +7,7 @@ module AuthSteps
     @me_password = "se7en!"
     @me = CoreClient::Auth::User.create!(
       name: "William Blake",
-      email: "nobody@blake.com",
+      emails: ["nobody@blake.com"],
       password: @me_password,
       password_confirmation: @me_password
     )  
@@ -15,7 +15,7 @@ module AuthSteps
 
   Given 'I am logged in' do
     page.execute_script "Coreon.application.session.deactivate();"
-    page.execute_script "Coreon.application.session.activate('#{@me.email}', '#{@me_password}');"
+    page.execute_script "Coreon.application.session.activate('#{@me.emails.first}', '#{@me_password}');"
     page.should have_css("#coreon-footer")
     CoreAPI.session = page.evaluate_script "Coreon.application.session.get('token')"
   end
