@@ -1,7 +1,6 @@
 #= require spec_helper
-#= require modules/helpers
 #= require modules/core_api
-# 
+
 describe "Coreon.Modules.CoreAPI", ->
 
   before ->
