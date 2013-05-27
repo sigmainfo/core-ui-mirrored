@@ -134,7 +134,7 @@ form.create, form.update{
      margin-top:60px;
      padding: 3px 10px;
 
-     .cancel {
+     .cancel, .reset {
        @extend .button;
        margin: 6px;
        padding: 5px 8px 3px 8px;
