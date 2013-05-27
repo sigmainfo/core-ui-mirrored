@@ -3,43 +3,54 @@
 
 connections = 0
 
+ajax = (deferred, method, model, options) ->
+  session = Coreon.application.session
+  options.headers["X-Core-Session"] = session.get "token"
+
+  request = Backbone.sync(method, model, options)
+  connections += 1
+  Coreon.Modules.CoreAPI.trigger "request", method, options.url, request
+
+  request.always ->
+    connections -= 1
+    if connections is 0 and request.status isnt 403
+      Coreon.Modules.CoreAPI.trigger "stop" 
+
+  request.done (data, status, request) ->
+    deferred.resolveWith model, [data, request]
+
+  request.fail (request, status, error) ->
+    data =
+      try
+        JSON.parse request.responseText
+      catch exception
+        {}
+    if request.status is 403
+      session.unset "token"
+      session.once "change:token", ->
+        ajax deferred, method, model, options
+    else
+      deferred.rejectWith model, [data, request]
+      Coreon.Modules.CoreAPI.trigger "error", request.status, error, data, request
+      Coreon.Modules.CoreAPI.trigger "error:#{request.status}", error, data, request
+
+  request 
+
 Coreon.Modules.CoreAPI =
 
   sync: (method, model, options = {}) ->
-    request = $.Deferred()
-    session = Coreon.application.session
-
-    options.headers ?= {}
-    options.headers["X-Core-Session"] = session.get "token"
+    deferred = $.Deferred()
     
-    root = session.get "repository_root"
+    root = Coreon.application.session.get "repository_root"
     root = root[..-2] if root.charAt(root.length - 1) is "/"
     path = model.url()
     path = path[1..] if path.charAt(0) is "/"
     options.url ?= "#{root}/#{path}"
-
-    xhr = Backbone.sync(method, model, options)
-    Coreon.Modules.CoreAPI.trigger "request", method, options.url, xhr
+    options.headers ?= {}
 
     Coreon.Modules.CoreAPI.trigger "start" if connections is 0
-    connections += 1
-    xhr.always ->
-      connections -= 1
-      Coreon.Modules.CoreAPI.trigger "stop" if connections is 0
+    ajax deferred, method, model, options
 
-    xhr.done (data, status, xhr) ->
-      request.resolveWith model, [data, xhr]
-
-    xhr.fail (xhr, status, error) ->
-      data =
-        try
-          JSON.parse xhr.responseText
-        catch exception
-          {}
-      request.rejectWith model, [data, xhr]
-      Coreon.Modules.CoreAPI.trigger "error", xhr.status, error, data, xhr
-      Coreon.Modules.CoreAPI.trigger "error:#{xhr.status}", error, data, xhr
-
-    request.promise()
+    deferred.promise()
 
 Coreon.Modules.extend Coreon.Modules.CoreAPI, Backbone.Events
