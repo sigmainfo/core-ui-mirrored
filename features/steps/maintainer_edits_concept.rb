@@ -103,16 +103,30 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
     page.should have_no_css("form .error-summary")
   end
 
-  step 'I should see error "can\'t be blank" for property input "Key"' do
-    page.should have_css(".property .key .error-message", text: "can\'t be blank")
+  step 'I should see error "can\'t be blank" for input "Key" of existing property' do
+    within ".properties .property:nth-of-type(1)" do
+      page.should have_css(".property .key .error-message", text: "can\'t be blank")
+    end
+  end
+
+  step 'I should see error "can\'t be blank" for input "Key" of new property' do
+    within ".properties .property:nth-of-type(2)" do
+      page.should have_css(".property .key .error-message", text: "can\'t be blank")
+    end
+  end
+
+  step 'I should see error "can\'t be blank" for input "Value" of new property' do
+    within ".properties .property:nth-of-type(2)" do
+      page.should have_css(".property .value .error-message", text: "can\'t be blank")
+    end
   end
 
   step 'this summary should contain "Failed to save concept:"' do
     page.find("form .error-summary").should have_content("Failed to save concept:")
   end
 
-  step 'this summary should contain "1 error on properties"' do
-    page.find("form .error-summary").should have_content("1 error on properties")
+  step 'this summary should contain "3 errors on properties"' do
+    page.find("form .error-summary").should have_content("3 errors on properties")
   end
 
   step 'I change "Value" of property to "obsolescense"' do
