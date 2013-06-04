@@ -98,28 +98,35 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
+  saveConceptProperties: (data)->
+    @model.save data.concept,
+      #wait: true
+      success: => @toggleEditConceptProperties()
+      error: (model)=>
+        model.once "error", @render, @
+      attrs: concept: properties: data.concept.properties
+
   updateConceptProperties: (evt) ->
     evt.preventDefault()
-    target = $ evt.target
-    data = target.serializeJSON() or {}
-    target.find("input,textarea,button").attr "disabled", true
+    form = $ evt.target
+    data = form.serializeJSON() or {}
+    form.find("input,textarea,button").attr "disabled", true
+    trigger = form.find('[type=submit]')
 
-    commit = =>
-      @model.save data.concept,
-        wait: true
-        success: => @toggleEditConceptProperties()
-        error: => @model.once "error", @render, @
-
-    elements_to_delete = target.find(".property.delete")
+    elements_to_delete = form.find(".property.delete")
     if elements_to_delete.length > 0
       @confirm
-        trigger: target
-        container: target.closest ".concept"
+        trigger: trigger
+        container: form.closest ".concept"
         message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
         action: =>
-          commit()
+          @saveConceptProperties(data)
     else
-      commit()
+      @saveConceptProperties(data)
+
+    form.find("[type=submit]").attr "disabled", false
+    false
+
 
   createTerm: (evt) ->
     evt.preventDefault()
@@ -138,21 +145,19 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   cancelForm: (evt) ->
     evt.preventDefault()
+    if @model.remoteError?
+      @model.set @model.previousAttributes()
+      @model.remoteError = null
     form = $(evt.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
 
   resetForm: (evt) ->
-    console.log "resetForm"
     evt.preventDefault()
-    target = $(evt.target)
-    form = target.closest "form"
-    form[0].reset()
-    for p in form.find(".property")
-      p = $(p)
-      p.remove() unless p.find('input[type=hidden][name*=_id]').length > 0
-      p.removeClass("delete") if p.hasClass("delete")
-      p.find("input,textarea,button").attr "disabled", false
+    if @model.remoteError?
+      @model.set @model.previousAttributes()
+      @model.remoteError = null
+    @render()
 
   removeTerm: (evt) =>
     trigger = $ evt.target
