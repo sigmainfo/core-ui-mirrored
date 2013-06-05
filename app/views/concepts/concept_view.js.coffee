@@ -7,7 +7,9 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
+#= require templates/concepts/_edit_properties
 #= require templates/terms/new_term
+#= require templates/properties/new_property
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
@@ -22,6 +24,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   Coreon.Modules.include @, Coreon.Modules.Confirmation
 
   className: "concept show"
+  editMode: no
+  editProperties: no
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
@@ -29,16 +33,21 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
+    "click  .edit-concept"                       : "toggleEditMode"
+    "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
     "click  .properties .index li"               : "selectProperty"
     "click  .add-term"                           : "addTerm"
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
+    "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
-    "click  form a.cancel"                       : "cancel"
+    "click  form a.cancel"                       : "cancelForm"
+    "click  form a.reset"                        : "resetForm"
     "click  .remove-term"                        : "removeTerm"
-    "click  .delete"                             : "delete"
+    "click  .edit .delete"                       : "delete"
+    "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -46,58 +55,112 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @listenTo @model, "change", @render
 
   render: ->
-    @$el.html @template concept: @model
+    @$el.html @template concept: @model, editMode: @editMode, editProperties: @editProperties
     @broaderAndNarrower.render() unless @_wasRendered
     @$el.children(".system-info").after @broaderAndNarrower.$el
     @_wasRendered = true
     @
 
-  toggleInfo: (event) ->
-    target = $ event.target
+  toggleInfo: (evt) ->
+    target = $ evt.target
     target.next(".system-info")
       .add( target.siblings(".properties").find ".system-info" )
       .slideToggle()
 
-  toggleSection: (event) ->
-    target = $(event.target)
+  toggleSection: (evt) ->
+    target = $(evt.target)
     target.closest("section").toggleClass "collapsed"
-    target.next().slideToggle()
+    target.siblings().not(".edit").slideToggle()
 
-  selectProperty: (event) ->
-    target = $ event.target
+  selectProperty: (evt) ->
+    target = $ evt.target
     container = target.closest "td"
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq(target.data "index").add(target)
       .addClass "selected"
+
+  toggleEditMode: ->
+    @editMode = !@editMode
+    if @editMode
+      @$el.removeClass("show").addClass("edit")
+    else
+      @$el.removeClass("edit").addClass("show")
+
+    @render()
+
+  toggleEditConceptProperties: (evt)->
+    evt.preventDefault() if evt?
+    @editProperties = !@editProperties
+    @render()
 
   addTerm: ->
     terms = @$(".terms")
     terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
-  createTerm: (event) ->
-    event.preventDefault()
-    target = $ event.target
+  saveConceptProperties: (data)->
+    @model.save data.concept,
+      #wait: true
+      success: => @toggleEditConceptProperties()
+      error: (model)=>
+        model.once "error", @render, @
+      attrs: concept: properties: data.concept.properties
+
+  updateConceptProperties: (evt) ->
+    evt.preventDefault()
+    form = $ evt.target
+    data = form.serializeJSON() or {}
+    form.find("input,textarea,button").attr "disabled", true
+    trigger = form.find('[type=submit]')
+
+    elements_to_delete = form.find(".property.delete")
+    if elements_to_delete.length > 0
+      @confirm
+        trigger: trigger
+        container: form.closest ".concept"
+        message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
+        action: =>
+          @saveConceptProperties(data)
+    else
+      @saveConceptProperties(data)
+
+    form.find("[type=submit]").attr "disabled", false
+    false
+
+
+  createTerm: (evt) ->
+    evt.preventDefault()
+    target = $ evt.target
     data = target.serializeJSON().term or {}
     data.concept_id = @model.id
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
-    target.find("input,button").attr "disabled", true
+    target.find("input,textarea,button").attr "disabled", true
     @model.terms().create data,
       wait: true
       error: (model, xhr, options) =>
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
 
-  cancel: (event) ->
-    event.preventDefault()
-    form = $(event.target).closest "form"
+  cancelForm: (evt) ->
+    evt.preventDefault()
+    if @model.remoteError?
+      @model.set @model.previousAttributes()
+      @model.remoteError = null
+    form = $(evt.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
 
-  removeTerm: (event) =>
-    trigger = $ event.target
+  resetForm: (evt) ->
+    evt.preventDefault()
+    if @model.remoteError?
+      @model.set @model.previousAttributes()
+      @model.remoteError = null
+    @render()
+
+  removeTerm: (evt) =>
+    trigger = $ evt.target
     container = trigger.closest ".term"
     model = @model.terms().get trigger.data "id"
     @confirm
@@ -108,8 +171,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         container.remove()
         model.destroy()
 
-  delete: (event) ->
-    trigger = $ event.target
+  delete: (evt) ->
+    trigger = $ evt.target
     @confirm
       trigger: trigger
       container: trigger.closest ".concept"

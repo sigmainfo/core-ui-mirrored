@@ -1,5 +1,5 @@
 != @render "concepts/caption", label: @concept.get "label"
-!= @form_for "concept", @concept, ->
+!= @form_for "concept", @concept, null, ->
   %section.properties
     %h3= I18n.t "properties.title"
     - for property, index in @concept.properties().models

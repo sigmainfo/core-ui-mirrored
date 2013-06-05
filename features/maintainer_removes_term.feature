@@ -11,8 +11,8 @@ Feature: maintainer removes term
   Scenario: remove term
     Given I have maintainer privileges
     And I am on the show concept page of this concept
-    # When I click "Edit concept" 
-    When I click "Remove term" within term "beaver hat"
+    When I click "Edit concept" 
+    And I click "Remove term" within term "beaver hat"
     Then I should see a confirmation dialog "This term will be deleted permanently."
     When I click outside the dialog
     Then I should not see a confirmation dialog

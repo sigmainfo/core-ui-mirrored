@@ -1,4 +1,4 @@
-!= @form_for "term", @term, ->
+!= @form_for "term", @term, null, ->
   != @form.input "value", required: true
   != @form.input "lang", required: true
   %section.properties

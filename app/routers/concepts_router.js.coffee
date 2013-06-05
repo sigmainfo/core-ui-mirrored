@@ -14,7 +14,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   _bindRoutes: ->
     super
-    @route /^concepts\/([0-9a-f]{24})$/, "show"
+    @route /^concepts\/([0-9a-f]{24})$/,       "show"
 
   initialize: (options) ->
     @[key] = value for key, value of options

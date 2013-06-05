@@ -11,8 +11,8 @@ Feature: maintainer deletes concept
   Scenario: remove concept
     Given I have maintainer privileges
     And I am on the show concept page of this concept
-    # When I click "Edit concept" 
-    When I click "Delete concept"
+    When I click "Edit concept" 
+    And I click "Delete concept"
     Then I should see a confirmation dialog "This concept including all terms will be deleted permanently."
     When I click outside the dialog
     Then I should not see a confirmation dialog

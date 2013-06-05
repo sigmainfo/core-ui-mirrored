@@ -11,8 +11,8 @@ Feature: maintainer adds term
   Scenario: add term
     Given I have maintainer privileges
     And I am on the show concept page of this concept
-    # When I click "Edit concept" 
-    When I click "Add term"
+    When I click "Edit concept" 
+    And I click "Add term"
     Then I should see a set of term inputs with labels "Value", "Language"
     When I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs
@@ -30,8 +30,8 @@ Feature: maintainer adds term
   Scenario: validation errors
     Given I have maintainer privileges
     And I am on the show concept page of this concept
-    # When I click "Edit concept"
-    When I click "Add term"
+    When I click "Edit concept"
+    And I click "Add term"
     And client-side validation is turned off
     And I fill in "Value" with "high hat" within term inputs
     And I click "Add property" within term inputs
@@ -52,8 +52,8 @@ Feature: maintainer adds term
   Scenario: cancel adding term
     Given I have maintainer privileges
     And I am on the show concept page of this concept
-    # When I click "Edit concept" 
-    When I click "Add term"
+    When I click "Edit concept" 
+    And I click "Add term"
     And I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs
     And I click "Add property" within term inputs

@@ -33,15 +33,23 @@ describe "Coreon.Modules.NestedFieldsFor", ->
           </fieldset>
           <fieldset id="second" class="term">
             <a class="remove-term">Remove term</a>
+            <input type="hidden" name="concept[terms][42][_id]">
           </fieldset>
           '''
         @event = $.Event "click"
 
-      it "removes fields", ->
+      it "removes fields of non-existing term", ->
         @event.target = @view.$("#first .remove-term")[0]
         @view.removeTerm @event
         @view.$el.should.not.have "#first"
         @view.$el.should.have "#second"
+
+      it "marks fields of existing term as deleted", ->
+        @event.target = @view.$("#second .remove-term")[0]
+        @view.removeTerm @event
+        @view.$el.should.have "#first"
+        @view.$el.should.have "#second"
+        @view.$('#second').should.have.class "delete"
 
     describe "addTerm()", ->
 

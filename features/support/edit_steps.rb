@@ -5,6 +5,10 @@ module EditSteps
     page.execute_script 'Coreon.application.session.ability.set("role", "maintainer");'
   end
 
+  step 'I do not have maintainer privileges' do
+    page.execute_script 'Coreon.application.session.ability.set("role", "user");'
+  end
+
   step 'client-side validation is turned off' do
     page.execute_script '$("form").attr("novalidate", true)'
   end
@@ -24,5 +28,9 @@ module EditSteps
 
   step 'I should not see a confirmation dialog' do
     page.should have_no_css(".confirm")
+  end
+
+  step 'I click "Edit concept"' do
+    click_link "Edit concept"
   end
 end

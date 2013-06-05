@@ -10,7 +10,14 @@ Coreon.Modules.NestedFieldsFor =
     options.template ?= Coreon.Templates["#{attr}/new_#{options.name}"]
 
     @::["remove#{options.as}"] = (event) ->
-      $(event.target).closest(".#{options.className}").remove()
+      container = $(event.target).closest(".#{options.className}")
+      if container.find('input[type=hidden][name*=_id]').length > 0
+        container.addClass("delete")
+        container.find('input,textarea').attr "disabled", true
+        $(event.target).remove()
+      else
+        container.remove()
+
 
     @::["add#{options.as}"] = (event) ->
       target = $(event.target)
