@@ -1,11 +1,18 @@
-- if @can "delete", Coreon.Models.Concept
-  .edit
+- if @can "edit", Coreon.Models.Concept
+  %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
+.edit
+  - if @can "delete", Coreon.Models.Concept
     %a.delete{href: "javascript:void(0)"}= I18n.t "concept.delete"
+
 != @render "concepts/caption", label: @concept.get "label"
 %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
 != @render "concepts/info", data: @concept.info()
-- if @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties: @concept.propertiesByKey()
+
+- if @editMode and @editProperties
+  != @render "concepts/edit_properties", concept: @concept, editToggle: yes
+- else if @editMode or @concept.get("properties")?.length > 0
+  != @render "concepts/properties", properties: @concept.propertiesByKey(), editToggle: yes
+
 .terms
   - if @concept.get("terms")?.length > 0
     - for lang, terms of @concept.termsByLang()
@@ -21,7 +28,7 @@
               %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
               != @render "concepts/info", data: term.info()
               - if term.get("properties")?.length > 0
-                != @render "concepts/properties", properties: term.propertiesByKey(), collapsed: true
+                != @render "concepts/properties", properties: term.propertiesByKey(), collapsed: true, noEditButton: true
   - if @can "create", Coreon.Models.Term
     .edit
       %a.add-term{href: "javascript:void(0)"}= I18n.t "term.new"

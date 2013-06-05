@@ -29,9 +29,9 @@
   &.edit-concept {
     @extend .big;
     padding-left: 6px;
-    position: absolute;
-    right: 0;
-    top:-15px;
+    float: right;
+    position: relative;
+    top: -16px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -40,7 +40,7 @@
 }
 
 
-form.create {
+form.create, form.update{
 
    &.term, fieldset {
      position: relative;
@@ -134,7 +134,7 @@ form.create {
      margin-top:60px;
      padding: 3px 10px;
 
-     .cancel {
+     .cancel, .reset {
        @extend .button;
        margin: 6px;
        padding: 5px 8px 3px 8px;
@@ -164,17 +164,72 @@ form.create {
 
    }
 
- }
+}
+ 
+ 
+.concept  {
+     .edit a {
+       font-size: 0.9em;
+       color:$greencolor;
+       display: inline-block;
+       margin-right: 10px;
+       float: right;
+       position: relative;
+       top: -10px;
+
+       &:before {
+         @include before-icon;
+         float: left;
+         margin-right: 5px;
+         background-position: -2px -351px;
+         @include edit-button;
+       };
+       &:hover {
+         color: $button-color;
+         &:before {
+           background-color: $button-color;
+           @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+         };
+       }
+     }
+     a.remove-term, a.remove-property, a.delete {
+       &:before {
+         background-position: -52px -351px;
+       };
+     }
+     a.remove-term, a.remove-property {
+       position: absolute;
+       top: 8px;
+       right: 0;
+     }
+     a.delete {
+       float: right;
+       top: -16px;
+     }
+     .terms a.remove-property {
+       width: 16px;
+       overflow: hidden;
+       text-indent: -2000px;
+     }
+     a.edit-properties {
+       width: 16px;
+       overflow: hidden;
+       text-indent: -5000px;
+       &:before {
+         background-position: -52px -502px;
+       };
+     }
+}
+
 // for edit mode
-/*.concept.show {
+.concept.show {
   .edit {
     display: none;
   }
 
-}*/
+}
 
-// remove concept show later
-.concept.edit, .concept.show {
+.concept.edit {
   .button.edit-concept {
     background-color: $beigecolor;
     color: $greencolor;
@@ -209,6 +264,19 @@ form.create {
       @include opacity(0.4);
     }
   }
+  .property.delete {
+    background-color:$greycolor;
+    @include opacity(0.4);
+    .edit {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      &:before {
+        @include before-icon;
+        background-position: 0px -552px;
+      };
+    }
+  }
 }
 
 .concept.delete {
@@ -218,58 +286,6 @@ form.create {
   &>.edit {
       @include opacity(1);
   }
-}
-
-
-.concept  {
-    .edit a {
-      font-size: 0.9em;
-      color:$greencolor;
-      display: inline-block;
-      margin-right: 10px;
-      float: right;
-      position: relative;
-      top: -10px;
-
-      &:before {
-        @include before-icon;
-        float: left;
-        margin-right: 5px;
-        background-position: -2px -351px;
-        @include edit-button;
-      };
-      &:hover {
-        color: $button-color;
-        &:before {
-          background-color: $button-color;
-          @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-        };
-      }
-    }
-    a.remove-term, a.remove-property, , a.delete {
-      position: absolute;
-      top: 8px;
-      right: 0;
-      &:before {
-        background-position: -52px -351px;
-      };
-    }
-    a.delete {
-      top:-18px;
-    }
-    .terms a.remove-property {
-      width: 16px;
-      overflow: hidden;
-      text-indent: -2000px;
-    }
-    a.edit-properties {
-      width: 16px;
-      overflow: hidden;
-      text-indent: -5000px;
-      &:before {
-        background-position: -52px -502px;
-      };
-    }
 }
 
 
@@ -297,7 +313,7 @@ form.create {
       }
     }
   }
-  .concept.edit, .concept.show {
+  .concept.edit {
     .language .term {
       .edit {
         height: 24px;
@@ -325,7 +341,7 @@ form.create {
     }
 
     .create, .update {
-      .properties {
+      &.term .properties, .term .properties {
           padding-top: 10px;
 
           fieldset {
@@ -348,7 +364,11 @@ form.create {
     }
 
     .submit {
-      font-size: 1.1em;
+      font-size: 0.94em;
+      padding-right: 5px;
+      .cancel, .reset {
+        margin: 3px;
+      }
     }
 
     .error-message {
@@ -357,7 +377,7 @@ form.create {
     }
 
   }
-  .concept.edit, .concept.show {
+  .concept.edit {
     .language .term {
       .edit {
         height: 24px;
