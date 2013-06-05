@@ -96,6 +96,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       
       beforeEach ->
         Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns true
+        Coreon.application.session.ability.can.withArgs("edit", Coreon.Models.Concept).returns true
 
       it "renders delete concept link", ->
         I18n.t.withArgs("concept.delete").returns "Delete concept"
@@ -103,14 +104,25 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$el.should.have ".edit a.delete"
         @view.$("a.delete").should.have.text "Delete concept"
 
+      it "renders edit concept link", ->
+        I18n.t.withArgs("concept.edit").returns "Edit concept"
+        @view.render()
+        @view.$el.should.have "a.edit-concept"
+        @view.$("a.edit-concept").should.have.text "Edit concept"
+
     context "without edit privileges", ->
       
       beforeEach ->
         Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns false
+        Coreon.application.session.ability.can.withArgs("edit", Coreon.Models.Concept).returns false
 
       it "does not render delete concept link", ->
         @view.render()
         @view.$el.should.not.have "a.delete"
+
+      it "does not render edit concept link", ->
+        @view.render()
+        @view.$el.should.not.have "a.edit-concept"
 
     context "properties", ->
 
@@ -461,11 +473,16 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$(".values li").eq(1).should.have.class "selected"
       @view.$(".values li").eq(0).should.not.have.class "selected"
 
+
   describe "toggleEditMode()", ->
 
     beforeEach ->
+      Coreon.application = session: ability: can: -> true
       @view.editMode = no
       @view.render()
+
+    afterEach ->
+      Coreon.application = null
 
     it "is triggered by click on edit mode toggle", ->
       @view.toggleEditMode = sinon.spy()
@@ -493,19 +510,21 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$el.should.have.class "edit"
       @view.$el.should.not.have.class "show"
 
+
   describe "editConceptProperties()", ->
 
     beforeEach ->
+      Coreon.application = session: ability: can: -> true
       @concept.properties = -> models: []
       @view.editMode = yes
       @view.editProperties = no
       @view.render()
 
     it "is triggered by click on edit-properties toggle", ->
-      @view.editConceptProperties = sinon.spy()
+      @view.toggleEditConceptProperties = sinon.spy()
       @view.delegateEvents()
       @view.$(".edit-properties").click()
-      @view.editConceptProperties.should.have.been.calledOnce
+      @view.toggleEditConceptProperties.should.have.been.calledOnce
 
     it "toggles edit properties value", ->
       @view.editProperties.should.be.false
@@ -763,27 +782,27 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @trigger[0]
 
     it "is triggered by click on cancel link", ->
-      @view.cancel = sinon.spy()
+      @view.cancelForm = sinon.spy()
       @view.delegateEvents()
       @trigger.click()
-      @view.cancel.should.have.been.calledOnce
+      @view.cancelForm.should.have.been.calledOnce
 
     it "prevents default action", ->
       @event.preventDefault = sinon.spy()
-      @view.cancel @event
+      @view.cancelForm @event
       @event.preventDefault.should.have.been.calledOnce
 
     it "removes wrapping form", ->
       @view.$el.append '''
         <form class="other"></form>
       '''
-      @view.cancel @event
+      @view.cancelForm @event
       @view.$el.should.not.have "form.term.create"
       @view.$el.should.have "form.other"
 
     it "shows related edit actions", ->
       $("#konacha").append @view.$el
-      @view.cancel @event
+      @view.cancelForm @event
       @view.$(".edit a.add-term").should.be.visible
 
   describe "removeTerm()", ->
@@ -871,7 +890,9 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         '''
       @view.$el.append '''
         <div class="concept">
-          <a class="delete" href="javascript:void(0)">Delete concept</a>
+          <div class="edit">
+            <a class="delete" href="javascript:void(0)">Delete concept</a>
+          </div>
         </div>
         '''
       @trigger = @view.$("a.delete")
@@ -884,7 +905,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "is triggered by click on remove concept link", ->
       @view.delete = sinon.spy()
       @view.delegateEvents()
-      @view.$(".delete").trigger @event
+      @view.$(".edit .delete").trigger @event
       @view.delete.should.have.been.calledOnce
 
     it "renders confirmation dialog", ->
