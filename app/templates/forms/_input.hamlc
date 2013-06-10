@@ -1,8 +1,11 @@
-%div{class: @className}
-  %label{for: @inputId}= @label
-  - unless @type is "textarea"
-    %input{type: @type, name: @inputName, id: @inputId, value: @value, required: @required}
-  - else
-    %textarea{name: @inputName, id: @inputId, required: @required}= @value
-  - for error in @errors
-    %p.error-message= error
+- unless @type is "hidden"
+  %div{class: @className}
+    %label{for: @inputId}= @label
+    - unless @type is "textarea"
+      %input{type: @type, name: @inputName, id: @inputId, value: @value, required: @required}
+    - else
+      %textarea{name: @inputName, id: @inputId, required: @required}= @value
+    - for error in @errors
+      %p.error-message= error
+- else
+  %input{type: @type, name: @inputName, id: @inputId, value: @value}

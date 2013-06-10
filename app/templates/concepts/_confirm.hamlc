@@ -1,0 +1,4 @@
+.modal-shim
+  %a.confirm{href: "javascript:void(0)"}
+    %p.message= @message
+    %p.ok= I18n.t "confirm.ok"

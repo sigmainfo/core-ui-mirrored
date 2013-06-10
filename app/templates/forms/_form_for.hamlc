@@ -6,4 +6,4 @@
         - for attr, count of @form.errorCounts
           %li= I18n.t "form.errors.attribute", name: attr, count: count
   != @form.yield()
-  != @render "forms/submit", submit: @form.submit, cancel: I18n.t("form.cancel")
+  != @render "forms/submit", submit: @form.submitButton, cancel: @form.cancelButton, reset: @form.resetButton

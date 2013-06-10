@@ -16,6 +16,7 @@
 .error-summary {
   color: darken($error-color, 20);
   background-color: rgba($error-color, 0.07);
+  margin-bottom: 25px;
   p, ul {
     padding: 8px 15px;
   }

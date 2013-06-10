@@ -1,0 +1,24 @@
+%section.properties{class: "collapsed" if @collapsed}
+  %h3= I18n.t "properties.title"
+  -unless @noEditButton
+    .edit
+      %a.edit-properties( href="javascript:void(0)" )= I18n.t "properties.edit"
+
+  %div{style: "display: none" if @collapsed}
+    %table
+      - for key, properties of @properties
+        %tr
+          %th= key
+          %td
+            - if properties.length is 1 and not properties[0].get("lang")
+              .value= properties[0].get "value"
+              != @render "concepts/info", data: properties[0].info()
+            - else
+              %ul.index
+                - for property, index in properties
+                  %li{class: "selected" if index is 0, "data-index": index }= property.get("lang") or index + 1
+              %ul.values
+                - for property, index in properties
+                  %li{class: "selected" if index is 0}
+                    .value= property.get "value"
+                    != @render "concepts/info", data: property.info()

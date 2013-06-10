@@ -1,6 +1,9 @@
 %fieldset.property
-  .actions
+  .edit
     %a.remove-property{href: "javascript:void(0)"}= I18n.t "property.remove"
+
+  -if @property and not @property.isNew()
+    != @input "property", "_id", @property, scope: @scope, index: @index, type: "hidden"
   != @input "property", "key", @property, scope: @scope, index: @index, required: true, errors: @errors?.key
   != @input "property", "value", @property, scope: @scope, index: @index, required: true, errors: @errors?.value, type: "textarea"
   != @input "property", "lang", @property, scope: @scope, index: @index, errors: @errors?.lang

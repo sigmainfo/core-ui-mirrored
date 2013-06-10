@@ -3,7 +3,7 @@ module AuthSteps
 
   attr_accessor :me
 
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do    
+  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
     @me_password = "se7en!"
     @me = CoreClient::Auth::User.create!(
       name: "William Blake",

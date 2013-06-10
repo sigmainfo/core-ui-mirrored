@@ -5,19 +5,23 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
-#= require templates/terms/new_term
+#= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
 #= require jquery.serializeJSON
-#= require modules/messages
+#= require modules/helpers
+#= require modules/nested_fields_for
 
 class Coreon.Views.Concepts.NewConceptView extends Backbone.View
+
+  Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
 
   className: "concept new"
 
   template: Coreon.Templates["concepts/new_concept"]
-  property: Coreon.Templates["properties/new_property"]
-  term: Coreon.Templates["terms/new_term"]
+
+  @nestedFieldsFor "properties", name: "property"
+  @nestedFieldsFor "terms", template: Coreon.Templates["concepts/new_term"]
 
   events:
     "click  a.add-property"    : "addProperty"
@@ -38,33 +42,16 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     @_wasRendered = true
     @
 
-  addProperty: (event) ->
-    $target = $(event.target)
-    $properties = $target.closest(".properties")
-    nextIndex = if name = $properties.find("input:last").attr("name")
-      name.match(/\[(\d+)\]\[[^\]]+\]$/)[1] * 1 + 1
-    else
-      0
-    $properties.children(".actions").before @property
-      index: nextIndex
-      scope: $target.data "scope"
-
-  removeProperty: (event) ->
-    $(event.target).closest(".property").remove()
-
-  addTerm: (event) ->
-    @termCount += 1
-    @$(".terms > .actions").before @term index: @termCount - 1
-
-  removeTerm: (event) ->
-    $(event.target).closest(".term").remove()
-
   create: (event) ->
     event.preventDefault()
     data = @$("form").serializeJSON().concept or {}
     attrs = {}
-    attrs.properties = if data.properties? then (property for property in data.properties when property?) else []
-    attrs.terms = if data.terms? then (term for term in data.terms when term?) else []
+    attrs.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
+    attrs.terms = if data.terms?
+      term for term in data.terms when term?
+    else []
     @$("form").find("input,button").attr("disabled", true)
     @model.save attrs,
       success: =>

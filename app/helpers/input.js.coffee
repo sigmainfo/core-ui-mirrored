@@ -11,7 +11,7 @@ class Input
     options.type     ?= "text"
     options.required ?= false
     options.scope    ?= @name
-    options.errors   ?= []
+    options.errors   ?= @model?.errors?()?[@attr] or []
 
     options.scope   = options.scope.replace "[]", "[#{options.index}]" if options.index?
     dasherizedAttr  = @attr.replace /[A-Z]/, (glyph) -> "-#{glyph.toLowerCase()}"

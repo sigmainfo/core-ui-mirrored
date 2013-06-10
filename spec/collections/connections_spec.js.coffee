@@ -53,18 +53,18 @@ describe "Coreon.Collections.Connections", ->
       @xhr.restore()
 
     it "generates graph url from url property", ->
-      @model.url = "models/123"
+      @model.url = "/models/123"
       @connections.sync "read", @model
       @request.url.should.equal "https://graph.coreon.com/models/123"
 
     it "generates graph url from url method", ->
-      @model.url = -> "models/123"
+      @model.url = -> "/models/123"
       @connections.sync "read", @model
       @request.url.should.equal "https://graph.coreon.com/models/123"
 
     it "allows overriding url", ->
-      @connections.sync "read", @model, url: "some/url"
-      @request.url.should.equal "some/url"
+      @connections.sync "read", @model, url: "/some/url"
+      @request.url.should.equal "/some/url"
 
     it "sets auth header", ->
       @connections.session.set "token", "123-my-token-xxx"
