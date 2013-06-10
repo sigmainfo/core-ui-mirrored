@@ -135,7 +135,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        container: form.closest ".concept"
         message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
         action: =>
           @saveConceptProperties(data)
@@ -151,7 +150,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form = $ evt.target
     data = form.serializeJSON()?.term or {}
     data._id = form.find("input[name=id]").val()
-    #data.concept_id = @model.id
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
@@ -163,7 +161,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        container: form.closest ".concept"
         message: I18n.t "term.confirm_update", {n:elements_to_delete.length}
         action: =>
           @saveTerm(data)
