@@ -15,7 +15,7 @@ set :use_sudo, false
 set :git_shallow_clone, 1
 set :deploy_via, :remote_cache
 
-set :stages, %w(acceptance staging production)
+set :stages, %w(staging production)
 set :default_stage, "staging"
 
 namespace :deploy do

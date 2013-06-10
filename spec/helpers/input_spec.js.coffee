@@ -70,7 +70,7 @@ describe "Coreon.Helpers.input()", ->
       tag.should.have.attr "id", "concept-properties-3-key"
 
   context "textarea tag", ->
-    
+
     it "renders textarea", ->
       @model.set "attrName", "foo bar baz", silent: true
       markup = @helper "model", "attrName", @model, type: "textarea"
@@ -80,6 +80,22 @@ describe "Coreon.Helpers.input()", ->
       tag.should.have.attr "name", "model[attrName]"
       tag.should.have.attr "id", "model-attr-name"
       tag.should.have.text "foo bar baz"
+
+  context "hidden tag", ->
+    beforeEach ->
+      @model.set "attrName", "foo bar baz", silent: true
+      @input = $(@helper "model", "attrName", @model, type: "hidden")
+
+    it "skips container and label", ->
+      @input.should.not.match ".input.attr-name"
+      @input.should.match "input"
+
+    it "renders hidden field", ->
+      @input.should.have.attr "name", "model[attrName]"
+      @input.should.have.attr "id", "model-attr-name"
+      @input.should.have.value "foo bar baz"
+      @input.should.have.attr "type", "hidden"
+
 
   context "label tag", ->
     
@@ -110,3 +126,10 @@ describe "Coreon.Helpers.input()", ->
       markup = @helper "model", "attrName", null, errors: [ "can't be blank" ]
       input = $(markup)
       input.should.have.class "error"
+
+    it "extracts errors from model", ->
+      @model.errors = -> attrName: [ "can't be blank" ]
+      markup = @helper "model", "attrName", @model 
+      input = $(markup)
+      error = input.find ".error-message"
+      error.should.have.text "can't be blank"

@@ -12,18 +12,18 @@ describe "Coreon.Helpers.form_for()", ->
     I18n.t.restore()
 
   it "wraps block with form tag", ->
-    markup = @helper "model", @model, -> '<input type="text" name="title" value="Wahappan?"/>'
+    markup = @helper "model", @model, null, -> '<input type="text" name="title" value="Wahappan?"/>'
     form = $(markup)
     form.should.match "form"
     form.should.have 'input[type="text"][name="title"][value="Wahappan?"]'
 
   it "classifies form", ->
-    markup = @helper "my_model", @model, ->
+    markup = @helper "my_model", @model, null, ->
     $(markup).should.have.class "my-model"
 
   it "renders cancel link", ->
     I18n.t.withArgs("form.cancel").returns "Cancel"
-    markup = @helper "model", @model, ->
+    markup = @helper "model", @model, null, ->
     form = $(markup)
     form.should.have "a.cancel"
     form.find("a.cancel").should.have.attr "href", "javascript:history.back()"
@@ -35,12 +35,12 @@ describe "Coreon.Helpers.form_for()", ->
       @model.isNew = -> true
 
     it "classifies form", ->
-      markup = @helper "model", @model, ->
+      markup = @helper "model", @model, null, ->
       $(markup).should.have.class "create"
 
     it "renders submit button", ->
       I18n.t.withArgs("model.create").returns "Create Model"
-      markup = @helper "model", @model, ->
+      markup = @helper "model", @model, null, ->
       form = $(markup)
       form.should.have 'button[type="submit"]'
       form.find('button[type="submit"]').should.have.text "Create Model"
@@ -51,12 +51,12 @@ describe "Coreon.Helpers.form_for()", ->
       @model.isNew = -> false
 
     it "classifies form", ->
-      markup = @helper "model", @model, ->
+      markup = @helper "model", @model, null, ->
       $(markup).should.have.class "update"
 
     it "renders submit button", ->
       I18n.t.withArgs("model.update").returns "Update Model"
-      markup = @helper "model", @model, ->
+      markup = @helper "model", @model, null, ->
       form = $(markup)
       form.should.have 'button[type="submit"]'
       form.find('button[type="submit"]').should.have.text "Update Model"
@@ -67,7 +67,7 @@ describe "Coreon.Helpers.form_for()", ->
       I18n.t.withArgs("form.errors.summary.create", name: "model").returns "Failed to create model:"
       @model.isNew = -> true
       @model.errors = -> {}
-      markup = @helper "model", @model, ->
+      markup = @helper "model", @model, null, ->
       form = $(markup)
       form.should.have ".error-summary"
       form.find(".error-summary *:first-child").should.have.text "Failed to create model:"
@@ -80,6 +80,19 @@ describe "Coreon.Helpers.form_for()", ->
           { value: ["can't be foo", "can't be bar"] }
           { key:   ["can't be baz"] }
         ]
-      markup = @helper "model", @model, ->
+      markup = @helper "model", @model, null, ->
       form = $(markup)
       form.find(".error-summary li").should.contain "3 errors on properties"
+
+  describe "input()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "input"
+
+    afterEach ->
+      Coreon.Helpers.input.restore()
+    
+    it "delegates call to input helper", ->
+      @helper "model", @model, null, -> @form.input "label", required: true
+      Coreon.Helpers.input.should.have.been.calledOnce
+      Coreon.Helpers.input.should.have.been.calledWith "model", "label", @model, required: true

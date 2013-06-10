@@ -1,0 +1,26 @@
+{
+  "app/*.js.coffee": {
+    "test": "spec/%s_spec.js.coffee"
+  },
+
+  "spec/*_spec.js.coffee": {
+    "alternate": "app/%s.js.coffee",
+    "task": "konacha:run SPEC=/%"
+  },
+
+  "app/views/*_view.js.coffee": {
+    "related": "app/templates/%s.hamlc"
+  },
+
+  "app/templates/*.hamlc": {
+    "related": "app/views/%s_view.js.coffee"
+  },
+
+  "features/*.feature": {
+    "alternate": "features/steps/%s.rb"
+  },
+
+  "features/steps/*.rb": {
+    "alternate": "features/%s.feature"
+  }
+}

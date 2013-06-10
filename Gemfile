@@ -6,12 +6,7 @@ if RUBY_VERSION =~ /1.9/
 end
 
 gem "rails", "= 3.2.12" # Needed for i18n-js with ruby 1.9
-
-# Bundle edge Rails instead:
-# gem "rails", :git => "git://github.com/rails/rails.git"
-
 gem "core_client", git: "git@devel.spom.net:core-client.git"
-gem "mongoid", "~> 3.0.0"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -30,12 +25,11 @@ end
 gem "jquery-rails"
 gem "jquery-ui-rails"
 
-gem "bcrypt-ruby", "~> 3.0.0"
 gem "rack-cors", require: "rack/cors"
 
 group :development do
   gem "thin"
-  gem "konacha", "~> 2.3.0"
+  gem "konacha"
   gem 'capistrano'
   gem 'capistrano-ext'
 end
@@ -48,8 +42,7 @@ group :test do
 end
 
 group :test, :development do
-  gem "capybara-webkit", "~>0.14.2"
+  gem "capybara-webkit"
   gem "rspec-rails", require: false
-  gem "text"
   gem "pry"
 end

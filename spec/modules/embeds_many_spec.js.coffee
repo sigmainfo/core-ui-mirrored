@@ -33,6 +33,12 @@ describe "Coreon.Modules.EmbedsMany", ->
         @model.submodels().should.be.an.instanceof Backbone.Collection
         @model.submodels().should.have.lengthOf 0
 
+      it "triggers change events", ->
+        spy = sinon.spy()
+        @model.on "change:submodels", spy
+        @model.submodels().add foo: "bar"
+        spy.should.have.been.calledOnce
+
     context "with custom configuration", ->
       
       it "uses provided collection type", ->

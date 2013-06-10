@@ -21,7 +21,7 @@ describe "Coreon.Models.Concept", ->
     Coreon.Models.Concept.find.should.equal Coreon.Modules.Accumulation.find
 
   it "has an URL root", ->
-    @model.urlRoot.should.equal "concepts"
+    @model.urlRoot.should.equal "/concepts"
 
   context "defaults", ->
 
@@ -166,25 +166,61 @@ describe "Coreon.Models.Concept", ->
     
     it "syncs with attr", ->
       @model.set "properties", [key: "label"]
+      @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
       @model.properties().at(0).get("key").should.equal "label"
       
   describe "terms()", ->
   
-    it "syncs with attr", ->
+    it "creates terms from attr", ->
       @model.set "terms", [value: "dead", lang: "en"]
       @model.terms().at(0).should.be.an.instanceof Coreon.Models.Term
       @model.terms().at(0).get("value").should.equal "dead"
 
+    it "updates attr from terms", ->
+      @model.terms().reset [ value: "dead", lang: "en", properties: [] ]
+      @model.get("terms").should.eql [ value: "dead", lang: "en", properties: [] ]
+
   describe "info()", ->
-    
+
     it "returns hash with system info attributes", ->
-      @model.set
+      @model.set {
         _id: "abcd1234"
         author: "Nobody"
-      @model.info().should.eql {
+        terms : [ "foo", "bar" ]
+      }, silent: true
+      @model.info().should.eql
         id: "abcd1234"
         author: "Nobody"
-      }
+
+  describe "propertiesByKey()", ->
+
+    it "returns empty hash when empty", ->
+      @model.properties = -> models: []
+      @model.propertiesByKey().should.eql {}
+
+    it "returns properties grouped by key", ->
+      prop1 = new Backbone.Model key: "label"
+      prop2 = new Backbone.Model key: "definition"
+      prop3 = new Backbone.Model key: "definition"
+      @model.properties = -> models: [ prop1, prop2, prop3 ]
+      @model.propertiesByKey().should.eql
+        label: [ prop1 ]
+        definition: [ prop2, prop3 ]
+
+  describe "termsByLang()", ->
+
+    it "returns empty hash when empty", ->
+      @model.terms = -> models: []
+      @model.termsByLang().should.eql {}
+
+    it "returns terms grouped by lang", ->
+      term1 = new Backbone.Model lang: "en"
+      term2 = new Backbone.Model lang: "de"
+      term3 = new Backbone.Model lang: "de"
+      @model.terms = -> models: [ term1, term2, term3 ]
+      @model.termsByLang().should.eql
+        en: [ term1 ]
+        de: [ term2, term3 ]
 
   describe "toJSON()", ->
 
@@ -202,32 +238,82 @@ describe "Coreon.Models.Concept", ->
       @model.toJSON().should.not.have.deep.property "concept.label"
       @model.toJSON().should.not.have.deep.property "concept.hit"
 
+    it "does not create wrapper for terms", ->
+      @model.terms().reset [ { value: "hat" }, { value: "top hat" } ]
+      @model.toJSON().should.have.deep.property "concept.terms[0].value", "hat"
+      @model.toJSON().should.have.deep.property "concept.terms[1].value", "top hat"
+
   describe "save()", ->
 
-    it "uses application sync with method 'update' if model exists", ->
-      Coreon.application = sync: sinon.spy()
-      try
-        @model.save()
+    context "application sync", ->
+
+      beforeEach ->
+        Coreon.application = sync: sinon.spy()
+
+      afterEach ->
+        Coreon.application = null
+
+      it "delegates to application sync", ->
+        @model.save {}, wait: true
+        Coreon.application.sync.should.have.been.calledOnce
         Coreon.application.sync.should.have.been.calledWith "update", @model
-      finally
+        Coreon.application.sync.firstCall.args[2].should.have.property "wait", true
+      
+    context "create", ->
+      
+      beforeEach ->
+        @model.id = null
+        Coreon.application = sync: (method, model, options = {}) -> 
+          model.id = "1234"
+          options.success?()
+        @model.message = sinon.spy()
+
+      afterEach ->
         Coreon.application = null
 
-    it "uses application sync with method 'create' if model is new", ->
-      @model = new Coreon.Models.Concept
-      Coreon.application = sync: sinon.spy()
-      try
-        @model.save()
-        Coreon.application.sync.should.have.been.calledWith "create", @model
-      finally
-        Coreon.application = null
+      it "creates message on first save", ->
+        I18n.t.withArgs("concept.created", label: "dead man").returns 'Successfully created concept "dead man"'
+        @model.save "label", "dead man"
+        @model.save "label", "nobody"
+        @model.message.should.have.been.calledOnce
+        @model.message.should.have.been.calledWith 'Successfully created concept "dead man"'
 
-    it "creates notification on successful sync", ->
-      I18n.t.withArgs("concept.sync.create", label: "dead man").returns 'Successfully created concept "dead man"'
-      @model.isNew = -> true
-      @model.initialize()
-      @model.set "label", "dead man", silent: true
+      it "only creates message on new models", ->
+        @model.isNew = -> false
+        @model.save "value", "high hat"
+        @model.message.should.not.have.been.called
+
+      it "triggers custom event", ->
+        spy = sinon.spy()
+        @model.on "create", spy
+        @model.save "label", "dead man"
+        @model.save "label", "nobody"
+        spy.should.have.been.calledOnce
+        spy.should.have.been.calledWith @model, @model.id
+
+  describe "errors()", ->
+
+    it "collects remote validation errors", ->
+      @model.trigger "error", @model,
+        responseText: '{"errors":{"foo":["must be bar"]}}'
+      @model.errors().should.eql
+        foo: ["must be bar"]
+
+  describe "onDestroy()", ->
+
+    beforeEach ->
       @model.message = sinon.spy()
-      @model.trigger "sync" 
-      @model.trigger "sync" 
+
+    it "is triggered when model was destroyed", ->
+      @model.onDestroy = sinon.spy()
+      @model.initialize()
+      @model.trigger "destroy"
+      @model.onDestroy.should.have.been.calledOnce
+      @model.onDestroy.should.have.been.calledOn @model
+  
+    it "creates message", ->
+      I18n.t.withArgs("concept.deleted", label: "high hat").returns 'Successfully deleted concept "high hat".'
+      @model.set "label", "high hat", silent: true
+      @model.onDestroy()
       @model.message.should.have.been.calledOnce
-      @model.message.should.have.been.calledWith 'Successfully created concept "dead man"'
+      @model.message.should.have.been.calledWith 'Successfully deleted concept "high hat".'

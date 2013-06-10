@@ -1,10 +1,10 @@
 #= require environment
 #= require views/composite_view
-#= require templates/layout/section
+#= require templates/shared/section
 
 class Coreon.Views.Layout.SectionView extends Coreon.Views.CompositeView
 
-  layout: Coreon.Templates["layout/section"]
+  layout: Coreon.Templates["shared/section"]
 
   events: {}
 
