@@ -101,8 +101,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       it "renders delete concept link", ->
         I18n.t.withArgs("concept.delete").returns "Delete concept"
         @view.render()
-        @view.$el.should.have ".edit a.delete"
-        @view.$("a.delete").should.have.text "Delete concept"
+        @view.$el.should.have ".edit a.delete-concept"
+        @view.$("a.delete-concept").should.have.text "Delete concept"
 
       it "renders edit concept link", ->
         I18n.t.withArgs("concept.edit").returns "Edit concept"
@@ -909,11 +909,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$el.append '''
         <div class="concept">
           <div class="edit">
-            <a class="delete" href="javascript:void(0)">Delete concept</a>
+            <a class="delete-concept" href="javascript:void(0)">Delete concept</a>
           </div>
         </div>
         '''
-      @trigger = @view.$("a.delete")
+      @trigger = @view.$("a.delete-concept")
       @event = $.Event "click"
       @event.target = @trigger[0]
 
@@ -923,7 +923,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "is triggered by click on remove concept link", ->
       @view.delete = sinon.spy()
       @view.delegateEvents()
-      @view.$(".edit .delete").trigger @event
+      @view.$(".edit .delete-concept").trigger @event
       @view.delete.should.have.been.calledOnce
 
     it "renders confirmation dialog", ->

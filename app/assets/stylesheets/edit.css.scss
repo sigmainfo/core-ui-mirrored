@@ -196,7 +196,7 @@ form.create.term {
          };
        }
      }
-     a.remove-term, a.remove-property, a.delete {
+     a.remove-term, a.remove-property, a.delete-concept {
        &:before {
          background-position: -52px -351px;
        };
@@ -206,6 +206,7 @@ form.create.term {
        top: 8px;
        right: 0;
      }
+
      a.remove-term {
        right: 18px;
      }
@@ -214,7 +215,7 @@ form.create.term {
         top: 8px;
        right: 0;
      }
-     a.delete {
+     a.delete-concept {
        float: right;
        top: -16px;
      }
