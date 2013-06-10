@@ -16,7 +16,7 @@ Coreon.Modules.Confirmation =
     shim = $ template message: options.message
     dialog = shim.find ".confirm"
 
-    options.container.addClass "delete"
+    options.container?.addClass "delete"
     shim.appendTo modal
 
     position = ->
@@ -31,7 +31,7 @@ Coreon.Modules.Confirmation =
 
     cancel = ->
       $(window).off ".coreonConfirm"
-      options.container.removeClass "delete"
+      options.container?.removeClass "delete"
       modal.empty()
 
     destroy = (event) ->
