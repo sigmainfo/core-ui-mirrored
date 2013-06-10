@@ -277,6 +277,14 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$(".term").should.have ".value"
         @view.$(".term .value").should.have.text "top hat"
 
+      it "renders terms", ->
+        @term.set "value", "top hat", silent: true
+        @concept.termsByLang = => hu: [ @term ]
+        @view.render()
+        @view.$(".language").should.have ".term"
+        @view.$(".term").should.have ".value"
+        @view.$(".term .value").should.have.text "top hat"
+
       it "renders system info for of term", ->
         @term.info = -> id: "#1234"
         Coreon.Templates["concepts/info"].withArgs(data: id: "#1234")
@@ -314,6 +322,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         beforeEach ->
           Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
           Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns true
+          Coreon.application.session.ability.can.withArgs("edit", Coreon.Models.Term).returns true
 
         it "renders add term link", ->
           I18n.t.withArgs("term.new").returns "Add term"
@@ -328,6 +337,15 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           @view.$(".term").should.have ".edit a.remove-term"
           @view.$(".term a.remove-term").should.have.text "Remove term"
           @view.$(".term a.remove-term").should.have.data "id", "56789fghj"
+
+        it "renders edit term links", ->
+          I18n.t.withArgs("term.edit").returns "Edit term"
+          @term.id = "56789fghj"
+          @view.render()
+          @view.$(".term").should.have ".edit a.edit-term"
+          @view.$(".term a.edit-term").should.have.text "Edit term"
+          @view.$(".term a.edit-term").should.have.data "id", "56789fghj"
+
 
       context "without edit privileges", ->
         

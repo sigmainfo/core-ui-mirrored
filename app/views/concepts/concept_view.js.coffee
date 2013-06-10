@@ -8,8 +8,8 @@
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
 #= require templates/concepts/_edit_properties
+#= require templates/concepts/_term
 #= require templates/terms/new_term
-#= require templates/properties/new_property
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require modules/helpers
@@ -26,6 +26,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   className: "concept show"
   editMode: no
   editProperties: no
+  editTerm: no
 
   template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
@@ -43,11 +44,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .remove-property"                    : "removeProperty"
     "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
+    "submit form.term.update"                    : "updateTerm"
     "click  form a.cancel"                       : "cancelForm"
     "click  form a.reset"                        : "resetForm"
+    "click  .edit-term"                          : "toggleEditTerm"
     "click  .remove-term"                        : "removeTerm"
     "click  .edit .delete"                       : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
+    "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -55,7 +59,12 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @listenTo @model, "change", @render
 
   render: ->
-    @$el.html @template concept: @model, editMode: @editMode, editProperties: @editProperties
+    @$el.html @template
+      concept: @model,
+      editMode: @editMode,
+      editProperties: @editProperties,
+      editTerm: @editTerm
+
     @broaderAndNarrower.render() unless @_wasRendered
     @$el.children(".system-info").after @broaderAndNarrower.$el
     @_wasRendered = true
@@ -93,6 +102,16 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @editProperties = !@editProperties
     @render()
 
+  toggleEditTerm: (evt)->
+    if evt?
+      evt.preventDefault()
+      term_id = $(evt.target).data("id")
+      @editTerm = if @editTerm == term_id then no else term_id
+    else
+      @editTerm = !@editTerm
+
+    @render()
+
   addTerm: ->
     terms = @$(".terms")
     terms.children(".edit").hide()
@@ -100,7 +119,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   saveConceptProperties: (data)->
     @model.save data.concept,
-      #wait: true
       success: => @toggleEditConceptProperties()
       error: (model)=>
         model.once "error", @render, @
@@ -112,8 +130,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     data = form.serializeJSON() or {}
     form.find("input,textarea,button").attr "disabled", true
     trigger = form.find('[type=submit]')
-
     elements_to_delete = form.find(".property.delete")
+
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
@@ -128,6 +146,44 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     false
 
 
+  updateTerm: (evt) ->
+    evt.preventDefault()
+    form = $ evt.target
+    data = form.serializeJSON()?.term or {}
+    data._id = form.find("input[name=id]").val()
+    #data.concept_id = @model.id
+    data.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
+
+    form.find("input,textarea,button").attr "disabled", true
+    trigger = form.find('[type=submit]')
+    elements_to_delete = form.find(".property.delete")
+
+    if elements_to_delete.length > 0
+      @confirm
+        trigger: trigger
+        container: form.closest ".concept"
+        message: I18n.t "term.confirm_update", {n:elements_to_delete.length}
+        action: =>
+          @saveTerm(data)
+    else
+      @saveTerm(data)
+
+    form.find("[type=submit]").attr "disabled", false
+    false
+
+
+  saveTerm: (data)->
+    model = @model.terms().get data._id
+    console.log model, data
+    model.save data,
+      success: => @toggleEditTerm()
+      error: (model)=>
+        model.once "error", @render, @
+      attrs: term: data
+
+
   createTerm: (evt) ->
     evt.preventDefault()
     target = $ evt.target
@@ -136,12 +192,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
+
     target.find("input,textarea,button").attr "disabled", true
     @model.terms().create data,
       wait: true
       error: (model, xhr, options) =>
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
+
 
   cancelForm: (evt) ->
     evt.preventDefault()

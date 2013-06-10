@@ -78,8 +78,12 @@ en:
     new: "Add term"
     create: "Create term"
     created: 'Successfully created term "{{value}}".'
+    saved: 'Successfully saved term "{{value}}".'
+    edit: "Edit term"
+    update: "Save term"
     delete: "Remove term"
     confirm_delete: "This term will be deleted permanently."
+    confirm_update: "Saving the term will delete {{n}} properties permanently!"
     deleted: 'Successfully deleted term "{{value}}".'
 
   terms:

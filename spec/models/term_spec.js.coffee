@@ -90,14 +90,21 @@ describe "Coreon.Models.Term", ->
     it "creates message on first save", ->
       I18n.t.withArgs("term.created", value: "high hat").returns 'Successfully created term "high hat"'
       @model.save "value", "high hat"
-      @model.save "value", "beaver hat"
       @model.message.should.have.been.calledOnce
       @model.message.should.have.been.calledWith 'Successfully created term "high hat"'
 
-    it "only creates message on new models", ->
+    it "creates message on update", ->
+      I18n.t.withArgs("term.saved", value: "high hat").returns 'Successfully saved term "high hat"'
       @model.isNew = -> false
       @model.save "value", "high hat"
-      @model.message.should.not.have.been.called
+      @model.message.should.have.been.calledOnce
+      @model.message.should.have.been.calledWith 'Successfully saved term "high hat"'
+
+    ## depricated because the term model now sends a message on update
+    #it "only creates message on new models", ->
+    #  @model.isNew = -> false
+    #  @model.save "value", "high hat"
+    #  @model.message.should.not.have.been.called
 
     it "triggers custom event", ->
       spy = sinon.spy()

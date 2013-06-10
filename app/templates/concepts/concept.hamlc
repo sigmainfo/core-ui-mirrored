@@ -9,9 +9,9 @@
 != @render "concepts/info", data: @concept.info()
 
 - if @editMode and @editProperties
-  != @render "concepts/edit_properties", concept: @concept, editToggle: yes
+  != @render "concepts/edit_properties", concept:@concept, editToggle:yes
 - else if @editMode or @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties: @concept.propertiesByKey(), editToggle: yes
+  != @render "concepts/properties", properties:@concept.propertiesByKey(), editToggle:yes
 
 .terms
   - if @concept.get("terms")?.length > 0
@@ -20,15 +20,11 @@
         %h3= lang
         %ul
           - for term in terms
-            %li.term
-              - if @can "delete", Coreon.Models.Term
-                .edit
-                  %a.remove-term{href: "javascript:void(0)", "data-id": term.id}= I18n.t "term.delete"
-              %h4.value= term.get "value"
-              %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
-              != @render "concepts/info", data: term.info()
-              - if term.get("properties")?.length > 0
-                != @render "concepts/properties", properties: term.propertiesByKey(), collapsed: true, noEditButton: true
+            - if @editMode and @editTerm == term.id
+              != @render "terms/new_term", term:term, reset:true
+            - else
+              != @render "concepts/term", term:term
+
   - if @can "create", Coreon.Models.Term
     .edit
       %a.add-term{href: "javascript:void(0)"}= I18n.t "term.new"

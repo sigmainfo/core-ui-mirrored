@@ -36,9 +36,10 @@ class Coreon.Models.Term extends Backbone.Model
 
   save: ->
     super
-    
+
   sync: (method, model, options = {}) ->
     @once "sync", @onCreate, @ if method is "create"
+    @once "sync", @onSave, @ if method is "update"
     Coreon.application?.sync method, model, options
 
   onCreate: ->
@@ -47,3 +48,6 @@ class Coreon.Models.Term extends Backbone.Model
 
   onDestroy: ->
     @message I18n.t("term.deleted", value: @get "value"), type: "info"
+
+  onSave: ->
+    @message I18n.t("term.saved", value: @get "value"), type: "info"
