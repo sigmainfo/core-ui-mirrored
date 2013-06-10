@@ -2,7 +2,7 @@
   %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
 .edit
   - if @can "delete", Coreon.Models.Concept
-    %a.delete{href: "javascript:void(0)"}= I18n.t "concept.delete"
+    %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"
 
 != @render "concepts/caption", label: @concept.get "label"
 %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"

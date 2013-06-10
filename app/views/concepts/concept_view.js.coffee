@@ -49,7 +49,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form a.reset"                        : "resetForm"
     "click  .edit-term"                          : "toggleEditTerm"
     "click  .remove-term"                        : "removeTerm"
-    "click  .edit .delete"                       : "delete"
+    "click  .delete-concept"                     : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
