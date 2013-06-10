@@ -14,7 +14,7 @@ ajax = (deferred, method, model, options) ->
   request.always ->
     connections -= 1
     if connections is 0 and request.status isnt 403
-      Coreon.Modules.CoreAPI.trigger "stop" 
+      Coreon.Modules.CoreAPI.trigger "stop"
 
   request.done (data, status, request) ->
     deferred.resolveWith model, [data, request]
@@ -34,13 +34,13 @@ ajax = (deferred, method, model, options) ->
       Coreon.Modules.CoreAPI.trigger "error", request.status, error, data, request
       Coreon.Modules.CoreAPI.trigger "error:#{request.status}", error, data, request
 
-  request 
+  request
 
 Coreon.Modules.CoreAPI =
 
   sync: (method, model, options = {}) ->
     deferred = $.Deferred()
-    
+
     root = Coreon.application.session.get "repository_root"
     root = root[..-2] if root.charAt(root.length - 1) is "/"
     path = model.url()

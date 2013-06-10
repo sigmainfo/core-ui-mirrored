@@ -62,21 +62,21 @@ describe "Coreon.Modules.CoreAPI", ->
 
       it "triggers global request event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "request", spy 
+        Coreon.Modules.CoreAPI.on "request", spy
         @model.sync "read", @model, url: "https://foo.net/1234"
         spy.should.have.been.calledOnce
         spy.should.have.been.calledWith "read", "https://foo.net/1234", @requests[0]
 
       it "triggers global start event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "start", spy 
+        Coreon.Modules.CoreAPI.on "start", spy
         @model.sync "read", @model, url: "https://foo.net/1234"
         @model.sync "read", @model, url: "https://foo.net/abcd"
         spy.should.have.been.calledOnce
 
       it "triggers global stop event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "stop", spy 
+        Coreon.Modules.CoreAPI.on "stop", spy
         @model.sync "read", @model, url: "https://foo.net/1234"
         @model.sync "read", @model, url: "https://foo.net/abcd"
         @requests[1].resolve()
@@ -102,7 +102,7 @@ describe "Coreon.Modules.CoreAPI", ->
         fail.should.not.have.been.called
 
     context "fail", ->
-      
+
       it "triggers fail callbacks", ->
         fail = sinon.spy()
         promise = @model.sync "create", @model
@@ -141,7 +141,7 @@ describe "Coreon.Modules.CoreAPI", ->
         spy1.should.have.been.calledWith 422, "Unprocessible Entity", error: "is not valid", @requests[0]
         spy2.should.have.been.calledOnce
         spy2.should.have.been.calledWith "Unprocessible Entity", error: "is not valid", @requests[0]
-    
+
     context "unauthorized", ->
 
       it "does not trigger any callbacks", ->
@@ -177,7 +177,7 @@ describe "Coreon.Modules.CoreAPI", ->
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
         Coreon.application.session.has("token").should.be.false
-      
+
       it "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
         @requests[0].status = 403
