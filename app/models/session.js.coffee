@@ -7,7 +7,7 @@ class Coreon.Models.Session extends Backbone.Model
 
   defaults:
     active: false
-    login: ""
+    email: ""
     name: ""
     token: null
     auth_root: "/api/auth/"
@@ -27,8 +27,8 @@ class Coreon.Models.Session extends Backbone.Model
 
     @connections.on "error:403", @onUnauthorized
     
-  activate: (login, password) ->
-    @set "login", login
+  activate: (email, password) ->
+    @set "email", email
     @requestSession password, @onActivated
 
   onActivated: (data) =>
@@ -47,13 +47,13 @@ class Coreon.Models.Session extends Backbone.Model
     @trigger "reactivated"
 
   requestSession: (password, done) ->
-    login = @get("login")
+    email = @get("email")
     options =
       url: @get("auth_root") + "login"
       type: "POST"
       dataType: "json"
       data:
-        login: login
+        email: email
         password: password
     
     @connections.add
@@ -74,7 +74,7 @@ class Coreon.Models.Session extends Backbone.Model
     @message I18n.t("notifications.account.logout")
 
   sync: (action, model, options)->
-    fields = ["token", "login", "name"]
+    fields = ["token", "email", "name"]
     switch action
       when "create", "update"
         data = {}

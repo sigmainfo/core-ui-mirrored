@@ -19,10 +19,10 @@ class Coreon.Views.Account.LoginView extends Coreon.Views.SimpleView
     @
 
   changeStateHandler: (event) ->
-    valid = @$("#coreon-login-login").val().length and @$("#coreon-login-password").val().length
+    valid = @$("#coreon-login-email").val().length and @$("#coreon-login-password").val().length
     @$("input[type='submit']").prop "disabled", not valid
 
   submitHandler: (event) ->
     event.preventDefault()
     event.stopPropagation()
-    @model.activate @$("#coreon-login-login").val(), @$("#coreon-login-password").val()
+    @model.activate @$("#coreon-login-email").val(), @$("#coreon-login-password").val()

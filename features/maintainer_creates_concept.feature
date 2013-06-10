@@ -4,7 +4,7 @@ Feature: maintainer creates concept
   I want to create a new concept optionally populated with some initial terms or properties
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
   
   Scenario: create empty concept
