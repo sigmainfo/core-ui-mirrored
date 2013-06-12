@@ -161,6 +161,9 @@ form.create, form.update{
          &:hover {
            background-color: saturate($button-color, 10);
          };
+         &:disabled {
+           background-color: desaturate($button-color, 20);
+         }
        }
 
    }

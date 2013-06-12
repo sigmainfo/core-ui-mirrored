@@ -229,7 +229,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       @event = $.Event "click"
       @view.render()
       @view.$(".properties").append '''
-        <fieldset class="property">
+        <fieldset class="property not-persisted">
           <a class="remove-property">Remove property</a>
         </fieldset>
         '''
@@ -302,7 +302,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     beforeEach ->
       sinon.stub Coreon.Helpers, "input", (name, attr, model, options) -> "<input />"
       @view.$el.append '''
-        <fieldset class="term">
+        <fieldset class="term not-persisted">
           <a class="remove-term">Remove term</a>
         </fieldset
       '''
