@@ -568,7 +568,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
       @view.$el.should.have("section.properties.edit")
 
-
   describe "addTerm()", ->
 
     beforeEach ->

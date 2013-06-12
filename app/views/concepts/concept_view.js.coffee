@@ -39,16 +39,16 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
     "click  .properties .index li"               : "selectProperty"
-    "click  .add-term"                           : "addTerm"
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
+    "click  .add-term"                           : "addTerm"
+    "click  .remove-term"                        : "removeTerm"
     "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
     "submit form.term.update"                    : "updateTerm"
     "click  form a.cancel:not(.disabled)"        : "cancelForm"
     "click  form a.reset:not(.disabled)"         : "reset"
     "click  .edit-term"                          : "toggleEditTerm"
-    "click  .remove-term"                        : "removeTerm"
     "click  .delete-concept"                     : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
@@ -134,22 +134,23 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     attrs.properties = if data.properties?
       property for property in data.properties when property?
     else []
-    form.find("input,textarea,button").attr "disabled", true
+    form
+      .find("input,textarea,button")
+        .prop("disabled", true)
+      .end()
+      .find("a")
+        .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
 
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
+        message: I18n.t "concept.confirm_update", n: elements_to_delete.length
         action: =>
           @saveConceptProperties attrs
     else
       @saveConceptProperties attrs
-
-    form.find("[type=submit]").attr "disabled", false
-    false
-
 
   updateTerm: (evt) ->
     evt.preventDefault()
@@ -160,7 +161,12 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       property for property in data.properties when property?
     else []
 
-    form.find("input,textarea,button").attr "disabled", true
+    form
+      .find("input,textarea,button")
+        .prop("disabled", true)
+      .end()
+      .find("a")
+        .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
 
@@ -196,7 +202,13 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       property for property in data.properties when property?
     else []
 
-    target.find("input,textarea,button").attr "disabled", true
+    target
+      .find("input,textarea,button")
+        .prop("disabled", true)
+      .end()
+      .find("a")
+        .addClass("disabled")
+        
     @model.terms().create data,
       wait: true
       error: (model, xhr, options) =>
