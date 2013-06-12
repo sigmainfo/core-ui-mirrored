@@ -118,11 +118,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms.append @term term: new Coreon.Models.Term
 
   saveConceptProperties: (attrs) ->
-    @model.save null,
-      wait: true
+    @model.save attrs,
       success: =>
-        @editProperties = no
-        @model.set attrs
+        @toggleEditConceptProperties()
       error: (model) =>
         model.once "error", @render, @
       attrs:
