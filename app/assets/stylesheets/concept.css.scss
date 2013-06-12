@@ -400,6 +400,9 @@ div.concept {
         &>div {
           margin-left: 44px;
           border-top: 1px solid white;
+          &.edit {
+            margin-left: 0px;
+          }
         }
       }  
     }
