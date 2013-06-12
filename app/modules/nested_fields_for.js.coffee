@@ -11,13 +11,12 @@ Coreon.Modules.NestedFieldsFor =
 
     @::["remove#{options.as}"] = (event) ->
       container = $(event.target).closest(".#{options.className}")
-      if container.find('input[type=hidden][name*=_id]').length > 0
+      if container.hasClass "not-persisted"
+        container.remove()
+      else
         container.addClass("delete")
         container.find('input,textarea').attr "disabled", true
         $(event.target).remove()
-      else
-        container.remove()
-
 
     @::["add#{options.as}"] = (event) ->
       target = $(event.target)
@@ -25,5 +24,6 @@ Coreon.Modules.NestedFieldsFor =
       data.index ?= 0
       context = {}
       context[key] = value for key, value of data
-      target.parent().before options.template context
+      field = $(options.template context).addClass "not-persisted"
+      target.parent().before field
       data.index += 1
