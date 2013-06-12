@@ -28,10 +28,10 @@ describe "Coreon.Modules.NestedFieldsFor", ->
       
       beforeEach ->
         @view.$el.append '''
-          <fieldset id="first" class="term">
+          <fieldset id="existing-term" class="term">
             <a class="remove-term">Remove term</a>
           </fieldset>
-          <fieldset id="second" class="term">
+          <fieldset id="new-term" class="term not-persisted">
             <a class="remove-term">Remove term</a>
             <input type="hidden" name="concept[terms][42][_id]">
           </fieldset>
@@ -39,17 +39,17 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         @event = $.Event "click"
 
       it "removes fields of non-existing term", ->
-        @event.target = @view.$("#first .remove-term")[0]
+        @event.target = @view.$("#new-term .remove-term")[0]
         @view.removeTerm @event
-        @view.$el.should.not.have "#first"
-        @view.$el.should.have "#second"
+        @view.$el.should.not.have "#new-term"
+        @view.$el.should.have "#existing-term"
 
       it "marks fields of existing term as deleted", ->
-        @event.target = @view.$("#second .remove-term")[0]
+        @event.target = @view.$("#existing-term .remove-term")[0]
         @view.removeTerm @event
-        @view.$el.should.have "#first"
-        @view.$el.should.have "#second"
-        @view.$('#second').should.have.class "delete"
+        @view.$el.should.have "#existing-term"
+        @view.$el.should.have "#new-term"
+        @view.$('#existing-term').should.have.class "delete"
 
     describe "addTerm()", ->
 
@@ -91,6 +91,11 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         Coreon.Templates["terms/new_term"].firstCall.args[0].should.have.property "index", 5
         Coreon.Templates["terms/new_term"].secondCall.args[0].should.have.property "index", 6
 
+      it "classifies template as being not yet persisted", ->
+        Coreon.Templates["terms/new_term"].returns '<fieldset class="term"></fieldset>'
+        @view.addTerm @event
+        @view.$(".term").should.match ".not-persisted"
+
   context "with custom options", ->
      
     before ->
@@ -103,7 +108,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
       
       beforeEach ->
         @view.$el.append '''
-          <fieldset class="term-property">
+          <fieldset class="term-property not-persisted">
             <a class="remove-property">Remove property</a>
           </fieldset>
           '''
