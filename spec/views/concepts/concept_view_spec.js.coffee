@@ -661,7 +661,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event = $.Event "click"
       @view.render()
       @view.$el.append '''
-        <fieldset class="property">
+        <fieldset class="property not-persisted">
           <a class="remove-property">Remove property</a>
         </fieldset>
         '''
@@ -805,6 +805,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @trigger.click()
       @view.cancelForm.should.have.been.calledOnce
 
+    it "is not triggered when link is disabled", ->
+      @view.cancelForm = sinon.spy()
+      @view.delegateEvents()
+      @trigger.addClass "disabled"
+      @trigger.click()
+      @view.cancelForm.should.not.have.been.called
+
     it "prevents default action", ->
       @event.preventDefault = sinon.spy()
       @view.cancelForm @event
@@ -822,6 +829,62 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       $("#konacha").append @view.$el
       @view.cancelForm @event
       @view.$(".edit a.add-term").should.be.visible
+
+  describe "reset()", ->
+  
+    beforeEach ->
+      @view.$el.append '''
+        <div>
+          <form class="term create">
+            <div class="submit">
+              <a class="reset" href="javascript:void(0)">Reset</a>
+              <button type="submit">Create term</button>
+            </div>
+          </form>
+          <div class="edit" style="display:none">
+            <a class="add-term" ref="javascript:void(0)">Add term</a>
+          </div>
+        </div>
+        '''
+      @event = $.Event "click"
+      @trigger = @view.$("form a.reset")
+      @event.target = @trigger[0]
+
+    it "is triggered by click on reset link", ->
+      @view.reset = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.reset.should.have.been.calledOnce
+
+    it "is not triggered when link is disabled", ->
+      @view.reset = sinon.spy()
+      @view.delegateEvents()
+      @trigger.addClass "disabled"
+      @trigger.click()
+      @view.reset.should.not.have.been.called
+
+    it "prevents default action", ->
+      @event.preventDefault = sinon.spy()
+      @view.reset @event
+      @event.preventDefault.should.have.been.calledOnce
+    
+    it "rerenders form", ->
+      @view.render = sinon.spy()
+      @view.reset @event
+      @view.render.should.have.been.calledOnce
+
+    it "drops remote validation errors", ->
+      @view.model.remoteError = "foo: ['must be bar']"
+      @view.reset @event
+      @view.model.should.have.property "remoteError", null
+      
+    it "restores previous state", ->
+      @view.model.sync = ->
+      @view.model.save foo: "bar"
+      @view.model.set foo: "baz", poo: "foo"
+      @view.reset @event
+      @view.model.get("foo").should.equal "bar"
+      @view.model.has("poo").should.be.false
 
   describe "removeTerm()", ->
 

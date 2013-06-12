@@ -45,8 +45,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
     "submit form.term.update"                    : "updateTerm"
-    "click  form a.cancel"                       : "cancelForm"
-    "click  form a.reset"                        : "resetForm"
+    "click  form a.cancel:not(.disabled)"        : "cancelForm"
+    "click  form a.reset:not(.disabled)"         : "reset"
     "click  .edit-term"                          : "toggleEditTerm"
     "click  .remove-term"                        : "removeTerm"
     "click  .delete-concept"                     : "delete"
@@ -203,7 +203,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
 
-
   cancelForm: (evt) ->
     evt.preventDefault()
     if @model.remoteError?
@@ -213,11 +212,10 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     form.siblings(".edit").show()
     form.remove()
 
-  resetForm: (evt) ->
+  reset: (evt) ->
     evt.preventDefault()
-    if @model.remoteError?
-      @model.set @model.previousAttributes()
-      @model.remoteError = null
+    @model.attributes = @model._previousAttributes
+    @model.remoteError = null
     @render()
 
   removeTerm: (evt) =>
