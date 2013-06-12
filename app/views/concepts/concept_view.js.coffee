@@ -102,7 +102,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @editProperties = !@editProperties
     @render()
 
-  toggleEditTerm: (evt)->
+  toggleEditTerm: (evt) ->
     if evt?
       evt.preventDefault()
       term_id = $(evt.target).data("id")
@@ -117,17 +117,23 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
-  saveConceptProperties: (data)->
-    @model.save data.concept,
-      success: => @toggleEditConceptProperties()
-      error: (model)=>
+  saveConceptProperties: (attrs) ->
+    @model.save attrs,
+      success: =>
+        @toggleEditConceptProperties()
+      error: (model) =>
         model.once "error", @render, @
-      attrs: concept: properties: data.concept.properties
+      attrs:
+        concept: attrs
 
   updateConceptProperties: (evt) ->
     evt.preventDefault()
     form = $ evt.target
-    data = form.serializeJSON() or {}
+    data = form.serializeJSON().concept or {}
+    attrs = {}
+    attrs.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
     form.find("input,textarea,button").attr "disabled", true
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
@@ -137,9 +143,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         trigger: trigger
         message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
         action: =>
-          @saveConceptProperties(data)
+          @saveConceptProperties attrs
     else
-      @saveConceptProperties(data)
+      @saveConceptProperties attrs
 
     form.find("[type=submit]").attr "disabled", false
     false
