@@ -52,7 +52,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     attrs.terms = if data.terms?
       term for term in data.terms when term?
     else []
-    @$("form").find("input,button").attr("disabled", true)
+    @$("form").find("input,button").prop "disabled", true
     @model.save attrs,
       success: =>
         Coreon.Models.Concept.collection().add @model
