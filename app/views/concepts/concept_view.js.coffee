@@ -212,16 +212,15 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   cancelForm: (evt) ->
     evt.preventDefault()
-    if @model.remoteError?
-      @model.set @model.previousAttributes()
-      @model.remoteError = null
+    @model.revert()
+    @model.remoteError = null
     form = $(evt.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
 
   reset: (evt) ->
     evt.preventDefault()
-    @model.restore()
+    @model.revert()
     @model.remoteError = null
     @render()
 

@@ -1,4 +1,4 @@
-%fieldset.property{class: "not-persisted" if @errors }
+%fieldset.property{class: "not-persisted" if @notPersisted }
   .edit
     %a.remove-property{href: "javascript:void(0)"}= I18n.t "property.remove"
 

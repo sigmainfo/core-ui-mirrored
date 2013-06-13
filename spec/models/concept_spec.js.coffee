@@ -318,13 +318,13 @@ describe "Coreon.Models.Concept", ->
       @model.message.should.have.been.calledOnce
       @model.message.should.have.been.calledWith 'Successfully deleted concept "high hat".'
 
-  describe "restore()", ->
+  describe "revert()", ->
 
     it "can restore last persisted state", ->
       @model.set "label", "high hat", silent: true
       @model.trigger "sync"
       @model.set "label", "xxxx", silent: true
       @model.set "label", "****", silent: true
-      @model.restore()
+      @model.revert()
       @model.get("label").should.equal "high hat"
     
