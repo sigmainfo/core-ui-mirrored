@@ -1,7 +1,7 @@
 != @form_for "concept", @concept, {reset:true}, ->
   %section.properties.edit{class: "collapsed" if @collapsed}
     %h3= I18n.t "properties.title"
-    - persisted = @concept.persistedAttributes().properties.length
+    - persisted = @concept.persistedAttributes().properties?.length or 0
     - for property, index in @concept.properties().models
       != @render "properties/new_property", index: index, property: property, scope: "concept[properties][]", errors: @concept.errors()?.nested_errors_on_properties?[index], notPersisted: index > persisted - 1
     .edit

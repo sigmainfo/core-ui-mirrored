@@ -178,12 +178,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     else
       @saveTerm(data)
 
-  saveTerm: (data)->
+  saveTerm: (data) ->
     model = @model.terms().get data._id
-    console.log model, data
     model.save data,
       success: => @toggleEditTerm()
-      error: (model)=>
+      error: (model) =>
         model.once "error", @render, @
       attrs: term: data
 
