@@ -1,4 +1,5 @@
 #= require environment
+#= require collections/notifications
 #= require collections/connections
 #= require models/ability
 #= require modules/core_api
@@ -6,11 +7,12 @@
 class Coreon.Models.CoreonSession extends Backbone.Model
   defaults:
     emails:       []
-    user_name:    ""
+    user_name:    no
     state:        "pending"  # TODO: sane default?
     repositories: []
     ttl:          3600       # TODO: sane default?
     auth_root:    "/api/auth/"
+    repo_root:    no
 
   valid: ->
     @getToken()?
@@ -21,6 +23,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
     @ability = new Coreon.Models.Ability
     @connections = new Coreon.Collections.Connections
     @connections.session = @
+    @notifications = new Coreon.Collections.Notifications
 
 
   activate: (email, password) ->
@@ -100,9 +103,12 @@ class Coreon.Models.CoreonSession extends Backbone.Model
 
 
   unsetToken: ->
-    @trigger "change:token"
     localStorage.removeItem "session"
     localStorage.removeItem "updated_at"
+    @connections.destroy()
+    @set(k, v) for k,v of @defaults
+    @message I18n.t("notifications.account.logout")
+    @trigger "change:token"
 
     options =
       url: @get("auth_root") + "login/" + @getToken()
@@ -120,7 +126,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
     localStorage.getItem "session"
 
 
-  onFetch: (data) =>
+  onFetch: (data)=>
     @setToken(data.auth_token)
     @save
       user_id:      data.user.id
@@ -129,6 +135,22 @@ class Coreon.Models.CoreonSession extends Backbone.Model
       emails:       data.user.emails
       repositories: data.repositories
       ttl:          data.ttl
+
+    @message I18n.t("notifications.account.login", name: @get "user_name")
+    @setRepository(data.repositories[0])
+
+
+  setRepository: (repo)->
+    uri = repo.graph_uri
+    if repo.user_roles? and "maintainer" in repo.user_roles
+      role = "maintainer"
+    else if repo.user_roles? and "user" in repo.user_roles
+      role = "user"
+    else
+      role = false
+
+    @set "repo_root", uri
+    @ability.set "role", role
 
 
   sync: (action, model, options)->
@@ -140,7 +162,5 @@ class Coreon.Models.CoreonSession extends Backbone.Model
       when "read"
         @_fetch_via_token()
       when "delete"
-        @connections.destroy()
         @unsetToken()
-        @set(k, v) for k,v of @defaults
 
