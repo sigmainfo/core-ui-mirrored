@@ -141,6 +141,9 @@ form.create, form.update{
        padding: 5px 8px 3px 8px;
        float: none;
        font-size: 1em;
+       &.disabled {
+         @include opacity(0.5);
+       }
      }
 
        button {

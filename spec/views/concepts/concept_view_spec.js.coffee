@@ -13,6 +13,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     @concept = new Backbone.Model
     @concept.info = -> {}
+    @concept.restore = ->
     @concept.set "properties", [ @property ], silent: true
     @concept.propertiesByKey = => label: [ @property ]
 
@@ -878,12 +879,9 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.model.should.have.property "remoteError", null
       
     it "restores previous state", ->
-      @view.model.sync = ->
-      @view.model.save foo: "bar"
-      @view.model.set foo: "baz", poo: "foo"
+      @view.model.restore = sinon.spy()
       @view.reset @event
-      @view.model.get("foo").should.equal "bar"
-      @view.model.has("poo").should.be.false
+      @view.model.restore.should.have.been.calledOnce
 
   describe "removeTerm()", ->
 

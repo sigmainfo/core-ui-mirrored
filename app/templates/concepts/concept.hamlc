@@ -9,9 +9,9 @@
 != @render "concepts/info", data: @concept.info()
 
 - if @editMode and @editProperties
-  != @render "concepts/edit_properties", concept:@concept, editToggle:yes
+  != @render "concepts/edit_properties", concept: @concept, editToggle: yes
 - else if @editMode or @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties:@concept.propertiesByKey(), editToggle:yes
+  != @render "concepts/properties", properties: @concept.propertiesByKey(), editToggle: yes
 
 .terms
   - if @concept.get("terms")?.length > 0
