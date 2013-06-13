@@ -3,7 +3,7 @@
 class Coreon.Models.Ability extends Backbone.Model
 
   defaults:
-    role: "maintainer"
+    role: "user"
 
   can: (action, target) ->
     role = @get "role"
