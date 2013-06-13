@@ -25,7 +25,7 @@ before ->
         name: "Voight"
         cache_id: "51ae096464010ca60e00000c"
         user_email: "rick.deckard@tyrell.tld"
-        user_roles: null
+        user_roles: ["user"]
         account_name: "Tyrell"
       }]
 

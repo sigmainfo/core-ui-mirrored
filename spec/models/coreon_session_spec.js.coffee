@@ -20,13 +20,16 @@ describe "Coreon.Models.CoreonSession", ->
       @session.valid().should.be.false
 
     it "has no user name", ->
-      @session.get("user_name").should.equal ""
+      @session.get("user_name").should.be.false
 
     it "has no emails", ->
       @session.get("emails").should.be.an.instanceof(Array).with.lengthOf 0
 
     it "has api paths set on domain", ->
       @session.get("auth_root").should.equal "/api/auth/"
+
+    it "selects no repository by default", ->
+      @session.get("repo_root").should.be.false
 
 
   describe "initialize()", ->
@@ -39,14 +42,19 @@ describe "Coreon.Models.CoreonSession", ->
       @session.connections.should.be.an.instanceof Coreon.Collections.Connections
       @session.connections.session.should.equal @session
 
+    it "creates notifications", ->
+      @session.notifications.should.be.an.instanceof Coreon.Collections.Notifications
+
 
   describe "activate()", ->
 
     beforeEach ->
+      sinon.stub I18n, "t"
       @xhr = sinon.useFakeXMLHttpRequest()
       @xhr.onCreate = (@request) =>
 
     afterEach ->
+      I18n.t.restore()
       @xhr.restore()
 
     it "sets email on model", ->
@@ -117,6 +125,17 @@ describe "Coreon.Models.CoreonSession", ->
       @session.onFetch @data
       spy.should.have.been.calledOnce
 
+    it "sends notification on activation", ->
+      @session.message = sinon.spy()
+      I18n.t.withArgs("notifications.account.login").returns "Logged in"
+      @session.onFetch @data
+      @session.message.should.have.been.calledWith "Logged in"
+
+    it "selects first repository automatically", ->
+      @session.setRepository = sinon.stub()
+      @session.onFetch @data
+      @session.setRepository.should.have.been.calledWith @data.repositories[0]
+
 
   describe "reactivate()", ->
 
@@ -168,7 +187,7 @@ describe "Coreon.Models.CoreonSession", ->
 
     it "resets name", ->
       @session.deactivate()
-      @session.get("user_name").should.equal ""
+      @session.get("user_name").should.be.false
 
     it "resets session", ->
       @session.deactivate()
@@ -179,6 +198,12 @@ describe "Coreon.Models.CoreonSession", ->
       @session.on "change:token", spy
       @session.deactivate()
       spy.should.have.been.calledOnce
+
+    it "sends notification on deactivation", ->
+      @session.message = sinon.spy()
+      I18n.t.withArgs("notifications.account.logout").returns "Logged out"
+      @session.deactivate()
+      @session.message.should.have.been.calledWith "Logged out"
 
 
   describe "sync()", ->
@@ -208,12 +233,6 @@ describe "Coreon.Models.CoreonSession", ->
       @session.connections.first().get("model").should.equal @session
       @session.connections.first().get("options").url.should.equal "/api/auth/login/fancySessionToken"
 
-    it "fetches data only if needed", ->
-      @session.setToken "fancySessionToken"
-      @session.isNew = -> false
-      @session.sync "read", @session
-      @session.connections.length.should.equal 0
-
     it "unsets token on destroy", ->
       @session.isNew = -> false
       @session.unsetToken = sinon.spy()
@@ -225,7 +244,7 @@ describe "Coreon.Models.CoreonSession", ->
       @session.set "user_name", "Rick Deckard"
       @session.destroy()
       should.not.exist localStorage.getItem "session"
-      @session.get("user_name").should.equal ""
+      @session.get("user_name").should.be.false
 
     it "destroys connections", ->
       @session.isNew = -> false
@@ -238,3 +257,42 @@ describe "Coreon.Models.CoreonSession", ->
       @session.setToken "fancySessionToken"
       @session.destroy()
       should.not.exist localStorage.getItem "session"
+
+  describe "setRepository()", ->
+    beforeEach ->
+      @session.ability = set: sinon.stub()
+
+    it "sets reporitory root", ->
+      @session.setRepository
+        graph_uri: "/graph/uri"
+        user_roles: []
+      @session.get("repo_root").should.equal "/graph/uri"
+
+    it "selects highest user role", ->
+      @session.setRepository
+        graph_uri: "/graph/uri"
+        user_roles: ["user"]
+      @session.ability.set.should.be.calledWith "role", "user"
+
+    it "doesn't crash if user_roles in null", ->
+      @session.setRepository
+        graph_uri: "/graph/uri"
+        user_roles: null
+      @session.ability.set.should.be.calledWith "role", false
+
+    it "selects highest user role", ->
+      @session.setRepository
+        graph_uri: "/graph/uri"
+        user_roles: []
+      @session.ability.set.should.be.calledWith "role", false
+
+      @session.setRepository
+        graph_uri: "/graph/uri"
+        user_roles: ["user"]
+      @session.ability.set.should.be.calledWith "role", "user"
+
+      @session.setRepository
+        graph_uri: "/graph/uri"
+        user_roles: ["user", "maintainer"]
+      @session.ability.set.should.be.calledWith "role", "maintainer"
+
