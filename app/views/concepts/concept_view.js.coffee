@@ -94,7 +94,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       @$el.removeClass("show").addClass("edit")
     else
       @$el.removeClass("edit").addClass("show")
-
     @render()
 
   toggleEditConceptProperties: (evt)->
@@ -179,10 +178,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     else
       @saveTerm(data)
 
-    form.find("[type=submit]").attr "disabled", false
-    false
-
-
   saveTerm: (data)->
     model = @model.terms().get data._id
     console.log model, data
@@ -226,7 +221,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   reset: (evt) ->
     evt.preventDefault()
-    @model.attributes = @model._previousAttributes
+    @model.restore()
     @model.remoteError = null
     @render()
 

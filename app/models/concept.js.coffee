@@ -7,6 +7,7 @@
 #= require modules/system_info
 #= require modules/properties_by_key
 #= require modules/remote_validation
+#= require modules/persisted_attributes
 
 class Coreon.Models.Concept extends Backbone.Model
 
@@ -19,6 +20,7 @@ class Coreon.Models.Concept extends Backbone.Model
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
   Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
   Coreon.Modules.include @, Coreon.Modules.RemoteValidation
+  Coreon.Modules.include @, Coreon.Modules.PersistedAttributes
 
   urlRoot: "/concepts"
 
@@ -42,6 +44,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @remoteValidationOn()
     @once "sync", @syncMessage, @ if @isNew()
     @once "destroy", @onDestroy, @
+    @persistedAttributesOn()
 
   termsByLang: ->
     terms = {}
