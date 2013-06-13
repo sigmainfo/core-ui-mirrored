@@ -178,12 +178,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     else
       @saveTerm(data)
 
-  saveTerm: (data)->
+  saveTerm: (data) ->
     model = @model.terms().get data._id
-    console.log model, data
     model.save data,
       success: => @toggleEditTerm()
-      error: (model)=>
+      error: (model) =>
         model.once "error", @render, @
       attrs: term: data
 
@@ -212,16 +211,15 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   cancelForm: (evt) ->
     evt.preventDefault()
-    if @model.remoteError?
-      @model.set @model.previousAttributes()
-      @model.remoteError = null
+    @model.revert()
+    @model.remoteError = null
     form = $(evt.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
 
   reset: (evt) ->
     evt.preventDefault()
-    @model.restore()
+    @model.revert()
     @model.remoteError = null
     @render()
 

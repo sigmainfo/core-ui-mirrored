@@ -5,6 +5,7 @@
 #= require modules/system_info
 #= require modules/properties_by_key
 #= require modules/remote_validation
+#= require modules/persisted_attributes
 
 class Coreon.Models.Term extends Backbone.Model
 
@@ -15,6 +16,7 @@ class Coreon.Models.Term extends Backbone.Model
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
   Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
   Coreon.Modules.include @, Coreon.Modules.RemoteValidation
+  Coreon.Modules.include @, Coreon.Modules.PersistedAttributes
 
   defaults: ->
     properties: []
@@ -28,6 +30,9 @@ class Coreon.Models.Term extends Backbone.Model
   initialize: ->
     @remoteValidationOn()
     @once "destroy", @onDestroy, @
+    @_persistedAttributes = {}
+    @_persistedAttributes[attr] = value for attr, value of @attributes
+    @persistedAttributesOn()
 
   toJSON: ->
     json = {}

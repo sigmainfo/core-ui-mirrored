@@ -21,7 +21,7 @@ Coreon.Modules.PersistedAttributes =
     @persistedAttributes().hasOwnProperty(attr) and
     @persistedAttributes()[attr] is @get(attr) 
 
-  restore: (options = {}) ->
+  revert: (options = {}) ->
     opts = {}
     opts[key] = value for key, value of options
     opts.silent = on

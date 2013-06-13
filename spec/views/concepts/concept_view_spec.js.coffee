@@ -13,7 +13,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     @concept = new Backbone.Model
     @concept.info = -> {}
-    @concept.restore = ->
+    @concept.revert = ->
     @concept.set "properties", [ @property ], silent: true
     @concept.propertiesByKey = => label: [ @property ]
 
@@ -535,6 +535,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     beforeEach ->
       Coreon.application = session: ability: can: -> true
       @concept.properties = -> models: []
+      @concept.persistedAttributes = -> {}
       @view.editMode = yes
       @view.editProperties = no
       @view.render()
@@ -879,9 +880,9 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.model.should.have.property "remoteError", null
       
     it "restores previous state", ->
-      @view.model.restore = sinon.spy()
+      @view.model.revert = sinon.spy()
       @view.reset @event
-      @view.model.restore.should.have.been.calledOnce
+      @view.model.revert.should.have.been.calledOnce
 
   describe "removeTerm()", ->
 
