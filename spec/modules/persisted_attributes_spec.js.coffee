@@ -34,19 +34,63 @@ describe "Coreon.Modules.PersistedAttributes", ->
       @model.trigger "sync"
       @model.persistedAttributes().should.not.equal @model.attributes
       
-
   describe "isPersisted()", ->
 
     it "returns false for non-existent attribute", ->
       @model.isPersisted("foo").should.be.false
 
-    it "returns true for unchanged attribute"
+    it "returns true for unchanged attribute", ->
+      @model.set "foo", "bar"
+      @model.trigger "sync"
+      @model.isPersisted("foo").should.be.true
 
-    it "returns false for changed attribute"
+    it "returns false for changed attribute", ->
+      @model.set "foo", "bar"
+      @model.trigger "sync"
+      @model.set "foo", "baz"
+      @model.isPersisted("foo").should.be.false
 
-  describe "reset()", ->
+  describe "restore()", ->
 
-    it "restores persisted model state"
+    beforeEach ->
+      @model.set "foo", "bar", silent: true
+      @model.set {
+        foo: "bar"
+        bar: "baz"
+      }, silent: on
+      @model.trigger "sync"
+
+    it "can be chained", ->
+      @model.restore().should.equal @model 
+
+    it "restores persisted model state", ->
+      @model.set { foo: "baz", poo: "foo" }, silent: true
+      @model.restore()
+      @model.attributes.should.eql foo: "bar", bar: "baz"
      
-    it "triggers events"
-      
+    it "triggers change event", ->
+      spy = sinon.spy()
+      @model.set "foo", "baz", silent: true
+      @model.on "change", spy
+      @model.restore areYouSure: yes
+      spy.should.have.been.calledOnce
+      spy.should.have.been.calledWith @model, areYouSure: yes
+
+    it "triggers change events for restored attrs", ->
+      spy1 = sinon.spy()
+      spy2 = sinon.spy()
+      @model.set { foo: "baz", bar: "poo" }, silent: true
+      @model.on "change:foo", spy1
+      @model.on "change:bar", spy2
+      @model.restore areYouSure: yes
+      spy1.should.have.been.calledOnce
+      spy1.should.have.been.calledWith @model, "bar", areYouSure: yes
+      spy2.should.have.been.calledOnce
+      spy2.should.have.been.calledWith @model, "baz", areYouSure: yes
+
+    it "silences events", ->
+      spy = sinon.spy()
+      @model.set foo: "baz", bar: "poo"
+      @model.on "all", spy
+      @model.restore silent: on
+      spy.should.not.have.been.called
