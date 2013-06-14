@@ -38,9 +38,8 @@ describe "Coreon.Models.CoreonSession", ->
       should.exist @session.ability
       @session.ability.should.be.an.instanceof Coreon.Models.Ability
 
-    it "creates connections", ->
-      @session.connections.should.be.an.instanceof Coreon.Collections.Connections
-      @session.connections.session.should.equal @session
+    it "depricates use of connections", ->
+      should.not.exist @session.connections
 
     it "creates notifications", ->
       @session.notifications.should.be.an.instanceof Coreon.Collections.Notifications
@@ -69,13 +68,6 @@ describe "Coreon.Models.CoreonSession", ->
       @request.method.should.equal "POST"
       @request.requestHeaders["Accept"].should.contain "application/json"
       @request.requestBody.should.equal "email=rick.deckard%40tyrell.tld&password=obsolescence"
-
-    it "adds connection for request", ->
-      @session.activate("rick.deckard@tyrell.tld", "obsolescence")
-      @session.connections.length.should.equal 1
-      @session.connections.first().get("xhr").should.respondTo "abort"
-      @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").data.email.should.equal "rick.deckard@tyrell.tld"
 
     it "triggers callback on success", ->
       @session.onFetch = sinon.spy()
@@ -156,14 +148,6 @@ describe "Coreon.Models.CoreonSession", ->
       @request.requestHeaders["Accept"].should.contain "application/json"
       @request.requestBody.should.equal "user_id=someFancyUserId&password=obsolescence"
 
-    it "adds connection for request", ->
-      @session.set "user_id", "someFancyUserId"
-      @session.reactivate "obsolescence"
-      @session.connections.length.should.equal 1
-      @session.connections.first().get("xhr").should.respondTo "abort"
-      @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").data.user_id.should.equal "someFancyUserId"
-
     it "triggers event on reactivation", ->
       spy = sinon.spy()
       @session.on "change:token", spy
@@ -207,37 +191,56 @@ describe "Coreon.Models.CoreonSession", ->
 
 
   describe "sync()", ->
+
+    beforeEach ->
+      @xhr = sinon.useFakeXMLHttpRequest()
+      @xhr.onCreate = (@request) =>
+
+    afterEach ->
+      @xhr.restore()
+
+
     it "fetches data via login on create", ->
+      @session.set "auth_root", "/api/auth/"
       @session.sync "create", @session, {email:"rick.deckard@tyrell.tld", password:"obsolescence"}
-      @session.connections.length.should.equal 1
-      @session.connections.first().get("xhr").should.respondTo "abort"
-      @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").data.should.have.property("email", "rick.deckard@tyrell.tld")
-      @session.connections.first().get("options").data.should.have.property("password", "obsolescence")
+      @request.method.should.equal "POST"
+      @request.url.should.equal "/api/auth/login"
+      @request.requestHeaders["Accept"].should.contain "application/json"
+      @request.requestBody.should.equal "email=rick.deckard%40tyrell.tld&password=obsolescence"
+
 
     it "fetches data via user_id on update", ->
+      @session.set "auth_root", "/api/auth/"
       @session.set "user_id", "coffeebabe23coffeebabe42"
       @session.sync "update", @session, password:"obsolescence"
-      @session.connections.length.should.equal 1
-      @session.connections.first().get("xhr").should.respondTo "abort"
-      @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").data.should.have.property("user_id", "coffeebabe23coffeebabe42")
-      @session.connections.first().get("options").data.should.have.property("password", "obsolescence")
+      @request.method.should.equal "POST"
+      @request.url.should.equal "/api/auth/login"
+      @request.requestHeaders["Accept"].should.contain "application/json"
+      @request.requestBody.should.equal "user_id=coffeebabe23coffeebabe42&password=obsolescence"
+
 
     it "fetches data via token on read", ->
       @session.set "auth_root", "/api/auth/"
       @session.getToken = -> "fancySessionToken"
       @session.sync "read", @session
-      @session.connections.length.should.equal 1
-      @session.connections.first().get("xhr").should.respondTo "abort"
-      @session.connections.first().get("model").should.equal @session
-      @session.connections.first().get("options").url.should.equal "/api/auth/login/fancySessionToken"
+      @request.method.should.equal "GET"
+      @request.url.should.equal "/api/auth/login/fancySessionToken"
+
+    it "gives server notice of departure on destroy", ->
+      @session.isNew = -> false
+      @session.set "auth_root", "/api/auth/"
+      @session.getToken = -> "fancySessionToken"
+      @session.destroy()
+      @request.method.should.equal "DELETE"
+      @request.url.should.equal "/api/auth/login/fancySessionToken"
+
 
     it "unsets token on destroy", ->
       @session.isNew = -> false
       @session.unsetToken = sinon.spy()
       @session.destroy()
       @session.unsetToken.should.be.calledOnce
+
 
     it "resets name and session on destroy", ->
       @session.isNew = -> false
@@ -246,11 +249,6 @@ describe "Coreon.Models.CoreonSession", ->
       should.not.exist localStorage.getItem "session"
       @session.get("user_name").should.be.false
 
-    it "destroys connections", ->
-      @session.isNew = -> false
-      @session.connections.destroy = sinon.spy()
-      @session.destroy()
-      @session.connections.destroy.should.have.been.calledOnce
 
     it "clears storage", ->
       @session.isNew = -> false
