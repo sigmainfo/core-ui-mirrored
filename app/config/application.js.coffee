@@ -1,5 +1,5 @@
 #= require environment
-#= require models/session
+#= require models/coreon_session
 #= require collections/hits
 #= require views/application_view
 #= require routers/search_router
@@ -16,12 +16,18 @@ class Coreon.Application
     _(@options).defaults
       el         : "#app"
       auth_root  : "/api/auth/"
-      graph_root : "/api/graph/"
-      
-    @session = new Coreon.Models.Session _(@options).pick "auth_root", "graph_root"
-    @session.fetch()
+
+    @session = @lookupExistingSession()
+    Coreon.Modules.CoreAPI.on "login", =>
+      @session = @lookupExistingSession()
 
     @hits = new Coreon.Collections.Hits
+
+  lookupExistingSession: ->
+    session = new Coreon.Models.CoreonSession
+      auth_root: @options.auth_root
+    session.fetch()
+
 
   start: (options = {}) ->
     _(@options).extend options
@@ -42,12 +48,12 @@ class Coreon.Application
         concepts: @concepts
         app: @
 
-    Backbone.history.start pushState: true, silent: not @session.get "active"
+    Backbone.history.start pushState: true, silent: not @session?.valid()
     @
 
   destroy: ->
-    @session.deactivate()
+    @session?.deactivate()
     delete Coreon.application
 
   sync: (method, model, options) ->
-    @session.connections.sync method, model, options
+    @session?.sync method, model, options

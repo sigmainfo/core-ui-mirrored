@@ -22,7 +22,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
     @notifications = new Coreon.Collections.Notifications
 
 
-  activate: (email, password) ->
+  @activate: (email, password) ->
     @_fetch_via_login(email, password)
 
 
@@ -38,7 +38,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
     @unsetToken()
 
 
-  _fetch_via_login: (email, password) ->
+  @_fetch_via_login: (email, password) ->
     options =
       url: @get("auth_root") + "login"
       type: "POST"
@@ -61,10 +61,15 @@ class Coreon.Models.CoreonSession extends Backbone.Model
 
 
   _fetch_via_token: ->
+    token = @getToken()
     options =
       url: @get("auth_root") + "login/" + @getToken()
       type: "GET"
-    $.ajax(options).done @onFetch
+    if token?
+      $.ajax(options).done @onFetch
+      return @
+    else
+      return null
 
 
   update_repository_ids: ->
@@ -115,7 +120,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
       ttl:          data.ttl
 
     @message I18n.t("notifications.account.login", name: @get "user_name")
-    @setRepository(data.repositories[0])
+    @setRepository(data.repositories[0]) if data.repositories.length > 0
 
 
   setRepository: (repo)->

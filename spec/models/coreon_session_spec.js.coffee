@@ -226,6 +226,7 @@ describe "Coreon.Models.CoreonSession", ->
       @request.method.should.equal "GET"
       @request.url.should.equal "/api/auth/login/fancySessionToken"
 
+
     it "gives server notice of departure on destroy", ->
       @session.isNew = -> false
       @session.set "auth_root", "/api/auth/"
@@ -255,6 +256,16 @@ describe "Coreon.Models.CoreonSession", ->
       @session.setToken "fancySessionToken"
       @session.destroy()
       should.not.exist localStorage.getItem "session"
+
+
+    it "doesn't try to fetch without a token", ->
+      $.ajax = sinon.stub()
+      @session.set "auth_root", "/api/auth/"
+      @session.getToken = -> null
+      @session.sync "read", @session
+      $.ajax.should.not.have.been.called
+      $.ajax.reset()
+
 
   describe "setRepository()", ->
     beforeEach ->

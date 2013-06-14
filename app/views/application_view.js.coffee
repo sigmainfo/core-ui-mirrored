@@ -16,20 +16,19 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
   initialize: ->
     super
     @header = new Coreon.Views.Layout.HeaderView
-      collection: @model.session.notifications
+      collection: @model.session?.notifications || new Backbone.Collection
     @add @header
     @header.on "resize", @onResize, @
 
-    @model.session.on "activated"    , @activate    , @
-    @model.session.on "deactivated"  , @deactivate  , @
-    @model.session.on "unauthorized" , @reauthorize , @
-    @model.session.on "reactivated"  , @reactivate  , @
+    Coreon.Modules.CoreAPI.on "login", =>
+      @model.session.on "change:token", @onChangeToken, @
 
   render: ->
     @$el.html @template()
     @prepend "#coreon-top", @header
     super
-    if @model.session.get "active" then @activate() else @deactivate()
+    @onChangeToken()
+    #if @model.session.get "active" then @activate() else @deactivate()
     @
 
   switch: (screen) ->
@@ -45,8 +44,16 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
     subviews = (view for view in @subviews when view isnt @header)
     @destroy.apply @, subviews if subviews.length > 0
 
-  activate: ->
-    if @model.session.get "active"
+  onChangeToken: (evt)->
+    if not @model.session?                              # NOT LOGGED IN
+      console.log "not logged in"
+      @clear()
+      @login = new Coreon.Views.Account.LoginView
+        model: @model.session
+      @append "#coreon-main", @login.render()
+
+    else if @model.session.valid()                      # LOGGED IN
+      console.log "logged in"
       @clear()
       @widgets = new Coreon.Views.Widgets.WidgetsView
         model: @model
@@ -55,18 +62,13 @@ class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
         model: @model.session
       @append @footer.render()
 
-  deactivate: ->
-    @clear()
-    @login = new Coreon.Views.Account.LoginView
-      model: @model.session
-    @append "#coreon-main", @login.render()
-
-  reauthorize: ->
-    @destroy @prompt if @prompt
-    @prompt = new Coreon.Views.Account.PasswordPromptView
-      model: @model.session
-    @append "#coreon-modal", @prompt.render()
-    @$("#coreon-password-password").focus()
+    else if not @model.session.valid()                  # REAUTHENTICATE
+      console.log "not authorized"
+      @destroy @prompt if @prompt
+      @prompt = new Coreon.Views.Account.PasswordPromptView
+        model: @model.session
+      @append "#coreon-modal", @prompt.render()
+      @$("#coreon-password-password").focus()
 
   reactivate: ->
     @destroy @prompt if @prompt
