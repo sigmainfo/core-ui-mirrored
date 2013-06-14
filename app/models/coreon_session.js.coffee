@@ -1,6 +1,5 @@
 #= require environment
 #= require collections/notifications
-#= require collections/connections
 #= require models/ability
 #= require modules/core_api
 
@@ -19,10 +18,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
 
   initialize: ->
     @created_at = Date.now()
-
     @ability = new Coreon.Models.Ability
-    @connections = new Coreon.Collections.Connections
-    @connections.session = @
     @notifications = new Coreon.Collections.Notifications
 
 
@@ -50,11 +46,7 @@ class Coreon.Models.CoreonSession extends Backbone.Model
       data:
         email: email
         password: password
-
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options).done @onFetch
+    $.ajax(options).done @onFetch
 
 
   _fetch_via_user_id: (password) ->
@@ -65,22 +57,14 @@ class Coreon.Models.CoreonSession extends Backbone.Model
       data:
         user_id: @get("user_id")
         password: password
-
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options).done @onFetch
+    $.ajax(options).done @onFetch
 
 
   _fetch_via_token: ->
     options =
       url: @get("auth_root") + "login/" + @getToken()
       type: "GET"
-
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options).done @onFetch
+    $.ajax(options).done @onFetch
 
 
   update_repository_ids: ->
@@ -105,19 +89,13 @@ class Coreon.Models.CoreonSession extends Backbone.Model
   unsetToken: ->
     localStorage.removeItem "session"
     localStorage.removeItem "updated_at"
-    @connections.destroy()
     @set(k, v) for k,v of @defaults
     @message I18n.t("notifications.account.logout")
     @trigger "change:token"
 
-    options =
+    $.ajax
       url: @get("auth_root") + "login/" + @getToken()
       type: "DELETE"
-
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options)
 
 
   getToken: ->
