@@ -1,6 +1,6 @@
 #= require environment
 #= require views/composite_view
-#= require templates/application/application
+#= require templates/application
 #= require views/layout/header_view
 #= require views/layout/footer_view
 #= require views/widgets/widgets_view
@@ -9,7 +9,7 @@
 
 class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
-  template: Coreon.Templates["application/application"]
+  template: Coreon.Templates["application"]
 
   events: "click a[href^='/']": "navigate"
 
