@@ -43,7 +43,7 @@ describe "Coreon.Models.Search", ->
         "search[only]":  "properties/definition"
         "search[tolerance]": 2
 
-  describe "#fetch", ->
+  xdescribe "#fetch", ->
 
     beforeEach ->
       @xhr = sinon.useFakeXMLHttpRequest()

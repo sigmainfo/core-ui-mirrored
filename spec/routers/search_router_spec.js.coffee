@@ -33,7 +33,7 @@ describe "Coreon.Routers.SearchRouter", ->
       @router.concepts.should.equal "concepts"
     
 
-  describe "#search", ->
+  xdescribe "#search", ->
 
     beforeEach ->
       @xhr = sinon.useFakeXMLHttpRequest()
