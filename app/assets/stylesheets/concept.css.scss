@@ -189,9 +189,9 @@ div.concept {
   .term {
     position: relative;
     @include dottedline;
-    &:first-child {
+/*    &:first-child {
       background: none;
-    };
+    };*/
 
     h4.value {
       font: 1.4em Palatino;
@@ -221,6 +221,9 @@ div.concept {
       }
     }
   }
+  li.term:first-child {
+    background: none;
+  };
 
   
   &.show, &.edit {
@@ -397,6 +400,9 @@ div.concept {
         &>div {
           margin-left: 44px;
           border-top: 1px solid white;
+          &.edit {
+            margin-left: 0px;
+          }
         }
       }  
     }

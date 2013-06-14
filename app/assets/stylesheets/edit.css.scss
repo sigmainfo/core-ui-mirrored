@@ -40,6 +40,7 @@
 }
 
 
+
 form.create, form.update{
 
    &.term, fieldset {
@@ -49,10 +50,10 @@ form.create, form.update{
      margin-bottom: 26px;
      background-color: darken(rgba($button-color, 0.1), 12);
    }
-   &.term {
+/*   &.term {
      @include retina-separator;
      padding-top: 28px;
-   }
+   }*/
 
    &.term, .term {
 
@@ -90,7 +91,7 @@ form.create, form.update{
            };
            position: relative;
            left: 0;
-           top: 0px;
+           top: 0;
          }
      }
 
@@ -140,6 +141,9 @@ form.create, form.update{
        padding: 5px 8px 3px 8px;
        float: none;
        font-size: 1em;
+       &.disabled {
+         @include opacity(0.5);
+       }
      }
 
        button {
@@ -160,12 +164,18 @@ form.create, form.update{
          &:hover {
            background-color: saturate($button-color, 10);
          };
+         &:disabled {
+           background-color: desaturate($button-color, 20);
+         }
        }
 
    }
 
 }
- 
+form.create.term {
+  @include retina-separator;
+  padding-top: 28px;
+}
  
 .concept  {
      .edit a {
@@ -192,7 +202,7 @@ form.create, form.update{
          };
        }
      }
-     a.remove-term, a.remove-property, a.delete {
+     a.remove-term, a.remove-property, a.delete-concept {
        &:before {
          background-position: -52px -351px;
        };
@@ -202,7 +212,16 @@ form.create, form.update{
        top: 8px;
        right: 0;
      }
-     a.delete {
+
+     a.remove-term {
+       right: 18px;
+     }
+     a.edit-term {
+       position: absolute;
+       top: 8px;
+       right: 0;
+     }
+     a.delete-concept {
        float: right;
        top: -16px;
      }
@@ -211,10 +230,11 @@ form.create, form.update{
        overflow: hidden;
        text-indent: -2000px;
      }
-     a.edit-properties {
+     a.edit-properties, a.edit-term {
        width: 16px;
        overflow: hidden;
        text-indent: -5000px;
+       margin-right: 0;
        &:before {
          background-position: -52px -502px;
        };
@@ -246,7 +266,7 @@ form.create, form.update{
     }
   }
   
-  .language .term {
+  .language li.term {
     .edit {
       height: 18px;
     }
@@ -314,7 +334,7 @@ form.create, form.update{
     }
   }
   .concept.edit {
-    .language .term {
+    .language li.term {
       .edit {
         height: 24px;
       }
@@ -378,15 +398,18 @@ form.create, form.update{
 
   }
   .concept.edit {
-    .language .term {
+    .language li.term {
       .edit {
         height: 24px;
         .remove-term {
           top: 5px;
-          margin-right: 0;
+          margin-right: 4px;
           width: 16px;
           overflow: hidden;
           text-indent: -2000px;
+        }
+        .edit-term {
+          top:5px;
         }
       }
       .properties h3 {

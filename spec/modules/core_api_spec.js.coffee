@@ -241,7 +241,7 @@ describe "Coreon.Modules.CoreAPI", ->
         @requests[0].reject @requests[0], "error", "Unauthorized"
         Coreon.application.session.unsetToken.should.have.been.calledOnce
 
-      it "resumes ajax request", ->
+      xit "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
         @requests[0].status = 401
         @requests[0].reject @requests[0], "error", "Unauthorized"

@@ -51,29 +51,56 @@ describe "Coreon.Modules.Confirmation", ->
         action: ->
       @view.$(".concept").should.have.class "delete"
 
-    context "cancel", ->
-
-      beforeEach ->
+    it "does not require container option", ->
+      confirm = =>
         @view.confirm
           trigger: @trigger
-          container: @view.$ ".concept"
+          container: null
           message: "Are you sure?"
           action: ->
+      confirm.should.not.throw Error 
+      
 
-      it "removes dialog", ->
-        $(".modal-shim").click()
-        $("#coreon-modal").should.be.empty
+    context "cancel", ->
 
-      it "unmarks container for deletion", ->
-        $(".modal-shim").click()
-        @view.$(".concept").should.not.have.class "delete"
+      context "with container", ->
 
-      it "cancels on escape key", ->
-        keypress= $.Event "keydown"
-        keypress.keyCode = 27
-        $(document).trigger keypress
-        $("#coreon-modal").should.be.empty
-        @view.$(".concept").should.not.have.class "delete"
+        beforeEach ->
+          @view.confirm
+            trigger: @trigger
+            container: @view.$ ".concept"
+            message: "Are you sure?"
+            action: ->
+
+        it "removes dialog", ->
+          $(".modal-shim").click()
+          $("#coreon-modal").should.be.empty
+
+        it "unmarks container for deletion", ->
+          $(".modal-shim").click()
+          @view.$(".concept").should.not.have.class "delete"
+
+
+        it "cancels on escape key", ->
+          keypress= $.Event "keydown"
+          keypress.keyCode = 27
+          $(document).trigger keypress
+          $("#coreon-modal").should.be.empty
+          @view.$(".concept").should.not.have.class "delete"
+
+      context "without container", ->
+        
+        beforeEach ->
+          @view.confirm
+            trigger: @trigger
+            container: null
+            message: "Are you sure?"
+            action: ->
+
+        it "does not throw an error", ->
+          cancel = ->
+            $(".modal-shim").click()
+          cancel.should.not.throw Error 
 
     context "destroy", ->
 

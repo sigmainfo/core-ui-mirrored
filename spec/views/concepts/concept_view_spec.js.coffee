@@ -13,6 +13,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
     @concept = new Backbone.Model
     @concept.info = -> {}
+    @concept.revert = ->
     @concept.set "properties", [ @property ], silent: true
     @concept.propertiesByKey = => label: [ @property ]
 
@@ -101,8 +102,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       it "renders delete concept link", ->
         I18n.t.withArgs("concept.delete").returns "Delete concept"
         @view.render()
-        @view.$el.should.have ".edit a.delete"
-        @view.$("a.delete").should.have.text "Delete concept"
+        @view.$el.should.have ".edit a.delete-concept"
+        @view.$("a.delete-concept").should.have.text "Delete concept"
 
       it "renders edit concept link", ->
         I18n.t.withArgs("concept.edit").returns "Edit concept"
@@ -534,6 +535,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     beforeEach ->
       Coreon.application = session: ability: can: -> true
       @concept.properties = -> models: []
+      @concept.persistedAttributes = -> {}
       @view.editMode = yes
       @view.editProperties = no
       @view.render()
@@ -567,7 +569,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.editProperties = yes
       @view.render()
       @view.$el.should.have("section.properties.edit")
-
 
   describe "addTerm()", ->
 
@@ -661,7 +662,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event = $.Event "click"
       @view.render()
       @view.$el.append '''
-        <fieldset class="property">
+        <fieldset class="property not-persisted">
           <a class="remove-property">Remove property</a>
         </fieldset>
         '''
@@ -743,6 +744,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       beforeEach ->
         @term = new Backbone.Model
+        @term.persistedAttributes = -> {}
         @term.errors = -> {}
         sinon.stub Coreon.Models, "Term", => @term
         @view.model.terms().create = (attrs, options = {}) =>
@@ -805,6 +807,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @trigger.click()
       @view.cancelForm.should.have.been.calledOnce
 
+    it "is not triggered when link is disabled", ->
+      @view.cancelForm = sinon.spy()
+      @view.delegateEvents()
+      @trigger.addClass "disabled"
+      @trigger.click()
+      @view.cancelForm.should.not.have.been.called
+
     it "prevents default action", ->
       @event.preventDefault = sinon.spy()
       @view.cancelForm @event
@@ -822,6 +831,59 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       $("#konacha").append @view.$el
       @view.cancelForm @event
       @view.$(".edit a.add-term").should.be.visible
+
+  describe "reset()", ->
+  
+    beforeEach ->
+      @view.$el.append '''
+        <div>
+          <form class="term create">
+            <div class="submit">
+              <a class="reset" href="javascript:void(0)">Reset</a>
+              <button type="submit">Create term</button>
+            </div>
+          </form>
+          <div class="edit" style="display:none">
+            <a class="add-term" ref="javascript:void(0)">Add term</a>
+          </div>
+        </div>
+        '''
+      @event = $.Event "click"
+      @trigger = @view.$("form a.reset")
+      @event.target = @trigger[0]
+
+    it "is triggered by click on reset link", ->
+      @view.reset = sinon.spy()
+      @view.delegateEvents()
+      @trigger.click()
+      @view.reset.should.have.been.calledOnce
+
+    it "is not triggered when link is disabled", ->
+      @view.reset = sinon.spy()
+      @view.delegateEvents()
+      @trigger.addClass "disabled"
+      @trigger.click()
+      @view.reset.should.not.have.been.called
+
+    it "prevents default action", ->
+      @event.preventDefault = sinon.spy()
+      @view.reset @event
+      @event.preventDefault.should.have.been.calledOnce
+    
+    it "rerenders form", ->
+      @view.render = sinon.spy()
+      @view.reset @event
+      @view.render.should.have.been.calledOnce
+
+    it "drops remote validation errors", ->
+      @view.model.remoteError = "foo: ['must be bar']"
+      @view.reset @event
+      @view.model.should.have.property "remoteError", null
+      
+    it "restores previous state", ->
+      @view.model.revert = sinon.spy()
+      @view.reset @event
+      @view.model.revert.should.have.been.calledOnce
 
   describe "removeTerm()", ->
 
@@ -909,11 +971,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$el.append '''
         <div class="concept">
           <div class="edit">
-            <a class="delete" href="javascript:void(0)">Delete concept</a>
+            <a class="delete-concept" href="javascript:void(0)">Delete concept</a>
           </div>
         </div>
         '''
-      @trigger = @view.$("a.delete")
+      @trigger = @view.$("a.delete-concept")
       @event = $.Event "click"
       @event.target = @trigger[0]
 
@@ -923,7 +985,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "is triggered by click on remove concept link", ->
       @view.delete = sinon.spy()
       @view.delegateEvents()
-      @view.$(".edit .delete").trigger @event
+      @view.$(".edit .delete-concept").trigger @event
       @view.delete.should.have.been.calledOnce
 
     it "renders confirmation dialog", ->

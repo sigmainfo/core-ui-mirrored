@@ -141,3 +141,20 @@ describe "Coreon.Models.Term", ->
       @model.message.should.have.been.calledOnce
       @model.message.should.have.been.calledWith 'Successfully deleted term "high hat".'
        
+  describe "revert()", ->
+
+    it "restores persisted state", ->
+      @model.set "value", "hat", silent: true
+      @model.trigger "sync"
+      @model.set "value", "####", silent: true
+      @model.set "value", "****", silent: true
+      @model.revert()
+      @model.get("value").should.equal "hat"
+      
+    it "restores initial state", ->
+      @model.set "value", "hat", silent: true
+      @model.initialize()
+      @model.set "value", "####", silent: true
+      @model.set "value", "****", silent: true
+      @model.revert()
+      @model.get("value").should.equal "hat"

@@ -39,17 +39,17 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
     "click  .properties .index li"               : "selectProperty"
-    "click  .add-term"                           : "addTerm"
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
+    "click  .add-term"                           : "addTerm"
+    "click  .remove-term"                        : "removeTerm"
     "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
     "submit form.term.update"                    : "updateTerm"
-    "click  form a.cancel"                       : "cancelForm"
-    "click  form a.reset"                        : "resetForm"
+    "click  form a.cancel:not(.disabled)"        : "cancelForm"
+    "click  form a.reset:not(.disabled)"         : "reset"
     "click  .edit-term"                          : "toggleEditTerm"
-    "click  .remove-term"                        : "removeTerm"
-    "click  .edit .delete"                       : "delete"
+    "click  .delete-concept"                     : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
@@ -94,7 +94,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       @$el.removeClass("show").addClass("edit")
     else
       @$el.removeClass("edit").addClass("show")
-
     @render()
 
   toggleEditConceptProperties: (evt)->
@@ -102,7 +101,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @editProperties = !@editProperties
     @render()
 
-  toggleEditTerm: (evt)->
+  toggleEditTerm: (evt) ->
     if evt?
       evt.preventDefault()
       term_id = $(evt.target).data("id")
@@ -117,69 +116,73 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms.children(".edit").hide()
     terms.append @term term: new Coreon.Models.Term
 
-  saveConceptProperties: (data)->
-    @model.save data.concept,
-      success: => @toggleEditConceptProperties()
-      error: (model)=>
+  saveConceptProperties: (attrs) ->
+    @model.save attrs,
+      success: =>
+        @toggleEditConceptProperties()
+      error: (model) =>
         model.once "error", @render, @
-      attrs: concept: properties: data.concept.properties
+      attrs:
+        concept: attrs
 
   updateConceptProperties: (evt) ->
     evt.preventDefault()
     form = $ evt.target
-    data = form.serializeJSON() or {}
-    form.find("input,textarea,button").attr "disabled", true
+    data = form.serializeJSON().concept or {}
+    attrs = {}
+    attrs.properties = if data.properties?
+      property for property in data.properties when property?
+    else []
+    form
+      .find("input,textarea,button")
+        .prop("disabled", true)
+      .end()
+      .find("a")
+        .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
 
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        container: form.closest ".concept"
-        message: I18n.t "concept.confirm_update", {n:elements_to_delete.length}
+        message: I18n.t "concept.confirm_update", n: elements_to_delete.length
         action: =>
-          @saveConceptProperties(data)
+          @saveConceptProperties attrs
     else
-      @saveConceptProperties(data)
-
-    form.find("[type=submit]").attr "disabled", false
-    false
-
+      @saveConceptProperties attrs
 
   updateTerm: (evt) ->
     evt.preventDefault()
     form = $ evt.target
     data = form.serializeJSON()?.term or {}
     data._id = form.find("input[name=id]").val()
-    #data.concept_id = @model.id
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
 
-    form.find("input,textarea,button").attr "disabled", true
+    form
+      .find("input,textarea,button")
+        .prop("disabled", true)
+      .end()
+      .find("a")
+        .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
 
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        container: form.closest ".concept"
         message: I18n.t "term.confirm_update", {n:elements_to_delete.length}
         action: =>
           @saveTerm(data)
     else
       @saveTerm(data)
 
-    form.find("[type=submit]").attr "disabled", false
-    false
-
-
-  saveTerm: (data)->
+  saveTerm: (data) ->
     model = @model.terms().get data._id
-    console.log model, data
     model.save data,
       success: => @toggleEditTerm()
-      error: (model)=>
+      error: (model) =>
         model.once "error", @render, @
       attrs: term: data
 
@@ -193,28 +196,31 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       property for property in data.properties when property?
     else []
 
-    target.find("input,textarea,button").attr "disabled", true
+    target
+      .find("input,textarea,button")
+        .prop("disabled", true)
+      .end()
+      .find("a")
+        .addClass("disabled")
+        
     @model.terms().create data,
       wait: true
       error: (model, xhr, options) =>
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
 
-
   cancelForm: (evt) ->
     evt.preventDefault()
-    if @model.remoteError?
-      @model.set @model.previousAttributes()
-      @model.remoteError = null
+    @model.revert()
+    @model.remoteError = null
     form = $(evt.target).closest "form"
     form.siblings(".edit").show()
     form.remove()
 
-  resetForm: (evt) ->
+  reset: (evt) ->
     evt.preventDefault()
-    if @model.remoteError?
-      @model.set @model.previousAttributes()
-      @model.remoteError = null
+    @model.revert()
+    @model.remoteError = null
     @render()
 
   removeTerm: (evt) =>
