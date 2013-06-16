@@ -1,95 +1,94 @@
 #= require environment
-#= require collections/notifications
-#= require collections/connections
-#= require models/ability
 
 class Coreon.Models.Session extends Backbone.Model
 
-  defaults:
-    active: false
-    email: ""
-    name: ""
-    token: null
-    auth_root: "/api/auth/"
-    graph_root: "/api/graph/"
+  @load = ->
 
-  options:
-    sessionId: "coreon-session"
+  # defaults:
+  #   active: false
+  #   email: ""
+  #   name: ""
+  #   token: null
+  #   auth_root: "/api/auth/"
+  #   graph_root: "/api/graph/"
 
-  initialize: ->
-    @notifications = new Coreon.Collections.Notifications
-    @connections = new Coreon.Collections.Connections
-    @connections.session = @
-    @ability = new Coreon.Models.Ability
+  # options:
+  #   sessionId: "coreon-session"
 
-    @on "change:token", @_updateActiveState, @
-    @_updateActiveState()
+  # initialize: ->
+  #   @notifications = new Coreon.Collections.Notifications
+  #   @connections = new Coreon.Collections.Connections
+  #   @connections.session = @
+  #   @ability = new Coreon.Models.Ability
 
-    @connections.on "error:403", @onUnauthorized
-    
-  activate: (email, password) ->
-    @set "email", email
-    @requestSession password, @onActivated
+  #   @on "change:token", @_updateActiveState, @
+  #   @_updateActiveState()
 
-  onActivated: (data) =>
-    @save
-      name: data.user.name
-      token: data.auth_token
-    @trigger "activated"
-    @notifications.reset()
-    @message I18n.t("notifications.account.login", name: @get "name")
+  #   @connections.on "error:403", @onUnauthorized
+  #   
+  # activate: (email, password) ->
+  #   @set "email", email
+  #   @requestSession password, @onActivated
 
-  reactivate: (password) ->
-    @requestSession password, @onReactivated
+  # onActivated: (data) =>
+  #   @save
+  #     name: data.user.name
+  #     token: data.auth_token
+  #   @trigger "activated"
+  #   @notifications.reset()
+  #   @message I18n.t("notifications.account.login", name: @get "name")
 
-  onReactivated: (data) =>
-    @save token: data.auth_token
-    @trigger "reactivated"
+  # reactivate: (password) ->
+  #   @requestSession password, @onReactivated
 
-  requestSession: (password, done) ->
-    email = @get("email")
-    options =
-      url: @get("auth_root") + "login"
-      type: "POST"
-      dataType: "json"
-      data:
-        email: email
-        password: password
-    
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options).done done
+  # onReactivated: (data) =>
+  #   @save token: data.auth_token
+  #   @trigger "reactivated"
+
+  # requestSession: (password, done) ->
+  #   email = @get("email")
+  #   options =
+  #     url: @get("auth_root") + "login"
+  #     type: "POST"
+  #     dataType: "json"
+  #     data:
+  #       email: email
+  #       password: password
+  #   
+  #   @connections.add
+  #     model: @
+  #     options: options
+  #     xhr: $.ajax(options).done done
 
 
-  onUnauthorized: =>
-    @unset "token"
-    @trigger "unauthorized"
+  # onUnauthorized: =>
+  #   @unset "token"
+  #   @trigger "unauthorized"
 
-  deactivate: ->
-    @set "active", false
-    @sync "delete", @
-    @trigger "deactivated"
-    @notifications.reset()
-    @message I18n.t("notifications.account.logout")
+  # deactivate: ->
+  #   @set "active", false
+  #   @sync "delete", @
+  #   @trigger "deactivated"
+  #   @notifications.reset()
+  #   @message I18n.t("notifications.account.logout")
 
-  sync: (action, model, options)->
-    fields = ["token", "email", "name"]
-    switch action
-      when "create", "update"
-        data = {}
-        for key, value of @attributes when key not in [ "active", "graph_root", "auth_root" ] 
-          data[key] = value
-        localStorage.setItem @options.sessionId, JSON.stringify data
-      when "read"
-        @set JSON.parse localStorage.getItem @options.sessionId 
-      when "delete"
-        localStorage.removeItem @options.sessionId
+  # sync: (action, model, options)->
+  #   fields = ["token", "email", "name"]
+  #   switch action
+  #     when "create", "update"
+  #       data = {}
+  #       for key, value of @attributes when key not in [ "active", "graph_root", "auth_root" ] 
+  #         data[key] = value
+  #       localStorage.setItem @options.sessionId, JSON.stringify data
+  #     when "read"
+  #       @set JSON.parse localStorage.getItem @options.sessionId 
+  #     when "delete"
+  #       localStorage.removeItem @options.sessionId
 
-  destroy: ->
-    @notifications.destroy()
-    @connections.destroy()
-    @sync "delete", @
+  # destroy: ->
+  #   @notifications.destroy()
+  #   @connections.destroy()
+  #   @sync "delete", @
 
-  _updateActiveState: ->
-    @set "active", @has("token")
+  # _updateActiveState: ->
+  #   @set "active", @has("token")

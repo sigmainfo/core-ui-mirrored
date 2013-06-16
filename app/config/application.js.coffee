@@ -1,59 +1,26 @@
 #= require environment
-#= require models/coreon_session
-#= require collections/hits
+#= require models/session
 #= require views/application_view
-#= require routers/search_router
 #= require routers/concepts_router
+#= require routers/search_router
 
-class Coreon.Application
+class Coreon.Application extends Backbone.Model
 
-  constructor: ->
-    throw new Error "Coreon application does already exist" if Coreon.application?
-    @initialize.apply @, arguments
-    Coreon.application = @
+  defaults:
+    el: "#coreon-app"
 
-  initialize: (@options = {}) ->
-    _(@options).defaults
-      el         : "#app"
-      auth_root  : "/api/auth/"
+  initialize: ->
+    unless Coreon.application?
+      Coreon.application = @
+    else
+      throw new Error "Coreon application already initialized"
+    view = new Coreon.Views.ApplicationView model: @, el: @get "el"
+    new router view: view for name, router of Coreon.Routers
 
-    @session = @lookupExistingSession()
-    Coreon.Modules.CoreAPI.on "login", =>
-      @session = @lookupExistingSession()
-
-    @hits = new Coreon.Collections.Hits
-
-  lookupExistingSession: ->
-    session = new Coreon.Models.CoreonSession
-      auth_root: @options.auth_root
-    session.fetch()
-
-
-  start: (options = {}) ->
-    _(@options).extend options
-
-    @view = new Coreon.Views.ApplicationView
-      model: @
-      el: @options.el
-
-    @view.render()
-
-    @routers =
-      concepts_router: new Coreon.Routers.ConceptsRouter
-        collection: @concepts
-        view: @view
-        app: @
-      search_router: new Coreon.Routers.SearchRouter
-        view: @view
-        concepts: @concepts
-        app: @
-
-    Backbone.history.start pushState: true, silent: not @session?.valid()
+  start: ->
+    unless @has "auth_root"
+      throw new Error "Authorization service root URL not given"
+    Backbone.history.start silent: on, pushState: on
+    Coreon.Models.Session.load(@get "auth_root").always (session) =>
+      @set "session", session
     @
-
-  destroy: ->
-    @session?.deactivate()
-    delete Coreon.application
-
-  sync: (method, model, options) ->
-    @session?.sync method, model, options

@@ -5,11 +5,7 @@
 describe "Coreon.Models.Search", ->
   
   beforeEach ->
-    Coreon.application = new Coreon.Application
     @model = new Coreon.Models.Search
-
-  afterEach ->
-    Coreon.application.destroy()
 
   it "is a Backbone model", ->
     @model.should.be.an.instanceof Backbone.Model

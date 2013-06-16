@@ -2,7 +2,7 @@
 #= require views/search/search_results_tnodes_view
 #= require config/application
 
-describe "Coreon.Views.Search.SearchResultsTnodesView", ->
+xdescribe "Coreon.Views.Search.SearchResultsTnodesView", ->
   
   beforeEach ->
     Coreon.application = new Coreon.Application

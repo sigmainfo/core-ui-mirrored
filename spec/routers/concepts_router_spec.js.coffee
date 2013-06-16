@@ -5,7 +5,9 @@
 describe "Coreon.Routers.ConceptsRouter", ->
   
   beforeEach ->
-    Coreon.application = new Coreon.Application
+    Coreon.application =
+      hits: new Backbone.Collection
+      sync: ->
     @xhr = sinon.useFakeXMLHttpRequest()
     @xhr.onCreate = (@request) =>
 
@@ -22,7 +24,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
     Backbone.history.start()
 
   afterEach ->
-    Coreon.application.destroy()
+    Coreon.application = null
     @xhr.restore()
     Backbone.history.stop()
 
