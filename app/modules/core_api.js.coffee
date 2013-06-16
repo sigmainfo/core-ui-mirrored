@@ -67,37 +67,40 @@ ajax = (deferred, method, model, options) ->
 
 Coreon.Modules.CoreAPI =
 
-  login: (email, password)->
-    session = Coreon.application.session
-    deferred = $.Deferred()
-    options =
-      email:email
-      password:password
-    auth deferred, "create", session, options
-    deferred.promise()
+  session: (token) ->
+    null
+
+  # login: (email, password)->
+  #   session = Coreon.application.session
+  #   deferred = $.Deferred()
+  #   options =
+  #     email:email
+  #     password:password
+  #   auth deferred, "create", session, options
+  #   deferred.promise()
 
 
-  logout: ->
-    session = Coreon.application.session
-    deferred = $.Deferred()
-    auth deferred, "delete", session
-    deferred.promise()
+  # logout: ->
+  #   session = Coreon.application.session
+  #   deferred = $.Deferred()
+  #   auth deferred, "delete", session
+  #   deferred.promise()
 
 
-  reauth: (password)->
-    session = Coreon.application.session
-    deferred = $.Deferred()
-    options =
-      password:password
-    auth deferred, "update", session, options
-    deferred.promise()
+  # reauth: (password)->
+  #   session = Coreon.application.session
+  #   deferred = $.Deferred()
+  #   options =
+  #     password:password
+  #   auth deferred, "update", session, options
+  #   deferred.promise()
 
 
-  getSession: ->
-    session = Coreon.application.session
-    deferred = $.Deferred()
-    auth deferred, "read", session
-    deferred.promise()
+  # getSession: ->
+  #   session = Coreon.application.session
+  #   deferred = $.Deferred()
+  #   auth deferred, "read", session
+  #   deferred.promise()
 
 
   sync: (method, model, options = {}) ->

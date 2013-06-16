@@ -2,12 +2,82 @@
 #= require models/session
 
 describe "Coreon.Models.Session", ->
-    
-  beforeEach ->
-    @session = new Coreon.Models.Session
 
+  beforeEach ->
+    sinon.stub localStorage, "getItem"
+    
   afterEach ->
-    @session.destroy()
+    localStorage.getItem.restore()
+
+  describe "class", ->
+  
+    describe "load()", ->
+
+        beforeEach ->
+          localStorage.getItem.withArgs("coreon-session").returns "0457-a33a403-f562fb6f"
+
+      context "without local session", ->
+        
+        beforeEach ->
+          localStorage.getItem.withArgs("coreon-session").returns null
+
+        it "passes null to callbacks", ->
+          Coreon.Models.Session.load("https://auth.coreon.com").always (@session) =>
+          should.equal @session, null
+
+      context "with local session", ->
+
+        beforeEach ->
+          localStorage.getItem.withArgs("coreon-session").returns "0457-a33a403-f562fb6f"
+          @request = $.Deferred()
+          @session = fetch: sinon.stub().returns @request
+          sinon.stub Coreon.Models, "Session", => @session
+
+        afterEach ->
+          Coreon.Models.Session.restore()
+
+        it "creates session object", ->
+          Coreon.Models.Session.load "https://auth.coreon.com"
+          Coreon.Models.Session.should.have.been.calledOnce
+          Coreon.Models.Session.should.have.been.calledWithNew
+          Coreon.Models.Session.should.have.been.calledWith 
+            auth_token: "0457-a33a403-f562fb6f"
+            auth_root: "https://auth.coreon.com" 
+
+        it "loads session from auth service", ->
+          Coreon.Models.Session.load "https://auth.coreon.com"
+          @session.fetch.should.have.been.calledOnce
+
+        it "resolves callbacks with session instance when done", ->
+          Coreon.Models.Session.load("https://auth.coreon.com").always (@arg) =>
+          @request.resolve()
+          @arg.should.equal @session
+
+        it "resolves callbacks with null on failure", ->
+          Coreon.Models.Session.load("https://auth.coreon.com").always (@arg) =>
+          @request.reject()
+          should.equal @arg, null
+          
+  describe "instance", ->
+    
+    beforeEach ->
+      @session = new Coreon.Models.Session
+
+    describe "url()", ->
+
+      it "is constructed from auth_root and auth_token", ->
+        @session.set {
+          auth_root: "https://my.auth.root"
+          auth_token: "my-auth-token-1234"
+        }, silent: on
+        @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
+    
+      it "strips trailing slash from auth root", ->
+        @session.set {
+          auth_root: "https://my.auth.root/"
+          auth_token: "my-auth-token-1234"
+        }, silent: on
+        @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
 
   # it "is a Backbone model", ->
   #   @session.should.be.an.instanceof Backbone.Model

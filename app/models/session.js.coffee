@@ -2,7 +2,20 @@
 
 class Coreon.Models.Session extends Backbone.Model
 
-  @load = ->
+  @load = (root) ->
+    request = $.Deferred()
+    if token = localStorage.getItem "coreon-session"
+      session = new @ auth_token: token, auth_root: root
+      session.fetch()
+        .fail(-> request.resolve null)
+        .done(-> request.resolve session)
+    else
+      request.resolve null
+    request.promise()
+
+  idAttribute: "auth_token"
+
+  urlRoot: -> "#{@get('auth_root').replace /\/$/, ''}/login"
 
   # defaults:
   #   active: false
