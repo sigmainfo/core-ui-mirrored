@@ -5,16 +5,15 @@ describe "Coreon.Models.Session", ->
 
   beforeEach ->
     sinon.stub localStorage, "getItem"
+    sinon.stub localStorage, "removeItem"
     
   afterEach ->
     localStorage.getItem.restore()
+    localStorage.removeItem.restore()
 
   describe "class", ->
   
     describe "load()", ->
-
-        beforeEach ->
-          localStorage.getItem.withArgs("coreon-session").returns "0457-a33a403-f562fb6f"
 
       context "without local session", ->
         
@@ -78,6 +77,23 @@ describe "Coreon.Models.Session", ->
           auth_token: "my-auth-token-1234"
         }, silent: on
         @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
+
+    describe "destroy()", ->
+
+      beforeEach ->
+        sinon.stub Backbone.Model::, "destroy"
+
+      afterEach ->
+        Backbone.Model::destroy.restore()
+
+      it "clears local session", ->
+        @session.destroy()
+        localStorage.removeItem.should.have.been.calledOnce
+        localStorage.removeItem.should.have.been.calledWith "coreon-session"
+        
+      it "calls super", ->
+        @session.destroy()
+        Backbone.Model::destroy.should.have.been.calledOnce
 
   # it "is a Backbone model", ->
   #   @session.should.be.an.instanceof Backbone.Model

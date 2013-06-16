@@ -6,6 +6,7 @@ describe "Coreon.Application", ->
   beforeEach ->
     @request = $.Deferred()
     sinon.stub Backbone.history, "start"
+    sinon.stub Coreon.Routers, "SessionsRouter"
     sinon.stub Coreon.Routers, "ConceptsRouter"
     sinon.stub Coreon.Routers, "SearchRouter"
     sinon.stub Coreon.Models.Session, "load", => @request
@@ -15,6 +16,7 @@ describe "Coreon.Application", ->
 
   afterEach ->
     Backbone.history.start.restore()
+    Coreon.Routers.SessionsRouter.restore()
     Coreon.Routers.ConceptsRouter.restore()
     Coreon.Routers.SearchRouter.restore()
     Coreon.Models.Session.load.restore()
@@ -42,15 +44,20 @@ describe "Coreon.Application", ->
       Coreon.Views.ApplicationView.should.have.been.calledWithNew
       Coreon.Views.ApplicationView.should.have.been.calledWith model: @app, el: "#coreon-app"
 
+    it "creates sessions router", ->
+      Coreon.Routers.SessionsRouter.should.have.been.calledOnce
+      Coreon.Routers.SessionsRouter.should.have.been.calledWithNew
+      Coreon.Routers.SessionsRouter.should.have.been.calledWith @view
+
     it "creates concepts router", ->
       Coreon.Routers.ConceptsRouter.should.have.been.calledOnce
       Coreon.Routers.ConceptsRouter.should.have.been.calledWithNew
-      Coreon.Routers.ConceptsRouter.should.have.been.calledWith view: @view
+      Coreon.Routers.ConceptsRouter.should.have.been.calledWith @view
 
     it "creates concepts router", ->
       Coreon.Routers.SearchRouter.should.have.been.calledOnce
       Coreon.Routers.SearchRouter.should.have.been.calledWithNew
-      Coreon.Routers.SearchRouter.should.have.been.calledWith view: @view
+      Coreon.Routers.SearchRouter.should.have.been.calledWith @view
 
   describe "start()", ->
 
@@ -79,10 +86,3 @@ describe "Coreon.Application", ->
       @app.start()
       @request.resolve null
       spy.should.have.been.calledOnce
-
-    it "starts history", ->
-      @app.start()
-      Backbone.history.start.should.have.been.calledOnce
-      Backbone.history.start.should.have.been.calledWith
-        silent: on
-        pushState: on

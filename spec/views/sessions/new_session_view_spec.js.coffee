@@ -1,18 +1,18 @@
 #= require spec_helper
-#= require views/account/login_view
+#= require views/sessions/new_session_view
 
-describe "Coreon.Views.Account.LoginView", ->
+describe "Coreon.Views.Sessions.NewSessionView", ->
   
   beforeEach ->
-    @view = new Coreon.Views.Account.LoginView 
+    @view = new Coreon.Views.Sessions.NewSessionView
 
-  it "is a simple view view", ->
-    @view.should.be.an.instanceOf Coreon.Views.SimpleView
+  it "is a Backbone view", ->
+    @view.should.be.an.instanceOf Backbone.View
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-login"
 
-  describe "#render", ->
+  describe "render()", ->
 
     it "allows chaining", ->
       @view.render().should.equal @view
@@ -43,7 +43,7 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.$("input[id='coreon-login-password']").should.have.attr "name", "login[password]"
       @view.$("input[id='coreon-login-password']").should.have.attr "required"
 
-  describe "on keyup", ->
+  describe "updateState()", ->
 
     beforeEach ->
       @view.render()
@@ -61,7 +61,6 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.$("#coreon-login-password").val "bar"
       @view.$("#coreon-login-password").keyup()
       @view.$("input[type='submit']").should.be.disabled
-      
 
     it "disables submit button when password is empty", ->
       @view.$("input[type='submit']").prop "disabled", false
@@ -77,7 +76,7 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.$("#coreon-login-password").trigger "paste"
       @view.$("input[type='submit']").should.not.be.disabled
 
-  describe "on submit", ->
+  describe "create()", ->
     
     beforeEach ->
       @event = new jQuery.Event "submit"
@@ -85,17 +84,13 @@ describe "Coreon.Views.Account.LoginView", ->
       @view.render().$el.appendTo "#konacha"
 
     it "handles submit events exclusively", ->
-      sinon.spy @event, "preventDefault"
-      sinon.spy @event, "stopPropagation"
+      @event.preventDefault = sinon.spy()
       @view.$("form").trigger @event
       @event.preventDefault.should.have.been.calledOnce
-      @event.stopPropagation.should.have.been.calledOnce
 
     it "authenticates account", ->
       @view.model.activate = sinon.spy()
       @view.$("#coreon-login-email").val "nobody@blake.com"
-      @view.$("#coreon-login-password").val "se7en"
+      @view.$("#coreon-login-password").val "se7en!"
       @view.$("form").trigger @event
-      @view.model.activate.should.have.been.calledWith "nobody@blake.com", "se7en"
-
-      
+      @view.model.activate.should.have.been.calledWith "nobody@blake.com", "se7en!"

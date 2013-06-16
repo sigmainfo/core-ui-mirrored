@@ -21,6 +21,6 @@ module AuthSteps
   end
 
   Given 'I am logged out' do
-    page.execute_script "Coreon.application.session.deactivate();"
+    visit "/logout"
   end
 end

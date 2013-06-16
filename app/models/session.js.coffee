@@ -17,6 +17,10 @@ class Coreon.Models.Session extends Backbone.Model
 
   urlRoot: -> "#{@get('auth_root').replace /\/$/, ''}/login"
 
+  destroy: ->
+    super
+    localStorage.removeItem "coreon-session"
+
   # defaults:
   #   active: false
   #   email: ""

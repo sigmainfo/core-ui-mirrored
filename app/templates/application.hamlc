@@ -1,3 +1,10 @@
 #coreon-top
+  #coreon-header
+    %ul#coreon-notifications
   #coreon-modal
+  - if @session?
+    #coreon-widgets
 #coreon-main
+  #coreon-filters
+- if @session?
+  #coreon-footer

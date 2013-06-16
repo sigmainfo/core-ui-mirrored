@@ -11,6 +11,7 @@ Coreon.Views.Layout             ?= {}
 Coreon.Views.Widgets            ?= {}
 Coreon.Views.Widgets.ConceptMap ?= {}
 Coreon.Views.Account            ?= {}
+Coreon.Views.Sessions           ?= {}
 Coreon.Views.Notifications      ?= {}
 Coreon.Views.Search             ?= {}
 Coreon.Views.Concepts           ?= {}
