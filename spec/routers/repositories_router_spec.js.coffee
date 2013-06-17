@@ -4,17 +4,16 @@
 describe "Coreon.Routers.RepositoriesRouter", ->
   
   beforeEach ->
-    sinon.stub Coreon.Models.Repository, "current"
-    sinon.stub Coreon.Models.Repository, "select"
-    @view = new Backbone.View
+    @session = new Backbone.Model
+    @session.currentRepository = -> null
+    app = new Backbone.Model session: @session
+    @view = new Backbone.View model: app
     @view.switch = sinon.spy()
     @router = new Coreon.Routers.RepositoriesRouter @view
     Backbone.history.start()
 
   afterEach ->
     Backbone.history.stop()
-    Coreon.Models.Repository.current.restore()
-    Coreon.Models.Repository.select.restore()
 
   it "is a Backbone router", ->
     @router.should.be.an.instanceof Backbone.Router
@@ -29,14 +28,14 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.root.should.have.been.calledOnce
 
     it "redirects to current repository", ->
-      Coreon.Models.Repository.current.returns id: "my-repo-123"
+      @session.currentRepository = -> id: "my-repo-123"
       @router.navigate = sinon.spy()
       @router.root()
       @router.navigate.should.have.been.calledOnce
       @router.navigate.should.have.been.calledWith "my-repo-123", trigger: yes, replace: yes
 
     it "kills session when no repository is available", ->
-      Coreon.Models.Repository.current.returns null
+      @session.currentRepository = -> null
       @router.navigate = sinon.spy()
       @router.root()
       @router.navigate.should.have.been.calledWith "logout"
@@ -57,12 +56,14 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.show.should.have.been.calledOnce
     
     it "switches repository", ->
+      @session.set "current_repository_id", "other-repo-fghj", silent: yes 
       @router.show "my-repo-abcdef"
-      Coreon.Models.Repository.select.should.have.been.calledWith "my-repo-abcdef"
+      @session.get("current_repository_id").should.equal "my-repo-abcdef"
 
     it "displays repository root", ->
       repo = id: "my-repo-abcdef"
-      Coreon.Models.Repository.select.withArgs("my-repo-abcdef").returns repo
+      @session.currentRepository = =>
+        repo if @session.get("current_repository_id") is "my-repo-abcdef"
       @router.view.switch = sinon.spy()
       @router.show "my-repo-abcdef"
       Coreon.Views.Repositories.RepositoryView.should.have.been.calledOnce
@@ -71,7 +72,11 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.view.switch.should.have.been.calledWith @screen
 
     it "redirects to root when repository is not available", ->
-      Coreon.Models.Repository.select.withArgs("ghost-repo-123").returns null
+      @session.currentRepository = =>
+        if @session.get("current_repository_id") is "ghost-repo-123"
+          null
+        else
+          id: "other-repo-123"
       @router.navigate = sinon.spy()
       @router.show "ghost-repo-123"
       @router.navigate.should.have.been.calledOnce

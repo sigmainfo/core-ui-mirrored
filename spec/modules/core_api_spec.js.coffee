@@ -19,62 +19,7 @@ describe "Coreon.Modules.CoreAPI", ->
     @model.urlRoot = "/concepts"
 
   afterEach ->
-    @request.resolve()
     Coreon.application = @_application
-
-
-  describe "session management", ->
-    beforeEach ->
-      @request = $.Deferred()
-      @session_sync = sinon.stub()
-      @session_sync.returns(@request)
-
-
-    it "loggs in", ->
-      Coreon.application = session: sync: @session_sync
-
-      @model.login "rick.deckard@tyrell.tld", "obsolescence"
-      @session_sync.should.have.been.calledOnce
-      @session_sync.should.have.been.calledWith "create", Coreon.application.session, {email:"rick.deckard@tyrell.tld", password:"obsolescence"}
-
-    it "loggs out", ->
-      Coreon.application = session: new Backbone.Model
-      Coreon.application.session.isNew = -> false
-      Coreon.application.session.sync = @session_sync
-
-      @model.logout "rick.deckard@tyrell.tld", "obsolescence"
-      @session_sync.should.have.been.calledOnce
-      @session_sync.should.have.been.calledWith "delete", Coreon.application.session, {}
-
-    it "reauthenticates", ->
-      Coreon.application = session: sync: @session_sync
-
-      @model.reauth "obsolescence"
-      @session_sync.should.have.been.calledOnce
-      @session_sync.should.have.been.calledWith "update", Coreon.application.session, {password:"obsolescence"}
-
-    it "getSession()", ->
-      Coreon.application = session: sync: @session_sync
-
-      @model.getSession()
-      @session_sync.should.have.been.calledOnce
-      @session_sync.should.have.been.calledWith "read", Coreon.application.session, {}
-
-    it "triggers global start event", ->
-      Coreon.application = session: sync: @session_sync
-      spy = sinon.spy()
-      Coreon.Modules.CoreAPI.on "start", spy
-      @model.getSession()
-      spy.should.have.been.calledOnce
-
-    it "triggers global stop event", ->
-      Coreon.application = session: sync: @session_sync
-      spy = sinon.spy()
-      Coreon.Modules.CoreAPI.on "stop", spy
-      @model.getSession()
-      @request.resolve()
-      spy.should.have.been.calledOnce
-
 
   describe "sync()", ->
 
@@ -84,14 +29,6 @@ describe "Coreon.Modules.CoreAPI", ->
         request = $.Deferred()
         @requests.push request
         request
-
-      Coreon.application.session = new Backbone.Model
-        repo_root: "https://123-456-789.coreon.com/"
-        _token: null
-      Coreon.application.session.setToken = (token)-> @set "_token", token
-      Coreon.application.session.getToken = -> @get "_token"
-      Coreon.application.session.unsetToken = -> @unset "_token"
-      sinon.stub Coreon.application.session, "unsetToken"
 
     afterEach ->
       Backbone.sync.restore()
@@ -106,7 +43,7 @@ describe "Coreon.Modules.CoreAPI", ->
         Backbone.sync.firstCall.args[2].should.have.property "username", "Nobody"
 
       it "sends token in headers", ->
-        Coreon.application.session.setToken "148ba2d2361930cbeef"
+        Coreon.application.session.set "token", "148ba2d2361930cbeef", silent: true
         @model.sync "read", @model
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "148ba2d2361930cbeef"
@@ -125,25 +62,24 @@ describe "Coreon.Modules.CoreAPI", ->
 
       it "triggers global request event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "request", spy
+        Coreon.Modules.CoreAPI.on "request", spy 
         @model.sync "read", @model, url: "https://foo.net/1234"
         spy.should.have.been.calledOnce
         spy.should.have.been.calledWith "read", "https://foo.net/1234", @requests[0]
 
       it "triggers global start event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "start", spy
+        Coreon.Modules.CoreAPI.on "start", spy 
         @model.sync "read", @model, url: "https://foo.net/1234"
         @model.sync "read", @model, url: "https://foo.net/abcd"
         spy.should.have.been.calledOnce
 
       it "triggers global stop event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "stop", spy
+        Coreon.Modules.CoreAPI.on "stop", spy 
         @model.sync "read", @model, url: "https://foo.net/1234"
         @model.sync "read", @model, url: "https://foo.net/abcd"
         @requests[1].resolve()
-        @requests[0].status = 200
         @requests[0].resolve()
         spy.should.have.been.calledOnce
 
@@ -166,7 +102,7 @@ describe "Coreon.Modules.CoreAPI", ->
         fail.should.not.have.been.called
 
     context "fail", ->
-
+      
       it "triggers fail callbacks", ->
         fail = sinon.spy()
         promise = @model.sync "create", @model
@@ -205,7 +141,7 @@ describe "Coreon.Modules.CoreAPI", ->
         spy1.should.have.been.calledWith 422, "Unprocessible Entity", error: "is not valid", @requests[0]
         spy2.should.have.been.calledOnce
         spy2.should.have.been.calledWith "Unprocessible Entity", error: "is not valid", @requests[0]
-
+    
     context "unauthorized", ->
 
       it "does not trigger any callbacks", ->
@@ -214,16 +150,16 @@ describe "Coreon.Modules.CoreAPI", ->
         promise = @model.sync "create", @model
         promise.done done
         promise.fail fail
-        @requests[0].status = 401
+        @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
         done.should.not.have.been.called
         fail.should.not.have.been.called
 
       it "does not trigger error event", ->
         spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "error error:401", spy
+        Coreon.Modules.CoreAPI.on "error error:403", spy
         @model.sync "read", @model
-        @requests[0].status = 401
+        @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
         spy.should.not.have.been.called
 
@@ -231,32 +167,32 @@ describe "Coreon.Modules.CoreAPI", ->
         spy = sinon.spy()
         Coreon.Modules.CoreAPI.on "stop", spy
         @model.sync "read", @model
-        @requests[0].status = 401
+        @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
         spy.should.not.have.been.called
 
       it "clears session token", ->
+        Coreon.application.session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
-        @requests[0].status = 401
+        @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        Coreon.application.session.unsetToken.should.have.been.calledOnce
-
-      xit "resumes ajax request", ->
+        Coreon.application.session.has("token").should.be.false
+      
+      it "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
-        @requests[0].status = 401
+        @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        Coreon.application.session.setToken "beef48548969b046148ba2d2361930c02"
+        Coreon.application.session.set "token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.should.have.been.calledTwice
         Backbone.sync.should.always.have.been.calledWith "read", @model
         Backbone.sync.lastCall.args[2].should.have.property "username", "Nobody"
 
-      xit "uses newly set token", ->
-        Coreon.application.session.setToken "148ba2d2361930cbeef48548969b04602"
+      it "uses newly set token", ->
+        Coreon.application.session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
-        @requests[0].status = 401
+        @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        Coreon.application.session.getToken = -> "beef48548969b046148ba2d2361930c02"
-        @model.reauth("condolescence")
-        @requests[0].resolve()
+        Backbone.sync.reset()
+        Coreon.application.session.set "token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "beef48548969b046148ba2d2361930c02"

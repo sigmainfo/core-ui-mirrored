@@ -14,15 +14,17 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
   initialize: (@view) ->
 
   root: ->
-    if current = Coreon.Models.Repository.current()
+    if current = @view.model.get("session").currentRepository()
       @navigate current.id, trigger: yes, replace: yes
     else
       @navigate "logout"
 
   show: (id) ->
-   if repo = Coreon.Models.Repository.select id
-     screen = new Coreon.Views.Repositories.RepositoryView model: repo
-     @view.switch screen
-   else
-     @navigate "", trigger: yes, replace: yes
+    session = @view.model.get("session")
+    session.set "current_repository_id", id
+    if repo = session.currentRepository()
+      screen = new Coreon.Views.Repositories.RepositoryView model: repo
+      @view.switch screen
+    else
+      @navigate "", trigger: yes, replace: yes
    

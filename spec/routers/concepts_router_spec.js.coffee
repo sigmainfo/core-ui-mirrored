@@ -5,15 +5,10 @@
 describe "Coreon.Routers.ConceptsRouter", ->
   
   beforeEach ->
-    Coreon.application =
-      hits: new Backbone.Collection
-      sync: ->
     @xhr = sinon.useFakeXMLHttpRequest()
     @xhr.onCreate = (@request) =>
 
     @router = new Coreon.Routers.ConceptsRouter
-      collection: _(new Backbone.Collection).extend
-        addOrUpdate: ->
       view: _(new Backbone.View).extend
         switch: (@screen) => @screen
         widgets:
@@ -24,7 +19,6 @@ describe "Coreon.Routers.ConceptsRouter", ->
     Backbone.history.start()
 
   afterEach ->
-    Coreon.application = null
     @xhr.restore()
     Backbone.history.stop()
 
@@ -33,35 +27,12 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
   describe "initialize()", ->
     
-    it "takes options", ->
-      concepts = new Backbone.Collection
+    it "assigns view", ->
       view = new Backbone.View
-      @router.initialize
-        collection: concepts
-        view: view
-      @router.collection.should.equal concepts
+      @router.initialize view
       @router.view.should.equal view
 
-  describe "root()", ->
-    
-    it "is routed", ->
-      @router.root = sinon.spy()
-      @router._bindRoutes()
-      @router.navigate "/other"
-      @router.navigate "/", trigger: true
-      @router.root.should.have.been.calledOnce
-
-    it "renders root screen", ->
-      @router.root()
-      @screen.should.be.an.instanceof Coreon.Views.Concepts.RootView
-
-    it "clears hits", ->
-      Coreon.application.hits.reset [ result: new Backbone.Model ]  
-      @router.root()
-      Coreon.application.hits.should.have.lengthOf 0
-    
-
-  describe "search()", ->
+  xdescribe "search()", ->
     
     it "is routed", ->
       @router.search = sinon.spy()

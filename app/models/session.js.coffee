@@ -13,6 +13,8 @@ class Coreon.Models.Session extends Backbone.Model
       request.resolve null
     request.promise()
 
+  @create = (email, password) ->
+
   idAttribute: "auth_token"
 
   urlRoot: -> "#{@get('auth_root').replace /\/$/, ''}/login"

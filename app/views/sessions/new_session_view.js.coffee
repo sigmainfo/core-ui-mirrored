@@ -1,5 +1,6 @@
 #= require environment
 #= require templates/sessions/new_session
+#= require models/session
 
 class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
@@ -24,4 +25,7 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
   create: (event) ->
     event.preventDefault()
-    @model.activate @$("#coreon-login-email").val(), @$("#coreon-login-password").val()
+    @$("input,button").prop "disabled", yes
+    Coreon.Models.Session.create(@$("#coreon-login-email").val(), @$("#coreon-login-password").val())
+      .fail( => @$("#coreon-login-password").val "" )
+      .done( (session) => @model.set "session", session )

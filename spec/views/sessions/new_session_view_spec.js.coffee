@@ -5,6 +5,7 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
   
   beforeEach ->
     @view = new Coreon.Views.Sessions.NewSessionView
+      model: new Backbone.Model
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -79,18 +80,56 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
   describe "create()", ->
     
     beforeEach ->
-      @event = new jQuery.Event "submit"
-      @view.model = activate: ->
-      @view.render().$el.appendTo "#konacha"
+      sinon.stub Coreon.Models.Session, "create", => @request = $.Deferred()
+      @event = $.Event "submit"
+      @view.render()
 
-    it "handles submit events exclusively", ->
-      @event.preventDefault = sinon.spy()
+    afterEach ->
+      Coreon.Models.Session.create.restore()
+      
+    it "is triggered on submit", ->
+      @view.create = sinon.spy()
+      @view.delegateEvents()
       @view.$("form").trigger @event
+      @view.create.should.have.been.calledOnce
+      @view.create.should.have.been.calledWith @event
+      
+    it "prevents default", ->
+      @event.preventDefault = sinon.spy()
+      @view.create @event
       @event.preventDefault.should.have.been.calledOnce
 
-    it "authenticates account", ->
-      @view.model.activate = sinon.spy()
-      @view.$("#coreon-login-email").val "nobody@blake.com"
-      @view.$("#coreon-login-password").val "se7en!"
-      @view.$("form").trigger @event
-      @view.model.activate.should.have.been.calledWith "nobody@blake.com", "se7en!"
+    it "disables button to prevent second click", ->
+      @view.$(":disabled").prop "disabled", no
+      @view.create @event
+      @view.$('[type="submit"]').should.be.disabled
+
+    context "session request", ->
+      
+      beforeEach ->
+        @view.$("#coreon-login-email").val "nobody@login.me"
+        @view.$("#coreon-login-password").val "xxx"
+
+      it "creates session from form", ->
+        @view.create @event
+        Coreon.Models.Session.create.should.have.been.calledOnce
+        Coreon.Models.Session.create.should.have.been.calledWith "nobody@login.me", "xxx"
+
+      context "fail", ->
+        
+        it "clears password field on failure", ->
+          @view.create @event
+          @request.reject()
+          @view.$("#coreon-login-password").should.have.value ""
+
+      context "done", ->
+
+        it "updates session on application", ->
+          session = token: "you-are-in-123"
+          @view.create @event
+          @request.resolve session
+          @view.model.get("session").should.equal session
+          
+        
+        
+           
