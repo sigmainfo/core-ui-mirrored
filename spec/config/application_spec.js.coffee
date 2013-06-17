@@ -7,6 +7,7 @@ describe "Coreon.Application", ->
     @request = $.Deferred()
     sinon.stub Backbone.history, "start"
     sinon.stub Coreon.Routers, "SessionsRouter"
+    sinon.stub Coreon.Routers, "RepositoriesRouter"
     sinon.stub Coreon.Routers, "ConceptsRouter"
     sinon.stub Coreon.Routers, "SearchRouter"
     sinon.stub Coreon.Models.Session, "load", => @request
@@ -17,6 +18,7 @@ describe "Coreon.Application", ->
   afterEach ->
     Backbone.history.start.restore()
     Coreon.Routers.SessionsRouter.restore()
+    Coreon.Routers.RepositoriesRouter.restore()
     Coreon.Routers.ConceptsRouter.restore()
     Coreon.Routers.SearchRouter.restore()
     Coreon.Models.Session.load.restore()
@@ -48,6 +50,11 @@ describe "Coreon.Application", ->
       Coreon.Routers.SessionsRouter.should.have.been.calledOnce
       Coreon.Routers.SessionsRouter.should.have.been.calledWithNew
       Coreon.Routers.SessionsRouter.should.have.been.calledWith @view
+
+    it "creates repositories router", ->
+      Coreon.Routers.RepositoriesRouter.should.have.been.calledOnce
+      Coreon.Routers.RepositoriesRouter.should.have.been.calledWithNew
+      Coreon.Routers.RepositoriesRouter.should.have.been.calledWith @view
 
     it "creates concepts router", ->
       Coreon.Routers.ConceptsRouter.should.have.been.calledOnce

@@ -2,6 +2,7 @@
 #= require models/session
 #= require views/application_view
 #= require routers/sessions_router
+#= require routers/repositories_router
 #= require routers/concepts_router
 #= require routers/search_router
 

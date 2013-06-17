@@ -27,6 +27,7 @@ describe "config/environment", ->
     should.exist Coreon.Views.Account
     should.exist Coreon.Views.Sessions
     should.exist Coreon.Views.Search
+    should.exist Coreon.Views.Repositories
     should.exist Coreon.Views.Concepts
     should.exist Coreon.Views.Concepts.Shared
     should.exist Coreon.Views.Properties

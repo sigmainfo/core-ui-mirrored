@@ -28,10 +28,10 @@ describe "Coreon.Routers.SessionsRouter", ->
       @application.set "session", session, silent: on
       @router.destroy()
       session.destroy.should.have.been.calledOnce
-      should.equal @application.has("session"), false
+      should.equal @application.has("session"), no
 
     it "navigates to root", ->
       @router.navigate = sinon.spy()
       @router.destroy()
       @router.navigate.should.have.been.calledOnce
-      @router.navigate.should.have.been.calledWith "/", reload: on
+      @router.navigate.should.have.been.calledWith "", reload: on

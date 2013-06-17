@@ -14,6 +14,7 @@ Coreon.Views.Account            ?= {}
 Coreon.Views.Sessions           ?= {}
 Coreon.Views.Notifications      ?= {}
 Coreon.Views.Search             ?= {}
+Coreon.Views.Repositories       ?= {}
 Coreon.Views.Concepts           ?= {}
 Coreon.Views.Concepts.Shared    ?= {}
 Coreon.Views.Properties         ?= {}
