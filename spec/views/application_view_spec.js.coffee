@@ -47,6 +47,9 @@ describe "Coreon.Views.ApplicationView", ->
       it "renders footer", ->
         @view.render()
         @view.$el.should.have "#coreon-footer"
+        @view.$("#coreon-footer").should.have ".toggle"
+        @view.$("#coreon-footer .toggle").should.have "h3"
+        @view.$("#coreon-footer .toggle").should.have "#coreon-progress-indicator"
 
     context "without session", ->
       

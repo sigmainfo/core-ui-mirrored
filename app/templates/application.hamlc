@@ -8,3 +8,6 @@
   #coreon-filters
 - if @session?
   #coreon-footer
+    .toggle
+      #coreon-progress-indicator
+      %h3 Coreon
