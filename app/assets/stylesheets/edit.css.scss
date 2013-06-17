@@ -215,6 +215,10 @@ form.create.term {
 
      a.remove-term {
        right: 18px;
+       margin-right: 4px;
+       width: 16px;
+       overflow: hidden;
+       text-indent: -2000px;
      }
      a.edit-term {
        position: absolute;
@@ -231,6 +235,9 @@ form.create.term {
        text-indent: -2000px;
      }
      a.edit-properties, a.edit-term {
+       position: absolute;
+       top: 8px;
+       right: 0;
        width: 16px;
        overflow: hidden;
        text-indent: -5000px;
@@ -401,15 +408,8 @@ form.create.term {
     .language li.term {
       .edit {
         height: 24px;
-        .remove-term {
+        .remove-term, .edit-term {
           top: 5px;
-          margin-right: 4px;
-          width: 16px;
-          overflow: hidden;
-          text-indent: -2000px;
-        }
-        .edit-term {
-          top:5px;
         }
       }
       .properties h3 {
