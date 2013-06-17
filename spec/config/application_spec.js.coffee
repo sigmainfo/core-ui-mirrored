@@ -41,6 +41,9 @@ describe "Coreon.Application", ->
     it "enforces single instance", ->
       (-> new Coreon.Application).should.throw "Coreon application already initialized"
 
+    it "configures auth root on session", ->
+      Coreon.Models.Session.auth_root.should.equal "https://auth.coreon.com"
+
     it "creates application view", ->
       Coreon.Views.ApplicationView.should.have.been.calledOnce
       Coreon.Views.ApplicationView.should.have.been.calledWithNew

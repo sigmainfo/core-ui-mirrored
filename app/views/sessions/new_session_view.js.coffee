@@ -26,6 +26,6 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
   create: (event) ->
     event.preventDefault()
     @$("input,button").prop "disabled", yes
-    Coreon.Models.Session.create(@$("#coreon-login-email").val(), @$("#coreon-login-password").val())
+    Coreon.Models.Session.authenticate(@$("#coreon-login-email").val(), @$("#coreon-login-password").val())
       .fail( => @$("#coreon-login-password").val "" )
       .done( (session) => @model.set "session", session )

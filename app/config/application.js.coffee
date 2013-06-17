@@ -16,6 +16,7 @@ class Coreon.Application extends Backbone.Model
       Coreon.application = @
     else
       throw new Error "Coreon application already initialized"
+    Coreon.Models.Session.auth_root = @get "auth_root"
     view = new Coreon.Views.ApplicationView model: @, el: @get "el"
     new router view for name, router of Coreon.Routers
 

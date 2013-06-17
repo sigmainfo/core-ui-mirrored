@@ -4,12 +4,15 @@
 describe "Coreon.Models.Session", ->
 
   beforeEach ->
+    @auth_root = Coreon.Models.Session.auth_root
+    Coreon.Models.Session.auth_root = "https://auth.coreon.com"
     sinon.stub localStorage, "getItem"
     sinon.stub localStorage, "removeItem"
     
   afterEach ->
     localStorage.getItem.restore()
     localStorage.removeItem.restore()
+    Coreon.Models.Session.auth_root = @auth_root
 
   describe "class", ->
   
@@ -21,7 +24,7 @@ describe "Coreon.Models.Session", ->
           localStorage.getItem.withArgs("coreon-session").returns null
 
         it "passes null to callbacks", ->
-          Coreon.Models.Session.load("https://auth.coreon.com").always (@session) =>
+          Coreon.Models.Session.load().always (@session) =>
           should.equal @session, null
 
       context "with local session", ->
@@ -36,26 +39,57 @@ describe "Coreon.Models.Session", ->
           Coreon.Models.Session.restore()
 
         it "creates session object", ->
-          Coreon.Models.Session.load "https://auth.coreon.com"
+          Coreon.Models.Session.load()
           Coreon.Models.Session.should.have.been.calledOnce
           Coreon.Models.Session.should.have.been.calledWithNew
           Coreon.Models.Session.should.have.been.calledWith 
             auth_token: "0457-a33a403-f562fb6f"
-            auth_root: "https://auth.coreon.com" 
 
         it "loads session from auth service", ->
-          Coreon.Models.Session.load "https://auth.coreon.com"
+          Coreon.Models.Session.load()
           @session.fetch.should.have.been.calledOnce
 
         it "resolves callbacks with session instance when done", ->
-          Coreon.Models.Session.load("https://auth.coreon.com").always (@arg) =>
+          Coreon.Models.Session.load().always (@arg) =>
           @request.resolve()
           @arg.should.equal @session
 
         it "resolves callbacks with null on failure", ->
-          Coreon.Models.Session.load("https://auth.coreon.com").always (@arg) =>
+          Coreon.Models.Session.load().always (@arg) =>
           @request.reject()
           should.equal @arg, null
+
+    describe "authenticate()", ->
+
+      beforeEach ->
+        sinon.stub Coreon.Models, "Session", =>
+          @session = new Backbone.Model
+          @request = $.Deferred()
+          @session.save = sinon.stub().returns @request
+          @session
+
+      afterEach ->
+        Coreon.Models.Session.restore()
+
+      it "creates pristine session", ->
+        Coreon.Models.Session.authenticate "nobody@blake.com", "se7en!"
+        Coreon.Models.Session.should.have.been.calledOnce
+        Coreon.Models.Session.should.have.been.calledWithNew
+      
+      it "saves session overiding data with credentials", ->
+        Coreon.Models.Session.authenticate "nobody@blake.com", "se7en!"
+        @session.save.should.have.been.calledWith {}, data: "email=nobody%40blake.com&password=se7en!"
+
+      it "resolves promise with session instance when done", ->
+        Coreon.Models.Session.authenticate("nobody@blake.com", "se7en!").always (@arg) =>
+        @request.resolve()
+        @arg.should.equal @session
+
+      it "resolves promise with null on failure", ->
+        Coreon.Models.Session.authenticate("nobody@blake.com", "se7en!").always (@arg) =>
+        @request.reject()
+        should.equal @arg, null
+        
           
   describe "instance", ->
     
@@ -65,17 +99,13 @@ describe "Coreon.Models.Session", ->
     describe "url()", ->
 
       it "is constructed from auth_root and auth_token", ->
-        @session.set {
-          auth_root: "https://my.auth.root"
-          auth_token: "my-auth-token-1234"
-        }, silent: on
+        Coreon.Models.Session.auth_root = "https://my.auth.root"
+        @session.set "auth_token", "my-auth-token-1234", silent: on
         @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
     
       it "strips trailing slash from auth root", ->
-        @session.set {
-          auth_root: "https://my.auth.root/"
-          auth_token: "my-auth-token-1234"
-        }, silent: on
+        Coreon.Models.Session.auth_root = "https://my.auth.root/"
+        @session.set "auth_token", "my-auth-token-1234", silent: on
         @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
 
     describe "destroy()", ->
@@ -94,352 +124,3 @@ describe "Coreon.Models.Session", ->
       it "calls super", ->
         @session.destroy()
         Backbone.Model::destroy.should.have.been.calledOnce
-
-  # it "is a Backbone model", ->
-  #   @session.should.be.an.instanceof Backbone.Model
-
-  # describe "with defaults", ->
-  #   
-  #   it "is inactive", ->
-  #     @session.get("active").should.be.false
-
-  #   it "has api paths set on domain", ->
-  #     @session.get("auth_root").should.equal "/api/auth/"
-  #     @session.get("graph_root").should.equal "/api/graph/"
-
-  #   it "has no user name or email", ->
-  #     @session.get("name").should.equal ""
-  #     
-  # 
-  # describe "initialize()", ->
-  #   
-  #   it "creates notifications", ->
-  #     @session.notifications.should.be.an.instanceof Coreon.Collections.Notifications
-
-  #   it "creates connections", ->
-  #     @session.connections.should.be.an.instanceof Coreon.Collections.Connections
-  #     @session.connections.session.should.equal @session
-
-  #   it "creates ability", ->
-  #     should.exist @session.ability
-  #     @session.ability.should.be.an.instanceof Coreon.Models.Ability
-  #     
-
-  # describe "activate()", ->
-  #   
-  #   beforeEach ->
-  #     @xhr = sinon.useFakeXMLHttpRequest()
-  #     @xhr.onCreate = (@request) =>
-
-  #   afterEach ->
-  #     @xhr.restore()
-
-  #   it "sets email on model", ->
-  #     @session.activate("nobody@blake.com", "se7en!")
-  #     @session.get("email").should.equal "nobody@blake.com"
-
-
-  #   it "calls auth service with credentials", ->
-  #     @session.set "auth_root", "https://api.coreon.com/auth/"
-  #     @session.activate("nobody@blake.com", "se7en!")
-  #     @request.url.should.equal "https://api.coreon.com/auth/login"
-  #     @request.method.should.equal "POST"
-  #     @request.requestHeaders["Accept"].should.contain "application/json"
-  #     @request.requestBody.should.equal "email=nobody%40blake.com&password=se7en!"
-
-  #   it "adds connection for request", ->
-  #     @session.activate("nobody@blake.com", "se7en!")
-  #     @session.connections.length.should.equal 1
-  #     @session.connections.first().get("xhr").should.respondTo "abort"
-  #     @session.connections.first().get("model").should.equal @session
-  #     @session.connections.first().get("options").data.email.should.equal "nobody@blake.com"
-
-  #   it "triggers callback on success", ->
-  #     @session.onActivated = sinon.spy()
-  #     @session.activate("Nobody", "se7en!")
-  #     @request.respond 200, {"Content-Type": "application/json"}, '{"message": "Logged in"}'
-  #     @session.onActivated.should.have.been.calledOnce
-
-  # describe "onActivated()", ->
-
-  #   beforeEach ->
-  #     sinon.stub I18n, "t"
-  #     @data =
-  #       user:
-  #         name: "JJ"
-  #       auth_token: "1234-xxx"
-
-  #   afterEach ->
-  #     I18n.t.restore()
-
-  #   it "adjusts state", ->
-  #     @session.onActivated @data
-  #     @session.get("active").should.be.true
-
-  #   it "stores user name and email", ->
-  #     @data.user.name = "William Blake"
-  #     @session.set "email", "w.blake@blake.com"
-  #     @session.onActivated @data
-  #     @session.get("name").should.equal "William Blake"
-  #     session = JSON.parse localStorage.getItem "coreon-session"
-  #     session.should.have.property "name", "William Blake"
-
-  #   it "sets auth token", ->
-  #     @data.auth_token = "xxx-1234-abcd"
-  #     @session.onActivated @data
-  #     @session.get("token").should.equal "xxx-1234-abcd"
-  #     session = JSON.parse localStorage.getItem "coreon-session"
-  #     session.should.have.property "token", "xxx-1234-abcd"
-
-  #   it "triggers event", ->
-  #     spy = sinon.spy()
-  #     @session.on "activated", spy
-  #     @session.onActivated @data
-  #     spy.should.have.been.calledOnce
-
-  #   it "creates notification", ->
-  #     @session.message = sinon.spy()
-  #     I18n.t.withArgs("notifications.account.login", name: "William Blake").returns "Hello, William Blake!" 
-  #     @data.user.name = "William Blake"
-  #     @session.onActivated @data
-  #     @session.message.should.have.been.calledWith "Hello, William Blake!"
-
-  #   it "clears notifications", ->
-  #     @session.notifications.reset = sinon.spy()
-  #     @session.onActivated @data
-  #     @session.notifications.reset.should.have.been.calledOnce
-
-  # describe "reactivate()", ->
-  #   
-  #   beforeEach ->
-  #     @xhr = sinon.useFakeXMLHttpRequest()
-  #     @xhr.onCreate = (@request) =>
-
-  #   afterEach ->
-  #     @xhr.restore()
-
-  #   it "calls auth service with credentials", ->
-  #     @session.set
-  #       auth_root: "https://api.coreon.com/auth/"
-  #       email: "nobody@blake.com"
-  #     @session.reactivate "se7en!"
-  #     @request.url.should.equal "https://api.coreon.com/auth/login"
-  #     @request.method.should.equal "POST"
-  #     @request.requestHeaders["Accept"].should.contain "application/json"
-  #     @request.requestBody.should.equal "email=nobody%40blake.com&password=se7en!"
-
-  #   it "adds connection for request", ->
-  #     @session.set "email", "nobody@blake.com"
-  #     @session.reactivate "se7en!"
-  #     @session.connections.length.should.equal 1
-  #     @session.connections.first().get("xhr").should.respondTo "abort"
-  #     @session.connections.first().get("model").should.equal @session
-  #     @session.connections.first().get("options").data.email.should.equal "nobody@blake.com"
-
-  #   it "triggers callback on success", ->
-  #     @session.onReactivated = sinon.spy()
-  #     @session.reactivate "se7en!"
-  #     @request.respond 200, {"Content-Type": "application/json"}, '{"message": "Logged in"}'
-  #     @session.onReactivated.should.have.been.calledOnce
-
-  # describe "onReactivated()", ->
-  #   
-  #   it "updates session", ->
-  #     @data.auth_token = "newsession-1234-abcd"
-  #     @session.onReactivated @data
-  #     @session.get("token").should.equal "newsession-1234-abcd"
-  #     session = JSON.parse localStorage.getItem "coreon-session"
-  #     session.should.have.property "token", "newsession-1234-abcd"
-
-  #   it "triggers event", ->
-  #     spy = sinon.spy()
-  #     @session.on "reactivated", spy
-  #     @session.onReactivated @data
-  #     spy.should.have.been.calledOnce
-
-  # describe "deactivate()", ->
-
-  #   beforeEach ->
-  #     sinon.stub I18n, "t"
-  #     @session.set "active", true
-
-  #   afterEach ->
-  #     I18n.t.restore()
-
-  #   it "adjusts state", ->
-  #     @session.deactivate()
-  #     @session.get("active").should.be.false
-  #  
-  #   it "resets name", ->
-  #     @session.deactivate()
-  #     @session.get("name").should.equal ""
-  # 
-  #   it "resets session", ->
-  #     @session.save
-  #         name: "Dead Man"
-  #         token: "1234abcd-xxxx"
-  #     @session.deactivate()
-  #     should.not.exist localStorage.getItem "coreon-session"
-
-  #   it "triggers event", ->
-  #     spy = sinon.spy()
-  #     @session.on "deactivated", spy
-  #     @session.deactivate()
-  #     spy.should.have.been.calledOnce
-
-  #   it "creates notification", ->
-  #     @session.message = sinon.spy()
-  #     I18n.t.withArgs("notifications.account.logout").returns "Logged out"
-  #     @session.deactivate()
-  #     @session.message.should.have.been.calledWith "Logged out"
-
-  #   it "clears notifications", ->
-  #     @session.notifications.reset = sinon.spy()
-  #     @session.deactivate()
-  #     @session.notifications.reset.should.have.been.calledOnce
-
-  # describe "sync()", ->
-  #   
-  #   describe "create", ->
-  #     
-  #     it "stores attributes locally", ->
-  #       @session.set
-  #         email: "nobody@dead.man"
-  #         name: "Dead Man"
-  #         token: "1234abcd-xxxx"
-  #       @session.sync "create", @session
-  #       session = JSON.parse localStorage.getItem("coreon-session")
-  #       should.exist session
-  #       session.should.have.property "email", "nobody@dead.man"
-  #       session.should.have.property "name", "Dead Man"
-  #       session.should.have.property "token", "1234abcd-xxxx"
-
-  #     it "does not store active state", ->
-  #       @session.set
-  #         active: true
-  #         token: "1234abcd-xxxx"
-  #       @session.sync "create", @session
-  #       session = JSON.parse localStorage.getItem("coreon-session")
-  #       session.should.have.property "token", "1234abcd-xxxx"
-  #       session.should.not.have.property "active"
-
-  #     it "does not store API paths", ->
-  #       @session.set
-  #         token: "1234abcd-xxxx"
-  #         graph_root: "/graph/"
-  #         auth_root:  "/auth/"
-  #       @session.sync "create", @session
-  #       session = JSON.parse localStorage.getItem("coreon-session")
-  #       session.should.have.property "token", "1234abcd-xxxx"
-  #       session.should.not.have.property "graph_root"
-  #       session.should.not.have.property "auth_root"
-  #       
-  #       
-  #   describe "update", ->
-
-  #     beforeEach ->
-  #       @session.set
-  #         email: "nobody@dead.man"
-  #         name: "Dead Man"
-  #         token: "1234abcd-xxxx"
-  #       @session.sync "create", @session
-  #   
-  #     it "updates attributes", ->
-  #       @session.set
-  #         token: "9999xxxx-abcd"
-  #       @session.sync "update", @session
-  #       session = JSON.parse localStorage.getItem("coreon-session")
-  #       should.exist session
-  #       session.should.have.property "token", "9999xxxx-abcd"
-
-  #     it "does not update active state", ->
-  #       @session.set
-  #         active: true
-  #       @session.sync "update", @session
-  #       session = JSON.parse localStorage.getItem("coreon-session")
-  #       session.should.not.have.property "active"
-
-  #     it "does not store API paths", ->
-  #       @session.set
-  #         graph_root: "/graph/"
-  #         auth_root:  "/auth/"
-  #       @session.sync "update", @session
-  #       session = JSON.parse localStorage.getItem("coreon-session")
-  #       session.should.not.have.property "graph_root"
-  #       session.should.not.have.property "auth_root"
-
-  #   describe "read", ->
-  #     
-  #     it "updates values from store", ->
-  #       localStorage.setItem "coreon-session", JSON.stringify
-  #         name: "Jim Jarmusch"
-  #         email: "nobody@jarmusch.com"
-  #         token: "0987654321"
-  #       @session.fetch()
-  #       @session.get("name").should.equal "Jim Jarmusch"
-  #       @session.get("email").should.equal "nobody@jarmusch.com"
-  #       @session.get("token").should.equal "0987654321"
-
-  #     it "syncs active state", ->
-  #       localStorage.setItem "coreon-session", JSON.stringify
-  #         token: "xxxxx-123456789"
-  #       @session.fetch()
-  #       @session.get("active").should.be.true
-  #       localStorage.setItem "coreon-session", JSON.stringify
-  #         token: null
-  #       @session.fetch()
-  #       @session.get("active").should.be.false
-
-  #   describe "delete", ->
-
-  #     it "resets name and session", ->
-  #       @session.save
-  #         name: "Dead Man"
-  #         session: "1234abcd-xxxx"
-  #         email: "w.blake@blake.com"
-  #       @session.destroy()
-  #       should.not.exist localStorage.getItem "coreon-session"
-
-  # describe "onUnauthorized()", ->
-
-  #   beforeEach ->
-  #     @session.save
-  #       name: "Dead Man"
-  #       session: "1234abcd-xxxx"
-  #       email: "deadman@blake.com"
-  #   
-  #   it "is triggered by errors on connections", ->
-  #     @session.onUnauthorized = sinon.spy()
-  #     @session.initialize()
-  #     @session.connections.trigger "error:403"
-  #     @session.onUnauthorized.should.have.been.calledOnce
-
-  #   it "clears session ", ->
-  #     @session.onUnauthorized()
-  #     expect(@session.get "token").to.not.exist
-
-  #   it "triggers event", ->
-  #     spy = sinon.spy()
-  #     @session.on "unauthorized", spy
-  #     @session.onUnauthorized()
-  #     spy.should.have.been.calledOnce
-
-  # describe "destroy()", ->
-  #   
-  #   it "destroys notifications", ->
-  #     @session.notifications.destroy = sinon.spy()
-  #     @session.destroy()
-  #     @session.notifications.destroy.should.have.been.calledOnce
-  #     
-  #   it "destroys connections", ->
-  #     @session.connections.destroy = sinon.spy()
-  #     @session.destroy()
-  #     @session.connections.destroy.should.have.been.calledOnce
-
-  #   it "clears storage", ->
-  #     @session.save
-  #       name: "Dead Man"
-  #       session: "1234abcd-xxxx"
-  #       email: "deadman@blake.com"
-  #     @session.destroy()
-  #     should.not.exist localStorage.getItem "coreon-session"
