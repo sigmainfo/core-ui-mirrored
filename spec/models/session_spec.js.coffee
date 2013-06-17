@@ -108,6 +108,50 @@ describe "Coreon.Models.Session", ->
         @session.set "auth_token", "my-auth-token-1234", silent: on
         @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
 
+    describe "currentRepository()", ->
+
+      beforeEach ->
+        @session.set "repositories", [
+          {
+            id: "nobody-repo-123"
+            name: "Nobody's Repository"
+          }
+          {
+            id: "nobody-repo-124" 
+            name: "Nobody's Other Repository"
+          }
+          {
+            id: "nobody-repo-125" 
+            name: "Nobody's Repo III"
+          }
+        ], silent: yes
+        @session.set "current_repository_id", "nobody-repo-124", silent: true
+        @session.currentRepository()
+      
+      it "creates repository matching id", ->
+        @session.set "current_repository_id", "nobody-repo-125", silent: true
+        repo = @session.currentRepository()
+        repo.should.be.an.instanceof Coreon.Models.Repository
+        repo.should.have.property "id",  "nobody-repo-125"
+        repo.get("name").should.equal "Nobody's Repo III"
+
+      it "creates repository only once", ->
+        @session.set "current_repository_id", "nobody-repo-125", silent: true
+        repo = @session.currentRepository()
+        @session.currentRepository().should.equal repo
+
+      it "returns default repository when none is selected", ->
+        @session.set "current_repository_id", null, silent: true
+        @session.currentRepository().should.have.property "id", "nobody-repo-123"
+
+      it "returns default repository when not available", ->
+        @session.set "current_repository_id", "no-no-no-dont-123", silent: true
+        @session.currentRepository().should.have.property "id", "nobody-repo-123"
+        
+      it "returns null when no repositories are available", ->
+        @session.set "repositories", [], silent: true
+        should.equal @session.currentRepository(), null
+        
     describe "destroy()", ->
 
       beforeEach ->

@@ -1,4 +1,7 @@
 #= require environment
+#= require models/repository
+
+repository = null
 
 class Coreon.Models.Session extends Backbone.Model
   
@@ -23,9 +26,24 @@ class Coreon.Models.Session extends Backbone.Model
       .fail( -> request.resolve null )
     request.promise()
 
+  defaults: ->
+    repositories: []
+    current_repository_id: null
+
   idAttribute: "auth_token"
 
   urlRoot: -> "#{Coreon.Models.Session.auth_root.replace /\/$/, ''}/login"
+
+  currentRepository: ->
+    if currentId = @get "current_repository_id"
+      attrs = repo for repo in @get "repositories" when repo.id is currentId
+    attrs ?= @get("repositories")[0]
+    if attrs?
+      unless attrs.id is repository?.id
+        repository = new Coreon.Models.Repository attrs 
+    else
+      repository = null
+    repository
 
   destroy: ->
     super

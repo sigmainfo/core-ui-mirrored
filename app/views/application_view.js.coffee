@@ -16,7 +16,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
       Backbone.history.start pushState: on
     else
       Backbone.history.stop()
-      @switch new Coreon.Views.Sessions.NewSessionView
+      @switch new Coreon.Views.Sessions.NewSessionView model: @model
 
   switch: (screen) ->
     @main?.remove()
