@@ -13,8 +13,10 @@ Feature: user signs in
     When I fill in "Email" with "nobody@blake.com"
     And fill in "Password" with "se7en!"
     And click on "Log in"
-    Then I should be on the repository page
-    # Then I should be within the application
+    Then I should not see the login screen
+    And I should be on the repository root page
+    And I should see the widgets
+    And I should see the footer
     And I should see a notice "Successfully logged in as William Blake"
 
   Scenario: failing login
