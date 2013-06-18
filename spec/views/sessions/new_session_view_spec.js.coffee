@@ -123,14 +123,19 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
         Coreon.Models.Session.authenticate.should.have.been.calledOnce
         Coreon.Models.Session.authenticate.should.have.been.calledWith "nobody@login.me", "xxx"
 
-      context "fail", ->
+      context "no session", ->
         
         it "clears password field on failure", ->
           @view.create @event
-          @request.reject()
+          @request.resolve null
           @view.$("#coreon-login-password").should.have.value ""
 
-      context "done", ->
+        it "reenable form", ->
+          @view.create @event
+          @request.resolve null
+          @view.$(":disabled").should.have.lengthOf 0
+
+      context "with session", ->
 
         beforeEach ->
           sinon.stub Coreon.Models.Notification, "info"
@@ -145,7 +150,7 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
           @view.model.get("session").should.equal @session
 
         it "creates notification message", ->
-          I18n.t.withArgs("account.notifications.login", name: "William Blake").returns "Successfully logged in as William Blake." 
+          I18n.t.withArgs("notifications.account.login", name: "William Blake").returns "Successfully logged in as William Blake." 
           @session.set "user", name: "William Blake", silent: yes
           @view.create @event
           @request.resolve @session
