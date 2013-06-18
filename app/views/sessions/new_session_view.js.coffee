@@ -1,6 +1,7 @@
 #= require environment
 #= require templates/sessions/new_session
 #= require models/session
+#= require models/notification
 
 class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
@@ -27,5 +28,11 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
     event.preventDefault()
     @$("input,button").prop "disabled", yes
     Coreon.Models.Session.authenticate(@$("#coreon-login-email").val(), @$("#coreon-login-password").val())
-      .fail( => @$("#coreon-login-password").val "" )
-      .done( (session) => @model.set "session", session )
+      .done( (session) =>
+        @model.set "session", session
+        if session?
+          Coreon.Models.Notification.info I18n.t "notifications.account.login", name: session.get("user").name
+        else
+          @$("#coreon-login-password").val ""
+          @$("input,button").prop "disabled", no
+      )

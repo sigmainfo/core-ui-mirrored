@@ -40,6 +40,11 @@ describe "Coreon.Views.ApplicationView", ->
         Backbone.history.start.should.have.been.calledOnce
         Backbone.history.start.should.have.been.calledWith  pushState: on
 
+      it "enables history only when idle", ->
+        Backbone.History.started = yes
+        @view.render()
+        Backbone.history.start.should.not.have.been.called
+
       it "renders widgets", ->
         @view.render()
         @view.$("#coreon-top").should.have "#coreon-widgets"
@@ -102,3 +107,38 @@ describe "Coreon.Views.ApplicationView", ->
       @view.switch null
       @view.should.have.property "main", null
       @view.$("#coreon-main").children().should.have.lengthOf 1
+
+  describe "notify()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Views.Notifications, "NotificationView", =>
+        @info = new Backbone.View
+        @info.render = sinon.stub().returns @info
+        @info
+      @collection = new Backbone.Collection
+      sinon.stub Coreon.Models.Notification, "collection", => @collection
+      @view.render()
+
+    afterEach ->
+      Coreon.Models.Notification.collection.restore()
+      Coreon.Views.Notifications.NotificationView.restore()
+
+    it "is triggered when notification was added", ->
+      @view.notify = sinon.spy()
+      @view.initialize()
+      @collection.trigger "add", message: "I preferred to be called Nobody.", @collection, by: "Nobody"
+      @view.notify.should.have.been.calledOnce
+      @view.notify.should.have.been.calledWith message: "I preferred to be called Nobody.", @collection, by: "Nobody"
+
+    it "creates notification view", ->
+      notification = new Backbone.Model
+      @view.notify notification
+      Coreon.Views.Notifications.NotificationView.should.have.been.calledOnce
+      Coreon.Views.Notifications.NotificationView.should.have.been.calledWithNew
+      Coreon.Views.Notifications.NotificationView.should.have.been.calledWith model: notification
+
+    it "appends notification", ->
+      $("#konacha").append @view.$el
+      @view.notify new Backbone.Model
+      @info.render.should.have.been.calledOnce
+      $.contains($("#coreon-notifications")[0], @info.el).should.be.true
