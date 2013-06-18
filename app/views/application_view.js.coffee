@@ -13,7 +13,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     session = @model.get "session"
     @$el.html @template session: session
     if session?
-      Backbone.history.start pushState: on
+      Backbone.history.start pushState: on unless Backbone.History.started
     else
       Backbone.history.stop()
       @switch new Coreon.Views.Sessions.NewSessionView model: @model

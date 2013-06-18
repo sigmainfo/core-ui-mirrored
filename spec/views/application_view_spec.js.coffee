@@ -40,6 +40,11 @@ describe "Coreon.Views.ApplicationView", ->
         Backbone.history.start.should.have.been.calledOnce
         Backbone.history.start.should.have.been.calledWith  pushState: on
 
+      it "enables history only when idle", ->
+        Backbone.History.started = yes
+        @view.render()
+        Backbone.history.start.should.not.have.been.called
+
       it "renders widgets", ->
         @view.render()
         @view.$("#coreon-top").should.have "#coreon-widgets"

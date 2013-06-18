@@ -17,4 +17,3 @@ class Coreon.Routers.SessionsRouter extends Backbone.Router
     @view.model.get("session")?.destroy()
     @view.model.unset "session"
     @navigate "", reload: on
-
