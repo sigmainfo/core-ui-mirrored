@@ -8,6 +8,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   template: Coreon.Templates["application"]
 
   events:
+    "click a[href^='/']": "navigate"
     "click .toggle": "toggle"
 
   initialize: ->
@@ -33,6 +34,10 @@ class Coreon.Views.ApplicationView extends Backbone.View
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
     @$("#coreon-notifications").append view.render().$el
+
+  navigate: (event) ->
+    event.preventDefault()
+    Backbone.history.navigate $(event.target).closest("a").attr("href")[1..], trigger: true
 
   toggle: (event) ->
     $(event.target).closest(".toggle").siblings().slideToggle()

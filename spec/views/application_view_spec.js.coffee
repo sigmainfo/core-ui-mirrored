@@ -172,6 +172,53 @@ describe "Coreon.Views.ApplicationView", ->
       @info.render.should.have.been.calledOnce
       $.contains($("#coreon-notifications")[0], @info.el).should.be.true
 
+  describe "navigate()", ->
+
+    beforeEach ->
+      sinon.stub Backbone.history, "navigate"
+      @view.$el.append '''
+        <a id="inside" href="/path">Click me</a>
+        <a id="outside" href="http://url">Click me</a>
+      '''
+      @event = $.Event "click"
+      @event.target = @view.$("a#inside")[0]
+
+    afterEach ->
+      Backbone.history.navigate.restore()
+
+    it "is triggered by click on internal link", ->
+      @view.navigate = sinon.spy()
+      @view.delegateEvents()
+      @view.$("a#inside").trigger @event
+      @view.navigate.should.have.been.calledOnce
+      @view.navigate.should.have.been.calledWith @event
+
+    it "is not triggered by click on external link", ->
+      @view.navigate = sinon.spy()
+      @view.delegateEvents()
+      @event.target = @view.$("a#outside")[0]
+      @view.$("a#outside").trigger @event
+      @view.navigate.should.not.have.been.called
+
+    it "prevents default", ->
+      @event.preventDefault = sinon.spy()
+      @view.navigate @event
+      @event.preventDefault.should.have.been.calledOnce
+
+    it "calls navigate on history", ->
+      $(@event.target).attr "href", "/logout"
+      @view.navigate @event
+      Backbone.history.navigate.should.have.been.calledOnce
+      Backbone.history.navigate.should.have.been.calledWith "logout", trigger: yes
+
+    it "can have nested elements", ->
+      @view.$el.append '<a id="nested" href="/foo"><p>Inner</p></a>'
+      @event.target = @view.$("#nested p")[0]
+      @view.navigate @event
+      Backbone.history.navigate.should.have.been.calledOnce
+      Backbone.history.navigate.should.have.been.calledWith "foo", trigger: yes
+      
+
   describe "toggle()", ->
 
     beforeEach ->
