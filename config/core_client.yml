@@ -1,21 +1,10 @@
 development:
-  graph_root: http://localhost:3332/
   auth_root: http://localhost:3333/
 styling:
-  graph_root: http://styling.local:3332/
   auth_root: http://styling.local:3333/
-test:  
-  graph_root: http://localhost:3336/
+test:
   auth_root: http://localhost:3335/
-xdevelopment:
-  graph_root: /api/graph/
-  auth_root: /api/auth/
-xtest:
-  graph_root: http://localhost:4000/api/graph/
-  auth_root: http://localhost:4000/api/auth/
 staging:
-  graph_root: https://graph.core.gmah.net/
   auth_root: https://auth.core.gmah.net/
-acceptance:
-  graph_root: /api/graph/
-  auth_root: /api/auth/
+production:
+  auth_root: https://auth.coreon.com/
