@@ -213,11 +213,6 @@ describe "Coreon.Models.Session", ->
         localStorage.setItem.should.not.have.been.called
         localStorage.removeItem.should.have.been.calledOnce
         localStorage.removeItem.should.have.been.calledWith "coreon-session" 
-
-      it "navigates to repo root", ->
-        @session.onChangeToken @session, "my-brandnew-token-123"
-        Backbone.history.navigate.should.have.been.calledOnce
-        Backbone.history.navigate.should.have.been.calledWith "my-brandnew-token-123", trigger: yes
         
     describe "destroy()", ->
 

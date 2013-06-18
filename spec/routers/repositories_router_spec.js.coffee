@@ -60,13 +60,6 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.show "my-repo-abcdef"
       @session.get("current_repository_id").should.equal "my-repo-abcdef"
 
-    it "does not trigger change event", ->
-      @session.set "current_repository_id", "other-repo-fghj", silent: yes 
-      spy = sinon.spy()
-      @session.on "change", spy 
-      @router.show "my-repo-abcdef"
-      spy.should.not.have.been.called
-
     it "displays repository root", ->
       repo = id: "my-repo-abcdef"
       @session.currentRepository = =>
@@ -77,6 +70,12 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       Coreon.Views.Repositories.RepositoryView.should.have.been.calledWithNew
       Coreon.Views.Repositories.RepositoryView.should.have.been.calledWith model: repo
       @router.view.switch.should.have.been.calledWith @screen
+
+    it "changes fragment when current repo is different from param", ->
+      @router.navigate = sinon.spy()
+      @session.currentRepository = -> id: "some-other-id-567"
+      @router.show "my-repo-abcdef"
+      @router.navigate.should.have.been.calledWithExactly "some-other-id-567"
 
     it "redirects to root when repository is not available", ->
       @session.currentRepository = =>

@@ -83,7 +83,6 @@ class Coreon.Models.Session extends Backbone.Model
       localStorage.setItem "coreon-session", token
     else
       localStorage.removeItem "coreon-session"
-    Backbone.history.navigate token, trigger: yes
 
   destroy: ->
     super
