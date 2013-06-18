@@ -4,15 +4,19 @@
 describe "Coreon.Models.Session", ->
 
   beforeEach ->
+    sinon.stub  Backbone.history, "navigate"
     @auth_root = Coreon.Models.Session.auth_root
     Coreon.Models.Session.auth_root = "https://auth.coreon.com"
     sinon.stub localStorage, "getItem"
+    sinon.stub localStorage, "setItem"
     sinon.stub localStorage, "removeItem"
     
   afterEach ->
     localStorage.getItem.restore()
+    localStorage.setItem.restore()
     localStorage.removeItem.restore()
     Coreon.Models.Session.auth_root = @auth_root
+    Backbone.history.navigate.restore()
 
   describe "class", ->
   
@@ -108,6 +112,52 @@ describe "Coreon.Models.Session", ->
         @session.set "auth_token", "my-auth-token-1234", silent: on
         @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
 
+    describe "set()", ->
+
+      beforeEach ->
+        @session.set "repositories", [
+          id: "nobody-repo-123"
+          name: "Nobody's Repository"
+        ], silent: yes
+        sinon.spy Backbone.Model::, "set"
+
+      afterEach ->
+        Backbone.Model::set.restore()
+
+      it "delegates to super", ->
+        @session.set {foo: "bar"}, silent: yes
+        Backbone.Model::set.should.have.been.calledOnce
+        Backbone.Model::set.should.have.been.calledWith { foo: "bar" }, silent: yes
+
+      it "converts to attributes hash", ->
+        @session.set "foo", "bar", silent: yes
+        Backbone.Model::set.should.have.been.calledWith { foo: "bar" }, silent: yes
+
+      it "selects first repo if given is not available", ->
+        @session.set "repositories", [ id: "nobody-repo-123" ]
+        @session.set "current_repository_id", "hands-off-123"
+        Backbone.Model::set.should.have.been.calledWith current_repository_id: "nobody-repo-123" 
+
+      it "passes null when repositories are empty", ->
+        @session.set "repositories", [], silent: yes
+        @session.set "current_repository_id", "some-repo-789"
+        Backbone.Model::set.should.have.been.calledWith current_repository_id: null
+
+      it "selects first available repo passing in new selection", ->
+        @session.set
+          current_repository_id: "some-repo-789"
+          repositories: [ id: "some-repo-789" ]
+        Backbone.Model::set.should.have.been.calledWith
+          current_repository_id: "some-repo-789"
+          repositories: [ id: "some-repo-789" ]
+      
+      it "selects first available repo", ->
+        @session.set "current_repository_id", "nobody-repo-123", silent: yes
+        @session.set "repositories", [ id: "my-new-repo-678" ]
+        Backbone.Model::set.should.have.been.calledWith
+          repositories: [ id: "my-new-repo-678" ]
+          current_repository_id: "my-new-repo-678"
+
     describe "currentRepository()", ->
 
       beforeEach ->
@@ -140,17 +190,34 @@ describe "Coreon.Models.Session", ->
         repo = @session.currentRepository()
         @session.currentRepository().should.equal repo
 
-      it "returns default repository when none is selected", ->
-        @session.set "current_repository_id", null, silent: true
-        @session.currentRepository().should.have.property "id", "nobody-repo-123"
-
-      it "returns default repository when not available", ->
-        @session.set "current_repository_id", "no-no-no-dont-123", silent: true
-        @session.currentRepository().should.have.property "id", "nobody-repo-123"
-        
-      it "returns null when no repositories are available", ->
+      it "returns null when none is selected", ->
         @session.set "repositories", [], silent: true
         should.equal @session.currentRepository(), null
+
+    describe "onChangeToken()", ->
+
+      it "is triggered by changes on token", ->
+        @session.onChangeToken = sinon.spy()
+        @session.initialize()
+        @session.trigger "change:auth_token", @session, "my-brandnew-token-123"
+        @session.onChangeToken.should.have.been.calledOnce 
+        @session.onChangeToken.should.have.been.calledWith @session, "my-brandnew-token-123"
+     
+      it "saves token locally", ->
+        @session.onChangeToken @session, "my-brandnew-token-123"
+        localStorage.setItem.should.have.been.calledOnce
+        localStorage.setItem.should.have.been.calledWith "coreon-session", "my-brandnew-token-123"
+
+      it "clears token locally", ->
+        @session.onChangeToken @session, ""
+        localStorage.setItem.should.not.have.been.called
+        localStorage.removeItem.should.have.been.calledOnce
+        localStorage.removeItem.should.have.been.calledWith "coreon-session" 
+
+      it "navigates to repo root", ->
+        @session.onChangeToken @session, "my-brandnew-token-123"
+        Backbone.history.navigate.should.have.been.calledOnce
+        Backbone.history.navigate.should.have.been.calledWith "my-brandnew-token-123", trigger: yes
         
     describe "destroy()", ->
 

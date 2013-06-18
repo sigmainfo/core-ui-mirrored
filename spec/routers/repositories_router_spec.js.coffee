@@ -60,6 +60,13 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.show "my-repo-abcdef"
       @session.get("current_repository_id").should.equal "my-repo-abcdef"
 
+    it "does not trigger change event", ->
+      @session.set "current_repository_id", "other-repo-fghj", silent: yes 
+      spy = sinon.spy()
+      @session.on "change", spy 
+      @router.show "my-repo-abcdef"
+      spy.should.not.have.been.called
+
     it "displays repository root", ->
       repo = id: "my-repo-abcdef"
       @session.currentRepository = =>

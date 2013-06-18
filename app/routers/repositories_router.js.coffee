@@ -21,7 +21,7 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
 
   show: (id) ->
     session = @view.model.get("session")
-    session.set "current_repository_id", id
+    session.set "current_repository_id", id, silent: yes
     if repo = session.currentRepository()
       screen = new Coreon.Views.Repositories.RepositoryView model: repo
       @view.switch screen

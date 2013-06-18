@@ -34,16 +34,56 @@ class Coreon.Models.Session extends Backbone.Model
 
   urlRoot: -> "#{Coreon.Models.Session.auth_root.replace /\/$/, ''}/login"
 
+  initialize: ->
+    @on "change:auth_token", @onChangeToken, @
+
+  set: (key, value, options) ->
+    if typeof key is "object"
+      [attrs, options] = arguments
+    else
+      (attrs = {})[key] = value
+    changed = no
+    if attrs.hasOwnProperty "repositories"
+      repositories = attrs.repositories
+      changed = yes
+    else
+      repositories = @get "repositories"
+    if attrs.hasOwnProperty "current_repository_id"
+      current_repository_id = attrs.current_repository_id
+      changed = yes
+    else
+      current_repository_id = @get "current_repository_id"
+    if changed
+      if repositories?.length > 0
+        available = no
+        for repo in repositories when repo.id is current_repository_id
+          available = yes
+          break
+        unless available
+          attrs.current_repository_id = repositories[0].id
+      else
+        attrs.current_repository_id = null
+    super attrs, options
+
   currentRepository: ->
-    if currentId = @get "current_repository_id"
-      attrs = repo for repo in @get "repositories" when repo.id is currentId
-    attrs ?= @get("repositories")[0]
-    if attrs?
-      unless attrs.id is repository?.id
-        repository = new Coreon.Models.Repository attrs 
+    current_repository_id = @get "current_repository_id"
+    if current_repository_id
+      repositories = @get "repositories"
+      for repo in repositories when repo.id is current_repository_id
+        attrs = repo
+        break
+      if not repository? or attrs.id isnt repository.id
+        repository = new Coreon.Models.Repository attrs
     else
       repository = null
     repository
+
+  onChangeToken: (model, token) ->
+    if token
+      localStorage.setItem "coreon-session", token
+    else
+      localStorage.removeItem "coreon-session"
+    Backbone.history.navigate token, trigger: yes
 
   destroy: ->
     super
