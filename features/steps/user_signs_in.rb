@@ -2,7 +2,7 @@ class UserSignsIn < Spinach::FeatureSteps
   include AuthSteps
 
   When 'I visit the home page' do
-    visit root_path
+    visit "/"
   end
 
   Then 'I should see the login screen' do
