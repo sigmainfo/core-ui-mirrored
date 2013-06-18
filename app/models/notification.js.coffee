@@ -14,5 +14,6 @@ class Coreon.Models.Notification extends Backbone.Model
     @collection().add message: message, type: "error"
 
   defaults:
+    hidden: false
     message: ""
     type: "info"

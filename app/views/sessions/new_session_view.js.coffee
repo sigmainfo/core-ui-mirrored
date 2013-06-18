@@ -31,5 +31,5 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
       .fail( => @$("#coreon-login-password").val "" )
       .done( (session) =>
         @model.set "session", session
-        Coreon.Models.Notification.info I18n.t "account.notifications.login", name: session.get("user").name
+        Coreon.Models.Notification.info I18n.t "notifications.account.login", name: session.get("user").name
       )

@@ -1,6 +1,7 @@
 #= require environment
 #= require templates/application
 #= require views/sessions/new_session_view
+#= require views/notifications/notification_view
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
@@ -8,6 +9,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   initialize: ->
     @listenTo @model, "change:session", @render
+    @listenTo Coreon.Models.Notification.collection(), "add", @notify
 
   render: ->
     session = @model.get "session"
@@ -23,6 +25,10 @@ class Coreon.Views.ApplicationView extends Backbone.View
     if @main = screen
       screen.render()
       @$("#coreon-main").append screen.$el
+
+  notify: (notification) ->
+    view = new Coreon.Views.Notifications.NotificationView model: notification
+    @$("#coreon-notifications").append view.render().$el
 
 # class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 

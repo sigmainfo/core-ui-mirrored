@@ -145,7 +145,7 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
           @view.model.get("session").should.equal @session
 
         it "creates notification message", ->
-          I18n.t.withArgs("account.notifications.login", name: "William Blake").returns "Successfully logged in as William Blake." 
+          I18n.t.withArgs("notifications.account.login", name: "William Blake").returns "Successfully logged in as William Blake." 
           @session.set "user", name: "William Blake", silent: yes
           @view.create @event
           @request.resolve @session
