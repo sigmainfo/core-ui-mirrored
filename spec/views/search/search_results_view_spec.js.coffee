@@ -8,7 +8,6 @@ describe "Coreon.Views.Search.SearchResultsView", ->
       models:
         terms: new Backbone.Model(hits: [])
         concepts: new Backbone.Model(hits: [])
-        tnodes: new Backbone.Model(hits: [])
     for name, search of @view.options.models
       search.query = -> "" 
 
@@ -25,10 +24,6 @@ describe "Coreon.Views.Search.SearchResultsView", ->
       @view.concepts.should.be.an.instanceof Coreon.Views.Search.SearchResultsConceptsView
       @view.concepts.model.should.equal @view.options.models.concepts
 
-    it "creates tnodes results view", ->
-      @view.tnodes.should.be.an.instanceof Coreon.Views.Search.SearchResultsTnodesView
-      @view.tnodes.model.should.equal @view.options.models.tnodes
-
   describe "#render", ->
 
     it "is chainable", ->
@@ -44,8 +39,3 @@ describe "Coreon.Views.Search.SearchResultsView", ->
       @view.render()
       @view.$el.should.have ".search-results-concepts"
       @view.$(".search-results-concepts").should.have "h3"
-      
-    it "renders tnodes results", ->
-      @view.render()
-      @view.$el.should.have ".search-results-tnodes"
-      @view.$(".search-results-tnodes").should.have "h3"

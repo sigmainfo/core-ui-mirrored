@@ -5,7 +5,6 @@
 describe "Coreon.Views.Search.SearchResultsTermsView", ->
   
   beforeEach ->
-    Coreon.application = new Coreon.Application
     sinon.stub I18n, "t"
     @xhr = sinon.useFakeXMLHttpRequest()
     @xhr.onCreate = (@request) =>
@@ -14,7 +13,6 @@ describe "Coreon.Views.Search.SearchResultsTermsView", ->
 
   afterEach ->
     @xhr.restore()
-    Coreon.application.destroy()
     I18n.t.restore()
 
   it "is a composite view", ->

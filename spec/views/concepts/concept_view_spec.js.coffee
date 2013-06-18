@@ -744,6 +744,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       beforeEach ->
         @term = new Backbone.Model
+        @term.persistedAttributes = -> {}
         @term.errors = -> {}
         sinon.stub Coreon.Models, "Term", => @term
         @view.model.terms().create = (attrs, options = {}) =>

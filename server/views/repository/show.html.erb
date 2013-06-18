@@ -3,8 +3,7 @@
   (function() {
     var app = new Coreon.Application({
       el:   "#coreon-app",
-      auth_root: "<%=j CoreClient.config[:auth_root] %>",
-      graph_root: "<%=j CoreClient.config[:graph_root] %>"
+      auth_root: "<%=j CoreClient.config[:auth_root] %>"
     });
 
     jQuery(function () { app.start(); });

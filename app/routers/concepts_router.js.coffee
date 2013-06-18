@@ -1,5 +1,4 @@
 #= require environment
-#= require views/concepts/root_view
 #= require views/concepts/concept_view
 #= require views/concepts/new_concept_view
 #= require models/concept_search
@@ -8,7 +7,6 @@
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   routes:
-    ""                                  : "root"
     "concepts/new(/terms/:lang/:value)" : "new"
     "concepts/search/(:target/):query"  : "search"
 
@@ -16,12 +14,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     super
     @route /^concepts\/([0-9a-f]{24})$/,       "show"
 
-  initialize: (options) ->
-    @[key] = value for key, value of options
-
-  root: ->
-    @view.switch new Coreon.Views.Concepts.RootView
-    @app.hits.reset []
+  initialize: (@view) ->
 
   show: (id) ->
     concept = Coreon.Models.Concept.find id

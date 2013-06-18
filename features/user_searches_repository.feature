@@ -4,7 +4,7 @@ Feature: user searches repository
   I want to enter a query string and trigger a search
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
   Scenario: trigger search

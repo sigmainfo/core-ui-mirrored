@@ -19,5 +19,4 @@ class Coreon.Views.Search.SearchResultsView extends Coreon.Views.CompositeView
     @$el.empty()
     @terms.render().$el.appendTo @$el
     @concepts.render().$el.appendTo @$el
-    @tnodes.render().$el.appendTo @el
     @

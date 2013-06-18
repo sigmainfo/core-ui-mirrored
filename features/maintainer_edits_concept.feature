@@ -4,7 +4,7 @@ Feature: maintainer edits concept
   I want to add, remove and change properties of a concept
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
     And a concept with property "label" of "handgun" exists
     And I have maintainer privileges

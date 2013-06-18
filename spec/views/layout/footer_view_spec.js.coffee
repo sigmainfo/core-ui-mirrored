@@ -12,7 +12,6 @@ describe "Coreon.Views.Layout.FooterView", ->
   it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView
 
-
   it "creates container", ->
     @view.$el.should.have.id "coreon-footer"
   
