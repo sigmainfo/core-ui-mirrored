@@ -82,29 +82,9 @@ describe "Coreon.Models.Term", ->
       Coreon.application = sync: (method, model, options = {}) -> 
         model.id = "1234"
         options.success?()
-      @model.message = sinon.spy()
 
     afterEach ->
       Coreon.application = null
-
-    it "creates message on first save", ->
-      I18n.t.withArgs("term.created", value: "high hat").returns 'Successfully created term "high hat"'
-      @model.save "value", "high hat"
-      @model.message.should.have.been.calledOnce
-      @model.message.should.have.been.calledWith 'Successfully created term "high hat"'
-
-    it "creates message on update", ->
-      I18n.t.withArgs("term.saved", value: "high hat").returns 'Successfully saved term "high hat"'
-      @model.isNew = -> false
-      @model.save "value", "high hat"
-      @model.message.should.have.been.calledOnce
-      @model.message.should.have.been.calledWith 'Successfully saved term "high hat"'
-
-    ## depricated because the term model now sends a message on update
-    #it "only creates message on new models", ->
-    #  @model.isNew = -> false
-    #  @model.save "value", "high hat"
-    #  @model.message.should.not.have.been.called
 
     it "triggers custom event", ->
       spy = sinon.spy()
@@ -122,25 +102,7 @@ describe "Coreon.Models.Term", ->
       @model.errors().should.eql
         foo: ["must be bar"]
 
-  describe "onDestroy()", ->
 
-    beforeEach ->
-      @model.message = sinon.spy()
-
-    it "is triggered when model was destroyed", ->
-      @model.onDestroy = sinon.spy()
-      @model.initialize()
-      @model.trigger "destroy"
-      @model.onDestroy.should.have.been.calledOnce
-      @model.onDestroy.should.have.been.calledOn @model
-  
-    it "creates message", ->
-      I18n.t.withArgs("term.deleted", value: "high hat").returns 'Successfully deleted term "high hat".'
-      @model.set "value", "high hat", silent: true
-      @model.onDestroy()
-      @model.message.should.have.been.calledOnce
-      @model.message.should.have.been.calledWith 'Successfully deleted term "high hat".'
-       
   describe "revert()", ->
 
     it "restores persisted state", ->
@@ -150,7 +112,7 @@ describe "Coreon.Models.Term", ->
       @model.set "value", "****", silent: true
       @model.revert()
       @model.get("value").should.equal "hat"
-      
+
     it "restores initial state", ->
       @model.set "value", "hat", silent: true
       @model.initialize()

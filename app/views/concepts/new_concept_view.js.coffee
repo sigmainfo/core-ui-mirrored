@@ -8,6 +8,7 @@
 #= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
+#= require models/notification
 #= require jquery.serializeJSON
 #= require modules/helpers
 #= require modules/nested_fields_for
@@ -55,6 +56,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     @$("form").find("input,button").prop "disabled", true
     @model.save attrs,
       success: =>
+        Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
         Coreon.Models.Concept.collection().add @model
         Backbone.history.navigate @model.url(), trigger: true
       error: =>

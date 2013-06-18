@@ -266,22 +266,9 @@ describe "Coreon.Models.Concept", ->
         Coreon.application = sync: (method, model, options = {}) -> 
           model.id = "1234"
           options.success?()
-        @model.message = sinon.spy()
 
       afterEach ->
         Coreon.application = null
-
-      it "creates message on first save", ->
-        I18n.t.withArgs("concept.created", label: "dead man").returns 'Successfully created concept "dead man"'
-        @model.save "label", "dead man"
-        @model.save "label", "nobody"
-        @model.message.should.have.been.calledOnce
-        @model.message.should.have.been.calledWith 'Successfully created concept "dead man"'
-
-      it "only creates message on new models", ->
-        @model.isNew = -> false
-        @model.save "value", "high hat"
-        @model.message.should.not.have.been.called
 
       it "triggers custom event", ->
         spy = sinon.spy()
@@ -299,25 +286,6 @@ describe "Coreon.Models.Concept", ->
       @model.errors().should.eql
         foo: ["must be bar"]
 
-  describe "onDestroy()", ->
-
-    beforeEach ->
-      @model.message = sinon.spy()
-
-    it "is triggered when model was destroyed", ->
-      @model.onDestroy = sinon.spy()
-      @model.initialize()
-      @model.trigger "destroy"
-      @model.onDestroy.should.have.been.calledOnce
-      @model.onDestroy.should.have.been.calledOn @model
-  
-    it "creates message", ->
-      I18n.t.withArgs("concept.deleted", label: "high hat").returns 'Successfully deleted concept "high hat".'
-      @model.set "label", "high hat", silent: true
-      @model.onDestroy()
-      @model.message.should.have.been.calledOnce
-      @model.message.should.have.been.calledWith 'Successfully deleted concept "high hat".'
-
   describe "revert()", ->
 
     it "can restore last persisted state", ->
@@ -327,4 +295,4 @@ describe "Coreon.Models.Concept", ->
       @model.set "label", "****", silent: true
       @model.revert()
       @model.get("label").should.equal "high hat"
-    
+

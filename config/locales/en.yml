@@ -64,11 +64,9 @@ en:
     new: "New concept"
     edit: "Edit concept"
     create: "Create concept"
-    created: 'Successfully created concept "{{label}}".'
     delete: "Delete concept"
     confirm_delete: "This concept including all terms will be deleted permanently!"
     confirm_update: "Saving the concept will delete {{n}} properties permanently!"
-    deleted: 'Successfully deleted concept "{{label}}".'
     update: "Save concept"
 
   term:
@@ -77,14 +75,11 @@ en:
     lang: "Language"
     new: "Add term"
     create: "Create term"
-    created: 'Successfully created term "{{value}}".'
-    saved: 'Successfully saved term "{{value}}".'
     edit: "Edit term"
     update: "Save term"
     delete: "Remove term"
     confirm_delete: "This term will be deleted permanently."
     confirm_update: "Saving the term will delete {{n}} properties permanently!"
-    deleted: 'Successfully deleted term "{{value}}".'
 
   terms:
     title: "Terms"
@@ -127,6 +122,13 @@ en:
     account:
       logout: "Successfully logged out."
       login: "Successfully logged in as {{name}}."
+    concept:
+      created: 'Successfully created concept "{{label}}".'
+      deleted: 'Successfully deleted concept "{{label}}".'
+    term:
+      created: 'Successfully created term "{{value}}".'
+      saved: 'Successfully saved term "{{value}}".'
+      deleted: 'Successfully deleted term "{{value}}".'
   
   errors:
     generic: "An error occured."

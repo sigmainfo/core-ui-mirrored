@@ -12,6 +12,7 @@
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
+#= require models/notification
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
@@ -168,20 +169,22 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
+    model = @model.terms().get data._id
 
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
         message: I18n.t "term.confirm_update", {n:elements_to_delete.length}
         action: =>
-          @saveTerm(data)
+          @saveTerm(model, data)
     else
-      @saveTerm(data)
+      @saveTerm(model, data)
 
-  saveTerm: (data) ->
-    model = @model.terms().get data._id
+  saveTerm: (model, data) ->
     model.save data,
-      success: => @toggleEditTerm()
+      success: =>
+        Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: model.get "label")
+        @toggleEditTerm()
       error: (model) =>
         model.once "error", @render, @
       attrs: term: data
@@ -205,6 +208,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         
     @model.terms().create data,
       wait: true
+      success:
+        Coreon.Models.Notification.info I18n.t("notifications.term.created", label: @model.get "label")
       error: (model, xhr, options) =>
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model
@@ -232,8 +237,10 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       container: container
       message: I18n.t "term.confirm_delete"
       action: ->
+        value = model.get "value"
         container.remove()
         model.destroy()
+        Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value:value)
 
   delete: (evt) ->
     trigger = $ evt.target
@@ -243,4 +250,5 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       message: I18n.t "concept.confirm_delete"
       action: =>
         @model.destroy()
+        Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: @model.get "label")
         Backbone.history.navigate "/", trigger: true

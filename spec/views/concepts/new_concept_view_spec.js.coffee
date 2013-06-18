@@ -391,6 +391,15 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.create @event
         Backbone.history.navigate.should.have.been.calledWith "concepts/1234abcdef", trigger: true
 
+      it "notifies about success", ->
+        I18n.t.withArgs("notifications.concept.created").returns "yay!"
+        Coreon.Models.Notification.info = sinon.spy()
+        @view.create @event
+        Coreon.Models.Notification.info.should.have.been.calledOnce
+        Coreon.Models.Notification.info.should.have.been.calledWith "yay!"
+
+
+
     context "error", ->
 
       beforeEach ->
