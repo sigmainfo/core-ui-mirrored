@@ -6,8 +6,6 @@ Feature: user signs out
   Scenario: log out
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
-    When I click to open the footer
-    And click on "Log out"
+    When I click on "Log out"
     Then I should see the login form
-    And should see a notice "Successfully logged out"
-    But should not see the footer
+    But I should not see the footer

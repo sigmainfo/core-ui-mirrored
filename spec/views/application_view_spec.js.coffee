@@ -4,8 +4,12 @@
 describe "Coreon.Views.ApplicationView", ->
   
   beforeEach ->
+    sinon.stub I18n, "t"
     @view = new Coreon.Views.ApplicationView
       model: new Backbone.Model
+
+  afterEach ->
+    I18n.t.restore()
 
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
@@ -30,7 +34,7 @@ describe "Coreon.Views.ApplicationView", ->
 
       beforeEach ->
         sinon.stub Backbone.history, "start"
-        @view.model.set "session", new Backbone.Model, silent: on
+        @view.model.set "session", new Backbone.Model(user: name: "nobody"), silent: on
 
       afterEach ->
         Backbone.history.start.restore()
@@ -55,6 +59,31 @@ describe "Coreon.Views.ApplicationView", ->
         @view.$("#coreon-footer").should.have ".toggle"
         @view.$("#coreon-footer .toggle").should.have "h3"
         @view.$("#coreon-footer .toggle").should.have "#coreon-progress-indicator"
+      
+      it "renders account info", ->
+        I18n.t.withArgs("account.status", name: "Nobody").returns "Logged in as Nobody"
+        @view.model.get("session").set "user", {name: "Nobody"}, silent: yes
+        @view.render()
+        @view.$("#coreon-footer").should.have "#coreon-account"
+        @view.$("#coreon-account p").should.contain "Logged in as Nobody"
+
+      it "hides account info after a short delay", ->
+        clock = sinon.useFakeTimers()
+        try
+          $("#konacha").append @view.$el
+          @view.render()
+          @view.$("#coreon-account").should.be.visible
+          clock.tick 5000
+          @view.$("#coreon-account").should.be.hidden
+        finally
+          clock.restore()
+
+      it "renders logout link", ->
+        I18n.t.withArgs("account.logout").returns "Log out"
+        @view.render()
+        @view.$("#coreon-footer").should.have "a.logout"
+        @view.$("a.logout").should.have.attr "href", "/logout"
+        @view.$("a.logout").should.have.text "Log out"
 
     context "without session", ->
       
@@ -142,3 +171,31 @@ describe "Coreon.Views.ApplicationView", ->
       @view.notify new Backbone.Model
       @info.render.should.have.been.calledOnce
       $.contains($("#coreon-notifications")[0], @info.el).should.be.true
+
+  describe "toggle()", ->
+
+    beforeEach ->
+      $("#konacha").append @view.$el
+      @view.$el.append '''
+        <div class="toggle">
+          <h3>Click to toggle</h3>
+        </div>
+        <div id="coreon-account">
+          <p>Logged in as Nobody</p>
+        </div>
+      '''
+      @event = $.Event "click"
+      @event.target = @view.$(".toggle h3")[0]
+  
+    it "is triggered by click on toggle", ->
+      @view.toggle = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".toggle").trigger @event
+      @view.toggle.should.have.been.calledOnce
+
+    it "toggles siblings", ->
+      @view.toggle @event
+      @view.$("#coreon-account").should.be.hidden
+      @view.toggle @event
+      @view.$("#coreon-account").should.be.visible
+      

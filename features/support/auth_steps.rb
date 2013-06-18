@@ -21,7 +21,7 @@ module AuthSteps
     within "#coreon-login" do
       fill_in "Email", with: @me.emails.first
       fill_in "Password", with: @me_password
-      click_button "Login"
+      click_button "Log in"
     end
   end
 

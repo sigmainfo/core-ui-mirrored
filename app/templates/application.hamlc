@@ -11,3 +11,8 @@
     .toggle
       #coreon-progress-indicator
       %h3 Coreon
+    #coreon-account
+      %p
+        = I18n.t "account.status", name: @session.get("user").name
+        |
+        %a.logout{href: "/logout"}= I18n.t "account.logout"

@@ -7,6 +7,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   template: Coreon.Templates["application"]
 
+  events:
+    "click .toggle": "toggle"
+
   initialize: ->
     @listenTo @model, "change:session", @render
     @listenTo Coreon.Models.Notification.collection(), "add", @notify
@@ -16,6 +19,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @$el.html @template session: session
     if session?
       Backbone.history.start pushState: on unless Backbone.History.started
+      @$("#coreon-account").delay(2000).slideUp()
     else
       Backbone.history.stop()
       @switch new Coreon.Views.Sessions.NewSessionView model: @model
@@ -29,6 +33,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
     @$("#coreon-notifications").append view.render().$el
+
+  toggle: (event) ->
+    $(event.target).closest(".toggle").siblings().slideToggle()
 
 # class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
 
