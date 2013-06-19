@@ -23,6 +23,7 @@ module AuthSteps
       fill_in "Password", with: @me_password
       click_button "Log in"
     end
+    page.should have_css("#coreon-footer")
   end
 
   Given 'I am logged out' do

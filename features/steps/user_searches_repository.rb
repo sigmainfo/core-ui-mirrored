@@ -26,7 +26,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Given 'the repository is not available' do
-    page.execute_script "Coreon.application.session.set('graph_root', 'https://this.goes.nowhere/')"
+    page.execute_script 'Coreon.application.graphUri = function() { return "https://black.hole" }'
   end
 
   Then 'I should see an error "Service is currently unavailable"' do

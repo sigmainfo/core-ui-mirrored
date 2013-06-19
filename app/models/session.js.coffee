@@ -41,7 +41,7 @@ class Coreon.Models.Session extends Backbone.Model
     if typeof key is "object"
       [attrs, options] = arguments
     else
-      (attrs = {})[key] = value
+      (attrs = {}?)[key] = value
     changed = no
     if attrs.hasOwnProperty "repositories"
       repositories = attrs.repositories

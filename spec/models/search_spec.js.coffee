@@ -1,6 +1,5 @@
 #= require spec_helper
 #= require models/search
-#= require config/application
 
 describe "Coreon.Models.Search", ->
   
@@ -39,24 +38,23 @@ describe "Coreon.Models.Search", ->
         "search[only]":  "properties/definition"
         "search[tolerance]": 2
 
-  xdescribe "#fetch", ->
+  describe "sync()", ->
 
-    beforeEach ->
-      @xhr = sinon.useFakeXMLHttpRequest()
-      @xhr.onCreate = (@request) =>
+    it "delegates to core api sync", ->
+      @model.sync.should.equal Coreon.Modules.CoreAPI.sync
 
-    afterEach ->
-      @xhr.restore()
+  describe "fetch()", ->
 
-    it "creates request", ->
-      Coreon.application.session.set "graph_root", "https://graph.coreon.com/"
-      @model.set
-        path:  "terms/search"
-        query: "poet"
-      @model.fetch()
-      @request.url.should.equal "https://graph.coreon.com/terms/search"
-      @request.method.should.equal "POST"
-      @request.requestBody.should.equal "search%5Bquery%5D=poet&search%5Btolerance%5D=2"
+    it "sends POST with params", ->
+      @model.params = -> "search[only]": "terms" 
+      @model.sync = sinon.spy()
+      @model.fetch parse: yes
+      @model.sync.should.have.been.calledOnce
+      @model.sync.should.have.been.calledWith "read", @model
+      @model.sync.firstCall.args[2].should.have.property "method", "POST"
+      @model.sync.firstCall.args[2].should.have.property "parse", yes
+      @model.sync.firstCall.args[2].should.have.property "data"
+      @model.sync.firstCall.args[2].data.should.have.property "search[only]", "terms"
 
   describe "#query", ->
     

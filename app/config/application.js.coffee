@@ -27,3 +27,6 @@ class Coreon.Application extends Backbone.Model
     Coreon.Models.Session.load().always (session) =>
       @set "session", session
     @
+
+  graphUri: ->
+    @get("session")?.currentRepository()?.get("graph_uri") or null

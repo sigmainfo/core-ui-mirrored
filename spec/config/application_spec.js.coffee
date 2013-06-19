@@ -79,10 +79,8 @@ describe "Coreon.Application", ->
       (=> @app.start() ).should.throw "Authorization service root URL not given"
       
     it "loads session", ->
-      @app.set "auth_root", "https://auth.me", silent: true
       @app.start()
       Coreon.Models.Session.load.should.have.been.calledOnce
-      Coreon.Models.Session.load.should.have.been.calledWith "https://auth.me"
     
     it "assigns session", ->
       session = new Backbone.Model
@@ -96,3 +94,20 @@ describe "Coreon.Application", ->
       @app.start()
       @request.resolve null
       spy.should.have.been.calledOnce
+
+  describe "graphUri()", ->
+
+    it "returns current graph_uri", ->
+      repository = new Backbone.Model graph_uri: "https://repo123.coreon.com:4000"
+      session = currentRepository: -> repository
+      @app.set "session", session, silent: yes
+      @app.graphUri().should.equal "https://repo123.coreon.com:4000"
+
+    it "returns null when no current repository exists", ->
+      session = currentRepository: -> null
+      @app.set "session", session, silent: yes
+      should.equal @app.graphUri(), null
+      
+    it "returns null when no session exists", ->
+      @app.set "session", null, silent: yes
+      should.equal @app.graphUri(), null

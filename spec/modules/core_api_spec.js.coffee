@@ -11,15 +11,15 @@ describe "Coreon.Modules.CoreAPI", ->
     delete Coreon.Models.CoreAPIModel
 
   beforeEach ->
-    @_application = Coreon.application
-    Coreon.application =
-      session: new Backbone.Model
-        repository_root: "https://1234-345.coreon.com"
+    @session = new Backbone.Model
+    Coreon.application = new Backbone.Model session: @session 
+    Coreon.application.graphUri = -> "https://repo123.coreon.com"
+
     @model = new Coreon.Models.CoreAPIModel
     @model.urlRoot = "/concepts"
 
   afterEach ->
-    Coreon.application = @_application
+    Coreon.application = null
 
   describe "sync()", ->
 
@@ -43,19 +43,19 @@ describe "Coreon.Modules.CoreAPI", ->
         Backbone.sync.firstCall.args[2].should.have.property "username", "Nobody"
 
       it "sends token in headers", ->
-        Coreon.application.session.set "token", "148ba2d2361930cbeef", silent: true
+        @session.set "token", "148ba2d2361930cbeef", silent: true
         @model.sync "read", @model
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "148ba2d2361930cbeef"
 
       it "generates url from repository root", ->
-        Coreon.application.session.set "repository_root", "https://123-456-789.coreon.com", silent: true
+        Coreon.application.graphUri = -> "https://123-456-789.coreon.com"
         @model.url = -> "/concepts/1234asdfg"
         @model.sync "read", @model
         Backbone.sync.firstCall.args[2].should.have.property "url", "https://123-456-789.coreon.com/concepts/1234asdfg"
 
       it "normalizes slashes when generating the url", ->
-        Coreon.application.session.set "repository_root", "https://123-456-789.coreon.com/", silent: true
+        Coreon.application.graphUri = -> "https://123-456-789.coreon.com/"
         @model.url = -> "/concepts/1234asdfg"
         @model.sync "read", @model
         Backbone.sync.firstCall.args[2].should.have.property "url", "https://123-456-789.coreon.com/concepts/1234asdfg"
@@ -172,27 +172,27 @@ describe "Coreon.Modules.CoreAPI", ->
         spy.should.not.have.been.called
 
       it "clears session token", ->
-        Coreon.application.session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
+        @session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        Coreon.application.session.has("token").should.be.false
+        @session.has("token").should.be.false
       
       it "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        Coreon.application.session.set "token", "beef48548969b046148ba2d2361930c02"
+        @session.set "token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.should.have.been.calledTwice
         Backbone.sync.should.always.have.been.calledWith "read", @model
         Backbone.sync.lastCall.args[2].should.have.property "username", "Nobody"
 
       it "uses newly set token", ->
-        Coreon.application.session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
+        @session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
         Backbone.sync.reset()
-        Coreon.application.session.set "token", "beef48548969b046148ba2d2361930c02"
+        @session.set "token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "beef48548969b046148ba2d2361930c02"

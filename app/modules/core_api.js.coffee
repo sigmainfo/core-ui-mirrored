@@ -4,8 +4,8 @@
 connections = 0
 
 ajax = (deferred, method, model, options) ->
-  session = Coreon.application.session
-  options.headers["X-Core-Session"] = session.get "token"
+  session = Coreon.application.get "session"
+  options.headers["X-Core-Session"] = session.get "auth_token"
 
   request = Backbone.sync(method, model, options)
   connections += 1
@@ -41,7 +41,7 @@ Coreon.Modules.CoreAPI =
   sync: (method, model, options = {}) ->
     deferred = $.Deferred()
     
-    root = Coreon.application.session.get "repository_root"
+    root = Coreon.application.graphUri() or throw new Error "No graph URI specified"
     root = root[..-2] if root.charAt(root.length - 1) is "/"
     path = model.url()
     path = path[1..] if path.charAt(0) is "/"
