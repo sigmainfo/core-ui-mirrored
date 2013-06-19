@@ -3,16 +3,17 @@
 #= require views/sessions/new_session_view
 #= require views/notifications/notification_view
 #= require views/widgets/widgets_view
-
-session = null
+#= require views/account/password_prompt_view
 
 updateSession = (view) ->
   previous = session
   session = view.model.get "session"
   if session isnt previous
     view.stopListening previous if previous?
-    view.listenTo session, "change:current_repository_id", view.render if session?
-  session
+  if session?
+    view.listenTo session, "change:current_repository_id", view.render
+    view.listenTo session, "change:auth_token", view.reauthenticate
+  view.session = session
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
@@ -23,6 +24,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
     "click .toggle": "toggle"
 
   initialize: ->
+    @session = null
+    @main = null
+    @modal = null
     @listenTo @model, "change:session", @render
     @listenTo Coreon.Models.Notification.collection(), "add", @notify
     @listenTo Coreon.Models.Notification.collection(), "reset", @clearNotifications
@@ -48,6 +52,12 @@ class Coreon.Views.ApplicationView extends Backbone.View
       screen.render()
       @$("#coreon-main").append screen.$el
 
+  prompt: (modal) ->
+    @modal?.remove()
+    if @modal = modal
+      modal.render()
+      @$("#coreon-modal").append modal.$el
+
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
     @$("#coreon-notifications").append view.render().$el
@@ -61,6 +71,13 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   toggle: (event) ->
     $(event.target).closest(".toggle").siblings().slideToggle()
+
+  reauthenticate: (model, token) ->
+    @prompt if token
+      null
+    else
+      new Coreon.Views.Account.PasswordPromptView
+        model: @model.get "session"
 
   repository: (id) ->
     session = @model.get "session"

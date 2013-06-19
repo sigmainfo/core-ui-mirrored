@@ -10,7 +10,7 @@ Coreon.Modules.ErrorNotifications =
       try
         response = JSON.parse xhr.responseText
       catch error
-        console?.log "[Backbone.ajax] #{error}"
+        console?.log "[Backbone.ajax]", "#{error}:", xhr.responseText
       finally
         response ?= {}
         response.message ?= I18n.t "errors.generic"
@@ -18,4 +18,4 @@ Coreon.Modules.ErrorNotifications =
           I18n.t response.code, defaultValue: response.message
         else
           response.message
-    Coreon.Models.Notification.error message
+    Coreon.Models.Notification.error message unless xhr.status is 403

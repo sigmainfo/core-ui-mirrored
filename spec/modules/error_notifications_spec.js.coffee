@@ -48,4 +48,10 @@ describe "Coreon.Modules.ErrorNotifications", ->
       Coreon.Modules.ErrorNotifications.failHandler @xhr, "error", ""
       Coreon.Models.Notification.error.should.have.been.calledOnce
       Coreon.Models.Notification.error.should.have.been.calledWith "Service unavailable."
+
+    it "creates no error message when unauthorized", ->
+      @xhr.status = 403
+      Coreon.Modules.ErrorNotifications.failHandler @xhr, "error", ""
+      Coreon.Models.Notification.error.should.not.have.been.called
+      
       

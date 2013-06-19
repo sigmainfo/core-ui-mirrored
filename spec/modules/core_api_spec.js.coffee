@@ -43,7 +43,7 @@ describe "Coreon.Modules.CoreAPI", ->
         Backbone.sync.firstCall.args[2].should.have.property "username", "Nobody"
 
       it "sends token in headers", ->
-        @session.set "token", "148ba2d2361930cbeef", silent: true
+        @session.set "auth_token", "148ba2d2361930cbeef", silent: true
         @model.sync "read", @model
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "148ba2d2361930cbeef"
@@ -172,27 +172,27 @@ describe "Coreon.Modules.CoreAPI", ->
         spy.should.not.have.been.called
 
       it "clears session token", ->
-        @session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
+        @session.set "auth_token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        @session.has("token").should.be.false
+        @session.has("auth_token").should.be.false
       
       it "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
-        @session.set "token", "beef48548969b046148ba2d2361930c02"
+        @session.set "auth_token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.should.have.been.calledTwice
         Backbone.sync.should.always.have.been.calledWith "read", @model
         Backbone.sync.lastCall.args[2].should.have.property "username", "Nobody"
 
       it "uses newly set token", ->
-        @session.set "token", "148ba2d2361930cbeef48548969b04602", silent: true
+        @session.set "auth_token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
         @requests[0].status = 403
         @requests[0].reject @requests[0], "error", "Unauthorized"
         Backbone.sync.reset()
-        @session.set "token", "beef48548969b046148ba2d2361930c02"
+        @session.set "auth_token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "beef48548969b046148ba2d2361930c02"

@@ -26,8 +26,8 @@ ajax = (deferred, method, model, options) ->
       catch exception
         {}
     if request.status is 403
-      session.unset "token"
-      session.once "change:token", ->
+      session.unset "auth_token"
+      session.once "change:auth_token", ->
         ajax deferred, method, model, options
     else
       deferred.rejectWith model, [data, request]

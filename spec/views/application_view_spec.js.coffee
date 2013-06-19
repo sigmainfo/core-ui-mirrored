@@ -25,7 +25,6 @@ describe "Coreon.Views.ApplicationView", ->
     it "is triggered when repository changes", ->
       session = new Backbone.Model user: name: "Nobody"
       @view.render = sinon.spy()
-      @view.initialize()
       @view.model.set "session", session
       @view.render.reset()
       session.set "current_repository_id", "myrepositoryzuio"
@@ -166,6 +165,32 @@ describe "Coreon.Views.ApplicationView", ->
       @view.should.have.property "main", null
       @view.$("#coreon-main").children().should.have.lengthOf 1
 
+  describe "prompt()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <div id="coreon-modal"></div>
+      '''
+
+    it "removes previous modal", ->
+      previous = remove: sinon.spy()
+      @view.modal = previous
+      @view.prompt new Backbone.View
+      previous.remove.should.have.been.calledOnce
+
+    it "displays current modal", ->
+      current = new Backbone.View
+      current.render = sinon.spy()
+      @view.prompt current
+      @view.should.have.property "modal", current
+      current.render.should.have.been.calledOnce
+      $.contains(@view.$("#coreon-modal")[0], current.el).should.be.true
+
+    it "removes prompt when no screen is passed", ->
+      @view.prompt null
+      @view.should.have.property "modal", null
+      @view.$("#coreon-modal").children().should.have.lengthOf 0
+
   describe "notify()", ->
 
     beforeEach ->
@@ -264,6 +289,43 @@ describe "Coreon.Views.ApplicationView", ->
       @view.navigate @event
       Backbone.history.navigate.should.have.been.calledOnce
       Backbone.history.navigate.should.have.been.calledWith "foo", trigger: yes
+
+  describe "reauthenticate()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Views.Account, "PasswordPromptView", =>
+        @prompt = new Backbone.View
+      @session = new Backbone.Model
+        auth_token: "supersecrettoken"
+        user:
+          name: "Nobody"
+      @view.model.set "session", @session
+
+    afterEach ->
+      Coreon.Views.Account.PasswordPromptView.restore()
+
+    it "is triggered by changes on session token", ->
+      @view.reauthenticate = sinon.spy()
+      @view.render()
+      @session.set "auth_token", "someothersecrettoken"
+      @view.reauthenticate.should.have.been.calledOnce
+      @view.reauthenticate.should.have.been.calledWith @session, "someothersecrettoken"
+
+    it "displays password prompt when token is not set", ->
+      @view.prompt = sinon.spy()
+      @view.reauthenticate @session, null
+      Coreon.Views.Account.PasswordPromptView.should.have.been.calledOnce
+      Coreon.Views.Account.PasswordPromptView.should.have.been.calledWithNew
+      Coreon.Views.Account.PasswordPromptView.should.have.been.calledWith model: @session
+      @view.prompt.should.have.been.calledOnce
+      @view.prompt.should.have.been.calledWith @prompt
+
+    it "hides password prompt when token is set", ->
+      @view.prompt = sinon.spy()
+      @view.reauthenticate @session, "newcoolsessiontoken"
+      Coreon.Views.Account.PasswordPromptView.should.not.have.been.called
+      @view.prompt.should.have.been.calledOnce
+      @view.prompt.should.have.been.calledWith null
 
   describe "repository()", ->
 
