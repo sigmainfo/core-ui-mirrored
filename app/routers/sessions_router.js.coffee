@@ -18,4 +18,4 @@ class Coreon.Routers.SessionsRouter extends Backbone.Router
     Coreon.Models.Notification.collection().reset []
     @view.model.get("session")?.destroy().abort()
     @view.model.unset "session"
-    location.replace "/"
+    @navigate "", reload:yes

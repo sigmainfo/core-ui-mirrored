@@ -33,11 +33,20 @@ describe "Coreon.Routers.SessionsRouter", ->
       @router.destroy.should.have.been.calledOnce
 
     it "destroys session", ->
-      session = destroy: sinon.spy()
+      session =
+        destroy: sinon.spy -> abort: ->
       @application.set "session", session, silent: on
       @router.destroy()
       session.destroy.should.have.been.calledOnce
       should.equal @application.has("session"), no
+
+    it "prevents service-unavailable error", ->
+      session = destroy: =>
+        @abort = sinon.spy()
+        abort: @abort
+      @application.set "session", session, silent: on
+      @router.destroy()
+      @abort.should.have.been.calledOnce
 
     it "navigates to root", ->
       @router.navigate = sinon.spy()
