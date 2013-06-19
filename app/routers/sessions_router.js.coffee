@@ -1,4 +1,5 @@
 #= require environment
+#= require models/notification
 
 class Coreon.Routers.SessionsRouter extends Backbone.Router
 
@@ -14,6 +15,7 @@ class Coreon.Routers.SessionsRouter extends Backbone.Router
       super
 
   destroy: ->
-    @view.model.get("session")?.destroy()
+    Coreon.Models.Notification.collection().reset []
+    @view.model.get("session")?.destroy().abort()
     @view.model.unset "session"
-    @navigate "", reload: on
+    location.replace "/"

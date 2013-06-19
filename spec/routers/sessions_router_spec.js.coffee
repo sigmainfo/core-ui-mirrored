@@ -17,6 +17,15 @@ describe "Coreon.Routers.SessionsRouter", ->
 
   describe "destroy()", ->
 
+    it "clears notifications", ->
+      Coreon.Models.Notification.collection = =>
+        @reset_notifiations = sinon.stub()
+        reset: @reset_notifiations
+      @router.destroy()
+      @reset_notifiations.should.have.been.calledOnce
+      @reset_notifiations.should.have.been.calledWith []
+
+
     it "is routed", ->
       @router.destroy = sinon.spy()
       @router._bindRoutes()

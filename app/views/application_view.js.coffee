@@ -14,6 +14,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   initialize: ->
     @listenTo @model, "change:session", @render
     @listenTo Coreon.Models.Notification.collection(), "add", @notify
+    @listenTo Coreon.Models.Notification.collection(), "reset", @clearNotifications
 
   render: ->
     session = @model.get "session"
@@ -34,6 +35,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
     @$("#coreon-notifications").append view.render().$el
+
+  clearNotifications: ->
+    @$("#coreon-notifications").empty()
 
   navigate: (event) ->
     event.preventDefault()
