@@ -24,6 +24,7 @@ module AuthSteps
       click_button "Log in"
     end
     page.should have_css("#coreon-footer")
+    CoreAPI.session = page.evaluate_script('localStorage.getItem("coreon-session")') 
   end
 
   Given 'I am logged out' do

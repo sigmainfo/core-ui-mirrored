@@ -8,6 +8,8 @@
 #= require modules/properties_by_key
 #= require modules/remote_validation
 #= require modules/persisted_attributes
+#= require models/hit
+#= require collections/hits
 
 class Coreon.Models.Concept extends Backbone.Model
 
@@ -39,8 +41,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @set "label", @_label(), silent: true
     @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
     @_updateHit()
-    if Coreon.application?.hits?
-      @listenTo Coreon.application.hits, "reset add remove", @_updateHit
+    @listenTo Coreon.Models.Hit.collection(), "reset add remove", @_updateHit
     @remoteValidationOn()
     @once "sync", @syncMessage, @ if @isNew()
     @persistedAttributesOn()
@@ -63,7 +64,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @set "label", @_label()
 
   _updateHit: ->
-    @set "hit", Coreon.application?.hits.findByResult(@)
+    @set "hit", Coreon.Models.Hit.collection().findByResult(@)
 
   _label: ->
     if @isNew()
