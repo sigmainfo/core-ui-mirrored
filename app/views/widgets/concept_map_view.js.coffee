@@ -30,10 +30,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
-    if session = Coreon.application?.session.get @id
-      @resize session.width, session.height
-    else
-      @resize @options.size...
+    # if session = Coreon.application?.session.get @id
+    #   @resize session.width, session.height
+    # else
+    @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
     @map = d3.select(@$("svg g.concept-map").get 0)
     @renderStrategy = new Coreon.Views.Widgets.ConceptMap.LeftToRight @map
@@ -65,8 +65,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @saveLayout width: @$el.width(), height: @$el.height()
     
   saveLayout = (layout) -> 
-    if Coreon.application?
-      Coreon.application?.session.save @id, layout
+    # if Coreon.application?
+    #   Coreon.application?.session.save @id, layout
 
   saveLayout: _.debounce saveLayout, 500
 

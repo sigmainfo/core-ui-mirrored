@@ -35,9 +35,6 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
     @view.repository id
 
     query = decodeURIComponent(query)
-    
-    # @view.widgets.search.selector.hideHint()
-    # @view.$("input#coreon-search-query").val query
     @view.query query
 
     terms = new Coreon.Models.Search

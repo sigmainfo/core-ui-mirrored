@@ -28,7 +28,8 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   render: ->
+    repo = Backbone.history.fragment.split("/")[0]
     @$el.toggleClass "hit", @model.has "hit"
-    @$el.attr "href", "/concepts/#{@model.id}"
+    @$el.attr "href", "/#{repo}/concepts/#{@model.id}"
     @$el.html @model.escape "label"
     @
