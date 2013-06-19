@@ -26,6 +26,8 @@ class Coreon.Models.Session extends Backbone.Model
       .fail( -> request.resolve null )
     request.promise()
 
+
+
   defaults: ->
     repositories: []
     current_repository_id: null
@@ -36,6 +38,15 @@ class Coreon.Models.Session extends Backbone.Model
 
   initialize: ->
     @on "change:auth_token", @onChangeToken, @
+
+  reauthenticate: (password) ->
+    @unset "auth_token"
+    @save {},
+      data:
+        $.param
+          password: password
+          user_id: @get("user").id
+    @
 
   set: (key, value, options) ->
     if typeof key is "object"
@@ -84,6 +95,9 @@ class Coreon.Models.Session extends Backbone.Model
     else
       localStorage.removeItem "coreon-session"
 
-  destroy: ->
+  destroy: (options) ->
     localStorage.removeItem "coreon-session"
-    super
+    if @id?
+      request = super
+      request.abort()
+    request or null

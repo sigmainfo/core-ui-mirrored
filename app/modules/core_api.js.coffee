@@ -6,7 +6,6 @@ connections = 0
 ajax = (deferred, method, model, options) ->
   session = Coreon.application.get "session"
   options.headers["X-Core-Session"] = session.get "auth_token"
-
   request = Backbone.sync(method, model, options)
   connections += 1
   Coreon.Modules.CoreAPI.trigger "request", method, options.url, request

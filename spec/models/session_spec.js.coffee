@@ -93,8 +93,7 @@ describe "Coreon.Models.Session", ->
         Coreon.Models.Session.authenticate("nobody@blake.com", "se7en!").always (@arg) =>
         @request.reject()
         should.equal @arg, null
-        
-          
+
   describe "instance", ->
     
     beforeEach ->
@@ -213,11 +212,29 @@ describe "Coreon.Models.Session", ->
         localStorage.setItem.should.not.have.been.called
         localStorage.removeItem.should.have.been.calledOnce
         localStorage.removeItem.should.have.been.calledWith "coreon-session" 
+
+    describe "reauthenticate()", ->
+
+      beforeEach ->
+        @session.set "user", id: "123456dfhg", silent: yes
+
+      it "can be chained", ->
+        @session.reauthenticate("se7en!").should.equal @session
+
+      it "unsets auth_token", ->
+        @session.reauthenticate "se7en!"
+        should.equal @session.has("auth_token"), false       
+
+      it "updates session with password and user id", ->
+        @session.save = sinon.spy()
+        @session.reauthenticate "se7en!"
+        @session.save.should.have.been.calledOnce
+        @session.save.should.have.been.calledWith {}, data: "password=se7en!&user_id=123456dfhg"
         
     describe "destroy()", ->
 
       beforeEach ->
-        sinon.stub Backbone.Model::, "destroy"
+        sinon.stub Backbone.Model::, "destroy", -> abort: ->
 
       afterEach ->
         Backbone.Model::destroy.restore()
@@ -228,5 +245,6 @@ describe "Coreon.Models.Session", ->
         localStorage.removeItem.should.have.been.calledWith "coreon-session"
         
       it "calls super", ->
+        @session.id = "mysupertoken"
         @session.destroy()
         Backbone.Model::destroy.should.have.been.calledOnce

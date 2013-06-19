@@ -16,6 +16,7 @@ class Coreon.Routers.SessionsRouter extends Backbone.Router
 
   destroy: ->
     Coreon.Models.Notification.collection().reset []
-    @view.model.get("session")?.destroy().abort()
-    @view.model.unset "session"
-    @navigate "", reload:yes
+    if session = @view.model.get "session"
+      session.destroy()
+      @view.model.unset "session"
+    @navigate "", reload: yes
