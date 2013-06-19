@@ -24,6 +24,6 @@ class Coreon.Application extends Backbone.Model
   start: ->
     unless @has "auth_root"
       throw new Error "Authorization service root URL not given"
-    Coreon.Models.Session.load(@get "auth_root").always (session) =>
+    Coreon.Models.Session.load().always (session) =>
       @set "session", session
     @

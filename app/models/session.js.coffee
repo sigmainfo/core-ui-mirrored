@@ -85,5 +85,5 @@ class Coreon.Models.Session extends Backbone.Model
       localStorage.removeItem "coreon-session"
 
   destroy: ->
-    super
     localStorage.removeItem "coreon-session"
+    super

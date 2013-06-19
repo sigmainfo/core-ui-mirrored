@@ -17,6 +17,15 @@ describe "Coreon.Routers.SessionsRouter", ->
 
   describe "destroy()", ->
 
+    it "clears notifications", ->
+      Coreon.Models.Notification.collection = =>
+        @reset_notifiations = sinon.stub()
+        reset: @reset_notifiations
+      @router.destroy()
+      @reset_notifiations.should.have.been.calledOnce
+      @reset_notifiations.should.have.been.calledWith []
+
+
     it "is routed", ->
       @router.destroy = sinon.spy()
       @router._bindRoutes()
@@ -24,11 +33,20 @@ describe "Coreon.Routers.SessionsRouter", ->
       @router.destroy.should.have.been.calledOnce
 
     it "destroys session", ->
-      session = destroy: sinon.spy()
+      session =
+        destroy: sinon.spy -> abort: ->
       @application.set "session", session, silent: on
       @router.destroy()
       session.destroy.should.have.been.calledOnce
       should.equal @application.has("session"), no
+
+    it "prevents service-unavailable error", ->
+      session = destroy: =>
+        @abort = sinon.spy()
+        abort: @abort
+      @application.set "session", session, silent: on
+      @router.destroy()
+      @abort.should.have.been.calledOnce
 
     it "navigates to root", ->
       @router.navigate = sinon.spy()

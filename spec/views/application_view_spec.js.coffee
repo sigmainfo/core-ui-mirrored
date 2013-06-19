@@ -201,6 +201,24 @@ describe "Coreon.Views.ApplicationView", ->
       @info.render.should.have.been.calledOnce
       $.contains($("#coreon-notifications")[0], @info.el).should.be.true
 
+    context "clearNotifications()", ->
+
+      it "is triggered when notification was added", ->
+        @view.clearNotifications = sinon.spy()
+        @view.initialize()
+        @collection.trigger "reset", []
+        @view.clearNotifications.should.have.been.calledOnce
+
+      it "clears notifications", ->
+        notification = new Backbone.Model
+        @view.initialize()
+        @view.notify message:"foo", @collection, by: "Nobody"
+
+        @view.$("#coreon-notifications").first().children().length.should.equal 1
+        @collection.trigger "reset", []
+        @view.$("#coreon-notifications").first().children().length.should.equal 0
+
+
   describe "navigate()", ->
 
     beforeEach ->
