@@ -8,8 +8,7 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
   routes:
     "search/:query": "search"
 
-  initialize: (options) ->
-    @[key] = value for key, value of options
+  initialize: (@view) ->
 
   search: (query) ->
 
@@ -27,14 +26,9 @@ class Coreon.Routers.SearchRouter extends Backbone.Router
         path: "concepts/search"
         query: query
 
-      tnodes: new Coreon.Models.Search
-        path: "taxonomy_nodes/search"
-        query: query
-
     @searchResultsView = new Coreon.Views.Search.SearchResultsView
       models: searches
     @view.switch @searchResultsView
 
     searches.terms.fetch()
-    searches.tnodes.fetch()
     searches.concepts.fetch()

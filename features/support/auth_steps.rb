@@ -11,9 +11,9 @@ module AuthSteps
       password: @me_password,
       password_confirmation: @me_password
     )  
-    account = CoreClient::Auth::Account.create! name: "Nobody's Account", active: true
-    repo = CoreClient::Auth::Repository.create! name: "Nobody's Repository", account_id: account.id, graph_uri: "http://localhost:3336/", active: true
-    repo_user = CoreClient::Auth::RepositoryUser.create! repository: repo, user: @me, email: "nobody@blake.com", roles: [:user, :maintainer]
+    @account = CoreClient::Auth::Account.create! name: "Nobody's Account", active: true
+    @repository = CoreClient::Auth::Repository.create! name: "Nobody's Repository", account_id: @account.id, graph_uri: "http://localhost:3336/", active: true
+    repo_user = CoreClient::Auth::RepositoryUser.create! repository: @repository, user: @me, email: "nobody@blake.com", roles: [:user, :maintainer]
   end
 
   Given 'I am logged in' do

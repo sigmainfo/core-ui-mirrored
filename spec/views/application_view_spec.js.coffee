@@ -22,6 +22,22 @@ describe "Coreon.Views.ApplicationView", ->
       @view.model.set "session", null
       @view.render.should.have.been.calledOnce
 
+    it "is triggered when repository changes", ->
+      session = new Backbone.Model user: name: "Nobody"
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.set "session", session
+      @view.render.reset()
+      session.set "current_repository_id", "myrepositoryzuio"
+      @view.render.should.have.been.calledOnce
+
+    it "removes subviews", ->
+      subview = remove: sinon.spy()
+      @view.subviews = [ subview ]
+      @view.render()
+      subview.remove.should.have.been.calledOnce
+      @view.subviews.should.eql []
+
     it "renders containers", ->
       @view.render()
       @view.$el.should.have "#coreon-top"
@@ -33,11 +49,28 @@ describe "Coreon.Views.ApplicationView", ->
     context "with session", ->
 
       beforeEach ->
+        sinon.stub Coreon.Views.Widgets, "WidgetsView", =>
+          @widgets = new Backbone.View
+          @widgets.render = sinon.stub().returns @widgets
+          @widgets
         sinon.stub Backbone.history, "start"
         @view.model.set "session", new Backbone.Model(user: name: "nobody"), silent: on
 
       afterEach ->
+        Coreon.Views.Widgets.WidgetsView.restore()
         Backbone.history.start.restore()
+
+      it "creates widgets", ->
+       @view.render()
+       Coreon.Views.Widgets.WidgetsView.should.have.been.calledOnce
+       Coreon.Views.Widgets.WidgetsView.should.have.been.calledWithNew
+       Coreon.Views.Widgets.WidgetsView.should.have.been.calledWith model: @view.model
+
+      it "displays widgets", ->
+        @view.render()
+        @widgets.render.should.have.been.calledOnce
+        $.contains(@view.$("#coreon-top")[0], @widgets.el).should.be.true
+        @view.subviews.should.contain @widgets
 
       it "enables history and triggers route", ->
         @view.render()
@@ -48,10 +81,6 @@ describe "Coreon.Views.ApplicationView", ->
         Backbone.History.started = yes
         @view.render()
         Backbone.history.start.should.not.have.been.called
-
-      it "renders widgets", ->
-        @view.render()
-        @view.$("#coreon-top").should.have "#coreon-widgets"
 
       it "renders footer", ->
         @view.render()
@@ -217,7 +246,57 @@ describe "Coreon.Views.ApplicationView", ->
       @view.navigate @event
       Backbone.history.navigate.should.have.been.calledOnce
       Backbone.history.navigate.should.have.been.calledWith "foo", trigger: yes
-      
+
+  describe "repository()", ->
+
+    beforeEach ->
+      @session = new Backbone.Model
+      @session.currentRepository = -> null
+      @view.model.set "session", @session, silent: yes
+
+    it "returns current repository when no id is given", ->
+      repository = new Backbone.Model
+      @session.currentRepository = -> repository
+      @view.repository().should.equal repository
+
+    it "returns null whithout a session", ->
+      @view.model.set "session", null, silent: yes
+      should.equal @view.repository(), null
+
+    it "selects current repository when id is pssed", ->
+      @view.repository "myrepositoryzuio"
+      @view.model.get("session").get("current_repository_id").should.equal "myrepositoryzuio"
+
+  describe "query()", ->
+
+    beforeEach ->
+      @view.$el.append '''
+        <input id="coreon-search-query" type="text" name="q" value=""/>
+        <div id="coreon-search-target-select">
+          <p class="hint">I am a hint</p>
+        </div>
+      '''
+      @input = @view.$("#coreon-search-query")
+      @hint = @view.$("#coreon-search-target-select .hint")
+
+    it "returns value from search input", ->
+      @input.val "whappan?"
+      @view.query().should.equal "whappan?"
+
+    it "sets value on search input", ->
+      @view.query "poet"
+      @input.should.have.value "poet"
+
+    it "hides hint when query is not empty", ->
+      $("#konacha").append @view.$el
+      @view.query "poet"
+      @hint.should.be.hidden
+
+    it "shows hint when query is empty", ->
+      $("#konacha").append @view.$el
+      @hint.hide()
+      @view.query ""
+      @hint.should.be.visible
 
   describe "toggle()", ->
 
@@ -245,4 +324,3 @@ describe "Coreon.Views.ApplicationView", ->
       @view.$("#coreon-account").should.be.hidden
       @view.toggle @event
       @view.$("#coreon-account").should.be.visible
-      
