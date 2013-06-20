@@ -6,13 +6,15 @@
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
-  routes:
-    ":repository/concepts/new(/terms/:lang/:value)" : "new"
-    ":repository/concepts/search/(:target/):query"  : "search"
-
   _bindRoutes: ->
     super
-    @route /^([0-9a-f]{24})\/concepts\/([0-9a-f]{24})$/,       "show"
+    show_concept =   new RegExp('^([0-9a-f]{24})/concepts/([0-9a-f]{24})$')
+    new_concept =    new RegExp('^([0-9a-f]{24})/concepts/new(?:/terms/([^/]+)/([^/]+))?$')
+    search_concept = new RegExp('^([0-9a-f]{24})/concepts/search/(?:([^/]+)/)?([^/]+)$')
+    @route show_concept,   "show"
+    @route new_concept,    "new"
+    @route search_concept, "search"
+
 
   initialize: (@view) ->
 
