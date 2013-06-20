@@ -99,6 +99,9 @@ en:
 
   repository:
     label: "Repository"
+  
+  repositories:
+    select: "Select repository"
 
   form:
     reset: "Reset"
