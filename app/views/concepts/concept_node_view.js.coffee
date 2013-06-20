@@ -2,6 +2,7 @@
 #= require views/svg_view
 #= require modules/helpers
 #= require helpers/text
+#= require helpers/repository_path
 
 class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
 
@@ -37,7 +38,8 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
         if @model.get("concept").isNew()
           "javascript:void(0)"
         else
-          "/#{Backbone.history.fragment.split("/")[0]}/concepts/#{@model.id}"
+          Coreon.Helpers.repositoryPath("concepts", @model.id)
+          #"/#{Backbone.history.fragment.split("/")[0]}/concepts/#{@model.id}"
       )
 
     @bg = a.append("svg:rect")

@@ -3,6 +3,7 @@
 #= require templates/widgets/search
 #= require models/search_type
 #= require views/widgets/search_target_select_view
+#= require helpers/repository_path
 
 class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
 
@@ -33,12 +34,10 @@ class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
   submitHandler: (event) ->
     event.preventDefault()
     type = @searchType.getSelectedType()
-    query = encodeURIComponent @$('input#coreon-search-query').val()
-    repo = Backbone.history.fragment.split("/")[0]
-    path = if type is "all"
-      "#{repo}/search/#{query}"
-    else
-      "#{repo}/concepts/#{type}/search/#{query}"
+    query = @$('input#coreon-search-query').val()
+    fragments = if type is "all" then [] else ["concepts", type]
+    fragments = fragments.concat ["search", query]
+    path = Coreon.Helpers.repositoryPath(fragments)
     Backbone.history.navigate path
     Backbone.history.loadUrl()
 
