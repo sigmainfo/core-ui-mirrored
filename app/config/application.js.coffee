@@ -4,7 +4,6 @@
 #= require routers/sessions_router
 #= require routers/repositories_router
 #= require routers/concepts_router
-#= require routers/search_router
 #= require modules/error_notifications
 
 class Coreon.Application extends Backbone.Model

@@ -30,7 +30,7 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
       @view.switch screen
     else
       @navigate "", trigger: yes, replace: yes
-   
+
   search: (id, query) ->
     @view.repository id
 

@@ -1,4 +1,5 @@
 #= require environment
+#= require helpers/repository_path
 #= require views/composite_view
 #= require views/search/search_results_terms_view
 #= require views/search/search_results_concepts_view
