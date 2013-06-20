@@ -12,8 +12,5 @@
 - if @can "create", Coreon.Models.Concept
   .edit
     %a.button.create-concept{href: @repositoryPath("concepts", "new", "terms", "en", @query)}= I18n.t "concept.new"
-    -#%a.button.create-concept{href: "/#{Backbone.history.fragment.split("/")[0]}/concepts/new/terms/en/#{@query}"}= I18n.t "concept.new"
 %p.actions
-  %a.show-all{href: @repositoryPath("concepts", "search", @query)}= I18n.t "concept.new"
-  -#%a.show-all{href: "/#{Backbone.history.fragment.split("/")[0]}/concepts/search/#{@query}"}= I18n.t "search.results.concepts.show_all"
-
+  %a.show-all{href: @repositoryPath("concepts", "search", @query)}= I18n.t "search.results.concepts.show_all"
