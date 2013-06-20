@@ -22,7 +22,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   events:
     "click a[href^='/']": "navigate"
-    "click .toggle": "toggle"
+    "click #coreon-footer .toggle": "toggle"
 
   initialize: ->
     @session = null
