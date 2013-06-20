@@ -1,3 +1,0 @@
-.edit
-  - if @can "create", Coreon.Models.Concept
-    %a.button.create-concept{href: "/concepts/new"}= I18n.t "concept.new"

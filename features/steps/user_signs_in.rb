@@ -2,7 +2,7 @@ class UserSignsIn < Spinach::FeatureSteps
   include AuthSteps
 
   When 'I visit the home page' do
-    visit root_path
+    visit "/"
   end
 
   Then 'I should see the login screen' do
@@ -10,8 +10,8 @@ class UserSignsIn < Spinach::FeatureSteps
     page.should have_no_css("#coreon-footer")
   end
 
-  When 'I fill in "Login" with "Nobody"' do
-    fill_in "Login", with: "Nobody"
+  When 'I fill in "Email" with "nobody@blake.com"' do
+    fill_in "Email", with: "nobody@blake.com"
   end
 
   And 'fill in "Password" with "se7en!"' do
@@ -22,8 +22,19 @@ class UserSignsIn < Spinach::FeatureSteps
     click_on "Log in"
   end
 
-  Then 'I should be within the application' do
+  step 'I should not see the login screen' do
     page.should have_no_css("#coreon-login")
+  end
+
+  step 'I should be on the repository root page' do
+    current_path.should =~ %r|[0-9a-f]{24}/?$|
+  end
+
+  Then 'I should see the widgets' do
+    page.should have_css("#coreon-widgets")
+  end
+
+  Then 'I should see the footer' do
     page.should have_css("#coreon-footer")
   end
 
@@ -35,12 +46,12 @@ class UserSignsIn < Spinach::FeatureSteps
     fill_in "Password", with: "ei8ht?"
   end
 
-  And 'should see an error "Invalid login or password"' do
-    find("#coreon-notifications .error").should have_content "Invalid login or password"
+  And 'should see an error "Invalid email or password"' do
+    find("#coreon-notifications .error").should have_content "Invalid email or password"
   end
 
   Given 'the authentication service is not available' do
-    page.execute_script "Coreon.application.session.set('auth_root', 'https://this.goes.nowhere/')"
+    page.execute_script "Coreon.Models.Session.auth_root = 'https://this.goes.nowhere'"
   end
 
   But 'I should see an error "Service is currently unavailable"' do

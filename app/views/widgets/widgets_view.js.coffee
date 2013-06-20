@@ -16,10 +16,10 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     super
     @search = new Coreon.Views.Widgets.SearchView
     @map = new Coreon.Views.Widgets.ConceptMapView
-      model: new Coreon.Collections.ConceptNodes( [], hits: @model.hits )
-    if Coreon.application?
-      if layout = Coreon.application.session.get "coreon-widgets"
-        @$el.width layout.width
+      model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Models.Hit.collection() )
+    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
+    @settings.widgets ?= {}
+    @$el.width @settings.widgets.width if @settings.widgets.width
 
   setElement: (element, delegate) ->
     super
@@ -40,8 +40,9 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     @$el.append @map.render().$el
     super
 
-  saveLayout = (layout) -> 
-    if Coreon.application?
-      Coreon.application?.session.save @id, layout
+  saveLayout = (layout) ->
+    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
+    @settings.widgets = layout
+    localStorage.setItem Coreon.application.get("session").currentRepository().get("cache_id"), JSON.stringify @settings
 
   saveLayout: _.debounce saveLayout, 500

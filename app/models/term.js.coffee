@@ -29,7 +29,6 @@ class Coreon.Models.Term extends Backbone.Model
 
   initialize: ->
     @remoteValidationOn()
-    @once "destroy", @onDestroy, @
     @_persistedAttributes = {}
     @_persistedAttributes[attr] = value for attr, value of @attributes
     @persistedAttributesOn()
@@ -44,15 +43,7 @@ class Coreon.Models.Term extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     @once "sync", @onCreate, @ if method is "create"
-    @once "sync", @onSave, @ if method is "update"
-    Coreon.application?.sync method, model, options
+    Coreon.Modules.CoreAPI.sync method, model, options
 
   onCreate: ->
     @trigger "create", @, @.id
-    @message I18n.t("term.created", value: @get "value"), type: "info"
-
-  onDestroy: ->
-    @message I18n.t("term.deleted", value: @get "value"), type: "info"
-
-  onSave: ->
-    @message I18n.t("term.saved", value: @get "value"), type: "info"

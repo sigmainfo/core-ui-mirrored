@@ -4,7 +4,7 @@ Feature: user browses list of concepts
   I want to see a list of matching concepts and their most essential data
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
   Scenario: expand search results

@@ -1,0 +1,38 @@
+@import 'compass/css3';
+@import '_config';
+
+#coreon-repository-select {
+  font-size: 0.86em;
+  
+  h4, a {
+    display: inline-block;
+    height: 18px;
+    padding: 2px 20px 2px 8px;
+    background-color: $beigecolor;
+    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
+    
+  }
+  
+  h4 {
+    float: left;
+    width: 100px;
+    margin-right: 1px;
+    @include border-left-radius(4px);
+  }
+  
+  a {
+    width: 18px;
+    padding: 2px;
+    background: image-url("layout/icons.png") no-repeat 1px -100px;
+    @include retina-icons;
+    text-indent: -2000px;
+    overflow: hidden;
+    background-color: $beigecolor;
+    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
+    &:hover {
+      background-color: $greycolor;
+    };
+    @include border-right-radius(4px);
+  }
+  
+}

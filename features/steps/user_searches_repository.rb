@@ -14,7 +14,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should be on the search results page for query "poet"' do
-    current_path.should == "/search/poet"
+    current_path.should == "/#{@repository.id}/search/poet"
   end
 
   And 'I should see a listing of the search results' do
@@ -26,7 +26,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Given 'the repository is not available' do
-    page.execute_script "Coreon.application.session.set('graph_root', 'https://this.goes.nowhere/')"
+    page.execute_script 'Coreon.application.graphUri = function() { return "https://black.hole" }'
   end
 
   Then 'I should see an error "Service is currently unavailable"' do
@@ -34,7 +34,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Given 'my auth token is not valid' do
-    page.execute_script "Coreon.application.session.set('token', 'xxxxxxxxxxxx-0488d880-af3a-012f-5664-525400b5532a', {silent: true})"
+    page.execute_script 'Coreon.application.get("session").set("auth_token", "xxxxxxxx", {silent: true})'
   end
 
   Then 'I should see the password prompt' do

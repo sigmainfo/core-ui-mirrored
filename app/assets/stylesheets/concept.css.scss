@@ -26,7 +26,8 @@ div.concept {
     };
   }
   
-  .broader-and-narrower, .properties {
+  .broader-and-narrower, &>.properties, .concept .properties {
+    position: relative;
     @include dottedline;
   }
   
@@ -209,7 +210,7 @@ div.concept {
     }
     
     .properties {
-      background: none;
+
       h3 {
         position: absolute;
         right: 20px;

@@ -23,6 +23,7 @@ Spinach.hooks.before_scenario do
   
   # disable jQuery animations
   Capybara.current_session.execute_script "jQuery.fx.off = true"
+  Capybara.current_session.execute_script "localStorage.clear()"
 end
 
 # Spinach.config.save_and_open_page_on_failure = true

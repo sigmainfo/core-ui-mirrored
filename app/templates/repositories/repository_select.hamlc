@@ -1,0 +1,3 @@
+%h4.current{class: "single" if @single}= @repository.get "name"
+- unless @single
+  %a.select{title: I18n.t "repositories.select"}= I18n.t "repositories.select"

@@ -1,6 +1,10 @@
 #= require environment
+#= require modules/helpers
+#= require modules/core_api
 
 class Coreon.Models.Search extends Backbone.Model
+
+  Coreon.Modules.include @, Coreon.Modules.CoreAPI
 
   defaults:
     hits: []
@@ -22,9 +26,7 @@ class Coreon.Models.Search extends Backbone.Model
     path = @get("target") + "/" + path if @has "target"
     path
 
-
-  sync: (method, model, options = {}) ->
-    _(options).extend
-      type: "POST"
-      data: @params()
-    Coreon.application.sync method, model, options
+  fetch: (options = {}) ->
+    options.method ?= "POST"
+    options.data ?= @params()
+    super options

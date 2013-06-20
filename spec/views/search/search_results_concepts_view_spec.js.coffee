@@ -2,7 +2,7 @@
 #= require views/search/search_results_concepts_view
 #= require config/application
 
-describe "Coreon.Views.Search.SearchResultsConceptsView", ->
+xdescribe "Coreon.Views.Search.SearchResultsConceptsView", ->
   
   beforeEach ->
     Coreon.application = new Coreon.Application

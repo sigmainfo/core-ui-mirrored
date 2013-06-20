@@ -3,24 +3,31 @@ module AuthSteps
 
   attr_accessor :me
 
-  Given 'my name is "William Blake" with login "Nobody" and password "se7en!"' do
+  Given 'my name is "William Blake" with email "nobody@blake.com" and password "se7en!"' do    
     @me_password = "se7en!"
     @me = CoreClient::Auth::User.create!(
       name: "William Blake",
-      login: "Nobody",
+      emails: ["nobody@blake.com"],
       password: @me_password,
       password_confirmation: @me_password
     )  
+    @account = CoreClient::Auth::Account.create! name: "Nobody's Account", active: true
+    @repository = CoreClient::Auth::Repository.create! name: "Nobody's Repository", account_id: @account.id, graph_uri: "http://localhost:3336/", active: true
+    repo_user = CoreClient::Auth::RepositoryUser.create! repository: @repository, user: @me, email: "nobody@blake.com", roles: [:user, :maintainer]
   end
 
   Given 'I am logged in' do
-    page.execute_script "Coreon.application.session.deactivate();"
-    page.execute_script "Coreon.application.session.activate('#{@me.login}', '#{@me_password}');"
+    visit "/"
+    within "#coreon-login" do
+      fill_in "Email", with: @me.emails.first
+      fill_in "Password", with: @me_password
+      click_button "Log in"
+    end
     page.should have_css("#coreon-footer")
-    CoreAPI.session = page.evaluate_script "Coreon.application.session.get('token')"
+    CoreAPI.session = page.evaluate_script('localStorage.getItem("coreon-session")') 
   end
 
   Given 'I am logged out' do
-    page.execute_script "Coreon.application.session.deactivate();"
+    visit "/logout"
   end
 end

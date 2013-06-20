@@ -1,6 +1,7 @@
 #= require environment
 #= require views/composite_view
 #= require helpers/can
+#= require helpers/repository_path
 #= require templates/search/search_results_concepts
 #= require views/concepts/concept_label_view
 
