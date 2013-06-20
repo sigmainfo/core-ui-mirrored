@@ -58,7 +58,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
       success: =>
         Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
         Coreon.Models.Concept.collection().add @model
-        Backbone.history.navigate @model.url(), trigger: true
+        Backbone.history.navigate "#{Coreon.application.get("session").currentRepository().id}/concepts/#{@model.id}", trigger: true
       error: =>
         @model.once "error", @render, @
 
