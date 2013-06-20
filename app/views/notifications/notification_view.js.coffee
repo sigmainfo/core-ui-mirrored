@@ -14,6 +14,7 @@ class Coreon.Views.Notifications.NotificationView extends Backbone.View
   
   initialize: ->
     @model.on "change:hidden", @onChangeHidden, @
+    @$el.delay(5000).slideUp()
 
   render: ->
     type = @model.get "type"
@@ -28,6 +29,7 @@ class Coreon.Views.Notifications.NotificationView extends Backbone.View
     @model.set "hidden", true 
 
   onChangeHidden: ->
+    @$el.stop()
     [type, duration] =
       if @model.get "hidden"
         ["hide", "fast"]
