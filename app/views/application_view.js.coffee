@@ -41,7 +41,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
       widgets = new Coreon.Views.Widgets.WidgetsView model: @model
       @$("#coreon-modal").after widgets.render().$el
       @subviews.push widgets
-      repoSelect = new Coreon.Views.Repositories.RepositorySelectView model: @model
+      repoSelect = new Coreon.Views.Repositories.RepositorySelectView
+        model: session
+        app: @
       @$("#coreon-filters").append repoSelect.render().$el
       @subviews.push repoSelect
       Backbone.history.start pushState: on unless Backbone.History.started
