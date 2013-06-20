@@ -62,7 +62,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @modal?.remove()
     if @modal = modal
       modal.render()
-      @$("#coreon-modal").append modal.$el
+      @$("#coreon-modal").empty().append modal.$el
 
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification

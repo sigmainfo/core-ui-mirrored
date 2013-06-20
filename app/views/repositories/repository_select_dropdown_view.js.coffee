@@ -14,6 +14,8 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
   template: Coreon.Templates["repositories/repository_select_dropdown"]
 
   events:
+    "click"        : "close"
+    "click li a"   : "select"
     "mouseover li" : "onFocus"
     "mouseout li"  : "onBlur"
 
@@ -26,6 +28,13 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     @$el.html @template repositories: repositories
     @
 
+  close: (event) =>
+    @options.app.prompt null
+
+  select: (event) =>
+    event.preventDefault()
+    Backbone.history.navigate $(event.target).attr("href"), trigger: yes
+
   onFocus: (event) =>
     @$("li.option.focus").removeClass "focus"
     $(event.target).closest("li").addClass "focus"
@@ -34,27 +43,31 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     @$("li.option.focus").removeClass "focus"
 
   onKeydown: (event) =>
+    current = @$("li.option.focus").first()
     switch event.keyCode
       when KEYCODE.esc
         @options.app.prompt null
       when KEYCODE.enter
-        @$("li.option.focus a").click()
+        if current.length > 0
+          Backbone.history.navigate current.find("a").attr("href"), trigger: yes
+        @options.app.prompt null
       when KEYCODE.down
-        current = @$("li.option.focus").first()
-        if current
-          if next = current.next()
+        if current.length > 0
+          next = current.next()
+          if next.length > 0
             current.removeClass "focus"
             next.addClass "focus"
         else
           @$("li.option").first().addClass "focus"
       when KEYCODE.up
-        current = @$("li.option.focus").first()
-        if current
-          if next = current.prev()
+        if current.length > 0
+          prev = current.prev()
+          if prev.length > 0
             current.removeClass "focus"
-            next.addClass "focus"
+            prev.addClass "focus"
         else
           @$("li.option").last().addClass "focus"
 
   remove: ->
     $(document).off "keydown"
+    super
