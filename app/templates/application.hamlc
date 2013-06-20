@@ -1,9 +1,9 @@
 #coreon-top
   #coreon-header
     %ul#coreon-notifications
+  #coreon-filters
   #coreon-modal
 #coreon-main
-  #coreon-filters
 - if @session?
   #coreon-footer
     .toggle
