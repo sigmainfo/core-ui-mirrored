@@ -1,6 +1,9 @@
 #= require environment
 #= require templates/repositories/repository_select
+<<<<<<< HEAD
+=======
 #= require templates/repositories/repository_select_dropdown
+>>>>>>> ec81cf5f7a2780f81f9a52b959ba10a97a5ade37
 
 class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
   
@@ -8,6 +11,15 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
 
   template: Coreon.Templates["repositories/repository_select"]
 
+<<<<<<< HEAD
+  render: ->
+    if session = @model.get("session")
+      repository = session.currentRepository() or new Coreon.Views.Models.Repository
+      single = session.get("repositories")?.length is 1
+      @$el.html @template repository: repository, single: single
+    else
+      @$el.empty()
+=======
   initialize: ->
     @listenTo @model, "change:current_repository_id change:repositories"
 
@@ -17,5 +29,6 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
       @$el.html @template
         repository: repository
         single: @model.get("repositories")?.length is 1
+>>>>>>> ec81cf5f7a2780f81f9a52b959ba10a97a5ade37
     @
 
