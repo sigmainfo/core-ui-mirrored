@@ -4,6 +4,7 @@
 #= require views/notifications/notification_view
 #= require views/widgets/widgets_view
 #= require views/account/password_prompt_view
+#= require views/repositories/repository_select_view
 
 updateSession = (view) ->
   previous = session
@@ -40,6 +41,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
       widgets = new Coreon.Views.Widgets.WidgetsView model: @model
       @$("#coreon-modal").after widgets.render().$el
       @subviews.push widgets
+      repoSelect = new Coreon.Views.Repositories.RepositorySelectView model: @model
+      @$("#coreon-filters").append repoSelect.render().$el
+      @subviews.push repoSelect
       Backbone.history.start pushState: on unless Backbone.History.started
       @$("#coreon-account").delay(2000).slideUp()
     else

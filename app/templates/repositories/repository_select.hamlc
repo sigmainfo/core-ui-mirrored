@@ -1,0 +1,1 @@
+%h4{class: "single" if @single}= @repository.get "name"
