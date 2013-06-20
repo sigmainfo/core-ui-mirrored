@@ -5,6 +5,7 @@
 #= require views/widgets/widgets_view
 #= require views/account/password_prompt_view
 #= require views/repositories/repository_select_view
+#= require views/layout/progress_indicator_view
 
 updateSession = (view) ->
   previous = session
@@ -46,6 +47,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
         app: @
       @$("#coreon-filters").append repoSelect.render().$el
       @subviews.push repoSelect
+      progress = new Coreon.Views.Layout.ProgressIndicatorView
+        el: @$("#coreon-progress-indicator")
+      @subviews.push progress
       Backbone.history.start pushState: on unless Backbone.History.started
       @$("#coreon-account").delay(2000).slideUp()
     else
