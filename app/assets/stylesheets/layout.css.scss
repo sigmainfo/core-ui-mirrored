@@ -11,8 +11,7 @@
 #coreon-filters {
   position: absolute;
   width: 100%;
-/*  height: 32px;*/
-padding: 10px;
+  padding: 10px;
   background-color: $beigecolor;
   @include retina-stripes("blue");
 }
