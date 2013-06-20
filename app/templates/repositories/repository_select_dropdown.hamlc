@@ -1,4 +1,4 @@
-%ul
+%ul.options
   - for repository in @repositories
-    %li.options
-      %a.option{href: "/#{repository.id}", title: repository.id}= repository.name
+    %li.option
+      %a{href: "/#{repository.id}", title: repository.id}= repository.name

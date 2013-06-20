@@ -23,6 +23,10 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     @
 
   select: ->
-    @options.app.prompt new Coreon.Views.Repositories.RepositorySelectDropdownView
+    dropdown = new Coreon.Views.Repositories.RepositorySelectDropdownView
       model: @model
-
+    @options.app.prompt dropdown
+    dropdown.$("ul.options").position
+      my: "left top"
+      at: "left bottom"
+      of: @$ "h4.current"
