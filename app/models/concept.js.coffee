@@ -26,9 +26,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   urlRoot: "/concepts"
 
-  editUrl: ->
-    "#{@url()}/edit"
-
   defaults: ->
     properties: []
     terms: []
