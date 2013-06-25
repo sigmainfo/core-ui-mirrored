@@ -76,6 +76,7 @@ Feature: maintainer edits concept
     And I should see error "can't be blank" for input "Key" of new property
     And I should see error "can't be blank" for input "Value" of new property
 
+  @wip
   Scenario: not a maintainer
     Given I do not have maintainer privileges
     Then I should not see the edit concept button

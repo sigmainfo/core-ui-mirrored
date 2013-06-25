@@ -10,10 +10,6 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     ]
   end
 
-  step 'I am on the show concept page of this concept' do
-    page.execute_script "Backbone.history.navigate('concepts/#{@concept['_id']}', { trigger: true })"
-  end
-
   step 'I click "Add term"' do
     click_link "Add term"
   end
