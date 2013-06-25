@@ -9,7 +9,7 @@ describe "Coreon.Application", ->
     sinon.stub Coreon.Routers, "SessionsRouter"
     sinon.stub Coreon.Routers, "RepositoriesRouter"
     sinon.stub Coreon.Routers, "ConceptsRouter"
-    sinon.stub Coreon.Routers, "SearchRouter"
+    #sinon.stub Coreon.Routers, "SearchRouter"
     sinon.stub Coreon.Models.Session, "load", => @request
     sinon.stub Coreon.Views, "ApplicationView", =>
       @view = new Backbone.View arguments...
@@ -20,7 +20,7 @@ describe "Coreon.Application", ->
     Coreon.Routers.SessionsRouter.restore()
     Coreon.Routers.RepositoriesRouter.restore()
     Coreon.Routers.ConceptsRouter.restore()
-    Coreon.Routers.SearchRouter.restore()
+    #Coreon.Routers.SearchRouter.restore()
     Coreon.Models.Session.load.restore()
     Coreon.Views.ApplicationView.restore()
     Coreon.application = null
@@ -64,10 +64,6 @@ describe "Coreon.Application", ->
       Coreon.Routers.ConceptsRouter.should.have.been.calledWithNew
       Coreon.Routers.ConceptsRouter.should.have.been.calledWith @view
 
-    it "creates concepts router", ->
-      Coreon.Routers.SearchRouter.should.have.been.calledOnce
-      Coreon.Routers.SearchRouter.should.have.been.calledWithNew
-      Coreon.Routers.SearchRouter.should.have.been.calledWith @view
 
   describe "start()", ->
 

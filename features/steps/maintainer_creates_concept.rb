@@ -15,7 +15,11 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the new concept page' do
-    page.current_path.should =~ %r|^/concepts/new|
+    page.current_path.should == "/#{@repository.id}/concepts/new"
+  end
+
+  step 'I should be on the new concept with english term "corpse" page' do
+    page.current_path.should == "/#{@repository.id}/concepts/new/terms/en/corpse"
   end
 
   step 'I should see "<New concept>" within the title' do
@@ -44,7 +48,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I should be on the show concept page' do
     page.should have_no_css(".concept.new")
-    page.current_path.should =~ %r|^/concepts/[0-9a-f]{24}$| 
+    page.current_path.should =~ %r|^/#{@repository.id}/concepts/[0-9a-f]{24}$|
     @id = current_path.split("/").last
   end
 
@@ -145,7 +149,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see a property "source" with value "Wikipedia"' do
-   page.find(:css, ".term").find(:xpath, '//th[text()="source"]/following-sibling::td').text.should == "Wikipedia"
+    page.find(:css, ".term").find(:xpath, '//th[text()="source"]/following-sibling::td').text.should == "Wikipedia"
   end
 
   step 'I fill "Value" with "Wikipedia" within the term property input set' do
@@ -234,11 +238,11 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end 
 
   step 'I should be on the start page again' do
-    page.current_path.should == "/"
+    page.current_path.should == "/#{@repository.id}"
   end
 
   step 'I should not see "<New concept>"' do
-    page.should have_no_content("<New concept>")
+    page.should have_no_css(".concept h2", text: "<New concept>")
   end
 
   step 'I should see link "New concept"' do
@@ -272,10 +276,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".notification", text: 'Successfully created concept "corpse".')
   end
 
-  step 'I do not have maintainer privileges' do
-    page.execute_script 'Coreon.application.session.ability.set("role", "user");'
-  end
-
   step 'I should not see link "New concept"' do
     page.should have_no_link("New concept")
   end
@@ -284,7 +284,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     visit "/concepts/new"
   end
 
-  step 'I should be on the start page' do
-    page.current_path.should == "/"
+  step 'I should be on the repository start page' do
+    page.current_path.should == "/#{@repository.id}"
   end
 end

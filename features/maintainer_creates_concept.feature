@@ -110,12 +110,13 @@ Feature: maintainer creates concept
     Given I have maintainer privileges
     When I do a search for "corpse"
     And I click on "New concept"
-    Then I should be on the new concept page
+    Then I should be on the new concept with english term "corpse" page
     And I should see "<New concept>" within the title
     And I should see a set of term inputs
     And I should see "corpse" for "Value"
     And I should see "en" for "Language"
 
+  @wip
   Scenario: not a maintainer
     Given I do not have maintainer privileges
     When I visit the start page

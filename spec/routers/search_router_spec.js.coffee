@@ -1,9 +1,5 @@
-#= require spec_helper
-#= require routers/search_router
-#= require config/application
+xdescribe "Coreon.Routers.SearchRouter", ->
 
-describe "Coreon.Routers.SearchRouter", ->
-  
   beforeEach ->
     $("#konacha").append('<div id="coreon-main">')
     @router = new Coreon.Routers.SearchRouter

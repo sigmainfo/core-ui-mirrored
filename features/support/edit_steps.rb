@@ -2,11 +2,11 @@ module EditSteps
   include Spinach::DSL
 
   step 'I have maintainer privileges' do
-    page.execute_script 'Coreon.application.session.ability.set("role", "maintainer");'
+    page.execute_script 'Coreon.application.get("session").currentRepository().set("user_roles", ["maintainer"])'
   end
 
   step 'I do not have maintainer privileges' do
-    page.execute_script 'Coreon.application.session.ability.set("role", "user");'
+    page.execute_script 'Coreon.application.get("session").currentRepository().set("user_roles", ["user"])'
   end
 
   step 'client-side validation is turned off' do

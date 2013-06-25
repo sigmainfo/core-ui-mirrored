@@ -11,7 +11,7 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
   end
 
   step 'I visit the page of this concept' do
-    page.execute_script "Backbone.history.navigate('concepts/#{@concept['_id']}', { trigger: true })"
+    page.execute_script "Backbone.history.navigate('/#{@repository.id}/concepts/#{@concept['_id']}', { trigger: true })"
   end
 
   step 'I should see edit buttons' do

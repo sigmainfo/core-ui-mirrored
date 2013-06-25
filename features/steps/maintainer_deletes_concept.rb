@@ -11,7 +11,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I am on the show concept page of this concept' do
-    page.execute_script "Backbone.history.navigate('concepts/#{@concept['_id']}', { trigger: true })"
+    page.execute_script "Backbone.history.navigate('/#{@repository.id}/concepts/#{@concept['_id']}', { trigger: true })"
   end
 
   step 'I click "Delete concept"' do
@@ -24,11 +24,11 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
 
 
   step 'I should still be on the show concept page' do
-    page.current_path.should == "/concepts/#{@concept['_id']}"
+    page.current_path.should == "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 
   step 'I should be on the repository root page' do
-    page.current_path.should == "/"
+    page.current_path.should == "/#{@repository.id}"
   end
 
   step 'I should see a message \'Successfully deleted concept "beaver hat".\'' do
