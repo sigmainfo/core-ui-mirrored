@@ -10,7 +10,7 @@ Feature: maintainer adds term
   
   Scenario: add term
     Given I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept" 
     And I click "Add term"
     Then I should see a set of term inputs with labels "Value", "Language"
@@ -29,7 +29,7 @@ Feature: maintainer adds term
 
   Scenario: validation errors
     Given I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept"
     And I click "Add term"
     And client-side validation is turned off
@@ -51,7 +51,7 @@ Feature: maintainer adds term
 
   Scenario: cancel adding term
     Given I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept" 
     And I click "Add term"
     And I fill in "Value" with "high hat" within term inputs

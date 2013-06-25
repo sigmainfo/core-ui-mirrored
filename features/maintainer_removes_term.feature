@@ -10,7 +10,7 @@ Feature: maintainer removes term
   
   Scenario: remove term
     Given I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept" 
     And I click "Remove term" within term "beaver hat"
     Then I should see a confirmation dialog "This term will be deleted permanently."

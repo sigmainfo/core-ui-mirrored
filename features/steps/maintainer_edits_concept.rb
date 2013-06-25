@@ -10,10 +10,6 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
     @concept = create_concept properties: [{key: 'label', value: 'handgun'}]
   end
 
-  step 'I visit the page of this concept' do
-    page.execute_script "Backbone.history.navigate('/#{@repository.id}/concepts/#{@concept['_id']}', { trigger: true })"
-  end
-
   step 'I should see edit buttons' do
     page.should have_css(".concept .properties .edit-properties")
   end

@@ -10,7 +10,7 @@ Feature: maintainer edits term
 
   Scenario: edit term
     Given I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept" 
     When I click "Edit term" within term "ten-gallon hat"
     Then I should see a set of term inputs with labels "Value", "Language"
@@ -33,7 +33,7 @@ Feature: maintainer edits term
   Scenario: removing existing properties
     Given this term has a property "notice" of "TODO: translate"
     And I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept" 
     When I click "Edit term" within term "ten-gallon hat"
     Then I should see a set of property inputs with labels "Key", "Value", "Language"
@@ -50,7 +50,7 @@ Feature: maintainer edits term
 
   Scenario: validation errors
     Given I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept"
     When I click "Edit term"
     Given client-side validation is turned off
@@ -75,7 +75,7 @@ Feature: maintainer edits term
   Scenario: reset and cancel
     Given this term has a property "notice" of "TODO: translate"
     And I have maintainer privileges
-    And I am on the show concept page of this concept
+    And I visit the page of this concept
     When I click "Edit concept" 
     When I click "Edit term"
     And I fill in "Value" with "high hat" within term inputs

@@ -12,10 +12,6 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     @prop = create_concept_term_property @concept, @term, key: "notice", value: "TODO: translate"
   end
 
-  step 'I am on the show concept page of this concept' do
-    page.execute_script "Backbone.history.navigate('concepts/#{@concept['_id']}', { trigger: true })"
-  end
-
   step 'I click "Edit term" within term "ten-gallon hat"' do
     page.find(".term .value", text: "ten-gallon hat").find(:xpath, './parent::*').find(".edit a", text: "Edit term").click
   end

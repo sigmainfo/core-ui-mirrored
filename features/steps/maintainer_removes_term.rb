@@ -10,10 +10,6 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
     ]
   end
 
-  step 'I am on the show concept page of this concept' do
-    page.execute_script "Backbone.history.navigate('concepts/#{@concept['_id']}', { trigger: true })"
-  end
-
   step 'I click "Remove term" within term "beaver hat"' do
     page.find(".term .value", text: "beaver hat").find(:xpath, './parent::*').find(".edit a", text: "Remove term").click
   end

@@ -183,7 +183,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   saveTerm: (model, data) ->
     model.save data,
       success: =>
-        Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: model.get "label")
+        Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: data.value)
         @toggleEditTerm()
       error: (model) =>
         model.once "error", @render, @
@@ -208,8 +208,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         
     @model.terms().create data,
       wait: true
-      success:
-        Coreon.Models.Notification.info I18n.t("notifications.term.created", label: @model.get "label")
+      success: =>
+        Coreon.Models.Notification.info I18n.t("notifications.term.created", value: data.value)
       error: (model, xhr, options) =>
         model.once "error", =>
           @$("form.term.create").replaceWith @term term: model

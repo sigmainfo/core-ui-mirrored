@@ -33,4 +33,8 @@ module EditSteps
   step 'I click "Edit concept"' do
     click_link "Edit concept"
   end
+
+  step 'I visit the page of this concept' do
+    page.execute_script "Backbone.history.navigate('/#{@repository.id}/concepts/#{@concept['_id']}', { trigger: true })"
+  end
 end
