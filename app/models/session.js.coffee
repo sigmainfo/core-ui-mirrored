@@ -89,6 +89,16 @@ class Coreon.Models.Session extends Backbone.Model
       repository = null
     repository
 
+  highestRole: ->
+    # TODO: more roles may become important
+    roles = @currentRepository().get("user_roles")
+    highest_role = if "maintainer" in roles
+      "maintainer"
+    else if "user" in roles
+      "user"
+    else
+      null
+
   onChangeToken: (model, token) ->
     if token
       localStorage.setItem "coreon-session", token

@@ -6,8 +6,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
 
   step 'I visit the start page' do
-    page.execute_script 'Backbone.history.navigate("/other");'
-    page.execute_script 'Backbone.history.navigate("/", {trigger: true});'
+    visit "/"
   end
 
   step 'I click on "New concept"' do
@@ -16,6 +15,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I should be on the new concept page' do
     page.current_path.should == "/#{@repository.id}/concepts/new"
+  end
+
+  step 'I should be on the start page' do
+    page.current_path.should == "/#{@repository.id}"
   end
 
   step 'I should be on the new concept with english term "corpse" page' do
@@ -280,8 +283,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_no_link("New concept")
   end
 
-  step 'I visit "/concepts/new"' do
-    visit "/concepts/new"
+  step 'I visit "concepts/new"' do
+    visit "/#{@repository.id}/concepts/new"
   end
 
   step 'I should be on the repository start page' do

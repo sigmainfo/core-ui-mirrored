@@ -27,7 +27,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   new: (repository, lang, value) ->
     @view.repository repository
-    if true #Coreon.application?.session.ability.can "create", Coreon.Models.Concept
+    if Coreon.application?.get("session")?.highestRole() is "maintainer"
       attrs = {}
       attrs.terms = [ lang: lang, value: value ] if value?
       concept = new Coreon.Models.Concept attrs

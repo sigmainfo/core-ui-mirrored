@@ -35,6 +35,6 @@ module EditSteps
   end
 
   step 'I visit the page of this concept' do
-    page.execute_script "Backbone.history.navigate('/#{@repository.id}/concepts/#{@concept['_id']}', { trigger: true })"
+    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 end

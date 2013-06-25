@@ -27,10 +27,6 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     end
   end
 
-  step 'I debug' do
-    binding.pry
-  end
-
   step 'I fill in "Language" with "en" within term inputs' do
     within ".term.create" do
       fill_in "Language", with: "en"
