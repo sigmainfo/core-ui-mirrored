@@ -59,7 +59,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
 
   step 'I should be on the search result page for concepts with query "gun"' do
     page.should have_css("#coreon-main .concept-list")
-    current_path.should == "/concepts/search/gun"
+    current_path.should == "/#{@repository.id}/concepts/search/gun"
   end
 
   And 'I should see a concept "handgun"' do
@@ -93,7 +93,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   step 'I should be on the search result page for concepts with target "terms" and query "gun"' do
-    current_path.should == "/concepts/search/terms/gun"
+    current_path.should == "/#{@repository.id}/concepts/search/terms/gun"
   end
 
   When 'I select "Concepts by Definition" as the type of search' do
@@ -103,6 +103,6 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   step 'I should be on the search result page for concepts with target "definition" and query "gun"' do
-    current_path.should == "/concepts/search/definition/gun"
+    current_path.should == "/#{@repository.id}/concepts/search/definition/gun"
   end
 end
