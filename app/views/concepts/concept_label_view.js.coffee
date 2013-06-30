@@ -14,7 +14,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
         options.model
       else #TODO: remove, too much magic
         Coreon.Models.Concept.find options.id
-      
+
     @model.on "change", @render, @
 
   appendTo: (target) ->

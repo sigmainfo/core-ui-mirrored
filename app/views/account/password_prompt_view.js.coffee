@@ -17,6 +17,7 @@ class Coreon.Views.Account.PasswordPromptView extends Coreon.Views.SimpleView
 
   onSubmit: (event) ->
     event.preventDefault()
+    event.stopPropagation()
     @model.reauthenticate @$("#coreon-password-password").val()
 
   onBlur: ->

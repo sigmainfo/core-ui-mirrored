@@ -17,6 +17,12 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     @view.should.be.an.instanceof Coreon.Views.SVGView
 
   describe "render()", ->
+    beforeEach ->
+      Coreon.application = new Backbone.Model
+        session: new Backbone.Model
+          current_repository_id: "coffeebabe23"
+      @view.model.id = "1234"
+
 
     it "is triggered by model changes", ->
       @view.render = sinon.spy()
@@ -35,7 +41,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     it "renders link to concept", ->
       @view.model.id = "nobody"
       @view.render()
-      @el.select("a").attr("xlink:href").should.equal "/concepts/nobody"
+      @el.select("a").attr("xlink:href").should.equal "/coffeebabe23/concepts/nobody"
 
     it "does not render link for new concept", ->
       @view.model.get("concept").isNew = -> true
@@ -185,6 +191,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
       @view.box().should.eql { x: 0, y: 0, height: 0, width: 0 }
     
     it "returns boundaries from background", ->
+      @view.model.id = "1234"
       @view.render()
       @view.bg.node = -> getBBox: -> { x: 5, y: 15, height: 30, width: 120 }
       @view.box().should.eql { x: 5, y: 15, height: 30, width: 120 }
@@ -192,6 +199,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
   describe "toggleChildren()", ->
 
     beforeEach ->
+      @view.model.id = "1234"
       @view.model.set {
         super_concept_ids: ["456"],
         sub_concept_ids: ["333"]
@@ -216,6 +224,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
   describe "toggleParents()", ->
 
     beforeEach ->
+      @view.model.id = "1234"
       @view.model.set {
         super_concept_ids: ["456"],
         sub_concept_ids: ["333"]

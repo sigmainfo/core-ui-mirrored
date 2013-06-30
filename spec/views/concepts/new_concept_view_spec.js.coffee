@@ -373,6 +373,9 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     context "success", ->
 
       beforeEach ->
+        Coreon.application = new Backbone.Model
+          session:
+            currentRepository: -> id: "coffee23"
         collection = new Backbone.Collection
         sinon.stub Coreon.Models.Concept, "collection", -> collection
         @view.model.url = -> ""
@@ -380,16 +383,16 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
 
       afterEach ->
         Coreon.Models.Concept.collection.restore()
-      
+
       it "accumulates newly created model", ->
-        @view.model.id = "1234abcdef"
+        @view.model.id = "babe42"
         @view.create @event
-        Coreon.Models.Concept.collection().get("1234abcdef").should.equal @view.model
-        
+        Coreon.Models.Concept.collection().get("babe42").should.equal @view.model
+
       it "redirects to show concept page", ->
-        @view.model.url = -> "concepts/1234abcdef"
+        @view.model.id = "babe42"
         @view.create @event
-        Backbone.history.navigate.should.have.been.calledWith "concepts/1234abcdef", trigger: true
+        Backbone.history.navigate.should.have.been.calledWith "coffee23/concepts/babe42", trigger: true
 
       it "notifies about success", ->
         I18n.t.withArgs("notifications.concept.created").returns "yay!"

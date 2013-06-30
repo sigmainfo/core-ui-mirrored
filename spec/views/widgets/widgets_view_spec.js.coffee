@@ -4,9 +4,17 @@
 describe "Coreon.Views.Widgets.WidgetsView", ->
 
   beforeEach ->
+    @session =
+      get: ->
+      currentRepository: ->
+    Coreon.application = new Backbone.Model session: @session
+
     @view = new Coreon.Views.Widgets.WidgetsView
-      model:
+      model: new Backbone.Collection
         hits: new Backbone.Collection
+
+  afterEach ->
+    Coreon.application = null
 
   it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView
@@ -16,14 +24,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
   describe "initialize()", ->
 
-    beforeEach ->
-      Coreon.application =
-        session:
-          get: (attr) ->
-
-    afterEach ->
-      Coreon.application = null
-
     it "creates search", ->
       @view.search.should.be.an.instanceOf Coreon.Views.Widgets.SearchView
 
@@ -32,10 +32,10 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.map.model.should.be.an.instanceof Coreon.Collections.ConceptNodes
       @view.map.model.should.have.property "hits", @view.model.hits
 
-    xit "creates resize handle", ->
+    it "creates resize handle", ->
       @view.$el.should.have ".ui-resizable-w"
 
-    xit "restores width from session", ->
+    it "restores width from session", ->
       Coreon.application.session.get = (attr) ->
         width: 347 if attr is "coreon-widgets"
       @view.initialize()
@@ -70,7 +70,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.render()
       @view.$("#coreon-concept-map").size().should.equal 1
 
-  xdescribe "resizing", ->
+  describe "resizing", ->
 
     beforeEach ->
       Coreon.application =

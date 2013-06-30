@@ -62,8 +62,7 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
     beforeEach ->
       @event = new jQuery.Event "submit"
       @view.model = new Backbone.Model
-      @view.model.activate = sinon.spy()
-      @view.model.reactivate = sinon.spy()
+      @view.model.reauthenticate = sinon.spy()
       @view.render().$el.appendTo "#konacha"
 
     it "handles submit events exclusively", ->
@@ -77,4 +76,4 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
       @view.model.set "login", "nobody"
       @view.$("#coreon-password-password").val "se7en"
       @view.$("form").trigger @event
-      @view.model.reactivate.should.have.been.calledWith "se7en"
+      @view.model.reauthenticate.should.have.been.calledWith "se7en"

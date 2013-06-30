@@ -4,16 +4,23 @@
 describe "Coreon.Views.ApplicationView", ->
   
   beforeEach ->
+    Coreon.application = new Backbone.Model
+    Coreon.Views.Layout.ProgressIndicatorView =-> new Backbone.View
+    @session = new Backbone.Model
+      current_repository_id: "coffeebabe23"
+      user: name: "Nobody"
+    @session.currentRepository =->
+
     sinon.stub I18n, "t"
     @view = new Coreon.Views.ApplicationView
-      model: new Backbone.Model
+      model: Coreon.application
 
   afterEach ->
     I18n.t.restore()
 
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
-  
+
   describe "render()", ->
 
     it "is triggered when session changes", ->
@@ -23,12 +30,12 @@ describe "Coreon.Views.ApplicationView", ->
       @view.render.should.have.been.calledOnce
 
     it "is triggered when repository changes", ->
-      session = new Backbone.Model user: name: "Nobody"
+      @session.set "current_repository_id", "myrepositoryzuio"
       @view.render = sinon.spy()
-      @view.model.set "session", session
-      @view.render.reset()
-      session.set "current_repository_id", "myrepositoryzuio"
+      @view.model.set "session", @session
       @view.render.should.have.been.calledOnce
+      @session.set "current_repository_id", "coffeebabe23", trigger:false
+      @view.render.reset()
 
     it "removes subviews", ->
       subview = remove: sinon.spy()
@@ -53,7 +60,7 @@ describe "Coreon.Views.ApplicationView", ->
           @widgets.render = sinon.stub().returns @widgets
           @widgets
         sinon.stub Backbone.history, "start"
-        @view.model.set "session", new Backbone.Model(user: name: "nobody"), silent: on
+        @view.model.set "session", @session, silent: on
 
       afterEach ->
         Coreon.Views.Widgets.WidgetsView.restore()

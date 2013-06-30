@@ -5,11 +5,18 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+
+    @session =
+      get: ->
+      currentRepository: ->
+    Coreon.application = new Backbone.Model session: @session
+
     nodes = new Backbone.Collection
     nodes.tree = ->
       root:
         children: []
       edges: []
+
     @view = new Coreon.Views.Widgets.ConceptMapView
       model: nodes
 
@@ -25,16 +32,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   describe "initialize()", ->
 
-    beforeEach ->
-      Coreon.application =
-        session:
-          get: (attr) ->
-
-    afterEach ->
-      Coreon.application = null
-
     context "rendering markup skeleton", ->
-      
+
       it "renders titlebar", ->
         I18n.t.withArgs("concept-map.title").returns "Concept Map"
         @view.initialize()
@@ -76,9 +75,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.have ".ui-resizable-s"
 
     context "restoring from session", ->
-      
+
       it "restores dimensions", ->
-        Coreon.application.session.get = (attr) ->
+        @session.get = (attr) ->
           if attr is "coreon-concept-map"
             width: 123
             height: 456
@@ -207,18 +206,19 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "resize()", ->
 
     beforeEach ->
-      Coreon.application =
-        session:
-          save: sinon.spy()
+      @_localStorage = localStorage
+      localStorage =
+        getItem: -> {}
+        setItem: sinon.spy()
       @clock = sinon.useFakeTimers()
       @view.$el.width 160
       @view.$el.height 120
       @view.renderStrategy = render: ->
 
     afterEach ->
-      Coreon.application = null
+      localStorage = @_localStorage
       @clock.restore()
-  
+
     it "is triggered when resize handle is dragged", ->
       $("#konacha").append @view.render().$el
       handle = @view.$(".ui-resizable-s")
@@ -253,7 +253,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     it "stores dimensions when finished", ->
       @view.resize 123, 334
       @clock.tick 1000
-      Coreon.application.session.save.should.have.been.calledOnce
-      Coreon.application.session.save.should.have.been.calledWith "coreon-concept-map",
-        width: 123
-        height: 334
+      localStorage.setItem.should.have.been.calledOnce
+      localStorage.setItem.should.have.been.calledWith
+        "coreon-concept-map":
+          width: 123
+          height: 334

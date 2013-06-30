@@ -30,7 +30,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
-    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
+
+    repo = Coreon.application.get("session")?.currentRepository()
+    cache_id = repo?.get "cache_id"
+    @settings = if cache_id then JSON.parse(localStorage.getItem(cache_id)) else {}
     @settings.conceptMap ?= {}
     if @settings.conceptMap.width?
       @resize @settings.conceptMap.width, @settings.conceptMap.height
@@ -67,9 +70,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @saveLayout width: @$el.width(), height: @$el.height()
     
   saveLayout = (layout) ->
-    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
-    @settings.conceptMap = layout
-    localStorage.setItem Coreon.application.get("session").currentRepository().get("cache_id"), JSON.stringify @settings
+    repo = Coreon.application.get("session")?.currentRepository()
+    cache_id = repo?.get "cache_id"
+    if cache_id
+      @settings = JSON.parse(localStorage.getItem(cache_id)) or {}
+      @settings.conceptMap = layout
+      localStorage.setItem cache_id, JSON.stringify @settings
 
   saveLayout: _.debounce saveLayout, 500
 

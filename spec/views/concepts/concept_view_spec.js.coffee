@@ -4,6 +4,7 @@
 describe "Coreon.Views.Concepts.ConceptView", ->
 
   beforeEach ->
+    Coreon.application = new Backbone.Model
     sinon.stub I18n, "t"
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", (options) =>
       @broaderAndNarrower = new Backbone.View options
@@ -23,6 +24,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
+    Coreon.application = null    
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
@@ -38,12 +40,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.broaderAndNarrower.should.have.property "model", @concept
 
   describe "render()", ->
-
-    beforeEach ->
-      Coreon.application = session: ability: can: sinon.stub()
-
-    afterEach ->
-      Coreon.application = null    
 
     it "can be chained", ->
       @view.render().should.equal @view
@@ -94,10 +90,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
 
     context "with edit privileges", ->
-      
+
       beforeEach ->
-        Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns true
-        Coreon.application.session.ability.can.withArgs("edit", Coreon.Models.Concept).returns true
+        @ability = can: sinon.stub()
+        Coreon.application = get:=> get:=> @ability
+        @ability.can.withArgs("edit").returns(true)
+        @ability.can.withArgs("delete").returns(true)
+
 
       it "renders delete concept link", ->
         I18n.t.withArgs("concept.delete").returns "Delete concept"
@@ -112,10 +111,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.$("a.edit-concept").should.have.text "Edit concept"
 
     context "without edit privileges", ->
-      
+
       beforeEach ->
-        Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Concept).returns false
-        Coreon.application.session.ability.can.withArgs("edit", Coreon.Models.Concept).returns false
+        @ability = can: sinon.stub()
+        Coreon.application = get:=> get:=> @ability
+        @ability.can.withArgs("edit").returns(false)
+        @ability.can.withArgs("delete").returns(false)
+
 
       it "does not render delete concept link", ->
         @view.render()
@@ -321,9 +323,12 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       context "with edit privileges", ->
         
         beforeEach ->
-          Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns true
-          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns true
-          Coreon.application.session.ability.can.withArgs("edit", Coreon.Models.Term).returns true
+          @ability = can: sinon.stub()
+          Coreon.application = get:=> get:=> @ability
+          @ability.can.withArgs("create").returns(true)
+          @ability.can.withArgs("edit").returns(true)
+          @ability.can.withArgs("delete").returns(true)
+
 
         it "renders add term link", ->
           I18n.t.withArgs("term.new").returns "Add term"
@@ -351,8 +356,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       context "without edit privileges", ->
         
         beforeEach ->
-          Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Term).returns false
-          Coreon.application.session.ability.can.withArgs("delete", Coreon.Models.Term).returns false
+          @ability = can: sinon.stub()
+          Coreon.application = get:=> get:=> @ability
+          @ability.can.withArgs("create").returns(false)
+          @ability.can.withArgs("delete").returns(false)
+
 
         it "does not render add term link", ->
           @view.render()
@@ -496,7 +504,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   describe "toggleEditMode()", ->
 
     beforeEach ->
-      Coreon.application = session: ability: can: -> true
+      Coreon.application = get:-> get:-> can:-> true
       @view.editMode = no
       @view.render()
 
@@ -533,7 +541,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   describe "editConceptProperties()", ->
 
     beforeEach ->
-      Coreon.application = session: ability: can: -> true
+      Coreon.application = get:-> get:-> can:-> true
       @concept.properties = -> models: []
       @concept.persistedAttributes = -> {}
       @view.editMode = yes
@@ -573,7 +581,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   describe "addTerm()", ->
 
     beforeEach ->
-      Coreon.application = session: ability: can: -> true
+      Coreon.application = get:-> get:-> can:-> true
       @view.render()
 
     afterEach ->
@@ -723,6 +731,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       I18n.t.withArgs("notifications.term.created").returns "Yay!"
       Coreon.Models.Notification.info = sinon.spy()
       @view.createTerm @event
+
+      @view.model.terms().create.firstCall.args[1].success()
       Coreon.Models.Notification.info.should.have.been.calledOnce
       Coreon.Models.Notification.info.should.have.been.calledWith "Yay!"
 
@@ -817,7 +827,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       model =
         save: (data, options)-> options.success()
         get: ->
-      @view.saveTerm(model)
+      @view.saveTerm(model, {})
 
       Coreon.Models.Notification.info.should.have.been.calledOnce
       Coreon.Models.Notification.info.should.have.been.calledWith "wohoow!"
