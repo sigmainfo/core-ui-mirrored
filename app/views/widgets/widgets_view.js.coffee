@@ -18,8 +18,11 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     @map = new Coreon.Views.Widgets.ConceptMapView
       model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Models.Hit.collection() )
     repo = Coreon.application.get("session")?.currentRepository()
-    cache_id = repo?.get "cache_id"
-    @settings = if cache_id then JSON.parse(localStorage.getItem(cache_id)) else {}
+    if cache_id = repo?.get "cache_id"
+      try
+        @settings = JSON.parse localStorage.getItem cache_id
+      finally
+        @settings ?= {}
     @settings.widgets ?= {}
     @$el.width @settings.widgets.width if @settings.widgets.width
 

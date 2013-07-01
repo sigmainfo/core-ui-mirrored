@@ -32,8 +32,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_renderMarkupSkeleton()
 
     repo = Coreon.application.get("session")?.currentRepository()
-    cache_id = repo?.get "cache_id"
-    @settings = if cache_id then JSON.parse(localStorage.getItem(cache_id)) else {}
+    if cache_id = repo?.get "cache_id"
+      try
+        @settings = JSON.parse localStorage.getItem cache_id
+      finally
+        @settings ?= {}
     @settings.conceptMap ?= {}
     if @settings.conceptMap.width?
       @resize @settings.conceptMap.width, @settings.conceptMap.height
