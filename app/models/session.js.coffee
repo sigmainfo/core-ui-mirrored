@@ -26,8 +26,6 @@ class Coreon.Models.Session extends Backbone.Model
       .fail( -> request.resolve null )
     request.promise()
 
-
-
   defaults: ->
     repositories: []
     current_repository_id: null
@@ -89,17 +87,11 @@ class Coreon.Models.Session extends Backbone.Model
       repository = null
     repository
 
-  highestRole: ->
-    # TODO: more roles may become important
-    roles = @currentRepository().get("user_roles")
-    highest_role = if "maintainer" in roles
-      "maintainer"
-    else if "user" in roles
-      "user"
-    else
-      null
+  ability: ->
+    @_ability ?= new Coreon.Models.Ability @
 
   onChangeToken: (model, token) ->
+    @_ability = null
     if token
       localStorage.setItem "coreon-session", token
     else
