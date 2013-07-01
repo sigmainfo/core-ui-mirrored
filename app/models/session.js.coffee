@@ -1,5 +1,6 @@
 #= require environment
 #= require models/repository
+#= require models/ability
 
 repository = null
 

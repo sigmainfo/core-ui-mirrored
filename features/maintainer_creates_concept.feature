@@ -7,7 +7,7 @@ Feature: maintainer creates concept
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     Given I am a maintainer of the repository
     And I am logged in
-  
+
   Scenario: create empty concept
     When I visit the start page
     And I click on "New concept"
