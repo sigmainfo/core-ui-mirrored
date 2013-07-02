@@ -2,7 +2,7 @@
 #= require views/widgets/search_view
 
 describe "Coreon.Views.SearchView", ->
-  
+
   beforeEach ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Widgets.SearchView
@@ -12,13 +12,13 @@ describe "Coreon.Views.SearchView", ->
 
   it "is a composite view", ->
     @view.should.be.an.instanceOf Coreon.Views.CompositeView
-    
+
   it "creates container", ->
     @view.$el.should.have.id "coreon-search"
 
 
   describe "#initialize", ->
-    
+
     it "creates selector", ->
       @view.selector.should.be.an.instanceof Coreon.Views.Widgets.SearchTargetSelectView
 
@@ -26,7 +26,7 @@ describe "Coreon.Views.SearchView", ->
 
     it "can be chained", ->
       @view.render().should.equal @view
-      
+
     it "renders form", ->
       @view.render()
       @view.$el.should.have "form.search"
@@ -38,7 +38,7 @@ describe "Coreon.Views.SearchView", ->
       @view.$("#coreon-search-query").should.have.attr "name", "q"
 
     it "renders submit button", ->
-      I18n.t.withArgs("search.submit").returns "Search"  
+      I18n.t.withArgs("search.submit").returns "Search"
       @view.render()
       @view.$("form").should.have 'input[type="submit"]'
       @view.$('input[type="submit"]').val().should.equal "Search"
@@ -47,14 +47,15 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$el.should.have "#coreon-search-target-select"
       @view.$("#coreon-search-target-select").should.have ".hint"
-      
+
 
   describe "#submitHandler", ->
 
     beforeEach ->
+      Coreon.Helpers.repositoryPath = (s)-> "/coffee23/#{s}"
       sinon.stub Backbone.history, "navigate"
       sinon.stub Backbone.history, "loadUrl"
-      Backbone.history.fragment = "myrepo4567fghj"
+      Backbone.history.fragment = "coffee23"
       @event = $.Event "submit"
 
     afterEach ->
@@ -76,18 +77,18 @@ describe "Coreon.Views.SearchView", ->
     it "navigates to search result", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
-      Backbone.history.fragment = "myrepo4567fghj/concepts/myconcept567hjkg"
+      Backbone.history.fragment = "coffee23/concepts/myconcept567hjkg"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "myrepo4567fghj/search/foo"
+      Backbone.history.navigate.should.have.been.calledWith "/coffee23/search/foo"
       Backbone.history.loadUrl.should.have.been.calledOnce
 
     it "navigates to concept search with type", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       @view.searchType.getSelectedType = -> "terms"
-      Backbone.history.fragment = "myrepo4567fghj/concepts/myconcept567hjkg"
+      Backbone.history.fragment = "coffee23/concepts/myconcept567hjkg"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "myrepo4567fghj/concepts/terms/search/foo"
+      Backbone.history.navigate.should.have.been.calledWith "/coffee23/concepts/search/terms/foo"
       Backbone.history.loadUrl.should.have.been.calledOnce
 
   describe "#onClickedToFocus", ->
@@ -122,7 +123,7 @@ describe "Coreon.Views.SearchView", ->
       @view.selector.$(".hint").should.not.be.visible
 
   describe "#onBlur", ->
-    
+
     beforeEach ->
       @event = jQuery.Event "blur"
       @view.render().$el.appendTo $("#konacha")
@@ -154,5 +155,5 @@ describe "Coreon.Views.SearchView", ->
       @view.searchType.set "selectedTypeIndex", 2
       @view.onChangeSelectedType.should.have.been.calledOnce
 
-    it "empties select", -> 
+    it "empties select", ->
       @view.$("input#coreon-search-query").val().should.equal ""

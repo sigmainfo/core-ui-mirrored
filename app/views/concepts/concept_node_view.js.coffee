@@ -38,8 +38,7 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
         if @model.get("concept").isNew()
           "javascript:void(0)"
         else
-          Coreon.Helpers.repositoryPath("concepts", @model.id)
-          #"/#{Backbone.history.fragment.split("/")[0]}/concepts/#{@model.id}"
+          Coreon.Helpers.repositoryPath("concepts/" + @model.id)
       )
 
     @bg = a.append("svg:rect")

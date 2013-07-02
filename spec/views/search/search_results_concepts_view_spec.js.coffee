@@ -2,18 +2,16 @@
 #= require views/search/search_results_concepts_view
 #= require config/application
 
-xdescribe "Coreon.Views.Search.SearchResultsConceptsView", ->
-  
+describe "Coreon.Views.Search.SearchResultsConceptsView", ->
+
   beforeEach ->
-    Coreon.application = new Coreon.Application
-    Coreon.application.sync = sinon.stub().returns done: ->
-    Coreon.application.session.ability.can = sinon.stub()
+    Coreon.Modules.CoreAPI.sync = ->
+    Coreon.Helpers.repositoryPath = (s)-> "/coffee23/"+s
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Search.SearchResultsConceptsView model: new Backbone.Model(hits: [])
     @view.model.query = -> "foo"
 
   afterEach ->
-    Coreon.application.destroy()
     I18n.t.restore()
 
   it "is a composite view", ->
@@ -23,6 +21,8 @@ xdescribe "Coreon.Views.Search.SearchResultsConceptsView", ->
     @view.$el.should.have.class "search-results-concepts"
 
   describe "render()", ->
+    beforeEach ->
+      Coreon.Helpers.can = -> true
 
     it "is chainable", ->
       @view.render().should.equal @view
@@ -55,11 +55,12 @@ xdescribe "Coreon.Views.Search.SearchResultsConceptsView", ->
           ]
       ]
       @view.render()
-      @view.$(".concepts tbody tr:first td.label").should.have "a[href='/concepts/503e248cd198795712000005']"
-      @view.$("a[href='/concepts/503e248cd198795712000005']").should.have.text "503e248cd198795712000005"
+      console.log @view.$(".concepts tbody tr:first td.label a")
+      @view.$(".concepts tbody tr:first td.label").should.have "a[href='/coffee23/concepts/503e248cd198795712000005']"
+      @view.$("a[href='/coffee23/concepts/503e248cd198795712000005']").should.have.text "503e248cd198795712000005"
 
-      @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/concepts/503e248cd198795712000002']"
-      @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/concepts/504e248cd198795712000042']"
+      @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/coffee23/concepts/503e248cd198795712000002']"
+      @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/coffee23/concepts/504e248cd198795712000042']"
 
     it "renders top 10 concepts only", ->
       @view.model.set "hits",
@@ -86,27 +87,27 @@ xdescribe "Coreon.Views.Search.SearchResultsConceptsView", ->
       @view.render()
       @view.$el.should.have "a.show-all"
       @view.$("a.show-all").should.have.text "Show all"
-      @view.$("a.show-all").should.have.attr "href", "/concepts/search/gun"
+      @view.$("a.show-all").should.have.attr "href", "/coffee23/concepts/search/gun"
 
     context "with maintainer privileges", ->
-    
+
       beforeEach ->
-        Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Concept).returns true
-  
+        Coreon.Helpers.can = -> true
+
       it "renders link to new concept form", ->
         I18n.t.withArgs("concept.new").returns "New concept"
         @view.model.query = -> "poet"
         @view.render()
-        @view.$el.should.have 'a[href="/concepts/new/terms/en/poet"]'
-        @view.$('a[href="/concepts/new/terms/en/poet"]').should.have.text "New concept"
+        @view.$el.should.have 'a[href="/coffee23/concepts/new/terms/en/poet"]'
+        @view.$('a[href="/coffee23/concepts/new/terms/en/poet"]').should.have.text "New concept"
 
 
     context "without maintainer privileges", ->
     
       beforeEach ->
-        Coreon.application.session.ability.can.withArgs("create", Coreon.Models.Concept).returns false
+        Coreon.Helpers.can = -> false
   
       it "renders link to new concept form", ->
         @view.render()
-        @view.$el.should.not.have 'a[href="/concepts/new"]'
+        @view.$el.should.not.have 'a[href="/coffee23/concepts/new"]'
 

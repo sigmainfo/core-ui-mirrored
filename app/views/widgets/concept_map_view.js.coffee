@@ -31,6 +31,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
 
+    @settings = {}
     repo = Coreon.application.get("session")?.currentRepository()
     if cache_id = repo?.get "cache_id"
       try

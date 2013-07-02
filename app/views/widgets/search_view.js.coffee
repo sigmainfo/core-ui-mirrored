@@ -35,11 +35,11 @@ class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
     event.preventDefault()
     type = @searchType.getSelectedType()
     query = @$('input#coreon-search-query').val()
-    if type is "all"
-      fragments = ["search", query]
+    path = if type is "all"
+      Coreon.Helpers.repositoryPath("search/#{query}")
     else
-      fragments = ["concepts", "search", type, query]
-    path = Coreon.Helpers.repositoryPath(fragments)
+      Coreon.Helpers.repositoryPath("concepts/search/#{type}/#{query}")
+
     Backbone.history.navigate path
     Backbone.history.loadUrl()
 
