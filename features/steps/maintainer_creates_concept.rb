@@ -149,10 +149,12 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I click "PROPERTIES" within term' do
     page.find(".language .term h3", text:"PROPERTIES").click
+    page.should have_css(".term .properties")
   end
 
   step 'I should see a property "source" with value "Wikipedia"' do
-    page.find(:css, ".term").find(:xpath, '//th[text()="source"]/following-sibling::td').text.should == "Wikipedia"
+    page.should have_text("Wikipedia")
+    page.find(:css, ".term .properties").find(:xpath, '//th[text()="source"]/following-sibling::td').text.should == "Wikipedia"
   end
 
   step 'I fill "Value" with "Wikipedia" within the term property input set' do
