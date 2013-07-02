@@ -17,14 +17,16 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     @search = new Coreon.Views.Widgets.SearchView
     @map = new Coreon.Views.Widgets.ConceptMapView
       model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Models.Hit.collection() )
-    repo = Coreon.application.get("session")?.currentRepository()
-    if cache_id = repo?.get "cache_id"
-      try
-        @settings = JSON.parse localStorage.getItem cache_id
-      finally
-        @settings ?= {}
-    @settings.widgets ?= {}
-    @$el.width @settings.widgets.width if @settings.widgets.width
+    settings = @localSettings()
+    settings.widgets ?= {}
+    @$el.width settings.widgets.width if settings.widgets.width
+
+
+  localSettings: ->
+    cache_id = Coreon.application.cacheId()
+    try settings = JSON.parse localStorage.getItem cache_id
+    finally settings ?= {}
+    settings
 
   setElement: (element, delegate) ->
     super
@@ -46,8 +48,9 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     super
 
   saveLayout = (layout) ->
-    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
-    @settings.widgets = layout
-    localStorage.setItem Coreon.application.get("session").currentRepository().get("cache_id"), JSON.stringify @settings
+    settings = @localSettings()
+    settings.widgets = layout
+    cache_id = Coreon.application.cacheId()
+    localStorage.setItem cache_id, JSON.stringify settings
 
   saveLayout: _.debounce saveLayout, 500

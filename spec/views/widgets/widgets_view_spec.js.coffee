@@ -4,10 +4,8 @@
 describe "Coreon.Views.Widgets.WidgetsView", ->
 
   beforeEach ->
-    @session =
-      get: ->
-      currentRepository: ->
-    Coreon.application = new Backbone.Model session: @session
+    Coreon.application = new Backbone.Model
+    Coreon.application.cacheId =-> "face42"
 
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
@@ -24,6 +22,14 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
   describe "initialize()", ->
 
+    beforeEach ->
+      sinon.stub localStorage, "getItem"
+      localStorage.getItem.returns JSON.stringify(widgets: width: 347)
+
+    afterEach ->
+      localStorage.getItem.restore()
+
+
     it "creates search", ->
       @view.search.should.be.an.instanceOf Coreon.Views.Widgets.SearchView
 
@@ -36,8 +42,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.$el.should.have ".ui-resizable-w"
 
     it "restores width from session", ->
-      Coreon.application.session.get = (attr) ->
-        width: 347 if attr is "coreon-widgets"
       @view.initialize()
       @view.$el.width().should.equal 347
 
@@ -49,7 +53,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     it "is chainable", ->
       @view.render().should.equal @view
-    
+
     it "renders search", ->
       @view.render()
       @view.$el.should.have "#coreon-search"
@@ -73,9 +77,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   describe "resizing", ->
 
     beforeEach ->
-      Coreon.application =
-        session:
-          save: sinon.spy()
+      sinon.stub localStorage, "setItem"
       @clock = sinon.useFakeTimers()
       $("#konacha").append @view.render().$el
       @handle = @view.$(".ui-resizable-w")
@@ -84,7 +86,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
         @handle.simulate "drag", dx: deltaX, moves: 1
 
     afterEach ->
-      Coreon.application = null
+      localStorage.setItem.restore()
       @clock.restore()
 
     it "adjusts width when dragging resize handler", ->
@@ -112,4 +114,4 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.$el.width 300
       @handle.drag -20
       @clock.tick 1000
-      Coreon.application.session.save.should.have.been.calledWith "coreon-widgets", width: 320
+      localStorage.setItem.should.have.been.calledWith "face42", JSON.stringify(widgets: width: 320)

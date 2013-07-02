@@ -1,15 +1,13 @@
 #= require spec_helper
 #= require views/widgets/concept_map_view
 
+
 describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
-
-    @session =
-      get: ->
-      currentRepository: ->
-    Coreon.application = new Backbone.Model session: @session
+    Coreon.application =
+      cacheId: -> "face42"
 
     nodes = new Backbone.Collection
     nodes.tree = ->
@@ -33,6 +31,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "initialize()", ->
 
     context "rendering markup skeleton", ->
+      beforeEach ->
+        sinon.stub(localStorage, "getItem").returns null
+
+      afterEach ->
+        localStorage.getItem.restore()
 
       it "renders titlebar", ->
         I18n.t.withArgs("concept-map.title").returns "Concept Map"
@@ -75,16 +78,21 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.have ".ui-resizable-s"
 
     context "restoring from session", ->
+      beforeEach ->
+        sinon.stub(localStorage, "getItem").returns JSON.stringify
+          conceptMap:
+            width: 347
+            height: 456
+
+      afterEach ->
+        localStorage.getItem.restore()
+
 
       it "restores dimensions", ->
-        @session.get = (attr) ->
-          if attr is "coreon-concept-map"
-            width: 123
-            height: 456
         @view.resize = sinon.spy()
         @view.initialize()
         @view.resize.should.have.been.calledOnce
-        @view.resize.should.have.been.calledWith 123, 456
+        @view.resize.should.have.been.calledWith 347, 456
 
   describe "render()", ->
 
@@ -206,17 +214,16 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "resize()", ->
 
     beforeEach ->
-      @_localStorage = localStorage
-      localStorage =
-        getItem: -> {}
-        setItem: sinon.spy()
+      sinon.stub(localStorage, "getItem").returns null
+      sinon.stub localStorage, "setItem"
       @clock = sinon.useFakeTimers()
       @view.$el.width 160
       @view.$el.height 120
       @view.renderStrategy = render: ->
 
     afterEach ->
-      localStorage = @_localStorage
+      localStorage.getItem.restore()
+      localStorage.setItem.restore()
       @clock.restore()
 
     it "is triggered when resize handle is dragged", ->
@@ -254,7 +261,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.resize 123, 334
       @clock.tick 1000
       localStorage.setItem.should.have.been.calledOnce
-      localStorage.setItem.should.have.been.calledWith
-        "coreon-concept-map":
+      localStorage.setItem.should.have.been.calledWith "face42", JSON.stringify
+        "conceptMap":
           width: 123
           height: 334

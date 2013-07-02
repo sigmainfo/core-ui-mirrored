@@ -31,16 +31,15 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
 
-    @settings = {}
-    repo = Coreon.application.get("session")?.currentRepository()
-    if cache_id = repo?.get "cache_id"
+    settings = {}
+    if cache_id = Coreon.application.cacheId()
       try
-        @settings = JSON.parse localStorage.getItem cache_id
+        settings = JSON.parse localStorage.getItem cache_id
       finally
-        @settings ?= {}
-    @settings.conceptMap ?= {}
-    if @settings.conceptMap.width?
-      @resize @settings.conceptMap.width, @settings.conceptMap.height
+        settings ?= {}
+    settings.conceptMap ?= {}
+    if settings.conceptMap.width?
+      @resize settings.conceptMap.width, settings.conceptMap.height
     else
       @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
@@ -74,12 +73,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @saveLayout width: @$el.width(), height: @$el.height()
     
   saveLayout = (layout) ->
-    repo = Coreon.application.get("session")?.currentRepository()
-    cache_id = repo?.get "cache_id"
-    if cache_id
-      @settings = JSON.parse(localStorage.getItem(cache_id)) or {}
-      @settings.conceptMap = layout
-      localStorage.setItem cache_id, JSON.stringify @settings
+    settings = {}
+    if cache_id = Coreon.application.cacheId()
+      settings = JSON.parse(localStorage.getItem(cache_id)) or {}
+      settings.conceptMap = layout
+      localStorage.setItem cache_id, JSON.stringify settings
 
   saveLayout: _.debounce saveLayout, 500
 
