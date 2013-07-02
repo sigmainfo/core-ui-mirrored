@@ -24,7 +24,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
-    Coreon.application = null    
+    Coreon.application = null
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
@@ -92,10 +92,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     context "with edit privileges", ->
 
       beforeEach ->
-        @ability = can: sinon.stub()
-        Coreon.application = get:=> get:=> @ability
-        @ability.can.withArgs("edit").returns(true)
-        @ability.can.withArgs("delete").returns(true)
+        Coreon.Helpers.can = -> true
 
 
       it "renders delete concept link", ->
@@ -113,10 +110,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     context "without edit privileges", ->
 
       beforeEach ->
-        @ability = can: sinon.stub()
-        Coreon.application = get:=> get:=> @ability
-        @ability.can.withArgs("edit").returns(false)
-        @ability.can.withArgs("delete").returns(false)
+        Coreon.Helpers.can = -> false
 
 
       it "does not render delete concept link", ->
@@ -134,7 +128,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       afterEach ->
         Coreon.Templates["concepts/info"].restore()
-      
+
       it "renders section", ->
         I18n.t.withArgs("properties.title").returns "Properties"
         @view.render()
@@ -319,15 +313,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @view.render()
         @view.$(".term .properties").should.have.class "collapsed"
         @view.$(".term .properties > *:nth-child(2)").should.have.css "display", "none"
-      
+
       context "with edit privileges", ->
-        
+
         beforeEach ->
-          @ability = can: sinon.stub()
-          Coreon.application = get:=> get:=> @ability
-          @ability.can.withArgs("create").returns(true)
-          @ability.can.withArgs("edit").returns(true)
-          @ability.can.withArgs("delete").returns(true)
+          Coreon.Helpers.can = -> true
 
 
         it "renders add term link", ->
@@ -354,12 +344,9 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
 
       context "without edit privileges", ->
-        
+
         beforeEach ->
-          @ability = can: sinon.stub()
-          Coreon.application = get:=> get:=> @ability
-          @ability.can.withArgs("create").returns(false)
-          @ability.can.withArgs("delete").returns(false)
+          Coreon.Helpers.can = -> false
 
 
         it "does not render add term link", ->
@@ -504,7 +491,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   describe "toggleEditMode()", ->
 
     beforeEach ->
-      Coreon.application = get:-> get:-> can:-> true
+      Coreon.Helpers.can = -> true
       @view.editMode = no
       @view.render()
 
