@@ -13,9 +13,12 @@ describe "Coreon.Models.ConceptSearch", ->
 
     beforeEach ->
       Coreon.application =
+        get: ->
+          get: -> "coffee"
         sync: ->
           done: ->
         hits: new Backbone.Collection
+        graphUri: -> "coffeebabe23"
       Coreon.application.hits.findByResult = -> null
       sinon.stub Coreon.Models.Search::, "fetch"
 
@@ -34,7 +37,7 @@ describe "Coreon.Models.ConceptSearch", ->
         spy = sinon.spy()
         @search.fetch success: spy
         spy.should.have.been.calledOnce
-        
+
       it "updates concepts", ->
         Coreon.Models.Search::fetch.yieldsTo "success", @search,
           hits: [

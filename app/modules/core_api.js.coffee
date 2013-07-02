@@ -39,7 +39,7 @@ Coreon.Modules.CoreAPI =
 
   sync: (method, model, options = {}) ->
     deferred = $.Deferred()
-    
+
     root = Coreon.application.graphUri() or throw new Error "No graph URI specified"
     root = root[..-2] if root.charAt(root.length - 1) is "/"
     path = model.url()
