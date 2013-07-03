@@ -34,9 +34,12 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         d3.svg.diagonal.restore()
 
   describe "render()", ->
+    before ->
+      Coreon.Helpers.repositoryPath = (s)-> "/coffee23/"+s
+
 
     context "nodes", ->
-      
+
       it "does not render root node", ->
         @strategy.render
           root:
@@ -45,7 +48,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         @svg.should.not.have ".concept-node"
 
       context "updating node instances", ->
-          
+
         it "renders additional nodes", ->
           @strategy.render
             root:
@@ -91,7 +94,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           @strategy.render @data
           @strategy.layout.nodes.should.have.been.calledOnce
           @strategy.layout.nodes.should.have.been.calledWith @data.root
-        
+
         it "updates node coordinates", ->
           @strategy.options.padding = 25
           @strategy.options.offsetX = 100
@@ -101,14 +104,14 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
               {
                 id: "node_1"
                 model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1"))
-                depth: 3 
+                depth: 3
                 x: 27
                 y: 380
               }
               {
                 id: "node_2"
                 model: new Backbone.Model(id: "node_2", label: "Node 2", concept: new Backbone.Model(_id: "node_2"))
-                depth: 5 
+                depth: 5
                 x: 154
                 y: 560
               }
@@ -126,13 +129,13 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           node_1 =
             id: "node_1"
             model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1"))
-            depth: 3 
+            depth: 3
             x: 0
             y: 0
           node_2 =
             id: "node_2"
             model: new Backbone.Model(id: "node_2", label: "Node 2", concept: new Backbone.Model(_id: "node_2"))
-            depth: 3 
+            depth: 3
             x: 15
             y: 0
           root =
@@ -147,7 +150,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
 
           datum2 = d3.select( @svg.find(".concept-node").get(1) ).data()[0]
           datum2.should.have.property "y", 35
-          
+
         it "moves views to new position", ->
           @strategy.options.padding = 25
           @strategy.options.offsetX = 100
@@ -157,7 +160,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
               {
                 id: "node_1"
                 model: new Backbone.Model(id: "node_1", label: "Node 1", concept: new Backbone.Model(_id: "node_1"))
-                depth: 3 
+                depth: 3
                 x: 27
               }
             ]
@@ -198,7 +201,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
             edges: []
           spy.should.have.been.calledOnce
           should.not.exist @strategy.views["c123"]
-  
+
     context "edges", ->
 
       beforeEach ->
@@ -249,6 +252,3 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           ]
         @svg.find(".concept-edge").should.have.attr("d").with.match /M140,40.*40,70/
 
-    
-
-  

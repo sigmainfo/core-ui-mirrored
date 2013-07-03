@@ -77,6 +77,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   describe "resizing", ->
 
     beforeEach ->
+      sinon.stub localStorage, "getItem", -> JSON.stringify(widgets: {})
       sinon.stub localStorage, "setItem"
       @clock = sinon.useFakeTimers()
       $("#konacha").append @view.render().$el
@@ -86,6 +87,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
         @handle.simulate "drag", dx: deltaX, moves: 1
 
     afterEach ->
+      localStorage.getItem.restore()
       localStorage.setItem.restore()
       @clock.restore()
 
