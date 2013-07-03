@@ -38,7 +38,6 @@ describe "Coreon.Routers.SessionsRouter", ->
       @application.set "session", session, silent: on
       @router.destroy()
       session.destroy.should.have.been.calledOnce
-      session.destroy.should.have.been.calledWith abort: yes
       should.equal @application.has("session"), no
 
     it "navigates to root", ->
