@@ -132,13 +132,12 @@ describe "Coreon.Models.Concept", ->
     describe "hit", ->
        
       beforeEach ->
-        @hits = new Backbone.Collection [ _id: "hit", result: @model ]
+        @hits.add _id: "hit", result: @model
         @hit = @hits.at 0
         @hits.findByResult = (result) =>
           for hit in @hits.models
             return hit if hit.get("result") is result
           null
-        Coreon.Collections.Hits.collection.returns @hits
         @model.initialize()
       
       it "gets hit from id", ->
