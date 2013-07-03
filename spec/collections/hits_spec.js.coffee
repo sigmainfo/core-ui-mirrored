@@ -22,7 +22,6 @@ describe "Coreon.Collections.Hits", ->
       @hits.should.be.an.instanceof Backbone.Collection
 
     it "uses Hit model", ->
-      console.log @hits
       @hits.model.should.equal Coreon.Models.Hit
 
     describe "findByResult", ->

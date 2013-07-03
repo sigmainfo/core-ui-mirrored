@@ -55,7 +55,6 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
           ]
       ]
       @view.render()
-      console.log @view.$(".concepts tbody tr:first td.label a")
       @view.$(".concepts tbody tr:first td.label").should.have "a[href='/coffee23/concepts/503e248cd198795712000005']"
       @view.$("a[href='/coffee23/concepts/503e248cd198795712000005']").should.have.text "503e248cd198795712000005"
 

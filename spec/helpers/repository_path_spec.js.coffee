@@ -2,6 +2,7 @@
 #= require helpers/repository_path
 
 describe "Coreon.Helpers.repository_path()", ->
+
   beforeEach ->
     @helper = Coreon.Helpers.repositoryPath
     Coreon.application = new Backbone.Model

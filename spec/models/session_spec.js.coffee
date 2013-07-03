@@ -25,7 +25,6 @@ describe "Coreon.Models.Session", ->
       context "without local session", ->
 
         beforeEach ->
-          console.log localStorage.getItem.withArgs
           localStorage.getItem.withArgs("coreon-session").returns null
 
         it "passes null to callbacks", ->

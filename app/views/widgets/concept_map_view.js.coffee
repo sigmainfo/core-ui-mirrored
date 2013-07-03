@@ -32,7 +32,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_renderMarkupSkeleton()
 
     settings = {}
-    if cache_id = Coreon.application.cacheId()
+    if cache_id = Coreon.application?.cacheId()
       try
         settings = JSON.parse localStorage.getItem cache_id
       finally
@@ -74,7 +74,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     
   saveLayout = (layout) ->
     settings = {}
-    if cache_id = Coreon.application.cacheId()
+    if cache_id = Coreon.application?.cacheId?()
       settings = JSON.parse(localStorage.getItem(cache_id)) or {}
       settings.conceptMap = layout
       localStorage.setItem cache_id, JSON.stringify settings

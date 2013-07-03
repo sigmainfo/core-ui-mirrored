@@ -19,6 +19,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       model: nodes
 
   afterEach ->
+    Coreon.application = null
     I18n.t.restore()
 
   it "is a simple view", ->
@@ -78,6 +79,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$el.should.have ".ui-resizable-s"
 
     context "restoring from session", ->
+
       beforeEach ->
         sinon.stub(localStorage, "getItem").returns JSON.stringify
           conceptMap:
@@ -86,7 +88,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       afterEach ->
         localStorage.getItem.restore()
-
 
       it "restores dimensions", ->
         @view.resize = sinon.spy()
