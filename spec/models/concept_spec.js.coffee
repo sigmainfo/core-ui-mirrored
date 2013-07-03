@@ -13,7 +13,7 @@ describe "Coreon.Models.Concept", ->
   afterEach ->
     I18n.t.restore()
     Coreon.Collections.Hits.collection.restore()
-  
+
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
 
@@ -113,24 +113,24 @@ describe "Coreon.Models.Concept", ->
         it "updates label on id attribute changes", ->
           @model.set "_id", "abc123"
           @model.get("label").should.equal "abc123"
-            
+
         it "updates label on property changes", ->
           @model.set "properties", [
             key: "label"
             value: "My Label"
           ]
           @model.get("label").should.equal "My Label"
-     
+
         it "updates label on term changes", ->
           @model.set "terms", [
             lang: "en"
             value: "poetry"
           ]
           @model.get("label").should.equal "poetry"
-          
+
 
     describe "hit", ->
-       
+
       beforeEach ->
         @hits.add _id: "hit", result: @model
         @hit = @hits.at 0
@@ -139,7 +139,7 @@ describe "Coreon.Models.Concept", ->
             return hit if hit.get("result") is result
           null
         @model.initialize()
-      
+
       it "gets hit from id", ->
         @model.get("hit").should.equal @hit
 
@@ -158,14 +158,14 @@ describe "Coreon.Models.Concept", ->
         @model.get("hit").should.equal added
 
   describe "properties()", ->
-    
+
     it "syncs with attr", ->
       @model.set "properties", [key: "label"]
       @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
       @model.properties().at(0).get("key").should.equal "label"
-      
+
   describe "terms()", ->
-  
+
     it "creates terms from attr", ->
       @model.set "terms", [value: "dead", lang: "en"]
       @model.terms().at(0).should.be.an.instanceof Coreon.Models.Term
@@ -243,27 +243,27 @@ describe "Coreon.Models.Concept", ->
     context "application sync", ->
 
       beforeEach ->
-        Coreon.application = sync: sinon.spy()
+        Coreon.Modules.CoreAPI = sync: sinon.spy()
 
       afterEach ->
-        Coreon.application = null
+        Coreon.Modules.CoreAPI = null
 
       it "delegates to application sync", ->
         @model.save {}, wait: true
-        Coreon.application.sync.should.have.been.calledOnce
-        Coreon.application.sync.should.have.been.calledWith "update", @model
-        Coreon.application.sync.firstCall.args[2].should.have.property "wait", true
-      
+        Coreon.Modules.CoreAPI.sync.should.have.been.calledOnce
+        Coreon.Modules.CoreAPI.sync.should.have.been.calledWith "update", @model
+        Coreon.Modules.CoreAPI.sync.firstCall.args[2].should.have.property "wait", true
+
     context "create", ->
-      
+
       beforeEach ->
         @model.id = null
-        Coreon.application = sync: (method, model, options = {}) -> 
+        Coreon.Modules.CoreAPI = sync: (method, model, options = {}) ->
           model.id = "1234"
           options.success?()
 
       afterEach ->
-        Coreon.application = null
+        Coreon.Modules.CoreAPI = null
 
       it "triggers custom event", ->
         spy = sinon.spy()

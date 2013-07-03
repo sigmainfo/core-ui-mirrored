@@ -22,6 +22,11 @@ describe "Coreon.Views.ApplicationView", ->
     @view.should.be.an.instanceof Backbone.View
 
   describe "render()", ->
+    beforeEach ->
+      Coreon.application.cacheId = -> "coffee23"
+
+    afterEach ->
+      Coreon.application.cacheId = null
 
     it "is triggered when session changes", ->
       @view.render = sinon.spy()
@@ -300,15 +305,18 @@ describe "Coreon.Views.ApplicationView", ->
   describe "reauthenticate()", ->
 
     beforeEach ->
+      Coreon.application.cacheId = -> "coffee23"
       sinon.stub Coreon.Views.Account, "PasswordPromptView", =>
         @prompt = new Backbone.View
       @session = new Backbone.Model
         auth_token: "supersecrettoken"
         user:
           name: "Nobody"
+      @session.currentRepository = ->
       @view.model.set "session", @session
 
     afterEach ->
+      Coreon.application.cacheId = null
       Coreon.Views.Account.PasswordPromptView.restore()
 
     it "is triggered by changes on session token", ->
