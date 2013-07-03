@@ -1,18 +1,18 @@
 #= require spec_helper
 #= require models/concept
-#= require collections/hits
 
 describe "Coreon.Models.Concept", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
-    Coreon.application = hits: new Backbone.Collection []
-    Coreon.application.hits.findByResult = -> null
+    @hits = new Backbone.Collection
+    @hits.findByResult = -> null
+    sinon.stub Coreon.Collections.Hits, "collection", => @hits
     @model = new Coreon.Models.Concept _id: "123"
 
   afterEach ->
     I18n.t.restore()
-    Coreon.application = null
+    Coreon.Collections.Hits.collection.restore()
   
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
@@ -138,12 +138,8 @@ describe "Coreon.Models.Concept", ->
           for hit in @hits.models
             return hit if hit.get("result") is result
           null
-        Coreon.application =
-          hits: @hits
+        Coreon.Collections.Hits.collection.returns @hits
         @model.initialize()
-          
-      afterEach ->
-        Coreon.application = null
       
       it "gets hit from id", ->
         @model.get("hit").should.equal @hit

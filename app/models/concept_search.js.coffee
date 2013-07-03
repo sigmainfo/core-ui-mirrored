@@ -13,5 +13,5 @@ class Coreon.Models.ConceptSearch extends Coreon.Models.Search
         hits.push
           score: hit.score
           result: Coreon.Models.Concept.upsert hit.result
-      Coreon.Models.Hit.collection().reset hits
+      Coreon.Collections.Hits.collection().reset hits
     super options
