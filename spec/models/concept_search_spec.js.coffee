@@ -70,5 +70,6 @@ describe "Coreon.Models.ConceptSearch", ->
             }
           ]
         @search.fetch()
-        Coreon.application.hits.should.have.length 1
-        Coreon.application.hits.at(0).get("result").should.have.property "id", "1234"
+        hits = Coreon.Collections.Hits.collection()
+        hits.should.have.length 1
+        hits.at(0).get("result").should.have.property "id", "1234"

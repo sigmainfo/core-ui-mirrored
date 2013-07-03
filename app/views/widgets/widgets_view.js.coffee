@@ -16,7 +16,7 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     super
     @search = new Coreon.Views.Widgets.SearchView
     @map = new Coreon.Views.Widgets.ConceptMapView
-      model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Models.Hit.collection() )
+      model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Collections.Hits.collection() )
     settings = @localSettings()
     settings.widgets ?= {}
     @$el.width settings.widgets.width if settings.widgets.width

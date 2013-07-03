@@ -1,6 +1,12 @@
 #= require environment
+#= require models/hit
+
+collection = null
 
 class Coreon.Collections.Hits extends Backbone.Collection
+
+  @collection: ->
+    collection ?= new @
 
   model: Coreon.Models.Hit
 
