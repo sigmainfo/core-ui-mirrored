@@ -4,14 +4,12 @@
 describe "Coreon.Models.Concept", ->
 
   beforeEach ->
-    sinon.stub I18n, "t"
     @hits = new Backbone.Collection
     @hits.findByResult = -> null
     sinon.stub Coreon.Collections.Hits, "collection", => @hits
     @model = new Coreon.Models.Concept _id: "123"
 
   afterEach ->
-    I18n.t.restore()
     Coreon.Collections.Hits.collection.restore()
 
   it "is a Backbone model", ->
@@ -38,10 +36,15 @@ describe "Coreon.Models.Concept", ->
     describe "label", ->
 
       context "when newly created", ->
-
-        it "defaults to <new concept>", ->
-          @model.isNew = sinon.stub().returns true
+        beforeEach ->
+          sinon.stub I18n, "t"
           I18n.t.withArgs("concept.new_concept").returns "<new concept>"
+
+        afterEach ->
+          I18n.t.restore()
+
+        xit "defaults to <new concept>", ->
+          @model.isNew = sinon.stub().returns true
           @model.set terms: [
               lang: "en"
               value: "flower"
@@ -243,10 +246,10 @@ describe "Coreon.Models.Concept", ->
     context "application sync", ->
 
       beforeEach ->
-        Coreon.Modules.CoreAPI = sync: sinon.spy()
+        sinon.stub Coreon.Modules.CoreAPI, "sync"
 
       afterEach ->
-        Coreon.Modules.CoreAPI = null
+        Coreon.Modules.CoreAPI.sync.restore()
 
       it "delegates to application sync", ->
         @model.save {}, wait: true
@@ -258,12 +261,12 @@ describe "Coreon.Models.Concept", ->
 
       beforeEach ->
         @model.id = null
-        Coreon.Modules.CoreAPI = sync: (method, model, options = {}) ->
+        sinon.stub Coreon.Modules.CoreAPI, "sync", (method, model, options = {}) ->
           model.id = "1234"
           options.success?()
 
       afterEach ->
-        Coreon.Modules.CoreAPI = null
+        Coreon.Modules.CoreAPI.sync.restore()
 
       it "triggers custom event", ->
         spy = sinon.spy()

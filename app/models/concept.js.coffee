@@ -8,6 +8,7 @@
 #= require modules/properties_by_key
 #= require modules/remote_validation
 #= require modules/persisted_attributes
+#= require modules/core_api
 #= require collections/hits
 
 class Coreon.Models.Concept extends Backbone.Model

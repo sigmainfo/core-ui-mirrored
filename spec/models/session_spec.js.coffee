@@ -7,9 +7,9 @@ describe "Coreon.Models.Session", ->
     sinon.stub  Backbone.history, "navigate"
     @auth_root = Coreon.Models.Session.auth_root
     Coreon.Models.Session.auth_root = "https://auth.coreon.com"
-    sinon.stub localStorage, "getItem"
-    sinon.stub localStorage, "setItem"
-    sinon.stub localStorage, "removeItem"
+    sinon.stub window.localStorage, "getItem"
+    sinon.stub window.localStorage, "setItem"
+    sinon.stub window.localStorage, "removeItem"
 
   afterEach ->
     localStorage.getItem.restore()
@@ -25,6 +25,7 @@ describe "Coreon.Models.Session", ->
       context "without local session", ->
 
         beforeEach ->
+          console.log localStorage.getItem.withArgs
           localStorage.getItem.withArgs("coreon-session").returns null
 
         it "passes null to callbacks", ->
@@ -192,22 +193,6 @@ describe "Coreon.Models.Session", ->
       it "returns null when none is selected", ->
         @session.set "repositories", [], silent: true
         should.equal @session.currentRepository(), null
-
-
-    describe "highestRole()", ->
-
-      beforeEach ->
-        @repo = new Backbone.Model
-          user_roles: []
-        @session.currentRepository = => @repo
-
-      it "selects the highest known role", ->
-        @repo.set "user_roles", ["user", "maintainer", "blurp"]
-        @session.highestRole().should.equal "maintainer"
-
-      it "returns null instead of any unknown roles", ->
-        @repo.set "user_roles", ["foo", "bar", "baz"]
-        should.equal @session.highestRole(), null
 
 
     describe "onChangeToken()", ->

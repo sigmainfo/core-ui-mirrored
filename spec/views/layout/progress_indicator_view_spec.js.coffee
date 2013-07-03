@@ -12,42 +12,16 @@ describe "Coreon.Views.Layout.ProgressIndicatorView", ->
     @time.restore()
     @view.destroy()
 
-  it "is a simple view", ->
-    @view.should.be.an.instanceOf Coreon.Views.SimpleView
-  
-  it "creates container", ->
-    @view.$el.should.have.id "coreon-progress-indicator"
+  it "is a backbone view", ->
+    @view.should.be.an.instanceOf Backbone.View
 
-  describe "#render", ->
+  describe "start()", ->
 
-    it "is chainable", ->
-      @view.render().should.equal @view
-
-    it "starts when busy", ->
+    it "is triggered on CoreAPI->start", ->
       @view.start = sinon.spy()
-      @view.collection.length = 3
-      @view.render()
+      @view.initialize()
+      Coreon.Modules.CoreAPI.trigger "start"
       @view.start.should.have.been.calledOnce
-
-    it "stops when idle", ->
-      @view.stop = sinon.spy()
-      @view.collection.length = 0
-      @view.render()
-      @view.stop.should.have.been.calledOnce
-
-    it "is triggered on reset", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.collection.trigger "reset"
-      @view.render.should.have.been.calledOnce
-
-    it "is triggered on remove", ->
-      @view.render = sinon.spy()
-      @view.initialize()
-      @view.collection.trigger "remove"
-      @view.render.should.have.been.calledOnce
-
-  describe "#start", ->
 
     it "changes status", ->
       @view.busy = false
@@ -59,28 +33,28 @@ describe "Coreon.Views.Layout.ProgressIndicatorView", ->
       @view.start()
       @view.$el.should.have.class "busy"
 
-    it "is triggerd on add", ->
-      @view.start = sinon.spy()
-      @view.initialize()
-      @view.collection.trigger "add"
-      @view.start.should.have.been.calledOnce
-
     it "starts animation", ->
       @view.start()
       @time.tick 2500
       @view.animation.frame.should.equal 8
       @view.$el.should.have.css "background-position", "-240px 0px"
-      
-  describe "#stop", ->
+
+  describe "stop()", ->
 
     beforeEach ->
       @view.start()
       @time.tick 500
-    
+
+    it "is triggered on CoreAPI->stop", ->
+      @view.stop = sinon.spy()
+      @view.initialize()
+      Coreon.Modules.CoreAPI.trigger "stop"
+      @view.stop.should.have.been.calledOnce
+
     it "changes status", ->
       @view.stop()
       @view.busy.should.be.false
-    
+
     it "marks view as being idle", ->
       @view.stop()
       @view.$el.should.not.have.class "busy"
@@ -90,29 +64,3 @@ describe "Coreon.Views.Layout.ProgressIndicatorView", ->
       @time.tick 250
       @view.animation.frame.should.equal 0
       @view.$el.should.have.css "background-position", "0px 0px"
-
-  describe "#destroy", ->
-
-    it "is chainable", ->
-      @view.destroy().should.equal @view
-
-    it "dismisses collection", ->
-      sinon.stub @view.collection
-      @view.destroy()
-      @view.collection.off.should.have.been.calledWith null, null, @view
-
-    it "undelegates events", ->
-      @view.undelegateEvents = sinon.spy()
-      @view.destroy()
-      @view.undelegateEvents.should.have.been.calledOnce
-
-    it "keeps el by default", ->
-      @view.remove = sinon.spy()
-      @view.destroy()
-      @view.remove.should.not.have.been.called
-    
-    it "can remove el", ->
-      @view.remove = sinon.spy()
-      @view.destroy(true)
-      @view.remove.should.have.been.calledOnce
-

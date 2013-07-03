@@ -1,4 +1,5 @@
 #= require environment
+#= require modules/core_api
 
 class Coreon.Views.Layout.ProgressIndicatorView extends Backbone.View
 
