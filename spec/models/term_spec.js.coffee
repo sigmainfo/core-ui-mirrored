@@ -6,7 +6,7 @@ describe "Coreon.Models.Term", ->
   beforeEach ->
     sinon.stub I18n, "t"
     @model = new Coreon.Models.Term
-  
+
   afterEach ->
     I18n.t.restore()
 
@@ -28,22 +28,22 @@ describe "Coreon.Models.Term", ->
       @model.get("lang").should.eql ""
 
   describe "urlRoot()", ->
-    
+
     it "is constructed from concept id", ->
       @model.set "concept_id", "4567asdf"
       @model.urlRoot().should.equal "/concepts/4567asdf/terms"
 
   describe "toJSON()", ->
-    
+
     it "wraps term", ->
       @model.set "value", "foo", silent: true
       @model.toJSON().should.have.deep.property "term.value", "foo"
-      
+
     it "skips concept_id", ->
       @model.toJSON().term.should.not.have.property "concept_id"
 
   describe "properties()", ->
-    
+
     it "syncs with attr", ->
       @model.set "properties", [key: "label"]
       @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
@@ -77,14 +77,15 @@ describe "Coreon.Models.Term", ->
         definition: [ prop2, prop3 ]
 
   describe "save()", ->
-    
+
     beforeEach ->
-      Coreon.application = sync: (method, model, options = {}) -> 
+      Coreon.application = graphUri:-> "/coffee23"
+      sinon.stub Coreon.Modules.CoreAPI, "sync", (method, model, options = {}) ->
         model.id = "1234"
         options.success?()
 
     afterEach ->
-      Coreon.application = null
+      Coreon.Modules.CoreAPI.sync.restore()
 
     it "triggers custom event", ->
       spy = sinon.spy()
