@@ -218,6 +218,7 @@ describe "Coreon.Models.Session", ->
 
       beforeEach ->
         @session.set "user", id: "123456dfhg", silent: yes
+        @session.save = sinon.spy()
 
       it "can be chained", ->
         @session.reauthenticate("se7en!").should.equal @session
@@ -227,7 +228,6 @@ describe "Coreon.Models.Session", ->
         should.equal @session.has("auth_token"), false
 
       it "updates session with password and user id", ->
-        @session.save = sinon.spy()
         @session.reauthenticate "se7en!"
         @session.save.should.have.been.calledOnce
         @session.save.should.have.been.calledWith {}, data: "password=se7en!&user_id=123456dfhg"
