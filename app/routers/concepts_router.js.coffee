@@ -1,7 +1,8 @@
 #= require environment
+#= require models/concept
+#= require models/concept_search
 #= require views/concepts/concept_view
 #= require views/concepts/new_concept_view
-#= require models/concept_search
 #= require views/concepts/concept_list_view
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
@@ -50,7 +51,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
     @view.switch new Coreon.Views.Concepts.ConceptListView
       model: search
-      collection: @collection
 
     search.fetch()
 
