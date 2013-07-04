@@ -335,7 +335,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Backbone.history.navigate.restore()
 
     it "is triggered on form submit", ->
-      @view.create = sinon.spy()
+      @view.create = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("form").trigger @event
       @view.create.should.have.been.calledOne

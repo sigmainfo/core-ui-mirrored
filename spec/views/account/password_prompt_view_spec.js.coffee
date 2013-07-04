@@ -60,7 +60,7 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
   describe "on submit", ->
     
     beforeEach ->
-      @event = new jQuery.Event "submit"
+      @event = $.Event "submit"
       @view.model = new Backbone.Model
       @view.model.reauthenticate = sinon.spy()
       @view.render().$el.appendTo "#konacha"
