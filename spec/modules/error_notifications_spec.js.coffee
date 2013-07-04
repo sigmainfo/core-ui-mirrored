@@ -8,7 +8,7 @@ describe "Coreon.Modules.ErrorNotifications", ->
     beforeEach ->
       sinon.stub I18n, "t"
       sinon.stub Coreon.Models.Notification, "error"
-      @xhr = status: 404, responseText: ""
+      @xhr = status: 404, responseText: "{}"
 
     afterEach ->
       I18n.t.restore()
@@ -17,7 +17,6 @@ describe "Coreon.Modules.ErrorNotifications", ->
     it "creates generic error message", ->
       I18n.t.withArgs("errors.generic").returns "An error occured."
       I18n.t.withArgs(undefined, defaultValue: "An error occured.").returns "An error occured."
-      @xhr.responseText = ""
       Coreon.Modules.ErrorNotifications.failHandler @xhr, "error", "Not found"
       Coreon.Models.Notification.error.should.have.been.calledOnce
       Coreon.Models.Notification.error.should.have.been.calledWith "An error occured."
