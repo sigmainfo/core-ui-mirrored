@@ -1,0 +1,3 @@
+%ul
+  -for clip in @clips
+    %li=clip

@@ -3,6 +3,7 @@
 #= require helpers/can
 #= require helpers/form_for
 #= require helpers/input
+#= require collections/clips
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
@@ -13,6 +14,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/notification
+#= require models/clip
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
