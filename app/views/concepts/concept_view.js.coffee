@@ -3,6 +3,7 @@
 #= require helpers/can
 #= require helpers/form_for
 #= require helpers/input
+#= require collections/clips
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
@@ -13,6 +14,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/notification
+#= require models/clip
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
@@ -35,6 +37,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
+    "click  .concept-to-clipboard"               : "addConceptToClipboard"
     "click  .edit-concept"                       : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
@@ -88,6 +91,10 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq(target.data "index").add(target)
       .addClass "selected"
+
+  addConceptToClipboard: ->
+    @clipsCollection ||= Coreon.Collections.Clips.collection()
+    @clipsCollection.add @model
 
   toggleEditMode: ->
     @editMode = !@editMode

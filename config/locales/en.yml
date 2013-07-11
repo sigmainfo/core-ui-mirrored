@@ -68,6 +68,7 @@ en:
     confirm_delete: "This concept including all terms will be deleted permanently!"
     confirm_update: "Saving the concept will delete {{n}} properties permanently!"
     update: "Save concept"
+    add_to_clipboard: "Add to clipboard"
 
   term:
     info: "System Info"
@@ -148,3 +149,6 @@ en:
 
   confirm:
     ok: "OK"
+
+  clipboard:
+    title: "Clipboard"
