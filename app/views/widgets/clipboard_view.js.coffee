@@ -13,11 +13,20 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
   _concept_label_views: []
 
   initialize: ->
-    @listenTo @collection, "add remove reset", @onChange
+    @listenTo @collection, "add", @onAddItem
+    #@listenTo @collection, "remove", @onRemoveItem
+    @listenTo @collection, "reset", @onResetItems
 
-  onChange: ->
-    clip.remove() for clip in @_concept_label_views
-    @_concept_label_views = []
+  onAddItem: (model, collection)->
+    view = new Coreon.Views.Concepts.ConceptLabelView model:model
+    @_concept_label_views.push view
+    @render()
+
+  #onRemoveItem: ->
+  #  @render()
+
+  onResetItems: ->
+    clip.remove() while clip = @_concept_label_views.pop()
     for clip in @collection.models
       @_concept_label_views.push new Coreon.Views.Concepts.ConceptLabelView model:clip
     @render()
