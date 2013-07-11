@@ -33,3 +33,11 @@ Feature: user adds concept to clipboard
     When I search for "panopticum"
     Then I should be on the search result page
     Then the clip should be highlighted as hit
+
+  Scenario: clear the clipboard
+    Given I visit the page of this concept
+    Then I should see a button "Clear" as clipboard action
+    When I click the button "Add to clipboard"
+    Then I should see a link to the concept in the clipboard
+    When I click the button "Clear"
+    Then the clipboard should be empty

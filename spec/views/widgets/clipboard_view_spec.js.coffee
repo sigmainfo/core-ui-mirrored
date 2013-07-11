@@ -38,6 +38,11 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
   it "can be chained", ->
     @view.render().should.equal @view
 
+  it "clears the collection", ->
+    @clips.add new Backbone.Model, silent:true
+    @clips.length.should.equal 1
+    @view.clear()
+    @clips.length.should.equal 0
 
   context "event handling", ->
 
