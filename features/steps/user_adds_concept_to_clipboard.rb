@@ -3,6 +3,7 @@
 class UserAddsConceptToClipboard < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
+  include SearchSteps
   include Api::Graph::Factory
 
   step 'a concept with label "panopticum" exists' do
@@ -27,5 +28,13 @@ class UserAddsConceptToClipboard < Spinach::FeatureSteps
 
   step 'I should see a link to the concept in the clipboard' do
     page.should have_css("#coreon-clipboard li > a", text: "panopticum")
+  end
+
+  step 'the clip should not be highlighted' do
+    page.should have_no_css("#coreon-clipboard li > a.hit", text: "panopticum")
+  end
+
+  step 'the clip should be highlighted as hit' do
+    page.should have_css("#coreon-clipboard li > a.hit", text: "panopticum")
   end
 end

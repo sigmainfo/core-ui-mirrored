@@ -46,8 +46,8 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.append @search.render().$el
-    @$el.append @map.render().$el
     @$el.append @clipboard.render().$el
+    @$el.append @map.render().$el
     super
 
   saveLayout = (layout) ->

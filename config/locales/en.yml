@@ -149,3 +149,6 @@ en:
 
   confirm:
     ok: "OK"
+
+  clipboard:
+    title: "Clipboard"

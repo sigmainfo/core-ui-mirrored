@@ -11,7 +11,25 @@ Feature: user adds concept to clipboard
   Scenario: add a concept to the clipboard
     Given I visit the page of this concept
     Then I should see a clipboard
-    And the clipboard should be empty
+    But the clipboard should be empty
     And I should see a button "Add to clipboard"
     When I click the button "Add to clipboard"
     Then I should see a link to the concept in the clipboard
+
+  Scenario: clipboard is not preserved
+    Given I visit the page of this concept
+    And I click the button "Add to clipboard"
+    Then I should see a link to the concept in the clipboard
+    When I visit the page of this concept
+    Then the clipboard should be empty
+
+  Scenario: hit is highlighted
+    Given I visit the page of this concept
+    When I click the button "Add to clipboard"
+    Then the clip should be highlighted as hit
+    When I search for "handgun"
+    Then I should be on the search result page
+    And the clip should not be highlighted
+    When I search for "panopticum"
+    Then I should be on the search result page
+    Then the clip should be highlighted as hit
