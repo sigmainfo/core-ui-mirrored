@@ -1,4 +1,4 @@
-%a.concept-to-clipboard.button( href="javascript:void(0)" )= I18n.t "concept.add-to-clipboard"
+%a.concept-to-clipboard.button( href="javascript:void(0)" )= I18n.t "concept.add_to_clipboard"
 - if @can "edit", Coreon.Models.Concept
   %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
 .edit

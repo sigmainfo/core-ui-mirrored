@@ -13,3 +13,5 @@ Feature: user adds concept to clipboard
     Then I should see a clipboard
     And the clipboard should be empty
     And I should see a button "Add to clipboard"
+    When I click the button "Add to clipboard"
+    Then I should see a link to the concept in the clipboard
