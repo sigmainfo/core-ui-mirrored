@@ -9,6 +9,9 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
   className: "widget"
   template: Coreon.Templates["widgets/clipboard"]
 
+  events:
+    "click .clear": "clear"
+
   _concept_label_views: []
 
   initialize: ->
@@ -27,6 +30,7 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
 
   onResetItems: (model, collection)->
     clip.remove() while clip = @_concept_label_views.pop()
+    collection = Coreon.Collections.Clips.collection()
     for clip in collection.models
       @_concept_label_views.push new Coreon.Views.Concepts.ConceptLabelView model:clip
     @render()
@@ -38,3 +42,5 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
       ul.append $('<li>').append clip.render().$el
     @
 
+  clear: ->
+    Coreon.Collections.Clips.collection().reset []
