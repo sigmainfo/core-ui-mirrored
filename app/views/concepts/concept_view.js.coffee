@@ -37,6 +37,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
+    "click  .concept-to-clipboard"               : "addConceptToClipboard"
     "click  .edit-concept"                       : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
@@ -90,6 +91,10 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq(target.data "index").add(target)
       .addClass "selected"
+
+  addConceptToClipboard: ->
+    @clipsCollection ||= Coreon.Collections.Clips.collection()
+    @clipsCollection.add @model
 
   toggleEditMode: ->
     @editMode = !@editMode

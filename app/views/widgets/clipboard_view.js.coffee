@@ -22,8 +22,7 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
 
   render: ->
     @$el.empty()
-    clips = (view.render().el for view in @_concept_label_views)
+    clips = (view.render().el.outerHTML for view in @_concept_label_views)
     @$el.html @template clips: clips
-    console.log "clipboardView: render", clips
     @
 
