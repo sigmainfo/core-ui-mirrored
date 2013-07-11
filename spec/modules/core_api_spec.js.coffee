@@ -7,12 +7,6 @@ describe "Coreon.Modules.CoreAPI", ->
     class Coreon.Models.CoreAPIModel extends Backbone.Model
       Coreon.Modules.include @, Coreon.Modules.CoreAPI
       urlRoot: "/concepts"
-      batchUrl: (method) ->
-        "concepts/fetch"
-      batchParam: (method) ->
-        "api_model_ids"
-      batchData: (method) ->
-        @id
 
   after ->
     delete Coreon.Models.CoreAPIModel
@@ -213,53 +207,50 @@ describe "Coreon.Modules.CoreAPI", ->
         @clock.restore()
 
       it "triggers first request normally", ->
+        Coreon.application.graphUri = -> "https://repo123.coreon.com"
+        @model.id = "123"
         @model.sync "read", @model, batch: on
-        for i in [1..5]
-          model = new Coreon.Models.CoreAPIModel _id: i
-          model.sync "read", model, batch: on
+        @model.sync "read", @model, batch: on
         Backbone.sync.should.have.been.calledOnce
         Backbone.sync.should.have.been.calledWith "read", @model
-        Backbone.sync.firstCall.args[2].should.have.property "batch", on
+        options = Backbone.sync.firstCall.args[2]
+        options.should.have.property "url", "https://repo123.coreon.com/concepts/123"
+        options.should.have.property "batch", on
 
       it "collects subsequent requests in a single batch request", ->
-        @model.sync "read", @model, batch: on
         for i in [1..5]
-          model = new Coreon.Models.CoreAPIModel _id: i
-          model.sync "read", model, batch: on
+          @model.sync "read", @model, batch: on
         @clock.tick 300
         Backbone.sync.should.have.been.calledTwice
         Backbone.sync.should.always.have.been.calledWith "read"
-        Backbone.sync.secondCall.args[2].should.have.property "type", "POST"
+        options = Backbone.sync.secondCall.args[2]
+        options.should.have.property "type", "POST"
 
-      it "determines batch url param and data from model", ->
+      it "batches request only for read requests", ->
+        @model.sync "update", @model, batch: on
+        @model.sync "update", @model, batch: on
+        Backbone.sync.should.have.been.calledTwice
+
+      it "generates url and data from model", ->
         Coreon.application.graphUri = -> "https://123-456-789.coreon.com/"
+        @model.urlRoot = "concepts"
         for i in [1..5]
-          model = new Coreon.Models.CoreAPIModel batchId: i
-          model.batchUrl = -> "concepts/batch"
-          model.batchParam = -> "concept_ids"
-          model.batchData = -> @get "batchId"
-          model.sync "read", model, batch: on
+          @model.id = i
+          @model.sync "read", @model, batch: on
         @clock.tick 300
         options = Backbone.sync.secondCall.args[2]
-        options.should.have.property "url", "https://123-456-789.coreon.com/concepts/batch"
-        options.should.have.deep.property("data.concept_ids").that.eqls [2,3,4,5]
+        options.should.have.property "url", "https://123-456-789.coreon.com/concepts/fetch"
+        options.should.have.deep.property("data.ids").that.eqls [2, 3, 4, 5]
 
-      it "creates one batch per url and param", ->
+      it "creates one batch per url", ->
         for i in [1..3]
-          model = new Coreon.Models.CoreAPIModel
-          model.batchUrl = -> "concepts/batch"
-          model.batchParam = -> "concept_ids"
-          model.sync "read", model, batch: on
+          @model.urlRoot = "concepts"
+          @model.sync "read", @model, batch: on
         for i in [1..3]
-          model = new Coreon.Models.CoreAPIModel
-          model.batchUrl = -> "concepts/batch"
-          model.batchParam = -> "api_model_ids"
-          model.sync "read", model, batch: on
+          @model.urlRoot = "models"
+          @model.sync "read", @model, batch: on
         for i in [1..3]
-          model = new Coreon.Models.CoreAPIModel
-          model.batchUrl = -> "concepts/fetch"
-          model.batchParam = -> "api_model_ids"
-          model.sync "read", model, batch: on
+          @model.sync "read", @model, batch: on, url: "http://foo"
         Backbone.sync.reset()
         @clock.tick 300
         Backbone.sync.should.have.been.calledThrice
@@ -270,17 +261,22 @@ describe "Coreon.Modules.CoreAPI", ->
         @clock.tick 300
         Backbone.sync.should.not.have.been.called
 
-      it "does not request same model multiple times", ->
-        @model.batchData = -> "123"
-        @model.sync "read", @model, batch: on
-        @model.sync "read", @model, batch: on
-        Backbone.sync.reset()
+      it "resolves promise for every request individually", ->
+        promises = []
+        for i in [1..3]
+          @model.urlRoot = "concepts"
+          promises.push @model.sync "read", @model, batch: on
         @clock.tick 300
-        Backbone.sync.should.not.have.been.called
+        @requests[1].resolve()
+        promises[1].should.not.equal promises[2]
+        promises[1].state().should.equal "resolved"
+        promises[2].state().should.equal "resolved"
 
-      it "triggers events for every model individually"
+      xit "rejects  promise for every request individually"
 
-      it "clears pending batches when aborted", ->
+      xit "triggers events for every model individually"
+
+      xit "clears pending batches when aborted", ->
         @model.sync "read", @model, batch: on
         for i in [1..5]
           model = new Coreon.Models.CoreAPIModel _id: i

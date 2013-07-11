@@ -52,31 +52,38 @@ ajax = (deferred, method, model, options) ->
   request
 
 batch = (deferred, method, model, options) ->
-  path = model.batchUrl method
-  param = model.batchParam method
-  name = "#{path} #{param}"
-  unless batches[name]?
-    batches[name] = []
+  url = if options.url?
+    options.url
+  else
+    root = urlFor _.result model, "urlRoot"
+    root = root[..-2] if root.charAt(root.length - 1) is "/"
+    url = "#{root}/fetch"
+
+  if batches[url]?
+    batches[url].push model.id
+  else
+    batches[url] = []
 
     opts = {}
     opts[key] = value for key, value of options
 
     ajax arguments...
     
-    opts.type ?= "POST"
-    opts.url  ?= urlFor path
-    unless options.data?
-      opts.data = {}
-      opts.data[param] = batches[name]
+    timers.push _.delay batchAjax, BATCH_DELAY, url, batches[url], opts
 
-    timers.push _.delay batchAjax, BATCH_DELAY, name, deferred, method, model, opts
-  else
-    data = model.batchData method
-    batches[name].push data
+batchAjax = (url, ids, options) ->
 
-batchAjax = (name, deferred, method, model, options) ->
-  ajax deferred, method, model, options if batches[name].length > 0
-  delete batches[name]
+  request = $.Deferred()
+
+  options.url = url
+  options.type ?= "POST"
+  options.data ?= ids: ids
+  ajax request, "read", null, options if ids.length > 0
+
+  request.done ->
+    #TODO: step thru batch
+
+  delete batches[url]
 
 Coreon.Modules.CoreAPI =
 
@@ -90,10 +97,10 @@ Coreon.Modules.CoreAPI =
 
     deferred = $.Deferred()
 
-    unless options.batch?
-      ajax deferred, method, model, options
-    else
+    if method is "read" and options.batch
       batch deferred, method, model, options
+    else
+      ajax deferred, method, model, options
       
     deferred.promise()
 
