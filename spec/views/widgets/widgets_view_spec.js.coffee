@@ -32,10 +32,10 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.map.model.should.be.an.instanceof Coreon.Collections.ConceptNodes
       @view.map.model.should.have.property "hits", @view.model.hits
 
-    it "creates resize handle", ->
+    xit "creates resize handle", ->
       @view.$el.should.have ".ui-resizable-w"
 
-    it "restores width from session", ->
+    xit "restores width from session", ->
       Coreon.application.session.get = (attr) ->
         width: 347 if attr is "coreon-widgets"
       @view.initialize()
@@ -70,7 +70,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.render()
       @view.$("#coreon-concept-map").size().should.equal 1
 
-  describe "resizing", ->
+  xdescribe "resizing", ->
 
     beforeEach ->
       Coreon.application =

@@ -1,4 +1,0 @@
-%p
-  = I18n.t "account.status", name: @name
-  |
-  %a.logout{href: "/account/logout"}= I18n.t "account.logout"

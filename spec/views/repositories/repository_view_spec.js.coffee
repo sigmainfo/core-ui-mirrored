@@ -1,10 +1,10 @@
 #= require spec_helper
-#= require views/concepts/root_view
+#= require views/repositories/repository_view
 
-describe "Coreon.Views.Concepts.RootView", ->
+describe "Coreon.Views.Repositories.RepositoryView", ->
 
   beforeEach ->
-    @view = new Coreon.Views.Concepts.RootView
+    @view = new Coreon.Views.Repositories.RepositoryView
     sinon.stub I18n, "t"
 
   afterEach ->

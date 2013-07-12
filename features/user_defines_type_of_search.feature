@@ -4,7 +4,7 @@ Feature: user defines type of search
   I want to select a search type
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
   Scenario: set search target

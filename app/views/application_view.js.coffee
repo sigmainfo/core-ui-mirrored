@@ -1,82 +1,105 @@
 #= require environment
-#= require views/composite_view
-#= require templates/application/application
-#= require views/layout/header_view
-#= require views/layout/footer_view
+#= require templates/application
+#= require views/sessions/new_session_view
+#= require views/notifications/notification_view
 #= require views/widgets/widgets_view
-#= require views/account/login_view
 #= require views/account/password_prompt_view
+#= require views/repositories/repository_select_view
+#= require views/layout/progress_indicator_view
 
-class Coreon.Views.ApplicationView extends Coreon.Views.CompositeView
+updateSession = (view) ->
+  previous = session
+  session = view.model.get "session"
+  if session isnt previous
+    view.stopListening previous if previous?
+  if session?
+    view.listenTo session, "change:current_repository_id", view.render
+    view.listenTo session, "change:auth_token", view.reauthenticate
+  view.session = session
 
-  template: Coreon.Templates["application/application"]
+class Coreon.Views.ApplicationView extends Backbone.View
 
-  events: "click a[href^='/']": "navigate"
+  template: Coreon.Templates["application"]
+
+  events:
+    "click a[href^='/']": "navigate"
+    "click #coreon-footer .toggle": "toggle"
 
   initialize: ->
-    super
-    @header = new Coreon.Views.Layout.HeaderView
-      collection: @model.session.notifications
-    @add @header
-    @header.on "resize", @onResize, @
-
-    @model.session.on "activated"    , @activate    , @
-    @model.session.on "deactivated"  , @deactivate  , @
-    @model.session.on "unauthorized" , @reauthorize , @
-    @model.session.on "reactivated"  , @reactivate  , @
+    @session = null
+    @main = null
+    @modal = null
+    @listenTo @model, "change:session", @render
+    @listenTo Coreon.Models.Notification.collection(), "add", @notify
+    @listenTo Coreon.Models.Notification.collection(), "reset", @clearNotifications
 
   render: ->
-    @$el.html @template()
-    @prepend "#coreon-top", @header
-    super
-    if @model.session.get "active" then @activate() else @deactivate()
-    @
+    subview.remove() for subview in @subviews if @subviews
+    @subviews = []
+    session = updateSession @
+    @$el.html @template session: session
+    if session?
+      widgets = new Coreon.Views.Widgets.WidgetsView model: @model
+      @$("#coreon-modal").after widgets.render().$el
+      @subviews.push widgets
+      repoSelect = new Coreon.Views.Repositories.RepositorySelectView
+        model: session
+        app: @
+      @$("#coreon-filters").append repoSelect.render().$el
+      @subviews.push repoSelect
+      progress = new Coreon.Views.Layout.ProgressIndicatorView
+        el: @$("#coreon-progress-indicator")
+      @subviews.push progress
+      Backbone.history.start pushState: on unless Backbone.History.started
+      @$("#coreon-account").delay(2000).slideUp()
+    else
+      Backbone.history.stop()
+      @switch new Coreon.Views.Sessions.NewSessionView model: @model
 
   switch: (screen) ->
-    @destroy @screen if @screen
-    @screen = screen.render()
-    @append "#coreon-main", @screen
+    @main?.remove()
+    if @main = screen
+      screen.render()
+      @$("#coreon-main").append screen.$el
+
+  prompt: (modal) ->
+    @modal?.remove()
+    if @modal = modal
+      modal.render()
+      @$("#coreon-modal").empty().append modal.$el
+
+  notify: (notification) ->
+    view = new Coreon.Views.Notifications.NotificationView model: notification
+    @$("#coreon-notifications").append view.render().$el
+
+  clearNotifications: ->
+    @$("#coreon-notifications").empty()
 
   navigate: (event) ->
     event.preventDefault()
-    Backbone.history.navigate $(event.target).closest("a").attr("href"), trigger: true
+    Backbone.history.navigate $(event.target).closest("a").attr("href")[1..], trigger: true
 
-  clear: ->
-    subviews = (view for view in @subviews when view isnt @header)
-    @destroy.apply @, subviews if subviews.length > 0
+  toggle: (event) ->
+    $(event.target).closest(".toggle").siblings().slideToggle()
 
-  activate: ->
-    if @model.session.get "active"
-      @clear()
-      @widgets = new Coreon.Views.Widgets.WidgetsView
-        model: @model
-      @append "#coreon-top", @widgets.render()
-      @footer = new Coreon.Views.Layout.FooterView
-        model: @model.session
-      @append @footer.render()
+  reauthenticate: (model, token) ->
+    @prompt if token
+      null
+    else
+      new Coreon.Views.Account.PasswordPromptView
+        model: @model.get "session"
 
-  deactivate: ->
-    @clear()
-    @login = new Coreon.Views.Account.LoginView
-      model: @model.session
-    @append "#coreon-main", @login.render()
+  repository: (id) ->
+    session = @model.get "session"
+    if session?
+      session.set "current_repository_id", id
+      session.currentRepository()
+    else
+      null
 
-  reauthorize: ->
-    @destroy @prompt if @prompt
-    @prompt = new Coreon.Views.Account.PasswordPromptView
-      model: @model.session
-    @append "#coreon-modal", @prompt.render()
-    @$("#coreon-password-password").focus()
-
-  reactivate: ->
-    @destroy @prompt if @prompt
-    dropped = @model.session.connections.filter (connection) ->
-      connection.get("xhr").status == 403
-    connection.resume() for connection in dropped
-
-  onResize: ->
-    @$("#coreon-main").css "paddingTop": @header.$el.outerHeight()
-
-  destroy: (subviews...) ->
-    super subviews...
-    @model.session.off null, null, @ if subviews.length is 0
+  query: (query) ->
+    input = @$ "#coreon-search-query"
+    hint = @$ "#coreon-search-target-select .hint"
+    input.val query if query?
+    if query then hint.hide() else hint.show()
+    input.val()

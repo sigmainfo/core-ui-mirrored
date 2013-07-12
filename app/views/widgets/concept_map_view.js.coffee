@@ -30,8 +30,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
-    if session = Coreon.application?.session.get @id
-      @resize session.width, session.height
+    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
+    @settings.conceptMap ?= {}
+    if @settings.conceptMap.width?
+      @resize @settings.conceptMap.width, @settings.conceptMap.height
     else
       @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
@@ -64,9 +66,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       svg.attr "width", "#{ width }px"
     @saveLayout width: @$el.width(), height: @$el.height()
     
-  saveLayout = (layout) -> 
-    if Coreon.application?
-      Coreon.application?.session.save @id, layout
+  saveLayout = (layout) ->
+    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
+    @settings.conceptMap = layout
+    localStorage.setItem Coreon.application.get("session").currentRepository().get("cache_id"), JSON.stringify @settings
 
   saveLayout: _.debounce saveLayout, 500
 

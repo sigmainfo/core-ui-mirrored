@@ -1,6 +1,7 @@
 #= require environment
 #= require views/simple_view
 #= require models/concept
+#= require helpers/repository_path
 
 class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
 
@@ -28,7 +29,8 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   render: ->
+    #repo = Backbone.history.fragment.split("/")[0]
     @$el.toggleClass "hit", @model.has "hit"
-    @$el.attr "href", "/concepts/#{@model.id}"
+    @$el.attr "href", Coreon.Helpers.repositoryPath("concepts", @model.id)
     @$el.html @model.escape "label"
     @

@@ -1,53 +1,31 @@
 #= require environment
 #= require models/session
-#= require collections/hits
 #= require views/application_view
-#= require routers/search_router
+#= require routers/sessions_router
+#= require routers/repositories_router
 #= require routers/concepts_router
+#= require modules/error_notifications
 
-class Coreon.Application
+class Coreon.Application extends Backbone.Model
 
-  constructor: ->
-    throw new Error "Coreon application does already exist" if Coreon.application?
-    @initialize.apply @, arguments
-    Coreon.application = @
+  defaults:
+    el: "#coreon-app"
 
-  initialize: (@options = {}) ->
-    _(@options).defaults
-      el         : "#app"
-      auth_root  : "/api/auth/"
-      graph_root : "/api/graph/"
-      
-    @session = new Coreon.Models.Session _(@options).pick "auth_root", "graph_root"
-    @session.fetch()
+  initialize: ->
+    unless Coreon.application?
+      Coreon.application = @
+    else
+      throw new Error "Coreon application already initialized"
+    Coreon.Models.Session.auth_root = @get "auth_root"
+    view = new Coreon.Views.ApplicationView model: @, el: @get "el"
+    new router view for name, router of Coreon.Routers
 
-    @hits = new Coreon.Collections.Hits
-
-  start: (options = {}) ->
-    _(@options).extend options
-
-    @view = new Coreon.Views.ApplicationView
-      model: @
-      el: @options.el
-
-    @view.render()
-
-    @routers =
-      concepts_router: new Coreon.Routers.ConceptsRouter
-        collection: @concepts
-        view: @view
-        app: @
-      search_router: new Coreon.Routers.SearchRouter
-        view: @view
-        concepts: @concepts
-        app: @
-
-    Backbone.history.start pushState: true, silent: not @session.get "active"
+  start: ->
+    unless @has "auth_root"
+      throw new Error "Authorization service root URL not given"
+    Coreon.Models.Session.load().always (session) =>
+      @set "session", session
     @
 
-  destroy: ->
-    @session.deactivate()
-    delete Coreon.application
-
-  sync: (method, model, options) ->
-    @session.connections.sync method, model, options
+  graphUri: ->
+    @get("session")?.currentRepository()?.get("graph_uri") or null

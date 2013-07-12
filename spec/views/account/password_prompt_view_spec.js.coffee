@@ -12,7 +12,7 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
   it "creates container", ->
     @view.$el.should.have.id "coreon-password-prompt"
 
-  describe "#render", ->
+  describe "render()", ->
 
     beforeEach ->
       sinon.stub I18n, "t"
@@ -50,12 +50,11 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
       @view.$("input#coreon-password-password").should.have.attr "name", "login[password]"
       @view.$("input#coreon-password-password").should.have.attr "required"
 
-
     it "renders logout link", ->
       I18n.t.withArgs("account.logout").returns "Log out"
       @view.render() 
       @view.$el.should.have "a.logout"
-      @view.$("a.logout").should.have.attr "href", "/account/logout"
+      @view.$("a.logout").should.have.attr "href", "/logout"
       @view.$("a.logout").should.have.text I18n.t "account.logout"
 
   describe "on submit", ->
@@ -79,32 +78,3 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
       @view.$("#coreon-password-password").val "se7en"
       @view.$("form").trigger @event
       @view.model.reactivate.should.have.been.calledWith "se7en"
-
-  context "#logout", ->
-
-    beforeEach ->
-      @view.model.deactivate = sinon.spy()
-      @event = new jQuery.Event "click"
-
-    it "handles clicks on logout link", ->
-      sinon.spy @view, "logout"
-      @view.delegateEvents()
-      @view.render()
-      @view.$("a.logout").trigger @event
-      @view.logout.should.have.been.calledOnce
-
-    it "terminates propagation and default action", ->
-      sinon.spy @event, "preventDefault"
-      sinon.spy @event, "stopPropagation"
-      @view.logout @event
-      @event.preventDefault.should.have.been.calledOnce
-      @event.stopPropagation.should.have.been.calledOnce
-
-    it "hides prompt", ->
-      @view.remove = sinon.spy()
-      @view.logout @event
-      @view.remove.should.have.been.calledOnce
-
-    it "calls logout on model", ->
-      @view.logout @event
-      @view.model.deactivate.should.have.been.calledOnce

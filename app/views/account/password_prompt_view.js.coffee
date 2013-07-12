@@ -8,7 +8,6 @@ class Coreon.Views.Account.PasswordPromptView extends Coreon.Views.SimpleView
   events:
     "submit form": "onSubmit"
     "blur input#coreon-password-password": "onBlur"
-    "click a.logout": "logout"
 
   template: Coreon.Templates["account/password_prompt"]
 
@@ -18,15 +17,7 @@ class Coreon.Views.Account.PasswordPromptView extends Coreon.Views.SimpleView
 
   onSubmit: (event) ->
     event.preventDefault()
-    event.stopPropagation()
-    @model.reactivate @$("#coreon-password-password").val()
+    @model.reauthenticate @$("#coreon-password-password").val()
 
   onBlur: ->
     @$("#coreon-password-password").focus()
-
-  logout: (event) ->
-    event.preventDefault()
-    event.stopPropagation()
-    @remove()
-    @model.deactivate()
-

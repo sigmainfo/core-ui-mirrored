@@ -719,6 +719,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.model.terms().create.should.have.been.calledOnce
       @view.model.terms().create.firstCall.args[0].should.have.property "concept_id", "3456ghj"
 
+    it "notifies about success", ->
+      I18n.t.withArgs("notifications.term.created").returns "Yay!"
+      Coreon.Models.Notification.info = sinon.spy()
+      @view.createTerm @event
+      Coreon.Models.Notification.info.should.have.been.calledOnce
+      Coreon.Models.Notification.info.should.have.been.calledWith "Yay!"
+
     it "updates term from form", ->
       @view.$("form.term.create").prepend '''
         <input type="text" name="term[value]" value="high hat"/>
@@ -744,6 +751,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       beforeEach ->
         @term = new Backbone.Model
+        @term.persistedAttributes = -> {}
         @term.errors = -> {}
         sinon.stub Coreon.Models, "Term", => @term
         @view.model.terms().create = (attrs, options = {}) =>
@@ -779,6 +787,41 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
         @view.createTerm @event
         @view.$("form.term.create .add-property").should.have.data "index", 1        
+
+
+  describe "updateTerm()", ->
+    beforeEach ->
+      @event = $.Event "submit"
+      @form = @view.$("form.term.update")
+      @event.target = @form
+      @view.model.terms = -> new Backbone.Collection
+
+    it "needs to be fully tested!"
+
+    it "prevents event default", ->
+      @view.saveTerm = ->     # lesser dependencies
+      @event.preventDefault = sinon.spy()
+      @view.updateTerm @event
+      @event.preventDefault.should.have.been.calledOnce
+
+    it "calls saveTerm()", ->
+      @view.saveTerm = sinon.spy()
+      @view.updateTerm @event
+      @view.saveTerm.should.have.been.calledOnce
+
+
+  describe "saveTerm()", ->
+    it "notifies about update", ->
+      I18n.t.withArgs("notifications.term.saved").returns "wohoow!"
+      Coreon.Models.Notification.info = sinon.spy()
+      model =
+        save: (data, options)-> options.success()
+        get: ->
+      @view.saveTerm(model)
+
+      Coreon.Models.Notification.info.should.have.been.calledOnce
+      Coreon.Models.Notification.info.should.have.been.calledWith "wohoow!"
+
 
   describe "cancel()", ->
 
@@ -868,7 +911,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.preventDefault = sinon.spy()
       @view.reset @event
       @event.preventDefault.should.have.been.calledOnce
-    
+
     it "rerenders form", ->
       @view.render = sinon.spy()
       @view.reset @event
@@ -878,7 +921,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.model.remoteError = "foo: ['must be bar']"
       @view.reset @event
       @view.model.should.have.property "remoteError", null
-      
+
     it "restores previous state", ->
       @view.model.revert = sinon.spy()
       @view.reset @event
@@ -939,7 +982,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       beforeEach ->
         @view.removeTerm @event
-        
+
       it "removes term from listing", ->
         li = @view.$(".term")[0]
         @view.$el.append '''
@@ -953,11 +996,19 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         $(".confirm").click()
         $.contains(@view.$el[0], li).should.be.false
         @view.$(".term").should.have.lengthOf 1
-      
+
       it "destroys model", ->
         term = @view.model.terms().at 0
         $(".confirm").click()
         term.destroy.should.have.been.calledOnce
+
+      it "notifies about destruction", ->
+        I18n.t.withArgs("notifications.term.deleted").returns "baaam!"
+        Coreon.Models.Notification.info = sinon.spy()
+        $(".confirm").click()
+        Coreon.Models.Notification.info.should.have.been.calledOnce
+        Coreon.Models.Notification.info.should.have.been.calledWith "baaam!"
+
 
   describe "delete()", ->
 
@@ -1023,3 +1074,11 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       it "destroys model", ->
         $(".confirm").click()
         @view.model.destroy.should.have.been.calledOnce
+
+      it "notifies about destruction", ->
+        I18n.t.withArgs("notifications.concept.deleted").returns "baaam!"
+        Coreon.Models.Notification.info = sinon.spy()
+        $(".confirm").click()
+        Coreon.Models.Notification.info.should.have.been.calledOnce
+        Coreon.Models.Notification.info.should.have.been.calledWith "baaam!"
+

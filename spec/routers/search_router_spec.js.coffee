@@ -5,45 +5,43 @@
 describe "Coreon.Routers.SearchRouter", ->
   
   beforeEach ->
-    Coreon.application = new Coreon.Application
-
     $("#konacha").append('<div id="coreon-main">')
     @router = new Coreon.Routers.SearchRouter
       view: _(new Backbone.View(el: $("#konacha"))).extend
         switch: (@screen) => @screen.render() 
-      concepts: Coreon.application.concepts
-      app: Coreon.application
+      # concepts: Coreon.application.concepts
+      # app: Coreon.application
 
-    @router.view.widgets =
-      search:
-        selector:
-          hideHint: sinon.spy()
-
-  afterEach ->
-    Coreon.application.destroy()
+    # @router.view.widgets =
+    #   search:
+    #     selector:
+    #       hideHint: sinon.spy()
 
   it "is a Backbone router", ->
     @router.should.be.an.instanceof Backbone.Router
 
-  describe "#initialize", ->
+  describe "initialize()", ->
     
-    it "stores references", ->
-      @router.initialize view: "myView", concepts: "concepts"
-      @router.view.should.equal "myView"
-      @router.concepts.should.equal "concepts"
-    
+    it "assigns view", ->
+      view = new Backbone.View
+      @router.initialize view
+      @router.view.should.equal view
 
-  describe "#search", ->
+  describe "search()", ->
 
     beforeEach ->
-      @xhr = sinon.useFakeXMLHttpRequest()
-      @xhr.onCreate = (@request) =>
+      # @xhr = sinon.useFakeXMLHttpRequest()
+      # @xhr.onCreate = (@request) =>
 
     afterEach ->
-      @xhr.restore()
+      # @xhr.restore()
 
     it "is routed", ->
-      @router.routes.should.have.property "search/:query", "search"
+      @router.search = sinon.spy()
+      @router._bindRoutes()
+      @router.navigate "51bedb0cd19879112b000004/concepts/definition/search/movie", trigger: true
+      @router.search.should.have.been.calledOnce
+      @router.search.should.have.been.calledWith "description", "movie"
 
     it "renders search results", ->
       @router.search "poet"

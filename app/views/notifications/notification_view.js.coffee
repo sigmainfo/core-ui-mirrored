@@ -1,9 +1,10 @@
 #= require environment
-#= require views/simple_view
 #= require templates/notifications/notification
 
-class Coreon.Views.Notifications.NotificationView extends Coreon.Views.SimpleView
+class Coreon.Views.Notifications.NotificationView extends Backbone.View
+
   tagName: "li"
+
   className: "notification"
 
   template: Coreon.Templates["notifications/notification"]
@@ -13,6 +14,7 @@ class Coreon.Views.Notifications.NotificationView extends Coreon.Views.SimpleVie
   
   initialize: ->
     @model.on "change:hidden", @onChangeHidden, @
+    @$el.delay(5000).slideUp()
 
   render: ->
     type = @model.get "type"
@@ -27,6 +29,7 @@ class Coreon.Views.Notifications.NotificationView extends Coreon.Views.SimpleVie
     @model.set "hidden", true 
 
   onChangeHidden: ->
+    @$el.stop()
     [type, duration] =
       if @model.get "hidden"
         ["hide", "fast"]

@@ -1,0 +1,4 @@
+.edit
+  - if @can "create", Coreon.Models.Concept
+    %a.button.create-concept{href: @repositoryPath("concepts", "new")}= I18n.t "concept.new"
+    -#%a.button.create-concept{href: "/#{Backbone.history.fragment.split("/")[0]}/concepts/new"}= I18n.t "concept.new"

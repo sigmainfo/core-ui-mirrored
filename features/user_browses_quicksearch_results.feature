@@ -4,7 +4,7 @@ Feature: user browses quicksearch results
   I want to see the top matches for terms, concepts, and taxonomies
 
   Background:
-    Given my name is "William Blake" with login "Nobody" and password "se7en!"
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
   Scenario: browse terms
@@ -39,17 +39,3 @@ Feature: user browses quicksearch results
     And "poet" should have superconcept "poetry"
     When I click on link to concept "poetry"
     Then I should be on the concept page of "poetry"
-
-  # @wip
-  Scenario: browse taxonomies
-    Given a taxonomy "Professions"
-    And this taxonomy has a node "programmer"
-    And this taxonomy has a node "artist"
-    And this taxonomy has a node "poet"
-    And "poet" is a subnode of "artist"
-    And this taxonomy has a node "poetry editor"
-    When I enter "poet" in the search field
-    And I click the search button
-    Then I should be on the search result page
-    And I should see a listing "TAXONOMIES"
-    And the listing should contain "poet", "poetry editor"

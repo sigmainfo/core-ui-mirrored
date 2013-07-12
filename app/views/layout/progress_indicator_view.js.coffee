@@ -1,8 +1,6 @@
 #= require environment
-#= require views/simple_view
 
-class Coreon.Views.Layout.ProgressIndicatorView extends Coreon.Views.SimpleView
-  id: "coreon-progress-indicator"
+class Coreon.Views.Layout.ProgressIndicatorView extends Backbone.View
 
   animation:
     fps: 18
@@ -14,14 +12,8 @@ class Coreon.Views.Layout.ProgressIndicatorView extends Coreon.Views.SimpleView
     @$el.css 
       width: @animation.width
       backgroundPosition: "0 0"
-
-    @collection.on "reset", @render, @
-    @collection.on "remove", @render, @
-    @collection.on "add", @start, @
-
-  render: ->
-    if @collection.length then @start() else @stop()
-    @
+    @listenTo Coreon.Modules.CoreAPI, "start", @start
+    @listenTo Coreon.Modules.CoreAPI, "stop", @stop
 
   start: ->
     unless @busy
@@ -42,9 +34,6 @@ class Coreon.Views.Layout.ProgressIndicatorView extends Coreon.Views.SimpleView
     @animation.frame = ++@animation.frame % @animation.frames
     @$el.css "backgroundPosition", "-#{@animation.frame * @animation.width}px 0"
 
-  destroy: (remove = false) ->
+  remove: ->
     @stop()
-    @collection.off null, null, @
-    @undelegateEvents()
-    @remove() if remove
-    @
+    super

@@ -1,5 +1,4 @@
 #= require environment
-#= require views/concepts/root_view
 #= require views/concepts/concept_view
 #= require views/concepts/new_concept_view
 #= require models/concept_search
@@ -7,42 +6,41 @@
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
-  routes:
-    ""                                  : "root"
-    "concepts/new(/terms/:lang/:value)" : "new"
-    "concepts/search/(:target/):query"  : "search"
-
   _bindRoutes: ->
     super
-    @route /^concepts\/([0-9a-f]{24})$/,       "show"
+    show_concept =   new RegExp('^([0-9a-f]{24})/concepts/([0-9a-f]{24})$')
+    new_concept =    new RegExp('^([0-9a-f]{24})/concepts/new(?:/terms/([^/]+)/([^/]+))?$')
+    search_concept = new RegExp('^([0-9a-f]{24})/concepts/search/(?:([^/]+)/)?([^/]+)$')
+    @route show_concept,   "show"
+    @route new_concept,    "new"
+    @route search_concept, "search"
 
-  initialize: (options) ->
-    @[key] = value for key, value of options
 
-  root: ->
-    @view.switch new Coreon.Views.Concepts.RootView
-    @app.hits.reset []
+  initialize: (@view) ->
 
-  show: (id) ->
+  show: (repository, id) ->
+    @view.repository repository
     concept = Coreon.Models.Concept.find id
     @view.switch new Coreon.Views.Concepts.ConceptView
       model: concept
-    @app.hits.reset [ result: concept ]
+    Coreon.Models.Hit.collection().reset [ result: concept ]
 
-  new: (lang, value) ->
-    if Coreon.application?.session.ability.can "create", Coreon.Models.Concept
+  new: (repository, lang, value) ->
+    @view.repository repository
+    if true #Coreon.application?.session.ability.can "create", Coreon.Models.Concept
       attrs = {}
       attrs.terms = [ lang: lang, value: value ] if value?
       concept = new Coreon.Models.Concept attrs
       @view.switch new Coreon.Views.Concepts.NewConceptView
         model: concept
-      @app.hits.reset [ result: concept ]
+      Coreon.Models.Hit.collection().reset [ result: concept ]
     else
       Backbone.history.navigate "/", trigger: true
 
-  search: (target, query) ->
-    @view.widgets.search.selector.hideHint()
-    @view.$("input#coreon-search-query").val decodeURIComponent(query)
+  search: (repository, target, query) ->
+    @view.repository repository
+    query = decodeURIComponent(query)
+    @view.query query
 
     search = new Coreon.Models.ConceptSearch
       path: "concepts/search"

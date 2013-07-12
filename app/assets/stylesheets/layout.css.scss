@@ -8,6 +8,14 @@
   z-index: 2;
 }
 
+#coreon-filters {
+  position: absolute;
+  width: 100%;
+  padding: 10px;
+  background-color: $beigecolor;
+  @include retina-stripes("blue");
+}
+
 #coreon-header {
   @include box-sizing(border-box);
   background:image-url("layout/top-bg.jpg");
@@ -72,5 +80,5 @@
 
 #coreon-main {
   padding: 0 100px 60px 5%;
-  margin-top: 60px;
+  margin-top: 80px;
 }

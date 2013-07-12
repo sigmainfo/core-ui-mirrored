@@ -6,7 +6,11 @@ if RUBY_VERSION =~ /1.9/
 end
 
 gem "rails", "= 3.2.12" # Needed for i18n-js with ruby 1.9
-gem "core_client", git: "git@devel.spom.net:core-client.git"
+if false
+  gem 'core_client', path: '../core-client'
+else
+  gem 'core_client', git: 'git@devel.spom.net:core-client.git'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.

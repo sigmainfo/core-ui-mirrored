@@ -1,95 +1,103 @@
 #= require environment
-#= require collections/notifications
-#= require collections/connections
-#= require models/ability
+#= require models/repository
+
+repository = null
 
 class Coreon.Models.Session extends Backbone.Model
+  
+  @auth_root = null
 
-  defaults:
-    active: false
-    login: ""
-    name: ""
-    token: null
-    auth_root: "/api/auth/"
-    graph_root: "/api/graph/"
+  @load = () ->
+    request = $.Deferred()
+    if token = localStorage.getItem "coreon-session"
+      session = new @ auth_token: token
+      session.fetch()
+        .done( -> request.resolve session )
+        .fail( -> request.resolve null )
+    else
+      request.resolve null
+    request.promise()
 
-  options:
-    sessionId: "coreon-session"
+  @authenticate = (email, password) ->
+    request = $.Deferred()
+    session = new @
+    session.save({}, data: $.param email: email, password: password)
+      .done( -> request.resolve session )
+      .fail( -> request.resolve null )
+    request.promise()
+
+
+
+  defaults: ->
+    repositories: []
+    current_repository_id: null
+
+  idAttribute: "auth_token"
+
+  urlRoot: -> "#{Coreon.Models.Session.auth_root.replace /\/$/, ''}/login"
 
   initialize: ->
-    @notifications = new Coreon.Collections.Notifications
-    @connections = new Coreon.Collections.Connections
-    @connections.session = @
-    @ability = new Coreon.Models.Ability
+    @on "change:auth_token", @onChangeToken, @
 
-    @on "change:token", @_updateActiveState, @
-    @_updateActiveState()
-
-    @connections.on "error:403", @onUnauthorized
-    
-  activate: (login, password) ->
-    @set "login", login
-    @requestSession password, @onActivated
-
-  onActivated: (data) =>
-    @save
-      name: data.user.name
-      token: data.auth_token
-    @trigger "activated"
-    @notifications.reset()
-    @message I18n.t("notifications.account.login", name: @get "name")
-
-  reactivate: (password) ->
-    @requestSession password, @onReactivated
-
-  onReactivated: (data) =>
-    @save token: data.auth_token
-    @trigger "reactivated"
-
-  requestSession: (password, done) ->
-    login = @get("login")
-    options =
-      url: @get("auth_root") + "login"
-      type: "POST"
-      dataType: "json"
+  reauthenticate: (password) ->
+    @unset "auth_token"
+    @save {},
       data:
-        login: login
-        password: password
-    
-    @connections.add
-      model: @
-      options: options
-      xhr: $.ajax(options).done done
+        $.param
+          password: password
+          user_id: @get("user").id
+    @
 
+  set: (key, value, options) ->
+    if typeof key is "object"
+      [attrs, options] = arguments
+    else
+      (attrs = {})[key] = value
+    changed = no
+    if attrs.hasOwnProperty "repositories"
+      repositories = attrs.repositories
+      changed = yes
+    else
+      repositories = @get "repositories"
+    if attrs.hasOwnProperty "current_repository_id"
+      current_repository_id = attrs.current_repository_id
+      changed = yes
+    else
+      current_repository_id = @get "current_repository_id"
+    if changed
+      if repositories?.length > 0
+        available = no
+        for repo in repositories when repo.id is current_repository_id
+          available = yes
+          break
+        unless available
+          attrs.current_repository_id = repositories[0].id
+      else
+        attrs.current_repository_id = null
+    super attrs, options
 
-  onUnauthorized: =>
-    @unset "token"
-    @trigger "unauthorized"
+  currentRepository: ->
+    current_repository_id = @get "current_repository_id"
+    if current_repository_id
+      repositories = @get "repositories"
+      for repo in repositories when repo.id is current_repository_id
+        attrs = repo
+        break
+      if not repository? or attrs.id isnt repository.id
+        repository = new Coreon.Models.Repository attrs
+    else
+      repository = null
+    repository
 
-  deactivate: ->
-    @set "active", false
-    @sync "delete", @
-    @trigger "deactivated"
-    @notifications.reset()
-    @message I18n.t("notifications.account.logout")
+  onChangeToken: (model, token) ->
+    if token
+      localStorage.setItem "coreon-session", token
+    else
+      localStorage.removeItem "coreon-session"
 
-  sync: (action, model, options)->
-    fields = ["token", "login", "name"]
-    switch action
-      when "create", "update"
-        data = {}
-        for key, value of @attributes when key not in [ "active", "graph_root", "auth_root" ] 
-          data[key] = value
-        localStorage.setItem @options.sessionId, JSON.stringify data
-      when "read"
-        @set JSON.parse localStorage.getItem @options.sessionId 
-      when "delete"
-        localStorage.removeItem @options.sessionId
-
-  destroy: ->
-    @notifications.destroy()
-    @connections.destroy()
-    @sync "delete", @
-
-  _updateActiveState: ->
-    @set "active", @has("token")
+  destroy: (options) ->
+    localStorage.removeItem "coreon-session"
+    if @id?
+      request = super
+      request.abort()
+    request or null
