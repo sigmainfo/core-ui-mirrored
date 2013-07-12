@@ -1,11 +1,13 @@
 #= require environment
 #= require modules/helpers
 
-BATCH_DELAY = 250
+BATCH_DELAY = 200
 
 connections = 0
 batches = {}
 timers = []
+
+_dummy = trigger: ->
 
 urlFor = (path) ->
   root = Coreon.application.graphUri() or throw new Error "No graph URI specified"
@@ -66,6 +68,7 @@ batch = (deferred, method, model, options) ->
     deferred.model = model
     deferred.options = opts
     batches[url].push deferred
+    model.trigger "request", model, deferred.promise(), opts
   else
     batches[url] = []
     ajax arguments...
@@ -84,7 +87,7 @@ batchAjax = (url, options) ->
   delete options.success
   delete options.error
 
-  ajax request, "read", null, options 
+  ajax request, "read", _dummy, options 
 
   request.done (data, request) ->
     if batches[url]?

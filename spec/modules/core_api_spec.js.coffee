@@ -262,7 +262,19 @@ describe "Coreon.Modules.CoreAPI", ->
         @clock.tick 300
         Backbone.sync.should.not.have.been.called
 
-      it "triggers request events"
+      it "triggers request events", ->
+          spy = sinon.spy()
+          promises = []
+          models = []
+          for i in [1..3]
+            model = new Coreon.Models.CoreAPIModel _id: "#{i}"
+            model.on "request", spy
+            promises.push model.sync "read", model, batch: on
+            models.push model
+            spy.reset() if i is 1
+          spy.should.have.been.calledTwice
+          spy.firstCall.should.have.been.calledWith models[1], promises[1], batch: on
+          spy.secondCall.should.have.been.calledWith models[2], promises[2], batch: on
 
       context "done", ->
         
@@ -308,8 +320,6 @@ describe "Coreon.Modules.CoreAPI", ->
           spy.should.have.been.calledTwice
           spy.firstCall.should.have.been.calledWith models[1], {_id: "2"}, batch: on, success: spy
           spy.secondCall.should.have.been.calledWith models[2], {_id: "3"}, batch: on, success: spy
-
-        it "triggers events"
 
       context "fail", ->
         
@@ -357,8 +367,6 @@ describe "Coreon.Modules.CoreAPI", ->
           spy.should.have.been.calledTwice
           spy.firstCall.should.have.been.calledWith models[1], {message: "Whahappan?!"}, batch: on, error: spy 
           spy.secondCall.should.have.been.calledWith models[2], {message: "Whahappan?!"}, batch: on, error: spy
-
-        it "triggers events"
 
       context "abort", ->
         
