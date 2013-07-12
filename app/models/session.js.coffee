@@ -1,5 +1,6 @@
 #= require environment
 #= require models/repository
+#= require models/ability
 
 repository = null
 
@@ -25,8 +26,6 @@ class Coreon.Models.Session extends Backbone.Model
       .done( -> request.resolve session )
       .fail( -> request.resolve null )
     request.promise()
-
-
 
   defaults: ->
     repositories: []
@@ -89,7 +88,11 @@ class Coreon.Models.Session extends Backbone.Model
       repository = null
     repository
 
+  ability: ->
+    @_ability ?= new Coreon.Models.Ability @
+
   onChangeToken: (model, token) ->
+    @_ability = null
     if token
       localStorage.setItem "coreon-session", token
     else

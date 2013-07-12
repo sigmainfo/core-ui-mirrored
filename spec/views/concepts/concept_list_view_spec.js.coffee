@@ -23,7 +23,12 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
     @view.$el.should.match "div.concept-list"
 
   describe "#render", ->
-    
+    beforeEach ->
+      Coreon.application = new Backbone.Model
+        session: new Backbone.Model
+          current_repository_id: "coffeebabe23"
+      @view.model.id = "1234"
+
     it "can be chained", ->
       @view.render().should.equal @view
 

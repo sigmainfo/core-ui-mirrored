@@ -7,10 +7,10 @@ describe "Coreon.Models.Session", ->
     sinon.stub  Backbone.history, "navigate"
     @auth_root = Coreon.Models.Session.auth_root
     Coreon.Models.Session.auth_root = "https://auth.coreon.com"
-    sinon.stub localStorage, "getItem"
-    sinon.stub localStorage, "setItem"
-    sinon.stub localStorage, "removeItem"
-    
+    sinon.stub window.localStorage, "getItem"
+    sinon.stub window.localStorage, "setItem"
+    sinon.stub window.localStorage, "removeItem"
+
   afterEach ->
     localStorage.getItem.restore()
     localStorage.setItem.restore()
@@ -19,11 +19,11 @@ describe "Coreon.Models.Session", ->
     Backbone.history.navigate.restore()
 
   describe "class", ->
-  
+
     describe "load()", ->
 
       context "without local session", ->
-        
+
         beforeEach ->
           localStorage.getItem.withArgs("coreon-session").returns null
 
@@ -46,7 +46,7 @@ describe "Coreon.Models.Session", ->
           Coreon.Models.Session.load()
           Coreon.Models.Session.should.have.been.calledOnce
           Coreon.Models.Session.should.have.been.calledWithNew
-          Coreon.Models.Session.should.have.been.calledWith 
+          Coreon.Models.Session.should.have.been.calledWith
             auth_token: "0457-a33a403-f562fb6f"
 
         it "loads session from auth service", ->
@@ -79,7 +79,7 @@ describe "Coreon.Models.Session", ->
         Coreon.Models.Session.authenticate "nobody@blake.com", "se7en!"
         Coreon.Models.Session.should.have.been.calledOnce
         Coreon.Models.Session.should.have.been.calledWithNew
-      
+
       it "saves session overiding data with credentials", ->
         Coreon.Models.Session.authenticate "nobody@blake.com", "se7en!"
         @session.save.should.have.been.calledWith {}, data: "email=nobody%40blake.com&password=se7en!"
@@ -95,7 +95,7 @@ describe "Coreon.Models.Session", ->
         should.equal @arg, null
 
   describe "instance", ->
-    
+
     beforeEach ->
       @session = new Coreon.Models.Session
 
@@ -105,7 +105,7 @@ describe "Coreon.Models.Session", ->
         Coreon.Models.Session.auth_root = "https://my.auth.root"
         @session.set "auth_token", "my-auth-token-1234", silent: on
         @session.url().should.equal "https://my.auth.root/login/my-auth-token-1234"
-    
+
       it "strips trailing slash from auth root", ->
         Coreon.Models.Session.auth_root = "https://my.auth.root/"
         @session.set "auth_token", "my-auth-token-1234", silent: on
@@ -135,7 +135,7 @@ describe "Coreon.Models.Session", ->
       it "selects first repo if given is not available", ->
         @session.set "repositories", [ id: "nobody-repo-123" ]
         @session.set "current_repository_id", "hands-off-123"
-        Backbone.Model::set.should.have.been.calledWith current_repository_id: "nobody-repo-123" 
+        Backbone.Model::set.should.have.been.calledWith current_repository_id: "nobody-repo-123"
 
       it "passes null when repositories are empty", ->
         @session.set "repositories", [], silent: yes
@@ -149,7 +149,7 @@ describe "Coreon.Models.Session", ->
         Backbone.Model::set.should.have.been.calledWith
           current_repository_id: "some-repo-789"
           repositories: [ id: "some-repo-789" ]
-      
+
       it "selects first available repo", ->
         @session.set "current_repository_id", "nobody-repo-123", silent: yes
         @session.set "repositories", [ id: "my-new-repo-678" ]
@@ -166,17 +166,17 @@ describe "Coreon.Models.Session", ->
             name: "Nobody's Repository"
           }
           {
-            id: "nobody-repo-124" 
+            id: "nobody-repo-124"
             name: "Nobody's Other Repository"
           }
           {
-            id: "nobody-repo-125" 
+            id: "nobody-repo-125"
             name: "Nobody's Repo III"
           }
         ], silent: yes
         @session.set "current_repository_id", "nobody-repo-124", silent: true
         @session.currentRepository()
-      
+
       it "creates repository matching id", ->
         @session.set "current_repository_id", "nobody-repo-125", silent: true
         repo = @session.currentRepository()
@@ -193,15 +193,16 @@ describe "Coreon.Models.Session", ->
         @session.set "repositories", [], silent: true
         should.equal @session.currentRepository(), null
 
+
     describe "onChangeToken()", ->
 
       it "is triggered by changes on token", ->
         @session.onChangeToken = sinon.spy()
         @session.initialize()
         @session.trigger "change:auth_token", @session, "my-brandnew-token-123"
-        @session.onChangeToken.should.have.been.calledOnce 
+        @session.onChangeToken.should.have.been.calledOnce
         @session.onChangeToken.should.have.been.calledWith @session, "my-brandnew-token-123"
-     
+
       it "saves token locally", ->
         @session.onChangeToken @session, "my-brandnew-token-123"
         localStorage.setItem.should.have.been.calledOnce
@@ -211,26 +212,26 @@ describe "Coreon.Models.Session", ->
         @session.onChangeToken @session, ""
         localStorage.setItem.should.not.have.been.called
         localStorage.removeItem.should.have.been.calledOnce
-        localStorage.removeItem.should.have.been.calledWith "coreon-session" 
+        localStorage.removeItem.should.have.been.calledWith "coreon-session"
 
     describe "reauthenticate()", ->
 
       beforeEach ->
         @session.set "user", id: "123456dfhg", silent: yes
+        @session.save = sinon.spy()
 
       it "can be chained", ->
         @session.reauthenticate("se7en!").should.equal @session
 
       it "unsets auth_token", ->
         @session.reauthenticate "se7en!"
-        should.equal @session.has("auth_token"), false       
+        should.equal @session.has("auth_token"), false
 
       it "updates session with password and user id", ->
-        @session.save = sinon.spy()
         @session.reauthenticate "se7en!"
         @session.save.should.have.been.calledOnce
         @session.save.should.have.been.calledWith {}, data: "password=se7en!&user_id=123456dfhg"
-        
+
     describe "destroy()", ->
 
       beforeEach ->
@@ -243,7 +244,7 @@ describe "Coreon.Models.Session", ->
         @session.destroy()
         localStorage.removeItem.should.have.been.calledOnce
         localStorage.removeItem.should.have.been.calledWith "coreon-session"
-        
+
       it "calls super", ->
         @session.id = "mysupertoken"
         @session.destroy()

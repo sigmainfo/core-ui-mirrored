@@ -24,6 +24,11 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
   describe "#render", ->
 
     beforeEach ->
+      Coreon.application = new Backbone.Model
+        session: new Backbone.Model
+          current_repository_id: "coffeebabe23"
+      @view.model.id = "1234"
+
       sinon.stub I18n, "t"
       sinon.stub Coreon.Models.Concept, "find", (id) ->
         new Coreon.Models.Concept _id: id

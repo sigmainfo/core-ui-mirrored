@@ -1,0 +1,5 @@
+.titlebar
+  %h4= I18n.t "clipboard.title"
+  .actions
+
+%ul

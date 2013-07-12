@@ -2,8 +2,10 @@
 #= require views/search/search_results_view
 
 describe "Coreon.Views.Search.SearchResultsView", ->
-   
+
   beforeEach ->
+    Coreon.Helpers.repositoryPath = (s)-> "/coffee23/#{s}"
+    Coreon.Helpers.can = -> true
     @view = new Coreon.Views.Search.SearchResultsView
       models:
         terms: new Backbone.Model(hits: [])
@@ -15,7 +17,7 @@ describe "Coreon.Views.Search.SearchResultsView", ->
     @view.should.be.an.instanceof Coreon.Views.CompositeView
 
   describe "#initialize", ->
-     
+
     it "creates term results view", ->
       @view.terms.should.be.an.instanceof Coreon.Views.Search.SearchResultsTermsView
       @view.terms.model.should.equal @view.options.models.terms
@@ -28,7 +30,7 @@ describe "Coreon.Views.Search.SearchResultsView", ->
 
     it "is chainable", ->
       @view.render().should.equal @view
-    
+
     it "renders term results", ->
       @view.render()
       @view.$el.should.have ".search-results-terms"

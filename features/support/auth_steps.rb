@@ -3,20 +3,28 @@ module AuthSteps
 
   attr_accessor :me
 
-  Given 'my name is "William Blake" with email "nobody@blake.com" and password "se7en!"' do    
+  step 'my name is "William Blake" with email "nobody@blake.com" and password "se7en!"' do
     @me_password = "se7en!"
     @me = CoreClient::Auth::User.create!(
       name: "William Blake",
       emails: ["nobody@blake.com"],
       password: @me_password,
       password_confirmation: @me_password
-    )  
+    )
     @account = CoreClient::Auth::Account.create! name: "Nobody's Account", active: true
     @repository = CoreClient::Auth::Repository.create! name: "Nobody's Repository", account_id: @account.id, graph_uri: "http://localhost:3336/", active: true
-    repo_user = CoreClient::Auth::RepositoryUser.create! repository: @repository, user: @me, email: "nobody@blake.com", roles: [:user, :maintainer]
+    @repo_user = CoreClient::Auth::RepositoryUser.create! repository: @repository, user: @me, email: "nobody@blake.com", roles: [:user]
   end
 
-  Given 'I am logged in' do
+  step 'I am no maintainer of the repository' do
+    @repo_user.update_attributes roles: [:user]
+  end
+
+  step 'I am a maintainer of the repository' do
+    @repo_user.update_attributes roles: [:user, :maintainer]
+  end
+
+  step 'I am logged in' do
     visit "/"
     within "#coreon-login" do
       fill_in "Email", with: @me.emails.first
@@ -24,10 +32,14 @@ module AuthSteps
       click_button "Log in"
     end
     page.should have_css("#coreon-footer")
-    CoreAPI.session = page.evaluate_script('localStorage.getItem("coreon-session")') 
+    CoreAPI.session = page.evaluate_script('localStorage.getItem("coreon-session")')
   end
 
-  Given 'I am logged out' do
+  step 'I am logged out' do
     visit "/logout"
+  end
+
+  step 'I debug' do
+    binding.pry
   end
 end

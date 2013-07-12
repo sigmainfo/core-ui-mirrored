@@ -2,7 +2,7 @@
 #= require views/concepts/concept_label_view
 
 describe "Coreon.Views.Concepts.ConceptLabelView", ->
-  
+
   beforeEach ->
     @concept = _(new Backbone.Model).extend
       label: -> "poem"
@@ -25,7 +25,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
 
     beforeEach ->
       @concept = new Backbone.Model
-    
+
     it "gets model by id", ->
       Coreon.Models.Concept.find.withArgs("1234abcf").returns @concept
       @view.initialize id: "1234abcf"
@@ -36,16 +36,20 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.initialize model: @concept
       @view.model.should.equal @concept
       Coreon.Models.Concept.find.should.not.have.been.calledWith "1234"
-    
+
   describe "#render", ->
-    
+    beforeEach ->
+      Coreon.application = new Backbone.Model
+        session: new Backbone.Model
+          current_repository_id: "coffeebabe23"
+      @view.model.id = "1234"
+
     it "can be chained", ->
       @view.render().should.equal @view
 
     it "renders url to concept", ->
-      @view.model.id = "1234"
       @view.render()
-      @view.$el.should.have.attr "href", "/concepts/1234"
+      @view.$el.should.have.attr "href", "/coffeebabe23/concepts/1234"
 
     it "renders label", ->
       @view.model.set "label", "Zitrone", silent: true
@@ -62,17 +66,17 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @concept.set "hit", new Backbone.Model, silent: true
       @view.render()
       @view.$el.should.have.class "hit"
-  
+
     it "does not classify as hit when false", ->
       @concept.set "hit", new Backbone.Model, silent: true
       @view.render()
       @concept.set "hit", null
       @view.render()
       @view.$el.should.not.have.class "hit"
-      
+
 
   describe "#appendTo", ->
-    
+
     it "appends $el", ->
       @view.appendTo "#konacha"
       $("#konacha").should.have ".concept-label"
@@ -83,7 +87,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.delegateEvents.should.have.been.calledOnce
 
   describe "#destroy", ->
-    
+
     it "removes $el", ->
       @view.appendTo "#konacha"
       @view.destroy()

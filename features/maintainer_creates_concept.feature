@@ -5,10 +5,10 @@ Feature: maintainer creates concept
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    Given I am a maintainer of the repository
     And I am logged in
-  
+
   Scenario: create empty concept
-    Given I have maintainer privileges
     When I visit the start page
     And I click on "New concept"
     Then I should be on the new concept page
@@ -23,7 +23,6 @@ Feature: maintainer creates concept
     And I should see a new concept node with the id of the newly created concept within the concept map
 
   Scenario: add property
-    Given I have maintainer privileges
     When I visit the start page
     And I click on "New concept"
     And I click "Add property"
@@ -38,7 +37,6 @@ Feature: maintainer creates concept
     And I should see a property "label" with value "dead man"
 
   Scenario: add term
-    Given I have maintainer privileges
     When I visit the start page
     And I click on "New concept"
     And I click "Add term"
@@ -53,7 +51,6 @@ Feature: maintainer creates concept
     Then I should see an English term "corpse"
 
   Scenario: add term with property
-    Given I have maintainer privileges
     When I visit the start page
     And I click on "New concept"
     And I click "Add term"
@@ -71,7 +68,6 @@ Feature: maintainer creates concept
     Then I should see a property "source" with value "Wikipedia"
 
   Scenario: validation errors
-    Given I have maintainer privileges
     When I visit the start page
     And I click on "New concept"
     And client-side validation is turned off
@@ -98,7 +94,6 @@ Feature: maintainer creates concept
     But I should see message 'Successfully created concept "corpse".'
 
   Scenario: cancel creation
-    Given I have maintainer privileges
     When I visit the start page
     And I click on "New concept"
     When I click "Cancel"
@@ -107,21 +102,17 @@ Feature: maintainer creates concept
     But I should see link "New concept"
   
   Scenario: term from recent search
-    Given I have maintainer privileges
     When I do a search for "corpse"
     And I click on "New concept"
-    Then I should be on the new concept page
+    Then I should be on the new concept with english term "corpse" page
     And I should see "<New concept>" within the title
     And I should see a set of term inputs
     And I should see "corpse" for "Value"
     And I should see "en" for "Language"
 
   Scenario: not a maintainer
-    Given I do not have maintainer privileges
+    Given I am no maintainer of the repository
     When I visit the start page
     Then I should not see link "New concept"
     When I do a search for "corpse"
     Then I should not see link "New concept"
-    When I visit "/concepts/new"
-    Then I should be on the start page
-    And I should not see link "New concept"

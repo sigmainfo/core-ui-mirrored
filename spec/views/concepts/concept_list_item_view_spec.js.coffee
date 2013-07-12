@@ -17,6 +17,11 @@ describe "Coreon.Views.Concepts.ConceptListItemView", ->
     @view.$el.should.match "tbody.concept-list-item"
 
   describe "#render", ->
+    beforeEach ->
+      Coreon.application = new Backbone.Model
+        session: new Backbone.Model
+          current_repository_id: "coffeebabe23"
+      @view.model.id = "1234"
 
     it "renders label", ->
       @view.model.set "label", "My Concept"

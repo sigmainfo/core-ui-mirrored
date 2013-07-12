@@ -3,6 +3,7 @@
 #= require views/composite_view
 #= require views/widgets/search_view
 #= require views/widgets/concept_map_view
+#= require views/widgets/clipboard_view
 #= require collections/concept_nodes
 
 class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
@@ -16,10 +17,18 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     super
     @search = new Coreon.Views.Widgets.SearchView
     @map = new Coreon.Views.Widgets.ConceptMapView
-      model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Models.Hit.collection() )
-    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
-    @settings.widgets ?= {}
-    @$el.width @settings.widgets.width if @settings.widgets.width
+      model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Collections.Hits.collection() )
+    @clipboard = new Coreon.Views.Widgets.ClipboardView
+    settings = @localSettings()
+    settings.widgets ?= {}
+    @$el.width settings.widgets.width if settings.widgets.width
+
+
+  localSettings: ->
+    cache_id = Coreon.application.cacheId()
+    try settings = JSON.parse localStorage.getItem cache_id
+    finally settings ?= {}
+    settings
 
   setElement: (element, delegate) ->
     super
@@ -37,12 +46,14 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.append @search.render().$el
+    @$el.append @clipboard.render().$el
     @$el.append @map.render().$el
     super
 
   saveLayout = (layout) ->
-    @settings = JSON.parse(localStorage.getItem Coreon.application.get("session").currentRepository().get "cache_id") or {}
-    @settings.widgets = layout
-    localStorage.setItem Coreon.application.get("session").currentRepository().get("cache_id"), JSON.stringify @settings
+    settings = @localSettings()
+    settings.widgets = layout
+    cache_id = Coreon.application.cacheId()
+    localStorage.setItem cache_id, JSON.stringify settings
 
   saveLayout: _.debounce saveLayout, 500

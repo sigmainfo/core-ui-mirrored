@@ -1,6 +1,13 @@
 module SearchSteps
   include Spinach::DSL
 
+  When 'I search for "panopticum"' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "panopticum"
+      find('input[type="submit"]').click
+    end
+  end
+
   When 'I enter "poet" in the search field' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "poet"
@@ -33,7 +40,7 @@ module SearchSteps
   end
 
   Then 'I should be on the search result page' do
-    current_path.should =~ %r|^/search|
+    current_path.should =~ %r|^/#{@repository.id}/search|
   end
 
   And 'I should see the query "poet" within the navigation' do

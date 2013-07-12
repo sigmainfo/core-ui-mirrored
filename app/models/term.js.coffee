@@ -6,6 +6,7 @@
 #= require modules/properties_by_key
 #= require modules/remote_validation
 #= require modules/persisted_attributes
+#= require modules/core_api
 
 class Coreon.Models.Term extends Backbone.Model
 

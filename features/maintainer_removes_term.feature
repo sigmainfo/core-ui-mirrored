@@ -7,10 +7,10 @@ Feature: maintainer removes term
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
     And a concept with an English term "beaver hat" exists
-  
+    And I am a maintainer of the repository
+    And I visit the page of this concept
+
   Scenario: remove term
-    Given I have maintainer privileges
-    And I am on the show concept page of this concept
     When I click "Edit concept" 
     And I click "Remove term" within term "beaver hat"
     Then I should see a confirmation dialog "This term will be deleted permanently."

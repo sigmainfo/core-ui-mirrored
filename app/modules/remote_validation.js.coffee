@@ -13,7 +13,12 @@ copyTo = (errors, other) ->
           copyTo errors[attr][index], error
 
 onError = (model, xhr, options) ->
-  response = JSON.parse(xhr.responseText).errors
+  try
+    response = JSON.parse(xhr.responseText).errors
+  catch error
+    console?.log "Could not parse JSON: #{xhr.responseText}"
+  finally
+    response ?= {}
   remoteError = {}
   hasErrors = no
   for attr, attrErrors of response

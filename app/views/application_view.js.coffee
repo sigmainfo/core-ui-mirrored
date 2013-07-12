@@ -7,15 +7,6 @@
 #= require views/repositories/repository_select_view
 #= require views/layout/progress_indicator_view
 
-updateSession = (view) ->
-  previous = session
-  session = view.model.get "session"
-  if session isnt previous
-    view.stopListening previous if previous?
-  if session?
-    view.listenTo session, "change:current_repository_id", view.render
-    view.listenTo session, "change:auth_token", view.reauthenticate
-  view.session = session
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
@@ -36,7 +27,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   render: ->
     subview.remove() for subview in @subviews if @subviews
     @subviews = []
-    session = updateSession @
+    session = @updateSession()
     @$el.html @template session: session
     if session?
       widgets = new Coreon.Views.Widgets.WidgetsView model: @model
@@ -103,3 +94,12 @@ class Coreon.Views.ApplicationView extends Backbone.View
     input.val query if query?
     if query then hint.hide() else hint.show()
     input.val()
+
+  updateSession: ->
+    previous = @session
+    session = @model.get "session"
+    @stopListening previous if previous?
+    if session?
+      @listenTo session, "change:current_repository_id", @render
+      @listenTo session, "change:auth_token", @reauthenticate
+    @session = session

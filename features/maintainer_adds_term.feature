@@ -5,13 +5,13 @@ Feature: maintainer adds term
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    And I am a maintainer of the repository
     And I am logged in
     And a concept "top hat" exists
-  
+    And I visit the page of this concept
+
   Scenario: add term
-    Given I have maintainer privileges
-    And I am on the show concept page of this concept
-    When I click "Edit concept" 
+    When I click "Edit concept"
     And I click "Add term"
     Then I should see a set of term inputs with labels "Value", "Language"
     When I fill in "Value" with "high hat" within term inputs
@@ -28,8 +28,6 @@ Feature: maintainer adds term
     And I should not see "Create term"
 
   Scenario: validation errors
-    Given I have maintainer privileges
-    And I am on the show concept page of this concept
     When I click "Edit concept"
     And I click "Add term"
     And client-side validation is turned off
@@ -50,8 +48,6 @@ Feature: maintainer adds term
     But I should see a message 'Successfully created term "high hat".'
 
   Scenario: cancel adding term
-    Given I have maintainer privileges
-    And I am on the show concept page of this concept
     When I click "Edit concept" 
     And I click "Add term"
     And I fill in "Value" with "high hat" within term inputs

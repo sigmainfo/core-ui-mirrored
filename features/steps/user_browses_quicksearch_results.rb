@@ -55,7 +55,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   Then 'I should be on the page of concept "versify"' do
-    current_path.should == "/concepts/#{@versify['_id']}"
+    current_path.should == "/#{@repository.id}/concepts/#{@versify['_id']}"
   end
 
   Given 'the a concept with label "dead"' do
@@ -114,7 +114,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   Then 'I should be on the concept page of "poetry"' do
-    current_path.should == "/concepts/#{@poetry['_id']}"
+    current_path.should == "/#{@repository.id}/concepts/#{@poetry['_id']}"
   end
 
   Given 'a taxonomy "Professions"' do

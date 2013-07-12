@@ -23,6 +23,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     @view.$el.should.be "section"
 
   describe "initialize()", ->
+    beforeEach ->
+      @repo = new Backbone.Model
+      @session = new Backbone.Model
+      @session.currentRepository = => @repo
+      Coreon.application = new Backbone.Model session: @session
+
+      @view.model.id = "1234"
 
     it "creates empty array for broader concepts", ->
       should.exist @view.broader
@@ -139,14 +146,16 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       context "with empty super concepts list", ->
         
         beforeEach ->
+          @repo.set
+            _id: "coffeebabe23"
+            name: "delicious data"
           @view.model.set "super_concept_ids", [], silent: true
 
         it "renders repository node", ->
-          I18n.t.withArgs("repository.label").returns "Repository"
           @view.render()
           @view.$(".broader ul").should.have "li a.repository-label"
-          @view.$(".broader .repository-label").should.have.attr "href", "/"
-          @view.$(".broader .repository-label").should.have.text "Repository"
+          @view.$(".broader .repository-label").should.have.attr "href", "/coffeebabe23/"
+          @view.$(".broader .repository-label").should.have.text "delicious data"
 
         it "does not render repository when blank", ->
           @view.model.blank = true

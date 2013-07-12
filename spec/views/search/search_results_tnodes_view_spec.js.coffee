@@ -2,16 +2,14 @@
 #= require views/search/search_results_tnodes_view
 #= require config/application
 
-xdescribe "Coreon.Views.Search.SearchResultsTnodesView", ->
-  
+describe "Coreon.Views.Search.SearchResultsTnodesView", ->
+
   beforeEach ->
-    Coreon.application = new Coreon.Application
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Search.SearchResultsTnodesView model: new Backbone.Model
     @view.model.set "hits", []
 
   afterEach ->
-    Coreon.application.destroy()
     I18n.t.restore()
 
   it "is a composite view", ->

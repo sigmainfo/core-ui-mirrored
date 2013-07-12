@@ -8,8 +8,8 @@ describe "Coreon.Views.Notifications.NotificationView", ->
     @view = new Coreon.Views.Notifications.NotificationView
       model: new Coreon.Models.Notification
 
-  it "is a simple view", ->
-    @view.should.be.an.instanceOf Coreon.Views.SimpleView
+  it "is no simple view anymore", ->
+    @view.should.be.an.instanceOf Backbone.View
 
   it "creates list element", ->
     @view.$el.should.be "li.notification"

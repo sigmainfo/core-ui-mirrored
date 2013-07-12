@@ -5,9 +5,9 @@ Feature: maintainer edits concept
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    And I am a maintainer of the repository
     And I am logged in
     And a concept with property "label" of "handgun" exists
-    And I have maintainer privileges
     And I visit the page of this concept
 
   Scenario: toggle edit mode
@@ -76,8 +76,10 @@ Feature: maintainer edits concept
     And I should see error "can't be blank" for input "Key" of new property
     And I should see error "can't be blank" for input "Value" of new property
 
+  @wip
   Scenario: not a maintainer
-    Given I do not have maintainer privileges
+    Given I am no maintainer of the repository
+    And I visit the page of this concept
     Then I should not see the edit concept button
 
   Scenario: change existing properties

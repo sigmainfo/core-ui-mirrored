@@ -4,17 +4,29 @@
 describe "Coreon.Views.ApplicationView", ->
   
   beforeEach ->
+    Coreon.application = new Backbone.Model
+    Coreon.Views.Layout.ProgressIndicatorView =-> new Backbone.View
+    @session = new Backbone.Model
+      current_repository_id: "coffeebabe23"
+      user: name: "Nobody"
+    @session.currentRepository =->
+
     sinon.stub I18n, "t"
     @view = new Coreon.Views.ApplicationView
-      model: new Backbone.Model
+      model: Coreon.application
 
   afterEach ->
     I18n.t.restore()
 
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
-  
+
   describe "render()", ->
+    beforeEach ->
+      Coreon.application.cacheId = -> "coffee23"
+
+    afterEach ->
+      Coreon.application.cacheId = null
 
     it "is triggered when session changes", ->
       @view.render = sinon.spy()
@@ -23,11 +35,11 @@ describe "Coreon.Views.ApplicationView", ->
       @view.render.should.have.been.calledOnce
 
     it "is triggered when repository changes", ->
-      session = new Backbone.Model user: name: "Nobody"
+      @view.model.set "session", @session, silent: true
+      @session.set "current_repository_id", "myrepositoryzuio", silent: true
       @view.render = sinon.spy()
-      @view.model.set "session", session
-      @view.render.reset()
-      session.set "current_repository_id", "myrepositoryzuio"
+      @view.updateSession()
+      @session.set "current_repository_id", "coffeebabe23"
       @view.render.should.have.been.calledOnce
 
     it "removes subviews", ->
@@ -43,7 +55,7 @@ describe "Coreon.Views.ApplicationView", ->
       @view.$("#coreon-top").should.have "#coreon-header ul#coreon-notifications"
       @view.$("#coreon-top").should.have "#coreon-modal"
       @view.$el.should.have "#coreon-main"
-      @view.$("#coreon-main").should.have "#coreon-filters"
+      @view.$("#coreon-top").should.have "#coreon-filters"
 
     context "with session", ->
 
@@ -53,7 +65,7 @@ describe "Coreon.Views.ApplicationView", ->
           @widgets.render = sinon.stub().returns @widgets
           @widgets
         sinon.stub Backbone.history, "start"
-        @view.model.set "session", new Backbone.Model(user: name: "nobody"), silent: on
+        @view.model.set "session", @session, silent: on
 
       afterEach ->
         Coreon.Views.Widgets.WidgetsView.restore()
@@ -163,7 +175,7 @@ describe "Coreon.Views.ApplicationView", ->
     it "clears display when no screen is passed", ->
       @view.switch null
       @view.should.have.property "main", null
-      @view.$("#coreon-main").children().should.have.lengthOf 1
+      @view.$("#coreon-main").children().should.have.lengthOf 0
 
   describe "prompt()", ->
 
@@ -293,32 +305,36 @@ describe "Coreon.Views.ApplicationView", ->
   describe "reauthenticate()", ->
 
     beforeEach ->
+      Coreon.application.cacheId = -> "coffee23"
       sinon.stub Coreon.Views.Account, "PasswordPromptView", =>
         @prompt = new Backbone.View
       @session = new Backbone.Model
         auth_token: "supersecrettoken"
         user:
           name: "Nobody"
+      @session.currentRepository = ->
       @view.model.set "session", @session
 
     afterEach ->
+      Coreon.application.cacheId = null
       Coreon.Views.Account.PasswordPromptView.restore()
 
     it "is triggered by changes on session token", ->
       @view.reauthenticate = sinon.spy()
-      @view.render()
+      @view.updateSession()
       @session.set "auth_token", "someothersecrettoken"
-      @view.reauthenticate.should.have.been.calledOnce
-      @view.reauthenticate.should.have.been.calledWith @session, "someothersecrettoken"
+      @view.reauthenticate.callCount.should.equal 1
+      @view.reauthenticate.firstCall.args[0].should.equal @session
+      @view.reauthenticate.firstCall.args[1].should.equal "someothersecrettoken"
 
     it "displays password prompt when token is not set", ->
       @view.prompt = sinon.spy()
       @view.reauthenticate @session, null
-      Coreon.Views.Account.PasswordPromptView.should.have.been.calledOnce
+      Coreon.Views.Account.PasswordPromptView.callCount.should.equal 1
       Coreon.Views.Account.PasswordPromptView.should.have.been.calledWithNew
-      Coreon.Views.Account.PasswordPromptView.should.have.been.calledWith model: @session
-      @view.prompt.should.have.been.calledOnce
-      @view.prompt.should.have.been.calledWith @prompt
+      Coreon.Views.Account.PasswordPromptView.firstCall.args[0].should.eql model: @session
+      @view.prompt.callCount.should.equal 1
+      @view.prompt.firstCall.args[0].should.equal @prompt
 
     it "hides password prompt when token is set", ->
       @view.prompt = sinon.spy()
@@ -383,11 +399,13 @@ describe "Coreon.Views.ApplicationView", ->
     beforeEach ->
       $("#konacha").append @view.$el
       @view.$el.append '''
-        <div class="toggle">
-          <h3>Click to toggle</h3>
-        </div>
-        <div id="coreon-account">
-          <p>Logged in as Nobody</p>
+        <div id="coreon-footer">
+          <div class="toggle">
+            <h3>Click to toggle</h3>
+          </div>
+          <div id="coreon-account">
+            <p>Logged in as Nobody</p>
+          </div>
         </div>
       '''
       @event = $.Event "click"

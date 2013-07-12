@@ -23,6 +23,10 @@ describe "Coreon.Views.Search.SearchResultsTermsView", ->
 
   describe "#render", ->
 
+    beforeEach ->
+      Coreon.Modules.CoreAPI.sync = ->
+      Coreon.Helpers.repositoryPath = (s)-> "/coffee23/#{s}"
+
     it "is chainable", ->
       @view.render().should.equal @view
     
@@ -52,7 +56,7 @@ describe "Coreon.Views.Search.SearchResultsTermsView", ->
       @view.render()
       @view.$(".terms tbody tr:first td").eq(0).should.have.text "poet"
       @view.$(".terms tbody tr:first td").eq(1).should.have.text "en"
-      @view.$(".terms tbody tr:first td").eq(2).should.have "a[href='/concepts/503e248cd198795712000005']"
+      @view.$(".terms tbody tr:first td").eq(2).should.have "a[href='/coffee23/concepts/503e248cd198795712000005']"
       @view.$(".terms tbody tr:first td a").should.have.text "503e248cd198795712000005"
 
     it "renders top 10 terms only", ->
