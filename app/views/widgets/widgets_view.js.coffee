@@ -3,6 +3,7 @@
 #= require views/composite_view
 #= require views/widgets/search_view
 #= require views/widgets/concept_map_view
+#= require views/widgets/clipboard_view
 #= require collections/concept_nodes
 
 class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
@@ -17,6 +18,7 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     @search = new Coreon.Views.Widgets.SearchView
     @map = new Coreon.Views.Widgets.ConceptMapView
       model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Collections.Hits.collection() )
+    @clipboard = new Coreon.Views.Widgets.ClipboardView
     settings = @localSettings()
     settings.widgets ?= {}
     @$el.width settings.widgets.width if settings.widgets.width
@@ -44,6 +46,7 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
 
   render: ->
     @$el.append @search.render().$el
+    @$el.append @clipboard.render().$el
     @$el.append @map.render().$el
     super
 
