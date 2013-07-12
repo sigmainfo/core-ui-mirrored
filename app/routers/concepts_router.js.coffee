@@ -9,12 +9,14 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   _bindRoutes: ->
     super
-    show_concept =   new RegExp('^([0-9a-f]{24})/concepts/([0-9a-f]{24})$')
-    new_concept =    new RegExp('^([0-9a-f]{24})/concepts/new(?:/terms/([^/]+)/([^/]+))?$')
-    search_concept = new RegExp('^([0-9a-f]{24})/concepts/search/(?:([^/]+)/)?([^/]+)$')
-    @route show_concept,   "show"
-    @route new_concept,    "new"
-    @route search_concept, "search"
+    show_concept =    new RegExp('^([0-9a-f]{24})/concepts/([0-9a-f]{24})$')
+    new_concept =     new RegExp('^([0-9a-f]{24})/concepts/new(?:/terms/([^/]+)/([^/]+))?$')
+    new_with_parent = new RegExp('^([0-9a-f]{24})/concepts/new/parent/([0-9a-f]{24})?$')
+    search_concept =  new RegExp('^([0-9a-f]{24})/concepts/search/(?:([^/]+)/)?([^/]+)$')
+    @route show_concept,    "show"
+    @route new_concept,     "new"
+    @route new_with_parent, "newWithParent"
+    @route search_concept,  "search"
 
 
   initialize: (@view) ->
@@ -25,6 +27,19 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @view.switch new Coreon.Views.Concepts.ConceptView
       model: concept
     Coreon.Collections.Hits.collection().reset [ result: concept ]
+
+  newWithParent: (repository, parent_id) ->
+    console.log "new with parent"
+    repo = @view.repository repository
+    roles = repo?.get "user_roles"
+    if roles and "maintainer" in roles
+      attrs =
+        super_concept_ids: [parent_id]
+      concept = new Coreon.Models.Concept attrs
+      @view.switch new Coreon.Views.Concepts.NewConceptView
+        model: concept
+    else
+      Backbone.history.navigate "/", trigger: true
 
   new: (repository, lang, value) ->
     repo = @view.repository repository
