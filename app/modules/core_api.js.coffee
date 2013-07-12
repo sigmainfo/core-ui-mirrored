@@ -59,40 +59,65 @@ batch = (deferred, method, model, options) ->
     root = root[..-2] if root.charAt(root.length - 1) is "/"
     url = "#{root}/fetch"
 
+  opts = {}
+  opts[key] = value for key, value of options
+
   if batches[url]?
-    batches[url].push model.id
+    deferred.model = model
+    deferred.options = opts
+    batches[url].push deferred
   else
     batches[url] = []
-
-    opts = {}
-    opts[key] = value for key, value of options
-
     ajax arguments...
-    
-    timers.push _.delay batchAjax, BATCH_DELAY, url, batches[url], opts
+    timers.push _.delay batchAjax, BATCH_DELAY, url, opts
 
-batchAjax = (url, ids, options) ->
+batchAjax = (url, options) ->
+  
+  return if batches[url].length is 0
 
   request = $.Deferred()
 
   options.url = url
   options.type ?= "POST"
-  options.data ?= ids: ids
-  ajax request, "read", null, options if ids.length > 0
+  options.data ?= ids: (deferred.model.id for deferred in batches[url])
+  
+  delete options.success
+  delete options.error
 
-  request.done ->
-    #TODO: step thru batch
+  ajax request, "read", null, options 
 
-  delete batches[url]
+  request.done (data, request) ->
+    if batches[url]?
+      for deferred in batches[url]
+        for attrs in data when attrs._id is deferred.model.id
+          current = attrs
+          break
+        if success = deferred.options.success
+          success deferred.model, current, deferred.options
+        deferred.resolveWith deferred.model, [current, request] 
+      delete batches[url]
+
+  request.fail (data, request) ->
+    if batches[url]?
+      for deferred in batches[url]
+        if error = deferred.options.error
+          error deferred.model, data, deferred.options
+        deferred.rejectWith deferred.model, [data, request]
+      delete batches[url]
+
+reset = ->
+  clearTimeout timer for timer in timers
+  timers = []
+  for url, deferreds of batches 
+    deferred.reject() for deferred in deferreds
+  batches = {}
 
 Coreon.Modules.CoreAPI =
 
   sync: (method, model, options = {}) ->
 
     if method is "abort"
-      batches = {}
-      clearTimeout timer for timer in timers
-      timers = []
+      reset()
       return
 
     deferred = $.Deferred()
