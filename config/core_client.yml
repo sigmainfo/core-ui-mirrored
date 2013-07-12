@@ -5,6 +5,6 @@ styling:
 test:
   auth_root: http://localhost:3335/
 staging:
-  auth_root: https://auth.core.gmah.net/
+  auth_root: https://auth-staging.coreon.com/
 production:
   auth_root: https://auth.coreon.com/
