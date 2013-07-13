@@ -83,6 +83,7 @@ class Coreon.Models.Concept extends Backbone.Model
 
   sync: (method, model, options = {}) ->
     @once "sync", @onCreate, @ if method is "create"
+    options.batch = on
     Coreon.Modules.CoreAPI.sync method, model, options
 
   onCreate: ->
