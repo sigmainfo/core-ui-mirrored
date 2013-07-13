@@ -54,6 +54,7 @@ ajax = (deferred, method, model, options) ->
   request
 
 batch = (deferred, method, model, options) ->
+
   url = if options.url?
     options.url
   else
@@ -70,43 +71,45 @@ batch = (deferred, method, model, options) ->
     batches[url].push deferred
     model.trigger "request", model, deferred.promise(), opts
   else
-    batches[url] = []
     ajax arguments...
+    batches[url] = []
     timers.push _.delay batchAjax, BATCH_DELAY, url, opts
 
 batchAjax = (url, options) ->
-  
-  return if batches[url].length is 0
 
-  request = $.Deferred()
+  if currentBatch = batches[url]
+    
+   if currentBatch.length > 0
 
-  options.url = url
-  options.type ?= "POST"
-  options.data ?= ids: (deferred.model.id for deferred in batches[url])
-  
-  delete options.success
-  delete options.error
+      request = $.Deferred()
 
-  ajax request, "read", _dummy, options 
+      delete options.success
+      delete options.error
 
-  request.done (data, request) ->
-    if batches[url]?
-      for deferred in batches[url]
-        for attrs in data when attrs._id is deferred.model.id
-          current = attrs
-          break
-        if success = deferred.options.success
-          success deferred.model, current, deferred.options
-        deferred.resolveWith deferred.model, [current, request] 
-      delete batches[url]
+      options.url = url
+      options.type ?= "POST"
+      options.data ?= ids: (deferred.model.id for deferred in currentBatch)
 
-  request.fail (data, request) ->
-    if batches[url]?
-      for deferred in batches[url]
-        if error = deferred.options.error
-          error deferred.model, data, deferred.options
-        deferred.rejectWith deferred.model, [data, request]
-      delete batches[url]
+      ajax request, "read", _dummy, options 
+
+      request.done (data, request) ->
+        if currentBatch?
+          for deferred in currentBatch
+            for attrs in data when attrs._id is deferred.model.id
+              current = attrs
+              break
+            if success = deferred.options.success
+              success current, "success", request
+            deferred.resolveWith deferred.model, [current, request] 
+
+      request.fail (data, request) ->
+        if currentBatch?
+          for deferred in currentBatch
+            if error = deferred.options.error
+              error request, "error", request.statusText
+            deferred.rejectWith deferred.model, [data, request]
+
+    delete batches[url]
 
 reset = ->
   clearTimeout timer for timer in timers

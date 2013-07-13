@@ -36,23 +36,17 @@ describe "Coreon.Models.Concept", ->
     describe "label", ->
 
       context "when newly created", ->
+
         beforeEach ->
           sinon.stub I18n, "t"
           I18n.t.withArgs("concept.new_concept").returns "<new concept>"
+          @model.isNew = -> true
 
         afterEach ->
           I18n.t.restore()
 
-        xit "defaults to <new concept>", ->
-          @model.isNew = sinon.stub().returns true
-          @model.set terms: [
-              lang: "en"
-              value: "flower"
-            ], properties: [
-              key: "label"
-              value: "gun"
-            ]
-          @model.initialize()
+        it "defaults to <new concept>", ->
+          @model.set properties: [ key: "label", value: "gun" ]
           @model.get("label").should.equal "<new concept>"
 
       context "after save", ->
@@ -240,6 +234,22 @@ describe "Coreon.Models.Concept", ->
       @model.terms().reset [ { value: "hat" }, { value: "top hat" } ]
       @model.toJSON().should.have.deep.property "concept.terms[0].value", "hat"
       @model.toJSON().should.have.deep.property "concept.terms[1].value", "top hat"
+
+  describe "fetch()", ->
+
+      beforeEach ->
+        sinon.stub Coreon.Modules.CoreAPI, "sync"
+
+      afterEach ->
+        Coreon.Modules.CoreAPI.sync.restore()
+      
+      it "combines multiple subsequent calls into a single batch request", ->
+        @model.fetch()
+        Coreon.Modules.CoreAPI.sync.should.have.been.calledOnce
+        Coreon.Modules.CoreAPI.sync.firstCall.args[2].should.have.property "batch", on
+        
+
+    
 
   describe "save()", ->
 

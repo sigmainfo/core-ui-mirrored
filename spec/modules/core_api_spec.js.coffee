@@ -318,8 +318,8 @@ describe "Coreon.Modules.CoreAPI", ->
           @clock.tick 300
           @requests[1].resolve [{_id: "2"}, {_id: "3"}], "success", @requests[1]
           spy.should.have.been.calledTwice
-          spy.firstCall.should.have.been.calledWith models[1], {_id: "2"}, batch: on, success: spy
-          spy.secondCall.should.have.been.calledWith models[2], {_id: "3"}, batch: on, success: spy
+          spy.firstCall.should.have.been.calledWith {_id: "2"}, "success", @requests[1]
+          spy.secondCall.should.have.been.calledWith {_id: "3"}, "success", @requests[1]
 
       context "fail", ->
         
@@ -363,10 +363,11 @@ describe "Coreon.Modules.CoreAPI", ->
             models.push model
           @clock.tick 300
           @requests[1].responseText = '{"message":"Whahappan?!"}'
+          @requests[1].statusText = "Ups!"
           @requests[1].reject @requests[1], "error", "Ups!"
           spy.should.have.been.calledTwice
-          spy.firstCall.should.have.been.calledWith models[1], {message: "Whahappan?!"}, batch: on, error: spy 
-          spy.secondCall.should.have.been.calledWith models[2], {message: "Whahappan?!"}, batch: on, error: spy
+          spy.firstCall.should.have.been.calledWith @requests[1], "error", "Ups!"
+          spy.secondCall.should.have.been.calledWith @requests[1], "error", "Ups!"
 
       context "abort", ->
         
