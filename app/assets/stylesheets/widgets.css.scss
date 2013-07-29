@@ -16,7 +16,7 @@
     h4 {
       color: $browncolor;
       font-size: 0.86em;
-      padding: 1px 0 0 12px;
+      padding: 2px 0 0 8px;
       float: left;
     }
 
@@ -35,6 +35,19 @@
         
         &:first-child {
           border-left: 1px solid rgba(black, 0.1);
+        }
+        &.clear {
+          &:before {
+            @include before-icon;
+            background-position: 0 -600px;
+          }
+
+          &:hover {
+
+            &:before {
+              background-position: -50px -600px;
+            }
+          }
         }
         
         &.zoom-in {

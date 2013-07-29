@@ -1,0 +1,21 @@
+@import '_config';
+@import 'compass/css3';
+
+#coreon-clipboard {
+  ul {
+    padding: 8px 20px;
+    background-color: rgba($darkerbluecolor, 0.14);
+    @include retina-stripes("white");
+    
+    li {
+      list-style: none;
+      padding: 1px;
+      .concept-label {
+        font-size: 0.9em;
+        line-height: 1.3em;
+        padding-top: 2px;
+        @include single-box-shadow(desaturate(lighten($text-color, 60%), 20%), 1px, 1px, 2px);
+      }
+    }
+  }
+}

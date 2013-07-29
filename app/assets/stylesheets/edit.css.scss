@@ -39,6 +39,26 @@
   }
 }
 
+.concept-to-clipboard {
+  font-size: 0.9em;
+  display: inline-block;
+  margin-right: 14px;
+  float: right;
+  position: relative;
+  top: -16px;
+  margin-left: 10px;
+  height: 12px;
+  &:before {
+    @include before-icon;
+    float: left;
+    width: 18px;
+    background-position: -3px -650px;
+  };
+  &:hover {
+    color: $hover-color;
+  }
+}
+
 
 
 form.create, form.update{
