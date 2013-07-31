@@ -6,6 +6,7 @@ describe "Coreon.Modules.CoreAPI", ->
   before ->
     class Coreon.Models.CoreAPIModel extends Backbone.Model
       Coreon.Modules.include @, Coreon.Modules.CoreAPI
+      urlRoot: "/concepts"
 
   after ->
     delete Coreon.Models.CoreAPIModel
@@ -16,7 +17,6 @@ describe "Coreon.Modules.CoreAPI", ->
     Coreon.application.graphUri = -> "https://repo123.coreon.com"
 
     @model = new Coreon.Models.CoreAPIModel
-    @model.urlRoot = "/concepts"
 
   afterEach ->
     Coreon.application = null
@@ -25,14 +25,15 @@ describe "Coreon.Modules.CoreAPI", ->
 
     beforeEach ->
       @requests = []
-      sinon.stub Backbone, "sync", =>
+      sinon.stub Backbone, "sync", (method, model, options) =>
         request = $.Deferred()
+        request.status = 200
         @requests.push request
         request
 
     afterEach ->
       Backbone.sync.restore()
-      request.resolve() for request in @requests
+      request.reject request, "error", "Aborted" for request in @requests
 
     context "always", ->
 
@@ -196,3 +197,189 @@ describe "Coreon.Modules.CoreAPI", ->
         @session.set "auth_token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "beef48548969b046148ba2d2361930c02"
+    
+    context "batch requests", ->
+
+      beforeEach ->
+        @clock = sinon.useFakeTimers()
+
+      afterEach ->
+        Coreon.Modules.CoreAPI.sync "abort"
+        @clock.restore()
+
+      it "triggers first request normally", ->
+        Coreon.application.graphUri = -> "https://repo123.coreon.com"
+        @model.id = "123"
+        @model.sync "read", @model, batch: on
+        @model.sync "read", @model, batch: on
+        Backbone.sync.should.have.been.calledOnce
+        Backbone.sync.should.have.been.calledWith "read", @model
+        options = Backbone.sync.firstCall.args[2]
+        options.should.have.property "url", "https://repo123.coreon.com/concepts/123"
+        options.should.have.property "batch", on
+
+      it "collects subsequent requests in a single batch request", ->
+        for i in [1..5]
+          @model.sync "read", @model, batch: on
+        @clock.tick 300
+        Backbone.sync.should.have.been.calledTwice
+        Backbone.sync.should.always.have.been.calledWith "read"
+        options = Backbone.sync.secondCall.args[2]
+        options.should.have.property "type", "POST"
+
+      it "batches request only for read requests", ->
+        @model.sync "update", @model, batch: on
+        @model.sync "update", @model, batch: on
+        Backbone.sync.should.have.been.calledTwice
+
+      it "generates url and data from model", ->
+        Coreon.application.graphUri = -> "https://123-456-789.coreon.com/"
+        @model.urlRoot = "concepts"
+        for i in [1..5]
+          model = new Coreon.Models.CoreAPIModel _id: i
+          model.sync "read", model, batch: on
+        @clock.tick 300
+        options = Backbone.sync.secondCall.args[2]
+        options.should.have.property "url", "https://123-456-789.coreon.com/concepts/fetch"
+        options.should.have.deep.property("data.ids").that.eqls [2, 3, 4, 5]
+
+      it "creates one batch per url", ->
+        for i in [1..3]
+          @model.urlRoot = "concepts"
+          @model.sync "read", @model, batch: on
+        for i in [1..3]
+          @model.urlRoot = "models"
+          @model.sync "read", @model, batch: on
+        for i in [1..3]
+          @model.sync "read", @model, batch: on, url: "http://foo"
+        Backbone.sync.reset()
+        @clock.tick 300
+        Backbone.sync.should.have.been.calledThrice
+
+      it "does not create empty batch request", ->
+        @model.sync "read", @model, batch: on
+        Backbone.sync.reset()
+        @clock.tick 300
+        Backbone.sync.should.not.have.been.called
+
+      it "triggers request events", ->
+          spy = sinon.spy()
+          promises = []
+          models = []
+          for i in [1..3]
+            model = new Coreon.Models.CoreAPIModel _id: "#{i}"
+            model.on "request", spy
+            promises.push model.sync "read", model, batch: on
+            models.push model
+            spy.reset() if i is 1
+          spy.should.have.been.calledTwice
+          spy.firstCall.should.have.been.calledWith models[1], promises[1], batch: on
+          spy.secondCall.should.have.been.calledWith models[2], promises[2], batch: on
+
+      context "done", ->
+        
+        it "clears batch", ->
+          for i in [1..3]
+            @model.sync "read", @model, batch: on
+          @clock.tick 300
+          @requests[1].resolve [{_id: "2"}, {_id: "3"}], "success", @requests[1]
+          @requests = []
+          for i in [1..3]
+            @model.sync "read", @model, batch: on
+          @clock.tick 300
+          @requests.should.have.lengthOf 2
+
+        it "resolves promise for every request individually", ->
+          promises = []
+          models = []
+          spy = sinon.spy()
+          for i in [1..3]
+            model = new Coreon.Models.CoreAPIModel _id: "#{i}"
+            model.urlRoot = "concepts"
+            promises.push model.sync "read", model, batch: on
+            models.push model
+          @clock.tick 300
+          promises[1].done spy
+          @requests[1].resolve [{_id: "2"}, {_id: "3"}], "success", @requests[1]
+          promises[1].should.not.equal promises[2]
+          promises[1].state().should.equal "resolved"
+          promises[2].state().should.equal "resolved"
+          spy.should.have.been.calledOnce
+          spy.should.have.been.calledOn models[1]
+          spy.should.have.been.calledWith {_id: "2"}, @requests[1]
+
+        it "triggers success callbacks", ->
+          spy = sinon.spy()
+          models = []
+          for i in [1..3]
+            model = new Coreon.Models.CoreAPIModel _id: "#{i}"
+            model.sync "read", model, batch: on, success: spy
+            models.push model
+          @clock.tick 300
+          @requests[1].resolve [{_id: "2"}, {_id: "3"}], "success", @requests[1]
+          spy.should.have.been.calledTwice
+          spy.firstCall.should.have.been.calledWith {_id: "2"}, "success", @requests[1]
+          spy.secondCall.should.have.been.calledWith {_id: "3"}, "success", @requests[1]
+
+      context "fail", ->
+        
+        it "clears batch", ->
+          for i in [1..3]
+            @model.sync "read", @model, batch: on
+          @clock.tick 300
+          @requests[1].reject @requests[1], "error", "Ups!"
+          @requests = []
+          for i in [1..3]
+            @model.sync "read", @model, batch: on
+          @clock.tick 300
+          @requests.should.have.lengthOf 2
+
+        it "rejects each promise individually", ->
+          promises = []
+          models = []
+          spy = sinon.spy()
+          for i in [1..3]
+            model = new Coreon.Models.CoreAPIModel _id: "#{i}"
+            model.urlRoot = "concepts"
+            promises.push model.sync "read", model, batch: on
+            models.push model
+          @clock.tick 300
+          promises[1].fail spy
+          @requests[1].responseText = '{"message":"Whahappan?!"}'
+          @requests[1].reject @requests[1], "error", "Ups!"
+          promises[1].should.not.equal promises[2]
+          promises[1].state().should.equal "rejected"
+          promises[2].state().should.equal "rejected"
+          spy.should.have.been.calledOnce
+          spy.should.have.been.calledOn models[1]
+          spy.should.have.been.calledWith {message: "Whahappan?!"}, @requests[1]
+
+        it "triggers error callbacks", ->
+          spy = sinon.spy()
+          models = []
+          for i in [1..3]
+            model = new Coreon.Models.CoreAPIModel _id: "#{i}"
+            model.sync "read", model, batch: on, error: spy
+            models.push model
+          @clock.tick 300
+          @requests[1].responseText = '{"message":"Whahappan?!"}'
+          @requests[1].statusText = "Ups!"
+          @requests[1].reject @requests[1], "error", "Ups!"
+          spy.should.have.been.calledTwice
+          spy.firstCall.should.have.been.calledWith @requests[1], "error", "Ups!"
+          spy.secondCall.should.have.been.calledWith @requests[1], "error", "Ups!"
+
+      context "abort", ->
+        
+        it "clears pending batches", ->
+          for i in [1..5]
+            promise = @model.sync "read", @model, batch: on
+          @model.sync "abort"
+          Backbone.sync.reset()
+          @clock.tick 300
+          @model.sync "read", @model, batch: on
+          @model.sync "read", @model, batch: on
+          @clock.tick 300
+          Backbone.sync.should.have.been.calledTwice
+          promise.state().should.equal "rejected"
+
