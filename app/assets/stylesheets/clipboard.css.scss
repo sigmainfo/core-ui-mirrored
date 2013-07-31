@@ -8,6 +8,7 @@
     background-position: -50px -650px;
   }
   ul {
+    border-top: 1px solid rgba(white, 0.2);
     padding: 8px 20px;
     background-color: rgba($darkerbluecolor, 0.14);
     @include retina-stripes("white");
