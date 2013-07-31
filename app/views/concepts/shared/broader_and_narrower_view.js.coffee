@@ -1,5 +1,6 @@
 #= require environment
 #= require helpers/repository_path
+#= require helpers/can
 #= require templates/concepts/shared/broader_and_narrower
 #= require templates/repositories/repository_label
 #= require views/concepts/concept_label_view
@@ -19,7 +20,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   initialize: ->
     @broader = []
     @narrower = []
-    @$el.html @template id:@model.id, editable:!@model.isNew()
+    @$el.html @template id: @model.id, editable: !@model.isNew()
     @listenTo @model, "change:label", @renderSelf
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
