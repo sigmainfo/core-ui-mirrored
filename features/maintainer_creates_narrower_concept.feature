@@ -1,5 +1,4 @@
-@wip
-Feature: maintainer creates concept
+Feature: maintainer creates narrower concept
   In order to create a concept as narrower concept of an existing one
   As a maintainer who is adding data to the repository
   I want to create a new concept already connected to an exisiting concept

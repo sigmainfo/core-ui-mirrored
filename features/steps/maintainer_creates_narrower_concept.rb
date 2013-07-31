@@ -1,5 +1,5 @@
 # encoding: utf-8
-class MaintainerCreatesConcept < Spinach::FeatureSteps
+class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
   include Api::Graph::Factory
