@@ -76,7 +76,6 @@ Feature: maintainer edits concept
     And I should see error "can't be blank" for input "Key" of new property
     And I should see error "can't be blank" for input "Value" of new property
 
-  @wip
   Scenario: not a maintainer
     Given I am no maintainer of the repository
     And I visit the page of this concept
