@@ -8,7 +8,10 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", (options) =>
       @broaderAndNarrower = new Backbone.View options
     @view = new Coreon.Views.Concepts.NewConceptView
-      model: new Backbone.Model properties: [], terms: []
+      model: new Backbone.Model
+        properties: []
+        terms: []
+        super_concept_ids: []
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
