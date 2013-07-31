@@ -1,3 +1,4 @@
+@wip
 Feature: maintainer creates concept
   In order to create a concept as narrower concept of an existing one
   As a maintainer who is adding data to the repository
@@ -11,12 +12,12 @@ Feature: maintainer creates concept
 
   Scenario: create a narrower concept
     Given I visit the page of this concept
-    And I click "Edit concept"
+    When I click "Edit concept"
     Then I should see a button "Add narrower concept"
     When I click "Add narrower concept"
     Then I should be on the new concept page
     And I should see "panopticum" within the list of broader concepts
-    And I click "Create concept"
+    When I click "Create concept"
     Then I should be on the show concept page
     And I should see the id of the newly created concept within the title
     And I should see "panopticum" within the list of broader concepts
