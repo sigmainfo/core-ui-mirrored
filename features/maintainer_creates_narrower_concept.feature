@@ -7,11 +7,11 @@ Feature: maintainer creates narrower concept
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am a maintainer of the repository
     And I am logged in
-    And a concept with label "panopticum" exists
 
   Scenario: create a narrower concept
-    Given I visit the page of this concept
-    When I click "Edit concept"
+    Given a concept with label "panopticum" exists
+    When I visit the page of this concept
+    And I click "Edit concept"
     Then I should see a button "Add narrower concept"
     When I click "Add narrower concept"
     Then I should be on the new concept page
@@ -20,3 +20,7 @@ Feature: maintainer creates narrower concept
     Then I should be on the show concept page
     And I should see the id of the newly created concept within the title
     And I should see "panopticum" within the list of broader concepts
+    When I click on "panopticum"
+    Then I should be on the show concept page of "panopticum"
+    And I should see the id of the newly created concept within the list of narrower concepts
+

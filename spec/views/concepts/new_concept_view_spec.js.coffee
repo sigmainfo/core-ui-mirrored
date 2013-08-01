@@ -404,8 +404,6 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         Coreon.Models.Notification.info.should.have.been.calledOnce
         Coreon.Models.Notification.info.should.have.been.calledWith "yay!"
 
-
-
     context "error", ->
 
       beforeEach ->

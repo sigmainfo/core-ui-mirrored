@@ -10,10 +10,15 @@
 #= require modules/persisted_attributes
 #= require modules/core_api
 #= require collections/hits
+#= require collections/concepts
 
 class Coreon.Models.Concept extends Backbone.Model
 
   Coreon.Modules.extend @, Coreon.Modules.Accumulation
+
+  @collection = ->
+    @_collection ||= new Coreon.Collections.Concepts
+
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
 
   @embedsMany "properties", model: Coreon.Models.Property

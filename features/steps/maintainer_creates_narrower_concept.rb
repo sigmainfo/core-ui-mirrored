@@ -38,4 +38,16 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   step 'I should see the id of the newly created concept within the title' do
     page.should have_css(".label", text: @id)
   end
+
+  step 'I click on "panopticum"' do
+    click_link "panopticum"
+  end
+
+  step 'I should be on the show concept page of "panopticum"' do
+    current_path.should == "/#{@repository.id}/concepts/#{@concept['_id']}"
+  end
+
+  step 'I should see the id of the newly created concept within the list of narrower concepts' do
+    page.should have_css(".broader-and-narrower .narrower li", text: @id)
+  end
 end
