@@ -6,6 +6,7 @@ describe "Coreon.Views.ApplicationView", ->
   beforeEach ->
     Coreon.application = new Backbone.Model
     Coreon.Views.Layout.ProgressIndicatorView =-> new Backbone.View
+    Coreon.Views.Repositories.RepositorySelectView =-> new Backbone.View
     @session = new Backbone.Model
       current_repository_id: "coffeebabe23"
       user: name: "Nobody"
@@ -66,16 +67,17 @@ describe "Coreon.Views.ApplicationView", ->
           @widgets
         sinon.stub Backbone.history, "start"
         @view.model.set "session", @session, silent: on
+        @session.set "repositories", [], silent: on
 
       afterEach ->
         Coreon.Views.Widgets.WidgetsView.restore()
         Backbone.history.start.restore()
 
       it "creates widgets", ->
-       @view.render()
-       Coreon.Views.Widgets.WidgetsView.should.have.been.calledOnce
-       Coreon.Views.Widgets.WidgetsView.should.have.been.calledWithNew
-       Coreon.Views.Widgets.WidgetsView.should.have.been.calledWith model: @view.model
+        @view.render()
+        Coreon.Views.Widgets.WidgetsView.should.have.been.calledOnce
+        Coreon.Views.Widgets.WidgetsView.should.have.been.calledWithNew
+        Coreon.Views.Widgets.WidgetsView.should.have.been.calledWith model: @view.model
 
       it "displays widgets", ->
         @view.render()
