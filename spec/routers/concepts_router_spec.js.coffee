@@ -105,6 +105,54 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @collection.reset.should.have.been.calledOnce
       @collection.reset.should.have.been.calledWith [ result:@concept ]
 
+  describe "newWithParent()", ->
+    beforeEach ->
+      sinon.stub Coreon.Views.Concepts, "NewConceptView", (opts)=>
+        @concept = opts.model if opts.model
+
+    afterEach ->
+      Coreon.Views.Concepts.NewConceptView.restore()
+
+    context "with maintainer privileges", ->
+      beforeEach ->
+        @repo.set "user_roles", [ "user", "maintainer" ]
+        sinon.stub Coreon.Helpers, "can", -> true
+
+      afterEach ->
+        Coreon.Helpers.can.restore()
+        @repo.set "user_roles", [ "user" ]
+
+      it "is routed", ->
+        @router.newWithParent = sinon.spy()
+        @router._bindRoutes()
+        @router.navigate "/c0ffeebabe23c0ffeebabe42/concepts/new/parent/c0ffeebabe42c0ffeebabe23", trigger: true
+        @router.newWithParent.should.have.been.calledOnce
+        @router.newWithParent.should.have.been.calledWith "c0ffeebabe23c0ffeebabe42", "c0ffeebabe42c0ffeebabe23"
+
+      it "switches to new concept form", ->
+        @router.newWithParent "c0ffeebabe23c0ffeebabe42", "c0ffeebabe42c0ffeebabe23"
+        Coreon.Views.Concepts.NewConceptView.should.have.been.calledOnce
+        Coreon.Views.Concepts.NewConceptView.should.have.been.calledWithNew
+        Coreon.Views.Concepts.NewConceptView.should.have.been.calledWith
+          model: @concept
+        @concept.isNew().should.be.true
+        @concept.get("super_concept_ids").should.eql ["c0ffeebabe42c0ffeebabe23"]
+
+    context "without maintainer privileges", ->
+      beforeEach ->
+        sinon.stub Backbone.history, "navigate"
+        sinon.stub Coreon.Helpers, "can", -> false
+
+      afterEach ->
+        Coreon.Helpers.can.restore()
+        Backbone.history.navigate.restore()
+
+      it "redirects to start page when not able to create a concept", ->
+        @router.newWithParent()
+        Backbone.history.navigate.should.have.been.calledOnce
+        Backbone.history.navigate.should.have.been.calledWith "/"
+
+
   describe "new()", ->
 
     beforeEach ->

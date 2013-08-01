@@ -43,6 +43,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
     context "rendering markup skeleton", ->
 
+      beforeEach ->
+        sinon.stub Coreon.Helpers, "can", -> false
+
+      afterEach ->
+        Coreon.Helpers.can.restore()
+
       it "renders section header", ->
         I18n.t.withArgs("concept.broader_and_narrower").returns "Broader & Narrower"
         @view.initialize()
