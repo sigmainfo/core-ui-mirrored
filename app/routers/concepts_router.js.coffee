@@ -29,7 +29,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     Coreon.Collections.Hits.collection().reset [ result: concept ]
 
   newWithParent: (repository, parent_id) ->
-    console.log "new with parent"
     repo = @view.repository repository
     roles = repo?.get "user_roles"
     if roles and "maintainer" in roles
