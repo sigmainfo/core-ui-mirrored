@@ -107,13 +107,12 @@
 #coreon-repository-select-dropdown {
   
   ul.options {
-    width: 127px;
+    position: relative;
     .option {
       padding:0;
       
       a {
-        width: 100px;
-        display: inline-block;
+        display: block;
         padding: 2px 20px 1px 8px;
       }
     }
