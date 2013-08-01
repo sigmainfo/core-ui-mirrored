@@ -12,7 +12,7 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
     I18n.t.restore()
 
   it "is a Backbone view", ->
-    @view.should.be.an.instanceof Backbone.View 
+    @view.should.be.an.instanceof Backbone.View
 
   describe "render()", ->
 
@@ -20,7 +20,7 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
       Coreon.Helpers.can = -> true
 
     afterEach ->
-      Coreon.application = null    
+      Coreon.application = null
 
     it "is chainable", ->
       @view.render().should.equal @view

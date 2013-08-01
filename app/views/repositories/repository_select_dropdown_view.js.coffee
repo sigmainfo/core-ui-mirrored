@@ -23,9 +23,9 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     $(document).on "keydown", @onKeydown
 
   render: ->
-    current = @model.currentRepository()
-    repositories = (repository for repository in @model.get("repositories") when repository.id isnt current.id)
+    repositories = (repository for repository in @model.get("repositories"))
     @$el.html @template repositories: repositories
+    @fixate()
     @
 
   close: (event) =>
@@ -71,3 +71,22 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
   remove: ->
     $(document).off "keydown"
     super
+
+  fixate: ->
+    w = 0
+    for el in @$(".option")
+      $el = $(el)
+      $el.css display: "inline-block"
+      w = $el.width() if w < $el.width()
+      $el.css display: "block"
+
+    @$("ul.options").width w
+    # remove padding ( aka outerWidth - width )
+    @options.selector.width w - 27
+
+    @$("ul.options").position
+      my: "left top"
+      at: "left top"
+      of: @options.selector
+
+    w
