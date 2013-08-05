@@ -8,6 +8,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
     sinon.stub I18n, "t"
     sinon.stub Coreon.Views.Widgets, "SearchTargetSelectDropdownView", =>
       @dropdown = new Backbone.View
+      @dropdown.alignTo = sinon.spy()
+      @dropdown
     @view = new Coreon.Views.Widgets.SearchTargetSelectView
       model: new Coreon.Models.SearchType
 
@@ -50,9 +52,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
 
     beforeEach ->
       @event = jQuery.Event "click"
-      $("#konacha")
-        .append $('<div id="coreon-modal">')
-        .append $('<input id="coreon-search-query">')
+      $("#konacha").append $('<div id="coreon-modal">')
+      $("#konacha").append $('<input id="coreon-search-query">')
       @view.render()
     
     it "is triggered by click on toggle", ->
@@ -70,27 +71,16 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.showDropdown()
       Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledOnce
       Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledWithNew
-      Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledWith model: @view.model
+      Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledWith
+        model: @view.model
       @view.prompt.should.have.been.calledOnce
       @view.prompt.should.have.been.calledWith @dropdown
       
-    # TODO: move functionality to dropdown
-    xit "adjusts width and position to match query input", ->
+    it "aligns to query input", ->
       input = $("#coreon-search-query")
-      opts = $('<ul class="options">').appendTo $("#coreon-modal")
-      # input.css
-      #   position: "absolute"
-      #   top: 10
-      #   left: 25
-      #   width: 200
-      #   height: 20
-      #   padding: 5
-      #   margin: 30
-      #   border: "2px solid red"
       @view.showDropdown()
-      # opts.width().should.equal 213
-      # opts.position().left.should.be.closeTo 56, 2
-      # opts.position().top.should.be.closeTo 74, 2
+      @dropdown.alignTo.should.have.been.calledOnce
+      @dropdown.alignTo.should.have.been.calledWith input
 
   describe "onFocus()", ->
 
