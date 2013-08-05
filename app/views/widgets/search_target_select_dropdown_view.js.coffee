@@ -1,6 +1,7 @@
 #= require environment
 #= require views/simple_view
 #= require templates/widgets/search_target_select_dropdown
+#= require jquery.ui.position
 
 KEYCODE =
   esc: 27
@@ -8,7 +9,7 @@ KEYCODE =
   down: 40
   up: 38
 
-class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Coreon.Views.SimpleView 
+class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
 
   id: "coreon-search-target-select-dropdown"
 
@@ -21,18 +22,22 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Coreon.Views.S
     "mouseout li": "onBlur"
 
   initialize: ->
-    super
     $(document).on "keydown", @onKeydown
-
-  resolve: ->
-    super
-    $(document).off "keydown"
 
   render: ->
     @$el.html @template
       options: @model.get "availableTypes"
       selected: @model.get "selectedTypeIndex"
-    super
+    @
+
+  alignTo: (parent) ->
+    @$("ul")
+      .width( parent.outerWidth() - 1 )
+      .position(
+        my: "left+1 top"
+        at: "left bottom"
+        of: parent
+      )
 
   onClick: (event) ->
     @remove()

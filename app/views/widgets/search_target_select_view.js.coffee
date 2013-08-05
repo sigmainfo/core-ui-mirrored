@@ -28,14 +28,7 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
     dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView
       model: @model
     @prompt dropdown
-    input = $("#coreon-search-query")
-    $("#coreon-modal .options")
-      .width( input.outerWidth() - 1 )
-      .position(
-        my: "left+1 top"
-        at: "left bottom"
-        of: input
-      )
+    dropdown.alignTo $("#coreon-search-query")
 
   hideHint: ->
     @$(".hint").hide()
