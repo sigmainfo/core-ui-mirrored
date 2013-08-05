@@ -6,9 +6,13 @@
 #= require views/account/password_prompt_view
 #= require views/repositories/repository_select_view
 #= require views/layout/progress_indicator_view
+#= require modules/helpers
+#= require modules/prompt
 
 
 class Coreon.Views.ApplicationView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Prompt
 
   template: Coreon.Templates["application"]
 
@@ -30,7 +34,8 @@ class Coreon.Views.ApplicationView extends Backbone.View
     session = @updateSession()
     @$el.html @template session: session
     if session?
-      widgets = new Coreon.Views.Widgets.WidgetsView model: @model
+      widgets = new Coreon.Views.Widgets.WidgetsView
+        model: @model
       @$("#coreon-modal").after widgets.render().$el
       @subviews.push widgets
       repoSelect = new Coreon.Views.Repositories.RepositorySelectView
@@ -52,12 +57,6 @@ class Coreon.Views.ApplicationView extends Backbone.View
     if @main = screen
       screen.render()
       @$("#coreon-main").append screen.$el
-
-  prompt: (modal) ->
-    @modal?.remove()
-    if @modal = modal
-      modal.render()
-      @$("#coreon-modal").empty().append modal.$el
 
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification

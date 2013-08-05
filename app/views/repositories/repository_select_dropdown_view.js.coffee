@@ -1,5 +1,7 @@
 #= require environment
 #= require templates/repositories/repository_select_dropdown
+#= require modules/helpers
+#= require modules/prompt
 
 KEYCODE =
   esc: 27
@@ -8,6 +10,8 @@ KEYCODE =
   up: 38
  
 class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Prompt
 
   id: "coreon-repository-select-dropdown"
 
@@ -29,7 +33,7 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     @
 
   close: (event) =>
-    @options.app.prompt null
+    @prompt null
 
   select: (event) =>
     event.preventDefault()
