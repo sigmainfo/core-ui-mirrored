@@ -1,8 +1,12 @@
 #= require environment
 #= require templates/repositories/repository_select
 #= require views/repositories/repository_select_dropdown_view
+#= require modules/helpers
+#= require modules/prompt
 
 class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Prompt
   
   id: "coreon-repository-select"
 
@@ -15,7 +19,7 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     @listenTo @model, "change:current_repository_id change:repositories", @render
 
   render: ->
-    @options.app.prompt null
+    @prompt null
     if repository = @model.currentRepository()
       @$el.html @template
         repository: repository
@@ -23,7 +27,7 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
 
     # some magic (or cheating?) to sync sizes of dropdown and menu
     @select()
-    @options.app.prompt null
+    @prompt null
 
     @
 
@@ -35,5 +39,5 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
       app: @options.app
       selector: @$("h4.current")
 
-    @options.app.prompt dropdown
+    @prompt dropdown
     dropdown.fixate()

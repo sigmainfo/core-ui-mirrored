@@ -12,13 +12,13 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
   afterEach ->
     I18n.t.restore()
 
-  it "is a simple view", ->
-    @view.should.be.an.instanceof Coreon.Views.SimpleView
+  it "is a Backbone view", ->
+    @view.should.be.an.instanceof Backbone.View
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-search-target-select-dropdown"
 
-  describe "#render", ->
+  describe "render()", ->
     
     it "is chainable", ->
       @view.render().should.equal @view
@@ -38,6 +38,45 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.model.set "selected", 0
       @view.render()
       @view.$("ul li.option").eq(0).should.have.class "selected"
+
+  describe "alignTo()", ->
+  
+    beforeEach ->
+      @parent = $("<input>").appendTo $("#konacha")
+      $("#konacha").append @view.render().$el
+
+    it "adjusts width", ->
+      @parent.css
+        width: 200
+        padding: 5
+        margin: 30
+        border: "2px solid red"
+      @view.alignTo @parent
+      opts = @view.$("ul")
+      opts.width().should.equal 213
+
+    it "adjusts position", ->
+      @parent.css
+        position: "absolute"
+        top: 10
+        left: 25
+        width: 200
+        height: 20
+        padding: 5
+        margin: 30
+        border: "2px solid red"
+      @view.alignTo @parent
+      opts = @view.$("ul")
+      opts.position().left.should.be.closeTo 56, 2
+      opts.position().top.should.be.closeTo 74, 2
+
+    it "keeps aligment on resize", ->
+      @view.alignTo @parent
+      @view.alignTo = sinon.spy()
+      @view.initialize()
+      $(window).resize()
+      @view.alignTo.should.have.been.calledOnce
+      @view.alignTo.should.have.been.calledWith @parent
 
   describe "#onClick", ->
     
@@ -109,7 +148,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
   describe "#onKeydown", ->
     
     beforeEach ->
-      @event = jQuery.Event "keydown"
+      @event = $.Event "keydown"
       $("#konacha").append @view.render().$el
 
     it "is triggered by keydown", ->
