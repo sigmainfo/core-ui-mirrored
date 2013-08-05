@@ -250,6 +250,11 @@ form.create.term {
        float: right;
        top: -16px;
      }
+     a.add-narrower {
+       position: absolute;
+       top: 8px;
+       right: 0;
+     }
      .terms a.remove-property {
        width: 16px;
        overflow: hidden;
