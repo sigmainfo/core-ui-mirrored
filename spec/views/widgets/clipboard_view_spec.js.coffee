@@ -74,6 +74,24 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       @clips.add @drop_model, silent: true
       @view.dropItemAcceptance(@drop_el).should.be.false
 
+    it "sets droppable identifying class on hover", ->
+      @view.onDropItemOver({}, helper: @drop_el)
+      @drop_el.should.have.class "ui-droppable-clipboard"
+
+    xit "sets deny class on hover", ->
+      @clips.add @drop_model, silent: true
+      @view.onDropItemOver({}, helper: @drop_el)
+      @drop_el.should.have.class "ui-droppable-denied"
+
+    it "removes identifying class on leave", ->
+      @view.onDropItemOut({}, helper: @drop_el)
+      @drop_el.should.not.have.class "ui-droppable-clipboard"
+
+    xit "removes deny class on leave", ->
+      @clips.add @drop_model, silent: true
+      @view.onDropItemOut({}, helper: @drop_el)
+      @drop_el.should.not.have.class "ui-droppable-denied"
+
   context "drop item", ->
     beforeEach ->
       sinon.stub @clips, "add"
