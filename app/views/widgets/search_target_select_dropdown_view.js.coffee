@@ -22,7 +22,9 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
     "mouseout li": "onBlur"
 
   initialize: ->
-    $(document).on "keydown", @onKeydown
+    $(document).keydown @onKeydown
+    $(window).off "resize"
+    $(window).resize @onResize
 
   render: ->
     @$el.html @template
@@ -31,6 +33,7 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
     @
 
   alignTo: (parent) ->
+    @parent = parent
     @$("ul")
       .width( parent.outerWidth() - 1 )
       .position(
@@ -69,3 +72,7 @@ class Coreon.Views.Widgets.SearchTargetSelectDropdownView extends Backbone.View
         focusedTypeIndex-- unless focusedTypeIndex <= 0
         @$("li.option.focus").removeClass "focus"
         @$("li.option").eq(focusedTypeIndex).addClass "focus"
+
+
+  onResize: (event) =>
+    @alignTo @parent if @parent
