@@ -74,6 +74,24 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.render()
       @view.$el.should.not.have.class "hit"
 
+    context "draggable", ->
+      beforeEach ->
+        sinon.stub @view.$el, "draggable"
+
+      afterEach ->
+        @view.$el.draggable.restore()
+
+      it "makes $el draggable", ->
+        @view.render()
+        @view.$el.draggable.should.have.been.calledOnce
+
+      it "adds drag ghost to modal layer", ->
+        @view.render()
+        args = @view.$el.draggable.firstCall.args[0]
+        args.helper.should.equal "clone"
+        args.appendTo.should.equal "#coreon-modal"
+
+
 
   describe "#appendTo", ->
 

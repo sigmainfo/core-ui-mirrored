@@ -1,4 +1,5 @@
 #= require environment
+#= require jquery.ui.draggable
 #= require views/simple_view
 #= require models/concept
 #= require helpers/repository_path
@@ -29,6 +30,10 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   render: ->
+    @$el.draggable
+      revert: "invalid"
+      helper: "clone"
+      appendTo: "#coreon-modal"
     @$el.toggleClass "hit", @model.has "hit"
     @$el.attr "href", Coreon.Helpers.repositoryPath("concepts/#{@model.id}")
     @$el.html @model.escape "label"
