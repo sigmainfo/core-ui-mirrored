@@ -179,32 +179,6 @@ describe "Coreon.Views.ApplicationView", ->
       @view.should.have.property "main", null
       @view.$("#coreon-main").children().should.have.lengthOf 0
 
-  describe "prompt()", ->
-
-    beforeEach ->
-      @view.$el.append '''
-        <div id="coreon-modal"></div>
-      '''
-
-    it "removes previous modal", ->
-      previous = remove: sinon.spy()
-      @view.modal = previous
-      @view.prompt new Backbone.View
-      previous.remove.should.have.been.calledOnce
-
-    it "displays current modal", ->
-      current = new Backbone.View
-      current.render = sinon.spy()
-      @view.prompt current
-      @view.should.have.property "modal", current
-      current.render.should.have.been.calledOnce
-      $.contains(@view.$("#coreon-modal")[0], current.el).should.be.true
-
-    it "removes prompt when no screen is passed", ->
-      @view.prompt null
-      @view.should.have.property "modal", null
-      @view.$("#coreon-modal").children().should.have.lengthOf 0
-
   describe "notify()", ->
 
     beforeEach ->
@@ -328,6 +302,10 @@ describe "Coreon.Views.ApplicationView", ->
       @view.reauthenticate.callCount.should.equal 1
       @view.reauthenticate.firstCall.args[0].should.equal @session
       @view.reauthenticate.firstCall.args[1].should.equal "someothersecrettoken"
+
+    it "can prompt", ->
+      should.exist Coreon.Modules.Prompt
+      @view.prompt.should.equal Coreon.Modules.Prompt.prompt
 
     it "displays password prompt when token is not set", ->
       @view.prompt = sinon.spy()

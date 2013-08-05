@@ -1,6 +1,5 @@
 #= require spec_helper
 #= require templates/repositories/repository_select_dropdown
-#= require views/application_view
 #= require views/repositories/repository_select_dropdown_view
 #= require views/repositories/repository_select_view
 
@@ -17,12 +16,8 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
         id:0
         name:"c0ffee"
     @model.set repositories: @repositories
-    @app = new Backbone.View
-      model: @model
-    @app.prompt = sinon.spy()
     @view = new Coreon.Views.Repositories.RepositorySelectView
       model: @model
-      app: @app
     sinon.stub I18n, "t"
 
   afterEach ->
@@ -30,6 +25,12 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
+
+  describe "prompt()", ->
+  
+    it "includes method from module", ->
+      should.exist Coreon.Modules.Prompt
+      @view.prompt.should.equal Coreon.Modules.Prompt.prompt
 
   describe "render()", ->
     beforeEach ->
@@ -63,10 +64,10 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
       Coreon.Views.Repositories.RepositorySelectDropdownView.should.have.been.calledWithNew
       options = Coreon.Views.Repositories.RepositorySelectDropdownView.firstCall.args[0]
       options.model.should.equal @model
-      options.app.should.equal @app
       options.selector.get(0).should.equal selector.get(0)
 
     it "passes dropdown to prompt method", ->
+      @view.prompt = sinon.spy()
       @view.select()
-      @app.prompt.should.have.been.calledOnce
-      @app.prompt.should.have.been.calledWith @dropdown
+      @view.prompt.should.have.been.calledOnce
+      @view.prompt.should.have.been.calledWith @dropdown

@@ -1,10 +1,13 @@
 #= require environment
 #= require jquery.ui.position
-#= require views/composite_view
 #= require templates/widgets/search_target_select
 #= require views/widgets/search_target_select_dropdown_view
+#= require modules/helpers
+#= require modules/prompt
 
-class Coreon.Views.Widgets.SearchTargetSelectView extends Coreon.Views.CompositeView
+class Coreon.Views.Widgets.SearchTargetSelectView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Prompt
 
   id: "coreon-search-target-select"
 
@@ -15,20 +18,18 @@ class Coreon.Views.Widgets.SearchTargetSelectView extends Coreon.Views.Composite
     "click .hint"   : "onFocus"
 
   initialize: ->
-    super
-    @model.on "change", @render, @
-    @dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView model: @model
-    @add @dropdown
+    @listenTo @model, "change", @render
 
   render: ->
     @$el.html @template selectedType: @model.getSelectedType() 
-    super
+    @
 
   showDropdown: (event) ->
-    $("#coreon-modal").append @dropdown.render().$el
-    @dropdown.delegateEvents()
+    dropdown = new Coreon.Views.Widgets.SearchTargetSelectDropdownView
+      model: @model
+    @prompt dropdown
     input = $("#coreon-search-query")
-    @dropdown.$(".options")
+    $("#coreon-modal .options")
       .width( input.outerWidth() - 1 )
       .position(
         my: "left+1 top"
