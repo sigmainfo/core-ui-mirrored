@@ -70,6 +70,14 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       opts.position().left.should.be.closeTo 56, 2
       opts.position().top.should.be.closeTo 74, 2
 
+    it "keeps aligment on resize", ->
+      @view.alignTo @parent
+      @view.alignTo = sinon.spy()
+      @view.initialize()
+      $(window).resize()
+      @view.alignTo.should.have.been.calledOnce
+      @view.alignTo.should.have.been.calledWith @parent
+
   describe "#onClick", ->
     
     beforeEach ->
