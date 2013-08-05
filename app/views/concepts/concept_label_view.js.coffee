@@ -10,6 +10,10 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
 
   className: "concept-label"
 
+  events:
+    "dragstart": "onStartDragging"
+    "dragstop":  "onStopDragging"
+
   initialize: (options = {}) ->
     @model = if options.model?
         options.model
@@ -28,6 +32,15 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
   destroy: ->
     @remove()
     @dispose()
+
+  onStartDragging: ->
+    console.log "onStartDragging"
+    @$el.addClass "ui-draggable-dragged"
+
+  onStopDragging: ->
+    console.log "onStopDragging"
+    @$el.removeClass "ui-draggable-dragged"
+
 
   render: ->
     @$el.draggable
