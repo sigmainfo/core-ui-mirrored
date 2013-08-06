@@ -25,4 +25,19 @@
       }
     }
   }
+  
+  &.ui-state-highlight {
+    ul {
+      background-color: rgba($button-color, 0.3);
+      @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 1px, 1px, 2px, false, inset);
+      border-top: none;
+      margin: 0 3px;
+      padding: 9px 17px 8px 17px;
+    }
+  }
+  &.ui-state-hovered {
+    ul {
+      background-color: rgba($button-color, 0.6);
+    }
+  }
 }

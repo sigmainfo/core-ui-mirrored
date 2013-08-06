@@ -1,0 +1,9 @@
+@import 'compass/css3';
+@import '_config';
+
+.ui-draggable-dragging {
+  @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 2px, 2px, 4px);
+}
+.ui-draggable-dragged {
+  @include opacity(0.7);
+}
