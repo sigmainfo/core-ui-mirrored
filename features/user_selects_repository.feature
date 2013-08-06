@@ -1,4 +1,3 @@
-@wip
 Feature: user selects repository
   In order to access data from different repositories
   As a user browsing concepts and terms

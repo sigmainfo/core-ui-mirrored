@@ -30,7 +30,6 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     @$el.html @template
       repositories: @model.get("repositories")
       currentRepository: @model.currentRepository()
-    @fixate()
     @
 
   close: (event) =>
@@ -72,22 +71,3 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
             prev.addClass "focus"
         else
           @$("li.option").last().addClass "focus"
-
-  fixate: ->
-    w = 0
-    for el in @$(".option")
-      $el = $(el)
-      $el.css display: "inline-block"
-      w = $el.width() if w < $el.width()
-      $el.css display: "block"
-
-    @$("ul.options").width w
-    # remove padding ( aka outerWidth - width )
-    @options.selector.width w - 27
-
-    @$("ul.options").position
-      my: "left top"
-      at: "left top"
-      of: @options.selector
-
-    w

@@ -108,12 +108,19 @@
   
   ul.options {
     position: relative;
+    float: left;
+
     .option {
-      padding:0;
+      float: left;
+      clear: left;
+
+      &.selected a {
+        color: $bluecolor;
+      }
       
       a {
         display: block;
-        padding: 2px 20px 1px 8px;
+        padding: 2px 5px 1px 18px;
       }
     }
   }  

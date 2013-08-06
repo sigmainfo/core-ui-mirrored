@@ -55,11 +55,6 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       @view.render()
       @view.$("li").eq(1).should.have.class "selected"
 
-    it "sets positions relative to given selector element", ->
-      @view.render()
-      @view.$("ul.options").css("top").should.equal "23px"
-      @view.$("ul.options").css("left").should.equal "42px"
-
   describe "close()", ->
 
     it "can prompt", ->
@@ -71,39 +66,3 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       @view.close()
       @view.prompt.should.have.been.calledOnce
       @view.prompt.should.have.been.calledWith null
-
-  describe "fixate()", ->
-    beforeEach ->
-      $('#konacha').append @view.$el
-      @view.render()
-      @width = @view.fixate()
-
-    afterEach ->
-      @model.set
-        repositories: [
-          {id:0, name:"c0ffee"},
-          {id:1, name:"f00bee"}
-        ]
-
-    it "should grow", ->
-      @model.set
-        repositories: [
-          {id:0, name:"a bunch of c0ffee beans"},
-          {id:1, name:"f00bee"}
-        ]
-      @view.render()
-      @view.fixate().should.be.above @width
-
-    it "should shrink", ->
-      @model.set
-        repositories: [
-          {id:0, name:"no"},
-          {id:1, name:"yes"}
-        ]
-      @view.render()
-      @view.fixate().should.be.below @width
-
-    it "should set the selectors width", ->
-      w = @view.fixate()
-      @selector.width().should.equal w-27
-
