@@ -1,7 +1,7 @@
 Capybara.server do |app, port|
   require 'rack/handler/thin'
   Rack::Handler::Thin.run(app, :Port => port)
-end
+end if defined?(Capybara)
 
 require 'capybara/poltergeist'
 
