@@ -17,13 +17,13 @@ Feature: user selects repository
     Then I should see a dropdown with "Wild West" and "Branch of Service"
     And I should see "Wild West" being the currently selected repository
     When I click on "Branch of Service"
-    Then I should be on the root page of "Branch of Service"
-    And I should see the repository "Branch of Service" within the filters bar
+    Then I should see the repository "Branch of Service" within the filters bar
+    And I should be on the root page of "Branch of Service"
     When I click the toggle of the repository selector
     Then I should see "Branch of Service" being the currently selected repository
     When I press the Escape key
-    Then I should be on the root page of "Branch of Service"
-    And I should not see the dropdown
+    Then I should not see the dropdown
+    And I should be on the root page of "Branch of Service"
 
   Scenario: single repository
     Given I have access to a single repository "Gunnery"

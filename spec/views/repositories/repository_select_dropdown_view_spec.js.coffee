@@ -13,7 +13,7 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       {id:1, name:"f00bee"}
     ]
     @model = new Backbone.Model
-    @model.currentRepository = =>
+    @model.currentRepository = ->
       new Backbone.Model
         id:0
         name:"c0ffee"
@@ -46,6 +46,14 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       @view.$("li").length.should.equal @repositories.length
       @view.$("li").eq(0).text().should.contain @repositories[0].name
       @view.$("li").eq(1).text().should.contain @repositories[1].name
+
+    it "marks currently selected repository", ->
+      @repositories[1].id = "123"
+      repo = new Backbone.Model
+      repo.id = "123"
+      @model.currentRepository = -> repo
+      @view.render()
+      @view.$("li").eq(1).should.have.class "selected"
 
     it "sets positions relative to given selector element", ->
       @view.render()

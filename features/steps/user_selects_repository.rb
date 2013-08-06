@@ -38,26 +38,40 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
   end
 
   step 'I click on "Branch of Service"' do
-    pending 'step not implemented'
-  end
-
-  step 'I should be on the root page of "Branch of Service"' do
-    pending 'step not implemented'
+    click_link "Branch of Service"
   end
 
   step 'I should see the repository "Branch of Service" within the filters bar' do
-    pending 'step not implemented'
+    page.find("#coreon-filters").should have_text("Branch of Service")
+  end
+
+  step 'I should be on the root page of "Branch of Service"' do
+    current_path.should == "/#{@repository2.id}"
   end
 
   step 'I should see "Branch of Service" being the currently selected repository' do
-    pending 'step not implemented'
+    within "#coreon-repository-select-dropdown" do
+      page.should have_css(".selected", text: "Branch of Service")
+    end
   end
 
   step 'I press the Escape key' do
-    pending 'step not implemented'
+    page.find("#coreon-repository-select-dropdown").native.send_keys :escape
   end
 
   step 'I should not see the dropdown' do
-    pending 'step not implemented'
+    page.should have_no_css("#coreon-repository-select-dropdown")
+  end
+
+  step 'I have access to a single repository "Gunnery"' do
+    @repository.update_attributes name: "Gunnery"
+  end
+
+  step 'I should see the repository "Gunnery" within the filters bar' do
+    page.find("#coreon-filters").should have_text("Gunnery")
+  end
+
+  step 'I should not see a repository selector toggle' do
+    page.should have_no_css("#coreon-repository-select .select")
   end
 end

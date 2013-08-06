@@ -27,8 +27,9 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     $(document).on "keydown", @onKeydown
 
   render: ->
-    repositories = (repository for repository in @model.get("repositories"))
-    @$el.html @template repositories: repositories
+    @$el.html @template
+      repositories: @model.get("repositories")
+      currentRepository: @model.currentRepository()
     @fixate()
     @
 
