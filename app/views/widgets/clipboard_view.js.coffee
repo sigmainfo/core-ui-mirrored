@@ -41,6 +41,7 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     id? && !@collection._byId[id]?
 
   onDropItem: (evt, ui)->
+    @$el.removeClass "ui-state-hovered"
     id = ui.draggable.attr("id")
     model = Coreon.Models.Concept.find id
     @collection.add model
