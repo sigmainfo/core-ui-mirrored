@@ -21,7 +21,7 @@
         font-size: 0.9em;
         line-height: 1.3em;
         padding-top: 2px;
-        @include single-box-shadow(desaturate(lighten($text-color, 60%), 20%), 1px, 1px, 2px);
+        @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
       }
     }
   }
@@ -29,15 +29,15 @@
   &.ui-state-highlight {
     ul {
       background-color: rgba($button-color, 0.3);
-      @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 1px, 1px, 2px, false, inset);
+      @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 3px, false, inset);
       border-top: none;
-      margin: 0 3px;
-      padding: 9px 17px 8px 17px;
+      margin: 0 4px 0 3px;
+      padding: 9px 16px 8px 17px;
     }
   }
   &.ui-state-hovered {
     ul {
-      background-color: rgba($button-color, 0.6);
+      background-color: rgba($button-color, 0.4);
     }
   }
 }
