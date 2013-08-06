@@ -46,20 +46,12 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     @collection.add model
 
   onDropItemOver: (evt, ui)->
-    el = ui.helper
-    if @dropItemAcceptance(el)
-      cssClass = "ui-droppable-clipboard"
-    else
-      cssClass = "ui-droppable-denied"
-    el.addClass cssClass
+    @$el.addClass "ui-state-hovered"
+    ui.helper.addClass "ui-droppable-clipboard"
 
   onDropItemOut: (evt, ui)->
-    el = ui.helper
-    if @dropItemAcceptance(el)
-      cssClass = "ui-droppable-clipboard"
-    else
-      cssClass = "ui-droppable-denied"
-    el.removeClass cssClass
+    @$el.removeClass "ui-state-hovered"
+    ui.helper.removeClass "ui-droppable-clipboard"
 
   render: ->
     @$el.droppable

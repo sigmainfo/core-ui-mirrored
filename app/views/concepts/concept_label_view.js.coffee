@@ -34,11 +34,9 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
     @dispose()
 
   onStartDragging: ->
-    console.log "onStartDragging"
     @$el.addClass "ui-draggable-dragged"
 
   onStopDragging: ->
-    console.log "onStopDragging"
     @$el.removeClass "ui-draggable-dragged"
 
 
