@@ -25,5 +25,6 @@
       - for manager in @repository.get "managers"
         %tr
           %td= manager[0]
-          %td= manager[1]
+          %td
+            %a{href: "mailto:#{manager[1]}"}= manager[1]
 

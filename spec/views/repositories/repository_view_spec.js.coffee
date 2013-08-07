@@ -74,10 +74,12 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
       @view.$("section.contact table.managers tr:eq(0) th:eq(1)").should.have.text "Email"
 
       @view.$("section.contact table.managers tr:eq(1) td:eq(0)").should.have.text "Sun Tzu"
-      @view.$("section.contact table.managers tr:eq(1) td:eq(1)").should.have.text "tzu@sun.com"
+      @view.$("section.contact table.managers tr:eq(1) td:eq(1) a").should.have.attr "href", "mailto:tzu@sun.com"
+      @view.$("section.contact table.managers tr:eq(1) td:eq(1) a").should.have.text "tzu@sun.com"
 
       @view.$("section.contact table.managers tr:eq(2) td:eq(0)").should.have.text "Wei Liaozi"
-      @view.$("section.contact table.managers tr:eq(2) td:eq(1)").should.have.text "wl@oracle.com"
+      @view.$("section.contact table.managers tr:eq(2) td:eq(1) a").should.have.attr "href", "mailto:wl@oracle.com"
+      @view.$("section.contact table.managers tr:eq(2) td:eq(1) a").should.have.text "wl@oracle.com"
 
     context "with maintainer privileges", ->
     
