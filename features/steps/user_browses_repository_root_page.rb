@@ -26,16 +26,16 @@ class Spinach::Features::UserBrowsesRepositoryRootPage < Spinach::FeatureSteps
   end
 
   step 'I should see a table containing the meta data for "CREATED AT", "COPYRIGHT", and "INFO"' do
-    page.should have_css("th", text: "Created at")
-    page.should have_css("th", text: "Copyright")
-    page.should have_css("th", text: "Info")
+    page.should have_css("th", text: "CREATED AT")
+    page.should have_css("th", text: "COPYRIGHT")
+    page.should have_css("th", text: "INFO")
   end
 
   step 'I should see a section "CONTACT" with my "NAME" and "EMAIL" listed' do
-    page.should have_css("h3", text: "Contact")
-    page.should have_css("th", text: "Name")
+    page.should have_css("h3", text: "CONTACT")
+    page.should have_css("th", text: "NAME")
     page.should have_css("td", text: "William Blake")
-    page.should have_css("th", text: "Email")
+    page.should have_css("th", text: "EMAIL")
     page.should have_css("td", text: "nobody@blake.com")
   end
 end
