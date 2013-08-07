@@ -2,38 +2,29 @@
 @import '_config';
 
 #coreon-repository-select {
-  font-size: 0.86em;
+  font-size: 0.94em;
   
   h4, a {
     display: inline-block;
     height: 18px;
     padding: 2px 0px;
-    background-color: $beigecolor;
-    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
     
   }
   
   h4 {
-    float: left;
-    margin-right: 1px;
-    @include border-left-radius(4px);
+    background-color: rgba($hit-color, 0.2);
+    @include border-radius(8px);
+    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
   }
   
   a {
     float: left;
-    width: 18px;
+    width: 22px;
     padding: 2px;
-    background: image-url("layout/icons.png") no-repeat 1px -100px;
+    background: image-url("layout/icons.png") no-repeat 5px -102px;
     @include retina-icons;
     text-indent: -2000px;
     overflow: hidden;
-    background-color: $beigecolor;
-    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
-    @include border-right-radius(4px);
-
-    &:hover {
-      background-color: $greycolor;
-    };
 
   }
   

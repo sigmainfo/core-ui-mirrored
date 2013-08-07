@@ -64,7 +64,6 @@
     
     .option {
       font-size: 0.86em;
-      padding: 2px 10px 1px 8px;
       color: $browncolor;
       position: relative;
       
@@ -82,7 +81,7 @@
         &:before {
           @include before-icon;
           position: absolute;
-          left: 3px;
+          left: 2px;
           top: 2px;
           background-position: 0px -150px;
         };
@@ -96,7 +95,7 @@
   ul.options {
     @include dottedline;
     .option {
-      padding-left: 28px;
+              padding: 2px 10px 1px 26px;
       &:first-child {
         border-bottom: 1px solid darken($greycolor, 2%);
       }
@@ -109,18 +108,23 @@
   ul.options {
     position: relative;
     float: left;
+    @include border-radius(8px);
 
     .option {
       float: left;
       clear: left;
+      width: 100%;
 
       &.selected a {
         color: $bluecolor;
       }
       
       a {
+        @include box-sizing(border-box);
+        color: $browncolor;
         display: block;
-        padding: 2px 5px 1px 18px;
+        padding: 2px 24px 1px 26px;
+        width: 100%;
       }
     }
   }  
