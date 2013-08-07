@@ -1,3 +1,29 @@
 .edit
   - if @can "create", Coreon.Models.Concept
     %a.button.create-concept{href: @repositoryPath("concepts/new")}= I18n.t "concept.new"
+%h2.name= @repository.get "name"
+%p.description= @repository.get "description"
+%table.meta
+  %tbody
+    %tr
+      %th= I18n.t "repository.created"
+      %td= I18n.l "date.formats.default", @repository.get "created_at" if @repository.has "created_at"
+    %tr
+      %th= I18n.t "repository.copyright"
+      %td= @repository.get "copyright"
+    %tr
+      %th= I18n.t "repository.info"
+      %td= @repository.get "info"
+%section.contact
+  %h3= I18n.t "repository.contact"
+  %table.managers
+    %thead
+      %tr
+        %th= I18n.t "user.name"
+        %th= I18n.t "user.email"
+    %tbody
+      - for manager in @repository.get "managers"
+        %tr
+          %td= manager[0]
+          %td= manager[1]
+
