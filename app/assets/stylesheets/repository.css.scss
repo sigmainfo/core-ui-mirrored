@@ -27,6 +27,7 @@ div.repository {
   }
   
   table.meta {
+    width: 100%;
     @include dottedline();
     border-spacing: 0;
     padding-top: 20px;
