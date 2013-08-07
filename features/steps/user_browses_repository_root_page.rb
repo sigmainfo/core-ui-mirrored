@@ -3,6 +3,8 @@ class Spinach::Features::UserBrowsesRepositoryRootPage < Spinach::FeatureSteps
   include AuthSteps
 
   step 'I am manager of a repository "The Art of War", "Ancient Chinese military treatise"' do
+    # set user_name to mark user as dirty 
+    @repo_user.update_attributes roles: ["user", "manager"], user_name: "xxx"
     @repository.update_attributes name: "The Art of War", description: "Ancient Chinese military treatise"
   end
 
@@ -34,6 +36,6 @@ class Spinach::Features::UserBrowsesRepositoryRootPage < Spinach::FeatureSteps
     page.should have_css("th", text: "Name")
     page.should have_css("td", text: "William Blake")
     page.should have_css("th", text: "Email")
-    page.should have_text("td", text: "nobody@blake.com")
+    page.should have_css("td", text: "nobody@blake.com")
   end
 end

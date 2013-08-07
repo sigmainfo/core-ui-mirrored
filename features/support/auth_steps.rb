@@ -11,17 +11,19 @@ module AuthSteps
       password: @me_password,
       password_confirmation: @me_password
     )
-    @account = CoreClient::Auth::Account.create! name: "Nobody's Account", active: true
+    @account = CoreClient::Auth::Account.create! name: "Nobody's Account", active: true, state: :confirmed
     @repository = CoreClient::Auth::Repository.create! name: "Nobody's Repository", account_id: @account.id, graph_uri: "http://localhost:3336/", active: true
-    @repo_user = CoreClient::Auth::RepositoryUser.create! repository: @repository, user: @me, email: "nobody@blake.com", roles: [:user]
+    @repo_user = CoreClient::Auth::RepositoryUser.create! repository: @repository, user: @me, email: "nobody@blake.com", roles: ["user"], state: :confirmed
   end
 
   step 'I am no maintainer of the repository' do
-    @repo_user.update_attributes roles: [:user]
+    # set user_name to mark user as dirty 
+    @repo_user.update_attributes roles: ["user"], user_name: "123"
   end
 
   step 'I am a maintainer of the repository' do
-    @repo_user.update_attributes roles: [:user, :maintainer]
+    # set user_name to mark user as dirty 
+    @repo_user.update_attributes roles: ["user", "maintainer"], user_name: "xxx"
   end
 
   step 'I am logged in' do
