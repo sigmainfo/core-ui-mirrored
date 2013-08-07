@@ -6,6 +6,6 @@
 %div.list
   .broader
     %ul
-  .self
+  .concept-label.hit.self
   .narrower
     %ul

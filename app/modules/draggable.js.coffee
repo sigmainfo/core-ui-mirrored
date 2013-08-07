@@ -5,40 +5,40 @@
 # Options can be overwritten via attribute and are the same as for
 # JQueryUI.draggable.
 #
-# To overwrite the element to be dragged, set @draggableElement before
-# initializing. For Example:
+# Parameters:
+# 
+#   el: element to drag
+#   options: options hash to overwrite defaults for jqueryui.draggable
+#
+# Example:
 #
 # class Coreon.View.Something extends Backbone.View
 #   Coreon.Modules.include @, Coreon.Modules.Draggable
 #   initialize: ->
-#     @draggableElement = @$(".draghandle")
-#     draggable()
-#
+#     draggableOn ".selector"
+
 
 Coreon.Modules.Draggable =
 
   _draggable_startDragging: ->
-    @draggableElement.addClass "ui-draggable-dragged"
+    @_draggableElement.addClass "ui-draggable-dragged"
 
   _draggable_stopDragging: ->
-    @draggableElement.removeClass "ui-draggable-dragged"
+    @_draggableElement.removeClass "ui-draggable-dragged"
 
-  draggableOn: (options={}, verbose=no)->
-    @draggableElement ||= @$el
-    @draggableElement = $(@draggableElement)
+  draggableOn: (el, options={})->
+    @_draggableElement = $(el)
 
     # events
-    @draggableElement.on "dragstart", =>@_draggable_startDragging()
-    @draggableElement.on "dragstop", =>@_draggable_stopDragging()
+    @_draggableElement.on "dragstart", =>@_draggable_startDragging()
+    @_draggableElement.on "dragstop", =>@_draggable_stopDragging()
 
     # jquery.ui.draggable magic
-    @draggableElement.draggable
+    @_draggableElement.draggable
       revert:   (options.revert || "invalid")
       helper:   (options.helper || "clone")
       appendTo: (options.appendTo || "#coreon-modal")
 
-    console.log @draggableElement, @draggableElement.data() if verbose
-
   draggableOff: ->
-    @draggableElement.off "dragstart"
-    @draggableElement.off "dragstop"
+    @_draggableElement.off "dragstart"
+    @_draggableElement.off "dragstop"

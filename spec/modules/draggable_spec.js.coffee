@@ -11,7 +11,7 @@ describe "Coreon.Modules.Draggable", ->
       tagName: "p"
       className: "test-model"
       initialize: ->
-        @draggableOn()
+        @draggableOn(@$el, "c0ffee")
 
     class Coreon.Views.MyView2 extends Backbone.View
       Coreon.Modules.include @, Coreon.Modules.Draggable
@@ -19,7 +19,7 @@ describe "Coreon.Modules.Draggable", ->
       className: "test-model"
       initialize: ->
         @draggableElement = $('<div class=".element-to-drag">').appendTo(@$el)
-        @draggableOn()
+        @draggableOn(@draggableElement, "c0ffee")
 
     @view = new Coreon.Views.MyView
     @view2 = new Coreon.Views.MyView2
@@ -40,8 +40,10 @@ describe "Coreon.Modules.Draggable", ->
     @view.$el.should.not.have.class "ui-draggable-dragged"
 
   it "uses alternative drag element", ->
-    console.log @view2.draggableElement
     should.not.exist @view2.$el.data("uiDraggable")
     @view2.draggableElement.data("uiDraggable").should.exist
+
+  it "saves identifier for drop zone", ->
+    @view.$el.data("dragIdent").should.equal "c0ffee"
 
 

@@ -37,12 +37,12 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     @render()
 
   dropItemAcceptance: (el)->
-    id = el.attr "id"
+    id = el.data "drag-ident"
     id? && !@collection._byId[id]?
 
   onDropItem: (evt, ui)->
     @$el.removeClass "ui-state-hovered"
-    id = ui.draggable.attr("id")
+    id = ui.draggable.data "drag-ident"
     model = Coreon.Models.Concept.find id
     @collection.add model
 
