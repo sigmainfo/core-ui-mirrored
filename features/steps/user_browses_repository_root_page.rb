@@ -1,0 +1,39 @@
+class Spinach::Features::UserBrowsesRepositoryRootPage < Spinach::FeatureSteps
+
+  include AuthSteps
+
+  step 'I am manager of a repository "The Art of War", "Ancient Chinese military treatise"' do
+    @repository.update_attributes name: "The Art of War", description: "Ancient Chinese military treatise"
+  end
+
+  step 'this repository has the copyright string "(c) 512 BC SunTzu"' do
+    @repository.update_attributes copyright: "(c) 512 BC SunTzu"
+  end
+
+  step 'it\'s info text reads "Verses from the book occur in modern daily Chinese idioms and phrases."' do
+    @repository.update_attributes info: "Verses from the book occur in modern daily Chinese idioms and phrases."
+  end
+
+  step 'I visit the repository root page' do
+    visit "/#{@repository.id}"
+  end
+
+  step 'I should see the title "The Art of War" with description "Ancient Chinese military treatise"' do
+    page.should have_css("h2.name", text: "The Art of War")
+    page.should have_css("p.description", text: "Ancient Chinese military treatise")
+  end
+
+  step 'I should see a table containing the meta data for "CREATED AT", "COPYRIGHT", and "INFO"' do
+    page.should have_css("th", text: "Created at")
+    page.should have_css("th", text: "Copyright")
+    page.should have_css("th", text: "Info")
+  end
+
+  step 'I should see a section "CONTACT" with my "NAME" and "EMAIL" listed' do
+    page.should have_css("h3", text: "Contact")
+    page.should have_css("th", text: "Name")
+    page.should have_css("td", text: "William Blake")
+    page.should have_css("th", text: "Email")
+    page.should have_text("td", text: "nobody@blake.com")
+  end
+end

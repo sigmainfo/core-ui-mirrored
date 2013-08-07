@@ -8,5 +8,6 @@ class Coreon.Views.Repositories.RepositoryView extends Backbone.View
   template: Coreon.Templates["repositories/repository"]
 
   render: ->
-    @$el.html @template()
+    @$el.html @template
+      repository: @model
     @
