@@ -13,12 +13,12 @@
     
     thead th {
       border-bottom: 1px solid $greencolor;   
-      height: 19px;
+/*      height: 14px;*/
       position: relative;
       &:before {
         @include before-icon;
         position: absolute;
-        top: 1.65em;
+        top: 1.3em;
         background-position: -52px -150px;
       }
     }
@@ -31,6 +31,7 @@
         font-weight: normal;
         text-align: left;
         text-transform: uppercase;
+        line-height: 15px;
         font-size: 0.8em;
       }
 
@@ -101,7 +102,7 @@
     position: relative;
     display: block;
     height: 20px;
-    top: 24px;
+    top: 20px;
   }
   
   .actions {
