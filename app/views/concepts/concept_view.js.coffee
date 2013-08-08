@@ -19,12 +19,13 @@
 #= require modules/nested_fields_for
 #= require modules/confirmation
 #= require jquery.serializeJSON
+#= require modules/draggable
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
-
   Coreon.Modules.include @, Coreon.Modules.Confirmation
+  Coreon.Modules.include @, Coreon.Modules.Draggable
 
   className: "concept show"
   editMode: no
@@ -61,6 +62,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
     @listenTo @model, "change", @render
+    @
 
   render: ->
     @$el.html @template
@@ -72,6 +74,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @broaderAndNarrower.render() unless @_wasRendered
     @$el.children(".system-info").after @broaderAndNarrower.$el
     @_wasRendered = true
+
+    @draggableOn(el) for el in @$("[data-drag-ident]")
+
     @
 
   toggleInfo: (evt) ->

@@ -5,7 +5,7 @@
   - if @can "delete", Coreon.Models.Concept
     %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"
 
-!= @render "concepts/caption", label: @concept.get "label"
+!= @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("_id")
 %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
 != @render "concepts/info", data: @concept.info()
 

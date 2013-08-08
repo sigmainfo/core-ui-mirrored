@@ -74,7 +74,6 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.render()
       @view.$el.should.not.have.class "hit"
 
-
   describe "#appendTo", ->
 
     it "appends $el", ->

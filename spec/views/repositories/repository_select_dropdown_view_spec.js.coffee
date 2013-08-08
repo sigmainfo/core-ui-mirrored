@@ -6,25 +6,21 @@
 describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
 
   beforeEach ->
+    sinon.stub I18n, "t"
+    @selector = $("<h4 class=\"current\">").appendTo "#konacha"
     @repositories = [
       {id:0, name:"c0ffee"},
       {id:1, name:"f00bee"}
     ]
-    @selector = $("<h4 class=\"current\">").appendTo "#konacha"
     @model = new Backbone.Model
     @model.currentRepository = =>
       new Backbone.Model
         id:0
         name:"c0ffee"
     @model.set repositories: @repositories
-    @app = new Backbone.View
-      model: @model
-    @app.prompt = sinon.spy()
     @view = new Coreon.Views.Repositories.RepositorySelectDropdownView
       model: @model
-      app: @app
       selector: @selector
-    sinon.stub I18n, "t"
 
   afterEach ->
     I18n.t.restore()
@@ -57,11 +53,16 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       @view.$("ul.options").css("left").should.equal "42px"
 
   describe "close()", ->
+
+    it "can prompt", ->
+      should.exist Coreon.Modules.Prompt
+      @view.prompt.should.equal Coreon.Modules.Prompt.prompt
     
     it "should remove menu", ->
+      @view.prompt = sinon.spy()
       @view.close()
-      @app.prompt.should.have.been.calledOnce
-      @app.prompt.should.have.been.calledWith null
+      @view.prompt.should.have.been.calledOnce
+      @view.prompt.should.have.been.calledWith null
 
   describe "fixate()", ->
     beforeEach ->
