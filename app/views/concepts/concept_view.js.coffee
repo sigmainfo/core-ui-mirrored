@@ -59,8 +59,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
   initialize: ->
-    @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
-      model: @model
     @listenTo @model, "change", @render
     @
 
@@ -71,12 +69,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       editProperties: @editProperties,
       editTerm: @editTerm
 
-    @broaderAndNarrower.render() unless @_wasRendered
-    @$el.children(".system-info").after @broaderAndNarrower.$el
-    @_wasRendered = true
-
-    @draggableOn(el) for el in @$("[data-drag-ident]")
-
+    broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
+      model: @model
+    @$el.children(".system-info").after broaderAndNarrower.render().$el
     @
 
   toggleInfo: (evt) ->

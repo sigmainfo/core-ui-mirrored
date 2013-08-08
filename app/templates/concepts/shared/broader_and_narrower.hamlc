@@ -2,7 +2,7 @@
 -if @editable
   .edit
     - if @can "create", Coreon.Models.Concept
-      %a.add-narrower{ href:@repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
+      %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 %div.list
   .broader
     %ul

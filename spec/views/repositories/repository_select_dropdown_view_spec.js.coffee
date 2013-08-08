@@ -13,7 +13,7 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       {id:1, name:"f00bee"}
     ]
     @model = new Backbone.Model
-    @model.currentRepository = =>
+    @model.currentRepository = ->
       new Backbone.Model
         id:0
         name:"c0ffee"
@@ -47,10 +47,13 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       @view.$("li").eq(0).text().should.contain @repositories[0].name
       @view.$("li").eq(1).text().should.contain @repositories[1].name
 
-    it "sets positions relative to given selector element", ->
+    it "marks currently selected repository", ->
+      @repositories[1].id = "123"
+      repo = new Backbone.Model
+      repo.id = "123"
+      @model.currentRepository = -> repo
       @view.render()
-      @view.$("ul.options").css("top").should.equal "23px"
-      @view.$("ul.options").css("left").should.equal "42px"
+      @view.$("li").eq(1).should.have.class "selected"
 
   describe "close()", ->
 
@@ -63,39 +66,3 @@ describe "Coreon.Views.Repositories.RepositorySelectDropdownView", ->
       @view.close()
       @view.prompt.should.have.been.calledOnce
       @view.prompt.should.have.been.calledWith null
-
-  describe "fixate()", ->
-    beforeEach ->
-      $('#konacha').append @view.$el
-      @view.render()
-      @width = @view.fixate()
-
-    afterEach ->
-      @model.set
-        repositories: [
-          {id:0, name:"c0ffee"},
-          {id:1, name:"f00bee"}
-        ]
-
-    it "should grow", ->
-      @model.set
-        repositories: [
-          {id:0, name:"a bunch of c0ffee beans"},
-          {id:1, name:"f00bee"}
-        ]
-      @view.render()
-      @view.fixate().should.be.above @width
-
-    it "should shrink", ->
-      @model.set
-        repositories: [
-          {id:0, name:"no"},
-          {id:1, name:"yes"}
-        ]
-      @view.render()
-      @view.fixate().should.be.below @width
-
-    it "should set the selectors width", ->
-      w = @view.fixate()
-      @selector.width().should.equal w-27
-

@@ -3,6 +3,7 @@
 #= require views/repositories/repository_select_dropdown_view
 #= require modules/helpers
 #= require modules/prompt
+#= require jquery.ui.position
 
 class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
 
@@ -19,25 +20,19 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     @listenTo @model, "change:current_repository_id change:repositories", @render
 
   render: ->
-    @prompt null
     if repository = @model.currentRepository()
       @$el.html @template
         repository: repository
         single: @model.get("repositories")?.length is 1
-
-    # some magic (or cheating?) to sync sizes of dropdown and menu
-    @select()
-    @prompt null
-
     @
 
   select: (event) ->
-    event?.preventDefault()
-    event?.stopPropagation()
+    event.preventDefault()
+    event.stopPropagation()
     dropdown = new Coreon.Views.Repositories.RepositorySelectDropdownView
       model: @model
-      app: @options.app
-      selector: @$("h4.current")
-
     @prompt dropdown
-    dropdown.fixate()
+    dropdown.$el.position
+      my: "left top"
+      at: "left bottom"
+      of: @$("h4.current")

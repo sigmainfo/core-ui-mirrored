@@ -83,26 +83,7 @@ div.concept {
   }
   
   table {
-    border-spacing: 0;
-    
-    tr {
-        vertical-align: top;
-        
-      td, th {
-        padding-top: 10px;
-        padding-bottom: 0.5em;
-      }
-      th {
-        font-weight: normal;
-        text-align: right;
-        text-transform: uppercase;
-        font-size: 0.8em;
-        padding-top: 11px;
-        color: $browncolor;
-        width: 98px;
-        padding-right: 16px;
-      }
-    }
+    @include table-properties;
   }
   
   ul.index, ul.values {
@@ -187,9 +168,6 @@ div.concept {
   .term {
     position: relative;
     @include dottedline;
-/*    &:first-child {
-      background: none;
-    };*/
 
     h4.value {
       font: 1.4em Palatino;
@@ -267,15 +245,6 @@ div.concept {
     }
     
     table {
-      margin-left: 0px;
-      tr td, tr th {
-        padding-top: 2px;
-        padding-bottom: 4px;
-      }
-      
-      tr th {
-        width: 69px;
-      }
       ul.index {
         padding-bottom: 12px;
         height: 9px;
@@ -334,16 +303,6 @@ div.concept {
       margin-left: 16px;
       width: 90%;
       tr {
-        th, td {
-          display: block;
-          padding-top: 4px;
-          padding-bottom: 0;
-        }
-        th {
-          width: auto;
-          text-align:left;
-          float: left;
-        }
         .values, .value {
           clear: both;
           padding-bottom: 6px;

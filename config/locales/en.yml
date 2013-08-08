@@ -101,6 +101,10 @@ en:
 
   repository:
     label: "Repository"
+    created: "Created at"
+    copyright: "Copyright"
+    info: "Info"
+    contact: "Contact"
   
   repositories:
     select: "Select repository"
@@ -154,3 +158,7 @@ en:
   clipboard:
     title: "Clipboard"
     clear: "Clear"
+
+  user:
+    name: "Name"
+    email: "Email"
