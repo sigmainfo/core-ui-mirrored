@@ -56,14 +56,6 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
       @view.$el.should.have "h4.current"
       @view.$("h4.current").should.contain "My Repository"
 
-    it "aligns width of selector to fit by dropdown width", ->
-      opts = $("<ul>")
-      opts.width 320
-      opts.css padding: "13px"
-      @dropdown.$el.append opts
-      @view.render()
-      @view.$("h4.current").width().should.equal 346
-
     context "multiple repositories", ->
 
       beforeEach ->

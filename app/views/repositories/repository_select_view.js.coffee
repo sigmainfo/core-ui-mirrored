@@ -24,17 +24,7 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
       @$el.html @template
         repository: repository
         single: @model.get("repositories")?.length is 1
-      @fitWidth()
     @
-
-  fitWidth: ->
-    dropdown = new Coreon.Views.Repositories.RepositorySelectDropdownView
-      model: @model
-    $("#coreon-modal").append dropdown.render().$el
-    @$("h4.current").width dropdown.$("ul").outerWidth()
-    dropdown.remove()
-
-  renderDropDown: ->
 
   select: (event) ->
     event.preventDefault()
