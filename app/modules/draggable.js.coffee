@@ -20,25 +20,26 @@
 
 Coreon.Modules.Draggable =
 
-  _draggable_startDragging: ->
-    @_draggableElement.addClass "ui-draggable-dragged"
+  _draggable_startDragging: (evt, ui)->
+    $(evt.target).addClass "ui-draggable-dragged"
 
-  _draggable_stopDragging: ->
-    @_draggableElement.removeClass "ui-draggable-dragged"
+  _draggable_stopDragging: (evt, ui)->
+    $(evt.target).removeClass "ui-draggable-dragged"
 
   draggableOn: (el, options={})->
-    @_draggableElement = $(el)
+    _draggableElement = $(el)
 
     # events
-    @_draggableElement.on "dragstart", =>@_draggable_startDragging()
-    @_draggableElement.on "dragstop", =>@_draggable_stopDragging()
+    _draggableElement.on "dragstart", @_draggable_startDragging
+    _draggableElement.on "dragstop", @_draggable_stopDragging
 
     # jquery.ui.draggable magic
-    @_draggableElement.draggable
+    _draggableElement.draggable
       revert:   (options.revert || "invalid")
       helper:   (options.helper || "clone")
       appendTo: (options.appendTo || "#coreon-modal")
 
-  draggableOff: ->
-    @_draggableElement.off "dragstart"
-    @_draggableElement.off "dragstop"
+  draggableOff: (el)->
+    _draggableElement = $(el)
+    _draggableElement.off "dragstart"
+    _draggableElement.off "dragstop"
