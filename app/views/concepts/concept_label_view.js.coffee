@@ -2,8 +2,11 @@
 #= require views/simple_view
 #= require models/concept
 #= require helpers/repository_path
+#= require modules/draggable
 
 class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
+
+  Coreon.Modules.include @, Coreon.Modules.Draggable
 
   tagName: "a"
 
@@ -16,6 +19,8 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
         Coreon.Models.Concept.find options.id
 
     @model.on "change", @render, @
+    @$el.attr "data-drag-ident", @model.get "_id"
+    @draggableOn(@$el)
 
   appendTo: (target) ->
     @delegateEvents()

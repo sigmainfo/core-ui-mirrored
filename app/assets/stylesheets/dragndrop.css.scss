@@ -1,0 +1,31 @@
+@import 'compass/css3';
+@import '_config';
+
+.ui-draggable {
+  &:hover {
+    @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px);
+  };
+}
+
+.ui-draggable-dragging {
+  cursor: pointer;
+  @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 2px, 2px, 4px);
+}
+.ui-draggable-dragged {
+  @include opacity(0.7);
+}
+.ui-droppable-clipboard {
+  &:after {
+    @include before-icon;
+    position: absolute;
+    left: -9px;
+    top: -5px;
+    width: 24px;
+    height: 24px;
+    background-position: 0px -700px;
+  };
+}
+
+h2.concept-label {
+  font-size: 1em;
+}
