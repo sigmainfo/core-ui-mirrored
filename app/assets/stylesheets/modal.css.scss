@@ -61,6 +61,7 @@
     @include border-bottom-radius(6px);
     @include single-box-shadow(rgba($text-color, 0.5), 1px, 2px, 2px, false);
     padding: 1px 0 0 0;
+    margin-top: 1px;
     
     .option {
       font-size: 0.86em;
@@ -114,6 +115,10 @@
       float: left;
       clear: left;
       width: 100%;
+      
+      &:first-child {
+        @include border-top-radius(8px);
+      };
 
       &.selected a {
         color: $bluecolor;
@@ -123,7 +128,7 @@
         @include box-sizing(border-box);
         color: $browncolor;
         display: block;
-        padding: 2px 24px 1px 26px;
+        padding: 2px 14px 1px 26px;
         width: 100%;
       }
     }
