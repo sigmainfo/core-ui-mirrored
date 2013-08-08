@@ -24,6 +24,9 @@ describe "Coreon.Modules.Draggable", ->
     @view = new Coreon.Views.MyView
     @view2 = new Coreon.Views.MyView2
 
+    @dragStartEvent = jQuery.Event "dragstart", target: @view.$el[0]
+    @dragStopEvent  = jQuery.Event "dragstop",  target: @view.$el[0]
+
   it "makes $el draggable", ->
     @view.$el.data("uiDraggable").should.exist
 
@@ -32,18 +35,14 @@ describe "Coreon.Modules.Draggable", ->
     options.appendTo.should.equal "#coreon-modal"
 
   it "adds class to dragged source element", ->
-    @view._draggable_startDragging()
+    @view._draggable_startDragging(@dragStartEvent)
     @view.$el.should.have.class "ui-draggable-dragged"
 
   it "adds class to dragged source element", ->
-    @view._draggable_stopDragging()
+    @view._draggable_stopDragging(@dragStopEvent)
     @view.$el.should.not.have.class "ui-draggable-dragged"
 
   it "uses alternative drag element", ->
     should.not.exist @view2.$el.data("uiDraggable")
     @view2.draggableElement.data("uiDraggable").should.exist
-
-  it "saves identifier for drop zone", ->
-    @view.$el.data("dragIdent").should.equal "c0ffee"
-
 

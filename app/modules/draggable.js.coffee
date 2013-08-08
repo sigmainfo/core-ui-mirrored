@@ -20,10 +20,10 @@
 
 Coreon.Modules.Draggable =
 
-  _draggable_startDragging: (evt, ui)->
+  _draggable_startDragging: (evt)->
     $(evt.target).addClass "ui-draggable-dragged"
 
-  _draggable_stopDragging: (evt, ui)->
+  _draggable_stopDragging: (evt)->
     $(evt.target).removeClass "ui-draggable-dragged"
 
   draggableOn: (el, options={})->
