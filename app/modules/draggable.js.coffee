@@ -39,6 +39,7 @@ Coreon.Modules.Draggable =
       helper:   (options.helper || "clone")
       appendTo: (options.appendTo || "#coreon-modal")
       cursorAt: {right: 5, bottom: 5}
+      revertDuration: 300
 
   draggableOff: (el)->
     _draggableElement = $(el)
