@@ -160,7 +160,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         it "renders repository node", ->
           @view.render()
           @view.$(".broader ul").should.have "li a.repository-label"
-          @view.$(".broader .repository-label").should.have.attr "href", "/coffeebabe23/"
+          @view.$(".broader .repository-label").should.have.attr "href", "/coffeebabe23"
           @view.$(".broader .repository-label").should.have.text "delicious data"
 
         it "does not render repository when blank", ->
