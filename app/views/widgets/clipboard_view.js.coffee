@@ -18,23 +18,9 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
 
   initialize: ->
     @collection = Coreon.Collections.Clips.collection()
-    @listenTo @collection, "add", @onAddItem
+    @listenTo @collection, "add", @render
     #@listenTo @collection, "remove", @onRemoveItem
-    @listenTo @collection, "reset", @onResetItems
-
-  onAddItem: (model, collection)->
-    view = new Coreon.Views.Concepts.ConceptLabelView model:model
-    @_concept_label_views.push view
-    @render()
-
-  #onRemoveItem: ->
-  #  @render()
-
-  onResetItems: (model, collection)->
-    clip.remove() while clip = @_concept_label_views.pop()
-    for clip in @collection.models
-      @_concept_label_views.push new Coreon.Views.Concepts.ConceptLabelView model:clip
-    @render()
+    @listenTo @collection, "reset", @render
 
   dropItemAcceptance: (el)->
     id = el.data "drag-ident"
@@ -55,6 +41,7 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     ui.helper.removeClass "ui-droppable-clipboard"
 
   render: ->
+    console.log "rendering"
     @$el.droppable
       accept: (el)=> @dropItemAcceptance(el)
       activeClass: "ui-state-highlight"
@@ -62,12 +49,15 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
       over: (evt, ui)=> @onDropItemOver(evt, ui)
       out: (evt, ui)=> @onDropItemOut(evt, ui)
 
+    clip.remove() while clip = @_concept_label_views.pop()
+
     @$el.html @template()
     ul = @$("ul")
-    for clip in @_concept_label_views
-      ul.append $('<li>').append clip.render().$el
+
+    for clip in Coreon.Collections.Clips.collection().models
+      view = new Coreon.Views.Concepts.ConceptLabelView model:clip
+      ul.append $('<li>').append view.render().$el
     @
 
   clear: ->
-    @collection ||= Coreon.Collections.Clips.collection()
     @collection.reset []
