@@ -89,6 +89,104 @@ $widget-width: 320px;
   };  
 }
 
+@mixin table-properties {
+  border-spacing: 0;
+  
+  tr {
+      vertical-align: top;
+      
+    td, th {
+      padding-top: 10px;
+      padding-bottom: 0.5em;
+    }
+    th {
+      font-weight: normal;
+      text-align: right;
+      text-transform: uppercase;
+      font-size: 0.8em;
+      padding-top: 11px;
+      color: $browncolor;
+      width: 98px;
+      padding-right: 16px;
+    }
+  }
+  @media all and (max-width: 999px) and (min-width: 800px) {
+    
+      margin-left: 0px;
+      tr td, tr th {
+        padding-top: 2px;
+        padding-bottom: 4px;
+      }
+      
+      tr th {
+        width: 69px;
+      }
+  }
+  
+  @media all and (max-width: 799px) {
+      tr {
+        th, td {
+          display: block;
+          padding-top: 4px;
+          padding-bottom: 0;
+        }
+        th {
+          width: auto;
+          text-align:left;
+          float: left;
+        }
+      }
+    }
+  
+}
+
+@mixin table-list {
+    border-spacing: 0;
+    width: 100%;
+    min-width: 200px;
+    margin-bottom: 30px;
+    position: relative;
+
+    thead th {
+      border-bottom: 1px solid $greencolor;   
+      position: relative;
+      &:before {
+        @include before-icon;
+        position: absolute;
+        top: 1.3em;
+        background-position: -52px -150px;
+      }
+    }
+
+    tr {
+      vertical-align: baseline;
+      text-align: left;
+
+      th {
+        font-weight: normal;
+        text-align: left;
+        text-transform: uppercase;
+        line-height: 15px;
+        font-size: 0.8em;
+      }
+
+      td {
+        border-bottom: 1px solid $greycolor;
+      }
+
+      td, th {      
+      padding: 3px 16px 2px 2px;
+      }
+
+      &:first-child {
+        td {
+          padding-top: 16px;
+        }
+      }
+
+    }
+}
+
 @mixin retina-logos {
   background-image: image-url('layout/coreon.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
