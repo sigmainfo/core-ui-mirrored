@@ -18,6 +18,11 @@ describe "Coreon.Models.Concept", ->
   it "is an accumulating model", ->
     Coreon.Models.Concept.find.should.equal Coreon.Modules.Accumulation.find
 
+  it "uses Concepts collection for accumulation", ->
+    collection = Coreon.Models.Concept.collection()
+    collection.should.be.an.instanceof Coreon.Collections.Concepts
+    Coreon.Models.Concept.collection().should.equal collection
+
   it "has an URL root", ->
     @model.urlRoot.should.equal "/concepts"
 

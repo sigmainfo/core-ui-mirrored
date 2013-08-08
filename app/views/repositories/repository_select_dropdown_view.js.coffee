@@ -1,5 +1,7 @@
 #= require environment
 #= require templates/repositories/repository_select_dropdown
+#= require modules/helpers
+#= require modules/prompt
 
 KEYCODE =
   esc: 27
@@ -8,6 +10,8 @@ KEYCODE =
   up: 38
  
 class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Prompt
 
   id: "coreon-repository-select-dropdown"
 
@@ -23,13 +27,13 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     $(document).on "keydown", @onKeydown
 
   render: ->
-    current = @model.currentRepository()
-    repositories = (repository for repository in @model.get("repositories") when repository.id isnt current.id)
-    @$el.html @template repositories: repositories
+    @$el.html @template
+      repositories: @model.get("repositories")
+      currentRepository: @model.currentRepository()
     @
 
   close: (event) =>
-    @options.app.prompt null
+    @prompt null
 
   select: (event) =>
     event.preventDefault()
@@ -46,11 +50,11 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     current = @$("li.option.focus").first()
     switch event.keyCode
       when KEYCODE.esc
-        @options.app.prompt null
+        @prompt null
       when KEYCODE.enter
         if current.length > 0
           Backbone.history.navigate current.find("a").attr("href"), trigger: yes
-        @options.app.prompt null
+        @prompt null
       when KEYCODE.down
         if current.length > 0
           next = current.next()
@@ -67,7 +71,3 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
             prev.addClass "focus"
         else
           @$("li.option").last().addClass "focus"
-
-  remove: ->
-    $(document).off "keydown"
-    super

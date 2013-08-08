@@ -1,8 +1,13 @@
 #= require environment
 #= require templates/repositories/repository_select
 #= require views/repositories/repository_select_dropdown_view
+#= require modules/helpers
+#= require modules/prompt
+#= require jquery.ui.position
 
 class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Prompt
   
   id: "coreon-repository-select"
 
@@ -15,7 +20,6 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     @listenTo @model, "change:current_repository_id change:repositories", @render
 
   render: ->
-    @options.app.prompt null
     if repository = @model.currentRepository()
       @$el.html @template
         repository: repository
@@ -27,9 +31,8 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     event.stopPropagation()
     dropdown = new Coreon.Views.Repositories.RepositorySelectDropdownView
       model: @model
-      app: @options.app
-    @options.app.prompt dropdown
-    dropdown.$("ul.options").position
+    @prompt dropdown
+    dropdown.$el.position
       my: "left top"
       at: "left bottom"
-      of: @$ "h4.current"
+      of: @$("h4.current")

@@ -6,8 +6,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   beforeEach ->
     Coreon.application = new Backbone.Model
     sinon.stub I18n, "t"
-    sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", (options) =>
-      @broaderAndNarrower = new Backbone.View options
+    @broaderAndNarrower = new Backbone.View
+    sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", => @broaderAndNarrower
 
     @property = new Backbone.Model key: "label", value: "top hat"
     @property.info = -> {}
@@ -35,16 +35,8 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   it "creates container", ->
     @view.$el.should.match ".concept.show"
 
-  describe "initialize()", ->
-  
-    it "creates view for broader & narrower section", ->
-      should.exist @view.broaderAndNarrower
-      @view.broaderAndNarrower.should.equal @broaderAndNarrower
-      @view.broaderAndNarrower.should.have.property "model", @concept
-
   describe "render()", ->
 
-       
     it "can be chained", ->
       @view.render().should.equal @view
 
@@ -76,22 +68,10 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$("> .system-info td").eq(1).should.have.text "543"
 
     it "renders tree", ->
-      Coreon.application.hits = new Backbone.Collection
-      Coreon.application.hits.findByResult = -> null
-      @concept.set "super_concept_ids", ["1234"], silent: true
-      @view.initialize()
-      @view.broaderAndNarrower.render = sinon.spy()
+      @broaderAndNarrower.render = sinon.stub().returns @broaderAndNarrower
       @view.render()
-      @view.broaderAndNarrower.render.should.have.been.calledOnce
-      $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
-
-    it "always renders tree", ->
-      @concept.set
-        sub_concept_ids: []
-        super_concept_ids: []
-      @view.render()
-      $.contains(@view.el, @view.broaderAndNarrower.el).should.be.true
-
+      @broaderAndNarrower.render.should.have.been.calledOnce
+      $.contains(@view.el, @broaderAndNarrower.el).should.be.true
 
     context "with edit privileges", ->
 

@@ -39,6 +39,7 @@ group :development do
 end
 
 group :test do
+  gem "poltergeist"
   gem "spinach-rails"
   gem "selenium-webdriver"
   gem "launchy"

@@ -6,24 +6,22 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
   
   beforeEach ->
     sinon.stub I18n, "t"
+    sinon.stub Coreon.Views.Widgets, "SearchTargetSelectDropdownView", =>
+      @dropdown = new Backbone.View
+      @dropdown.alignTo = sinon.spy()
+      @dropdown
     @view = new Coreon.Views.Widgets.SearchTargetSelectView
       model: new Coreon.Models.SearchType
 
   afterEach ->
     I18n.t.restore()
+    Coreon.Views.Widgets.SearchTargetSelectDropdownView.restore()
 
-  it "is a composite view", ->
-    @view.should.be.an.instanceof Coreon.Views.CompositeView 
+  it "is a Backbone view", ->
+    @view.should.be.an.instanceof Backbone.View
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-search-target-select"
-
-  describe "initialize()", ->
-    
-    it "creates dropdown", ->
-      @view.dropdown.should.be.an.instanceof Coreon.Views.Widgets.SearchTargetSelectDropdownView 
-      @view.dropdown.model.should.equal @view.model
-      @view.subviews.should.eql [@view.dropdown]
 
   describe "render()", ->
 
@@ -63,29 +61,26 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.delegateEvents()
       @view.$(".toggle").trigger @event
       @view.showDropdown.should.have.been.calledWith @event
+
+    it "can prompt", ->
+      should.exist Coreon.Modules.Prompt
+      @view.prompt.should.eql Coreon.Modules.Prompt.prompt
     
     it "renders dropdown as an overlay", ->
-      @view.dropdown.delegateEvents = sinon.spy()
-      @view.$(".toggle").trigger @event
-      $("#coreon-modal").should.have "#coreon-search-target-select-dropdown"
-      @view.dropdown.delegateEvents.should.have.been.calledOnce
-
-    it "adjusts width and position to match query input", ->
+      @view.prompt = sinon.spy()
+      @view.showDropdown()
+      Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledOnce
+      Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledWithNew
+      Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledWith
+        model: @view.model
+      @view.prompt.should.have.been.calledOnce
+      @view.prompt.should.have.been.calledWith @dropdown
+      
+    it "aligns to query input", ->
       input = $("#coreon-search-query")
-      input.css
-        position: "absolute"
-        top: 10
-        left: 25
-        width: 200
-        height: 20
-        padding: 5
-        margin: 30
-        border: "2px solid red"
-      @view.$(".toggle").trigger @event
-      list = @view.dropdown.$ ".options"
-      list.width().should.equal 213
-      list.position().left.should.be.closeTo 56, 2
-      list.position().top.should.be.closeTo 74, 2
+      @view.showDropdown()
+      @dropdown.alignTo.should.have.been.calledOnce
+      @dropdown.alignTo.should.have.been.calledWith input
 
   describe "onFocus()", ->
 
