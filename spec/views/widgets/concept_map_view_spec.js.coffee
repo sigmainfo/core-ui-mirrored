@@ -59,7 +59,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$(".zoom-out").should.have.text "Zoom out"
         @view.$(".zoom-out").should.have.attr "title", "Zoom out"
 
-      xit "renders toggle button", ->
+      it "renders toggle button", ->
         I18n.t.withArgs("concept-map.toggle-orientation").returns "Toggle orientation"
         @view.initialize()
         @view.$el.should.have ".toggle-orientation"
@@ -266,3 +266,10 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         "conceptMap":
           width: 123
           height: 334
+
+  describe "toggleOrientation()", ->
+  
+    it "is triggered by click on toggle", ->
+      @view.toggleOrientation = sinon.spy()
+      @view.$(".toggle-orientation").click()
+      @view.toggleOrientation.should.have.been.calledOnce
