@@ -80,9 +80,14 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       concepts = {}
       sinon.stub Coreon.Models.Concept, "find", (id) ->
         concepts[id] ?= new Backbone.Model _id: id
+      sinon.stub Coreon.Views.Concepts, "ConceptLabelView", (options) =>
+        @label = new Backbone.View model: options.model
+        @label.render = sinon.stub().returns @label
+        @label
 
     afterEach ->
       Coreon.Models.Concept.find.restore()
+      Coreon.Views.Concepts.ConceptLabelView.restore()
 
     it "can be chained", ->
       @view.render().should.equal @view
@@ -125,16 +130,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$(".broader ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
-        $el = $ '<a class="concept-label">'
-        label = render: sinon.stub().returns $el: $el
-        sinon.stub Coreon.Views.Concepts, "ConceptLabelView", -> label
-        try
-          @view.model.set "super_concept_ids", [ "c1" ], silent: true
-          @view.render()
-          label.render.should.have.been.calledOnce
-          ( $.contains @view.el, $el.get 0 ).should.be.true
-        finally
-          Coreon.Views.Concepts.ConceptLabelView.restore()
+        @view.model.set "super_concept_ids", [ "c1" ], silent: true
+        @view.render()
+        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledOnce
+        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
+        @label.render.should.have.been.calledOnce
+        ( $.contains @view.el, @label.el ).should.be.true
 
       it "removes old list items", ->
         @view.model.set "super_concept_ids", [], silent: true
@@ -196,16 +197,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$(".narrower ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
-        $el = $ '<a class="concept-label">'
-        label = render: sinon.stub().returns $el: $el
-        sinon.stub Coreon.Views.Concepts, "ConceptLabelView", -> label
-        try
-          @view.model.set "sub_concept_ids", [ "c1" ], silent: true
-          @view.render()
-          label.render.should.have.been.calledOnce
-          ( $.contains @view.el, $el.get 0 ).should.be.true
-        finally
-          Coreon.Views.Concepts.ConceptLabelView.restore()
+        @view.model.set "sub_concept_ids", [ "c1" ], silent: true
+        @view.render()
+        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledOnce
+        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
+        @label.render.should.have.been.calledOnce
+        ( $.contains @view.el, @label.el ).should.be.true
 
       it "removes old list items", ->
         @view.model.set "sub_concept_ids", [], silent: true

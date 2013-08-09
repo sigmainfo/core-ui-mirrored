@@ -21,34 +21,31 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     @listenTo @collection, "add", @render
     #@listenTo @collection, "remove", @onRemoveItem
     @listenTo @collection, "reset", @render
+    @$el.droppable
+      accept: (el) => @dropItemAcceptance(el)
+      activeClass: "ui-state-highlight"
+      tolerance: "pointer"
+      over: (evt, ui) => @onDropItemOver(evt, ui)
+      out: (evt, ui) => @onDropItemOut(evt, ui)
 
-  dropItemAcceptance: (el)->
-    id = el.data "drag-ident"
-    id? && !@collection._byId[id]?
+  dropItemAcceptance: (item) ->
+    not @collection.get item.data "drag-ident"
 
-  onDropItem: (evt, ui)->
+  onDropItem: (evt, ui) ->
     @$el.removeClass "ui-state-hovered"
     id = ui.draggable.data "drag-ident"
     model = Coreon.Models.Concept.find id
     @collection.add model
 
-  onDropItemOver: (evt, ui)->
+  onDropItemOver: (evt, ui) ->
     @$el.addClass "ui-state-hovered"
     ui.helper.addClass "ui-droppable-clipboard"
 
-  onDropItemOut: (evt, ui)->
+  onDropItemOut: (evt, ui) ->
     @$el.removeClass "ui-state-hovered"
     ui.helper.removeClass "ui-droppable-clipboard"
 
   render: ->
-    console.log "rendering"
-    @$el.droppable
-      accept: (el)=> @dropItemAcceptance(el)
-      activeClass: "ui-state-highlight"
-      tolerance: "pointer"
-      over: (evt, ui)=> @onDropItemOver(evt, ui)
-      out: (evt, ui)=> @onDropItemOut(evt, ui)
-
     clip.remove() while clip = @_concept_label_views.pop()
 
     @$el.html @template()

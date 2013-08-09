@@ -52,7 +52,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     concepts = ( @createConcept id for id in ids )
     for concept in concepts
       concept_el = concept.render().$el
-      concept_el.attr "data-drag-ident", concept.model.get "_id"
+      concept_el.attr "data-drag-ident", concept.model.id
       container.append $("<li>").append concept_el
     concepts
 

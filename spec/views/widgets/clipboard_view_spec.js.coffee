@@ -44,7 +44,8 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
     @view.clear()
     @clips.length.should.equal 0
 
-  context "droppable element", ->
+  describe "initialize()", ->
+
     beforeEach ->
       sinon.stub @view.$el, "droppable"
 
@@ -52,19 +53,20 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       @view.$el.droppable.restore()
 
     it "creates droppable from $el", ->
-      @view.render()
+      @view.initialize()
       @view.$el.droppable.should.have.been.calledOnce
 
     it "uses function for acceptance test", ->
-      @view.render()
-      args = @view.$el.droppable.firstCall.args[0]
-      args.accept.should.equal @view.dropItemAcceptance
-
+      @view.dropItemAcceptance = sinon.spy()
+      @view.initialize()
+      @view.$el.droppable.firstCall.args[0].accept()
+      @view.dropItemAcceptance.should.have.been.calledOnce
 
   context "drop item acceptance", ->
+
     beforeEach ->
       @clips.reset [], silent: true
-      @drop_el = $('<div id="c0ffeebabe">')
+      @drop_el = $('<div data-drag-ident="c0ffeebabe">')
       @drop_model = new Backbone.Model _id: "c0ffeebabe"
 
     it "accepts not enlisted drop items", ->
@@ -110,6 +112,7 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
 
     beforeEach ->
       @view.render = sinon.spy()
+      @view.initialize()
 
     it "rerenders on collection change", ->
       @clips.trigger "add"
