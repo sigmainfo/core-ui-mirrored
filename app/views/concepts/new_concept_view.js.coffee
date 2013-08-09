@@ -53,7 +53,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     attrs.terms = if data.terms?
       term for term in data.terms when term?
     else []
-    @$("form").find("input,button").prop "disabled", true
+    @$("form").find("input,textarea,button").prop "disabled", true
     @model.save attrs,
       success: =>
         Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
