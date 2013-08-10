@@ -2,7 +2,7 @@
 #= require routers/repositories_router
 
 describe "Coreon.Routers.RepositoriesRouter", ->
-  
+
   beforeEach ->
     @view = new Backbone.View
     @view.repository = -> null
@@ -18,7 +18,7 @@ describe "Coreon.Routers.RepositoriesRouter", ->
     @router.should.be.an.instanceof Backbone.Router
 
   describe "root()", ->
-  
+
     it "is routed", ->
       @router.root = sinon.spy()
       @router._bindRoutes()
@@ -45,20 +45,24 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       sinon.stub Coreon.Views.Repositories, "RepositoryView", =>
         @screen = new Backbone.View arguments...
 
+      @collectionReset = sinon.spy()
+      Coreon.Collections.MyCollection = new Backbone.Collection
+      Coreon.Collections.MyCollection.collection = => reset: @collectionReset
+
     afterEach ->
       Coreon.Views.Repositories.RepositoryView.restore()
-  
+
     it "is routed", ->
       @router.show = sinon.spy()
       @router._bindRoutes()
       @router.navigate "50990fb960303934ea000041", trigger: yes
       @router.show.should.have.been.calledOnce
-    
-    it "switches repository", -> 
+
+    it "switches repository", ->
       @router.navigate = ->
       @view.repository = sinon.spy()
       @router.show "my-repo-abcdef"
-      @view.repository.should.have.been.calledOnce
+      @view.repository.should.have.been.calledTwice     # really!
       @view.repository.should.have.been.calledWith "my-repo-abcdef"
 
     it "displays repository root", ->
@@ -84,6 +88,12 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.navigate.should.have.been.calledOnce
       @router.navigate.should.have.been.calledWith "", trigger: yes, replace: yes
 
+    it "empties static collections", ->
+      @view.repository = -> "a-repo-abcdef"
+      @router.show "another-repo-efg"
+      @collectionReset.should.have.been.calledOnce
+      @collectionReset.should.have.been.calledWith []
+
   describe "search()", ->
 
     beforeEach ->
@@ -99,7 +109,7 @@ describe "Coreon.Routers.RepositoriesRouter", ->
 
       sinon.stub Coreon.Views.Search, "SearchResultsView", =>
         @screen = new Backbone.View
-      
+
     afterEach ->
       Coreon.Models.Search.restore()
       Coreon.Models.ConceptSearch.restore()
@@ -155,6 +165,4 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.search "my-repo-abcdef", "poet"
       @view.query.should.have.been.calledOnce
       @view.query.should.have.been.calledWith "poet"
-      
-      
-      
+
