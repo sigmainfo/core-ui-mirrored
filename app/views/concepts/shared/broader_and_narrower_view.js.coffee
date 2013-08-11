@@ -33,6 +33,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   renderSelf: ->
     @$(".self").html @model.escape "label"
+    @$(".self").attr "data-drag-ident", @model.get("_id")
 
   renderBroader: ->
     @clearBroader()
@@ -50,13 +51,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     container.empty()
     concepts = ( @createConcept id for id in ids )
     for concept in concepts
-      container.append $("<li>").append concept.render().$el
+      concept_el = concept.render().$el
+      concept_el.attr "data-drag-ident", concept.model.id
+      container.append $("<li>").append concept_el
     concepts
 
   createConcept: (id) ->
     concept = new Coreon.Views.Concepts.ConceptLabelView
       model: Coreon.Models.Concept.find id
-    concept 
+    concept
 
   remove: ->
     @clearBroader()

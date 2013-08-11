@@ -42,7 +42,9 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
         @map.resize ui.size.width, null
         @saveLayout width: ui.size.width
       stop: (event, ui) =>
-        @$el.css("left", "auto")
+        @$el.css
+          left: "auto"
+          top: "auto"
 
   render: ->
     @$el.append @search.render().$el
