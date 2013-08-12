@@ -29,7 +29,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     afterEach ->
       localStorage.getItem.restore()
 
-
     it "creates search", ->
       @view.search.should.be.an.instanceOf Coreon.Views.Widgets.SearchView
 
@@ -108,8 +107,9 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @handle.drag 300
       @view.$el.width().should.equal 240
 
-    it "restores left positioning after drag", ->
+    it "restores positioning after drag", ->
       @handle.drag 25
+      @view.$el.css("top").should.equal "auto"
       @view.$el.css("left").should.equal "auto"
 
     it "stores width when finished", ->

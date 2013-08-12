@@ -1,1 +1,1 @@
-%h2.label= @label
+%h2.concept-label.hit.label( data-drag-ident="#{@dragId}" )= @label

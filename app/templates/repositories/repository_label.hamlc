@@ -1,1 +1,1 @@
-%a.repository-label{href: "/#{@repository.id}/"}= @repository.get "name"
+%a.repository-label{href: "/#{@repository.id}"}= @repository.get "name"

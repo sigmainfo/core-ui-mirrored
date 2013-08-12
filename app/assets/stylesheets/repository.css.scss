@@ -27,30 +27,67 @@ div.repository {
   }
   
   table.meta {
-    width: 100%;
     @include dottedline();
+    @include table-properties;
+    width: 100%;
     border-spacing: 0;
     padding-top: 20px;
+  }
+  
+  .contact {    
+    margin-top: 30px;
+    margin-right: 0;
     
-    tr {
-        vertical-align: top;
-        
-      td, th {
-        padding-top: 10px;
-        padding-bottom: 0.5em;
+    h3 {
+      text-transform: uppercase;
+      color: $greencolor;
+      font-size: 0.9em;
+      position: relative;
+      display: block;
+      height: 20px;
+      top: 20px;
+    }
+
+    table.managers {
+      @include table-list;
+      width: 100%;
+
+      td, th {      
+        &:first-child {
+          padding-left: 112px;
+        }
       }
       th {
-        font-weight: normal;
-        text-align: right;
-        text-transform: uppercase;
-        font-size: 0.8em;
-        padding-top: 11px;
-        color: $browncolor;
-        width: 98px;
-        padding-right: 16px;
+        &:first-child{
+          text-indent: 0px;
+        }
+      }
+    }
+  }  
+
+}
+
+@media all and (max-width: 999px) {
+  div.repository {
+      font-size: 0.9em;
+    
+    .contact table.managers {
+
+        td, th {      
+          &:first-child {
+            padding-left: 82px;
+          }
+        }
+      }  
+  }
+
+}
+
+@media all and (max-width: 799px) {
+    table.meta {
+      td {
+        clear: both;
+        padding-bottom: 6px;
       }
     }
   }
-  
-
-}
