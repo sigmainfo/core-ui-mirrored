@@ -1,4 +1,3 @@
-@wip
 Feature: user toggles orientation of concept map
   In order to explore the concept map in a different way
   As a user browsing the concept map
