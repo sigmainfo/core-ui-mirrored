@@ -80,9 +80,8 @@ class Coreon.Views.ApplicationView extends Backbone.View
         model: @model.get "session"
 
   repository: (id) ->
-    session = @model.get "session"
-    if session?
-      session.set "current_repository_id", id
+    if session = @model.get "session"
+      session.set "current_repository_id", id unless arguments.length is 0
       session.currentRepository()
     else
       null

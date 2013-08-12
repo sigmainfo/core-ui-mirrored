@@ -335,11 +335,18 @@ describe "Coreon.Views.ApplicationView", ->
       @session.currentRepository = -> repository
       @view.repository().should.equal repository
 
-    it "returns null whithout a session", ->
+    it "doesn't switch to default repository when no id is given", ->
+      repository = new Backbone.Model
+      @session.currentRepository = -> repository
+      @session.set = sinon.spy()
+      @view.repository().should.equal repository
+      @session.set.should.not.have.been.called
+
+    it "returns null without a session", ->
       @view.model.set "session", null, silent: yes
       should.equal @view.repository(), null
 
-    it "selects current repository when id is pssed", ->
+    it "selects current repository when id is passed", ->
       @view.repository "myrepositoryzuio"
       @view.model.get("session").get("current_repository_id").should.equal "myrepositoryzuio"
 
