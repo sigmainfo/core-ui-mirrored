@@ -1,10 +1,10 @@
 #= require environment
 #= require views/widgets/concept_map/render_strategy
 
-class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
+class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   initialize: ->
-    @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
+    @stencil = d3.svg.diagonal()
     super
 
   renderNodes: (root, options) ->
@@ -45,5 +45,5 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
         datum.x = ( datum.depth - 1 ) * @options.offsetX + @options.padding
       )
       .attr( "transform", (datum) ->
-        "translate(#{datum.x}, #{datum.y})"
+        "translate(#{datum.y}, #{datum.x})"
       )

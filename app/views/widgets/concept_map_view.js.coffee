@@ -4,6 +4,7 @@
 #= require templates/widgets/concept_map
 #= require d3
 #= require views/widgets/concept_map/left_to_right
+#= require views/widgets/concept_map/top_down
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
@@ -22,6 +23,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   events:
     "click .zoom-in":  "zoomIn"
     "click .zoom-out": "zoomOut"
+    "click .toggle-orientation": "toggleOrientation"
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
@@ -30,6 +32,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @stopListening()
     @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
+
+    @renderStrategies = [
+      Coreon.Views.Widgets.ConceptMap.LeftToRight
+      Coreon.Views.Widgets.ConceptMap.TopDown
+    ]
 
     settings = {}
     if cache_id = Coreon.application?.cacheId()
@@ -44,7 +51,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
     @map = d3.select(@$("svg g.concept-map").get 0)
-    @renderStrategy = new Coreon.Views.Widgets.ConceptMap.LeftToRight @map
+    @renderStrategy = new @renderStrategies[0] @map
 
   render: ->
     @renderStrategy.render @model.tree(), size: [@_svgWidth, @_svgHeight]
@@ -92,3 +99,10 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   _panAndZoom: =>
     @map.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+
+  toggleOrientation: ->
+    @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1
+    views = @renderStrategy.views
+    @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
+    @renderStrategy.views = views
+    @render()
