@@ -185,6 +185,7 @@ describe "Coreon.Views.ApplicationView", ->
       sinon.stub Coreon.Views.Notifications, "NotificationView", =>
         @info = new Backbone.View
         @info.render = sinon.stub().returns @info
+        @info.show = sinon.spy()
         @info
       @collection = new Backbone.Collection
       sinon.stub Coreon.Models.Notification, "collection", => @collection
@@ -213,6 +214,12 @@ describe "Coreon.Views.ApplicationView", ->
       @view.notify new Backbone.Model
       @info.render.should.have.been.calledOnce
       $.contains($("#coreon-notifications")[0], @info.el).should.be.true
+
+    it "reveals notification", ->
+      $("#konacha").append @view.$el
+      @view.notify new Backbone.Model
+      @info.$el.should.be.hidden
+      @info.show.should.have.been.calledOnce
 
     context "clearNotifications()", ->
 

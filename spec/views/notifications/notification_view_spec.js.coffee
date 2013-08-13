@@ -6,7 +6,7 @@ describe "Coreon.Views.Notifications.NotificationView", ->
   
   beforeEach ->
     @view = new Coreon.Views.Notifications.NotificationView
-      model: new Coreon.Models.Notification
+      model: new Backbone.Model
 
   it "is no simple view anymore", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -14,26 +14,36 @@ describe "Coreon.Views.Notifications.NotificationView", ->
   it "creates list element", ->
     @view.$el.should.be "li.notification"
 
-  context "#render", ->
+  describe "render()", ->
 
-    it "renders label", ->
-      @view.render()
-      @view.$el.should.have "span.label"
-      @view.$(".label").should.have.text I18n.t "notification.label.info"
-
+    it "can be chained", ->
+      @view.render().should.equal @view
+    
+    it "is triggered on model changes", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "change" 
+      @view.render.should.have.been.calledOnce
+    
     it "renders notification type", ->
       @view.model.set "type", "error", silent: true
       @view.render()
       @view.$el.should.have.class "error"
-      @view.$(".label").should.have.text I18n.t "notification.label.error"
-      
+
+    it "replaces notification type", ->
+      @view.model.set "type", "error", silent: true
+      @view.render()
+      @view.model.set "type", "info", silent: true
+      @view.render()
+      @view.$el.should.be ".notification.info"
+      @view.$el.should.not.have.class "error"
+
     it "renders hide button", ->
       @view.model.id = "123"
       @view.model.url = -> "notifications/123"
       @view.render()
       @view.$el.should.have "span.actions a.hide"
       @view.$("a.hide").should.have.text I18n.t "notification.actions.hide"
-      @view.$("a.hide").should.have.attr "href", "/notification/hide"
 
     it "renders message", ->
       @view.model.set message: "If you kill him, he will win."
@@ -41,62 +51,67 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       @view.$el.should.have "span.message"
       @view.$(".message").should.have.text "If you kill him, he will win."
 
-    it "allows chaining", ->
-      @view.render().should.equal @view
+  describe "close()", ->
 
-    it "hides el when hidden", ->
-      @view.model.set hidden: true, silent: true
-      $("#konacha").append @view.$el
-      @view.render()
-      @view.$el.should.be.hidden
-
-  context "#hide", ->
-    
     beforeEach ->
-      @event = new jQuery.Event "click"
-
-    it "is triggered by hide button", ->
-      sinon.spy @view, "hide"
-      @view.delegateEvents()
       @view.render()
-      @view.$("a.hide").trigger @event
-      @view.hide.should.have.been.calledOnce
 
-    it "changes model state", ->
-      @view.hide @event
-      @view.model.get("hidden").should.equal true
+    it "is triggered by click on hide button", ->
+      @view.close = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".hide").click()
+      @view.close.should.have.been.calledOnce
+  
+    it "removes model from collection", ->
+      collection = new Backbone.Collection
+      collection.add @view.model
+      @view.close()
+      expect(collection.get @view.model).to.not.exist
 
-    it "cancels event propagation and default action", ->
-      sinon.spy @event, "preventDefault"
-      sinon.spy @event, "stopPropagation"
-      @view.hide @event
-      @event.preventDefault.should.have.been.calledOnce
-      @event.stopPropagation.should.have.been.calledOnce
-
-  context "#onChangeHidden", ->
+  describe "hide()", ->
 
     beforeEach ->
       $("#konacha").append @view.render().$el
 
-    it "is triggered by change of model state", ->
-      sinon.spy @view, "onChangeHidden"
+    it "is triggered when removed", ->
+      @view.hide = sinon.spy()
       @view.initialize()
-      @view.model.set "hidden", true
-      @view.onChangeHidden.should.have.been.calledOnce
+      @view.model.trigger "remove"
+      @view.hide.should.have.been.calledOnce
 
-    it "hides view when hidden", ->
-      sinon.spy @view.$el, "animate"
-      @view.model.set "hidden", false, silent: true
-      @view.model.set "hidden", true
-      @view.$el.animate.should.have.been.calledWith {height: "hide"},
-        duration: "fast"
-        step: @view.onStep
+    it "hides el", ->
+      @view.hide()
+      @view.$el.should.be.hidden
+  
+    it "removes el", ->
+      @view.remove = sinon.spy()
+      @view.hide()
+      @view.remove.should.have.been.calledOnce
 
-    it "reveals view when not hidden", ->
-      sinon.spy @view.$el, "animate"
-      @view.model.set "hidden", true, silent: true
-      @view.model.set "hidden", false
-      @view.$el.should.be.visible
-      @view.$el.animate.should.have.been.calledWith {height: "show"},
-        duration: 400
-        step: @view.onStep
+    it "triggers resize event during animation", ->
+      @view.$el.slideUp = sinon.spy()
+      spy = sinon.spy()
+      @view.on "resize", spy
+      @view.hide()
+      @view.$el.slideUp.should.have.been.calledOnce
+      @view.$el.slideUp.firstCall.args[0].step()
+      spy.should.have.been.calledOnce
+      
+  describe "show()", ->
+
+    beforeEach ->
+      $("#konacha").append @view.render().$el
+      @view.$el.hide()
+
+    it "shows el", ->
+      @view.show()
+      @view.$el.should.not.be.hidden
+
+    it "triggers resize event during animation", ->
+      @view.$el.slideDown = sinon.spy()
+      spy = sinon.spy()
+      @view.on "resize", spy
+      @view.show()
+      @view.$el.slideDown.should.have.been.calledOnce
+      @view.$el.slideDown.firstCall.args[0].step()
+      spy.should.have.been.calledOnce

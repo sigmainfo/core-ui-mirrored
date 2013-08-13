@@ -60,7 +60,8 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
-    @$("#coreon-notifications").append view.render().$el
+    @$("#coreon-notifications").append view.render().$el.hide()
+    view.show()
 
   clearNotifications: ->
     @$("#coreon-notifications").empty()

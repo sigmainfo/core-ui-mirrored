@@ -10,36 +10,62 @@ class Coreon.Views.Notifications.NotificationView extends Backbone.View
   template: Coreon.Templates["notifications/notification"]
 
   events:
-    "click a.hide": "hide"
+    "click a.hide": "close"
   
   initialize: ->
-    @model.on "change:hidden", @onChangeHidden, @
-    @$el.delay(5000).slideUp()
+    @listenTo @model, "change", @render
+    @listenTo @model, "remove", @hide
 
   render: ->
     type = @model.get "type"
-    @$el.html @template message: @model.get("message"), url: "/notification/hide", label: I18n.t "notification.label.#{type}"
-    @$el.addClass type
-    @$el.hide() if @model.get "hidden"
+    @$el.removeClass().addClass "#{@className} #{type}"
+    @$el.html @template
+      message: @model.get("message")
+      label: I18n.t "notification.label.#{type}"
     @
   
-  hide: (event) ->
-    event.preventDefault()
-    event.stopPropagation()
-    @model.set "hidden", true 
+  close: ->
+    @model.destroy()
 
-  onChangeHidden: ->
-    @$el.stop()
-    [type, duration] =
-      if @model.get "hidden"
-        ["hide", "fast"]
-      else
-        ["show", 400]
-    @$el.animate {
-      height: type
-    },
-      duration: duration
-      step: @onStep
+  hide: ->
+    @$el.slideUp
+      duration: "slow"
+      step: => @trigger "resize"
+      complete: => @remove()
 
-  onStep: =>
-    @$el.trigger "animate"
+  show: ->
+    @$el.slideDown
+      duration: "slow"
+      step: => @trigger "resize"
+
+
+    # @model.on "change:hidden", @onChangeHidden, @
+  #   @$el.delay(5000).slideUp()
+
+  # render: ->
+  #   type = @model.get "type"
+  #   @$el.html @template message: @model.get("message"), url: "/notification/hide", label: I18n.t "notification.label.#{type}"
+  #   @$el.addClass type
+  #   @$el.hide() if @model.get "hidden"
+  #   @
+  # 
+  # hide: (event) ->
+  #   event.preventDefault()
+  #   event.stopPropagation()
+  #   @model.set "hidden", true 
+
+  # onChangeHidden: ->
+  #   @$el.stop()
+  #   [type, duration] =
+  #     if @model.get "hidden"
+  #       ["hide", "fast"]
+  #     else
+  #       ["show", 400]
+  #   @$el.animate {
+  #     height: type
+  #   },
+  #     duration: duration
+  #     step: @onStep
+
+  # onStep: =>
+  #   @$el.trigger "animate"
