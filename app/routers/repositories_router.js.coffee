@@ -18,7 +18,7 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
   initialize: (@view) ->
 
   root: ->
-    if repo = @view.repository()
+    if repo = @view.repository(null)
       @navigate repo.id, trigger: yes, replace: yes
     else
       @navigate "logout"
