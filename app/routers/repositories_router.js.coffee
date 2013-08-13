@@ -24,10 +24,8 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
       @navigate "logout"
 
   show: (id) ->
-    if id != @view.repository()?.id
-      for name of Coreon.Collections
-        c = Coreon.Collections[name]
-        c.collection().reset([]) if c.collection? and c.collection.call?
+    Coreon.Collections.Hits.collection().reset []
+    Coreon.Models.Concept.collection().reset [] unless id is @view.repository()?.id
 
     if repo = @view.repository id
       @navigate repo.id

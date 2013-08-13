@@ -8,10 +8,13 @@ describe "Coreon.Routers.RepositoriesRouter", ->
     @view.repository = -> null
     @view.query = -> ""
     @view.switch = sinon.spy()
+    @hits = reset: sinon.spy()
+    sinon.stub Coreon.Collections.Hits, "collection", => @hits
     @router = new Coreon.Routers.RepositoriesRouter @view
     Backbone.history.start silent: yes
 
   afterEach ->
+    Coreon.Collections.Hits.collection.restore()
     Backbone.history.stop()
 
   it "is a Backbone router", ->
@@ -43,14 +46,13 @@ describe "Coreon.Routers.RepositoriesRouter", ->
   describe "show()", ->
 
     beforeEach ->
+      @concepts = reset: sinon.spy()
+      sinon.stub Coreon.Models.Concept, "collection", => @concepts
       sinon.stub Coreon.Views.Repositories, "RepositoryView", =>
         @screen = new Backbone.View arguments...
 
-      @collectionReset = sinon.spy()
-      Coreon.Collections.MyCollection = new Backbone.Collection
-      Coreon.Collections.MyCollection.collection = => reset: @collectionReset
-
     afterEach ->
+      Coreon.Models.Concept.collection.restore()
       Coreon.Views.Repositories.RepositoryView.restore()
 
     it "is routed", ->
@@ -65,6 +67,21 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.show "my-repo-abcdef"
       @view.repository.should.have.been.calledTwice     # really!
       @view.repository.should.have.been.calledWith "my-repo-abcdef"
+
+    it "resets concepts cache when repository has changed", ->
+      @view.repository = -> id: "other"
+      @router.show "my-repo-abcdef"
+      @concepts.reset.should.have.been.calledWith []
+
+    it "wdoes not reset concepts cache when repository did not change", ->
+      @view.repository = -> id: "my-repo-abcdef"
+      @router.show "my-repo-abcdef"
+      @concepts.reset.should.not.have.been.called
+      
+    it "clears hits", ->
+      @router.show "my-repo-abcdef"
+      @hits.reset.should.have.been.calledOnce
+      @hits.reset.should.have.been.calledWith []
 
     it "displays repository root", ->
       repository = new Backbone.Model "my-repo-abcdef"
@@ -88,12 +105,6 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.show "ghost-repo-123"
       @router.navigate.should.have.been.calledOnce
       @router.navigate.should.have.been.calledWith "", trigger: yes, replace: yes
-
-    it "empties static collections", ->
-      @view.repository = -> "a-repo-abcdef"
-      @router.show "another-repo-efg"
-      @collectionReset.should.have.been.calledOnce
-      @collectionReset.should.have.been.calledWith []
 
   describe "search()", ->
 
