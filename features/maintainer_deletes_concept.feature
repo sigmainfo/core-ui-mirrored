@@ -5,12 +5,12 @@ Feature: maintainer deletes concept
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    And I am a maintainer of the repository
     And I am logged in
     And a concept with an English term "beaver hat" exists
   
-  Scenario: remove concept
-    Given I have maintainer privileges
-    And I am on the show concept page of this concept
+  Scenario: delete concept
+    Given I am on the show concept page of "beaver hat"
     When I click "Edit concept" 
     And I click "Delete concept"
     Then I should see a confirmation dialog "This concept including all terms will be deleted permanently."
@@ -24,3 +24,14 @@ Feature: maintainer deletes concept
     And I should see a message 'Successfully deleted concept "beaver hat".'
     When I search for "hat"
     Then I should not see "beaver hat"
+
+  @wip
+  Scenario: delete subconcept
+    Given "beaver hat" is a subconcept of "hat"
+    And I am on the show concept page of "beaver hat"
+    When I click "Edit concept"
+    And I click "Delete concept"
+    And I click "OK" within the dialog
+    Then I should be on the repository root page
+    When I navigate to the show concept of "hat"
+    Then I should see no narrower concepts for "hat"
