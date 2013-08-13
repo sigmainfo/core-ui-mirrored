@@ -8,6 +8,7 @@ class Coreon.Collections.Concepts extends Backbone.Collection
     @model = Coreon.Models.Concept
 
     @on "add", @onAdd, @
+    @on "remove", @onRemove, @
 
   onAdd: (model, collection, options) ->
     for super_concept_id in model.get("super_concept_ids")
@@ -16,3 +17,10 @@ class Coreon.Collections.Concepts extends Backbone.Collection
         unless model.id in sub_concept_ids
           sub_concept_ids.push model.id
           parent.set "sub_concept_ids", sub_concept_ids 
+
+  onRemove: (model, collection, options) ->
+    for super_concept_id in model.get("super_concept_ids")
+      @remove super_concept_id, silent: on
+    for sub_concept_id in model.get("sub_concept_ids")
+      @remove sub_concept_id, silent: on
+    
