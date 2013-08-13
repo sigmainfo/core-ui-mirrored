@@ -261,4 +261,4 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       action: =>
         @model.destroy()
         Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: @model.get "label")
-        Backbone.history.navigate "/", trigger: true
+        Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true

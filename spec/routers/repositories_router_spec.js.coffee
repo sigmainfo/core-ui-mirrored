@@ -26,8 +26,9 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.navigate "", trigger: yes
       @router.root.should.have.been.calledOnce
 
-    it "redirects to current repository", ->
-      @view.repository = -> id: "my-repo-123"
+    it "redirects to default repository", ->
+      @view.repository = sinon.stub()
+      @view.repository.withArgs(null).returns id: "my-repo-123" 
       @router.navigate = sinon.spy()
       @router.root()
       @router.navigate.should.have.been.calledOnce

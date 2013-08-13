@@ -28,7 +28,10 @@ class Coreon.Application extends Backbone.Model
     @
 
   graphUri: ->
-    @get("session")?.currentRepository()?.get("graph_uri") or null
+    if repository = @repository() then repository.get("graph_uri") else null
 
   cacheId: ->
-    @get("session")?.currentRepository()?.get("cache_id") or null
+    if repository = @repository() then repository.get("cache_id") else null
+
+  repository: ->
+    @get("session")?.currentRepository() or null
