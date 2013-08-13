@@ -25,7 +25,6 @@ Feature: maintainer deletes concept
     When I search for "hat"
     Then I should not see "beaver hat"
 
-  @wip
   Scenario: delete subconcept
     Given "beaver hat" is a subconcept of "hat"
     And I am on the show concept page of "beaver hat"
