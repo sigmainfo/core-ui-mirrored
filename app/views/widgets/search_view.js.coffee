@@ -1,56 +1,58 @@
 #= require environment
-#= require views/composite_view
 #= require templates/widgets/search
 #= require models/search_type
 #= require views/widgets/search_target_select_view
 #= require helpers/repository_path
 
-class Coreon.Views.Widgets.SearchView extends Coreon.Views.CompositeView
+class Coreon.Views.Widgets.SearchView extends Backbone.View
 
   id: "coreon-search"
 
   template: Coreon.Templates["widgets/search"]
 
   events:
-    "submit form": "submitHandler"
+    "submit form#coreon-search-form": "submitHandler"
     "focus input#coreon-search-query": "onFocus"
     "blur input#coreon-search-query": "onBlur"
 
   initialize: ->
-    super
-    @searchType = new Coreon.Models.SearchType
-
-    @selector = new Coreon.Views.Widgets.SearchTargetSelectView
-      model: @searchType
-    @selector.render()
-    @selector.on "focus", @onClickedToFocus, @
-    @searchType.on "change:selectedTypeIndex", @onChangeSelectedType, @ 
+    @listenTo @model, "change:selectedTypeIndex", @onChangeSelectedType
+    @select = null
 
   render: ->
-    @$el.html @template label: I18n.t "search.submit"
-    @$("#coreon-search-query").after @selector.render().$el
-    super
+    @$el.html @template()
+
+    if old = @select
+      old.remove()
+      @stopListening old
+
+    @select = new Coreon.Views.Widgets.SearchTargetSelectView
+      model: @model
+    @$("#coreon-search-query").after @select.render().$el
+    @listenTo @select, "focus", @onClickedToFocus
+
+    @
 
   submitHandler: (event) ->
     event.preventDefault()
-    type = @searchType.getSelectedType()
+    type = @model.getSelectedType()
     query = @$('input#coreon-search-query').val()
     path = if type is "all"
       Coreon.Helpers.repositoryPath("search/#{query}")
     else
       Coreon.Helpers.repositoryPath("concepts/search/#{type}/#{query}")
 
-    Backbone.history.navigate path
+    Backbone.history.navigate path[1..]
     Backbone.history.loadUrl()
 
   onClickedToFocus: (event) ->
     @$("input#coreon-search-query").focus()
 
   onFocus: (event) ->
-    @selector.hideHint()
+    @select?.hideHint()
 
   onBlur: (event) ->
-    @selector.revealHint() unless @$("input#coreon-search-query").val()
+    @select?.revealHint() unless @$("input#coreon-search-query").val()
 
   onChangeSelectedType: (event) ->
     @$("input#coreon-search-query").val ""

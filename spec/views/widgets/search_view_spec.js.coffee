@@ -5,24 +5,30 @@ describe "Coreon.Views.SearchView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+    
+    sinon.stub Coreon.Views.Widgets, "SearchTargetSelectView", =>
+      @select = new Backbone.View
+      @select.render = sinon.stub().returns @select
+      @select.hideHint = sinon.spy()
+      @select.revealHint = sinon.spy()
+      @select
+
+    model = new Backbone.Model
+    model.getSelectedType = -> "all"
     @view = new Coreon.Views.Widgets.SearchView
+      model: model
 
   afterEach ->
+    Coreon.Views.Widgets.SearchTargetSelectView.restore()
     I18n.t.restore()
 
-  it "is a composite view", ->
-    @view.should.be.an.instanceOf Coreon.Views.CompositeView
+  it "is a Backbone view", ->
+    @view.should.be.an.instanceOf Backbone.View
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-search"
 
-
-  describe "#initialize", ->
-
-    it "creates selector", ->
-      @view.selector.should.be.an.instanceof Coreon.Views.Widgets.SearchTargetSelectView
-
-  describe "#render", ->
+  describe "render()", ->
 
     it "can be chained", ->
       @view.render().should.equal @view
@@ -43,13 +49,22 @@ describe "Coreon.Views.SearchView", ->
       @view.$("form").should.have 'input[type="submit"]'
       @view.$('input[type="submit"]').val().should.equal "Search"
 
-    it "renders select", ->
+    it "renders search type select", ->
       @view.render()
-      @view.$el.should.have "#coreon-search-target-select"
-      @view.$("#coreon-search-target-select").should.have ".hint"
+      Coreon.Views.Widgets.SearchTargetSelectView.should.have.been.calledOnce
+      Coreon.Views.Widgets.SearchTargetSelectView.should.have.been.calledWithNew
+      Coreon.Views.Widgets.SearchTargetSelectView.should.have.been.calledWith model: @view.model
+      @select.render.should.have.been.calledOnce
+      $.contains(@view.el, @select.el).should.be.true
 
+    it "removes old search type select", ->
+      @view.render()
+      old = @select
+      old.remove = sinon.spy()
+      @view.render()
+      old.remove.should.have.been.calledOnce
 
-  describe "#submitHandler", ->
+  describe "submitHandler()", ->
 
     beforeEach ->
       Coreon.Helpers.repositoryPath = (s)-> "/coffee23/#{s}"
@@ -78,35 +93,44 @@ describe "Coreon.Views.SearchView", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
       Backbone.history.fragment = "coffee23/concepts/myconcept567hjkg"
+      @view.model.getSelectedType = -> "all"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "/coffee23/search/foo"
+      Backbone.history.navigate.should.have.been.calledWith "coffee23/search/foo"
       Backbone.history.loadUrl.should.have.been.calledOnce
 
     it "navigates to concept search with type", ->
       @view.render()
       @view.$('input[name="q"]').val "foo"
-      @view.searchType.getSelectedType = -> "terms"
+      @view.model.getSelectedType = -> "terms"
       Backbone.history.fragment = "coffee23/concepts/myconcept567hjkg"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "/coffee23/concepts/search/terms/foo"
+      Backbone.history.navigate.should.have.been.calledWith "coffee23/concepts/search/terms/foo"
       Backbone.history.loadUrl.should.have.been.calledOnce
 
-  describe "#onClickedToFocus", ->
+  describe "onClickedToFocus()", ->
 
     it "is triggered by select", ->
+      @view.onClickedToFocus = sinon.spy()
+      @view.render()
+      @select.trigger "focus"
+      @view.onClickedToFocus.should.have.been.calledOnce
+
+    it "is not triggered by removed select", ->
+      @view.onClickedToFocus = sinon.spy()
+      @view.render()
+      old = @select
+      @view.render()
+      old.trigger "focus"
+      @view.onClickedToFocus.should.not.have.been.called
+      
+    it "puts focus on search input", ->
       spy = sinon.spy()
-      @view.onClickedToFocus = spy
-      @view.initialize()
-      @view.selector.trigger "focus"
+      @view.$ = sinon.stub()
+      @view.$.withArgs("input#coreon-search-query").returns focus: spy
+      @view.onClickedToFocus()
       spy.should.have.been.calledOnce
 
-    # disabled because it randomly fails
-    # it "puts focus on search input", ->
-    #   @view.render().$el.appendTo $("#konacha")
-    #   @view.onClickedToFocus()
-    #   @view.$("#coreon-search-query").should.match ":focus"
-
-  describe "#onFocus", ->
+  describe "onFocus()", ->
 
     beforeEach ->
       @event = jQuery.Event "focusin"
@@ -120,14 +144,13 @@ describe "Coreon.Views.SearchView", ->
 
     it "hides hint", ->
       @view.onFocus @event
-      @view.selector.$(".hint").should.not.be.visible
+      @select.hideHint.should.have.been.calledOnce
 
-  describe "#onBlur", ->
+  describe "onBlur()", ->
 
     beforeEach ->
       @event = jQuery.Event "blur"
       @view.render().$el.appendTo $("#konacha")
-      @view.selector.hideHint()
 
     it "is triggered by focus of input", ->
       @view.onBlur = sinon.spy()
@@ -137,14 +160,14 @@ describe "Coreon.Views.SearchView", ->
 
     it "reveals hint", ->
       @view.onBlur @event
-      @view.selector.$(".hint").should.be.visible
+      @select.revealHint.should.have.been.calledOnce
 
     it "does not reveal hint when not empty", ->
       @view.$("input#coreon-search-query").val "Zitrone"
       @view.onBlur @event
-      @view.selector.$(".hint").should.not.be.visible
+      @select.revealHint.should.not.have.been.called
 
-  describe "#onChangeSelectedType", ->
+  describe "onChangeSelectedType()", ->
 
     beforeEach ->
       @view.render().$el.appendTo $("#konacha")
@@ -152,7 +175,7 @@ describe "Coreon.Views.SearchView", ->
     it "is triggered by change on model", ->
       @view.onChangeSelectedType = sinon.spy()
       @view.initialize()
-      @view.searchType.set "selectedTypeIndex", 2
+      @view.model.trigger "change:selectedTypeIndex"
       @view.onChangeSelectedType.should.have.been.calledOnce
 
     it "empties select", ->
