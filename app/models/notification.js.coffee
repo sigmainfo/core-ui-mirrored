@@ -17,3 +17,10 @@ class Coreon.Models.Notification extends Backbone.Model
     hidden: false
     message: ""
     type: "info"
+
+  initialize: ->
+    @timeout = setTimeout ( => @destroy() ), 5000
+
+  destroy: ->
+    clearTimeout @timeout
+    super
