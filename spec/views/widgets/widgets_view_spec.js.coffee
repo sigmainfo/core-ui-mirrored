@@ -7,15 +7,42 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.application = new Backbone.Model
     Coreon.application.cacheId =-> "face42"
 
+    sinon.stub Coreon.Collections, "ConceptNodes", =>
+      @nodes = new Backbone.Collection
+
+    sinon.stub Coreon.Collections.Hits, "collection", =>
+      @hits ?= new Backbone.Collection
+
+    sinon.stub Coreon.Views.Widgets, "SearchView", =>
+      @search = new Backbone.View
+      @search.render = sinon.stub().returns @search
+      @search
+
+    sinon.stub Coreon.Views.Widgets, "ClipboardView", =>
+      @clips = new Backbone.View
+      @clips.render = sinon.stub().returns @clips
+      @clips
+
+    sinon.stub Coreon.Views.Widgets, "ConceptMapView", =>
+      @map = new Backbone.View
+      @map.render = sinon.stub().returns @map
+      @map.resize = sinon.spy()
+      @map
+
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
         hits: new Backbone.Collection
 
   afterEach ->
+    Coreon.Collections.ConceptNodes.restore()
+    Coreon.Collections.Hits.collection.restore()
+    Coreon.Views.Widgets.SearchView.restore()
+    Coreon.Views.Widgets.ClipboardView.restore()
+    Coreon.Views.Widgets.ConceptMapView.restore()
     Coreon.application = null
 
-  it "is a composite view", ->
-    @view.should.be.an.instanceOf Coreon.Views.CompositeView
+  it "is a Backbone view", ->
+    @view.should.be.an.instanceOf Backbone.View
 
   it "creates container", ->
     @view.$el.should.have.id "coreon-widgets"
@@ -29,14 +56,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     afterEach ->
       localStorage.getItem.restore()
 
-    it "creates search", ->
-      @view.search.should.be.an.instanceOf Coreon.Views.Widgets.SearchView
-
-    it "creates concept map", ->
-      @view.map.should.be.an.instanceOf Coreon.Views.Widgets.ConceptMapView
-      @view.map.model.should.be.an.instanceof Coreon.Collections.ConceptNodes
-      @view.map.model.should.have.property "hits", @view.model.hits
-
     it "creates resize handle", ->
       @view.$el.should.have ".ui-resizable-w"
 
@@ -46,32 +65,48 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
   describe "render()", ->
 
-    beforeEach ->
-      @view.search.render = sinon.stub().returns @view.search
-      @view.map.render = sinon.stub().returns @view.map
-
     it "is chainable", ->
       @view.render().should.equal @view
 
-    it "renders search", ->
+    it "removes subviews", ->
+      subview = new Backbone.View
+      subview.remove = sinon.spy()
+      @view.subviews = [ subview ]
       @view.render()
-      @view.$el.should.have "#coreon-search"
-      @view.search.render.should.have.been.calledOnce
+      subview.remove.should.have.been.calledOnce
+      @view.subviews.should.not.contain subview
+    
+    it "renders search view", ->
+      @view.render()
+      Coreon.Views.Widgets.SearchView.should.have.been.calledOnce
+      Coreon.Views.Widgets.SearchView.should.have.been.calledWithNew
+      @search.render.should.have.been.calledOnce
+      $.contains(@view.el, @search.el).should.be.true
+      @view.subviews.should.contain @search
 
-    it "renders search only once", ->
+    it "renders clipboard view", ->
       @view.render()
-      @view.render()
-      @view.$("#coreon-search").size().should.equal 1
+      Coreon.Views.Widgets.ClipboardView.should.have.been.calledOnce
+      Coreon.Views.Widgets.ClipboardView.should.have.been.calledWithNew
+      @clips.render.should.have.been.calledOnce
+      $.contains(@view.el, @clips.el).should.be.true
+      @view.subviews.should.contain @clips
 
-    it "renders map", ->
+    it "creates concept map view", ->
       @view.render()
-      @view.$el.should.have "#coreon-concept-map"
-      @view.map.render.should.have.property "callCount", 1
+      Coreon.Collections.ConceptNodes.should.have.been.calledOnce
+      Coreon.Collections.ConceptNodes.should.have.been.calledWithNew
+      Coreon.Collections.ConceptNodes.should.have.been.calledWith [], hits: @hits
+      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledOnce
+      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWithNew
+      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWith model: @nodes
+      @view.map.should.equal @map
 
-    it "renders map only once", ->
+    it "renders concept map view", ->
       @view.render()
-      @view.render()
-      @view.$("#coreon-concept-map").size().should.equal 1
+      @map.render.should.have.been.calledOnce
+      $.contains(@view.el, @map.el).should.be.true
+      @view.subviews.should.contain @map
 
   describe "resizing", ->
 
@@ -97,10 +132,9 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     it "syncs svg width", ->
       @view.$el.width 320
-      @view.map.resize = sinon.spy()
       @handle.drag -47
-      @view.map.resize.should.have.been.calledOnce
-      @view.map.resize.should.have.been.calledWith 367, null
+      @map.resize.should.have.been.calledOnce
+      @map.resize.should.have.been.calledWith 367, null
 
     it "does not allow to reduce width below min width", ->
       @view.$el.width 320

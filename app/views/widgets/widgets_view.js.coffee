@@ -1,12 +1,11 @@
 #= require environment
 #= require jquery.ui.resizable
-#= require views/composite_view
 #= require views/widgets/search_view
 #= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
 #= require collections/concept_nodes
 
-class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
+class Coreon.Views.Widgets.WidgetsView extends Backbone.View
 
   id: "coreon-widgets"
 
@@ -14,20 +13,16 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
     resizeDelay: 500
 
   initialize: ->
-    super
-    @search = new Coreon.Views.Widgets.SearchView
-    @map = new Coreon.Views.Widgets.ConceptMapView
-      model: new Coreon.Collections.ConceptNodes( [], hits: Coreon.Collections.Hits.collection() )
-    @clipboard = new Coreon.Views.Widgets.ClipboardView
     settings = @localSettings()
-    settings.widgets ?= {}
-    @$el.width settings.widgets.width if settings.widgets.width
+    @$el.width settings.widgets.width if settings.widgets.width?
+    @subviews = []
 
 
   localSettings: ->
     cache_id = Coreon.application.cacheId()
     try settings = JSON.parse localStorage.getItem cache_id
     finally settings ?= {}
+    settings.widgets ?= {}
     settings
 
   setElement: (element, delegate) ->
@@ -47,10 +42,24 @@ class Coreon.Views.Widgets.WidgetsView extends Coreon.Views.CompositeView
           top: "auto"
 
   render: ->
-    @$el.append @search.render().$el
-    @$el.append @clipboard.render().$el
+    subview.remove() for subview in @subviews
+    @subviews = []
+    
+    search = new Coreon.Views.Widgets.SearchView
+    @$el.append search.render().$el
+    @subviews.push search
+
+    clipboard = new Coreon.Views.Widgets.ClipboardView
+    @$el.append clipboard.render().$el
+    @subviews.push clipboard
+
+    @map = new Coreon.Views.Widgets.ConceptMapView
+      model: new Coreon.Collections.ConceptNodes [],
+        hits: Coreon.Collections.Hits.collection()
     @$el.append @map.render().$el
-    super
+    @subviews.push @map
+
+    @
 
   saveLayout = (layout) ->
     settings = @localSettings()
