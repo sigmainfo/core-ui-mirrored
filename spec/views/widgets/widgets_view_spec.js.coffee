@@ -13,6 +13,9 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     sinon.stub Coreon.Collections.Hits, "collection", =>
       @hits ?= new Backbone.Collection
 
+    sinon.stub Coreon.Models, "SearchType", =>
+      @searchType = new Backbone.Model
+
     sinon.stub Coreon.Views.Widgets, "SearchView", =>
       @search = new Backbone.View
       @search.render = sinon.stub().returns @search
@@ -36,6 +39,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   afterEach ->
     Coreon.Collections.ConceptNodes.restore()
     Coreon.Collections.Hits.collection.restore()
+    Coreon.Models.SearchType.restore()
     Coreon.Views.Widgets.SearchView.restore()
     Coreon.Views.Widgets.ClipboardView.restore()
     Coreon.Views.Widgets.ConceptMapView.restore()
@@ -78,8 +82,11 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     
     it "renders search view", ->
       @view.render()
+      Coreon.Models.SearchType.should.have.been.calledOnce
+      Coreon.Models.SearchType.should.have.been.calledWithNew
       Coreon.Views.Widgets.SearchView.should.have.been.calledOnce
       Coreon.Views.Widgets.SearchView.should.have.been.calledWithNew
+      Coreon.Views.Widgets.SearchView.should.have.been.calledWith model: @searchType
       @search.render.should.have.been.calledOnce
       $.contains(@view.el, @search.el).should.be.true
       @view.subviews.should.contain @search

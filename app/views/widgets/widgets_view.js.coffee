@@ -46,6 +46,7 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @subviews = []
     
     search = new Coreon.Views.Widgets.SearchView
+      model: new Coreon.Models.SearchType
     @$el.append search.render().$el
     @subviews.push search
 
