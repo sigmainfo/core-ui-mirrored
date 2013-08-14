@@ -1,10 +1,11 @@
 #= require environment
 
+prompt = null
+
 Coreon.Modules.Prompt =
 
   prompt: (widget) ->
-    modal = $("#coreon-modal")
-    modal.empty()
-    @_prompt?.remove()
-    if @_prompt = widget
+    prompt?.remove()
+    modal = $("#coreon-modal").empty()
+    if prompt = widget
       modal.append widget.render().$el
