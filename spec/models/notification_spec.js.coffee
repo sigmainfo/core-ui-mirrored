@@ -51,5 +51,42 @@ describe "Coreon.Models.Notification", ->
     beforeEach ->
       @notification = new Coreon.Models.Notification
 
+    afterEach ->
+      @notification.destroy()
+
     it "is a Backbone model", ->
       @notification.should.be.an.instanceOf Backbone.Model
+
+    describe "destroy()", ->
+
+      beforeEach ->
+        @clock = sinon.useFakeTimers()
+        sinon.stub Backbone.Model::, "destroy"
+
+      afterEach ->
+        @clock.restore()
+        Backbone.Model::destroy.restore()
+
+      it "is triggered after timeout", ->
+        @notification.destroy = sinon.spy()
+        @notification.initialize()
+        @notification.destroy.should.not.have.been.called
+        @clock.tick 6000
+        @notification.destroy.should.have.been.calledOnce
+
+      it "calls super", ->
+        @notification.destroy()
+        Backbone.Model::destroy.should.have.been.calledOnce
+
+      it "clears timeout", ->
+        sinon.stub window, "clearTimeout"
+        orig = @notification.timeout
+        @notification.timeout = 1234
+        try
+          @notification.destroy()
+          window.clearTimeout.should.have.been.calledOnce
+          window.clearTimeout.should.have.been.calledWith 1234
+        finally
+          window.clearTimeout.restore()
+          clearTimeout orig
+        

@@ -1,4 +1,4 @@
 %span.label= @label
 %span.message= @message
 %span.actions
-  %a.hide{href: @url}= I18n.t "notification.actions.hide"
+  %a.hide{href: "javascript:void(0)"}= I18n.t "notification.actions.hide"

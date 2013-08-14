@@ -60,10 +60,15 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
-    @$("#coreon-notifications").append view.render().$el
+    @$("#coreon-notifications").append view.render().$el.hide()
+    view.show()
+    @listenTo view, "resize", @syncOffset
 
   clearNotifications: ->
     @$("#coreon-notifications").empty()
+
+  syncOffset: ->
+    $("#coreon-main").css paddingTop: $("#coreon-top").height()
 
   navigate: (event) ->
     event.preventDefault()
@@ -80,9 +85,8 @@ class Coreon.Views.ApplicationView extends Backbone.View
         model: @model.get "session"
 
   repository: (id) ->
-    session = @model.get "session"
-    if session?
-      session.set "current_repository_id", id
+    if session = @model.get "session"
+      session.set "current_repository_id", id unless arguments.length is 0
       session.currentRepository()
     else
       null

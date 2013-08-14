@@ -8,10 +8,20 @@ describe "Coreon.Routers.RepositoriesRouter", ->
     @view.repository = -> null
     @view.query = -> ""
     @view.switch = sinon.spy()
+
+    @hits = reset: sinon.spy()
+    sinon.stub Coreon.Collections.Hits, "collection", => @hits
+
+    @clips = reset: sinon.spy()
+    sinon.stub Coreon.Collections.Clips, "collection", => @clips
+
     @router = new Coreon.Routers.RepositoriesRouter @view
+
     Backbone.history.start silent: yes
 
   afterEach ->
+    Coreon.Collections.Hits.collection.restore()
+    Coreon.Collections.Clips.collection.restore()
     Backbone.history.stop()
 
   it "is a Backbone router", ->
@@ -26,8 +36,9 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.navigate "", trigger: yes
       @router.root.should.have.been.calledOnce
 
-    it "redirects to current repository", ->
-      @view.repository = -> id: "my-repo-123"
+    it "redirects to default repository", ->
+      @view.repository = sinon.stub()
+      @view.repository.withArgs(null).returns id: "my-repo-123" 
       @router.navigate = sinon.spy()
       @router.root()
       @router.navigate.should.have.been.calledOnce
@@ -42,12 +53,9 @@ describe "Coreon.Routers.RepositoriesRouter", ->
   describe "show()", ->
 
     beforeEach ->
+      @concepts = reset: sinon.spy()
       sinon.stub Coreon.Views.Repositories, "RepositoryView", =>
         @screen = new Backbone.View arguments...
-
-      @collectionReset = sinon.spy()
-      Coreon.Collections.MyCollection = new Backbone.Collection
-      Coreon.Collections.MyCollection.collection = => reset: @collectionReset
 
     afterEach ->
       Coreon.Views.Repositories.RepositoryView.restore()
@@ -62,7 +70,7 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.navigate = ->
       @view.repository = sinon.spy()
       @router.show "my-repo-abcdef"
-      @view.repository.should.have.been.calledTwice     # really!
+      @view.repository.should.have.been.calledOnce
       @view.repository.should.have.been.calledWith "my-repo-abcdef"
 
     it "displays repository root", ->
@@ -87,12 +95,6 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.show "ghost-repo-123"
       @router.navigate.should.have.been.calledOnce
       @router.navigate.should.have.been.calledWith "", trigger: yes, replace: yes
-
-    it "empties static collections", ->
-      @view.repository = -> "a-repo-abcdef"
-      @router.show "another-repo-efg"
-      @collectionReset.should.have.been.calledOnce
-      @collectionReset.should.have.been.calledWith []
 
   describe "search()", ->
 

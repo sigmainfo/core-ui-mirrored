@@ -10,8 +10,8 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
     ]
   end
 
-  step 'I am on the show concept page of this concept' do
-    page.execute_script "Backbone.history.navigate('/#{@repository.id}/concepts/#{@concept['_id']}', { trigger: true })"
+  step 'I am on the show concept page of "beaver hat"' do
+    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 
   step 'I click "Delete concept"' do
@@ -45,6 +45,22 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   step 'I should not see "beaver hat"' do
     within ".search-results-concepts" do
       page.should have_no_content("beaver hat")
+    end
+  end
+
+  step '"beaver hat" is a subconcept of "hat"' do
+    @superconcept = create_concept terms: [{lang: "en", value: "hat"}]
+    link_narrower_to_broader @concept, @superconcept
+  end
+
+  step 'I navigate to the show concept of "hat"' do
+    page.execute_script "Backbone.history.navigate('#{@repository.id}/concepts/#{@superconcept['_id']}', {trigger: true})"
+    page.should have_css("h2.label", text: "hat")
+  end
+
+  step 'I should see no narrower concepts for "hat"' do
+    within "section.broader-and-narrower" do
+      page.should have_no_css(".narrower li")
     end
   end
 end

@@ -1,6 +1,8 @@
 #= require environment
 #= require models/repository
+#= require models/concept
 #= require models/ability
+#= require collections/clips
 
 repository = null
 
@@ -36,7 +38,9 @@ class Coreon.Models.Session extends Backbone.Model
   urlRoot: -> "#{Coreon.Models.Session.auth_root.replace /\/$/, ''}/login"
 
   initialize: ->
+    @off()
     @on "change:auth_token", @onChangeToken, @
+    @on "change:current_repository_id", @onChangeRepository, @
 
   reauthenticate: (password) ->
     @unset "auth_token"
@@ -97,6 +101,10 @@ class Coreon.Models.Session extends Backbone.Model
       localStorage.setItem "coreon-session", token
     else
       localStorage.removeItem "coreon-session"
+
+  onChangeRepository: ->
+    Coreon.Models.Concept.collection().reset []
+    Coreon.Collections.Clips.collection().reset []
 
   destroy: (options) ->
     localStorage.removeItem "coreon-session"

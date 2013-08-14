@@ -14,7 +14,6 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/notification
-#= require models/clip
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
@@ -96,8 +95,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       .addClass "selected"
 
   addConceptToClipboard: ->
-    @clipsCollection ||= Coreon.Collections.Clips.collection()
-    @clipsCollection.add @model
+    Coreon.Collections.Clips.collection().add @model
 
   toggleEditMode: ->
     @editMode = !@editMode
@@ -261,4 +259,4 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       action: =>
         @model.destroy()
         Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: @model.get "label")
-        Backbone.history.navigate "/", trigger: true
+        Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true

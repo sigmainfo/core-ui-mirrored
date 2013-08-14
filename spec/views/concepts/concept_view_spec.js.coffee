@@ -1026,19 +1026,23 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     context "destroy", ->
 
       beforeEach ->
+        Coreon.application = repository: -> id: "8765jhgf"
         @history = Backbone.history
         Backbone.history = navigate: sinon.spy()
         @view.model.destroy = sinon.spy()
         @view.delete @event
 
       afterEach ->
+        Coreon.application = null
         Backbone.history = @history
         
       it "redirects to repository root", ->
+        Coreon.application = repository: -> id: "8765jhgf"
         $(".confirm").click()
-        Backbone.history.navigate.should.have.been.calledWith "/", trigger: true
+        Backbone.history.navigate.should.have.been.calledWith "/8765jhgf", trigger: true
       
       it "destroys model", ->
+        Coreon.application
         $(".confirm").click()
         @view.model.destroy.should.have.been.calledOnce
 
