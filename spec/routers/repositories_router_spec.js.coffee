@@ -8,13 +8,20 @@ describe "Coreon.Routers.RepositoriesRouter", ->
     @view.repository = -> null
     @view.query = -> ""
     @view.switch = sinon.spy()
+
     @hits = reset: sinon.spy()
     sinon.stub Coreon.Collections.Hits, "collection", => @hits
+
+    @clips = reset: sinon.spy()
+    sinon.stub Coreon.Collections.Clips, "collection", => @clips
+
     @router = new Coreon.Routers.RepositoriesRouter @view
+
     Backbone.history.start silent: yes
 
   afterEach ->
     Coreon.Collections.Hits.collection.restore()
+    Coreon.Collections.Clips.collection.restore()
     Backbone.history.stop()
 
   it "is a Backbone router", ->
@@ -47,12 +54,10 @@ describe "Coreon.Routers.RepositoriesRouter", ->
 
     beforeEach ->
       @concepts = reset: sinon.spy()
-      sinon.stub Coreon.Models.Concept, "collection", => @concepts
       sinon.stub Coreon.Views.Repositories, "RepositoryView", =>
         @screen = new Backbone.View arguments...
 
     afterEach ->
-      Coreon.Models.Concept.collection.restore()
       Coreon.Views.Repositories.RepositoryView.restore()
 
     it "is routed", ->
@@ -65,23 +70,8 @@ describe "Coreon.Routers.RepositoriesRouter", ->
       @router.navigate = ->
       @view.repository = sinon.spy()
       @router.show "my-repo-abcdef"
-      @view.repository.should.have.been.calledTwice     # really!
+      @view.repository.should.have.been.calledOnce
       @view.repository.should.have.been.calledWith "my-repo-abcdef"
-
-    it "resets concepts cache when repository has changed", ->
-      @view.repository = -> id: "other"
-      @router.show "my-repo-abcdef"
-      @concepts.reset.should.have.been.calledWith []
-
-    it "wdoes not reset concepts cache when repository did not change", ->
-      @view.repository = -> id: "my-repo-abcdef"
-      @router.show "my-repo-abcdef"
-      @concepts.reset.should.not.have.been.called
-      
-    it "clears hits", ->
-      @router.show "my-repo-abcdef"
-      @hits.reset.should.have.been.calledOnce
-      @hits.reset.should.have.been.calledWith []
 
     it "displays repository root", ->
       repository = new Backbone.Model "my-repo-abcdef"
