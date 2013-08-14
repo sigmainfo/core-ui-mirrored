@@ -11,7 +11,7 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
   template: Coreon.Templates["widgets/search"]
 
   events:
-    "submit form": "submitHandler"
+    "submit form#coreon-search-form": "submitHandler"
     "focus input#coreon-search-query": "onFocus"
     "blur input#coreon-search-query": "onBlur"
 

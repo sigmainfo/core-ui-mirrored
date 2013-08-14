@@ -24,7 +24,11 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     "mouseout li"  : "onBlur"
 
   initialize: ->
-    $(document).on "keydown", @onKeydown
+    $(document).on "keydown.repositorySelectDropdown", @onKeydown
+
+  remove: ->
+    $(document).off "keydown.repositorySelectDropdown"
+    super
 
   render: ->
     @$el.html @template
@@ -32,7 +36,7 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
       currentRepository: @model.currentRepository()
     @
 
-  close: (event) =>
+  close: () =>
     @prompt null
 
   select: (event) =>
@@ -50,11 +54,11 @@ class Coreon.Views.Repositories.RepositorySelectDropdownView extends Backbone.Vi
     current = @$("li.option.focus").first()
     switch event.keyCode
       when KEYCODE.esc
-        @prompt null
+        @close()
       when KEYCODE.enter
+        @close()
         if current.length > 0
           Backbone.history.navigate current.find("a").attr("href"), trigger: yes
-        @prompt null
       when KEYCODE.down
         if current.length > 0
           next = current.next()
