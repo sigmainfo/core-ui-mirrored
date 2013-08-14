@@ -221,22 +221,46 @@ describe "Coreon.Views.ApplicationView", ->
       @info.$el.should.be.hidden
       @info.show.should.have.been.calledOnce
 
-    context "clearNotifications()", ->
+  describe "syncOffset()", ->
+    
+    beforeEach ->
+      sinon.stub Coreon.Views.Notifications, "NotificationView", =>
+        @info = new Backbone.View
+        @info.show = ->
+        @info
 
-      it "is triggered when notification was added", ->
-        @view.clearNotifications = sinon.spy()
-        @view.initialize()
-        @collection.trigger "reset", []
-        @view.clearNotifications.should.have.been.calledOnce
+    afterEach ->
+      Coreon.Views.Notifications.NotificationView.restore()
 
-      it "clears notifications", ->
-        notification = new Backbone.Model
-        @view.initialize()
-        @view.notify message:"foo", @collection, by: "Nobody"
+    it "is triggered on notification resize", ->
+      @view.syncOffset = sinon.spy()
+      @view.notify new Backbone.Model
+      @info.trigger "resize"
+      @view.syncOffset.should.have.been.calledOnce
 
-        @view.$("#coreon-notifications").first().children().length.should.equal 1
-        @collection.trigger "reset", []
-        @view.$("#coreon-notifications").first().children().length.should.equal 0
+  describe "clearNotifications()", ->
+
+    beforeEach ->
+      @collection = new Backbone.Collection
+      sinon.stub Coreon.Models.Notification, "collection", => @collection
+      @view.render()
+
+    afterEach ->
+      Coreon.Models.Notification.collection.restore()
+
+    it "is triggered when notifications are reset", ->
+      @view.clearNotifications = sinon.spy()
+      @view.initialize()
+      @collection.trigger "reset", []
+      @view.clearNotifications.should.have.been.calledOnce
+
+    it "clears notifications", ->
+      notification = new Backbone.Model
+      @view.initialize()
+      @view.notify notification
+      @view.$("#coreon-notifications").first().children().length.should.equal 1
+      @collection.trigger "reset", []
+      @view.$("#coreon-notifications").first().children().length.should.equal 0
 
 
   describe "navigate()", ->

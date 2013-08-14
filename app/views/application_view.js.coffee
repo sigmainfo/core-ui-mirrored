@@ -62,9 +62,13 @@ class Coreon.Views.ApplicationView extends Backbone.View
     view = new Coreon.Views.Notifications.NotificationView model: notification
     @$("#coreon-notifications").append view.render().$el.hide()
     view.show()
+    @listenTo view, "resize", @syncOffset
 
   clearNotifications: ->
     @$("#coreon-notifications").empty()
+
+  syncOffset: ->
+    $("#coreon-main").css paddingTop: $("#coreon-top").height()
 
   navigate: (event) ->
     event.preventDefault()

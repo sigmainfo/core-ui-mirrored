@@ -115,3 +115,20 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       @view.$el.slideDown.should.have.been.calledOnce
       @view.$el.slideDown.firstCall.args[0].step()
       spy.should.have.been.calledOnce
+
+  describe "remove()", ->
+  
+    it "calls super", ->
+      sinon.stub Backbone.View::, "remove"
+      try
+        @view.remove()
+        Backbone.View::remove.should.have.been.calledOnce
+        Backbone.View::remove.should.have.been.calledOn @view
+      finally
+        Backbone.View::remove.restore()
+
+    it "releases all registered listeners", ->
+      @view.off = sinon.spy()
+      @view.remove()
+      @view.off.should.have.been.calledOnce
+      @view.off.firstCall.args.should.have.lengthOf 0
