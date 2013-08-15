@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 class UserBrowsesConceptGraph < Spinach::FeatureSteps
+
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
