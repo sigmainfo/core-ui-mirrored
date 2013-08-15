@@ -1,6 +1,11 @@
 - if @can "edit", Coreon.Models.Concept
   %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
-%a.concept-to-clipboard( href="javascript:void(0)" )= I18n.t "concept.add_to_clipboard"
+
+- if @clipped
+  %a.concept-to-clipboard.remove( href="javascript:void(0)" )= I18n.t "concept.remove_from_clipboard"
+- else
+  %a.concept-to-clipboard.add( href="javascript:void(0)" )= I18n.t "concept.add_to_clipboard"
+
 .edit
   - if @can "delete", Coreon.Models.Concept
     %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"

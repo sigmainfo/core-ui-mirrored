@@ -37,7 +37,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click  .concept-to-clipboard"               : "addConceptToClipboard"
+    "click  .concept-to-clipboard.add"           : "addConceptToClipboard"
+    "click  .concept-to-clipboard.remove"        : "removeConceptFromClipboard"
     "click  .edit-concept"                       : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
@@ -59,6 +60,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   initialize: ->
     @listenTo @model, "change", @render
+    @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @render
     @
 
   render: ->
@@ -67,6 +69,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       editMode: @editMode,
       editProperties: @editProperties,
       editTerm: @editTerm
+      clipped: Coreon.Collections.Clips.collection().get(@model)
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
@@ -96,6 +99,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   addConceptToClipboard: ->
     Coreon.Collections.Clips.collection().add @model
+
+  removeConceptFromClipboard: ->
+    Coreon.Collections.Clips.collection().remove @model
 
   toggleEditMode: ->
     @editMode = !@editMode
