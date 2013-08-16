@@ -15,12 +15,19 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         children: []
       edges: []
 
+    sinon.stub Coreon.Views.Widgets.ConceptMap, "LeftToRight", =>
+      @leftToRight = render: => @lefttoright
+    sinon.stub Coreon.Views.Widgets.ConceptMap, "TopDown", =>
+      @topDown = render: => @topDown
+
     @view = new Coreon.Views.Widgets.ConceptMapView
       model: nodes
 
   afterEach ->
     Coreon.application = null
     I18n.t.restore()
+    Coreon.Views.Widgets.ConceptMap.LeftToRight.restore()
+    Coreon.Views.Widgets.ConceptMap.TopDown.restore()
 
   it "is a simple view", ->
     @view.should.be.an.instanceof Coreon.Views.SimpleView
@@ -32,6 +39,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "initialize()", ->
 
     context "rendering markup skeleton", ->
+
       beforeEach ->
         sinon.stub(localStorage, "getItem").returns null
 
@@ -59,7 +67,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$(".zoom-out").should.have.text "Zoom out"
         @view.$(".zoom-out").should.have.attr "title", "Zoom out"
 
-      xit "renders toggle button", ->
+      it "renders toggle button", ->
         I18n.t.withArgs("concept-map.toggle-orientation").returns "Toggle orientation"
         @view.initialize()
         @view.$el.should.have ".toggle-orientation"
@@ -266,3 +274,39 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         "conceptMap":
           width: 123
           height: 334
+
+  describe "toggleOrientation()", ->
+
+    beforeEach ->
+      @view.map = d3.select $("<svg>")[0]
+
+    it "is triggered by click on toggle", ->
+      @view.toggleOrientation = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".toggle-orientation").click()
+      @view.toggleOrientation.should.have.been.calledOnce
+
+    it "switches render strategy", ->
+      Coreon.Views.Widgets.ConceptMap.LeftToRight.reset()
+      @view.toggleOrientation()
+      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.not.have.been.called
+      Coreon.Views.Widgets.ConceptMap.TopDown.should.have.been.calledOnce
+      Coreon.Views.Widgets.ConceptMap.TopDown.should.have.been.calledWithNew
+      Coreon.Views.Widgets.ConceptMap.TopDown.should.have.been.calledWith @view.map
+      @view.renderStrategy.should.equal @topDown
+
+    it "toggles between render starategies", ->
+      @view.toggleOrientation()
+      Coreon.Views.Widgets.ConceptMap.LeftToRight.reset()
+      Coreon.Views.Widgets.ConceptMap.TopDown.reset()
+      @view.toggleOrientation()
+      Coreon.Views.Widgets.ConceptMap.TopDown.should.not.have.been.called
+      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledOnce
+      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledWithNew
+      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledWith @view.map
+      @view.renderStrategy.should.equal @leftToRight
+      
+    it "renders view", ->
+      @view.render = sinon.spy()
+      @view.toggleOrientation()
+      @view.render.should.have.been.calledOnce 

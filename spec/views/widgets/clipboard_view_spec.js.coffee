@@ -114,11 +114,14 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       @view.render = sinon.spy()
       @view.initialize()
 
-    it "rerenders on collection change", ->
+    it "rerenders when a model is added", ->
       @clips.trigger "add"
+      @view.render.should.have.been.calledOnce
+
+    it "rerenders when a model is removed", ->
+      @clips.trigger "remove"
       @view.render.should.have.been.calledOnce
 
     it "rerenders on collection reset", ->
       @clips.trigger "reset", null, @clips
       @view.render.should.have.been.calledOnce
-

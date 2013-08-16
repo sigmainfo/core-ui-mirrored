@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require views/concepts/concept_view
+#= require views/concepts/concept_view
 
 describe "Coreon.Views.Concepts.ConceptView", ->
 
@@ -8,7 +9,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     sinon.stub I18n, "t"
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", => @broaderAndNarrower
-
+    
     @property = new Backbone.Model key: "label", value: "top hat"
     @property.info = -> {}
 
@@ -1026,19 +1027,23 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     context "destroy", ->
 
       beforeEach ->
+        Coreon.application = repository: -> id: "8765jhgf"
         @history = Backbone.history
         Backbone.history = navigate: sinon.spy()
         @view.model.destroy = sinon.spy()
         @view.delete @event
 
       afterEach ->
+        Coreon.application = null
         Backbone.history = @history
         
       it "redirects to repository root", ->
+        Coreon.application = repository: -> id: "8765jhgf"
         $(".confirm").click()
-        Backbone.history.navigate.should.have.been.calledWith "/", trigger: true
+        Backbone.history.navigate.should.have.been.calledWith "/8765jhgf", trigger: true
       
       it "destroys model", ->
+        Coreon.application
         $(".confirm").click()
         @view.model.destroy.should.have.been.calledOnce
 

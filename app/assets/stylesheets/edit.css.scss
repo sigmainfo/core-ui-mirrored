@@ -31,7 +31,7 @@
     padding-left: 6px;
     float: right;
     position: relative;
-    top: -16px;
+    top: -20px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -45,7 +45,7 @@
   margin-right: 14px;
   float: right;
   position: relative;
-  top: -16px;
+  top: -20px;
   margin-left: 10px;
   height: 12px;
   &:before {
@@ -56,6 +56,11 @@
   };
   &:hover {
     color: $hover-color;
+  }
+  &.remove {
+    &:before {
+      background-position: -53px -650px;
+    };
   }
 }
 
@@ -248,7 +253,7 @@ form.create.term {
      }
      a.delete-concept {
        float: right;
-       top: -16px;
+       top: -20px;
      }
      a.add-narrower {
        position: absolute;
@@ -452,6 +457,8 @@ form.create.term {
     overflow: hidden;
     width: 16px;
     height: 20px;
+    position: absolute;
+    right: -40px;
   }
   
 }

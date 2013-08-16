@@ -249,3 +249,33 @@ describe "Coreon.Models.Session", ->
         @session.id = "mysupertoken"
         @session.destroy()
         Backbone.Model::destroy.should.have.been.calledOnce
+
+    describe "onChangeRepository()", ->
+
+      beforeEach ->
+        @clips = reset: sinon.spy()
+        sinon.stub Coreon.Collections.Clips, "collection", => @clips
+
+        @concepts = reset: sinon.spy()
+        sinon.stub Coreon.Models.Concept, "collection", => @concepts
+
+      afterEach ->
+        Coreon.Collections.Clips.collection.restore()
+        Coreon.Models.Concept.collection.restore()
+      
+      it "is triggered on changes of current repository id", ->
+        @session.onChangeRepository = sinon.spy()
+        @session.initialize()
+        @session.trigger "change:current_repository_id"
+        @session.onChangeRepository.should.have.been.calledOnce
+
+      it "clears concepts cache", ->
+        @session.onChangeRepository()
+        @concepts.reset.should.have.been.calledOnce
+        @concepts.reset.should.have.been.calledWith []
+
+      it "clears clipboard", ->
+        @session.onChangeRepository()
+        @clips.reset.should.have.been.calledOnce
+        @clips.reset.should.have.been.calledWith []
+      

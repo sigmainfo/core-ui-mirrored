@@ -1,7 +1,10 @@
 #= require environment
 #= require models/repository
 #= require models/search
+#= require models/concept
 #= require models/concept_search
+#= require collections/hits
+#= require collections/clips
 #= require views/repositories/repository_view
 #= require views/search/search_results_view
 
@@ -18,16 +21,13 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
   initialize: (@view) ->
 
   root: ->
-    if repo = @view.repository()
+    if repo = @view.repository(null)
       @navigate repo.id, trigger: yes, replace: yes
     else
       @navigate "logout"
 
   show: (id) ->
-    if id != @view.repository()?.id
-      for name of Coreon.Collections
-        c = Coreon.Collections[name]
-        c.collection().reset([]) if c.collection? and c.collection.call?
+    Coreon.Collections.Hits.collection().reset []
 
     if repo = @view.repository id
       @navigate repo.id

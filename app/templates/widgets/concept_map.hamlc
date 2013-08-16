@@ -1,7 +1,7 @@
 .titlebar
   %h4= I18n.t "concept-map.title"
   .actions
-    -# %a.toggle-orientation{ href: "javascript: void(0)", title: I18n.t "concept-map.toggle-orientation" }= I18n.t "concept-map.toggle-orientation"
+    %a.toggle-orientation{ href: "javascript: void(0)", title: I18n.t "concept-map.toggle-orientation" }= I18n.t "concept-map.toggle-orientation"
     %a.zoom-in{  href: "javascript: void(0)", title: I18n.t "concept-map.zoom-in"  }= I18n.t "concept-map.zoom-in"
     %a.zoom-out{ href: "javascript: void(0)", title: I18n.t "concept-map.zoom-out" }= I18n.t "concept-map.zoom-out"
 .map

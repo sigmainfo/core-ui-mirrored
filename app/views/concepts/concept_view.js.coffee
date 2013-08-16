@@ -3,7 +3,6 @@
 #= require helpers/can
 #= require helpers/form_for
 #= require helpers/input
-#= require collections/clips
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
@@ -13,8 +12,8 @@
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
+#= require collections/clips
 #= require models/notification
-#= require models/clip
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
@@ -38,7 +37,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click  .concept-to-clipboard"               : "addConceptToClipboard"
+    "click  .concept-to-clipboard.add"           : "addConceptToClipboard"
+    "click  .concept-to-clipboard.remove"        : "removeConceptFromClipboard"
     "click  .edit-concept"                       : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
@@ -60,9 +60,13 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   initialize: ->
     @listenTo @model, "change", @render
+    @subviews = []
     @
 
   render: ->
+    subview.remove() for subview in @subviews
+    @subviews = []
+
     @$el.html @template
       concept: @model,
       editMode: @editMode,
@@ -72,8 +76,16 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
     @$el.children(".system-info").after broaderAndNarrower.render().$el
+    @subviews.push broaderAndNarrower
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
+
+    if Coreon.Collections.Clips.collection().get(@model)
+      @$(".concept-to-clipboard.add").hide()
+      @$(".concept-to-clipboard.remove").show()
+    else
+      @$(".concept-to-clipboard.remove").hide()
+      @$(".concept-to-clipboard.add").show()
 
     @
 
@@ -94,10 +106,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq(target.data "index").add(target)
       .addClass "selected"
-
-  addConceptToClipboard: ->
-    @clipsCollection ||= Coreon.Collections.Clips.collection()
-    @clipsCollection.add @model
 
   toggleEditMode: ->
     @editMode = !@editMode
@@ -261,4 +269,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       action: =>
         @model.destroy()
         Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: @model.get "label")
-        Backbone.history.navigate "/", trigger: true
+        Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true
+
+  addConceptToClipboard: ->
+    @$(".concept-to-clipboard.add").hide()
+    @$(".concept-to-clipboard.remove").show()
+    Coreon.Collections.Clips.collection().add @model
+
+  removeConceptFromClipboard: ->
+    @$(".concept-to-clipboard.remove").hide()
+    @$(".concept-to-clipboard.add").show()
+    Coreon.Collections.Clips.collection().remove @model

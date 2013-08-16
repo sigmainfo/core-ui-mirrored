@@ -4,7 +4,8 @@
 #coreon-password-prompt {
   position: absolute;
   top: 0;
-  width: 100%;
+  //because #coreon-modal has 200% width
+  width: 50%;
   height: 3000px;
   background-color: rgba($text-color, 0.5);
   

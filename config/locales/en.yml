@@ -70,6 +70,7 @@ en:
     confirm_update: "Saving the concept will delete {{n}} properties permanently!"
     update: "Save concept"
     add_to_clipboard: "Add to clipboard"
+    remove_from_clipboard: "Remove from clipboard"
 
   term:
     info: "System Info"

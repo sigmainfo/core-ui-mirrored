@@ -5,10 +5,6 @@ class UserDragsConceptLabelToClipboard < Spinach::FeatureSteps
   include Api::Graph::Factory
 
 
-  step 'I debug' do
-    binding.pry
-  end
-
   step 'I visit the home page' do
     visit "/"
   end

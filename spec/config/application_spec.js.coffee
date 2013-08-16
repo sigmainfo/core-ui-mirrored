@@ -107,3 +107,16 @@ describe "Coreon.Application", ->
     it "returns null when no session exists", ->
       @app.set "session", null, silent: yes
       should.equal @app.graphUri(), null
+
+  describe "repository()", ->
+
+    it "returns current repository from session", ->
+      repo = new Backbone.Model
+      session = currentRepository: -> repo
+      @app.set "session", session, silent: true
+      @app.repository().should.equal repo
+  
+    it "returns null when no session exists", ->
+      @app.set "session", null, silent: yes
+      should.equal @app.repository(), null
+

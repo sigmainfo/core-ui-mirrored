@@ -10,6 +10,7 @@
 .ui-draggable-dragging {
   cursor: pointer;
   @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 2px, 2px, 4px);
+  max-width: 400px;
 }
 .ui-draggable-dragged {
   @include opacity(0.7);

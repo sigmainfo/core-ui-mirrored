@@ -185,6 +185,7 @@ describe "Coreon.Views.ApplicationView", ->
       sinon.stub Coreon.Views.Notifications, "NotificationView", =>
         @info = new Backbone.View
         @info.render = sinon.stub().returns @info
+        @info.show = sinon.spy()
         @info
       @collection = new Backbone.Collection
       sinon.stub Coreon.Models.Notification, "collection", => @collection
@@ -214,22 +215,52 @@ describe "Coreon.Views.ApplicationView", ->
       @info.render.should.have.been.calledOnce
       $.contains($("#coreon-notifications")[0], @info.el).should.be.true
 
-    context "clearNotifications()", ->
+    it "reveals notification", ->
+      $("#konacha").append @view.$el
+      @view.notify new Backbone.Model
+      @info.$el.should.be.hidden
+      @info.show.should.have.been.calledOnce
 
-      it "is triggered when notification was added", ->
-        @view.clearNotifications = sinon.spy()
-        @view.initialize()
-        @collection.trigger "reset", []
-        @view.clearNotifications.should.have.been.calledOnce
+  describe "syncOffset()", ->
+    
+    beforeEach ->
+      sinon.stub Coreon.Views.Notifications, "NotificationView", =>
+        @info = new Backbone.View
+        @info.show = ->
+        @info
 
-      it "clears notifications", ->
-        notification = new Backbone.Model
-        @view.initialize()
-        @view.notify message:"foo", @collection, by: "Nobody"
+    afterEach ->
+      Coreon.Views.Notifications.NotificationView.restore()
 
-        @view.$("#coreon-notifications").first().children().length.should.equal 1
-        @collection.trigger "reset", []
-        @view.$("#coreon-notifications").first().children().length.should.equal 0
+    it "is triggered on notification resize", ->
+      @view.syncOffset = sinon.spy()
+      @view.notify new Backbone.Model
+      @info.trigger "resize"
+      @view.syncOffset.should.have.been.calledOnce
+
+  describe "clearNotifications()", ->
+
+    beforeEach ->
+      @collection = new Backbone.Collection
+      sinon.stub Coreon.Models.Notification, "collection", => @collection
+      @view.render()
+
+    afterEach ->
+      Coreon.Models.Notification.collection.restore()
+
+    it "is triggered when notifications are reset", ->
+      @view.clearNotifications = sinon.spy()
+      @view.initialize()
+      @collection.trigger "reset", []
+      @view.clearNotifications.should.have.been.calledOnce
+
+    it "clears notifications", ->
+      notification = new Backbone.Model
+      @view.initialize()
+      @view.notify notification
+      @view.$("#coreon-notifications").first().children().length.should.equal 1
+      @collection.trigger "reset", []
+      @view.$("#coreon-notifications").first().children().length.should.equal 0
 
 
   describe "navigate()", ->
@@ -335,11 +366,18 @@ describe "Coreon.Views.ApplicationView", ->
       @session.currentRepository = -> repository
       @view.repository().should.equal repository
 
-    it "returns null whithout a session", ->
+    it "doesn't switch to default repository when no id is given", ->
+      repository = new Backbone.Model
+      @session.currentRepository = -> repository
+      @session.set = sinon.spy()
+      @view.repository().should.equal repository
+      @session.set.should.not.have.been.called
+
+    it "returns null without a session", ->
       @view.model.set "session", null, silent: yes
       should.equal @view.repository(), null
 
-    it "selects current repository when id is pssed", ->
+    it "selects current repository when id is passed", ->
       @view.repository "myrepositoryzuio"
       @view.model.get("session").get("current_repository_id").should.equal "myrepositoryzuio"
 
