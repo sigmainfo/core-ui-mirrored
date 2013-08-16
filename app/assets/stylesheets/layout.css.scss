@@ -32,8 +32,9 @@
 #coreon-modal {
   position: relative;
   height: 0;
-  width: 100%;
-  padding-right: 400px;
+  //for drag and drop
+  width: 200%;
+  
   z-index: 1000;
 }
 
