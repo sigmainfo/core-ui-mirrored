@@ -47,20 +47,25 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
   describe "initialize()", ->
 
     beforeEach ->
-      sinon.stub @view.$el, "droppable"
+      sinon.spy @view, "droppableOn"
 
     afterEach ->
-      @view.$el.droppable.restore()
+      @view.droppableOn.restore()
 
     it "creates droppable from $el", ->
       @view.initialize()
-      @view.$el.droppable.should.have.been.calledOnce
+      @view.droppableOn.should.have.been.calledOnce
 
     it "uses function for acceptance test", ->
       @view.dropItemAcceptance = sinon.spy()
       @view.initialize()
-      @view.$el.droppable.firstCall.args[0].accept()
+      @view.droppableOn.firstCall.args[2].accept()
       @view.dropItemAcceptance.should.have.been.calledOnce
+
+    it "droppable will identified with 'clipboard'", ->
+      @view.initialize()
+      @view.droppableOn.firstCall.args[1].should.equal "ui-droppable-clipboard"
+
 
   context "drop item acceptance", ->
 
@@ -75,24 +80,6 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
     it "denies enlisted drop items", ->
       @clips.add @drop_model, silent: true
       @view.dropItemAcceptance(@drop_el).should.be.false
-
-    it "sets droppable identifying class on hover", ->
-      @view.onDropItemOver({}, helper: @drop_el)
-      @drop_el.should.have.class "ui-droppable-clipboard"
-
-    xit "sets deny class on hover", ->
-      @clips.add @drop_model, silent: true
-      @view.onDropItemOver({}, helper: @drop_el)
-      @drop_el.should.have.class "ui-droppable-denied"
-
-    it "removes identifying class on leave", ->
-      @view.onDropItemOut({}, helper: @drop_el)
-      @drop_el.should.not.have.class "ui-droppable-clipboard"
-
-    xit "removes deny class on leave", ->
-      @clips.add @drop_model, silent: true
-      @view.onDropItemOut({}, helper: @drop_el)
-      @drop_el.should.not.have.class "ui-droppable-denied"
 
   context "drop item", ->
     beforeEach ->
