@@ -29,8 +29,4 @@ class UserRemovesConceptFromClipboard < Spinach::FeatureSteps
   step 'I should see one clipboard entry "panopticum"' do
     page.should have_css("#coreon-clipboard li > a", text: "panopticum")
   end
-
-  step 'I debug' do
-    binding.pry
-  end
 end
