@@ -39,7 +39,7 @@ div.concept {
     overflow: hidden;
     position: absolute;
     right: 0;
-    top: 15px;
+    top: 17px;
     &:hover {
       cursor: pointer;
       background-position: -51px -201px;
@@ -241,7 +241,7 @@ div.concept {
       min-height: 1em;
       padding: 2px 6px 3px 16px;
       margin-bottom: 6px;
-      margin-right: 0px;
+/*      margin-right: 0px;*/
       @include concept-icon;
     }
     
@@ -273,7 +273,7 @@ div.concept {
       }
     }
     .system-info-toggle {
-      top: 5px;
+/*      top: 5px;*/
     }
   }
 }

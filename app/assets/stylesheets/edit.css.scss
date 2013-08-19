@@ -31,7 +31,7 @@
     padding-left: 6px;
     float: right;
     position: relative;
-    top: -20px;
+    top: -12px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -45,9 +45,9 @@
   margin-right: 14px;
   float: right;
   position: relative;
-  top: -20px;
+  top: -12px;
   margin-left: 10px;
-  height: 12px;
+  height: 18px;
   &:before {
     @include before-icon;
     float: left;
@@ -253,7 +253,7 @@ form.create.term {
      }
      a.delete-concept {
        float: right;
-       top: -20px;
+       top: -12px;
      }
      a.add-narrower {
        position: absolute;
