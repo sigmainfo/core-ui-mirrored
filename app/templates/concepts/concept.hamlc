@@ -1,4 +1,4 @@
-.buttons
+.actions
   - if @can "edit", Coreon.Models.Concept
     %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
 
