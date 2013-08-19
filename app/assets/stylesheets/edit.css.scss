@@ -1,6 +1,13 @@
 @import '_config';
 @import 'compass/css3';
 
+div.concept {
+  .buttons {
+    width: 100%;
+    height: 24px;
+  }
+}
+
 .button {
   float: left;
   font-size: 0.86em;
@@ -30,8 +37,6 @@
     @extend .big;
     padding-left: 6px;
     float: right;
-    position: relative;
-    top: -12px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -44,8 +49,6 @@
   display: inline-block;
   margin-right: 14px;
   float: right;
-  position: relative;
-  top: -12px;
   margin-left: 10px;
   height: 18px;
   &:before {
