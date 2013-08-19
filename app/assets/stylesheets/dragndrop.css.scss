@@ -30,3 +30,11 @@
 h2.concept-label {
   font-size: 1em;
 }
+
+.concept.show .narrower.ui-droppable, .concept.show .broader.ui-droppable {
+  display: none;
+}
+.concept.edit .narrower.static, .concept.edit .broader.static {
+  display: none;
+}
+

@@ -5,8 +5,11 @@
 #= require templates/repositories/repository_label
 #= require views/concepts/concept_label_view
 #= require models/concept
+#= require modules/droppable
 
 class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Droppable
 
   tagName: "section"
 
@@ -25,6 +28,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
+    @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-narrower"
+    @droppableOn @$(".broader.ui-droppable"), "ui-droppable-broader"
+
   render: ->
     @renderSelf()
     @renderBroader()
@@ -39,13 +45,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @clearBroader()
     super_concept_ids = @model.get "super_concept_ids"
     if super_concept_ids.length > 0
-      @broader = @renderConcepts @$(".broader ul"), super_concept_ids
+      @broader = @renderConcepts @$(".broader.static ul"), super_concept_ids
+      @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), super_concept_ids
     else unless @model.blank
       @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
-    @narrower = @renderConcepts @$(".narrower ul"), @model.get "sub_concept_ids"
+    @narrower = @renderConcepts @$(".narrower.static ul"), @model.get "sub_concept_ids"
+    @narrower.concat @renderConcepts @$(".narrower.ui-droppable ul"), @model.get "sub_concept_ids"
 
   renderConcepts: (container, ids) ->
     container.empty()

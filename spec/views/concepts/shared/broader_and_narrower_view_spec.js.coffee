@@ -41,6 +41,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.narrower.should.be.an.instanceof Array
       @view.narrower.should.have.lengthOf 0
 
+    it "makes drop zones available in edit mode", ->
+      should.exist @view.$(".broader.ui-droppable").data("uiDroppable")
+      should.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
+      should.not.exist @view.$(".broader.static").data("uiDroppable")
+      should.not.exist @view.$(".narrower.static").data("uiDroppable")
+
     context "rendering markup skeleton", ->
 
       beforeEach ->
@@ -70,9 +76,9 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       it "renders container for toggling", ->
         @view.render()
         container = @view.$("h3").next()
-        container.should.have ".self" 
-        container.should.have ".broader" 
-        container.should.have ".narrower" 
+        container.should.have ".self"
+        container.should.have ".broader"
+        container.should.have ".narrower"
 
   describe "render()", ->
 
@@ -122,17 +128,19 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         parent = remove: sinon.spy()
         @view.broader = [ parent ]
         @view.render()
-        parent.remove.should.have.been.calledOnce 
+        parent.remove.should.have.been.calledOnce
 
       it "creates list item for every concept", ->
         @view.model.set "super_concept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
-        @view.$(".broader ul li").should.have.lengthOf 3
+        @view.$(".broader.static ul li").should.have.lengthOf 3
+        @view.$(".broader.ui-droppable ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
         @view.model.set "super_concept_ids", [ "c1" ], silent: true
         @view.render()
-        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledOnce
+        # one for static and one for dropzone
+        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledTwice
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
         @label.render.should.have.been.calledOnce
         ( $.contains @view.el, @label.el ).should.be.true
@@ -161,8 +169,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         it "renders repository node", ->
           @view.render()
           @view.$(".broader ul").should.have "li a.repository-label"
-          @view.$(".broader .repository-label").should.have.attr "href", "/coffeebabe23"
-          @view.$(".broader .repository-label").should.have.text "delicious data"
+          @view.$(".broader.static .repository-label").should.have.attr "href", "/coffeebabe23"
+          @view.$(".broader.static .repository-label").should.have.text "delicious data"
+          @view.$(".broader.ui-droppable .repository-label").should.have.attr "href", "/coffeebabe23"
+          @view.$(".broader.ui-droppable .repository-label").should.have.text "delicious data"
 
         it "does not render repository when blank", ->
           @view.model.blank = true
@@ -189,17 +199,19 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         child = remove: sinon.spy()
         @view.narrower = [ child ]
         @view.render()
-        child.remove.should.have.been.calledOnce 
+        child.remove.should.have.been.calledOnce
 
       it "creates list item for every concept", ->
         @view.model.set "sub_concept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
-        @view.$(".narrower ul li").should.have.lengthOf 3
+        @view.$(".narrower.static ul li").should.have.lengthOf 3
+        @view.$(".narrower.ui-droppable ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
         @view.model.set "sub_concept_ids", [ "c1" ], silent: true
         @view.render()
-        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledOnce
+        # one for static and one for dropzone
+        Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledTwice
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
         @label.render.should.have.been.calledOnce
         ( $.contains @view.el, @label.el ).should.be.true
