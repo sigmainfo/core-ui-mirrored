@@ -37,6 +37,7 @@ div.concept {
     @extend .big;
     padding-left: 6px;
     float: right;
+    margin-left: 14px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -47,7 +48,6 @@ div.concept {
 .concept-to-clipboard {
   font-size: 0.9em;
   display: inline-block;
-  margin-right: 14px;
   float: right;
   margin-left: 10px;
   height: 18px;
