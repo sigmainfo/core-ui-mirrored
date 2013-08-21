@@ -1,6 +1,13 @@
 @import '_config';
 @import 'compass/css3';
 
+div.concept {
+  .actions {
+    width: 100%;
+    height: 24px;
+  }
+}
+
 .button {
   float: left;
   font-size: 0.86em;
@@ -30,8 +37,7 @@
     @extend .big;
     padding-left: 6px;
     float: right;
-    position: relative;
-    top: -20px;
+    margin-left: 14px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -42,12 +48,9 @@
 .concept-to-clipboard {
   font-size: 0.9em;
   display: inline-block;
-  margin-right: 14px;
   float: right;
-  position: relative;
-  top: -20px;
   margin-left: 10px;
-  height: 12px;
+  height: 18px;
   &:before {
     @include before-icon;
     float: left;
@@ -253,7 +256,7 @@ form.create.term {
      }
      a.delete-concept {
        float: right;
-       top: -20px;
+       top: 0px;
      }
      a.add-narrower {
        position: absolute;
