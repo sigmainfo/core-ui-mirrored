@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require views/concepts/concept_view
+#= require views/concepts/concept_view
 
 describe "Coreon.Views.Concepts.ConceptView", ->
 
@@ -8,7 +9,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     sinon.stub I18n, "t"
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", => @broaderAndNarrower
-
+    
     @property = new Backbone.Model key: "label", value: "top hat"
     @property.info = -> {}
 
