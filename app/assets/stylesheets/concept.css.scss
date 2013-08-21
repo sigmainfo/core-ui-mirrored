@@ -145,7 +145,18 @@ div.concept {
   }
   
   .terms {
-    padding-top: 60px;
+    margin-top: 60px;
+      &>h3 {
+        @include toggle;
+        padding: 2px 7px 1px 5px;
+        margin: 0px 0 1px 0;
+        color: $browncolor;
+
+        background: rgba($greencolor, 0.08);
+        &:before {
+          content: none;
+        };
+      }
     
     section.language {
       @include retina-separator;
@@ -203,6 +214,7 @@ div.concept {
 
   
   &.show, &.edit {
+
     section {
       h3 {
         @include toggle;

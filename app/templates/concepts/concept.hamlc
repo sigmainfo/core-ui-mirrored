@@ -19,6 +19,7 @@
   != @render "concepts/properties", properties: @concept.propertiesByKey(), editToggle: yes
 
 .terms
+  %h3= I18n.t "terms.title"
   - if @concept.get("terms")?.length > 0
     - for lang, terms of @concept.termsByLang()
       %section.language{class: lang}

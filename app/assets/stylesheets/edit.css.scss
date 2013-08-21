@@ -67,7 +67,9 @@ div.concept {
   }
 }
 
-
+form.update {
+  background-color: rgba($greencolor, 0.05);
+}
 
 form.create, form.update{
 
@@ -298,7 +300,22 @@ form.create.term {
       background-position: -4px -504px;
     };
   }
-  
+  .terms {
+/*    @include background(linear-gradient(rgba($greencolor, 0.05), rgba(white, 0)));
+    @include dottedline;*/
+    margin-top: 80px;
+/*    .language ul{
+      background: rgba($greencolor, 0.08);
+    }*/
+    &>h3 {
+      padding: 2px 0px 1px 0px;
+      text-indent: 5px;
+      width: 100%;
+      margin-top: 6px;
+/*      background: none;*/
+    }
+
+  }
   .terms >.edit {
     @include retina-separator;
     height:20px;
