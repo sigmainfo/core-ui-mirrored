@@ -47,6 +47,53 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       should.not.exist @view.$(".broader.static").data("uiDroppable")
       should.not.exist @view.$(".narrower.static").data("uiDroppable")
 
+    it "denies existing broader concepts for dropping", ->
+      acceptance = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+      acceptance.should.be.a "function"
+
+    context "drag and dro", ->
+      before ->
+        @el_broad = $("<div>").data("drag-ident", "c0ffee")
+        @el_narrow = $("<div>").data("drag-ident", "deadbeef")
+        @el_foreign = $("<div>").data("drag-ident", "baffee")
+        @el_own = $("<div>").data("drag-ident", @view.model.id)
+
+      beforeEach ->
+        @view.model.set "super_concept_ids", ["c0ffee"], silent: true
+        @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+
+      afterEach ->
+        @view.model.set "super_concept_ids", [], silent: true
+        @view.model.set "sub_concept_ids", [], silent: true
+
+      it "denies existing narrower concepts for dropping", ->
+        acceptance = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance.should.be.a "function"
+        acceptance(@el_narrow).should.be.false
+
+      it "denies existing broader concepts for dropping", ->
+        acceptance = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance.should.be.a "function"
+        acceptance(@el_broad).should.be.false
+
+      it "denies drop to narrower if broader is existing and vice versa", ->
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance1(@el_narrow).should.be.false
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance2(@el_broad).should.be.false
+
+      it "denies itself for dropping", ->
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance1(@el_own).should.be.false
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance2(@el_own).should.be.false
+
+      it "accepts non-existing concepts", ->
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance1(@el_foreign).should.be.true
+        acceptance2(@el_foreign).should.be.true
+
     context "rendering markup skeleton", ->
 
       beforeEach ->

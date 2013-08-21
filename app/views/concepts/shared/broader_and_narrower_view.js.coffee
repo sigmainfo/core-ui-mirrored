@@ -28,8 +28,12 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
-    @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-narrower"
-    @droppableOn @$(".broader.ui-droppable"), "ui-droppable-broader"
+    @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
+      accept: (item)=> @dropItemAcceptance(item)
+      drop: (evt, ui)=> @onDropBroader(evt, ui)
+    @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
+      accept: (item)=> @dropItemAcceptance(item)
+      drop: (evt, ui)=> @onDropNarrower(evt, ui)
 
   render: ->
     @renderSelf()
@@ -79,3 +83,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   clearNarrower: ->
     concept.remove() while concept = @narrower.pop()
+
+  dropItemAcceptance: (item)->
+    ids = [@model.id]
+    ids.push @model.get("super_concept_ids")...
+    ids.push @model.get("sub_concept_ids")...
+    ids.indexOf($(item).data("drag-ident")) == -1
+
+  onDropBroader: (evt, ui)->
+    console.log "would add to broader concepts", ui.helper.data("drag-ident")
+
+  onDropNarrower: (evt, ui)->
+    console.log "would add to narrower concepts", ui.helper.data("drag-ident")
