@@ -22,22 +22,22 @@
 
 Coreon.Modules.Droppable =
 
-  _droppable_onEnter: (evt, ui) ->
-    ui.helper.addClass @dragElClass
+  _droppable_onEnter: (el, cssClass) ->
+    $(el).addClass cssClass
 
-  _droppable_onLeave: (evt, ui) ->
-    ui.helper.removeClass @dragElClass
+  _droppable_onLeave: (el, cssClass) ->
+    $(el).removeClass cssClass
 
 
-  droppableOn: (el, @dragElClass="ui-droppable-hovered", options={})->
+  droppableOn: (el, dragElClass="ui-droppable-hovered", options={})->
     _dropzone = $(el)
 
     defaults =
       activeClass: "ui-state-highlight"
       hoverClass: "ui-state-hovered"
       tolerance: "pointer"
-      over: (evt, ui) => @_droppable_onEnter(evt, ui)
-      out: (evt, ui) => @_droppable_onLeave(evt, ui)
+      over: (evt, ui) => @_droppable_onEnter(ui.helper, dragElClass)
+      out: (evt, ui) => @_droppable_onLeave(ui.helper, dragElClass)
 
     options = _.extend defaults, options
     _dropzone.droppable options
