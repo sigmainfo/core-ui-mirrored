@@ -15,7 +15,7 @@
 .ui-draggable-dragged {
   @include opacity(0.7);
 }
-.ui-droppable-clipboard {
+.ui-droppable-clipboard, .ui-droppable-broader {
   &:after {
     @include before-icon;
     position: absolute;
@@ -26,15 +26,45 @@
     background-position: 0px -700px;
   };
 }
+.ui-droppable-broader {
+  &:after {
+    background-position: 0px -750px;
+  };
+}
 
 h2.concept-label {
   font-size: 1em;
 }
 
-.concept.show .narrower.ui-droppable, .concept.show .broader.ui-droppable {
-  display: none;
+.concept.show {
+  .broader-and-narrower .ui-droppable {
+    display: none;
+  }
 }
-.concept.edit .narrower.static, .concept.edit .broader.static {
-  display: none;
+.concept.edit {
+  .broader-and-narrower .static {
+    display: none;
+  }
+}
+
+.broader-and-narrower {
+  .ui-droppable {
+    ul {
+      @include droparea;
+      padding: 4px 6px 24px 6px;
+      @include retina-stripes("white");
+      li {
+        margin: 2px 0;
+        .concept-label {
+          @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
+        }
+      }
+    }
+    &.ui-state-hovered {
+      ul {
+        background-color: rgba($button-color, 0.4);
+      }
+    }
+  }
 }
 
