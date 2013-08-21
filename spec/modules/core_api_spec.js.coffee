@@ -16,24 +16,22 @@ describe "Coreon.Modules.CoreAPI", ->
     Coreon.application = new Backbone.Model session: @session 
     Coreon.application.graphUri = -> "https://repo123.coreon.com"
 
+    @requests = []
+    sinon.stub Backbone, "sync", (method, model, options) =>
+      request = $.Deferred()
+      request.status = 200
+      request.abort = -> @reject(@, "abort")
+      @requests.push request
+      request
+
     @model = new Coreon.Models.CoreAPIModel
 
   afterEach ->
+    @model.sync "abort"
+    Backbone.sync.restore()
     Coreon.application = null
 
   describe "sync()", ->
-
-    beforeEach ->
-      @requests = []
-      sinon.stub Backbone, "sync", (method, model, options) =>
-        request = $.Deferred()
-        request.status = 200
-        @requests.push request
-        request
-
-    afterEach ->
-      Backbone.sync.restore()
-      request.reject request, "error", "Aborted" for request in @requests
 
     context "always", ->
 
@@ -204,7 +202,6 @@ describe "Coreon.Modules.CoreAPI", ->
         @clock = sinon.useFakeTimers()
 
       afterEach ->
-        Coreon.Modules.CoreAPI.sync "abort"
         @clock.restore()
 
       it "triggers first request normally", ->
@@ -371,15 +368,9 @@ describe "Coreon.Modules.CoreAPI", ->
 
       context "abort", ->
         
-        it "clears pending batches", ->
-          for i in [1..5]
-            promise = @model.sync "read", @model, batch: on
+        it "cancels pending requests", ->
+          connections = (@model.sync "read", @model for i in [1..5])
           @model.sync "abort"
-          Backbone.sync.reset()
-          @clock.tick 300
-          @model.sync "read", @model, batch: on
-          @model.sync "read", @model, batch: on
-          @clock.tick 300
-          Backbone.sync.should.have.been.calledTwice
-          promise.state().should.equal "rejected"
+          for connection in connections
+            connection.state().should.equal "rejected"
 

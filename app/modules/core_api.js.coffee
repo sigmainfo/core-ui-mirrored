@@ -3,7 +3,8 @@
 
 BATCH_DELAY = 200
 
-connections = 0
+xhrs = []
+
 batches = {}
 timers = []
 
@@ -24,13 +25,13 @@ ajax = (deferred, method, model, options) ->
   options.url ?= urlFor model.url()
 
   request = Backbone.sync(method, model, options)
-  Coreon.Modules.CoreAPI.trigger "start" if connections is 0
-  connections += 1
+  Coreon.Modules.CoreAPI.trigger "start" if xhrs.length is 0
+  xhrs.push request
   Coreon.Modules.CoreAPI.trigger "request", method, options.url, request
 
   request.always ->
-    connections -= 1
-    if connections is 0 and request.status isnt 403
+    xhrs = (xhr for xhr in xhrs when xhr isnt request)
+    if xhrs.length is 0 and request.status isnt 403
       Coreon.Modules.CoreAPI.trigger "stop" 
 
   request.done (data, status, request) ->
@@ -112,11 +113,13 @@ batchAjax = (url, options) ->
     delete batches[url]
 
 reset = ->
+  xhrs[0].abort() while xhrs.length
   clearTimeout timer for timer in timers
   timers = []
   for url, deferreds of batches 
     deferred.reject() for deferred in deferreds
   batches = {}
+
 
 Coreon.Modules.CoreAPI =
 
