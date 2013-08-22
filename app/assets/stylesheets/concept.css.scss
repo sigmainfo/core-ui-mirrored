@@ -26,6 +26,7 @@ div.concept {
   .broader-and-narrower, &>.properties, .concept .properties {
     position: relative;
     @include dottedline;
+    overflow: hidden;
   }
   
   .system-info-toggle {
@@ -337,7 +338,8 @@ div.concept {
     }
     .terms {
       padding-top: 6px;
-
+      margin-top: 20px;
+      
       .section {
         padding: 0;
       }
