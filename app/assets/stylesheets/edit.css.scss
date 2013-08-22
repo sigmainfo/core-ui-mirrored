@@ -311,6 +311,7 @@ form.create.term {
 .concept.edit {
   &>section {
     background-color: rgba($greencolor, 0.05);
+    padding-left: 5px;
   }
   .button.edit-concept {
     background-color: $beigecolor;

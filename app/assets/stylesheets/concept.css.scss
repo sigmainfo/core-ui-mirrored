@@ -146,24 +146,32 @@ div.concept {
   }
   
   .terms {
-    margin-top: 60px;
+    margin-top: 40px;
+    padding-top: 10px;
+          @include retina-separator;
       &>h3 {
         @include toggle;
-        padding: 2px 7px 1px 5px;
-        margin: 0px 0 1px 0;
+        padding: 2px 7px 1px 7px;
+        margin: 0;
         color: $browncolor;
-
-        background: rgba($greencolor, 0.08);
+        background-color: rgba($greencolor, 0.08);
         &:before {
           content: none;
         };
+
+/*        display: none;*/
       }
     
     section.language {
-      @include retina-separator;
-      padding-top: 8px;
+/*      @include retina-separator;*/
+/*      padding-top: 12px;*/
+      margin-top: 12px;
       min-height: 19px;
-      
+      @include single-box-shadow(rgba($greencolor, 0.2), 1px, 1px, 2px, false, inset);
+      background-color: rgba($greencolor, 0.03);
+/*            @include single-box-shadow(rgba($greencolor, 0.4), 1px, 1px, 2px, false);
+            background-color: rgba($bluecolor, 0.05);*/
+            
       &>h3 {
         margin: 1px 0;
         position: absolute;
@@ -173,6 +181,11 @@ div.concept {
     
     ul {
       list-style: none;
+/*      @include single-box-shadow(rgba($greencolor, 0.2), 1px, 1px, 2px, false, inset);
+      background-color: rgba($greencolor, 0.03);*/
+/*      @include single-box-shadow(rgba($greencolor, 0.4), 1px, 1px, 2px, false);
+      background-color: rgba($bluecolor, 0.05);*/
+
     }
 
   }
