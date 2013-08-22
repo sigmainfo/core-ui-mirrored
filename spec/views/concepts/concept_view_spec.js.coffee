@@ -1054,3 +1054,19 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         Coreon.Models.Notification.info.should.have.been.calledOnce
         Coreon.Models.Notification.info.should.have.been.calledWith "baaam!"
 
+  describe "clipboard interaction", ->
+    beforeEach ->
+      @collection = new Backbone.Collection
+      sinon.stub Coreon.Collections.Clips, "collection", => @collection
+      sinon.spy @view, "setClipboardButton"
+
+    afterEach ->
+      Coreon.Collections.Clips.collection.restore()
+      @view.setClipboardButton.restore()
+
+    it "sets button if clips changing", ->
+      @view.initialize()
+      @collection.add @concept
+      @collection.reset []
+      @view.setClipboardButton.should.have.been.calledTwice
+
