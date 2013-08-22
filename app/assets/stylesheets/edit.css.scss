@@ -1,6 +1,13 @@
 @import '_config';
 @import 'compass/css3';
 
+div.concept {
+  .actions {
+    width: 100%;
+    height: 24px;
+  }
+}
+
 .button {
   float: left;
   font-size: 0.86em;
@@ -30,8 +37,7 @@
     @extend .big;
     padding-left: 6px;
     float: right;
-    position: relative;
-    top: -20px;
+    margin-left: 14px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -42,12 +48,9 @@
 .concept-to-clipboard {
   font-size: 0.9em;
   display: inline-block;
-  margin-right: 14px;
   float: right;
-  position: relative;
-  top: -20px;
   margin-left: 10px;
-  height: 12px;
+  height: 18px;
   &:before {
     @include before-icon;
     float: left;
@@ -64,7 +67,9 @@
   }
 }
 
-
+form.update {
+  background-color: rgba($greencolor, 0.05);
+}
 
 form.create, form.update{
 
@@ -253,7 +258,7 @@ form.create.term {
      }
      a.delete-concept {
        float: right;
-       top: -20px;
+       top: 0px;
      }
      a.add-narrower {
        position: absolute;
@@ -295,7 +300,22 @@ form.create.term {
       background-position: -4px -504px;
     };
   }
-  
+  .terms {
+/*    @include background(linear-gradient(rgba($greencolor, 0.05), rgba(white, 0)));
+    @include dottedline;*/
+    margin-top: 80px;
+/*    .language ul{
+      background: rgba($greencolor, 0.08);
+    }*/
+    &>h3 {
+      padding: 2px 0px 1px 0px;
+      text-indent: 5px;
+      width: 100%;
+      margin-top: 6px;
+/*      background: none;*/
+    }
+
+  }
   .terms >.edit {
     @include retina-separator;
     height:20px;

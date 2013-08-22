@@ -60,6 +60,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   initialize: ->
     @listenTo @model, "change", @render
+    @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
     @subviews = []
     @
 
@@ -272,11 +273,16 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true
 
   addConceptToClipboard: ->
-    @$(".concept-to-clipboard.add").hide()
-    @$(".concept-to-clipboard.remove").show()
     Coreon.Collections.Clips.collection().add @model
 
   removeConceptFromClipboard: ->
-    @$(".concept-to-clipboard.remove").hide()
-    @$(".concept-to-clipboard.add").show()
     Coreon.Collections.Clips.collection().remove @model
+
+  setClipboardButton: ->
+    if Coreon.Collections.Clips.collection().get @model
+      @$(".concept-to-clipboard.add").hide()
+      @$(".concept-to-clipboard.remove").show()
+    else
+      @$(".concept-to-clipboard.remove").hide()
+      @$(".concept-to-clipboard.add").show()
+

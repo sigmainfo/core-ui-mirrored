@@ -1,12 +1,13 @@
-- if @can "edit", Coreon.Models.Concept
-  %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
+.actions
+  - if @can "edit", Coreon.Models.Concept
+    %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
 
-%a.concept-to-clipboard.remove( href="javascript:void(0)" )= I18n.t "concept.remove_from_clipboard"
-%a.concept-to-clipboard.add( href="javascript:void(0)" )= I18n.t "concept.add_to_clipboard"
+  %a.concept-to-clipboard.remove( href="javascript:void(0)" )= I18n.t "concept.remove_from_clipboard"
+  %a.concept-to-clipboard.add( href="javascript:void(0)" )= I18n.t "concept.add_to_clipboard"
 
-.edit
-  - if @can "delete", Coreon.Models.Concept
-    %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"
+  .edit
+    - if @can "delete", Coreon.Models.Concept
+      %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"
 
 != @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("_id")
 %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
@@ -18,6 +19,7 @@
   != @render "concepts/properties", properties: @concept.propertiesByKey(), editToggle: yes
 
 .terms
+  %h3= I18n.t "terms.title"
   - if @concept.get("terms")?.length > 0
     - for lang, terms of @concept.termsByLang()
       %section.language{class: lang}
