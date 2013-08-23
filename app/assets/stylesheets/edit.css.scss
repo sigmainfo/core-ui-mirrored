@@ -87,7 +87,8 @@ form.create, form.update{
      background-color: darken(rgba($button-color, 0.1), 12);
    }
    &.term {
-     margin-bottom: 0;
+     margin-bottom: 4px;
+     @include single-box-shadow(rgba($greencolor, 0.8), 0px, 1px, 1px, false);
    }
    &.concept {
      &>.properties fieldset {
@@ -117,6 +118,7 @@ form.create, form.update{
          }
          &>.edit {
            margin: 0;
+           background: none;
            border-top: 1px solid white;
            height: 30px;
          }
@@ -220,8 +222,9 @@ form.create, form.update{
 
 }
 form.create.term {
-  @include retina-separator;
-  padding-top: 28px;
+  @include retina-BigSeparator;
+  margin-top: 28px;
+  padding-top: 36px;
 }
  
 .concept  {
@@ -322,23 +325,13 @@ form.create.term {
   }
   
   .terms {
-/*    @include background(linear-gradient(rgba($greencolor, 0.05), rgba(white, 0)));
-    @include dottedline;*/
-/*    margin-top: 80px;*/
-    .language ul{
+    .language li{
       background-color: rgba($greencolor, 0.08);
-    }
-    &>h3 {
-/*      padding: 2px 0px 1px 0px;
-      text-indent: 5px;
-      width: 100%;
-      margin-top: 6px;*/
-/*      background: none;*/
     }
 
   }
   .terms >.edit {
-    @include retina-separator;
+/*    margin-top: 20px;*/
     height:20px;
     .add-term {
       top: 20px;
