@@ -268,11 +268,12 @@ form.create.term {
        margin-right: 4px;
        width: 16px;
        overflow: hidden;
+       top: 6px;
        text-indent: -2000px;
      }
      a.edit-term {
        position: absolute;
-       top: 8px;
+       top: 6px;
        right: 0;
      }
      a.delete-concept {
@@ -291,7 +292,7 @@ form.create.term {
      }
      a.edit-properties, a.edit-term {
        position: absolute;
-       top: 8px;
+       top: 6px;
        right: 6px;
        width: 16px;
        overflow: hidden;
@@ -331,7 +332,6 @@ form.create.term {
 
   }
   .terms >.edit {
-/*    margin-top: 20px;*/
     height:20px;
     .add-term {
       top: 20px;
@@ -340,13 +340,13 @@ form.create.term {
   
   .language li.term {
     .edit {
-      height: 18px;
+      height: 12px;
     }
     .properties h3 {
-      top: 28px;
+      top: 22px;
     }
     .system-info-toggle {
-      top: 34px;
+      top: 28px;
     }
     
   }
