@@ -4,14 +4,19 @@
     - if @can "create", Coreon.Models.Concept
       %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
-%div.list
-  .broader.static
-    %ul
-  .broader.ui-droppable
-    %ul
-  .concept-label.hit.self
-  .narrower.static
-    %ul
-  .narrower.ui-droppable
-    %ul
+%form( novalidate )
+  .list
+    .broader.static
+      %ul
+    .broader.ui-droppable
+      %ul
+    .concept-label.hit.self
+    .narrower.static
+      %ul
+    .narrower.ui-droppable
+      %ul
 
+  .submit
+    %a.reset( href="javascript:void(0)" )= I18n.t 'form.reset'
+    %a.cancel( href="javascript:void(0)" )= I18n.t 'form.cancel'
+    %button( type="submit" )= I18n.t 'concept.update'

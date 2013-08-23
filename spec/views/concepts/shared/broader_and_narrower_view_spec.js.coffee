@@ -51,16 +51,19 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       acceptance = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
       acceptance.should.be.a "function"
 
-    context "drag and dro", ->
+    context "drag and drop", ->
       before ->
-        @el_broad = $("<div>").data("drag-ident", "c0ffee")
-        @el_narrow = $("<div>").data("drag-ident", "deadbeef")
-        @el_foreign = $("<div>").data("drag-ident", "baffee")
-        @el_own = $("<div>").data("drag-ident", @view.model.id)
+        @el_broad = $("<div data-drag-ident='c0ffee'>")
+        @el_narrow = $("<div data-drag-ident='deadbeef'>")
+        @el_foreign = $("<div data-drag-ident='bad1dea'>")
+        @el_own = $("<div data-drag-ident='#{@view.model.id}'>")
 
       beforeEach ->
         @view.model.set "super_concept_ids", ["c0ffee"], silent: true
         @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+        @view.$(".broader ul").append $("<li>").append @el_broad
+        @view.$(".narrower ul").append $("<li>").append @el_narrow
+        sinon.stub @view, "createConcept", -> new Backbone.View
 
       afterEach ->
         @view.model.set "super_concept_ids", [], silent: true
@@ -93,6 +96,27 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
         acceptance1(@el_foreign).should.be.true
         acceptance2(@el_foreign).should.be.true
+
+      it "temporary connects broader concept", ->
+        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
+        dropFun.should.be.a "function"
+        dropFun new $.Event, helper: @el_foreign
+        item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
+        should.exist item
+        should.exist item.siblings("input[type=hidden]")
+        item.siblings("input[type=hidden]").attr("name").should.equal "super_concept_ids[]"
+        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
+
+      it "temporary connects narrower concept", ->
+        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
+        dropFun.should.be.a "function"
+        dropFun new $.Event, helper: @el_foreign
+        item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
+        should.exist item
+        should.exist item.siblings("input[type=hidden]")
+        item.siblings("input[type=hidden]").attr("name").should.equal "sub_concept_ids[]"
+        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
+
 
     context "rendering markup skeleton", ->
 

@@ -30,10 +30,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
-      drop: (evt, ui)=> @onDropBroader(evt, ui)
+      drop: (evt, ui)=> @onDrop("broader", ui.helper.data("drag-ident"))
     @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
-      drop: (evt, ui)=> @onDropNarrower(evt, ui)
+      drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
 
   render: ->
     @renderSelf()
@@ -88,10 +88,23 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     ids = [@model.id]
     ids.push @model.get("super_concept_ids")...
     ids.push @model.get("sub_concept_ids")...
-    ids.indexOf($(item).data("drag-ident")) == -1
+    ids.indexOf($(item).data("drag-ident").toString()) == -1
 
-  onDropBroader: (evt, ui)->
-    console.log "would add to broader concepts", ui.helper.data("drag-ident")
+  onDrop: (broaderNarrower, ident)->
+    temporaryConcept = @createConcept ident
+    temporaryConceptEl = temporaryConcept.render().$el
+    temporaryConceptEl.attr "data-drag-ident", ident
+    listItem = $("<li>").append temporaryConceptEl
+
+    if broaderNarrower is "broader"
+      name = 'super_concept_ids[]'
+      list = @$(".broader.ui-droppable ul")
+    else
+      name = 'sub_concept_ids[]'
+      list = @$(".narrower.ui-droppable ul")
+
+    listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
+    list.append listItem
 
   onDropNarrower: (evt, ui)->
     console.log "would add to narrower concepts", ui.helper.data("drag-ident")
