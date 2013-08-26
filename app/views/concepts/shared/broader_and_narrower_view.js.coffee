@@ -18,6 +18,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   template: Coreon.Templates["concepts/shared/broader_and_narrower"]
   repositoryLabel: Coreon.Templates["repositories/repository_label"]
 
+  events:
+    "submit form": "updateConceptConnections"
+
   concepts: null
 
   initialize: ->
@@ -85,10 +88,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     concept.remove() while concept = @narrower.pop()
 
   dropItemAcceptance: (item)->
-    ids = [@model.id]
-    ids.push @model.get("super_concept_ids")...
-    ids.push @model.get("sub_concept_ids")...
-    ids.indexOf($(item).data("drag-ident").toString()) == -1
+    id = $(item).data "drag-ident"
+    temporaryIds = ($(el).val() for el in @$("form li input[type=hidden]"))
+    @model.acceptsConnection(id) && temporaryIds.indexOf(id) == -1
 
   onDrop: (broaderNarrower, ident)->
     temporaryConcept = @createConcept ident
@@ -108,3 +110,11 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   onDropNarrower: (evt, ui)->
     console.log "would add to narrower concepts", ui.helper.data("drag-ident")
+
+  updateConceptConnections: (evt) ->
+    evt.preventDefault()
+    data = $(evt.target).serializeJSON() or {}
+    data.super_concept_ids.unshift @model.get("super_concept_ids")...
+    data.sub_concept_ids.unshift @model.get("sub_concept_ids")...
+    console.log data
+
