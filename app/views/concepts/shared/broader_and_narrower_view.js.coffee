@@ -20,6 +20,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   events:
     "submit form": "updateConceptConnections"
+    "click .edit-connections": "toggleEditMode"
 
   concepts: null
 
@@ -118,3 +119,11 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     data.sub_concept_ids.unshift @model.get("sub_concept_ids")...
     console.log data
 
+  toggleEditMode: ->
+    @editMode = !@editMode
+    if @editMode
+      @$("form").addClass("edit")
+      @$("form").removeClass("show")
+    else
+      @$("form").removeClass("edit")
+      @$("form").addClass("show")
