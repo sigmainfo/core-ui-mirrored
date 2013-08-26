@@ -4,7 +4,7 @@
 #= require helpers/text
 #= require helpers/repository_path
 
-class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
+class Coreon.Views.Widgets.ConceptMap.ConceptNodeListView extends Coreon.Views.SVGView
 
   Coreon.Modules.include @, Coreon.Helpers.Text
 

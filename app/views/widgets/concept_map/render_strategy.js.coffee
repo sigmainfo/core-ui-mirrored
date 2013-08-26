@@ -1,6 +1,5 @@
 #= require environment
 #= require d3
-#= require views/concepts/concept_node_view
 
 class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 

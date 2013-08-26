@@ -1,11 +1,11 @@
 #= require spec_helper
-#= require views/concepts/concept_node_view
+#= require views/widgets/concept_map/concept_node_list_view
 
-describe "Coreon.Views.Concepts.ConceptNodeView", ->
+describe "Coreon.Views.Widgets.ConceptMap.ConceptNodeListView", ->
 
   beforeEach ->
     svg = d3.select $("<svg>").appendTo("#konacha").get(0)
-    @view = new Coreon.Views.Concepts.ConceptNodeView
+    @view = new Coreon.Views.Widgets.ConceptMap.ConceptNodeListView
       el: svg.append("g").node()
       model: new Backbone.Model(label: "concept#123", concept: new Backbone.Model(_id: "concept#123") )
     @el = d3.select @view.el

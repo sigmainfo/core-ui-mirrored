@@ -1,5 +1,6 @@
 #= require environment
 #= require views/widgets/concept_map/render_strategy
+#= require views/widgets/concept_map/concept_node_list_view
 
 class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
@@ -20,7 +21,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       .append("g")
       .attr("class", "concept-node")
       .each( (datum) ->
-        view = new Coreon.Views.Concepts.ConceptNodeView
+        view = new Coreon.Views.Widgets.ConceptMap.ConceptNodeListView
           el: @
           model: datum.model
         views[datum.model.cid] = view.render()

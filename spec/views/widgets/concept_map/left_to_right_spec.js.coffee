@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require views/widgets/concept_map/left_to_right
+#= require views/widgets/concept_map/concept_node_list_view
 
 describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
 
@@ -181,7 +182,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
                 model: @node
               ]
             edges: []
-          @strategy.views.should.have.property("c123").that.is.an.instanceof Coreon.Views.Concepts.ConceptNodeView
+          @strategy.views.should.have.property("c123").that.is.an.instanceof Coreon.Views.Widgets.ConceptMap.ConceptNodeListView
           @strategy.views.should.have.deep.property "c123.el", @svg.find(".concept-node").get(0)
           @strategy.views.should.have.deep.property "c123.model", @node
 
