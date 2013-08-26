@@ -86,6 +86,11 @@ class Coreon.Models.Concept extends Backbone.Model
     label ?= terms[0]?.value
     label
 
+  acceptsConnection: (item_id)->
+    item_id != @id &&
+      @get("super_concept_ids").indexOf(item_id) == -1 &&
+        @get("sub_concept_ids").indexOf(item_id) == -1
+
   sync: (method, model, options = {}) ->
     @once "sync", @onCreate, @ if method is "create"
     options.batch = on
