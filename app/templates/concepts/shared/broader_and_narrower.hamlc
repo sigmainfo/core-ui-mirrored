@@ -8,12 +8,12 @@
   .list
     .broader.static
       %ul
-    .broader.ui-droppable
+    .broader.edit
       %ul
     .concept-label.hit.self
     .narrower.static
       %ul
-    .narrower.ui-droppable
+    .narrower.edit
       %ul
 
   .submit
