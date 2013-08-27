@@ -19,6 +19,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   repositoryLabel: Coreon.Templates["repositories/repository_label"]
 
   events:
+    "click .submit .cancel": "cancelConceptConnections"
+    "click .submit .reset": "resetConceptConnections"
     "submit form": "updateConceptConnections"
     "click .edit-connections": "toggleEditMode"
 
@@ -109,15 +111,38 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
     list.append listItem
 
-  onDropNarrower: (evt, ui)->
-    console.log "would add to narrower concepts", ui.helper.data("drag-ident")
+
+  resetConceptConnections: (evt) ->
+    console.log "reset"
+    evt.preventDefault()
+    $(el).remove() for el in @$("form li").has("input[type=hidden]")
+
+  cancelConceptConnections: (evt) ->
+    console.log "cancel"
+    @resetConceptConnections(evt)
+    @toggleEditMode()
+
 
   updateConceptConnections: (evt) ->
     evt.preventDefault()
-    data = $(evt.target).serializeJSON() or {}
+    form = $(evt.target)
+    #form.find("button").prop "disabled", true
+    #form.find("a.cancel,a.reset").addClass "disabled"
+    
+    data = form.serializeJSON() || {}
+    data.super_concept_ids ?= []
+    data.sub_concept_ids ?= []
     data.super_concept_ids.unshift @model.get("super_concept_ids")...
     data.sub_concept_ids.unshift @model.get("sub_concept_ids")...
-    console.log data
+
+    @model.save data,
+      success: =>
+        @toggleEditMode()
+      error: (model) =>
+        model.once "error", @render, @
+      attrs:
+        concept: data
+
 
   toggleEditMode: ->
     @editMode = !@editMode
