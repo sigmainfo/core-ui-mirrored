@@ -165,7 +165,7 @@ div.concept {
       list-style: none;
       padding-bottom: 3px;
       
-      li {
+      li.term {
         margin-bottom: 4px;
         @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
         background-color: rgba($bluecolor, 0.05);
@@ -176,7 +176,6 @@ div.concept {
   
   .term {
     position: relative;
-
 
     h4.value {
       font: 1.4em Palatino;
