@@ -325,12 +325,6 @@ form.create.term {
     };
   }
   
-  .terms {
-    .language li{
-      background-color: rgba($greencolor, 0.08);
-    }
-
-  }
   .terms >.edit {
     height:20px;
     .add-term {
@@ -339,6 +333,8 @@ form.create.term {
   }
   
   .language li.term {
+    
+    background-color: rgba($greencolor, 0.08);
     .edit {
       height: 12px;
     }
