@@ -5,18 +5,18 @@
     - if @can "create", Coreon.Models.Concept
       %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
-%form.show( novalidate )
+%form.static( novalidate )
   .list
     .broader.static
       %ul
     -if @editable
-      .broader.edit
+      .broader.ui-droppable
         %ul
     .concept-label.hit.self
     .narrower.static
       %ul
     -if @editable
-      .narrower.edit
+      .narrower.ui-droppable
         %ul
 
   -if @editable

@@ -34,10 +34,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
-    @droppableOn @$(".broader.edit"), "ui-droppable-connect",
+    @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("broader", ui.helper.data("drag-ident"))
-    @droppableOn @$(".narrower.edit"), "ui-droppable-connect",
+    @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
 
@@ -56,14 +56,14 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     super_concept_ids = @model.get "super_concept_ids"
     if super_concept_ids.length > 0
       @broader = @renderConcepts @$(".broader.static ul"), super_concept_ids
-      @broader.concat @renderConcepts @$(".broader.edit ul"), super_concept_ids
+      @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), super_concept_ids
     else unless @model.blank
       @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
     @narrower = @renderConcepts @$(".narrower.static ul"), @model.get "sub_concept_ids"
-    @narrower.concat @renderConcepts @$(".narrower.edit ul"), @model.get "sub_concept_ids"
+    @narrower.concat @renderConcepts @$(".narrower.ui-droppable ul"), @model.get "sub_concept_ids"
 
   renderConcepts: (container, ids) ->
     container.empty()
@@ -103,10 +103,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     if broaderNarrower is "broader"
       name = 'super_concept_ids[]'
-      list = @$(".broader.edit ul")
+      list = @$(".broader.ui-droppable ul")
     else
       name = 'sub_concept_ids[]'
-      list = @$(".narrower.edit ul")
+      list = @$(".narrower.ui-droppable ul")
 
     listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
     list.append listItem
@@ -147,8 +147,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   toggleEditMode: ->
     @editMode = !@editMode
     if @editMode
-      @$("form").addClass("edit")
-      @$("form").removeClass("show")
+      @$("form").addClass("active")
+      @$("form").removeClass("static")
     else
-      @$("form").removeClass("edit")
-      @$("form").addClass("show")
+      @$("form").removeClass("active")
+      @$("form").addClass("static")
