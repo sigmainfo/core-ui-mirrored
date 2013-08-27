@@ -89,6 +89,12 @@ $widget-width: 320px;
   };  
 }
 
+@mixin droparea {
+  background-color: rgba($button-color, 0.3);
+  @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 3px, false, inset);
+  padding: 9px 16px 8px 17px;
+}
+
 @mixin table-properties {
   border-spacing: 0;
   

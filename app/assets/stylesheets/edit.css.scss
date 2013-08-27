@@ -71,7 +71,34 @@ form.update {
   background-color: rgba($greencolor, 0.05);
 }
 
-form.create, form.update{
+.concept.edit .broader-and-narrower {
+  
+  form.static {
+    .submit {
+      display: none;
+    }
+  }
+
+  form.active {
+    overflow: hidden;
+    background-color: darken(rgba($button-color, 0.1), 12);
+    .broader.ui-droppable {
+      padding-left: 5px;
+    }
+    .self.ui-droppable {
+      max-width: 22%;
+    }
+    .narrower.ui-droppable {
+      max-width: 30%;
+    }
+    .submit {
+      margin-top: 1px;
+    }
+  }
+}
+
+
+form.create, form.update, .concept form {
 
    &.term, fieldset {
      position: relative;
@@ -80,10 +107,7 @@ form.create, form.update{
      margin-bottom: 26px;
      background-color: darken(rgba($button-color, 0.1), 12);
    }
-/*   &.term {
-     @include retina-separator;
-     padding-top: 28px;
-   }*/
+
 
    &.term, .term {
 
@@ -251,11 +275,7 @@ form.create.term {
        overflow: hidden;
        text-indent: -2000px;
      }
-     a.edit-term {
-       position: absolute;
-       top: 8px;
-       right: 0;
-     }
+
      a.delete-concept {
        float: right;
        top: 0px;
@@ -263,14 +283,14 @@ form.create.term {
      a.add-narrower {
        position: absolute;
        top: 8px;
-       right: 0;
+       right: 20px;
      }
      .terms a.remove-property {
        width: 16px;
        overflow: hidden;
        text-indent: -2000px;
      }
-     a.edit-properties, a.edit-term {
+     a.edit-properties, a.edit-term, a.edit-connections {
        position: absolute;
        top: 8px;
        right: 0;
@@ -286,7 +306,7 @@ form.create.term {
 
 // for edit mode
 .concept.show {
-  .edit {
+  .edit, .submit {
     display: none;
   }
 

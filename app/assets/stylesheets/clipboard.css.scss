@@ -28,11 +28,9 @@
   
   &.ui-state-highlight {
     ul {
-      background-color: rgba($button-color, 0.3);
-      @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 3px, false, inset);
-      border-top: none;
+      @include droparea;
       margin: 0 4px 0 3px;
-      padding: 9px 16px 8px 17px;
+      border-top: none;
     }
   }
   &.ui-state-hovered {

@@ -157,9 +157,11 @@ div.concept {
           content: none;
         };
       }
+/*    @include background(linear-gradient(rgba($browncolor, 0.03), rgba($browncolor, 0)));*/
     
     section.language {
       @include retina-separator;
+         
       padding-top: 8px;
       min-height: 19px;
       
@@ -187,6 +189,9 @@ div.concept {
         content:"»\00a0";
         font-size: 1.3em;
       };
+    }
+    .system-info-toggle {
+      top: 15px;
     }
     >.system-info {
       padding-left: 116px;
@@ -282,10 +287,11 @@ div.concept {
           margin-left: 64px;
         }
       }
+      .system-info-toggle {
+        top: 5px;
+      }
     }
-    .system-info-toggle {
-/*      top: 5px;*/
-    }
+
   }
 }
 

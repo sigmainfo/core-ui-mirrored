@@ -12,7 +12,6 @@
     .self {   
       cursor: default;
       font-size: 1.1em;
-/*      margin: 0 2%;*/
       max-width: 25%;
     }
     li {
@@ -24,7 +23,6 @@
       &:empty {
         min-height: 18px;
         min-width: 30px;
-        @include opacity(0.3);
       }
       
     }
