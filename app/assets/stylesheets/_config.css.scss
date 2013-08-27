@@ -217,6 +217,14 @@ $widget-width: 320px;
       @include background-size(4px 8px);
   } 
 }
+@mixin retina-BigSeparator {
+  background-image: image-url('layout/separatorBig.png');
+  background-repeat: repeat-x;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/separator@2x.png');
+      @include background-size(8px 17px);
+  } 
+}
 
 @mixin dottedline {
   background-image: image-url('layout/dottedline.png');
