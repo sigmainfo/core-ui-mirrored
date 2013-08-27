@@ -19,10 +19,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   repositoryLabel: Coreon.Templates["repositories/repository_label"]
 
   events:
-    "click .submit .cancel": "cancelConceptConnections"
-    "click .submit .reset": "resetConceptConnections"
-    "submit form": "updateConceptConnections"
-    "click .edit-connections": "toggleEditMode"
+    "click  .submit .cancel":   "cancelConceptConnections"
+    "click  .submit .reset":    "resetConceptConnections"
+    "submit  form":             "updateConceptConnections"
+    "click  .edit-connections": "toggleEditMode"
 
   concepts: null
 
@@ -113,12 +113,11 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
 
   resetConceptConnections: (evt) ->
-    console.log "reset"
     evt.preventDefault()
+    evt.stopPropagation()
     $(el).remove() for el in @$("form li").has("input[type=hidden]")
 
   cancelConceptConnections: (evt) ->
-    console.log "cancel"
     @resetConceptConnections(evt)
     @toggleEditMode()
 

@@ -40,46 +40,79 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
     end
   end
 
-  step 'I click "Edit Concept"' do
+  step 'I click "Edit concept"' do
     click_link_or_button "Edit concept"
   end
 
+  step 'I click "Edit concept connections"' do
+    click_link_or_button "Edit concept connections"
+  end
+
   step 'I drag the clipped concept to the subconcept dropzone' do
-    find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to find(".concept.edit .broader-and-narrower.ui-state-highlight .narrower")
+    drop = find(".concept.edit .broader-and-narrower .narrower.ui-droppable")
+    find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to drop
   end
 
   step 'I drag the clipped concept to the superconcept dropzone' do
-    find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to find(".concept.edit .broader-and-narrower.ui-state-highlight .broader")
+    drop = find(".concept.edit .broader-and-narrower .broader.ui-droppable")
+    find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to drop
   end
 
   step 'I should see "panopticum" unsaved as narrower concept' do
-    within ".concept.edit .broader-and-narrower.ui-state-dirty .narrower" do
-      has_css("li .concept-label.pending", text: "panopticum")
+    within ".concept.edit .broader-and-narrower .narrower.ui-droppable" do
+      find "li .concept-label", text: "panopticum"
+    end
+  end
+
+  step 'I should see "panopticum" unsaved as broader concept' do
+    within ".concept.edit .broader-and-narrower .broader.ui-droppable" do
+      find "li .concept-label", text: "panopticum"
     end
   end
 
   step 'I should see reset, cancel and save buttons' do
-    within ".concept.edit .broader-and-narrower.ui-state-dirty" do
-      has_css(".submit .reset")
-      has_css(".submit .cancel")
-      has_css(".submit .submit")
+    within ".concept.edit .broader-and-narrower form.active" do
+      find(".submit .reset")
+      find(".submit .cancel")
+      find(".submit [type=submit]")
     end
   end
 
+  step 'the concept should have a new narrower connection' do
+    within ".concept.edit .broader-and-narrower .narrower.static" do
+      find "li .concept-label", text: "panopticum"
+    end
+  end
+
+  step 'the concept should have a new broader connection' do
+    within ".concept.edit .broader-and-narrower .broader.static" do
+      find "li .concept-label", text: "panopticum"
+    end
+  end
+
+  step 'I should not see any unsaved concepts' do
+    page.should have_no_css(".broader-and-narrower li .concept-label", text: "panopticum")
+  end
+
+  step 'I should not see drop zones' do
+    page.should have_css(".broader-and-narrower form.static")
+    page.should have_no_css(".broader-and-narrower form.active")
+  end
+
   step 'I click Save' do
-    within ".concept.edit .broader-and-narrower.ui-state-dirty" do
+    within ".concept.edit .broader-and-narrower form.active" do
       click_link_or_button "Save"
     end
   end
 
   step 'I click Cancel' do
-    within ".concept.edit .broader-and-narrower.ui-state-dirty" do
+    within ".concept.edit .broader-and-narrower form.active" do
       click_link_or_button "Cancel"
     end
   end
 
   step 'I click Reset' do
-    within ".concept.edit .broader-and-narrower.ui-state-dirty" do
+    within ".concept.edit .broader-and-narrower form.active" do
       click_link_or_button "Reset"
     end
   end

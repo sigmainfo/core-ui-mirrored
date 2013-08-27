@@ -5,6 +5,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+    sinon.stub(Coreon.Helpers, "can").returns true
     model = new Backbone.Model
       super_concept_ids: []
       sub_concept_ids: []
@@ -13,6 +14,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
   afterEach ->
     I18n.t.restore()
+    Coreon.Helpers.can.restore()
 
   it "is a Backbone view", ->
    @view.should.be.an.instanceof Backbone.View
@@ -31,6 +33,9 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       Coreon.application = new Backbone.Model session: @session
 
       @view.model.id = "1234"
+      @view.model.isNew = -> false
+      @view.initialize()
+
 
     it "creates empty array for broader concepts", ->
       should.exist @view.broader
@@ -43,13 +48,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.narrower.should.have.lengthOf 0
 
     it "makes drop zones available in edit mode", ->
-      should.exist @view.$(".broader.edit").data("uiDroppable")
-      should.exist @view.$(".narrower.edit").data("uiDroppable")
+      should.exist @view.$(".broader.ui-droppable").data("uiDroppable")
+      should.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
       should.not.exist @view.$(".broader.static").data("uiDroppable")
       should.not.exist @view.$(".narrower.static").data("uiDroppable")
 
     it "denies existing broader concepts for dropping", ->
-      acceptance = @view.$(".broader.edit").data("uiDroppable").options.accept
+      acceptance = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
       acceptance.should.be.a "function"
 
     context "drag and drop", ->
@@ -71,44 +76,44 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.model.set "sub_concept_ids", [], silent: true
 
       it "temporary connects broader concept", ->
-        dropFun = @view.$(".broader.edit").data("uiDroppable").options.drop
+        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
         dropFun.should.be.a "function"
         dropFun new $.Event, helper: @el_foreign
-        item = @view.$(".broader.edit ul li [data-drag-ident=bad1dea]")
+        item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
         should.exist item
         should.exist item.siblings("input[type=hidden]")
         item.siblings("input[type=hidden]").attr("name").should.equal "super_concept_ids[]"
         item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
 
       it "temporary connects narrower concept", ->
-        dropFun = @view.$(".narrower.edit").data("uiDroppable").options.drop
+        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
         dropFun.should.be.a "function"
         dropFun new $.Event, helper: @el_foreign
-        item = @view.$(".narrower.edit ul li [data-drag-ident=bad1dea]")
+        item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
         should.exist item
         should.exist item.siblings("input[type=hidden]")
         item.siblings("input[type=hidden]").attr("name").should.equal "sub_concept_ids[]"
         item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
 
       it "denies temporary connected broader concepts", ->
-        dropFun = @view.$(".broader.edit").data("uiDroppable").options.drop
+        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
         dropFun new $.Event, helper: @el_foreign
-        acceptance1 = @view.$(".broader.edit").data("uiDroppable").options.accept
-        acceptance2 = @view.$(".narrower.edit").data("uiDroppable").options.accept
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
         acceptance1(@el_foreign).should.be.false
         acceptance2(@el_foreign).should.be.false
 
       it "denies temporary connected narrower concepts", ->
-        dropFun = @view.$(".narrower.edit").data("uiDroppable").options.drop
+        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
         dropFun new $.Event, helper: @el_foreign
-        acceptance1 = @view.$(".broader.edit").data("uiDroppable").options.accept
-        acceptance2 = @view.$(".narrower.edit").data("uiDroppable").options.accept
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
         acceptance1(@el_foreign).should.be.false
         acceptance2(@el_foreign).should.be.false
 
       it "accepts non-existing concepts", ->
-        acceptance1 = @view.$(".broader.edit").data("uiDroppable").options.accept
-        acceptance2 = @view.$(".narrower.edit").data("uiDroppable").options.accept
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
         acceptance1(@el_foreign).should.be.true
         acceptance2(@el_foreign).should.be.true
 
@@ -116,10 +121,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     context "rendering markup skeleton", ->
 
       beforeEach ->
-        sinon.stub Coreon.Helpers, "can", -> false
-
-      afterEach ->
-        Coreon.Helpers.can.restore()
+        Coreon.Helpers.can.returns false
 
       it "renders section header", ->
         I18n.t.withArgs("concept.broader_and_narrower").returns "Broader & Narrower"
@@ -141,7 +143,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       it "renders container for toggling", ->
         @view.render()
-        container = @view.$("h3").next()
+        container = @view.$("h3").siblings("form")
         container.should.have ".self"
         container.should.have ".broader"
         container.should.have ".narrower"
@@ -200,7 +202,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.model.set "super_concept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.$(".broader.static ul li").should.have.lengthOf 3
-        @view.$(".broader.edit ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
         @view.model.set "super_concept_ids", [ "c1" ], silent: true
@@ -209,7 +210,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledTwice
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
         @label.render.should.have.been.calledOnce
-        ( $.contains @view.el, @label.el ).should.be.true
+        @view.$el.find("[data-drag-ident=c1]").length.should.equal 1
 
       it "removes old list items", ->
         @view.model.set "super_concept_ids", [], silent: true
@@ -222,7 +223,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.render()
         @view.model.set "super_concept_ids", [ "c45" ]
         @view.broader.should.have.lengthOf 1
-        ( $.contains @view.el, @view.broader[0].el ).should.be.true
+        @view.$el.find("[data-drag-ident=c45]").length.should.equal 1
 
       context "with empty super concepts list", ->
         
@@ -237,8 +238,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
           @view.$(".broader ul").should.have "li a.repository-label"
           @view.$(".broader.static .repository-label").should.have.attr "href", "/coffeebabe23"
           @view.$(".broader.static .repository-label").should.have.text "delicious data"
-          @view.$(".broader.edit .repository-label").should.have.attr "href", "/coffeebabe23"
-          @view.$(".broader.edit .repository-label").should.have.text "delicious data"
+
+        it "renders repository node in droppable", ->
+          @view.model.isNew = -> false
+          @view.initialize()
+          @view.render()
+          @view.$(".broader.ui-droppable .repository-label").should.have.attr "href", "/coffeebabe23"
+          @view.$(".broader.ui-droppable .repository-label").should.have.text "delicious data"
 
         it "does not render repository when blank", ->
           @view.model.blank = true
@@ -271,7 +277,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.model.set "sub_concept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.$(".narrower.static ul li").should.have.lengthOf 3
-        @view.$(".narrower.edit ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
         @view.model.set "sub_concept_ids", [ "c1" ], silent: true
@@ -280,7 +285,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledTwice
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
         @label.render.should.have.been.calledOnce
-        ( $.contains @view.el, @label.el ).should.be.true
+        @view.$el.find("[data-drag-ident=c1]").length.should.equal 1
 
       it "removes old list items", ->
         @view.model.set "sub_concept_ids", [], silent: true
