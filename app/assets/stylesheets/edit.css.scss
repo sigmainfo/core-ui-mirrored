@@ -68,7 +68,13 @@ div.concept {
 }
 
 form.update {
-  background-color: rgba($greencolor, 0.05);
+  background-color: darken(rgba($button-color, 0.1), 4);
+}
+
+form.create {
+  .submit {
+    margin-top: 60px;
+  }
 }
 
 form.create, form.update{
@@ -80,10 +86,22 @@ form.create, form.update{
      margin-bottom: 26px;
      background-color: darken(rgba($button-color, 0.1), 12);
    }
-/*   &.term {
-     @include retina-separator;
-     padding-top: 28px;
-   }*/
+   &.term {
+     margin-bottom: 4px;
+     @include single-box-shadow(rgba($greencolor, 0.8), 0px, 1px, 1px, false);
+   }
+   &.concept {
+     &>.properties fieldset {
+
+       margin-bottom: 0;
+       border-bottom: 1px solid white;
+       &:last-of-type {
+         margin-bottom: 26px;
+         border-bottom: none;
+       };
+     }
+   }
+
 
    &.term, .term {
 
@@ -100,6 +118,7 @@ form.create, form.update{
          }
          &>.edit {
            margin: 0;
+           background: none;
            border-top: 1px solid white;
            height: 30px;
          }
@@ -163,7 +182,6 @@ form.create, form.update{
      clear: both;
      overflow: hidden;
      background-color: darken(rgba($button-color, 0.18), 15);
-     margin-top:60px;
      padding: 3px 10px;
 
      .cancel, .reset {
@@ -204,8 +222,9 @@ form.create, form.update{
 
 }
 form.create.term {
-  @include retina-separator;
-  padding-top: 28px;
+  @include retina-BigSeparator;
+  margin-top: 28px;
+  padding-top: 36px;
 }
  
 .concept  {
@@ -245,15 +264,16 @@ form.create.term {
      }
 
      a.remove-term {
-       right: 18px;
+       right: 24px;
        margin-right: 4px;
        width: 16px;
        overflow: hidden;
+       top: 6px;
        text-indent: -2000px;
      }
      a.edit-term {
        position: absolute;
-       top: 8px;
+       top: 6px;
        right: 0;
      }
      a.delete-concept {
@@ -272,8 +292,8 @@ form.create.term {
      }
      a.edit-properties, a.edit-term {
        position: absolute;
-       top: 8px;
-       right: 0;
+       top: 6px;
+       right: 6px;
        width: 16px;
        overflow: hidden;
        text-indent: -5000px;
@@ -293,6 +313,10 @@ form.create.term {
 }
 
 .concept.edit {
+  &>section {
+    background-color: rgba($greencolor, 0.05);
+    padding-left: 5px;
+  }
   .button.edit-concept {
     background-color: $beigecolor;
     color: $greencolor;
@@ -300,24 +324,14 @@ form.create.term {
       background-position: -4px -504px;
     };
   }
+  
   .terms {
-/*    @include background(linear-gradient(rgba($greencolor, 0.05), rgba(white, 0)));
-    @include dottedline;*/
-    margin-top: 80px;
-/*    .language ul{
-      background: rgba($greencolor, 0.08);
-    }*/
-    &>h3 {
-      padding: 2px 0px 1px 0px;
-      text-indent: 5px;
-      width: 100%;
-      margin-top: 6px;
-/*      background: none;*/
+    .language li{
+      background-color: rgba($greencolor, 0.08);
     }
 
   }
   .terms >.edit {
-    @include retina-separator;
     height:20px;
     .add-term {
       top: 20px;
@@ -326,13 +340,13 @@ form.create.term {
   
   .language li.term {
     .edit {
-      height: 18px;
+      height: 12px;
     }
     .properties h3 {
-      top: 28px;
+      top: 22px;
     }
     .system-info-toggle {
-      top: 34px;
+      top: 28px;
     }
     
   }
@@ -478,7 +492,7 @@ form.create.term {
     width: 16px;
     height: 20px;
     position: absolute;
-    right: -40px;
+    right: -30px;
   }
   
 }
