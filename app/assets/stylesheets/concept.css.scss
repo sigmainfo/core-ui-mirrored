@@ -258,6 +258,11 @@ div.concept {
       }
     }
   }
+  &.edit {
+    section h3 {
+      margin-left: 5px;
+    }
+  }
    
 }
 
@@ -353,7 +358,7 @@ div.concept {
   
   div.concept.show, div.concept.edit {
     section h3 {
-      margin: 2px 0 0px 0;
+      margin: 2px 0 6px 0;
     }
     .terms {
       padding-top: 6px;
