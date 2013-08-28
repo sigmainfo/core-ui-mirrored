@@ -88,6 +88,7 @@ form.create {
   form.active {
     overflow: hidden;
     background-color: darken(rgba($button-color, 0.1), 12);
+    margin-left: -5px;
     .broader.ui-droppable {
       padding-left: 5px;
     }
@@ -309,8 +310,8 @@ form.create.term {
      }
      a.add-narrower {
        position: absolute;
-       top: 8px;
-       right: 20px;
+       top: 6px;
+       right: 24px;
      }
      .terms a.remove-property {
        width: 16px;
@@ -340,9 +341,9 @@ form.create.term {
 }
 
 .concept.edit {
-  &>section {
+  &>section, form>section {
     background-color: rgba($greencolor, 0.05);
-    padding-left: 5px;
+
   }
   .button.edit-concept {
     background-color: $beigecolor;
