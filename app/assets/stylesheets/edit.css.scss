@@ -67,15 +67,6 @@ div.concept {
   }
 }
 
-form.update {
-  background-color: darken(rgba($button-color, 0.1), 4);
-}
-
-form.create {
-  .submit {
-    margin-top: 60px;
-  }
-}
 
 .concept.edit .broader-and-narrower {
   
@@ -104,8 +95,11 @@ form.create {
   }
 }
 
+form.update {
+  background-color: darken(rgba($button-color, 0.1), 4);
+}
 
-form.create, form.update, .concept form {
+.concept form {
 
    &.term, fieldset {
      position: relative;
