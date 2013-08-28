@@ -58,7 +58,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @broader = @renderConcepts @$(".broader.static ul"), super_concept_ids
       @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), super_concept_ids
     else unless @model.blank
-      @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
+      @$(".broader.static ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
