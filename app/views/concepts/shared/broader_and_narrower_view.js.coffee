@@ -41,6 +41,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
 
+    @droppableOn @$(".list"), "ui-droppable-disconnect",
+      accept: (item)-> $(item).hasClass "from-connection-list"
+      drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
+
   render: ->
     @renderSelf()
     @renderBroader()
@@ -71,6 +75,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     for concept in concepts
       concept_el = concept.render().$el
       concept_el.attr "data-drag-ident", concept.model.id
+      concept_el.addClass "from-connection-list"
       container.append $("<li>").append concept_el
     concepts
 
@@ -111,6 +116,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
     list.append listItem
 
+  onDisconnect: (ident)->
+    console.log "#{ident} says: disconnect me"
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
