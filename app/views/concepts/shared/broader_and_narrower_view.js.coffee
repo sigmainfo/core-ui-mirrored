@@ -121,8 +121,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   updateConceptConnections: (evt) ->
     evt.preventDefault()
     form = $(evt.target)
-    #form.find("button").prop "disabled", true
-    #form.find("a.cancel,a.reset").addClass "disabled"
+    form.find("button").prop "disabled", true
+    form.find("a.cancel,a.reset").addClass "disabled"
     
     data = form.serializeJSON() || {}
     data.super_concept_ids ?= []
