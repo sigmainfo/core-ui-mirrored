@@ -34,17 +34,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
-    @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
-      accept: (item)=> @dropItemAcceptance(item)
-      drop: (evt, ui)=> @onDrop("broader", ui.helper.data("drag-ident"))
-    @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
-      accept: (item)=> @dropItemAcceptance(item)
-      drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
-
-    @droppableOn @$(".list"), "ui-droppable-disconnect",
-      accept: (item)-> $(item).hasClass "from-connection-list"
-      drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
-
   render: ->
     @renderSelf()
     @renderBroader()
@@ -155,6 +144,21 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     if @editMode
       @$("form").addClass("active")
       @$("form").removeClass("static")
+
+      @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
+        accept: (item)=> @dropItemAcceptance(item)
+        drop: (evt, ui)=> @onDrop("broader", ui.helper.data("drag-ident"))
+      @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
+        accept: (item)=> @dropItemAcceptance(item)
+        drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
+
+      @droppableOn @$(".list"), "ui-droppable-disconnect",
+        accept: (item)-> $(item).hasClass "from-connection-list"
+        drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
+
     else
       @$("form").removeClass("active")
       @$("form").addClass("static")
+
+      console.log "deactivate on", @$(".ui-droppable")
+      @droppableOff @$(".ui-droppable")

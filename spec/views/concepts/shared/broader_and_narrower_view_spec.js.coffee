@@ -46,77 +46,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.narrower.should.be.an.instanceof Array
       @view.narrower.should.have.lengthOf 0
 
-    it "makes drop zones available in edit mode", ->
-      should.exist @view.$(".broader.ui-droppable").data("uiDroppable")
-      should.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
-      should.not.exist @view.$(".broader.static").data("uiDroppable")
-      should.not.exist @view.$(".narrower.static").data("uiDroppable")
-
-    it "denies existing broader concepts for dropping", ->
-      acceptance = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
-      acceptance.should.be.a "function"
-
-    context "drag and drop", ->
-      before ->
-        @el_broad = $("<div data-drag-ident='c0ffee'>")
-        @el_narrow = $("<div data-drag-ident='deadbeef'>")
-        @el_foreign = $("<div data-drag-ident='bad1dea'>")
-        @el_own = $("<div data-drag-ident='#{@view.model.id}'>")
-
-      beforeEach ->
-        @view.model.set "super_concept_ids", ["c0ffee"], silent: true
-        @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
-        @view.$(".broader ul").append $("<li>").append @el_broad
-        @view.$(".narrower ul").append $("<li>").append @el_narrow
-        sinon.stub @view, "createConcept", -> new Backbone.View
-
-      afterEach ->
-        @view.model.set "super_concept_ids", [], silent: true
-        @view.model.set "sub_concept_ids", [], silent: true
-
-      it "temporary connects broader concept", ->
-        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
-        dropFun.should.be.a "function"
-        dropFun new $.Event, helper: @el_foreign
-        item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
-        should.exist item
-        should.exist item.siblings("input[type=hidden]")
-        item.siblings("input[type=hidden]").attr("name").should.equal "super_concept_ids[]"
-        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
-
-      it "temporary connects narrower concept", ->
-        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
-        dropFun.should.be.a "function"
-        dropFun new $.Event, helper: @el_foreign
-        item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
-        should.exist item
-        should.exist item.siblings("input[type=hidden]")
-        item.siblings("input[type=hidden]").attr("name").should.equal "sub_concept_ids[]"
-        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
-
-      it "denies temporary connected broader concepts", ->
-        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
-        dropFun new $.Event, helper: @el_foreign
-        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
-        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
-        acceptance1(@el_foreign).should.be.false
-        acceptance2(@el_foreign).should.be.false
-
-      it "denies temporary connected narrower concepts", ->
-        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
-        dropFun new $.Event, helper: @el_foreign
-        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
-        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
-        acceptance1(@el_foreign).should.be.false
-        acceptance2(@el_foreign).should.be.false
-
-      it "accepts non-existing concepts", ->
-        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
-        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
-        acceptance1(@el_foreign).should.be.true
-        acceptance2(@el_foreign).should.be.true
-
-
     context "rendering markup skeleton", ->
 
       beforeEach ->
@@ -323,4 +252,98 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       Backbone.View::remove.should.have.been.calledOn @view
 
       
-      
+  describe "toggleEditMode()", ->
+    beforeEach ->
+      @view.model.id = "1234"
+      @view.model.isNew = -> false
+ 
+    context "outside edit mode", ->
+
+      beforeEach ->
+        @view.initialize()
+        @view.render()
+
+      it "creates no drop zones", ->
+        should.not.exist @view.$(".broader.ui-droppable").data("uiDroppable")
+        should.not.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
+        should.not.exist @view.$(".broader.static").data("uiDroppable")
+        should.not.exist @view.$(".narrower.static").data("uiDroppable")
+
+    context "inside edit mode", ->
+      before ->
+        @el_broad = $("<div data-drag-ident='c0ffee'>")
+        @el_narrow = $("<div data-drag-ident='deadbeef'>")
+        @el_foreign = $("<div data-drag-ident='bad1dea'>")
+        @el_own = $("<div data-drag-ident='#{@view.model.id}'>")
+
+      beforeEach ->
+        sinon.stub @view, "createConcept", ->
+          new Backbone.View model: new Backbone.Model
+
+        @view.model.set "super_concept_ids", ["c0ffee"], silent: true
+        @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+
+        @view.initialize()
+        @view.render()
+        @view.$(".broader ul").append $("<li>").append @el_broad
+        @view.$(".narrower ul").append $("<li>").append @el_narrow
+
+        @view.toggleEditMode()
+
+      afterEach ->
+        @view.model.set "super_concept_ids", [], silent: true
+        @view.model.set "sub_concept_ids", [], silent: true
+
+
+      it "makes drop zones available", ->
+        should.exist @view.$(".broader.ui-droppable").data("uiDroppable")
+        should.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
+        should.not.exist @view.$(".broader.static").data("uiDroppable")
+        should.not.exist @view.$(".narrower.static").data("uiDroppable")
+
+      it "denies existing broader concepts for dropping", ->
+        acceptance = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance.should.be.a "function"
+
+      it "temporary connects broader concept", ->
+        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
+        dropFun.should.be.a "function"
+        dropFun new $.Event, helper: @el_foreign
+        item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
+        should.exist item
+        should.exist item.siblings("input[type=hidden]")
+        item.siblings("input[type=hidden]").attr("name").should.equal "super_concept_ids[]"
+        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
+
+      it "temporary connects narrower concept", ->
+        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
+        dropFun.should.be.a "function"
+        dropFun new $.Event, helper: @el_foreign
+        item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
+        should.exist item
+        should.exist item.siblings("input[type=hidden]")
+        item.siblings("input[type=hidden]").attr("name").should.equal "sub_concept_ids[]"
+        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
+
+      it "denies temporary connected broader concepts", ->
+        dropFun = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
+        dropFun new $.Event, helper: @el_foreign
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance1(@el_foreign).should.be.false
+        acceptance2(@el_foreign).should.be.false
+
+      it "denies temporary connected narrower concepts", ->
+        dropFun = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
+        dropFun new $.Event, helper: @el_foreign
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance1(@el_foreign).should.be.false
+        acceptance2(@el_foreign).should.be.false
+
+      it "accepts non-existing concepts", ->
+        acceptance1 = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
+        acceptance2 = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
+        acceptance1(@el_foreign).should.be.true
+        acceptance2(@el_foreign).should.be.true
+
