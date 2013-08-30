@@ -84,12 +84,17 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   clearNarrower: ->
     concept.remove() while concept = @narrower.pop()
 
-  dropItemAcceptance: (item)->
+  _dropItemAcceptance: (item)->
     id = $(item).data "drag-ident"
     temporaryIds = ($(el).val() for el in @$("form li input[type=hidden]"))
+    console.log "dropAcc", temporaryIds, @model.acceptsConnection(id)
     @model.acceptsConnection(id) && temporaryIds.indexOf(id) == -1
 
-  onDrop: (broaderNarrower, ident)->
+  onDrop: (broaderNarrower, item)->
+    console.log "onDrop", broaderNarrower, item, @_dropItemAcceptance(item)
+    unless @_dropItemAcceptance(item)
+      return false
+    ident = item.data("drag-ident")
     temporaryConcept = @createConcept ident
     temporaryConceptEl = temporaryConcept.render().$el
     temporaryConceptEl.attr "data-drag-ident", ident
@@ -145,20 +150,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @$("form").addClass("active")
       @$("form").removeClass("static")
 
-      @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
-        accept: (item)=> @dropItemAcceptance(item)
-        drop: (evt, ui)=> @onDrop("broader", ui.helper.data("drag-ident"))
-      @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
-        accept: (item)=> @dropItemAcceptance(item)
-        drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
-
       @droppableOn @$(".list"), "ui-droppable-disconnect",
         accept: (item)-> $(item).hasClass "from-connection-list"
         drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
+      @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
+        drop: (evt, ui)=> @onDrop("broader", ui.helper)
+      @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
+        drop: (evt, ui)=> @onDrop("narrower", ui.helper)
 
     else
       @$("form").removeClass("active")
       @$("form").addClass("static")
-
-      console.log "deactivate on", @$(".ui-droppable")
       @droppableOff @$(".ui-droppable")

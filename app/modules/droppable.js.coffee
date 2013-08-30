@@ -33,6 +33,7 @@ Coreon.Modules.Droppable =
     _dropzone = $(el)
 
     defaults =
+      greedy: true
       activeClass: "ui-state-highlight"
       hoverClass: "ui-state-hovered"
       tolerance: "pointer"
