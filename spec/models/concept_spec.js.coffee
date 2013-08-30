@@ -309,3 +309,17 @@ describe "Coreon.Models.Concept", ->
       @model.revert()
       @model.get("label").should.equal "high hat"
 
+
+  describe "acceptsConnection()", ->
+    beforeEach ->
+      @model.id = "c0ffee"
+      @model.set "sub_concept_ids", ["bad1dea"], silent: true
+      @model.set "super_concept_ids", ["deadbeef"], silent: true
+
+    it "forbids simple circular connections", ->
+      @model.acceptsConnection("c0ffee").should.be.false
+      @model.acceptsConnection("bad1dea").should.be.false
+      @model.acceptsConnection("deadbeef").should.be.false
+
+    it "allows valid connections", ->
+      @model.acceptsConnection("f00baa").should.be.true

@@ -33,15 +33,19 @@ Coreon.Modules.Draggable =
     _draggableElement.on "dragstart", @_draggable_startDragging
     _draggableElement.on "dragstop", @_draggable_stopDragging
 
-    # jquery.ui.draggable magic
-    _draggableElement.draggable
-      revert:   (options.revert || "invalid")
-      helper:   (options.helper || "clone")
-      appendTo: (options.appendTo || "#coreon-modal")
+    defaults =
+      revert:   "invalid"
+      helper:   "clone"
+      appendTo: "#coreon-modal"
       cursorAt: {left: 8, bottom: 5}
       revertDuration: 300
+    options = _.extend defaults, options
+
+    # jquery.ui.draggable magic
+    _draggableElement.draggable options
 
   draggableOff: (el)->
     _draggableElement = $(el)
     _draggableElement.off "dragstart"
     _draggableElement.off "dragstop"
+    _draggableElement.draggable "disable"

@@ -70,7 +70,41 @@ describe "Coreon.Collections.Concepts", ->
       @collection.remove "parent"
       expect( @collection.get "child_of_child" ).to.exist
     
+  describe "when super_concept_ids and/or sub_concept_ids change", ->
+    beforeEach ->
+      @concept = new Backbone.Model
+        _id: "self"
+        sub_concept_ids: []
+        super_concept_ids: []
+
+      @collection.reset [
+        @concept
+        { _id: "parent", sub_concept_ids: [ "child" ] }
+        { _id: "child", super_concept_ids: [ "parent" ] }
+        { _id: "parent_of_parent", sub_concept_ids: [ "parent" ] }
+        { _id: "child_of_child", super_concept_ids: [ "child" ] }
+        { _id: "other" }
+      ], silent: on
+
+    it "removes parent concepts", ->
+      @concept.set "super_concept_ids", ["parent"]
+      @concept.save
+      expect( @collection.get "parent" ).to.not.exist
+
+    it "removes child concepts", ->
+      @concept.set "sub_concept_ids", ["child"]
+      @concept.save
+      expect( @collection.get "child" ).to.not.exist
+
+
+    it "does not remove parents of parent, childs of child or foreigns", ->
+      @concept.set "super_concept_ids", ["parent"]
+      @concept.set "sub_concept_ids", ["child"]
+      @concept.save
+      expect( @collection.get "child_of_child" ).to.exist
+      expect( @collection.get "parent_of_parent" ).to.exist
+      expect( @collection.get "other" ).to.exist
+
 
   #TODO: update on change
-  #TODO: update super_concept_ids
       

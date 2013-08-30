@@ -2,10 +2,6 @@
 @import 'compass/css3';
 
 
-/*// FIX FEATURE TESTS
-div.concept section  h3 {
-  text-transform: uppercase;
-}*/
 
 div.concept.new {
 
@@ -40,14 +36,12 @@ div.concept.new {
     position: relative;
     @include retina-separator;
     padding-top: 10px;
-    margin-top: 0;
+          margin-top: 0;
+
     .term {
       background-image: none;
     }
 
-  }
-    .submit {
-      margin-top: 60px;
   }
 
 }

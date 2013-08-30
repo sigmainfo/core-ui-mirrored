@@ -1,10 +1,12 @@
 #= require environment
-#= require jquery.ui.droppable
 #= require collections/clips
 #= require views/concepts/concept_label_view
 #= require templates/widgets/clipboard
+#= require modules/droppable
 
 class Coreon.Views.Widgets.ClipboardView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Droppable
 
   id: "coreon-clipboard"
   className: "widget"
@@ -18,12 +20,8 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
 
   initialize: ->
     @listenTo @collection(), "add reset remove", @render
-    @$el.droppable
+    @droppableOn @$el, "ui-droppable-clipboard",
       accept: (el) => @dropItemAcceptance(el)
-      activeClass: "ui-state-highlight"
-      tolerance: "pointer"
-      over: (evt, ui) => @onDropItemOver(evt, ui)
-      out: (evt, ui) => @onDropItemOut(evt, ui)
 
   dropItemAcceptance: (item) ->
     not @collection().get item.data "drag-ident"
@@ -33,14 +31,6 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     id = ui.draggable.data "drag-ident"
     model = Coreon.Models.Concept.find id
     @collection().add model
-
-  onDropItemOver: (evt, ui) ->
-    @$el.addClass "ui-state-hovered"
-    ui.helper.addClass "ui-droppable-clipboard"
-
-  onDropItemOut: (evt, ui) ->
-    @$el.removeClass "ui-state-hovered"
-    ui.helper.removeClass "ui-droppable-clipboard"
 
   render: ->
     clip.remove() while clip = @_concept_label_views.pop()

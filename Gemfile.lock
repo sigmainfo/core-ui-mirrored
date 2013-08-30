@@ -37,6 +37,7 @@ GEM
       multi_json (~> 1.0)
     addressable (2.3.5)
     arel (3.0.2)
+    awesome_print (1.1.0)
     builder (3.0.4)
     capistrano (2.15.5)
       highline
@@ -137,6 +138,8 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
+    pry-theme (0.2.0)
+      json
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -228,6 +231,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   capistrano
   capistrano-ext
   capybara-webkit
@@ -243,6 +247,7 @@ DEPENDENCIES
   launchy
   poltergeist
   pry
+  pry-theme
   rack-cors
   rails (= 3.2.12)
   rspec (~> 2.13.0)

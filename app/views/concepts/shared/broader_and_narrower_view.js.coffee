@@ -5,8 +5,11 @@
 #= require templates/repositories/repository_label
 #= require views/concepts/concept_label_view
 #= require models/concept
+#= require modules/droppable
 
 class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Droppable
 
   tagName: "section"
 
@@ -14,6 +17,12 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   template: Coreon.Templates["concepts/shared/broader_and_narrower"]
   repositoryLabel: Coreon.Templates["repositories/repository_label"]
+
+  events:
+    "click  .submit .cancel":   "cancelConceptConnections"
+    "click  .submit .reset":    "resetConceptConnections"
+    "submit  form":             "updateConceptConnections"
+    "click  .edit-connections": "toggleEditMode"
 
   concepts: null
 
@@ -24,6 +33,13 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @listenTo @model, "change:label", @renderSelf
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
+
+    @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
+      accept: (item)=> @dropItemAcceptance(item)
+      drop: (evt, ui)=> @onDrop("broader", ui.helper.data("drag-ident"))
+    @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
+      accept: (item)=> @dropItemAcceptance(item)
+      drop: (evt, ui)=> @onDrop("narrower", ui.helper.data("drag-ident"))
 
   render: ->
     @renderSelf()
@@ -39,13 +55,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @clearBroader()
     super_concept_ids = @model.get "super_concept_ids"
     if super_concept_ids.length > 0
-      @broader = @renderConcepts @$(".broader ul"), super_concept_ids
+      @broader = @renderConcepts @$(".broader.static ul"), super_concept_ids
+      @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), super_concept_ids
     else unless @model.blank
-      @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
+      @$(".broader.static ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
-    @narrower = @renderConcepts @$(".narrower ul"), @model.get "sub_concept_ids"
+    @narrower = @renderConcepts @$(".narrower.static ul"), @model.get "sub_concept_ids"
+    @narrower.concat @renderConcepts @$(".narrower.ui-droppable ul"), @model.get "sub_concept_ids"
 
   renderConcepts: (container, ids) ->
     container.empty()
@@ -71,3 +89,65 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   clearNarrower: ->
     concept.remove() while concept = @narrower.pop()
+
+  dropItemAcceptance: (item)->
+    id = $(item).data "drag-ident"
+    temporaryIds = ($(el).val() for el in @$("form li input[type=hidden]"))
+    @model.acceptsConnection(id) && temporaryIds.indexOf(id) == -1
+
+  onDrop: (broaderNarrower, ident)->
+    temporaryConcept = @createConcept ident
+    temporaryConceptEl = temporaryConcept.render().$el
+    temporaryConceptEl.attr "data-drag-ident", ident
+    listItem = $("<li>").append temporaryConceptEl
+
+    if broaderNarrower is "broader"
+      name = 'super_concept_ids[]'
+      list = @$(".broader.ui-droppable ul")
+    else
+      name = 'sub_concept_ids[]'
+      list = @$(".narrower.ui-droppable ul")
+
+    listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
+    list.append listItem
+
+
+  resetConceptConnections: (evt) ->
+    evt.preventDefault()
+    evt.stopPropagation()
+    $(el).remove() for el in @$("form li").has("input[type=hidden]")
+
+  cancelConceptConnections: (evt) ->
+    @resetConceptConnections(evt)
+    @toggleEditMode()
+
+
+  updateConceptConnections: (evt) ->
+    evt.preventDefault()
+    form = $(evt.target)
+    #form.find("button").prop "disabled", true
+    #form.find("a.cancel,a.reset").addClass "disabled"
+    
+    data = form.serializeJSON() || {}
+    data.super_concept_ids ?= []
+    data.sub_concept_ids ?= []
+    data.super_concept_ids.unshift @model.get("super_concept_ids")...
+    data.sub_concept_ids.unshift @model.get("sub_concept_ids")...
+
+    @model.save data,
+      success: =>
+        @toggleEditMode()
+      error: (model) =>
+        model.once "error", @render, @
+      attrs:
+        concept: data
+
+
+  toggleEditMode: ->
+    @editMode = !@editMode
+    if @editMode
+      @$("form").addClass("active")
+      @$("form").removeClass("static")
+    else
+      @$("form").removeClass("active")
+      @$("form").addClass("static")
