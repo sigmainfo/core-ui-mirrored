@@ -33,7 +33,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       Coreon.application = new Backbone.Model session: @session
 
       @view.model.id = "1234"
-      @view.model.isNew = -> false
       @view.initialize()
 
 
@@ -232,19 +231,18 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
             _id: "coffeebabe23"
             name: "delicious data"
           @view.model.set "super_concept_ids", [], silent: true
+          @view.model.isNew = -> false
+          @view.initialize()
 
         it "renders repository node", ->
           @view.render()
-          @view.$(".broader ul").should.have "li a.repository-label"
+          @view.$(".broader.static ul").should.have "li a.repository-label"
           @view.$(".broader.static .repository-label").should.have.attr "href", "/coffeebabe23"
           @view.$(".broader.static .repository-label").should.have.text "delicious data"
 
-        it "renders repository node in droppable", ->
-          @view.model.isNew = -> false
-          @view.initialize()
+        it "renders no repository node in droppable", ->
           @view.render()
-          @view.$(".broader.ui-droppable .repository-label").should.have.attr "href", "/coffeebabe23"
-          @view.$(".broader.ui-droppable .repository-label").should.have.text "delicious data"
+          @view.$(".broader.ui-droppbale ul").should.not.have "li a.repository-label"
 
         it "does not render repository when blank", ->
           @view.model.blank = true
