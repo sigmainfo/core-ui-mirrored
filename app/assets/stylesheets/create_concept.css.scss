@@ -36,13 +36,22 @@ div.concept.new {
     position: relative;
     @include retina-separator;
     padding-top: 10px;
-          margin-top: 0;
+    margin-top: 0;
 
     .term {
       background-image: none;
     }
+    .edit a.remove-term {
+      right: 6px;
+      top: 8px;
+    }
 
   }
+
+  .submit {
+    margin-top: 60px;
+  }
+
 
 }
 
