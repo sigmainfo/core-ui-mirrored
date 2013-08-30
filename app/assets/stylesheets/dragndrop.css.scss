@@ -32,12 +32,18 @@
   };
 }
 
+.ui-droppable-disconnect {
+  &:after {
+    background-position: 0px -750px;
+  };
+}
+
 h2.concept-label {
   font-size: 1em;
 }
 
 .concept .broader-and-narrower {
-  form.static {
+  form.static .list {
     .ui-droppable {
       display: none;
     }
@@ -50,7 +56,7 @@ h2.concept-label {
 }
 
 .broader-and-narrower {
-  .ui-droppable {
+  .list .ui-droppable {
     ul {
       @include droparea;
       padding: 4px 6px 24px 6px;
