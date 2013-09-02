@@ -37,6 +37,11 @@
     background-position: -50px -750px;
   };
 }
+.ui-droppable-hovered {
+  &:after {
+    display: none;
+  };
+}
 
 h2.concept-label {
   font-size: 1em;
