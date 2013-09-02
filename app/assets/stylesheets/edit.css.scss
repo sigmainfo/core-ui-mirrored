@@ -61,6 +61,7 @@ div.concept {
     color: $hover-color;
   }
   &.remove {
+    color: $greytext-color;
     &:before {
       background-position: -53px -650px;
     };
