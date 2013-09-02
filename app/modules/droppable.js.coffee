@@ -42,6 +42,7 @@ Coreon.Modules.Droppable =
 
     options = _.extend defaults, options
     _dropzone.droppable options
+    _dropzone.droppable "enable"
 
   droppableOff: (el)->
     _dropzone = $(el)
