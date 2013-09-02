@@ -146,18 +146,20 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @$("form").addClass("active")
       @$("form").removeClass("static")
 
-      @droppableOn @$(".list"), "ui-droppable-disconnect",
-        accept: (item)-> $(item).hasClass "from-connection-list"
-        drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
-
-      @droppableOn @$(".catch-disconnect")
-
       @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
         drop: (evt, ui)=> @onDrop("broader", ui.helper)
       @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
         drop: (evt, ui)=> @onDrop("narrower", ui.helper)
+
+      @droppableOn @$(".catch-disconnect"), "ui-droppable-hovered",
+        accept: (item)-> $(item).hasClass "from-connection-list"
+        drop: -> console.log "catch drop"
+
+      @droppableOn @$(".list"), "ui-droppable-disconnect",
+        accept: (item)-> $(item).hasClass "from-connection-list"
+        drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
 
     else
       @$("form").removeClass("active")

@@ -10,15 +10,15 @@
     .broader.static
       %ul
     -if @editable
-      .catch-disconnect
-        .broader.ui-droppable
+      .broader.ui-droppable
+        .catch-disconnect
           %ul
     .concept-label.hit.self
     .narrower.static
       %ul
     -if @editable
-      .catch-disconnect
-        .narrower.ui-droppable
+      .narrower.ui-droppable
+        .catch-disconnect
           %ul
 
   -if @editable
