@@ -324,7 +324,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @acceptFunNarrow(@el_own).should.be.false
 
       it "temporary connects broader concept", ->
-        @dropFunBroad {}, helper: @el_foreign
+        @dropFunBroad {}, draggable: @el_foreign
         item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
         should.exist item
         should.exist item.siblings("input[type=hidden]")
@@ -332,7 +332,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
 
       it "temporary connects narrower concept", ->
-        @dropFunNarrow {}, helper: @el_foreign
+        @dropFunNarrow {}, draggable: @el_foreign
         item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
         should.exist item
         should.exist item.siblings("input[type=hidden]")
@@ -346,13 +346,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       it "denies temporary connected broader concepts", ->
         @view.model.acceptsConnection = -> true
-        @dropFunBroad new $.Event, helper: @el_foreign
+        @dropFunBroad {}, draggable: @el_foreign
         @acceptFunBroad(@el_foreign).should.be.false
         @acceptFunNarrow(@el_foreign).should.be.false
 
       it "denies temporary connected narrower concepts", ->
         @view.model.acceptsConnection = -> true
-        @dropFunNarrow new $.Event, helper: @el_foreign
+        @dropFunNarrow {}, draggable: @el_foreign
         @acceptFunBroad(@el_foreign).should.be.false
         @acceptFunNarrow(@el_foreign).should.be.false
 

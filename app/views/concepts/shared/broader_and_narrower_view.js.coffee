@@ -107,8 +107,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
     list.append listItem
 
-  onDisconnect: (ident)->
-    console.log "#{ident} says: disconnect me"
+  onDisconnect: (item)->
+    ident = item.data("drag-ident")
+    $(el).remove() for el in @$("form li").has("[data-drag-ident=#{ident}]")
+
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
@@ -149,17 +151,17 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
       @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
-        drop: (evt, ui)=> @onDrop("broader", ui.helper)
+        drop: (evt, ui)=> @onDrop("broader", ui.draggable)
       @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
-        drop: (evt, ui)=> @onDrop("narrower", ui.helper)
+        drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
 
       @droppableOn @$(".catch-disconnect"), "ui-droppable-hovered",
         accept: (item)-> $(item).hasClass "from-connection-list"
 
       @droppableOn @$(".list"), "ui-droppable-disconnect",
         accept: (item)-> $(item).hasClass "from-connection-list"
-        drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
+        drop: (evt, ui)=> @onDisconnect(ui.draggable)
 
     else
       @$("form").removeClass("active")
