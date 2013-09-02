@@ -86,7 +86,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   dropItemAcceptance: (item)->
     id = $(item).data("drag-ident")     #TODO: .toString breaks it O_o
-    temporaryIds = ($(el).val() for el in @$("form li input[type=hidden]"))
+    temporaryIds = ($(el).data("drag-ident") for el in @$(".list li [data-new-connection=true]"))
     @model.acceptsConnection(id) && temporaryIds.indexOf(id) == -1
 
   onDrop: (broaderNarrower, item)->
@@ -94,28 +94,27 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     temporaryConcept = @createConcept ident
     temporaryConceptEl = temporaryConcept.render().$el
     temporaryConceptEl.attr "data-drag-ident", ident
+    temporaryConceptEl.attr "data-new-connection", "true"
     temporaryConceptEl.addClass "from-connection-list"
     listItem = $("<li>").append temporaryConceptEl
 
     if broaderNarrower is "broader"
-      name = 'super_concept_ids[]'
       list = @$(".broader.ui-droppable ul")
     else
-      name = 'sub_concept_ids[]'
       list = @$(".narrower.ui-droppable ul")
 
-    listItem.append $("<input type='hidden' name='#{name}' value='#{ident}'>")
     list.append listItem
 
   onDisconnect: (item)->
     ident = item.data("drag-ident")
-    $(el).remove() for el in @$("form li").has("[data-drag-ident=#{ident}]")
-
+    for el in @$("form li").has("[data-drag-ident=#{ident}]")
+      $("[data-drag-ident]", el).data "deleted-connection", true
+      $(el).hide()
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
     evt.stopPropagation()
-    $(el).remove() for el in @$("form li").has("input[type=hidden]")
+    $(el).remove() for el in @$(".list li").has("[data-new-connection=true]")
 
   cancelConceptConnections: (evt) ->
     @resetConceptConnections(evt)
@@ -124,15 +123,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   updateConceptConnections: (evt) ->
     evt.preventDefault()
-    form = $(evt.target)
-    form.find("button").prop "disabled", true
-    form.find("a.cancel,a.reset").addClass "disabled"
-    
-    data = form.serializeJSON() || {}
-    data.super_concept_ids ?= []
-    data.sub_concept_ids ?= []
-    data.super_concept_ids.unshift @model.get("super_concept_ids")...
-    data.sub_concept_ids.unshift @model.get("sub_concept_ids")...
+    data = { super_concept_ids: [], sub_concept_ids: [] }
+
+    for item in @$(".broader.ui-droppable [data-drag-ident]")
+      data.super_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
+
+    for item in @$(".narrower.ui-droppable [data-drag-ident]")
+      data.sub_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
+
+    console.log "save", data
 
     @model.save data,
       success: =>

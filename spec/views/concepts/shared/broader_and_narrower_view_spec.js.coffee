@@ -327,17 +327,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @dropFunBroad {}, draggable: @el_foreign
         item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
         should.exist item
-        should.exist item.siblings("input[type=hidden]")
-        item.siblings("input[type=hidden]").attr("name").should.equal "super_concept_ids[]"
-        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
+        $(item).data("new-connection").should.be.true
 
       it "temporary connects narrower concept", ->
         @dropFunNarrow {}, draggable: @el_foreign
         item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
         should.exist item
-        should.exist item.siblings("input[type=hidden]")
-        item.siblings("input[type=hidden]").attr("name").should.equal "sub_concept_ids[]"
-        item.siblings("input[type=hidden]").attr("value").should.equal "bad1dea"
+        $(item).data("new-connection").should.be.true
 
       it "accepts non-existing concepts", ->
         @view.model.acceptsConnection = -> true
@@ -355,4 +351,99 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @dropFunNarrow {}, draggable: @el_foreign
         @acceptFunBroad(@el_foreign).should.be.false
         @acceptFunNarrow(@el_foreign).should.be.false
+
+  describe "onDisconnect()", ->
+    beforeEach ->
+      sinon.stub @view, "createConcept", ->
+        new Backbone.View model: new Backbone.Model
+
+      @el_broad = $("<div data-drag-ident='c0ffee'>")
+      @el_narrow = $("<div data-drag-ident='deadbeef'>")
+
+      @view.model.set "super_concept_ids", ["c0ffee"], silent: true
+      @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+
+      @view.initialize()
+      @view.render()
+      @view.$(".broader ul").append $("<li>").append @el_broad
+      @view.$(".narrower ul").append $("<li>").append @el_narrow
+      @view.toggleEditMode()
+
+    afterEach ->
+      @view.model.set "super_concept_ids", [], silent: true
+      @view.model.set "sub_concept_ids", [], silent: true
+
+    it "removes significant list items", ->
+      @view.onDisconnect(@el_broad)
+      @view.$(".broader [data-drag-ident=c0ffee]").data("deleted-connection").should.be.true
+      @view.onDisconnect(@el_narrow)
+      @view.$(".narrower [data-drag-ident=deadbeef]").data("deleted-connection").should.be.true
+
+    it "keeps non-deleted list items in broader list", ->
+      @view.onDisconnect(@el_narrow)
+      should.not.exist @view.$(".broader [data-drag-ident=c0ffee]").data("deleted-connection")
+
+    it "keeps non-deleted list items in narrower list", ->
+      @view.onDisconnect(@el_broad)
+      should.exist @view.$(".narrower [data-drag-ident=deadbeef]")
+
+  describe "updateConceptConnections()", ->
+    beforeEach ->
+      @event = $.Event()
+      sinon.stub @view.model, "save"
+
+      @view.$el.html $('
+        <div class="broader static">
+          <ul>
+            <li><div data-drag-ident="c0ffee">Coffee</div></li>
+          </ul>
+        </div>
+        <div class="broader ui-droppable">
+          <ul>
+            <li><div data-drag-ident="c0ffee">Coffee</div></li>
+          </ul>
+        </div>
+        <div class="narrower static">
+          <ul>
+            <li><div data-drag-ident="deadbeef">Meat</div></li>
+          </ul>
+        </div>
+        <div class="narrower ui-droppable">
+          <ul>
+            <li><div data-drag-ident="deadbeef">Meat</div></li>
+          </ul>
+        </div>
+      ')
+
+      @view.model.set "super_concept_ids", ["c0ffee"], silent: true
+      @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+
+    afterEach ->
+      @view.model.save.restore()
+
+    it "adds new ids", ->
+      @view.$(".broader.ui-droppable ul").append $('<li><div data-drag-ident="bad1dea"></div></li>')
+      @view.$(".narrower.ui-droppable ul").append $('<li><div data-drag-ident="babee"></div></li>')
+      @view.updateConceptConnections @event
+      @view.model.save.should.have.been.calledOnce
+      dataArg = @view.model.save.firstCall.args[0]
+      dataArg.should.be.an.object
+      dataArg.super_concept_ids.should.be.an.array
+      dataArg.super_concept_ids.should.contain "bad1dea"
+      dataArg.sub_concept_ids.should.be.an.array
+      dataArg.sub_concept_ids.should.contain "babee"
+
+    it "removes deleted ids", ->
+      @view.$(".broader.ui-droppable [data-drag-ident=c0ffee]").remove()
+      @view.$(".narrower.ui-droppable [data-drag-ident=deadbeef]").remove()
+      @view.updateConceptConnections @event
+      dataArg = @view.model.save.firstCall.args[0]
+      dataArg.super_concept_ids.should.not.contain "c0ffee"
+      dataArg.sub_concept_ids.should.not.contain "deadbeef"
+
+    it "adds non-deleted ids", ->
+      @view.updateConceptConnections @event
+      dataArg = @view.model.save.firstCall.args[0]
+      dataArg.super_concept_ids.should.contain "c0ffee"
+      dataArg.sub_concept_ids.should.contain "deadbeef"
 
