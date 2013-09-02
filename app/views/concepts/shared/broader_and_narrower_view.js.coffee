@@ -94,6 +94,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     temporaryConcept = @createConcept ident
     temporaryConceptEl = temporaryConcept.render().$el
     temporaryConceptEl.attr "data-drag-ident", ident
+    temporaryConceptEl.addClass "from-connection-list"
     listItem = $("<li>").append temporaryConceptEl
 
     if broaderNarrower is "broader"
@@ -155,7 +156,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
       @droppableOn @$(".catch-disconnect"), "ui-droppable-hovered",
         accept: (item)-> $(item).hasClass "from-connection-list"
-        drop: -> console.log "catch drop"
 
       @droppableOn @$(".list"), "ui-droppable-disconnect",
         accept: (item)-> $(item).hasClass "from-connection-list"
