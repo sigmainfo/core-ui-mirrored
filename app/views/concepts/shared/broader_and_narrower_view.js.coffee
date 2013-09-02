@@ -85,7 +85,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     concept.remove() while concept = @narrower.pop()
 
   dropItemAcceptance: (item)->
-    id = $(item).data("drag-ident").toString()
+    id = $(item).data("drag-ident")     #TODO: .toString breaks it O_o
     temporaryIds = ($(el).val() for el in @$("form li input[type=hidden]"))
     @model.acceptsConnection(id) && temporaryIds.indexOf(id) == -1
 
@@ -149,6 +149,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @droppableOn @$(".list"), "ui-droppable-disconnect",
         accept: (item)-> $(item).hasClass "from-connection-list"
         drop: (evt, ui)=> @onDisconnect(ui.helper.data("drag-ident"))
+
+      @droppableOn @$(".catch-disconnect")
+
       @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
         drop: (evt, ui)=> @onDrop("broader", ui.helper)
