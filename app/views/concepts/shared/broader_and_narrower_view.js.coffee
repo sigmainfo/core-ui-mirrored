@@ -108,13 +108,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   onDisconnect: (item)->
     ident = item.data("drag-ident")
     for el in @$("form li").has("[data-drag-ident=#{ident}]")
-      $("[data-drag-ident]", el).data "deleted-connection", true
+      $("[data-drag-ident]", el).attr "data-deleted-connection", true
       $(el).hide()
 
   resetConceptConnections: (evt) ->
+    console.log "reset", @$(".list li").has("[data-new-connection=true]"), @$(".list li").has("[data-deleted-connection=true]")
     evt.preventDefault()
     evt.stopPropagation()
     $(el).remove() for el in @$(".list li").has("[data-new-connection=true]")
+    $(el).show() for el in @$(".list li").has("[data-deleted-connection=true]")
 
   cancelConceptConnections: (evt) ->
     @resetConceptConnections(evt)
