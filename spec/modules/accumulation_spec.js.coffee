@@ -82,6 +82,20 @@ describe "Coreon.Modules.Accumulation", ->
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123").should.equal model
 
+      it "does not fetch model by default", ->
+        model = new Coreon.Models.MyModel _id: "123"
+        model.fetch = sinon.spy()
+        Coreon.Models.MyModel.collection().add model
+        Coreon.Models.MyModel.find("123").should.equal model
+        model.fetch.should.not.have.been.called
+        
+      it "fetches model when option is set", ->
+        model = new Coreon.Models.MyModel _id: "123"
+        model.fetch = sinon.spy()
+        Coreon.Models.MyModel.collection().add model
+        Coreon.Models.MyModel.find("123", fetch: yes).should.equal model
+        model.fetch.should.have.been.calledOnce
+
   describe "upsert()", ->
 
     beforeEach ->

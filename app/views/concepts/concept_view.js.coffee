@@ -263,14 +263,15 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   delete: (evt) ->
     trigger = $ evt.target
+    label = @model.get "label"
     @confirm
       trigger: trigger
       container: trigger.closest ".concept"
       message: I18n.t "concept.confirm_delete"
       action: =>
-        Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: @model.get "label")
-        @model.destroy(wait: true).done ->
-          Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true
+        @model.destroy()
+        Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: label)
+        Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true
 
   addConceptToClipboard: ->
     Coreon.Collections.Clips.collection().add @model

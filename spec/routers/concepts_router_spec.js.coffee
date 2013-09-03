@@ -70,11 +70,12 @@ describe "Coreon.Routers.ConceptsRouter", ->
         model: @search
 
   describe "show()", ->
+
     beforeEach ->
       sinon.stub Coreon.Views.Concepts, "ConceptView", -> new Backbone.View
       sinon.stub Coreon.Models.Concept, "find", =>
         @concept = new Backbone.Model
-        @concept.sync = ->
+        @concept.sync = sinon.spy()
         @concept
 
     afterEach ->
@@ -96,6 +97,8 @@ describe "Coreon.Routers.ConceptsRouter", ->
 
     it "renders concept details", ->
       @router.show "c0ffeebabe23c0ffeebabe42", "123"
+      Coreon.Models.Concept.find.should.have.been.calledOnce
+      Coreon.Models.Concept.find.should.have.been.calledWith "123", fetch: yes
       Coreon.Views.Concepts.ConceptView.should.have.been.called.withNew
       Coreon.Views.Concepts.ConceptView.should.have.been.calledWith
         model: @concept

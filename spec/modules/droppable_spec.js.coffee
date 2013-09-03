@@ -32,3 +32,8 @@ describe "Coreon.Modules.Droppable", ->
 
   xit "adds class to draggable on hover"
     # don't know how to test this…
+  
+  it "re-enables drops after disable", ->
+    @view.droppableOff @view.$el
+    @view.droppableOn @view.$el, "c0ffee"
+    @view.$el.data("uiDroppable").options.disabled.should.be.false

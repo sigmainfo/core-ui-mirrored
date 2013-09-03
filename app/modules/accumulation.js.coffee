@@ -9,8 +9,12 @@ Coreon.Modules.Accumulation =
     options.wait ?= true
     @collection().create attributes, options
 
-  find: (id) ->
-    @collection().get(id) or @fetch(id)
+  find: (id, options = {}) ->
+    if model = @collection().get id
+      model.fetch() if options.fetch
+      model
+    else
+      @fetch id
 
   fetch: (id) ->
     attrs = {}
