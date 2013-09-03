@@ -146,7 +146,28 @@ div.concept {
   }
   
   .terms {
-    margin-top: 50px;
+    margin-top: 60px;
+      &>h3 {
+        @include toggle;
+        padding: 2px 7px 1px 5px;
+        margin: 0px 0 1px 0;
+        color: $browncolor;
+
+        background: rgba($greencolor, 0.08);
+        &:before {
+          content: none;
+        };
+      }
+/*    @include background(linear-gradient(rgba($browncolor, 0.03), rgba($browncolor, 0)));*/
+    
+    /*TODO: merged stuff, I don't know which to use…
+      section.language {
+      @include retina-separator;
+         
+      padding-top: 8px;
+      min-height: 19px;
+      
+      margin-top: 50px;*/
     
     section.language {
       margin-top: 12px;
@@ -165,7 +186,7 @@ div.concept {
       list-style: none;
       padding-bottom: 3px;
       
-      li {
+      li.term {
         margin-bottom: 4px;
         @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
         background-color: rgba($bluecolor, 0.05);
@@ -177,7 +198,6 @@ div.concept {
   .term {
     position: relative;
 
-
     h4.value {
       font: 1.4em Palatino;
       padding: 12px 100px 6px 97px;
@@ -186,9 +206,9 @@ div.concept {
         font-size: 1.3em;
       };
     }
-     .system-info-toggle {
-       top: 15px;
-      }
+    .system-info-toggle {
+      top: 15px;
+    }
     >.system-info {
       padding-left: 116px;
       table {
@@ -236,6 +256,11 @@ div.concept {
           background-position: -53px -103px;
         };
       }
+    }
+  }
+  &.edit {
+    section h3 {
+      margin-left: 5px;
     }
   }
    
@@ -333,7 +358,7 @@ div.concept {
   
   div.concept.show, div.concept.edit {
     section h3 {
-      margin: 2px 0 0px 0;
+      margin: 2px 0 2px 0;
     }
     .terms {
       padding-top: 6px;

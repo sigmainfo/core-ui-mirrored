@@ -1037,9 +1037,10 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         Coreon.application = null
         Backbone.history = @history
         
-      it "redirects to repository root", ->
+      it "redirects to repository root when done", ->
         Coreon.application = repository: -> id: "8765jhgf"
         $(".confirm").click()
+        Backbone.history.navigate.should.have.been.calledOnce
         Backbone.history.navigate.should.have.been.calledWith "/8765jhgf", trigger: true
       
       it "destroys model", ->

@@ -1,10 +1,12 @@
 #= require environment
-#= require jquery.ui.droppable
 #= require collections/clips
 #= require views/concepts/concept_label_view
 #= require templates/widgets/clipboard
+#= require modules/droppable
 
 class Coreon.Views.Widgets.ClipboardView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Droppable
 
   id: "coreon-clipboard"
   className: "widget"
@@ -14,16 +16,13 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     "click .clear": "clear"
     "drop": "onDropItem"
 
-  _concept_label_views: []
-
   initialize: ->
-    @listenTo @collection(), "add reset remove", @render
-    @$el.droppable
+    @labels = []
+
+    @$el.html @template()
+    @droppableOn @$("ul"), "ui-droppable-clipboard",
       accept: (el) => @dropItemAcceptance(el)
-      activeClass: "ui-state-highlight"
-      tolerance: "pointer"
-      over: (evt, ui) => @onDropItemOver(evt, ui)
-      out: (evt, ui) => @onDropItemOut(evt, ui)
+    @listenTo @collection(), "add reset remove", @render
 
   dropItemAcceptance: (item) ->
     not @collection().get item.data "drag-ident"
@@ -34,23 +33,16 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     model = Coreon.Models.Concept.find id
     @collection().add model
 
-  onDropItemOver: (evt, ui) ->
-    @$el.addClass "ui-state-hovered"
-    ui.helper.addClass "ui-droppable-clipboard"
-
-  onDropItemOut: (evt, ui) ->
-    @$el.removeClass "ui-state-hovered"
-    ui.helper.removeClass "ui-droppable-clipboard"
-
   render: ->
-    clip.remove() while clip = @_concept_label_views.pop()
+    label.remove() for label in @labels
+    @labels = []
 
-    @$el.html @template()
-    ul = @$("ul")
+    ul = @$("ul").empty()
 
     for clip in @collection().models
-      view = new Coreon.Views.Concepts.ConceptLabelView model:clip
+      view = new Coreon.Views.Concepts.ConceptLabelView model: clip
       ul.append $('<li>').append view.render().$el
+      @labels.push view
     @
 
   collection: ->
