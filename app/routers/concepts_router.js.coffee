@@ -23,7 +23,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
   show: (repository, id) ->
     @view.repository repository
-    concept = Coreon.Models.Concept.find id
+    concept = Coreon.Models.Concept.find id, fetch: yes
     @view.switch new Coreon.Views.Concepts.ConceptView
       model: concept
     Coreon.Collections.Hits.collection().reset [ result: concept ]

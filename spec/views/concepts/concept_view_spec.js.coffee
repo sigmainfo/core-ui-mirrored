@@ -1030,8 +1030,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         Coreon.application = repository: -> id: "8765jhgf"
         @history = Backbone.history
         Backbone.history = navigate: sinon.spy()
-        @view.model.destroy = sinon.stub().returns
-          done: (@done) =>
+        @view.model.destroy = sinon.spy()
         @view.delete @event
 
       afterEach ->
@@ -1041,8 +1040,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       it "redirects to repository root when done", ->
         Coreon.application = repository: -> id: "8765jhgf"
         $(".confirm").click()
-        Backbone.history.navigate.should.not.have.been.called
-        @done()
         Backbone.history.navigate.should.have.been.calledOnce
         Backbone.history.navigate.should.have.been.calledWith "/8765jhgf", trigger: true
       
@@ -1050,7 +1047,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         Coreon.application
         $(".confirm").click()
         @view.model.destroy.should.have.been.calledOnce
-        @view.model.destroy.should.have.been.calledWith wait: true
 
       it "notifies about destruction", ->
         I18n.t.withArgs("notifications.concept.deleted").returns "baaam!"

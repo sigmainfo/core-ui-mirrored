@@ -73,9 +73,14 @@ h2.concept-label {
         }
       }
     }
-    &.ui-state-hovered {
+    &.ui-state-highlight {
       ul {
         background-color: rgba($button-color, 0.4);
+      }
+    }
+    &.ui-state-hovered {
+      ul {
+        background-color: rgba($button-color, 0.6);
       }
     }
   }
