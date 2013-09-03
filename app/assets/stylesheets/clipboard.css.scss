@@ -24,17 +24,14 @@
         @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
       }
     }
-  }
-  
-  &.ui-state-highlight {
-    ul {
+
+    &.ui-state-highlight {
       @include droparea;
       margin: 0 4px 0 3px;
       border-top: none;
     }
-  }
-  &.ui-state-hovered {
-    ul {
+
+    &.ui-state-hovered {
       background-color: rgba($button-color, 0.4);
     }
   }
