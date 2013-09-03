@@ -11,13 +11,15 @@
       %ul
     -if @editable
       .broader.ui-droppable
-        %ul
+        .catch-disconnect
+          %ul
     .concept-label.hit.self
     .narrower.static
       %ul
     -if @editable
       .narrower.ui-droppable
-        %ul
+        .catch-disconnect
+          %ul
 
   -if @editable
     .submit

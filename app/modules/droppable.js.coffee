@@ -33,6 +33,7 @@ Coreon.Modules.Droppable =
     _dropzone = $(el)
 
     defaults =
+      greedy: true
       activeClass: "ui-state-highlight"
       hoverClass: "ui-state-hovered"
       tolerance: "pointer"
@@ -41,6 +42,7 @@ Coreon.Modules.Droppable =
 
     options = _.extend defaults, options
     _dropzone.droppable options
+    _dropzone.droppable "enable"
 
   droppableOff: (el)->
     _dropzone = $(el)
