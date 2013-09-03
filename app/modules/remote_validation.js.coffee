@@ -24,7 +24,7 @@ onError = (model, xhr, options) ->
   for attr, attrErrors of response
     unless attrErrors.length is 0
       hasErrors = true
-      remoteError[attr] = attrErrors 
+      remoteError[attr] = attrErrors
   @remoteError = if hasErrors then remoteError else null
 
 onSync = ->

@@ -28,6 +28,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the repository root page' do
+    page.should have_css(".repository h2.name")
     page.current_path.should == "/#{@repository.id}"
   end
 

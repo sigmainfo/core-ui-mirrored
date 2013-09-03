@@ -61,30 +61,51 @@ div.concept {
     color: $hover-color;
   }
   &.remove {
+    color: $greytext-color;
     &:before {
       background-position: -53px -650px;
     };
   }
 }
 
-form.update {
-  background-color: darken(rgba($button-color, 0.1), 4);
-}
 
-form.create {
-  .submit {
-    margin-top: 60px;
+.concept.edit .broader-and-narrower {
+  
+  form.static {
+    .submit {
+      display: none;
+    }
+  }
+
+  form.active {
+    overflow: hidden;
+    background-color: darken(rgba($button-color, 0.12), 4);
+    margin-left: -5px;
+    margin-bottom: 8px;
+    .broader.ui-droppable {
+      padding-left: 5px;
+    }
+    .self.ui-droppable {
+      max-width: 22%;
+    }
+    .narrower.ui-droppable {
+      max-width: 30%;
+    }
+    .submit {
+      margin-top: 1px;
+    }
   }
 }
 
-form.create, form.update{
+
+.concept form {
 
    &.term, fieldset {
      position: relative;
      border: 0;
      padding-top: 18px;
      margin-bottom: 26px;
-     background-color: darken(rgba($button-color, 0.1), 12);
+     background-color: darken(rgba($button-color, 0.12), 4);
    }
    &.term {
      margin-bottom: 4px;
@@ -228,94 +249,94 @@ form.create.term {
 }
  
 .concept  {
-     .edit a {
-       font-size: 0.9em;
-       color:$greencolor;
-       display: inline-block;
-       margin-right: 10px;
-       float: right;
-       position: relative;
-       top: -10px;
+  .edit a {
+   font-size: 0.9em;
+   color:$greencolor;
+   display: inline-block;
+   margin-right: 10px;
+   float: right;
+   position: relative;
+   top: -10px;
 
-       &:before {
-         @include before-icon;
-         float: left;
-         margin-right: 5px;
-         background-position: -2px -351px;
-         @include edit-button;
-       };
-       &:hover {
-         color: $button-color;
-         &:before {
-           background-color: $button-color;
-           @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-         };
-       }
-     }
-     a.remove-term, a.remove-property, a.delete-concept {
-       &:before {
-         background-position: -52px -351px;
-       };
-     }
-     a.remove-term, a.remove-property {
-       position: absolute;
-       top: 8px;
-       right: 0;
-     }
+   &:before {
+     @include before-icon;
+     float: left;
+     margin-right: 5px;
+     background-position: -2px -351px;
+     @include edit-button;
+   };
+   &:hover {
+     color: $button-color;
+     &:before {
+       background-color: $button-color;
+       @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+     };
+   }
+  }
+  a.remove-term, a.remove-property, a.delete-concept {
+   &:before {
+     background-position: -52px -351px;
+   };
+  }
+  a.remove-term, a.remove-property {
+   position: absolute;
+   top: 8px;
+   right: 0;
+  }
 
-     a.remove-term {
-       right: 24px;
-       margin-right: 4px;
-       width: 16px;
-       overflow: hidden;
-       top: 6px;
-       text-indent: -2000px;
-     }
-     a.edit-term {
-       position: absolute;
-       top: 6px;
-       right: 0;
-     }
-     a.delete-concept {
-       float: right;
-       top: 0px;
-     }
-     a.add-narrower {
-       position: absolute;
-       top: 8px;
-       right: 0;
-     }
-     .terms a.remove-property {
-       width: 16px;
-       overflow: hidden;
-       text-indent: -2000px;
-     }
-     a.edit-properties, a.edit-term {
-       position: absolute;
-       top: 6px;
-       right: 6px;
-       width: 16px;
-       overflow: hidden;
-       text-indent: -5000px;
-       margin-right: 0;
-       &:before {
-         background-position: -52px -502px;
-       };
-     }
+  a.remove-term {
+   right: 24px;
+   margin-right: 4px;
+   width: 16px;
+   overflow: hidden;
+   top: 6px;
+   text-indent: -2000px;
+  }
+  a.edit-term {
+   position: absolute;
+   top: 6px;
+   right: 0;
+  }
+  a.delete-concept {
+   float: right;
+   top: 0px;
+  }
+  a.add-narrower {
+   position: absolute;
+   top: 6px;
+   right: 24px;
+  }
+  .terms a.remove-property {
+   width: 16px;
+   overflow: hidden;
+   text-indent: -2000px;
+  }
+  a.edit-properties, a.edit-term, a.edit-connections {
+   position: absolute;
+   top: 6px;
+   right: 6px;
+   width: 16px;
+   overflow: hidden;
+   text-indent: -5000px;
+   margin-right: 0;
+   &:before {
+     background-position: -52px -502px;
+   };
+  }
 }
 
 // for edit mode
 .concept.show {
-  .edit {
+  .edit, .submit {
     display: none;
   }
 
 }
 
 .concept.edit {
-  &>section {
+  &>section, form>section {
     background-color: rgba($greencolor, 0.05);
-    padding-left: 5px;
+
   }
   .button.edit-concept {
     background-color: $beigecolor;
@@ -325,12 +346,6 @@ form.create.term {
     };
   }
   
-  .terms {
-    .language li{
-      background-color: rgba($greencolor, 0.08);
-    }
-
-  }
   .terms >.edit {
     height:20px;
     .add-term {
@@ -339,6 +354,8 @@ form.create.term {
   }
   
   .language li.term {
+    
+    background-color: rgba($greencolor, 0.05);
     .edit {
       height: 12px;
     }

@@ -15,7 +15,7 @@
 .ui-draggable-dragged {
   @include opacity(0.7);
 }
-.ui-droppable-clipboard {
+.ui-droppable-clipboard, .ui-droppable-connect, .ui-droppable-disconnect {
   &:after {
     @include before-icon;
     position: absolute;
@@ -26,7 +26,64 @@
     background-position: 0px -700px;
   };
 }
+.ui-droppable-connect {
+  &:after {
+    background-position: 0px -750px;
+  };
+}
+
+.ui-droppable-disconnect {
+  &:after {
+    background-position: -50px -750px;
+  };
+}
+.ui-droppable-hovered {
+  &:after {
+    display: none;
+  };
+}
 
 h2.concept-label {
   font-size: 1em;
 }
+
+.concept .broader-and-narrower {
+  form.static .list {
+    .ui-droppable {
+      display: none;
+    }
+  }
+  form.active {
+    .static {
+      display: none;
+    }
+  }
+}
+
+.broader-and-narrower {
+  .list .ui-droppable {
+    ul {
+      @include droparea;
+      padding: 4px 6px 24px 6px;
+      @include retina-stripes("white");
+      li {
+        margin: 2px 0;
+        .concept-label {
+          @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
+        }
+      }
+      &.ui-state-highlight {
+          background-color: rgba($button-color, 0.4);
+
+      }
+      &.ui-state-hovered {
+          background-color: rgba($button-color, 0.6);
+      }
+    }
+
+  }
+  .list.ui-state-hovered {
+    background-color: rgba($button-color, 0.1);
+  }
+}
+

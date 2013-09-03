@@ -24,19 +24,14 @@
         @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
       }
     }
-  }
-  
-  &.ui-state-highlight {
-    ul {
-      background-color: rgba($button-color, 0.3);
-      @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 3px, false, inset);
-      border-top: none;
+
+    &.ui-state-highlight {
+      @include droparea;
       margin: 0 4px 0 3px;
-      padding: 9px 16px 8px 17px;
+      border-top: none;
     }
-  }
-  &.ui-state-hovered {
-    ul {
+
+    &.ui-state-hovered {
       background-color: rgba($button-color, 0.4);
     }
   }

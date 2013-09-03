@@ -50,4 +50,6 @@ group :test, :development do
   gem 'capybara-webkit'
   gem 'rspec-rails', require: false
   gem 'pry'
+  gem 'pry-theme'
+  gem 'awesome_print'
 end
