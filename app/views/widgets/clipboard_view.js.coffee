@@ -37,7 +37,7 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
     label.remove() for label in @labels
     @labels = []
 
-    ul = @$("ul")
+    ul = @$("ul").empty()
 
     for clip in @collection().models
       view = new Coreon.Views.Concepts.ConceptLabelView model: clip

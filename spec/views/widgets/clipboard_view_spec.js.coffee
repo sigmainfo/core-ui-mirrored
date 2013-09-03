@@ -91,7 +91,7 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       @view.render()
       @view.labels.should.eql []
       @labels[0].remove.should.have.been.calledOnce
-      
+      @view.$("ul").should.be.empty
 
   describe "clear()", ->
   
