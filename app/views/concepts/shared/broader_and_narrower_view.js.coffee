@@ -88,12 +88,12 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     id = $(item).data("drag-ident")     #TODO: .toString breaks it O_o
     temporaryAddedIds = ($(el).data("drag-ident") for el in @$(".list li [data-new-connection=true]"))
     temporaryRemovedIds = ($(el).data("drag-ident") for el in @$(".list li [data-deleted-connection=true]"))
-    temporaryRemovedIds.indexOf(id) >= 0 || (@model.acceptsConnection(id) && temporaryAddedIds.indexOf(id) == -1)
+    (temporaryRemovedIds.indexOf(id) >= 0 && temporaryAddedIds.indexOf(id) == -1) || (@model.acceptsConnection(id) && temporaryAddedIds.indexOf(id) == -1)
 
   onDrop: (broaderNarrower, item)->
     ident = item.data("drag-ident")
 
-    if (existing = @$("[data-drag-ident=#{ident}]")).length > 0
+    if (existing = @$(".#{broaderNarrower} [data-drag-ident=#{ident}]")).length > 0
       existing.attr "data-deleted-connection", false
       existing.data "deleted-connection", false
       existing.parents("li").show()
@@ -118,6 +118,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     for el in @$("form li").has("[data-drag-ident=#{ident}]")
       $("[data-drag-ident]", el).attr "data-deleted-connection", true
       $(el).hide()
+      _.defer => @$("[data-drag-ident=#{ident}][data-new-connection=true]").parents("li").remove()
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
