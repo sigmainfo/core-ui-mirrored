@@ -264,10 +264,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.render()
 
       it "creates no drop zones", ->
-        should.not.exist @view.$(".broader.ui-droppable").data("uiDroppable")
-        should.not.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
-        should.not.exist @view.$(".broader.static").data("uiDroppable")
-        should.not.exist @view.$(".narrower.static").data("uiDroppable")
+        should.not.exist @view.$(".broader.ui-droppable ul").data("uiDroppable")
+        should.not.exist @view.$(".narrower.ui-droppable ul").data("uiDroppable")
+        should.not.exist @view.$(".broader.static ul").data("uiDroppable")
+        should.not.exist @view.$(".narrower.static ul").data("uiDroppable")
 
     context "inside edit mode", ->
       before ->
@@ -289,10 +289,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$(".narrower ul").append $("<li>").append @el_narrow
         @view.toggleEditMode()
 
-        @acceptFunBroad = @view.$(".broader.ui-droppable").data("uiDroppable").options.accept
-        @acceptFunNarrow = @view.$(".narrower.ui-droppable").data("uiDroppable").options.accept
-        @dropFunBroad = @view.$(".broader.ui-droppable").data("uiDroppable").options.drop
-        @dropFunNarrow = @view.$(".narrower.ui-droppable").data("uiDroppable").options.drop
+        @acceptFunBroad = @view.$(".broader.ui-droppable ul").data("uiDroppable").options.accept
+        @acceptFunNarrow = @view.$(".narrower.ui-droppable ul").data("uiDroppable").options.accept
+        @dropFunBroad = @view.$(".broader.ui-droppable ul").data("uiDroppable").options.drop
+        @dropFunNarrow = @view.$(".narrower.ui-droppable ul").data("uiDroppable").options.drop
 
 
       afterEach ->
@@ -301,10 +301,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
 
       it "makes drop zones available", ->
-        should.exist @view.$(".broader.ui-droppable").data("uiDroppable")
-        should.exist @view.$(".narrower.ui-droppable").data("uiDroppable")
-        should.not.exist @view.$(".broader.static").data("uiDroppable")
-        should.not.exist @view.$(".narrower.static").data("uiDroppable")
+        should.exist @view.$(".broader.ui-droppable ul").data("uiDroppable")
+        should.exist @view.$(".narrower.ui-droppable ul").data("uiDroppable")
+        should.not.exist @view.$(".broader.static ul").data("uiDroppable")
+        should.not.exist @view.$(".narrower.static ul").data("uiDroppable")
 
       it "has drop methods", ->
         @dropFunBroad.should.be.a "function"

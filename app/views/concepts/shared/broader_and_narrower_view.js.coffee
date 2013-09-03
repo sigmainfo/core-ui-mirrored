@@ -150,10 +150,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @$("form").addClass("active")
       @$("form").removeClass("static")
 
-      @droppableOn @$(".broader.ui-droppable"), "ui-droppable-connect",
+      @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
         drop: (evt, ui)=> @onDrop("broader", ui.draggable)
-      @droppableOn @$(".narrower.ui-droppable"), "ui-droppable-connect",
+      @droppableOn @$(".narrower.ui-droppable ul"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
         drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
 
