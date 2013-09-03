@@ -36,6 +36,21 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
     find('.narrower.ui-droppable li a.concept-label.ui-draggable').drag_to drop
   end
 
+  step 'I drag "camera" back to the sub concept list' do
+    drop = find(".concept.edit .broader-and-narrower .narrower.ui-droppable ul")
+    find("#coreon-clipboard li .concept-label", text: "camera").drag_to drop
+  end
+
+  step 'I drag "camera" to the super concept list' do
+    drop = find(".concept.edit .broader-and-narrower .broader.ui-droppable ul")
+    find("#coreon-clipboard li .concept-label", text: "camera").drag_to drop
+  end
+
+  step 'I drag "camera" out of the super concept list' do
+    drop = find(".concept.edit .broader-and-narrower .list.ui-droppable")
+    find('.broader.ui-droppable li a.concept-label.ui-draggable', text: "camera").drag_to drop
+  end
+
   step 'I should see no super concept anymore' do
     page.should have_no_css('.broader.ui-droppable li')
   end
@@ -51,6 +66,12 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
 
   step 'I should see "camera" as narrower concept' do
     within ".concept.edit .broader-and-narrower .narrower.ui-droppable" do
+      find "li .concept-label", text: "camera"
+    end
+  end
+
+  step 'I should see "camera" as broader concept' do
+    within ".concept.edit .broader-and-narrower .broader.ui-droppable" do
       find "li .concept-label", text: "camera"
     end
   end
@@ -87,5 +108,9 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
   step 'I should not be in edit mode anymore' do
     page.should have_css(".broader-and-narrower form.static")
     page.should have_no_css(".broader-and-narrower form.active")
+  end
+
+  step 'I drag "camera" to the clipboard' do
+    find(".narrower.ui-droppable .concept-label", text: "camera").drag_to find("#coreon-clipboard .ui-droppable")
   end
 end
