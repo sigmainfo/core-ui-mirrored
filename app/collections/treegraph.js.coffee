@@ -3,6 +3,10 @@
 
 class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
 
+  initialize: ->
+    super
+    @on "change:label", @_updateLabel, @
+
   tree: ->
     @_createTree() unless @_tree?
     @_tree
@@ -26,7 +30,7 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
   _getDatum: (model) ->
     @_data[model.id] ?=
       id: model.id
-      model: model
+      label: model.get "label"
       children: []
 
   _createDatumEdges: (datum) ->
@@ -55,3 +59,6 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     @_tree    = null
     @_parents = null
     @_data    = null
+
+  _updateLabel: (model, value)->
+    @_data?[model.id].label = value

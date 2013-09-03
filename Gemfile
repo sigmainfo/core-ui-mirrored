@@ -51,5 +51,6 @@ group :test, :development do
   gem 'rspec-rails', require: false
   gem 'pry'
   gem 'pry-theme'
+  gem 'pry-rails'
   gem 'awesome_print'
 end

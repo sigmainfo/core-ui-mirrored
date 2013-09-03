@@ -17,11 +17,10 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.tree().root.should.eql children: []
 
      it "accumulates data from models", ->
-        @graph.reset [ _id: "node" ], silent: true
-        @graph.tree()
-        node = @graph.get "node"
-        @graph.tree().should.have.deep.property "root.children[0].id", "node"
-        @graph.tree().should.have.deep.property "root.children[0].model", node
+        @graph.reset [ _id: "123", label: "node" ], silent: true
+        node = @graph.get "123"
+        @graph.tree().should.have.deep.property "root.children[0].id", "123"
+        @graph.tree().should.have.deep.property "root.children[0].label", "node"
         @graph.tree().should.have.deep.property("root.children[0].children").with.length 0
 
      it "creates complete branch downto leaves", ->
@@ -100,4 +99,10 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.get("source").set "targetIds", []
         @graph.tree().should.have.deep.property "root.children.length", 2
 
-        
+     it "updates labels on data when they changed on the model", ->
+       @graph.reset [ _id: "123", label: "before123" ], silent: true
+       node = @graph.get "123"
+       @graph.tree()
+       node.set "label", "after123"
+       @graph.tree().root.children[0].should.have.property "label", "after123"
+         

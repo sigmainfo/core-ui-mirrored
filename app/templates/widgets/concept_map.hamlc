@@ -15,4 +15,6 @@
         %feMerge
           %feMergeNode{ in: "drop-shadow" }
           %feMergeNode{ in: "SourceGraphic" }
+      %symbol#coreon-node-label-background
+        %rect.background{ width: 120, height: 16 }
     %g.concept-map

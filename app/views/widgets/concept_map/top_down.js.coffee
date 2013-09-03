@@ -4,10 +4,6 @@
 
 class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
-  initialize: ->
-    @stencil = d3.svg.diagonal()
-    super
-
   renderNodes: (root, options) ->
     @layout.size [ @size[1], @size[0] ]
 
@@ -47,4 +43,30 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
       )
       .attr( "transform", (datum) ->
         "translate(#{datum.y}, #{datum.x})"
+      )
+
+  renderEdges: (edges, options) ->
+
+    edges = @selection.selectAll(".concept-edge")
+      .data( edges, (datum) ->
+        "#{datum.source.model.cid}|#{datum.target.model.cid}"
+      )
+    
+    edges.enter()
+      .insert("path", ".concept-node")
+      .attr("class", "concept-edge")
+
+    edges.exit()
+      .remove()
+
+    edges
+      .attr("d", (datum) =>
+        sourceBox = @views[datum.source.model.cid].box()
+        @diagonal
+          source:
+            x: datum.source.y + sourceBox.height / 2
+            y: datum.source.x + sourceBox.width
+          target:
+            x: datum.target.y + sourceBox.height / 2
+            y: datum.target.x
       )

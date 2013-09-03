@@ -1,7 +1,6 @@
 #= require spec_helper
 #= require views/widgets/concept_map_view
 
-
 describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   beforeEach ->
@@ -16,9 +15,14 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       edges: []
 
     sinon.stub Coreon.Views.Widgets.ConceptMap, "LeftToRight", =>
-      @leftToRight = render: => @lefttoright
+      @leftToRight = 
+        resize: sinon.spy()
+        render: => @lefttoright
+
     sinon.stub Coreon.Views.Widgets.ConceptMap, "TopDown", =>
-      @topDown = render: => @topDown
+      @topDown =
+        resize: sinon.spy()
+        render: => @topDown
 
     @view = new Coreon.Views.Widgets.ConceptMapView
       model: nodes
@@ -84,7 +88,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "creates resize handle", ->
         @view.initialize()
-        @view.$el.should.have ".ui-resizable-s"
+        @view.$el.should.have "svg defs symbol#coreon-node-label-background"
+        @view.$("#coreon-node-label-background").should.have.attr "attr", value
+
+      it "creates symbol for label backgrounds", ->
+        @view.initialize()
+        
 
     context "restoring from session", ->
 
@@ -118,15 +127,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.renderStrategy = strategy
       @view.render()
       strategy.render.should.have.been.calledWith tree
-
-    it "passes size to strategy", ->
-      @view.model.tree = -> null
-      strategy = render: sinon.spy()
-      @view.renderStrategy = strategy
-      @view.options.svgOffset = 12
-      @view.resize 456, 234
-      @view.render()
-      strategy.render.should.have.been.calledWith null, size: [456, 222]
 
     context "updates", ->
       
@@ -228,7 +228,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @clock = sinon.useFakeTimers()
       @view.$el.width 160
       @view.$el.height 120
-      @view.renderStrategy = render: ->
+      @view.renderStrategy =
+        render: -> @
+        resize: sinon.spy()
 
     afterEach ->
       localStorage.getItem.restore()
@@ -265,6 +267,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       svg = @view.$("svg")
       svg.should.have.attr "width", "200px"
       svg.should.have.attr "height", "282px"
+
+    it "resizes render strategy", ->
+      @view.renderStrategy.resize.reset()
+      @view.resize 200, 300
+      @view.renderStrategy.resize.should.have.been.calledOnce
 
     it "stores dimensions when finished", ->
       @view.resize 123, 334

@@ -23,7 +23,6 @@ describe "Coreon.Views.Widgets.ConceptMap.ConceptNodeListView", ->
           current_repository_id: "coffeebabe23"
       @view.model.id = "1234"
 
-
     it "is triggered by model changes", ->
       @view.render = sinon.spy()
       @view.initialize()
