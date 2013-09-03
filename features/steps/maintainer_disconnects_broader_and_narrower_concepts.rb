@@ -43,4 +43,49 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
   step 'I should see no sub concept anymore' do
     page.should have_no_css('.narrower.ui-droppable li')
   end
+
+  step 'I should see no broader and narrower concepts anymore' do
+    page.should have_no_css('.broader li .concept-label')
+    page.should have_no_css('.narrower li .concept-label')
+  end
+
+  step 'I should see "camera" as narrower concept' do
+    within ".concept.edit .broader-and-narrower .narrower.ui-droppable" do
+      find "li .concept-label", text: "camera"
+    end
+  end
+
+  step 'I should see "surveillance" as broader concept' do
+    within ".concept.edit .broader-and-narrower .broader.ui-droppable" do
+      find "li .concept-label", text: "surveillance"
+    end
+  end
+
+  step 'I click Save' do
+    within ".concept.edit .broader-and-narrower form.active" do
+      click_link_or_button "Save"
+    end
+  end
+
+  step 'I click Cancel' do
+    within ".concept.edit .broader-and-narrower form.active" do
+      click_link_or_button "Cancel"
+    end
+  end
+
+  step 'I click Reset' do
+    within ".concept.edit .broader-and-narrower form.active" do
+      click_link_or_button "Reset"
+    end
+  end
+
+  step 'still see "surveillance" as broader and "camera" as narrower concept' do
+      find "form.static .broader li .concept-label", text: "surveillance"
+      find "form.static .narrower li .concept-label", text: "camera"
+  end
+
+  step 'I should not be in edit mode anymore' do
+    page.should have_css(".broader-and-narrower form.static")
+    page.should have_no_css(".broader-and-narrower form.active")
+  end
 end

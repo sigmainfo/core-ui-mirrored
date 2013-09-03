@@ -18,3 +18,29 @@ Feature: maintainer disconnects broader and narrower concepts
     Then I should see no super concept anymore
     When I drag "camera" out of the sub concept list
     Then I should see no sub concept anymore
+
+  Scenario: reset and cancel
+    Given I am on the show concept page of "panopticum"
+    And I click "Edit concept"
+    And I click "Edit concept connections"
+    And I drag "surveillance" out of the super concept list
+    And I drag "camera" out of the sub concept list
+    When I click Reset
+    Then I should see "surveillance" as broader concept
+    And I should see "camera" as narrower concept
+    When I drag "surveillance" out of the super concept list
+    And I drag "camera" out of the sub concept list
+    And I click Cancel
+    Then I should not be in edit mode anymore
+    But still see "surveillance" as broader and "camera" as narrower concept
+
+  Scenario: save changes
+    Given I am on the show concept page of "panopticum"
+    And I click "Edit concept"
+    And I click "Edit concept connections"
+    And I drag "surveillance" out of the super concept list
+    And I drag "camera" out of the sub concept list
+    When I click Save
+    Then I should not be in edit mode anymore
+    And I should see no broader and narrower concepts anymore
+

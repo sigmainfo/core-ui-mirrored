@@ -49,12 +49,12 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'I drag the clipped concept to the subconcept dropzone' do
-    drop = find(".concept.edit .broader-and-narrower .narrower.ui-droppable")
+    drop = find(".concept.edit .broader-and-narrower .narrower.ui-droppable ul")
     find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to drop
   end
 
   step 'I drag the clipped concept to the superconcept dropzone' do
-    drop = find(".concept.edit .broader-and-narrower .broader.ui-droppable")
+    drop = find(".concept.edit .broader-and-narrower .broader.ui-droppable ul")
     find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to drop
   end
 
@@ -115,9 +115,5 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
     within ".concept.edit .broader-and-narrower form.active" do
       click_link_or_button "Reset"
     end
-  end
-
-  step 'I debug' do
-    binding.pry
   end
 end
