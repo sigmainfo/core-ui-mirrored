@@ -173,4 +173,4 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     else
       @$("form").removeClass("active")
       @$("form").addClass("static")
-      @droppableOff @$(".ui-droppable")
+      @droppableOff(el) for el in @$(".ui-droppable") if $(el).data("uiDroppable")
