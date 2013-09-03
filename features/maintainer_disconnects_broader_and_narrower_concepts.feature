@@ -4,23 +4,17 @@ Feature: maintainer disconnects broader and narrower concepts
   I want to drag a connected concept
   Out of the connection list
 
-  Background:    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+  Background:
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am a maintainer of the repository
     And I am logged in
-    And a concept with label "panopticum" exists
-    And a superconcept with label "surveillance" exists
-    And a subconcept with label "camera" exists
+    And a concept with label "panopticum", superconcept "surveillance" and subconcept "camera" exists
 
-  Scenario: connect a concept as subconcept
-    Given I search for "panopticum"
-    And I drag the search result to the clipboard
-    And I search for "surveillance"
-    And I click on the search result
+  Scenario: disconnect broader and narrower concepts
+    Given I am on the show concept page of "panopticum"
     And I click "Edit concept"
     And I click "Edit concept connections"
-    And I drag the clipped concept to the subconcept dropzone
-    Then I should see "panopticum" unsaved as narrower concept
-    And I should see reset, cancel and save buttons
-    When I click save
-    Then the concept should have a new narrower connection
-
+    When I drag "surveillance" out of the super concept list
+    Then I should see no super concept anymore
+    When I drag "camera" out of the sub concept list
+    Then I should see no sub concept anymore
