@@ -86,15 +86,23 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   dropItemAcceptance: (item)->
     id = $(item).data("drag-ident")     #TODO: .toString breaks it O_o
-    temporaryIds = ($(el).data("drag-ident") for el in @$(".list li [data-new-connection=true]"))
-    @model.acceptsConnection(id) && temporaryIds.indexOf(id) == -1
+    temporaryAddedIds = ($(el).data("drag-ident") for el in @$(".list li [data-new-connection=true]"))
+    temporaryRemovedIds = ($(el).data("drag-ident") for el in @$(".list li [data-deleted-connection=true]"))
+    temporaryRemovedIds.indexOf(id) >= 0 || (@model.acceptsConnection(id) && temporaryAddedIds.indexOf(id) == -1)
 
   onDrop: (broaderNarrower, item)->
     ident = item.data("drag-ident")
+
+    if (existing = @$("[data-drag-ident=#{ident}]")).length > 0
+      existing.attr "data-deleted-connection", false
+      existing.data "deleted-connection", false
+      existing.parents("li").show()
+      return existing
+
     temporaryConcept = @createConcept ident
     temporaryConceptEl = temporaryConcept.render().$el
     temporaryConceptEl.attr "data-drag-ident", ident
-    temporaryConceptEl.attr "data-new-connection", "true"
+    temporaryConceptEl.attr "data-new-connection", true
     temporaryConceptEl.addClass "from-connection-list"
     listItem = $("<li>").append temporaryConceptEl
 
@@ -112,7 +120,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       $(el).hide()
 
   resetConceptConnections: (evt) ->
-    console.log "reset", @$(".list li").has("[data-new-connection=true]"), @$(".list li").has("[data-deleted-connection=true]")
     evt.preventDefault()
     evt.stopPropagation()
     $(el).remove() for el in @$(".list li").has("[data-new-connection=true]")
@@ -132,8 +139,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     for item in @$(".narrower.ui-droppable [data-drag-ident]")
       data.sub_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
-
-    console.log "save", data
 
     @model.save data,
       success: =>
