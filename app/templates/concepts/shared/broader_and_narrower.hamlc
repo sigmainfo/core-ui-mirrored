@@ -3,26 +3,22 @@
   .edit
     %a.edit-connections( href="javascript:void(0)" title="#{I18n.t('concept.edit_concept_connections')}" )= I18n.t('concept.edit_concept_connections')
     - if @can "create", Coreon.Models.Concept
-      %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
+      %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@model.id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
-%form.static( action="javascript:void(0)" novalidate )
+.list
+  .broader.static
+    %ul
+  .concept-label.hit.self
+  .narrower.static
+    %ul
+
+!= @form_for "concept", @model, null, ->
   .list
-    .broader.static
-      %ul
-    -if @editable
-      .broader.ui-droppable
-        .catch-disconnect
-          %ul
+    .broader.ui-droppable
+      .catch-disconnect
+        %ul
     .concept-label.hit.self
-    .narrower.static
-      %ul
-    -if @editable
-      .narrower.ui-droppable
-        .catch-disconnect
-          %ul
+    .narrower.ui-droppable
+      .catch-disconnect
+        %ul
 
-  -if @editable
-    .submit
-      %a.reset( href="javascript:void(0)" )= I18n.t 'form.reset'
-      %a.cancel( href="javascript:void(0)" )= I18n.t 'form.cancel'
-      %button( type="submit" )= I18n.t 'concept.update'
