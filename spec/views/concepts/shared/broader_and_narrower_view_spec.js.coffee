@@ -269,6 +269,15 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         should.not.exist @view.$(".broader.static ul").data("uiDroppable")
         should.not.exist @view.$(".narrower.static ul").data("uiDroppable")
 
+      it "doesn't disable concept-label links", ->
+        clickEvent = $.Event "click"
+        clickEvent.preventDefault = sinon.spy()
+        clickEvent.stopPropagation = sinon.spy()
+        @view.$(".concept-label").first().trigger clickEvent
+        clickEvent.preventDefault.should.not.have.been.called
+        clickEvent.stopPropagation.should.not.have.been.called
+
+
     context "inside edit mode", ->
       before ->
         @el_broad = $("<div data-drag-ident='c0ffee'>")
@@ -297,6 +306,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.model.set "super_concept_ids", [], silent: true
         @view.model.set "sub_concept_ids", [], silent: true
 
+      it "calls preventLabelClicks on click", ->
+        clickEvent = $.Event "click"
+        clickEvent.preventDefault = sinon.spy()
+        clickEvent.stopPropagation = sinon.spy()
+        @view.$('.concept-label').trigger clickEvent
+        clickEvent.preventDefault.should.have.been.calledOnce
+        clickEvent.stopPropagation.should.have.been.calledOnce
 
       it "makes drop zones available", ->
         should.exist @view.$(".broader.ui-droppable ul").data("uiDroppable")

@@ -23,6 +23,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     "click  .submit .cancel":   "cancelConceptConnections"
     "click  .submit .reset":    "resetConceptConnections"
     "submit  form":             "updateConceptConnections"
+    "click   .concept-label":   "preventLabelClicks"
     "click  .edit-connections": "toggleEditMode"
 
   concepts: null
@@ -206,3 +207,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @$("form").removeClass("active")
       @$("form").addClass("static")
       @droppableOff(el) for el in @$(".ui-droppable") if $(el).data("uiDroppable")
+
+  preventLabelClicks: (evt)->
+    if @editMode
+      evt.preventDefault()
+      evt.stopPropagation()
