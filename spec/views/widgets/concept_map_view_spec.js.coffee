@@ -93,6 +93,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
       it "creates symbol for label backgrounds", ->
         @view.initialize()
+        @view.$el.should.have "svg defs symbol#coreon-node-label-background"
+        @view.$("#coreon-node-label-background").should.have.attr "attr", value
         
 
     context "restoring from session", ->
