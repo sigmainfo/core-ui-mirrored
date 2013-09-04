@@ -5,7 +5,7 @@
     - if @can "create", Coreon.Models.Concept
       %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
-%form.static( novalidate )
+%form.static( action="javascript:void(0)" novalidate )
   .list
     .broader.static
       %ul
