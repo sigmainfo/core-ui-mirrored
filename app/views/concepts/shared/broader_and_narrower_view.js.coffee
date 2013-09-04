@@ -7,6 +7,7 @@
 #= require models/concept
 #= require models/notification
 #= require modules/droppable
+#= require helpers/form_for
 
 class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
@@ -31,7 +32,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   initialize: ->
     @broader = []
     @narrower = []
-    @$el.html @template id: @model.id, editable: !@model.isNew()
+    @$el.html @template model: @model, editable: !@model.isNew()
     @listenTo @model, "change:label", @renderSelf
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
