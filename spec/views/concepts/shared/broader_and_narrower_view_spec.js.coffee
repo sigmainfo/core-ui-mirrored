@@ -411,26 +411,32 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       sinon.stub @view.model, "save"
 
       @view.$el.html $('
-        <div class="broader static">
-          <ul>
-            <li><div data-drag-ident="c0ffee">Coffee</div></li>
-          </ul>
-        </div>
-        <div class="broader ui-droppable">
-          <ul>
-            <li><div data-drag-ident="c0ffee">Coffee</div></li>
-          </ul>
-        </div>
-        <div class="narrower static">
-          <ul>
-            <li><div data-drag-ident="deadbeef">Meat</div></li>
-          </ul>
-        </div>
-        <div class="narrower ui-droppable">
-          <ul>
-            <li><div data-drag-ident="deadbeef">Meat</div></li>
-          </ul>
-        </div>
+        <form class="active">
+          <div class="broader static">
+            <ul>
+              <li><div data-drag-ident="c0ffee">Coffee</div></li>
+            </ul>
+          </div>
+          <div class="broader ui-droppable">
+            <ul>
+              <li><div data-drag-ident="c0ffee">Coffee</div></li>
+            </ul>
+          </div>
+          <div class="narrower static">
+            <ul>
+              <li><div data-drag-ident="deadbeef">Meat</div></li>
+            </ul>
+          </div>
+          <div class="narrower ui-droppable">
+            <ul>
+              <li><div data-drag-ident="deadbeef">Meat</div></li>
+            </ul>
+          </div>
+          <div class="submit">
+            <a href="#">submitaction</a>
+            <button type="submit">submit</button>
+          </div>
+        </form>
       ')
 
       @view.model.set "super_concept_ids", ["c0ffee"], silent: true
@@ -464,4 +470,17 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       dataArg = @view.model.save.firstCall.args[0]
       dataArg.super_concept_ids.should.contain "c0ffee"
       dataArg.sub_concept_ids.should.contain "deadbeef"
+
+    it "disables all form fields", ->
+      @view.updateConceptConnections @event
+      @view.$("form").hasClass("disabled").should.be.true
+      $(el).hasClass("disabled").should.be.true for el in @view.$(".submit a")
+      $(el).should.be.disabled for el in @view.$("input,textarea,button")
+
+    xit "disables droppables", ->
+      @view.updateConceptConnections @event
+      for el in @view.$('.ui-droppable')
+        console.log el, $(el).data()
+        $(el).droppable("option", "disabled").should.be.true if $(el).data("uiDroppable")
+
 

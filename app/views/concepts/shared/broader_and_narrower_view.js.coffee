@@ -141,6 +141,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     for item in @$(".narrower.ui-droppable [data-drag-ident]")
       data.sub_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
 
+    @$("form, .submit a").addClass "disabled"
+    @$(".submit button").prop "disabled", true
+
     @model.save data,
       success: =>
         @toggleEditMode()
