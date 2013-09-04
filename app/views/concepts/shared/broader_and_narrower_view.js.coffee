@@ -5,6 +5,7 @@
 #= require templates/repositories/repository_label
 #= require views/concepts/concept_label_view
 #= require models/concept
+#= require models/notification
 #= require modules/droppable
 
 class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
@@ -144,8 +145,36 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @$("form, .submit a").addClass "disabled"
     @$(".submit button").prop "disabled", true
 
+    broaderAdded = []
+    broaderDeleted = []
+    narrowerAdded = []
+    narrowerDeleted = []
+
+    for el in @$('.broader.ui-droppable li [data-new-connection=true]')
+      ident = $(el).data("drag-ident")
+      broaderAdded.push ident unless broaderAdded.indexOf(ident) >= 0
+    for el in @$('.broader.ui-droppable li [data-deleted-connection=true]')
+      ident = $(el).data("drag-ident")
+      broaderDeleted.push ident unless broaderDeleted.indexOf(ident) >= 0
+
+    for el in @$('.narrower.ui-droppable li [data-new-connection=true]')
+      ident = $(el).data("drag-ident")
+      narrowerAdded.push ident unless narrowerAdded.indexOf(ident) >= 0
+    for el in @$('.narrower.ui-droppable li [data-deleted-connection=true]')
+      ident = $(el).data("drag-ident")
+      narrowerDeleted.push ident unless narrowerDeleted.indexOf(ident) >= 0
+
     @model.save data,
       success: =>
+        if (n = broaderAdded.length) > 0
+          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", n:n)
+        if (n = broaderDeleted.length) > 0
+          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", n:n)
+        if (n = narrowerAdded.length) > 0
+          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", n:n)
+        if (n = narrowerDeleted.length) > 0
+          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", n:n)
+
         @toggleEditMode()
       error: (model) =>
         model.once "error", @render, @
