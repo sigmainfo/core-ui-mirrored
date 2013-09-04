@@ -71,6 +71,10 @@ div.concept {
 
 .concept.edit .broader-and-narrower {
   
+  form.disabled {
+    @include opacity(0.4);
+  }
+  
   form.static {
     .submit {
       display: none;
