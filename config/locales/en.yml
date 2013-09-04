@@ -67,7 +67,7 @@ en:
     create: "Create concept"
     delete: "Delete concept"
     confirm_delete: "This concept including all terms will be deleted permanently!"
-    confirm_update: "Saving the concept will delete {{n}} properties permanently!"
+    confirm_update: "Saving the concept will delete {{count}} properties permanently!"
     update: "Save concept"
     add_to_clipboard: "Add to clipboard"
     remove_from_clipboard: "Remove from clipboard"
@@ -83,7 +83,7 @@ en:
     update: "Save term"
     delete: "Remove term"
     confirm_delete: "This term will be deleted permanently."
-    confirm_update: "Saving the term will delete {{n}} properties permanently!"
+    confirm_update: "Saving the term will delete {{count}} properties permanently!"
 
   terms:
     title: "Terms"
@@ -135,10 +135,18 @@ en:
     concept:
       created: 'Successfully created concept "{{label}}".'
       deleted: 'Successfully deleted concept "{{label}}".'
-      broader_deleted: 'Successfully disconnected {{n}} broader concepts.'
-      broader_added: 'Successfully connected {{n}} broader concepts.'
-      narrower_deleted: 'Successfully disconnected {{n}} narrower concepts.'
-      narrower_added: 'Successfully connected {{n}} narrower concepts.'
+      broader_deleted:
+        one: 'Successfully disconnected broader concept "{{label}}".'
+        other: 'Successfully disconnected {{count}} broader concepts.'
+      broader_added:
+        one: 'Successfully connected broader concept "{{label}}".'
+        other: 'Successfully connected {{count}} broader concepts.'
+      narrower_deleted:
+        one: 'Successfully disconnected narrower concept "{{label}}".'
+        other: 'Successfully disconnected {{count}} narrower concepts.'
+      narrower_added:
+        one: 'Successfully connected narrower concept "{{label}}".'
+        other: 'Successfully connected {{count}} narrower concepts.'
     term:
       created: 'Successfully created term "{{value}}".'
       saved: 'Successfully saved term "{{value}}".'

@@ -165,7 +165,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        message: I18n.t "concept.confirm_update", n: elements_to_delete.length
+        message: I18n.t "concept.confirm_update", count: elements_to_delete.length
         action: =>
           @saveConceptProperties attrs
     else
@@ -193,7 +193,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     if elements_to_delete.length > 0
       @confirm
         trigger: trigger
-        message: I18n.t "term.confirm_update", n: elements_to_delete.length
+        message: I18n.t "term.confirm_update", count: elements_to_delete.length
         action: =>
           @saveTerm(model, data)
     else
