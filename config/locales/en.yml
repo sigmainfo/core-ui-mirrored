@@ -71,7 +71,7 @@ en:
     update: "Save concept"
     add_to_clipboard: "Add to clipboard"
     remove_from_clipboard: "Remove from clipboard"
-    edit_concept_connections: "Edit concept connections"
+    edit_concept_connections: "Edit broader & narrower concepts"
 
   term:
     info: "System Info"
@@ -88,7 +88,6 @@ en:
   terms:
     title: "Terms"
     add: "Add term"
-
 
   properties:
     title: "Properties"
@@ -136,10 +135,10 @@ en:
     concept:
       created: 'Successfully created concept "{{label}}".'
       deleted: 'Successfully deleted concept "{{label}}".'
-      broader_deleted: 'Successfully deleted {{n}} broader connections.'
-      broader_added: 'Successfully added {{n}} broader connections.'
-      narrower_deleted: 'Successfully deleted {{n}} narrower connections.'
-      narrower_added: 'Successfully added {{n}} narrower connections.'
+      broader_deleted: 'Successfully disconnected {{n}} broader concepts.'
+      broader_added: 'Successfully connected {{n}} broader concepts.'
+      narrower_deleted: 'Successfully disconnected {{n}} narrower concepts.'
+      narrower_added: 'Successfully connected {{n}} narrower concepts.'
     term:
       created: 'Successfully created term "{{value}}".'
       saved: 'Successfully saved term "{{value}}".'

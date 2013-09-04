@@ -376,6 +376,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.dropItemAcceptance(@el_foreign).should.be.false
 
   describe "onDisconnect()", ->
+
     beforeEach ->
       sinon.stub @view, "createConcept", ->
         new Backbone.View model: new Backbone.Model
