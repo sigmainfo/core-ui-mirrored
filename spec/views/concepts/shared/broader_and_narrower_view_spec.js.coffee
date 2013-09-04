@@ -512,4 +512,53 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         console.log el, $(el).data()
         $(el).droppable("option", "disabled").should.be.true if $(el).data("uiDroppable")
 
+    context "notifications", ->
+      beforeEach ->
+        @view.$el.html $('
+          <form class="active">
+            <div class="broader static">
+              <ul>
+                <li><div data-drag-ident="c0ffee1">Coffee1</div></li>
+              </ul>
+            </div>
+            <div class="broader ui-droppable">
+              <ul>
+                <li><div data-drag-ident="c0ffee1" data-deleted-connection="true">Coffee1</div></li>
+                <li><div data-drag-ident="c0ffee2" data-new-connection="true">Coffee2</div></li>
+              </ul>
+            </div>
+            <div class="narrower static">
+              <ul>
+                <li><div data-drag-ident="deadbeef1">Meat1</div></li>
+              </ul>
+            </div>
+            <div class="narrower ui-droppable">
+              <ul>
+                <li><div data-drag-ident="deadbeef1" data-deleted-connection="true">Meat1</div></li>
+                <li><div data-drag-ident="deadbeef2" data-new-connection="true">Meat2</div></li>
+              </ul>
+            </div>
+            <div class="submit">
+              <a href="#">submitaction</a>
+              <button type="submit">submit</button>
+            </div>
+          </form>
+        ')
+
+      it "notifies about success", ->
+        console.log @view.el
+        I18n.t.withArgs("notifications.concept.broader_added", n:1).returns "one broader added"
+        I18n.t.withArgs("notifications.concept.broader_deleted", n:1).returns "one broader deleted"
+        I18n.t.withArgs("notifications.concept.narrower_added", n:1).returns "one narrower added"
+        I18n.t.withArgs("notifications.concept.narrower_deleted", n:1).returns "one narrower deleted"
+        Coreon.Models.Notification.info = sinon.spy()
+
+        @view.updateConceptConnections @event
+        @view.model.save.firstCall.args[1].success()
+
+        Coreon.Models.Notification.info.callCount.should.be 4
+        Coreon.Models.Notification.info.should.have.been.calledWith "one broader added"
+        Coreon.Models.Notification.info.should.have.been.calledWith "one broader deleted"
+        Coreon.Models.Notification.info.should.have.been.calledWith "one narrower added"
+        Coreon.Models.Notification.info.should.have.been.calledWith "one narrower deleted"
 

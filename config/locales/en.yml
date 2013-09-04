@@ -136,6 +136,10 @@ en:
     concept:
       created: 'Successfully created concept "{{label}}".'
       deleted: 'Successfully deleted concept "{{label}}".'
+      broader_deleted: 'Successfully deleted {{n}} broader connections.'
+      broader_added: 'Successfully added {{n}} broader connections.'
+      narrower_deleted: 'Successfully deleted {{n}} narrower connections.'
+      narrower_added: 'Successfully added {{n}} narrower connections.'
     term:
       created: 'Successfully created term "{{value}}".'
       saved: 'Successfully saved term "{{value}}".'

@@ -1,7 +1,7 @@
 %h3= I18n.t "concept.broader_and_narrower"
 -if @editable
   .edit
-    %a.edit-connections( href="javascript:void(0)" )= I18n.t('concept.edit_concept_connections')
+    %a.edit-connections( href="javascript:void(0)" title="#{I18n.t('concept.edit_concept_connections')}" )= I18n.t('concept.edit_concept_connections')
     - if @can "create", Coreon.Models.Concept
       %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
