@@ -509,7 +509,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     xit "disables droppables", ->
       @view.updateConceptConnections @event
       for el in @view.$('.ui-droppable')
-        console.log el, $(el).data()
         $(el).droppable("option", "disabled").should.be.true if $(el).data("uiDroppable")
 
     context "notifications", ->
@@ -546,7 +545,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         ')
 
       it "notifies about success", ->
-        console.log @view.el
         I18n.t.withArgs("notifications.concept.broader_added", n:1).returns "one broader added"
         I18n.t.withArgs("notifications.concept.broader_deleted", n:1).returns "one broader deleted"
         I18n.t.withArgs("notifications.concept.narrower_added", n:1).returns "one narrower added"
