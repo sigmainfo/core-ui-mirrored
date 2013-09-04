@@ -132,7 +132,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @resetConceptConnections(evt)
     @toggleEditMode()
 
-
   updateConceptConnections: (evt) ->
     evt.preventDefault()
     data = { super_concept_ids: [], sub_concept_ids: [] }
@@ -182,12 +181,14 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       attrs:
         concept: data
 
-
   toggleEditMode: ->
     @editMode = !@editMode
     if @editMode
       @$("form").addClass("active")
       @$("form").removeClass("static")
+
+      $(window).on "keydown.coreonSubmit", (event) =>
+        @$("form").submit() if event.keyCode is 13
 
       @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
         accept: (item)=> @dropItemAcceptance(item)
@@ -204,6 +205,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
         drop: (evt, ui)=> @onDisconnect(ui.draggable)
 
     else
+      $(window).off ".coreonSubmit"
       @$("form").removeClass("active")
       @$("form").addClass("static")
       @droppableOff(el) for el in @$(".ui-droppable") if $(el).data("uiDroppable")

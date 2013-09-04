@@ -10,6 +10,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       super_concept_ids: []
       sub_concept_ids: []
     model.acceptsConnection = -> true
+    model.url = "/concepts/123"
     @view = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: model
 
   afterEach ->
@@ -26,6 +27,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     @view.$el.should.be "section"
 
   describe "initialize()", ->
+
     beforeEach ->
       @repo = new Backbone.Model
       @session = new Backbone.Model
@@ -253,9 +255,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       
   describe "toggleEditMode()", ->
+
     beforeEach ->
       @view.model.id = "1234"
       @view.model.isNew = -> false
+
+    afterEach ->
+      $(window).off ".coreonSubmit"
  
     context "outside edit mode", ->
 
@@ -277,8 +283,16 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         clickEvent.preventDefault.should.not.have.been.called
         clickEvent.stopPropagation.should.not.have.been.called
 
+      it "does not submit form when pressing enter", ->
+        spy = sinon.spy()
+        @view.$("form").on "submit", spy
+        event = $.Event "keydown"
+        event.keyCode = 13
+        $(window).trigger event
+        spy.should.not.have.been.called
 
     context "inside edit mode", ->
+
       before ->
         @el_broad = $("<div data-drag-ident='c0ffee'>")
         @el_narrow = $("<div data-drag-ident='deadbeef'>")
@@ -313,6 +327,14 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$('.concept-label').trigger clickEvent
         clickEvent.preventDefault.should.have.been.calledOnce
         clickEvent.stopPropagation.should.have.been.calledOnce
+
+      it "submits form when pressing enter", ->
+        spy = sinon.spy()
+        @view.$("form").on "submit", spy
+        event = $.Event "keydown"
+        event.keyCode = 13
+        $(window).trigger event
+        spy.should.have.been.calledOnce
 
       it "makes drop zones available", ->
         should.exist @view.$(".broader.ui-droppable ul").data("uiDroppable")
@@ -422,6 +444,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
 
   describe "updateConceptConnections()", ->
+
     beforeEach ->
       @event = $.Event()
       sinon.stub @view.model, "save"
@@ -461,6 +484,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     afterEach ->
       @view.model.save.restore()
 
+    it "is triggered on submit", ->
+      @view.updateConceptConnections = sinon.spy()
+      @view.delegateEvents()
+      @view.$("form.active").submit()
+      @view.updateConceptConnections.should.have.been.calledOnce
+
     it "adds new ids", ->
       @view.$(".broader.ui-droppable ul").append $('<li><div data-drag-ident="bad1dea" data-new-connection="true"></div></li>')
       @view.$(".narrower.ui-droppable ul").append $('<li><div data-drag-ident="babee" data-new-connection="true"></div></li>')
@@ -496,7 +525,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     xit "disables droppables", ->
       @view.updateConceptConnections @event
       for el in @view.$('.ui-droppable')
-        console.log el, $(el).data()
         $(el).droppable("option", "disabled").should.be.true if $(el).data("uiDroppable")
 
     context "notifications", ->
@@ -533,7 +561,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         ')
 
       it "notifies about success", ->
-        console.log @view.el
         I18n.t.withArgs("notifications.concept.broader_added", n:1).returns "one broader added"
         I18n.t.withArgs("notifications.concept.broader_deleted", n:1).returns "one broader deleted"
         I18n.t.withArgs("notifications.concept.narrower_added", n:1).returns "one narrower added"
