@@ -9,7 +9,7 @@ gem 'rails', '= 3.2.12' # Needed for i18n-js with ruby 1.9
 if false
   gem 'core_client', path: '../core-client'
 else
-  gem 'core_client', git: 'git@devel.spom.net:core-client.git'
+  gem 'core_client', git: 'git@github.com:gmah/core-client.git'
 end
 
 # Gems used only for assets and not required

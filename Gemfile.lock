@@ -1,5 +1,5 @@
 GIT
-  remote: git@devel.spom.net:core-client.git
+  remote: git@github.com:gmah/core-client.git
   revision: a69fac6c630fe4694ae996d85ec54d7ca38dd0f4
   specs:
     core_client (0.0.3)
