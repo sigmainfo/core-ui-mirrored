@@ -13,6 +13,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require collections/clips
+#= require models/broader_and_narrower_form
 #= require models/notification
 #= require modules/helpers
 #= require modules/nested_fields_for
@@ -75,7 +76,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       editTerm: @editTerm
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
-      model: @model
+      model: new Coreon.Models.BroaderAndNarrowerForm @model
     @$el.children(".system-info").after broaderAndNarrower.render().$el
     @subviews.push broaderAndNarrower
 

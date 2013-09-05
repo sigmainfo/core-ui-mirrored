@@ -32,16 +32,43 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   initialize: ->
     @broader = []
     @narrower = []
-    @$el.html @template model: @model, editable: !@model.isNew()
     @listenTo @model, "change:label", @renderSelf
     @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
   render: ->
+    if @editMode
+      @activateDropzones()
+      $(window).on "keydown.coreonSubmit", (event) =>
+        @$("form").submit() if event.keyCode is 13
+    else
+      @deactivateDropzones()
+      $(window).off ".coreonSubmit"
+
+    @$el.html @template model: @model, editable: !@model.isNew(), editMode: @editMode
     @renderSelf()
     @renderBroader()
     @renderNarrower()
     @
+
+  activateDropzones: ->
+    @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
+      accept: (item)=> @dropItemAcceptance(item)
+      drop: (evt, ui)=> @onDrop("broader", ui.draggable)
+    @droppableOn @$(".narrower.ui-droppable ul"), "ui-droppable-connect",
+      accept: (item)=> @dropItemAcceptance(item)
+      drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
+
+    @droppableOn @$(".catch-disconnect"), "ui-droppable-hovered",
+      accept: (item)-> $(item).hasClass "from-connection-list"
+
+    @droppableOn @$(".list"), "ui-droppable-disconnect",
+      accept: (item)-> $(item).hasClass "from-connection-list"
+      drop: (evt, ui)=> @onDisconnect(ui.draggable)
+
+  deactivateDropzones: ->
+    @droppableOff(el) for el in @$(".ui-droppable") if $(el).data("uiDroppable")
+
 
   renderSelf: ->
     @$(".self").html @model.escape "label"
@@ -184,32 +211,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   toggleEditMode: ->
     @editMode = !@editMode
-    if @editMode
-      @$("form").addClass("active")
-      @$("form").removeClass("static")
-
-      $(window).on "keydown.coreonSubmit", (event) =>
-        @$("form").submit() if event.keyCode is 13
-
-      @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
-        accept: (item)=> @dropItemAcceptance(item)
-        drop: (evt, ui)=> @onDrop("broader", ui.draggable)
-      @droppableOn @$(".narrower.ui-droppable ul"), "ui-droppable-connect",
-        accept: (item)=> @dropItemAcceptance(item)
-        drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
-
-      @droppableOn @$(".catch-disconnect"), "ui-droppable-hovered",
-        accept: (item)-> $(item).hasClass "from-connection-list"
-
-      @droppableOn @$(".list"), "ui-droppable-disconnect",
-        accept: (item)-> $(item).hasClass "from-connection-list"
-        drop: (evt, ui)=> @onDisconnect(ui.draggable)
-
-    else
-      $(window).off ".coreonSubmit"
-      @$("form").removeClass("active")
-      @$("form").addClass("static")
-      @droppableOff(el) for el in @$(".ui-droppable") if $(el).data("uiDroppable")
+    @render()
 
   preventLabelClicks: (evt)->
     if @editMode
