@@ -14,16 +14,8 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
     
-  context "defaults", ->
-    it "has empty sets for added/removed relations", ->
-      @model.get("added_broader_relations").should.eql []
-      @model.get("deleted_broader_relations").should.eql []
-      @model.get("added_narrower_relations").should.eql []
-      @model.get("deleted_narrower_relations").should.eql []
-
-
   it "delivers original model id", ->
-    @model.get("concept_id").should.equal "c0ffee"
+    @model.id.should.equal "c0ffee"
 
   it "delivers superconcept ids", ->
     @model.get("super_concept_ids").should.be.instanceOf Array
@@ -53,4 +45,27 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
     @model.isNew().should.be.true
     @concept.isNew = -> false
     @model.isNew().should.be.false
+
+  it "ignores doublettes", ->
+    @model.set "super_concept_ids", ["daddaa", "daddaa"]
+    @model.get("super_concept_ids").should.eql ["daddaa"]
+    @model.set "sub_concept_ids", ["bibii", "bibii"]
+    @model.get("sub_concept_ids").should.eql ["bibii"]
+
+  it "doesn't propagate changes", ->
+    @concept.set "super_concept_ids", ["daddee"]
+    @concept.set "sub_concept_ids", ["babee"]
+    @model.set "super_concept_ids", ["daddee", "daddaa"]
+    @model.set "sub_concept_ids", ["babee", "bibii"]
+    @concept.get("super_concept_ids").should.eql ["daddee"]
+    @concept.get("sub_concept_ids").should.eql ["babee"]
+
+  it "keeps temporary changes when original concept changes", ->
+    @model.set "super_concept_ids", ["daddee", "daddaa"]
+    @concept.set "super_concept_ids", ["daddee", "diddie"]
+    @model.get("super_concept_ids").sort().should.eql ["daddaa", "daddee", "diddie"]
+
+    @model.set "sub_concept_ids", ["babee", "bibii"]
+    @concept.set "sub_concept_ids", ["babee", "bubuu"]
+    @model.get("sub_concept_ids").sort().should.eql ["babee", "bibii", "bubuu"]
 
