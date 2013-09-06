@@ -5,20 +5,22 @@
     - if @can "create", Coreon.Models.Concept
       %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@model.id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
-.list
-  .broader.static
-    %ul
-  .concept-label.hit.self
-  .narrower.static
-    %ul
+-if @editMode
+  != @form_for "concept", @model, {reset: yes}, ->
+    .list
+      .broader.ui-droppable
+        .catch-disconnect
+          %ul
+      .concept-label.hit.self
+      .narrower.ui-droppable
+        .catch-disconnect
+          %ul
 
-!= @form_for "concept", @model, null, ->
+-else
   .list
-    .broader.ui-droppable
-      .catch-disconnect
-        %ul
+    .broader.static
+      %ul
     .concept-label.hit.self
-    .narrower.ui-droppable
-      .catch-disconnect
-        %ul
+    .narrower.static
+      %ul
 
