@@ -44,8 +44,8 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
     click_link_or_button "Edit concept"
   end
 
-  step 'I click "Edit concept connections"' do
-    click_link_or_button "Edit concept connections"
+  step 'I click "Edit broader & narrower concepts"' do
+    click_link_or_button "Edit broader & narrower concepts"
   end
 
   step 'I drag the clipped concept to the subconcept dropzone' do

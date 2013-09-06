@@ -12,10 +12,14 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     model.acceptsConnection = -> true
     model.url = "/concepts/123"
     @view = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: model
+    concepts = {}
+    sinon.stub Coreon.Models.Concept, "find", (id) ->
+      concepts[id] ?= new Backbone.Model _id: id, label: id
 
   afterEach ->
     I18n.t.restore()
     Coreon.Helpers.can.restore()
+    Coreon.Models.Concept.find.restore()
 
   it "is a Backbone view", ->
    @view.should.be.an.instanceof Backbone.View
@@ -81,16 +85,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
   describe "render()", ->
 
     beforeEach ->
-      concepts = {}
-      sinon.stub Coreon.Models.Concept, "find", (id) ->
-        concepts[id] ?= new Backbone.Model _id: id
       sinon.stub Coreon.Views.Concepts, "ConceptLabelView", (options) =>
         @label = new Backbone.View model: options.model
         @label.render = sinon.stub().returns @label
         @label
 
     afterEach ->
-      Coreon.Models.Concept.find.restore()
       Coreon.Views.Concepts.ConceptLabelView.restore()
 
     it "can be chained", ->
@@ -392,6 +392,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.dropItemAcceptance(@el_foreign).should.be.false
 
   describe "onDisconnect()", ->
+
     beforeEach ->
       sinon.stub @view, "createConcept", ->
         new Backbone.View model: new Backbone.Model
@@ -528,6 +529,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         $(el).droppable("option", "disabled").should.be.true if $(el).data("uiDroppable")
 
     context "notifications", ->
+
       beforeEach ->
         @view.$el.html $('
           <form class="active">
@@ -561,10 +563,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         ')
 
       it "notifies about success", ->
-        I18n.t.withArgs("notifications.concept.broader_added", n:1).returns "one broader added"
-        I18n.t.withArgs("notifications.concept.broader_deleted", n:1).returns "one broader deleted"
-        I18n.t.withArgs("notifications.concept.narrower_added", n:1).returns "one narrower added"
-        I18n.t.withArgs("notifications.concept.narrower_deleted", n:1).returns "one narrower deleted"
+        I18n.t.withArgs("notifications.concept.broader_added", count: 1, label: "c0ffee2").returns "one broader added"
+        I18n.t.withArgs("notifications.concept.broader_deleted", count: 1, label: "c0ffee1").returns "one broader deleted"
+        I18n.t.withArgs("notifications.concept.narrower_added", count: 1, label: "deadbeef2").returns "one narrower added"
+        I18n.t.withArgs("notifications.concept.narrower_deleted", count: 1, label: "deadbeef1").returns "one narrower deleted"
         Coreon.Models.Notification.info = sinon.spy()
 
         @view.updateConceptConnections @event

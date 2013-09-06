@@ -180,28 +180,28 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     for el in @$('.broader.ui-droppable li [data-new-connection=true]')
       ident = $(el).data("drag-ident")
-      broaderAdded.push ident unless broaderAdded.indexOf(ident) >= 0
+      broaderAdded.push Coreon.Models.Concept.find(ident).get("label") unless broaderAdded.indexOf(ident) >= 0
     for el in @$('.broader.ui-droppable li [data-deleted-connection=true]')
       ident = $(el).data("drag-ident")
-      broaderDeleted.push ident unless broaderDeleted.indexOf(ident) >= 0
+      broaderDeleted.push Coreon.Models.Concept.find(ident).get("label") unless broaderDeleted.indexOf(ident) >= 0
 
     for el in @$('.narrower.ui-droppable li [data-new-connection=true]')
       ident = $(el).data("drag-ident")
-      narrowerAdded.push ident unless narrowerAdded.indexOf(ident) >= 0
+      narrowerAdded.push Coreon.Models.Concept.find(ident).get("label") unless narrowerAdded.indexOf(ident) >= 0
     for el in @$('.narrower.ui-droppable li [data-deleted-connection=true]')
       ident = $(el).data("drag-ident")
-      narrowerDeleted.push ident unless narrowerDeleted.indexOf(ident) >= 0
+      narrowerDeleted.push Coreon.Models.Concept.find(ident).get("label") unless narrowerDeleted.indexOf(ident) >= 0
 
     @model.save data,
       success: =>
         if (n = broaderAdded.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", n:n)
+          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: n, label: broaderAdded[0])
         if (n = broaderDeleted.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", n:n)
+          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: n, label: broaderDeleted[0])
         if (n = narrowerAdded.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", n:n)
+          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: n, label: narrowerAdded[0])
         if (n = narrowerDeleted.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", n:n)
+          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: n, label: narrowerDeleted[0])
 
         @toggleEditMode()
       error: (model) =>
