@@ -1,9 +1,10 @@
 #= require environment
 #= require d3
+#= require helpers/repository_path
 
 class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
-  constructor: (@selection) ->
+  constructor: (@parent) ->
     @layout = d3.layout.tree()
     @diagonal = d3.svg.diagonal()
 
@@ -14,5 +15,80 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     @renderEdges tree.edges
 
   renderNodes: (root) ->
+    nodes = @parent.selectAll(".concept-node")
+      .data( @layout.nodes(root)[1..], (datum) ->
+        datum.id
+      )
+    @createNodes nodes.enter()
+    @deleteNodes nodes.exit()
+    @updateNodes nodes
+    nodes
+
+  createNodes: (enter) ->
+    nodes = enter.append("g")
+      .attr("class", "concept-node")
+
+    nodes.append("title")
+
+    links = nodes.append("a")
+      .attr("xlink:href", (datum) ->
+        if datum.id?
+          Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
+        else
+          "javascript:void(0)"
+        )
+    links.append("rect").attr("class", "background")
+    links.append("circle").attr("class", "bullet")
+    links.append("text").attr("class", "label")
+
+    nodes
+
+  deleteNodes: (exit) ->
+    exit.remove()
+
+  updateNodes: (nodes) ->
+    nodes
+      .classed("hit", (datum) ->
+        if datum.hit then "hit" else no
+      )
+      .classed("new", (datum) ->
+        if datum.id then no else "new"
+      )
+    
+    nodes.select("title")
+      .text( (datum) ->
+        datum.label
+      )
+
+    nodes.select("circle.bullet")
+      .attr("r", (datum) ->
+        if datum.hit then 2.8 else 2.5
+      )
+
+    nodes.select("rect.background")
+      .attr("filter", (datum) ->
+        if datum.hit then "url(#coreon-drop-shadow-filter)" else null
+      )
+
+    nodes
 
   renderEdges: (edges) ->
+    edges = @parent.selectAll(".concept-edge")
+      .data(edges, (datum) ->
+        "#{datum.source.id}|#{datum.target.id}"
+      )
+    @createEdges edges.enter()
+    @deleteEdges edges.exit()
+    @updateEdges edges
+    edges
+
+  createEdges: (enter) ->
+    edges = enter.insert("path", ".concept-node")
+      .attr("class", "concept-edge")
+    edges
+
+  deleteEdges: (exit) ->
+    exit.remove()
+
+  updateEdges: (edges) ->
+    edges

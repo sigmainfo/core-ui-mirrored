@@ -17,11 +17,17 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.tree().root.should.eql children: []
 
      it "accumulates data from models", ->
-        @graph.reset [ _id: "123", label: "node" ], silent: true
+        @graph.reset [ _id: "123", label: "node", hit: yes ], silent: true
         node = @graph.get "123"
         @graph.tree().should.have.deep.property "root.children[0].id", "123"
         @graph.tree().should.have.deep.property "root.children[0].label", "node"
+        @graph.tree().should.have.deep.property "root.children[0].hit", on
         @graph.tree().should.have.deep.property("root.children[0].children").with.length 0
+
+     it "defaults hit attribute to false", ->
+        @graph.reset [ _id: "123" ], silent: true
+        node = @graph.get "123"
+        @graph.tree().root.children[0].hit.should.be.false
 
      it "creates complete branch downto leaves", ->
         @graph.reset [

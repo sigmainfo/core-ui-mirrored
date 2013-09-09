@@ -31,6 +31,7 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     @_data[model.id] ?=
       id: model.id
       label: model.get "label"
+      hit: model.has("hit")
       children: []
 
   _createDatumEdges: (datum) ->

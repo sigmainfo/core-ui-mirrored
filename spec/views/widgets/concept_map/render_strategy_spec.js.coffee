@@ -4,10 +4,12 @@
 describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
 
   beforeEach ->
-    sinon.stub d3.layout, "tree", => @layout = size: sinon.spy()
+    @svg = $('<svg:g class="map">')
+    @parent = d3.select @svg[0]
+    sinon.stub d3.layout, "tree", => @layout =
+      nodes: sinon.stub().returns []
     sinon.stub d3.svg, "diagonal", => @diagonal = {}
-    @selection = selectAll: ->
-    @strategy = new Coreon.Views.Widgets.ConceptMap.RenderStrategy @selection, d3.layout.tree() 
+    @strategy = new Coreon.Views.Widgets.ConceptMap.RenderStrategy @parent, d3.layout.tree() 
 
   afterEach ->
     d3.layout.tree.restore()
@@ -15,8 +17,8 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
   
   describe "constructor()", ->
   
-    it "stores selection reference", ->
-      @strategy.should.have.property "selection", @selection
+    it "stores reference to parent selection", ->
+      @strategy.should.have.deep.property "parent", @parent
 
     it "creates layout instance", ->
       @strategy.should.have.property "layout", @layout
@@ -49,3 +51,263 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.render @tree
       @strategy.renderEdges.should.have.been.calledOnce
       @strategy.renderEdges.should.have.been.calledWith @tree.edges
+
+  describe "renderNodes()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "repositoryPath"
+      @parent.append("g")
+        .attr("class", "concept-node")
+        .datum(id: "remove")
+      @parent.append("g")
+        .attr("class", "concept-node")
+        .datum(id: "update")
+      @root =
+        id: "root"
+        children: [
+          { id: "create" }
+          { id: "update" }
+        ]
+      @layout.nodes.withArgs(@root).returns [
+        { id: "root" }
+        { id: "create" }
+        { id: "update" }
+      ]
+
+    afterEach ->
+      Coreon.Helpers.repositoryPath.restore()
+
+    it "maps nodes to data skipping root node", ->
+      nodes = @strategy.renderNodes @root
+      nodes.data().should.eql [
+        { id: "create" }
+        { id: "update" }
+      ]
+
+    it "creates missing nodes", ->
+      @strategy.createNodes = sinon.spy()
+      enter = @strategy.renderNodes(@root).enter()
+      data = (node.__data__ for i, node of enter[0] when node.__data__?)
+      data.should.eql [ id: "create" ]
+      @strategy.createNodes.should.have.been.calledOnce
+      @strategy.createNodes.should.have.been.calledWith enter
+
+    it "deletes deprecated nodes", ->
+      @strategy.deleteNodes = sinon.spy()
+      exit = @strategy.renderNodes(@root).exit()
+      data = (node.__data__ for i, node of exit[0] when node.__data__?)
+      data.should.eql [ id: "remove" ]
+      @strategy.deleteNodes.should.have.been.calledOnce
+      @strategy.deleteNodes.should.have.been.calledWith exit
+
+    it "updates all nodes", ->
+      @strategy.updateNodes = sinon.spy()
+      nodes = @strategy.renderNodes @root
+      @strategy.updateNodes.should.have.been.calledOnce
+      @strategy.updateNodes.should.have.been.calledWith nodes
+
+  describe "createNodes()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Helpers, "repositoryPath"
+      @enter = @parent
+        .selectAll(".concept-node")
+        .data([ id: "node1" ])
+        .enter()
+
+    afterEach ->
+      Coreon.Helpers.repositoryPath.restore()
+
+    it "appends concept node container", ->
+      @strategy.createNodes @enter
+      should.exist @parent.select("g.concept-node").node()
+
+    it "renders link", ->
+      Coreon.Helpers.repositoryPath.withArgs("concepts/node1").returns "/my-repo/concepts/node1"
+      @strategy.createNodes @enter
+      link = @parent.select(".concept-node a")
+      should.exist link.node()
+      link.attr("xlink:href").should.equal "/my-repo/concepts/node1"
+
+    it "renders dummy link for new concept", ->
+      @enter = @parent
+        .selectAll(".concept-node")
+        .data([ id: null ])
+        .enter()
+      @strategy.createNodes @enter
+      link = @parent.select(".concept-node a")
+      should.exist link.node()
+      link.attr("xlink:href").should.equal "javascript:void(0)"
+
+    it "renders bullet", ->
+      @strategy.createNodes @enter
+      bullet = @parent.select(".concept-node a circle.bullet")
+      should.exist bullet.node()
+
+    it "renders empty label", ->
+      @strategy.createNodes @enter
+      label = @parent.select(".concept-node a text.label")
+      should.exist label.node()
+
+    it "inserts background", ->
+      @strategy.createNodes @enter
+      bg = @parent.select('.concept-node a rect.background')
+      should.exist bg.node()
+
+    it "renders title", ->
+      @strategy.createNodes @enter
+      title = @parent.select('.concept-node title')
+      should.exist title.node()
+
+    it "returns selection of newly created nodes", ->
+      nodes = @strategy.createNodes @enter
+      nodes.node().should.equal @parent.select(".concept-node").node()
+      
+  describe "deleteNodes()", ->
+  
+    it "removes nodes", ->
+      exit = remove: sinon.spy()
+      @strategy.deleteNodes exit
+      exit.remove.should.have.been.calledOnce
+
+  describe "updateNodes()", ->
+    
+    beforeEach ->
+      @selection = @parent.append("g").attr("class", "concept-node")
+
+    it "can be chained", ->
+      nodes = @selection.data []
+      @strategy.updateNodes(nodes).should.equal nodes
+
+    it "classifies hits", ->
+      nodes = @selection.data [
+        hit: yes
+      ]
+      @strategy.updateNodes nodes
+      nodes.attr("class").split(" ").should.include "hit"
+
+    it "classifies new concepts", ->
+      nodes = @selection.data [
+        id: null
+      ]
+      @strategy.updateNodes nodes
+      nodes.attr("class").split(" ").should.include "new"
+
+    it "does not classify ordinary nodes", ->
+      nodes = @selection.data [
+        id: "node1"
+        hit: no
+      ]
+      @strategy.updateNodes nodes
+      classNames = nodes.attr("class").split(" ")
+      classNames.should.not.include "hit"
+      classNames.should.not.include "new"
+
+    it "updates title", ->
+      title = @selection.append("title")
+      nodes = @selection.data [
+        label: "node 123"
+      ]
+      @strategy.updateNodes nodes
+      title.text().should.equal "node 123"
+
+    it "updates bullet size depending on hit status", ->
+      bullet = @selection.append("circle").attr("class", "bullet")
+      nodes = @selection.data [
+        hit: no
+      ]
+      @strategy.updateNodes nodes
+      bullet.attr("r").should.equal "2.5"
+      nodes = @selection.data [
+        hit: yes
+      ]
+      @strategy.updateNodes nodes
+      bullet.attr("r").should.equal "2.8"
+
+    it "applies drop shadow depending on hit status", ->
+      background = @selection.append("rect").attr("class", "background")
+      nodes = @selection.data [
+        hit: yes
+      ]
+      @strategy.updateNodes nodes
+      background.attr("filter").should.equal "url(#coreon-drop-shadow-filter)"
+      nodes = @selection.data [
+        hit: no
+      ]
+      @strategy.updateNodes nodes
+      should.not.exist background.attr("filter")
+
+  describe "renderEdges()", ->
+
+    beforeEach ->
+      source = id: "source"
+      remove = id: "remove"
+      update = id: "update"
+      create = id: "create"
+      @parent.append("g")
+        .attr("class", "concept-edge")
+        .datum(
+          source: source
+          target: remove
+        )
+      @parent.append("g")
+        .attr("class", "concept-edge")
+        .datum(
+          source: source
+          target: update
+        )
+      @edges = [
+        { source: source, target: create } 
+        { source: source, target: update } 
+      ]
+
+    it "creates missing edges", ->
+      @strategy.createEdges = sinon.spy()
+      enter = @strategy.renderEdges(@edges).enter()
+      data = (edge.__data__ for i, edge of enter[0] when edge.__data__?)
+      data.should.eql [
+        source: id: "source"
+        target: id: "create" 
+      ]
+      @strategy.createEdges.should.have.been.calledOnce
+      @strategy.createEdges.should.have.been.calledWith enter
+
+    it "deletes deprecated edges", ->
+      @strategy.deleteEdges = sinon.spy()
+      exit = @strategy.renderEdges(@edges).exit()
+      data = (edge.__data__ for i, edge of exit[0] when edge.__data__?)
+      data.should.eql [
+        source: id: "source"
+        target: id: "remove" 
+      ]
+      @strategy.deleteEdges.should.have.been.calledOnce
+      @strategy.deleteEdges.should.have.been.calledWith exit
+
+    it "updates all edges", ->
+      @strategy.updateEdges = sinon.spy()
+      edges = @strategy.renderEdges @edges
+      @strategy.updateEdges.should.have.been.calledOnce
+      @strategy.updateEdges.should.have.been.calledWith edges
+
+  describe "createEdges()", ->
+  
+    beforeEach ->
+      @enter = @parent
+        .selectAll(".concept-edge")
+        .data([ source: {id: "parent"}, target: {id: "child"} ])
+        .enter()
+
+    it "inserts path", ->
+      @strategy.createEdges @enter
+      should.exist @parent.select("path.concept-edge").node()
+
+    it "returns selection of newly created paths", ->
+      paths = @strategy.createEdges @enter
+      paths.node().should.equal @parent.select(".concept-edge").node()
+      
+  describe "deleteEdges()", ->
+  
+    it "removes paths", ->
+      exit = remove: sinon.spy()
+      @strategy.deleteEdges exit
+      exit.remove.should.have.been.calledOnce
