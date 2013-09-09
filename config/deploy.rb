@@ -9,7 +9,10 @@ set :domain, 'www.core'
 set :application, "core-ui"
 
 set :scm, :git
-set :repository, "git@devel.spom.net:core-ui.git"
+#set :repository, "git@devel.spom.net:core-ui.git"
+set :repository, "git@github.com:gmah/core-ui.git"
+set :repository_cache, "cached-github"
+
 set :scm_verbose, true
 set :use_sudo, false
 set :git_shallow_clone, 1
