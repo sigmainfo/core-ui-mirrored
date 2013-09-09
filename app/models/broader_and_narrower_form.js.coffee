@@ -32,6 +32,9 @@ class Coreon.Models.BroaderAndNarrowerForm extends Backbone.Model
     newIds.unshift changes.removed...
     @set "super_concept_ids", newIds
 
+  acceptsConnection: (ident)->
+    @concept.acceptsConnection(ident)
+
   _temporaryChanges: (toCompare, comparative)->
     {
       added: _.difference @get(toCompare), comparative

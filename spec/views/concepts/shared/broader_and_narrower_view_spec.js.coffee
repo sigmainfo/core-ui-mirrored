@@ -52,6 +52,20 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.narrower.should.be.an.instanceof Array
       @view.narrower.should.have.lengthOf 0
 
+  describe "render()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Views.Concepts, "ConceptLabelView", (options) =>
+        @label = new Backbone.View model: options.model
+        @label.render = sinon.stub().returns @label
+        @label
+
+    afterEach ->
+      Coreon.Views.Concepts.ConceptLabelView.restore()
+
+    it "can be chained", ->
+      @view.render().should.equal @view
+
     context "rendering markup skeleton", ->
 
       beforeEach ->
@@ -59,7 +73,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       it "renders section header", ->
         I18n.t.withArgs("concept.broader_and_narrower").returns "Broader & Narrower"
-        @view.initialize()
+        @view.render()
         @view.$el.should.have "h3"
         @view.$("h3").should.have.text "Broader & Narrower"
 
@@ -75,26 +89,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.render()
         @view.$el.should.have ".narrower ul"
 
-      it "renders container for toggling", ->
-        @view.render()
+      it "renders form in edit mode", ->
+        @view.toggleEditMode()
         container = @view.$("h3").siblings("form")
         container.should.have ".self"
         container.should.have ".broader"
         container.should.have ".narrower"
 
-  describe "render()", ->
-
-    beforeEach ->
-      sinon.stub Coreon.Views.Concepts, "ConceptLabelView", (options) =>
-        @label = new Backbone.View model: options.model
-        @label.render = sinon.stub().returns @label
-        @label
-
-    afterEach ->
-      Coreon.Views.Concepts.ConceptLabelView.restore()
-
-    it "can be chained", ->
-      @view.render().should.equal @view
 
     context "itself", ->
       
@@ -300,17 +301,16 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @el_own = $("<div data-drag-ident='#{@view.model.id}'>")
 
       beforeEach ->
-        sinon.stub @view, "createConcept", ->
-          new Backbone.View model: new Backbone.Model
+        sinon.stub @view, "createConcept", (id)->
+          new Backbone.View model: new Backbone.Model _id:id
 
         @view.model.set "super_concept_ids", ["c0ffee"], silent: true
         @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
 
         @view.initialize()
-        @view.render()
-        @view.$(".broader ul").append $("<li>").append @el_broad
-        @view.$(".narrower ul").append $("<li>").append @el_narrow
         @view.toggleEditMode()
+        @view.$(".broader ul").html $("<li>").append @el_broad
+        @view.$(".narrower ul").html $("<li>").append @el_narrow
 
         @dropFunBroad = @view.$(".broader.ui-droppable ul").data("uiDroppable").options.drop
         @dropFunNarrow = @view.$(".narrower.ui-droppable ul").data("uiDroppable").options.drop
@@ -350,46 +350,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$(".broader.ui-droppable ul").data("uiDroppable").options.accept.should.be.a.function
         @view.$(".narrower.ui-droppable ul").data("uiDroppable").options.accept.should.be.a.function
 
-        @view.dropItemAcceptance.should.be.a "function"
-        @view.dropItemAcceptance.should.be.a "function"
-
-      it "denies existing broader concepts for dropping", ->
-        @view.model.acceptsConnection = -> false
-        @view.dropItemAcceptance(@el_broad).should.be.false
-        @view.dropItemAcceptance(@el_narrow).should.be.false
-        @view.dropItemAcceptance(@el_own).should.be.false
-        @view.dropItemAcceptance(@el_broad).should.be.false
-        @view.dropItemAcceptance(@el_narrow).should.be.false
-        @view.dropItemAcceptance(@el_own).should.be.false
-
-      it "temporary connects broader concept", ->
-        @dropFunBroad {}, draggable: @el_foreign
-        item = @view.$(".broader.ui-droppable ul li [data-drag-ident=bad1dea]")
-        should.exist item
-        $(item).data("new-connection").should.be.true
-
-      it "temporary connects narrower concept", ->
-        @dropFunNarrow {}, draggable: @el_foreign
-        item = @view.$(".narrower.ui-droppable ul li [data-drag-ident=bad1dea]")
-        should.exist item
-        $(item).data("new-connection").should.be.true
-
-      it "accepts non-existing concepts", ->
-        @view.model.acceptsConnection = -> true
-        @view.dropItemAcceptance(@el_foreign).should.be.true
-        @view.dropItemAcceptance(@el_foreign).should.be.true
-
-      it "denies temporary connected broader concepts", ->
-        @view.model.acceptsConnection = -> true
-        @dropFunBroad {}, draggable: @el_foreign
-        @view.dropItemAcceptance(@el_foreign).should.be.false
-        @view.dropItemAcceptance(@el_foreign).should.be.false
-
-      it "denies temporary connected narrower concepts", ->
-        @view.model.acceptsConnection = -> true
-        @dropFunNarrow {}, draggable: @el_foreign
-        @view.dropItemAcceptance(@el_foreign).should.be.false
-        @view.dropItemAcceptance(@el_foreign).should.be.false
+      it "renders new connected concepts", ->
+        @view.onDrop "broader", @el_foreign
+        console.log @view.el
+        @view.$(".broader [data-drag-ident=bad1dea]").should.exist
 
   describe "onDisconnect()", ->
 
@@ -413,35 +377,19 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.model.set "super_concept_ids", [], silent: true
       @view.model.set "sub_concept_ids", [], silent: true
 
-    it "marks deleted list items", ->
+    it "deletes items", ->
       @view.onDisconnect(@el_broad)
-      #@view.$(".broader [data-drag-ident=c0ffee]").data("deleted-connection").should.be.true
-      @el_broad.data("deleted-connection").should.be.true
       @view.onDisconnect(@el_narrow)
-      #@view.$(".narrower [data-drag-ident=deadbeef]").data("deleted-connection").should.be.true
-      @el_narrow.data("deleted-connection").should.be.true
+      @view.$(".broader [data-drag-ident=c0ffee]").should.not.exist
+      @view.$(".narrower [data-drag-ident=deadbeef]").should.not.exist
+      @view.model.get("super_concept_ids").should.not.contain "c0ffee"
+      @view.model.get("sub_concept_ids").should.not.contain "deadbeef"
 
-    it "doesn't mark non-deleted list items in broader list", ->
-      @view.onDisconnect(@el_narrow)
-      should.not.exist @view.$(".broader [data-drag-ident=c0ffee]").data("deleted-connection")
-
-    it "doesn't mark non-deleted list items in narrower list", ->
-      @view.onDisconnect(@el_broad)
-      should.exist @view.$(".narrower [data-drag-ident=deadbeef]")
-
-    it "accepts reconnection of marked items", ->
-      @view.model.acceptsConnection = -> false
-      @view.onDisconnect(@el_narrow)
-      @view.onDisconnect(@el_broad)
-      @view.dropItemAcceptance(@el_broad).should.be.true
-      @view.dropItemAcceptance(@el_narrow).should.be.true
-
-    it "unmarks reconnected items on reconnect", ->
+    it "reconnects items", ->
       @view.onDisconnect(@el_narrow)
       @view.onDisconnect(@el_broad)
       @view.onDrop("narrower", @el_narrow)
       @view.onDrop("broader", @el_broad)
-      $(el).data("deleted-connection").should.be.false for el in @view.$(".list [data-deleted-connection]")
 
 
   describe "updateConceptConnections()", ->

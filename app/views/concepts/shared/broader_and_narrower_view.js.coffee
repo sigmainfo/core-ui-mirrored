@@ -37,6 +37,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @listenTo @model, "change:sub_concept_ids", @renderNarrower
 
   render: ->
+    @$el.html @template model: @model, editable: !@model.isNew(), editMode: @editMode
+
     if @editMode
       @activateDropzones()
       $(window).on "keydown.coreonSubmit", (event) =>
@@ -45,7 +47,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @deactivateDropzones()
       $(window).off ".coreonSubmit"
 
-    @$el.html @template model: @model, editable: !@model.isNew(), editMode: @editMode
     @renderSelf()
     @renderBroader()
     @renderNarrower()
@@ -116,45 +117,30 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   dropItemAcceptance: (item)->
     id = $(item).data("drag-ident")     #TODO: .toString breaks it O_o
-    temporaryAddedIds = ($(el).data("drag-ident") for el in @$(".list li [data-new-connection=true]"))
-    temporaryRemovedIds = ($(el).data("drag-ident") for el in @$(".list li [data-deleted-connection=true]"))
-    (temporaryRemovedIds.indexOf(id) >= 0 && temporaryAddedIds.indexOf(id) == -1) || (@model.acceptsConnection(id) && temporaryAddedIds.indexOf(id) == -1)
+    @model.acceptsConnection(id)
 
   onDrop: (broaderNarrower, item)->
     ident = item.data("drag-ident")
-
-    if (existing = @$(".#{broaderNarrower} [data-drag-ident=#{ident}]")).length > 0
-      existing.attr "data-deleted-connection", false
-      existing.data "deleted-connection", false
-      existing.parents("li").show()
-      return existing
-
-    temporaryConcept = @createConcept ident
-    temporaryConceptEl = temporaryConcept.render().$el
-    temporaryConceptEl.attr "data-drag-ident", ident
-    temporaryConceptEl.attr "data-new-connection", true
-    temporaryConceptEl.addClass "from-connection-list"
-    listItem = $("<li>").append temporaryConceptEl
-
     if broaderNarrower is "broader"
-      list = @$(".broader.ui-droppable ul")
+      conceptIds = (id for id in @model.get("super_concept_ids"))
+      conceptIds.push(ident)
+      @model.set "super_concept_ids", conceptIds
     else
-      list = @$(".narrower.ui-droppable ul")
-
-    list.append listItem
+      conceptIds = (id for id in @model.get("sub_concept_ids"))
+      conceptIds.push(ident)
+      @model.set "sub_concept_ids", conceptIds
 
   onDisconnect: (item)->
     ident = item.data("drag-ident")
-    for el in @$("form li").has("[data-drag-ident=#{ident}]")
-      $("[data-drag-ident]", el).attr "data-deleted-connection", true
-      $(el).hide()
-      _.defer => @$("[data-drag-ident=#{ident}][data-new-connection=true]").parents("li").remove()
+    broader = @model.get "super_concept_ids"
+    narrower = @model.get "sub_concept_ids"
+    @model.set "super_concept_ids", _.without broader, ident if ident in broader
+    @model.set "sub_concept_ids", _.without narrower, ident if ident in narrower
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
     evt.stopPropagation()
-    $(el).remove() for el in @$(".list li").has("[data-new-connection=true]")
-    $(el).show() for el in @$(".list li").has("[data-deleted-connection=true]")
+    @model.resetConceptConnections()
 
   cancelConceptConnections: (evt) ->
     @resetConceptConnections(evt)
