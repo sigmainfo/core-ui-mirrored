@@ -28,7 +28,8 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     @_fillParents datum
 
   _getDatum: (model) ->
-    @_data[model.id] ?=
+    key = model.id or model.cid
+    @_data[key] ?=
       id: model.id
       label: model.get "label"
       hit: model.has("hit")
@@ -62,4 +63,5 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     @_data    = null
 
   _updateLabel: (model, value)->
-    @_data?[model.id].label = value
+    key = model.id or model.cid
+    @_data?[key]?.label = value
