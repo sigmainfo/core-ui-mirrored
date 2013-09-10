@@ -69,39 +69,6 @@ div.concept {
 }
 
 
-.concept.edit .broader-and-narrower {
-  
-  form.disabled {
-    @include opacity(0.4);
-  }
-  
-  form.static {
-    .submit {
-      display: none;
-    }
-  }
-
-  form.active {
-    overflow: hidden;
-    background-color: darken(rgba($button-color, 0.12), 4);
-    margin-left: -5px;
-    margin-bottom: 8px;
-    .broader.ui-droppable {
-      padding-left: 5px;
-    }
-    .self.ui-droppable {
-      max-width: 22%;
-    }
-    .narrower.ui-droppable {
-      max-width: 30%;
-    }
-    .submit {
-      margin-top: 1px;
-    }
-  }
-}
-
-
 .concept form {
 
    &.term, fieldset {
@@ -251,6 +218,32 @@ form.create.term {
   margin-top: 28px;
   padding-top: 36px;
 }
+
+
+.concept.edit .broader-and-narrower {
+  
+  form {
+    overflow: hidden;
+    background-color: darken(rgba($button-color, 0.12), 4);
+    margin-left: -5px;
+    margin-bottom: 8px;
+    .broader {
+      padding-left: 5px;
+    }
+    .self {
+      max-width: 22%;
+    }
+    .narrower {
+      max-width: 30%;
+    }
+    .submit {
+      margin-top: 1px;
+    }
+    &.disabled {
+      @include opacity(0.4);
+    }
+  }
+}
  
 .concept  {
   .edit a {
@@ -331,7 +324,7 @@ form.create.term {
 
 // for edit mode
 .concept.show {
-  .edit, .submit {
+  .edit {
     display: none;
   }
 
