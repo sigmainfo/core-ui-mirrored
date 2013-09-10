@@ -26,7 +26,6 @@ $edge-color: #bfc5c0;
 
       .concept-node {
         cursor: pointer;
-
         circle {
           fill: none;
           stroke-width: 1.5px;
@@ -83,6 +82,38 @@ $edge-color: #bfc5c0;
 
         }
 
+        .toggle {
+
+          .background {
+            fill: transparent;
+          }
+
+          .icon {
+            stroke: darken($edge-color, 10);
+            stroke-width: 2px;
+          }
+
+          &:hover {
+            .icon {
+              stroke: $bluecolor;
+            }
+
+          }
+
+          &.expanded {
+            fill: transparent;
+            .icon {
+              stroke: none;
+            }
+            
+            &:hover {
+              .icon {
+                stroke: $bluecolor;
+              }
+            }
+          }
+          
+        }
       }
 
       .concept-edge {
@@ -99,37 +130,6 @@ $edge-color: #bfc5c0;
     }
   }
 
-  #coreon-tree-toggle {
-
-    rect {
-      fill: transparent;
-    }
-
-    .icon {
-      stroke: darken($edge-color, 10);
-      stroke-width: 2px;
-    }
-
-    &:hover {
-      .icon {
-        stroke: $bluecolor;
-      }
-
-    }
-
-    &.expanded {
-      fill: transparent;
-      .icon {
-        stroke: none;
-      }
-
-      &:hover {
-        .icon {
-          stroke: $bluecolor;
-        }
-      }
-    }
-  }
 }
 
 

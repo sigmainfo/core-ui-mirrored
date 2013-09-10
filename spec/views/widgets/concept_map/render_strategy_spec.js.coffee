@@ -159,22 +159,46 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       title = @parent.select('.concept-node title')
       should.exist title.node()
 
-    it "renders toggle for children", ->
-      @strategy.createNodes @enter
-      toggleChildren = @parent.select('.concept-node use.toggle-children')
-      should.exist toggleChildren.node()
-      toggleChildren.attr("xlink:href").should.equal "#coreon-tree-toggle"
-
-    it "renders toggle for parents", ->
-      @strategy.createNodes @enter
-      toggleParents = @parent.select('.concept-node use.toggle-parents')
-      should.exist toggleParents.node()
-      toggleParents.attr("xlink:href").should.equal "#coreon-tree-toggle"
+    it "renders toggles", ->
+      @strategy.createToggles = sinon.spy()
+      nodes = @strategy.createNodes @enter
+      @strategy.createToggles.should.have.been.calledTwice
+      @strategy.createToggles.should.have.been.calledWith nodes, "toggle-children"
+      @strategy.createToggles.should.have.been.calledWith nodes, "toggle-parents"
 
     it "returns selection of newly created nodes", ->
       nodes = @strategy.createNodes @enter
       nodes.node().should.equal @parent.select(".concept-node").node()
-      
+
+  describe "createToggles()", ->
+
+    beforeEach ->
+      @enter = @parent
+        .selectAll(".concept-node")
+        .data([ id: null ])
+        .enter()
+  
+    it "creates container", ->
+      toggles = @strategy.createToggles @enter, "toggle-nodes"
+      should.exist toggles.node()
+      toggles.attr("class").split(" ").should.include "toggle"
+      toggles.attr("class").split(" ").should.include "toggle-nodes"
+
+    it "renders background", ->
+      toggles = @strategy.createToggles @enter, "toggle-nodes"
+      background = toggles.select("rect.background")
+      should.exist background.node()
+      background.attr("width").should.equal "20"
+      background.attr("height").should.equal "20"
+      background.attr("x").should.equal "-10"
+      background.attr("y").should.equal "-10"
+
+    it "rendwers icon", ->
+      toggles = @strategy.createToggles @enter, "toggle-nodes"
+      icon = toggles.select("path.icon")
+      should.exist icon.node()
+      icon.attr("d").should.equal "M -3.5 -2 h 7 m 0 4 h -7"
+
   describe "deleteNodes()", ->
   
     it "removes nodes", ->
@@ -250,7 +274,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       should.not.exist background.attr("filter")
 
     it "hides toggle for parents on root nodes", ->
-      toggle = @selection.append("use").attr("class", "toggle-parents")
+      toggle = @selection.append("g").attr("class", "toggle-parents")
       nodes = @selection.data [
         root: yes
       ]
@@ -263,7 +287,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       should.equal toggle.attr("style"), null
 
     it "hides toggle for children on root nodes", ->
-      toggle = @selection.append("use").attr("class", "toggle-children")
+      toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         leaf: yes
       ]
@@ -276,7 +300,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       should.equal toggle.attr("style"), null
 
     it "classifies expanded toggle for children", ->
-      toggle = @selection.append("use").attr("class", "toggle-children")
+      toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         leaf: no
         expandedOut: yes
@@ -291,7 +315,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       toggle.attr("class").split(" ").should.not.include "expanded"
       
     it "classifies expanded toggle for parents", ->
-      toggle = @selection.append("use").attr("class", "toggle-parents")
+      toggle = @selection.append("g").attr("class", "toggle-parents")
       nodes = @selection.data [
         root: no
         expandedIn: yes

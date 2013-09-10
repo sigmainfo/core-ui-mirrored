@@ -41,15 +41,25 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     links.append("circle").attr("class", "bullet")
     links.append("text").attr("class", "label")
 
-    nodes.append("use")
-      .attr("class", "toggle-parents")
-      .attr("xlink:href", "#coreon-tree-toggle")
-
-    nodes.append("use")
-      .attr("class", "toggle-children")
-      .attr("xlink:href", "#coreon-tree-toggle")
+    @createToggles nodes, "toggle-parents"
+    @createToggles nodes, "toggle-children"
 
     nodes
+
+  createToggles: (nodes, className) ->
+    toggles = nodes.append("g")
+      .attr("class", "toggle #{className}")
+
+    toggles.append("rect")
+      .attr("class", "background")
+      .attr("width", 20)
+      .attr("height", 20)
+      .attr("x", -10)
+      .attr("y", -10)
+    toggles.append("path")
+      .attr("class", "icon")
+      .attr("d", "M -3.5 -2 h 7 m 0 4 h -7")
+    toggles
 
   deleteNodes: (exit) ->
     exit.remove()
@@ -78,7 +88,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null
       )
 
-    nodes.select("use.toggle-parents")
+    nodes.select("g.toggle-parents")
       .attr("style", (datum) ->
         if datum.root then "display: none" else null
       )
@@ -86,7 +96,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
         datum.expandedIn
       )
 
-    nodes.select("use.toggle-children")
+    nodes.select("g.toggle-children")
       .attr("style", (datum) ->
         if datum.leaf then "display: none" else null
       )

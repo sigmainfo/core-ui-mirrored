@@ -117,21 +117,49 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       background.attr("y").should.equal "-10"
 
     it "positions toggle for parents", ->
-      toggle = @selection.append("use").attr("class", "toggle-parents")
+      toggle = @selection.append("g").attr("class", "toggle-parents")
       nodes = @selection.data [ root: no ]
       @strategy.updateNodes nodes
-      toggle.attr("y").should.equal "0"
-      toggle.attr("x").should.equal "-15"
+      toggle.attr("transform").should.include "translate(-15, 0)"
+
+    it "rotates toggle for parents depending on expansion state", ->
+      toggle = @selection.append("g").attr("class", "toggle-parents")
+      nodes = @selection.data [
+        root: no
+        expandedIn: yes
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("transform").should.include "rotate(90)"
+      nodes = @selection.data [
+        root: no
+        expandedIn: no
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("transform").should.include "rotate(0)"
 
     it "positions toggle for children", ->
-      toggle = @selection.append("use").attr("class", "toggle-children")
+      toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         leaf: no
         textWidth: 120
       ]
       @strategy.updateNodes nodes
-      toggle.attr("y").should.equal "0"
-      toggle.attr("x").should.equal "141"
+      toggle.attr("transform").should.include "translate(141, 0)"
+
+    it "rotates toggle for children depending on expansion state", ->
+      toggle = @selection.append("g").attr("class", "toggle-children")
+      nodes = @selection.data [
+        leaf: no
+        expandedOut: yes
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("transform").should.include "rotate(90)"
+      nodes = @selection.data [
+        leaf: no
+        expandedOut: no
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("transform").should.include "rotate(0)"
       
 
   describe "updateEdges()", ->
