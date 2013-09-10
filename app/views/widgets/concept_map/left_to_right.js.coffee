@@ -18,7 +18,6 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
 
     nodes.select("rect.background")
       .attr("x", -7)
-      
 
   updateNodes: (nodes) ->
     super
@@ -43,6 +42,16 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       )
       .attr("y", (datum) ->
         if datum.hit then -10 else -8.5
+      )
+    
+    nodes.select("use.toggle-parents")
+      .attr("y", 0)
+      .attr("x", -15)
+
+    nodes.select("use.toggle-children")
+      .attr("y", 0)
+      .attr("x", (datum) ->
+        datum.textWidth + 21
       )
 
   updateEdges: (edges) ->

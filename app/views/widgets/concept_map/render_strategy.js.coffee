@@ -41,6 +41,14 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     links.append("circle").attr("class", "bullet")
     links.append("text").attr("class", "label")
 
+    nodes.append("use")
+      .attr("class", "toggle-parents")
+      .attr("xlink:href", "#coreon-tree-toggle")
+
+    nodes.append("use")
+      .attr("class", "toggle-children")
+      .attr("xlink:href", "#coreon-tree-toggle")
+
     nodes
 
   deleteNodes: (exit) ->
@@ -68,6 +76,22 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     nodes.select("rect.background")
       .attr("filter", (datum) ->
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null
+      )
+
+    nodes.select("use.toggle-parents")
+      .attr("style", (datum) ->
+        if datum.root then "display: none" else null
+      )
+      .classed("expanded", (datum) ->
+        datum.expandedIn
+      )
+
+    nodes.select("use.toggle-children")
+      .attr("style", (datum) ->
+        if datum.leaf then "display: none" else null
+      )
+      .classed("expanded", (datum) ->
+        datum.expandedOut
       )
 
     nodes

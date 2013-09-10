@@ -53,7 +53,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(@$("svg").get 0).call @navigator
 
     @stopListening()
-    @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
+    @listenTo @model, "reset add remove change:label change:hit", _.throttle(@render, 100)
 
   render: ->
     @renderStrategy.render @model.tree()

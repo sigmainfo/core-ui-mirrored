@@ -159,6 +159,18 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       title = @parent.select('.concept-node title')
       should.exist title.node()
 
+    it "renders toggle for children", ->
+      @strategy.createNodes @enter
+      toggleChildren = @parent.select('.concept-node use.toggle-children')
+      should.exist toggleChildren.node()
+      toggleChildren.attr("xlink:href").should.equal "#coreon-tree-toggle"
+
+    it "renders toggle for parents", ->
+      @strategy.createNodes @enter
+      toggleParents = @parent.select('.concept-node use.toggle-parents')
+      should.exist toggleParents.node()
+      toggleParents.attr("xlink:href").should.equal "#coreon-tree-toggle"
+
     it "returns selection of newly created nodes", ->
       nodes = @strategy.createNodes @enter
       nodes.node().should.equal @parent.select(".concept-node").node()
@@ -236,6 +248,63 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       ]
       @strategy.updateNodes nodes
       should.not.exist background.attr("filter")
+
+    it "hides toggle for parents on root nodes", ->
+      toggle = @selection.append("use").attr("class", "toggle-parents")
+      nodes = @selection.data [
+        root: yes
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("style").should.equal "display: none"
+      nodes = @selection.data [
+        root: no
+      ]
+      @strategy.updateNodes nodes
+      should.equal toggle.attr("style"), null
+
+    it "hides toggle for children on root nodes", ->
+      toggle = @selection.append("use").attr("class", "toggle-children")
+      nodes = @selection.data [
+        leaf: yes
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("style").should.equal "display: none"
+      nodes = @selection.data [
+        leaf: no
+      ]
+      @strategy.updateNodes nodes
+      should.equal toggle.attr("style"), null
+
+    it "classifies expanded toggle for children", ->
+      toggle = @selection.append("use").attr("class", "toggle-children")
+      nodes = @selection.data [
+        leaf: no
+        expandedOut: yes
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("class").split(" ").should.include "expanded"
+      nodes = @selection.data [
+        leaf: no
+        expandedOut: no
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("class").split(" ").should.not.include "expanded"
+      
+    it "classifies expanded toggle for parents", ->
+      toggle = @selection.append("use").attr("class", "toggle-parents")
+      nodes = @selection.data [
+        root: no
+        expandedIn: yes
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("class").split(" ").should.include "expanded"
+      nodes = @selection.data [
+        root: no
+        expandedIn: no
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("class").split(" ").should.not.include "expanded"
+
 
   describe "renderEdges()", ->
 

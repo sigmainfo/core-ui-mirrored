@@ -116,6 +116,24 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       background.attr("height").should.equal "20"
       background.attr("y").should.equal "-10"
 
+    it "positions toggle for parents", ->
+      toggle = @selection.append("use").attr("class", "toggle-parents")
+      nodes = @selection.data [ root: no ]
+      @strategy.updateNodes nodes
+      toggle.attr("y").should.equal "0"
+      toggle.attr("x").should.equal "-15"
+
+    it "positions toggle for children", ->
+      toggle = @selection.append("use").attr("class", "toggle-children")
+      nodes = @selection.data [
+        leaf: no
+        textWidth: 120
+      ]
+      @strategy.updateNodes nodes
+      toggle.attr("y").should.equal "0"
+      toggle.attr("x").should.equal "141"
+      
+
   describe "updateEdges()", ->
     
     beforeEach ->

@@ -15,4 +15,7 @@
         %feMerge
           %feMergeNode{ in: "drop-shadow" }
           %feMergeNode{ in: "SourceGraphic" }
+      %g#coreon-tree-toggle
+        %rect.background{ width: 20, height: 20, x: -10, y: -10}
+        %path.icon{ d: "M -3.5 -2 h 7 m 0 4 h -7"}
     %g.concept-map
