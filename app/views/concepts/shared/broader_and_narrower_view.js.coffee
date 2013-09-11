@@ -61,13 +61,13 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("broader", ui.draggable)
-      over: (evt, ui)=> @onDropOver(ui)
-      out: (evt, ui)=> @onDropOut(ui)
+      over: (evt, ui)=> @onDropOver(evt, ui)
+      out: (evt, ui)=> @onDropOut(evt, ui)
     @droppableOn @$(".narrower.ui-droppable ul"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
-      over: (evt, ui)=> @onDropOver(ui)
-      out: (evt, ui)=> @onDropOut(ui)
+      over: (evt, ui)=> @onDropOver(evt, ui)
+      out: (evt, ui)=> @onDropOut(evt, ui)
 
     @droppableOn @$(".list"), "ui-droppable-disconnect",
       accept: (item)-> $(item).hasClass "from-connection-list"
@@ -122,14 +122,15 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   dropItemAcceptance: (item)->
     true
 
-  onDropOver: (ui)->
+  onDropOver: (evt, ui)->
     ident = $(ui.draggable.context).attr("data-drag-ident")
     if @model.acceptsConnection(ident)
       $(ui.helper).addClass "ui-droppable-connect"
     else
       $(ui.draggable.context).draggable "option", "revert", true
+      $(evt.target).removeClass "ui-state-hovered"
 
-  onDropOut: (ui)->
+  onDropOut: (evt, ui)->
     ident = $(ui.helper).data("drag-ident")
     $(ui.helper).removeClass "ui-droppable-connect"
     $(ui.draggable.context).draggable "option", "revert", "invalid"
@@ -153,7 +154,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     narrower = @model.get "sub_concept_ids"
     @model.set "super_concept_ids", _.without broader, ident if ident in broader
     @model.set "sub_concept_ids", _.without narrower, ident if ident in narrower
-    console.log "disconnect", ident, @model.get("super_concept_ids")
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
