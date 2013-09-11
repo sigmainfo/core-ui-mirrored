@@ -14,14 +14,15 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
 
   events:
     "click .clear": "clear"
-    "drop": "onDropItem"
 
   initialize: ->
     @labels = []
 
     @$el.html @template()
     @droppableOn @$("ul"), "ui-droppable-clipboard",
+      greedy: false
       accept: (el) => @dropItemAcceptance(el)
+      drop: (evt, ui) => @onDropItem(evt, ui)
     @listenTo @collection(), "add reset remove", @render
 
   dropItemAcceptance: (item) ->
