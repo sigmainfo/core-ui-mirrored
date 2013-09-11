@@ -24,6 +24,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     "click .zoom-in":  "zoomIn"
     "click .zoom-out": "zoomOut"
     "click .toggle-orientation": "toggleOrientation"
+    "click .toggle-children": "toggleChildren"
+    "click .toggle-parents": "toggleParents"
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
@@ -53,10 +55,20 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(@$("svg").get 0).call @navigator
 
     @stopListening()
-    @listenTo @model, "reset add remove change:label change:hit", _.throttle(@render, 100)
+    @listenTo @model, "add remove change:label", _.throttle(@render, 100)
+    @listenTo @model, "reset", @renderAndCenterSelection
 
   render: ->
     @renderStrategy.render @model.tree()
+    @
+
+  renderAndCenterSelection: ->
+    width = @width / 2
+    width -= 350 if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
+    height = @svgHeight / 2
+    @navigator.translate [width, height]
+    @_panAndZoom()
+    @render()
     @
 
   zoomIn: ->
@@ -73,8 +85,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     svg = @$("svg")
     if height?
       @height = height
+      @svgHeight = height - @options.svgOffset 
       @$el.height height
-      svg.attr "height", "#{ height - @options.svgOffset }px"
+      svg.attr "height", "#{@svgHeight}px"
     if width?
       @width = width
       @$el.width width
@@ -109,3 +122,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
     @render()
+
+  toggleChildren: (event) ->
+    datum = d3.select(event.target).datum()
+    datum.expandedOut = not datum.expandedOut
+    @model.get(datum.id).set "expandedOut", datum.expandedOut
+
+  toggleParents: (event) ->
+    datum = d3.select(event.target).datum()
+    datum.expandedIn = not datum.expandedIn
+    @model.get(datum.id).set "expandedIn", datum.expandedIn

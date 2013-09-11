@@ -153,10 +153,16 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @clock.tick 200
         @view.render.should.have.been.calledOnce
 
-      it "is triggered when hits changed", ->
-        @view.model.trigger "change:hit"
-        @clock.tick 200
-        @view.render.should.have.been.calledOnce
+  describe "renderAndCenterSelection()", ->
+  
+    it "can be chained", ->
+      @view.renderAndCenterSelection().should.equal @view
+
+    it "calls render", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.renderAndCenterSelection()
+      @view.render.should.have.been.calledOnce
 
   describe "zoomIn()", ->
 
@@ -317,3 +323,47 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render = sinon.spy()
       @view.toggleOrientation()
       @view.render.should.have.been.calledOnce 
+
+  describe "toggleChildren()", ->
+
+    it "is triggered by click on toggle", ->
+      @view.$el.append('<svg:g class="toggle-children">')
+      @view.toggleChildren = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".toggle-children").click()
+      @view.toggleChildren.should.have.been.calledOnce
+
+    it "toggles expansion state of corresponding node", ->
+      model = new Backbone.Model _id: "abc1234", expandedOut: false
+      @view.model.reset [ model ]
+      event = $.Event "click"
+      toggle = @view.map.append("g")
+        .attr("class", "toggle-children")
+        .datum( id: "abc1234", expandedOut: false )
+      event.target = toggle.node()
+      @view.toggleChildren event
+      model.get("expandedOut").should.be.true
+      @view.toggleChildren event
+      model.get("expandedOut").should.be.false
+
+  describe "toggleParents()", ->
+
+    it "is triggered by click on toggle", ->
+      @view.$el.append('<svg:g class="toggle-parents">')
+      @view.toggleParents = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".toggle-parents").click()
+      @view.toggleParents.should.have.been.calledOnce
+
+    it "toggles expansion state of corresponding node", ->
+      model = new Backbone.Model _id: "abc1234", expandedIn: false
+      @view.model.reset [ model ]
+      event = $.Event "click"
+      toggle = @view.map.append("g")
+        .attr("class", "toggle-parents")
+        .datum( id: "abc1234", expandedIn: false )
+      event.target = toggle.node()
+      @view.toggleParents event
+      model.get("expandedIn").should.be.true
+      @view.toggleParents event
+      model.get("expandedIn").should.be.false

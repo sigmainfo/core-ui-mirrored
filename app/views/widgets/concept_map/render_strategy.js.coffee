@@ -36,7 +36,8 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
           Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
         else
           "javascript:void(0)"
-        )
+      )
+
     links.append("rect").attr("class", "background")
     links.append("circle").attr("class", "bullet")
     links.append("text").attr("class", "label")
