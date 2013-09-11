@@ -39,6 +39,10 @@ class Coreon.Models.BroaderAndNarrowerForm extends Backbone.Model
     checklist.push @get("sub_concept_ids")...
     !(ident in checklist)
 
+  resetConceptConnections: ->
+    @set "sub_concept_ids", @concept.get("sub_concept_ids")
+    @set "super_concept_ids", @concept.get("super_concept_ids")
+
   _temporaryChanges: (toCompare, comparative)->
     {
       added: _.difference @get(toCompare), comparative
