@@ -242,6 +242,10 @@ form.create.term {
     &.disabled {
       @include opacity(0.4);
     }
+    ul .concept-label:hover {
+      color: $greytext-color;
+      @include single-box-shadow(rgba($text-color, 0.4), 2px, 2px, 2px);
+    }
   }
 }
  
