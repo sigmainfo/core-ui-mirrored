@@ -32,9 +32,14 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   initialize: ->
     @broader = []
     @narrower = []
+    @_bindChangeEvents()
+
+  _bindChangeEvents: ->
     @listenTo @model, "change:label", @renderSelf
-    @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
-    @listenTo @model, "change:sub_concept_ids", @renderNarrower
+    @listenTo @model, "change:super_concept_ids nonblank", =>
+      _.defer => @renderBroader()
+    @listenTo @model, "change:sub_concept_ids", =>
+      _.defer => @renderNarrower()
 
   render: ->
     @$el.html @template model: @model, editable: !@model.isNew(), editMode: @editMode
@@ -56,12 +61,13 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("broader", ui.draggable)
+      over: (evt, ui)=> @onDropOver(ui)
+      out: (evt, ui)=> @onDropOut(ui)
     @droppableOn @$(".narrower.ui-droppable ul"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
-
-    @droppableOn @$(".catch-disconnect"), "ui-droppable-hovered",
-      accept: (item)-> $(item).hasClass "from-connection-list"
+      over: (evt, ui)=> @onDropOver(ui)
+      out: (evt, ui)=> @onDropOut(ui)
 
     @droppableOn @$(".list"), "ui-droppable-disconnect",
       accept: (item)-> $(item).hasClass "from-connection-list"
@@ -79,15 +85,13 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @clearBroader()
     super_concept_ids = @model.get "super_concept_ids"
     if super_concept_ids.length > 0
-      @broader = @renderConcepts @$(".broader.static ul"), super_concept_ids
-      @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), super_concept_ids
-    else unless @model.blank
-      @$(".broader.static ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
+      @broader = @renderConcepts @$(".broader ul"), super_concept_ids
+    else unless @model.blank or @editMode
+      @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
-    @narrower = @renderConcepts @$(".narrower.static ul"), @model.get "sub_concept_ids"
-    @narrower.concat @renderConcepts @$(".narrower.ui-droppable ul"), @model.get "sub_concept_ids"
+    @narrower = @renderConcepts @$(".narrower ul"), @model.get "sub_concept_ids"
 
   renderConcepts: (container, ids) ->
     container.empty()
@@ -116,11 +120,24 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     concept.remove() while concept = @narrower.pop()
 
   dropItemAcceptance: (item)->
-    id = $(item).data("drag-ident")     #TODO: .toString breaks it O_o
-    @model.acceptsConnection(id)
+    true
+
+  onDropOver: (ui)->
+    ident = $(ui.draggable.context).attr("data-drag-ident")
+    if @model.acceptsConnection(ident)
+      $(ui.helper).addClass "ui-droppable-connect"
+    else
+      $(ui.draggable.context).draggable "option", "revert", true
+
+  onDropOut: (ui)->
+    ident = $(ui.helper).data("drag-ident")
+    $(ui.helper).removeClass "ui-droppable-connect"
+    $(ui.draggable.context).draggable "option", "revert", "invalid"
 
   onDrop: (broaderNarrower, item)->
     ident = item.data("drag-ident")
+    return false unless @model.acceptsConnection(ident)
+
     if broaderNarrower is "broader"
       conceptIds = (id for id in @model.get("super_concept_ids"))
       conceptIds.push(ident)
@@ -136,6 +153,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     narrower = @model.get "sub_concept_ids"
     @model.set "super_concept_ids", _.without broader, ident if ident in broader
     @model.set "sub_concept_ids", _.without narrower, ident if ident in narrower
+    console.log "disconnect", ident, @model.get("super_concept_ids")
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
@@ -148,55 +166,35 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   updateConceptConnections: (evt) ->
     evt.preventDefault()
-    data = { super_concept_ids: [], sub_concept_ids: [] }
-
-    for item in @$(".broader.ui-droppable [data-drag-ident]")
-      data.super_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
-
-    for item in @$(".narrower.ui-droppable [data-drag-ident]")
-      data.sub_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
+    evt.stopPropagation()
 
     @$("form, .submit a").addClass "disabled"
     @$(".submit button").prop "disabled", true
 
-    broaderAdded = []
-    broaderDeleted = []
-    narrowerAdded = []
-    narrowerDeleted = []
+    data =
+      super_concept_ids: @model.get "super_concept_ids"
+      sub_concept_ids: @model.get "sub_concept_ids"
 
-    for el in @$('.broader.ui-droppable li [data-new-connection=true]')
-      ident = $(el).data("drag-ident")
-      broaderAdded.push Coreon.Models.Concept.find(ident).get("label") unless broaderAdded.indexOf(ident) >= 0
-    for el in @$('.broader.ui-droppable li [data-deleted-connection=true]')
-      ident = $(el).data("drag-ident")
-      broaderDeleted.push Coreon.Models.Concept.find(ident).get("label") unless broaderDeleted.indexOf(ident) >= 0
-
-    for el in @$('.narrower.ui-droppable li [data-new-connection=true]')
-      ident = $(el).data("drag-ident")
-      narrowerAdded.push Coreon.Models.Concept.find(ident).get("label") unless narrowerAdded.indexOf(ident) >= 0
-    for el in @$('.narrower.ui-droppable li [data-deleted-connection=true]')
-      ident = $(el).data("drag-ident")
-      narrowerDeleted.push Coreon.Models.Concept.find(ident).get("label") unless narrowerDeleted.indexOf(ident) >= 0
-
-    @model.save data,
+    @model.save null, # data,
       success: =>
-        if (n = broaderAdded.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: n, label: broaderAdded[0])
-        if (n = broaderDeleted.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: n, label: broaderDeleted[0])
-        if (n = narrowerAdded.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: n, label: narrowerAdded[0])
-        if (n = narrowerDeleted.length) > 0
-          Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: n, label: narrowerDeleted[0])
-
+        Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: 42, label: "example")
+        Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: 42, label: "example")
+        Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: 42, label: "example")
+        Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: 42, label: "example")
         @toggleEditMode()
-      error: (model) =>
-        model.once "error", @render, @
+
       attrs:
         concept: data
 
+
   toggleEditMode: ->
     @editMode = !@editMode
+    if @editMode
+      @model = new Coreon.Models.BroaderAndNarrowerForm {}, concept: @model
+    else
+      @model = @model.concept
+
+    @_bindChangeEvents()
     @render()
 
   preventLabelClicks: (evt)->

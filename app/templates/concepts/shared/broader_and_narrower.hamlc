@@ -9,12 +9,10 @@
   != @form_for "concept", @model, {reset: yes}, ->
     .list
       .broader.ui-droppable
-        .catch-disconnect
-          %ul
+        %ul
       .concept-label.hit.self
       .narrower.ui-droppable
-        .catch-disconnect
-          %ul
+        %ul
 
 -else
   .list

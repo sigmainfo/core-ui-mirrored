@@ -76,7 +76,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       editTerm: @editTerm
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
-      model: new Coreon.Models.BroaderAndNarrowerForm @model
+      model: @model
+
     @$el.children(".system-info").after broaderAndNarrower.render().$el
     @subviews.push broaderAndNarrower
 
