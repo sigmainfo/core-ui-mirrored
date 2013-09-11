@@ -9,10 +9,6 @@ class Coreon.Models.BroaderAndNarrowerForm extends Backbone.Model
     @set "label", @concept.get("label")
     @set "_id", @concept.id
 
-    @concept.on "change:sub_concept_ids", @updateSubconceptIds, @
-    @concept.on "change:super_concept_ids", @updateSuperconceptIds, @
-    @concept.on "change:label", => @set "label", @concept.get("label")
-
     @on "change:sub_concept_ids", (model, newValue)=>
       @set "sub_concept_ids", _.uniq(newValue), silent: yes
     @on "change:super_concept_ids", (model, newValue)=>
@@ -20,18 +16,6 @@ class Coreon.Models.BroaderAndNarrowerForm extends Backbone.Model
 
   isNew: ->
     @concept.isNew()
-
-  updateSubconceptIds: (model, newIds)->
-    changes = @_temporaryChanges "sub_concept_ids", model.previous "sub_concept_ids"
-    newIds.push changes.added...
-    newIds.unshift changes.removed...
-    @set "sub_concept_ids", newIds
-
-  updateSuperconceptIds: (model, newIds)->
-    changes = @_temporaryChanges "super_concept_ids", model.previous "super_concept_ids"
-    newIds.push changes.added...
-    newIds.unshift changes.removed...
-    @set "super_concept_ids", newIds
 
   acceptsConnection: (ident)->
     checklist = [@id]
@@ -49,6 +33,6 @@ class Coreon.Models.BroaderAndNarrowerForm extends Backbone.Model
       removed: _.difference comparative, @get(toCompare)
     }
 
-  save: ->
-    @concept.save arguments...
+  save: (data, opts)->
+    @concept.save data, opts
 

@@ -173,10 +173,10 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @$(".submit button").prop "disabled", true
 
     data =
-      super_concept_ids: @model.get "super_concept_ids"
-      sub_concept_ids: @model.get "sub_concept_ids"
+      super_concept_ids: @model.get("super_concept_ids")
+      sub_concept_ids: @model.get("sub_concept_ids")
 
-    @model.save null, # data,
+    @model.save data,
       success: =>
         Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: 42, label: "example")
         Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: 42, label: "example")

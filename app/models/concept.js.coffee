@@ -92,6 +92,7 @@ class Coreon.Models.Concept extends Backbone.Model
         @get("sub_concept_ids").indexOf(item_id) == -1
 
   sync: (method, model, options = {}) ->
+    console.log model.attributes, @attributes
     @once "sync", @onCreate, @ if method is "create"
     options.batch = on
     Coreon.Modules.CoreAPI.sync method, model, options
