@@ -59,12 +59,12 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @
 
   activateDropzones: ->
-    @droppableOn @$(".broader.ui-droppable ul"), "ui-droppable-connect",
+    @droppableOn @$(".broader ul"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("broader", ui.draggable)
       over: (evt, ui)=> @onDropOver(evt, ui)
       out: (evt, ui)=> @onDropOut(evt, ui)
-    @droppableOn @$(".narrower.ui-droppable ul"), "ui-droppable-connect",
+    @droppableOn @$(".narrower ul"), "ui-droppable-connect",
       accept: (item)=> @dropItemAcceptance(item)
       drop: (evt, ui)=> @onDrop("narrower", ui.draggable)
       over: (evt, ui)=> @onDropOver(evt, ui)
@@ -75,7 +75,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       drop: (evt, ui)=> @onDisconnect(ui.draggable)
 
   deactivateDropzones: ->
-    @droppableOff(el) for el in @$(".ui-droppable") if $(el).data("uiDroppable")
+    @droppableOff(el) for el in @$(".ui-droppable")
 
 
   renderSelf: ->
@@ -171,24 +171,30 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     @$("form, .submit a").addClass "disabled"
     @$(".submit button").prop "disabled", true
+    $(el).draggable "disable" for el in @$("form .ui-draggable")
+    $(el).droppable "disable" for el in @$("form .ui-droppable")
 
     data =
       super_concept_ids: @model.get("super_concept_ids")
       sub_concept_ids: @model.get("sub_concept_ids")
 
-    @model.save data,
-      success: =>
-        Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: 42, label: "example")
-        Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: 42, label: "example")
-        Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: 42, label: "example")
-        Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: 42, label: "example")
-        @toggleEditMode()
+    deferred = @model.save data, attrs: {concept: data}, wait: true
+    deferred.done =>
+      Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: 42, label: "example")
+      Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: 42, label: "example")
+      Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: 42, label: "example")
+      Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: 42, label: "example")
+      @toggleEditMode()
 
-      attrs:
-        concept: data
+    deferred.fail =>
+      @$("form, .submit a").removeClass "disabled"
+      @$(".submit button").prop "disabled", false
+      $(el).draggable "enable" for el in @$("form .ui-draggable")
+      $(el).droppable "enable" for el in @$("form .ui-droppable")
 
 
   toggleEditMode: ->
+    console.log "toggle edit mode"
     @editMode = !@editMode
     if @editMode
       @model = new Coreon.Models.BroaderAndNarrowerForm {}, concept: @model

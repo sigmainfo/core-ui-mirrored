@@ -8,17 +8,17 @@
 -if @editMode
   != @form_for "concept", @model, {reset: yes}, ->
     .list
-      .broader.ui-droppable
+      .broader
         %ul
       .concept-label.hit.self
-      .narrower.ui-droppable
+      .narrower
         %ul
 
 -else
   .list
-    .broader.static
+    .broader
       %ul
     .concept-label.hit.self
-    .narrower.static
+    .narrower
       %ul
 
