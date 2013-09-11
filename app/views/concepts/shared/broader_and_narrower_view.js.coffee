@@ -46,8 +46,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     if @editMode
       @activateDropzones()
-      $(window).on "keydown.coreonSubmit", (event) =>
-        @$("form").submit() if event.keyCode is 13
+      $(window).on "keydown.coreonSubmit", (evt) =>
+        if evt.keyCode is 13 and $(":focus").length == 0 or $(":focus").parents(".broader-and-narrower").length == 1
+          @$("form").submit()
     else
       @deactivateDropzones()
       $(window).off ".coreonSubmit"
