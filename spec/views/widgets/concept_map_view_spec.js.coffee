@@ -153,6 +153,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @clock.tick 200
         @view.render.should.have.been.calledOnce
 
+      it "is triggered when hit state changed", ->
+        @view.model.trigger "change:hit"
+        @clock.tick 200
+        @view.render.should.have.been.calledOnce
+
   describe "renderAndCenterSelection()", ->
   
     it "can be chained", ->
