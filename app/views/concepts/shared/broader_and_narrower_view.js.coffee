@@ -7,11 +7,13 @@
 #= require models/concept
 #= require models/notification
 #= require modules/droppable
+#= require modules/draggable
 #= require helpers/form_for
 
 class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   Coreon.Modules.include @, Coreon.Modules.Droppable
+  Coreon.Modules.include @, Coreon.Modules.Draggable
 
   tagName: "section"
 
@@ -24,7 +26,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     "click  .submit .cancel":   "cancelConceptConnections"
     "click  .submit .reset":    "resetConceptConnections"
     "submit  form":             "updateConceptConnections"
-    "click   .concept-label":   "preventLabelClicks"
+    "click  .concept-label":    "preventLabelClicks"
     "click  .edit-connections": "toggleEditMode"
 
   concepts: null
@@ -194,7 +196,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
 
   toggleEditMode: ->
-    console.log "toggle edit mode"
     @editMode = !@editMode
     if @editMode
       @model = new Coreon.Models.BroaderAndNarrowerForm {}, concept: @model
@@ -203,6 +204,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
     @_bindChangeEvents()
     @render()
+    @draggableOn @$(".self")
 
   preventLabelClicks: (evt)->
     if @editMode
