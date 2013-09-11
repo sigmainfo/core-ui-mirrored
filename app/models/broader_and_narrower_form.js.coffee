@@ -33,6 +33,16 @@ class Coreon.Models.BroaderAndNarrowerForm extends Backbone.Model
       removed: _.difference comparative, @get(toCompare)
     }
 
+  addedBroaderConcepts: ->
+    @_temporaryChanges("super_concept_ids", @concept.get("super_concept_ids")).added
+  addedNarrowerConcepts: ->
+    @_temporaryChanges("sub_concept_ids", @concept.get("sub_concept_ids")).added
+
+  removedBroaderConcepts: ->
+    @_temporaryChanges("super_concept_ids", @concept.get("super_concept_ids")).removed
+  removedNarrowerConcepts: ->
+    @_temporaryChanges("sub_concept_ids", @concept.get("sub_concept_ids")).removed
+
   save: (data, opts)->
     @concept.save data, opts
 

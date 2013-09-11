@@ -180,12 +180,23 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       super_concept_ids: @model.get("super_concept_ids")
       sub_concept_ids: @model.get("sub_concept_ids")
 
+    addedBroaderConcepts = (Coreon.Models.Concept.find(id).get("label") for id in @model.addedBroaderConcepts())
+    addedNarrowerConcepts = (Coreon.Models.Concept.find(id).get("label") for id in @model.addedNarrowerConcepts())
+    removedBroaderConcepts = (Coreon.Models.Concept.find(id).get("label") for id in @model.removedBroaderConcepts())
+    removedNarrowerConcepts = (Coreon.Models.Concept.find(id).get("label") for id in @model.removedNarrowerConcepts())
+
     deferred = @model.save data, attrs: {concept: data}, wait: true
     deferred.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: 42, label: "example")
-      Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: 42, label: "example")
-      Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: 42, label: "example")
-      Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: 42, label: "example")
+      if addedBroaderConcepts.length > 0
+        Coreon.Models.Notification.info I18n.t("notifications.concept.broader_added", count: addedBroaderConcepts.length, label: addedBroaderConcepts[0])
+      if addedNarrowerConcepts.length > 0
+        Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_added", count: addedNarrowerConcepts.length, label: addedNarrowerConcepts[0])
+
+      if removedBroaderConcepts.length > 0
+        Coreon.Models.Notification.info I18n.t("notifications.concept.broader_deleted", count: removedBroaderConcepts.length, label: removedBroaderConcepts[0])
+      if removedNarrowerConcepts.length > 0
+        Coreon.Models.Notification.info I18n.t("notifications.concept.narrower_deleted", count: removedNarrowerConcepts.length, label: removedNarrowerConcepts[0])
+
       @toggleEditMode()
 
     deferred.fail =>
