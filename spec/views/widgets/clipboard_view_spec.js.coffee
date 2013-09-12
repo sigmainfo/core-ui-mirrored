@@ -106,7 +106,7 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
     beforeEach ->
       @clips.reset [], silent: true
       @drop_el = $('<div data-drag-ident="c0ffeebabe">')
-      @drop_model = new Backbone.Model _id: "c0ffeebabe"
+      @drop_model = new Backbone.Model id: "c0ffeebabe"
 
     it "accepts not enlisted drop items", ->
       @view.dropItemAcceptance(@drop_el).should.be.true
@@ -119,7 +119,7 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
     beforeEach ->
       sinon.stub @clips, "add"
       @drop = draggable: $('<div id="c0ffeebabe">')
-      sinon.stub Coreon.Models.Concept, "find", -> new Backbone.Model _id: "c0ffeebabe"
+      sinon.stub Coreon.Models.Concept, "find", -> new Backbone.Model id: "c0ffeebabe"
 
     afterEach ->
       @clips.add.restore()

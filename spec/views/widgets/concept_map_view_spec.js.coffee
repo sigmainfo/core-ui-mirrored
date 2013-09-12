@@ -339,7 +339,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.toggleChildren.should.have.been.calledOnce
 
     it "toggles expansion state of corresponding node", ->
-      model = new Backbone.Model _id: "abc1234", expandedOut: false
+      model = new Backbone.Model id: "abc1234", expandedOut: false
       @view.model.reset [ model ]
       event = $.Event "click"
       toggle = @view.map.append("g")
@@ -361,7 +361,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.toggleParents.should.have.been.calledOnce
 
     it "toggles expansion state of corresponding node", ->
-      model = new Backbone.Model _id: "abc1234", expandedIn: false
+      model = new Backbone.Model id: "abc1234", expandedIn: false
       @view.model.reset [ model ]
       event = $.Event "click"
       toggle = @view.map.append("g")

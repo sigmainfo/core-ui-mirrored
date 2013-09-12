@@ -13,7 +13,7 @@ class Spinach::Features::UserBrowsesTreeView < Spinach::FeatureSteps
   end
 
   step 'I visit the show concept page of this concept' do
-    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
+    visit "/#{@repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I should see a multiline label representing the currently selected concept within the concept map' do
