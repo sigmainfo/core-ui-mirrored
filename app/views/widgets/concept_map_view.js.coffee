@@ -34,8 +34,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_renderMarkupSkeleton()
 
     @renderStrategies = [
-      Coreon.Views.Widgets.ConceptMap.LeftToRight
       Coreon.Views.Widgets.ConceptMap.TopDown
+      Coreon.Views.Widgets.ConceptMap.LeftToRight
     ]
 
     @map = d3.select(@$("svg g.concept-map").get 0)
@@ -64,8 +64,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
   renderAndCenterSelection: ->
     width = @width / 2
-    width -= 350 if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
     height = @svgHeight / 2
+    if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
+      width -= 300
+    else
+      height -= 300
     @navigator.translate [width, height]
     @_panAndZoom()
     @render()
@@ -121,7 +124,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     views = @renderStrategy.views
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
-    @render()
+    @renderAndCenterSelection()
 
   toggleChildren: (event) ->
     datum = d3.select(event.target).datum()

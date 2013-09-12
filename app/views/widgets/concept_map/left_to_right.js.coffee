@@ -9,16 +9,6 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
     @layout.nodeSize [25, 190]
     @diagonal.projection (datum) -> [datum.y, datum.x]
 
-  createNodes: (nodes) ->
-    nodes = super
-
-    nodes.select("text.label")
-      .attr("dx", 7)
-      .attr("dy", "0.35em")
-
-    nodes.select("rect.background")
-      .attr("x", -7)
-
   updateNodes: (nodes) ->
     super
     nodes.attr("transform", (datum) ->
@@ -26,6 +16,12 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       )
     
     nodes.select("text.label")
+      .attr("x", 7)
+      .attr("y", "0.35em")
+      .attr("text-anchor", "start")
+      .each( (datum) ->
+        d3.select(@).select("tspan").remove()
+      )
       .text( (datum) ->
         Coreon.Helpers.Text.shorten datum.label, 24
       )
@@ -40,6 +36,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       .attr("width", (datum) ->
         datum.textWidth + 20
       )
+      .attr("x", -7)
       .attr("y", (datum) ->
         if datum.hit then -10 else -8.5
       )

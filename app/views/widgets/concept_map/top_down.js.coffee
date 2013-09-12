@@ -3,69 +3,77 @@
 
 class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
-  # renderNodes: (root, options) ->
-  #   @layout.size [ @size[1], @size[0] ]
+  constructor: (parent) ->
+    super
+    @layout.nodeSize [190, 100]
 
-  #   data  = @layout.nodes root
-  #   views = @views
+  updateNodes: (nodes) ->
+    super
+    nodes.attr("transform", (datum) ->
+      "translate(#{datum.x}, #{datum.y})"
+    )
 
-  #   nodes = @selection.selectAll(".concept-node")
-  #     .data( data[1..], (datum) -> datum.model.cid )
+    nodes.select("text.label")
+      .attr("text-anchor", "middle")
+      .attr("x", "0")
+      .attr("y", "17")
+      .text("")
+      .each( (datum) ->
+        text = d3.select(@)
+        text.selectAll("tspan").remove()
+        if datum.hit
+          lineHeight = 17
+          paddingTop = 4
+        else
+          lineHeight = 14
+          paddingTop = 1
 
-  #   nodes.enter()
-  #     .append("g")
-  #     .attr("class", "concept-node")
-  #     .each( (datum) ->
-  #       view = new Coreon.Views.Widgets.ConceptMap.ConceptNodeListView
-  #         el: @
-  #         model: datum.model
-  #       views[datum.model.cid] = view.render()
-  #     )
+        words = datum.label.split(/\s+/)
+        for word, i in words
+          console.log i
+          text.append("tspan")
+            .text(word)
+            .attr("dy", if i is 0 then paddingTop else lineHeight)
+            .attr("x", 0)
+        datum.textBox = @.getBBox()
 
-  #   nodes.exit()
-  #     .each( (datum) ->
-  #       views[datum.model.cid].stopListening()
-  #       delete views[datum.model.cid]
-  #     )
-  #     .remove()
+      )
 
-  #   minY = @options.offsetY
-  #   for datum in data
-  #     if datum.children?.length > 1
-  #       minY = Math.min minY, datum.children[1].x - datum.children[0].x
-  #   scaleY = @options.offsetY / minY
+    nodes.select("rect.background")
+      .attr("height", (datum) ->
+        datum.textBox.height + 6
+      )
+      .attr("width", (datum) ->
+        datum.textBox.width + 10
+      )
+      .attr("x", (datum) ->
+        datum.textBox.x - 5
+      )
+      .attr("y", (datum) ->
+        offset = if datum.hit then 4 else 3
+        datum.textBox.y - offset
+      )
 
-  #   nodes
-  #     .each( (datum) =>
-  #       datum.y = datum.x * scaleY + @options.padding
-  #       datum.x = ( datum.depth - 1 ) * @options.offsetX + @options.padding
-  #     )
-  #     .attr( "transform", (datum) ->
-  #       "translate(#{datum.y}, #{datum.x})"
-  #     )
+    nodes.select("g.toggle-parents")
+      .attr("transform", (datum) ->
+        "translate(0, -15) rotate(#{if datum.expandedIn then 90 else 0})" 
+      )
 
-  # renderEdges: (edges, options) ->
+    nodes.select("g.toggle-children")
+      .attr("transform", (datum) ->
+        paddingBottom = if datum.hit then 5 else 3
+        "translate(0, #{datum.textBox.y + datum.textBox.height + 15}) rotate(#{if datum.expandedIn then 90 else 0})" 
+      )
 
-  #   edges = @selection.selectAll(".concept-edge")
-  #     .data( edges, (datum) ->
-  #       "#{datum.source.model.cid}|#{datum.target.model.cid}"
-  #     )
-  #   
-  #   edges.enter()
-  #     .insert("path", ".concept-node")
-  #     .attr("class", "concept-edge")
-
-  #   edges.exit()
-  #     .remove()
-
-  #   edges
-  #     .attr("d", (datum) =>
-  #       sourceBox = @views[datum.source.model.cid].box()
-  #       @diagonal
-  #         source:
-  #           x: datum.source.y + sourceBox.height / 2
-  #           y: datum.source.x + sourceBox.width
-  #         target:
-  #           x: datum.target.y + sourceBox.height / 2
-  #           y: datum.target.x
-  #     )
+  updateEdges: (edges) ->
+    diagonal = @diagonal
+    edges.attr("d", (datum) ->
+      paddingBottom = if datum.hit then 5 else 3
+      diagonal
+        source:
+          x: datum.source.x
+          y: datum.source.y + datum.source.textBox.y + datum.source.textBox.height + paddingBottom
+        target:
+          x: datum.target.x
+          y: datum.target.y - 3.5
+    )
