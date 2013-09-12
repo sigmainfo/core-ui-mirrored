@@ -27,7 +27,7 @@ ajax = (deferred, method, model, options) ->
   request.always ->
     xhrs = (xhr for xhr in xhrs when xhr isnt request)
     if xhrs.length is 0 and request.status isnt 403
-      Coreon.Modules.CoreAPI.trigger "stop" 
+      Coreon.Modules.CoreAPI.trigger "stop"
 
   request.done (data, status, request) ->
     deferred.resolveWith model, [data, request]

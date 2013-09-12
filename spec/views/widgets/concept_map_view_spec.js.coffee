@@ -1,7 +1,6 @@
 #= require spec_helper
 #= require views/widgets/concept_map_view
 
-
 describe "Coreon.Views.Widgets.ConceptMapView", ->
 
   beforeEach ->
@@ -16,9 +15,14 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       edges: []
 
     sinon.stub Coreon.Views.Widgets.ConceptMap, "LeftToRight", =>
-      @leftToRight = render: => @lefttoright
+      @leftToRight = 
+        resize: sinon.spy()
+        render: => @lefttoright
+
     sinon.stub Coreon.Views.Widgets.ConceptMap, "TopDown", =>
-      @topDown = render: => @topDown
+      @topDown =
+        resize: sinon.spy()
+        render: => @topDown
 
     @view = new Coreon.Views.Widgets.ConceptMapView
       model: nodes
@@ -119,15 +123,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render()
       strategy.render.should.have.been.calledWith tree
 
-    it "passes size to strategy", ->
-      @view.model.tree = -> null
-      strategy = render: sinon.spy()
-      @view.renderStrategy = strategy
-      @view.options.svgOffset = 12
-      @view.resize 456, 234
-      @view.render()
-      strategy.render.should.have.been.calledWith null, size: [456, 222]
-
     context "updates", ->
       
       beforeEach ->
@@ -157,6 +152,22 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.model.trigger "change:label"
         @clock.tick 200
         @view.render.should.have.been.calledOnce
+
+      it "is triggered when hit state changed", ->
+        @view.model.trigger "change:hit"
+        @clock.tick 200
+        @view.render.should.have.been.calledOnce
+
+  describe "renderAndCenterSelection()", ->
+  
+    it "can be chained", ->
+      @view.renderAndCenterSelection().should.equal @view
+
+    it "calls render", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.renderAndCenterSelection()
+      @view.render.should.have.been.calledOnce
 
   describe "zoomIn()", ->
 
@@ -228,7 +239,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @clock = sinon.useFakeTimers()
       @view.$el.width 160
       @view.$el.height 120
-      @view.renderStrategy = render: ->
+      @view.renderStrategy =
+        render: -> @
+        resize: sinon.spy()
 
     afterEach ->
       localStorage.getItem.restore()
@@ -265,6 +278,11 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       svg = @view.$("svg")
       svg.should.have.attr "width", "200px"
       svg.should.have.attr "height", "282px"
+
+    it "resizes render strategy", ->
+      @view.renderStrategy.resize.reset()
+      @view.resize 200, 300
+      @view.renderStrategy.resize.should.have.been.calledOnce
 
     it "stores dimensions when finished", ->
       @view.resize 123, 334
@@ -310,3 +328,47 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render = sinon.spy()
       @view.toggleOrientation()
       @view.render.should.have.been.calledOnce 
+
+  describe "toggleChildren()", ->
+
+    it "is triggered by click on toggle", ->
+      @view.$el.append('<svg:g class="toggle-children">')
+      @view.toggleChildren = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".toggle-children").click()
+      @view.toggleChildren.should.have.been.calledOnce
+
+    it "toggles expansion state of corresponding node", ->
+      model = new Backbone.Model id: "abc1234", expandedOut: false
+      @view.model.reset [ model ]
+      event = $.Event "click"
+      toggle = @view.map.append("g")
+        .attr("class", "toggle-children")
+        .datum( id: "abc1234", expandedOut: false )
+      event.target = toggle.node()
+      @view.toggleChildren event
+      model.get("expandedOut").should.be.true
+      @view.toggleChildren event
+      model.get("expandedOut").should.be.false
+
+  describe "toggleParents()", ->
+
+    it "is triggered by click on toggle", ->
+      @view.$el.append('<svg:g class="toggle-parents">')
+      @view.toggleParents = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".toggle-parents").click()
+      @view.toggleParents.should.have.been.calledOnce
+
+    it "toggles expansion state of corresponding node", ->
+      model = new Backbone.Model id: "abc1234", expandedIn: false
+      @view.model.reset [ model ]
+      event = $.Event "click"
+      toggle = @view.map.append("g")
+        .attr("class", "toggle-parents")
+        .datum( id: "abc1234", expandedIn: false )
+      event.target = toggle.node()
+      @view.toggleParents event
+      model.get("expandedIn").should.be.true
+      @view.toggleParents event
+      model.get("expandedIn").should.be.false

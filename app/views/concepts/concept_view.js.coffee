@@ -13,6 +13,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require collections/clips
+#= require models/broader_and_narrower_form
 #= require models/notification
 #= require modules/helpers
 #= require modules/nested_fields_for
@@ -76,6 +77,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
+
     @$el.children(".system-info").after broaderAndNarrower.render().$el
     @subviews.push broaderAndNarrower
 
@@ -175,7 +177,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     evt.preventDefault()
     form = $ evt.target
     data = form.serializeJSON()?.term or {}
-    data._id = form.find("input[name=id]").val()
+    data.id = form.find("input[name=id]").val()
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
@@ -188,7 +190,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
-    model = @model.terms().get data._id
+    model = @model.terms().get data.id
 
     if elements_to_delete.length > 0
       @confirm

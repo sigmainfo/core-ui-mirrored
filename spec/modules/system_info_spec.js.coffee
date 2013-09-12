@@ -20,10 +20,15 @@ describe "Coreon.Modules.SystemInfo", ->
     it "returns hash with system info attributes", ->
       @model.defaults = -> terms: []
       @model.set {
-        _id: "abcd1234"
-        author: "Nobody"
+        id: "abcd1234"
+        admin: {author: "Nobody"}
         terms : [ "foo", "bar" ]
+        created_at: '2013-09-12 13:48'
+        updated_at: '2013-09-12 13:50'
       }, silent: true
       @model.info().should.eql
         id: "abcd1234"
         author: "Nobody"
+        created_at: '2013-09-12 13:48'
+        updated_at: '2013-09-12 13:50'
+

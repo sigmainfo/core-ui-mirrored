@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 class UserBrowsesConceptGraph < Spinach::FeatureSteps
+
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
@@ -176,6 +177,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'I click on "Zoom in"' do
+    sleep 0.5
     @orig = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
     page.find("#coreon-concept-map a", text: "Zoom in").click
   end

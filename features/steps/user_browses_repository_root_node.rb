@@ -12,7 +12,7 @@ class Spinach::Features::UserBrowsesRepositoryRootNode < Spinach::FeatureSteps
   end
 
   step 'I visit the show concept page for "Top Gun"' do
-    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
+    visit "/#{@repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I should see a single repository node within the broader listing' do

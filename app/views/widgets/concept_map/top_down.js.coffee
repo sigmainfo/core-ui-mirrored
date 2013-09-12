@@ -3,47 +3,62 @@
 
 class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
-  initialize: ->
-    @stencil = d3.svg.diagonal()
+  constructor: (parent) ->
     super
+    @layout.nodeSize [190, 100]
 
-  renderNodes: (root, options) ->
-    @layout.size [ @size[1], @size[0] ]
+  updateNodes: (nodes) ->
+    super
+    nodes.attr("transform", (datum) ->
+      "translate(#{datum.x}, #{datum.y})"
+    )
 
-    data  = @layout.nodes root
-    views = @views
-
-    nodes = @selection.selectAll(".concept-node")
-      .data( data[1..], (datum) -> datum.model.cid )
-
-    nodes.enter()
-      .append("g")
-      .attr("class", "concept-node")
+    nodes.select("text.label")
+      .attr("text-anchor", "middle")
+      .attr("x", "0")
+      .attr("y", "17")
+      .text( (datum) ->
+        Coreon.Helpers.Text.shorten datum.label, 24
+      )
       .each( (datum) ->
-        view = new Coreon.Views.Concepts.ConceptNodeView
-          el: @
-          model: datum.model
-        views[datum.model.cid] = view.render()
+        datum.textBox = @.getBBox()
       )
 
-    nodes.exit()
-      .each( (datum) ->
-        views[datum.model.cid].stopListening()
-        delete views[datum.model.cid]
+    nodes.select("rect.background")
+      .attr("height", (datum) ->
+        datum.textBox.height + 6
       )
-      .remove()
+      .attr("width", (datum) ->
+        datum.textBox.width + 10
+      )
+      .attr("x", (datum) ->
+        datum.textBox.x - 5
+      )
+      .attr("y", (datum) ->
+        offset = if datum.hit then 4 else 3
+        datum.textBox.y - offset
+      )
 
-    minY = @options.offsetY
-    for datum in data
-      if datum.children?.length > 1
-        minY = Math.min minY, datum.children[1].x - datum.children[0].x
-    scaleY = @options.offsetY / minY
+    nodes.select("g.toggle-parents")
+      .attr("transform", (datum) ->
+        "translate(0, -15) rotate(#{if datum.expandedIn then 90 else 0})" 
+      )
 
-    nodes
-      .each( (datum) =>
-        datum.y = datum.x * scaleY + @options.padding
-        datum.x = ( datum.depth - 1 ) * @options.offsetX + @options.padding
+    nodes.select("g.toggle-children")
+      .attr("transform", (datum) ->
+        paddingBottom = if datum.hit then 5 else 3
+        "translate(0, #{datum.textBox.y + datum.textBox.height + 15}) rotate(#{if datum.expandedIn then 90 else 0})" 
       )
-      .attr( "transform", (datum) ->
-        "translate(#{datum.y}, #{datum.x})"
-      )
+
+  updateEdges: (edges) ->
+    diagonal = @diagonal
+    edges.attr("d", (datum) ->
+      paddingBottom = if datum.hit then 5 else 3
+      diagonal
+        source:
+          x: datum.source.x
+          y: datum.source.y + datum.source.textBox.y + datum.source.textBox.height + paddingBottom
+        target:
+          x: datum.target.x
+          y: datum.target.y - 3.5
+    )

@@ -3,7 +3,7 @@
   %thead
     %tr
       %th.label= I18n.t "search.results.concepts.header.label"
-      %th.super= I18n.t "search.results.concepts.header.super_concepts"
+      %th.super= I18n.t "search.results.concepts.header.superconcepts"
   %tbody
     - for concept in @concepts
       %tr

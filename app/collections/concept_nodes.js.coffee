@@ -8,8 +8,8 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
   model: Coreon.Models.ConceptNode
 
   initialize: (models, options = {}) ->
-    options.sourceIds = "super_concept_ids"
-    options.targetIds = "sub_concept_ids"
+    options.sourceIds = "superconcept_ids"
+    options.targetIds = "subconcept_ids"
     super models, options
     if hits = options.hits
       @hits = hits
@@ -57,7 +57,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     model.set "hit", null for model in @models
     attrs = for hit in @hits.models
       concept = hit.get "result"
-      _id: concept.id or concept.cid
+      id: concept.id
       concept: concept
       hit: hit
       expandedOut: true
@@ -78,7 +78,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
   _spreadOutSubnodes: (model, targetIds = [], options) ->
     if model.get "expandedOut"
       previousTargetIds = model.previous(@options.targetIds) ? []
-      @add { _id: id }, options for id in targetIds
+      @add { id: id }, options for id in targetIds
       @remove id, options for id in previousTargetIds when id not in targetIds
 
   _spreadOutSupernodes: (model, sourceIds = [], options) ->
@@ -88,7 +88,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
         if source = @get id
           source.set "expandedOut", true
         else
-          @add { _id: id, expandedOut: true }, options
+          @add { id: id, expandedOut: true }, options
       @remove id, options for id in previousSourceIds when id not in sourceIds
 
   _spreadOutAll: (collection, options)->

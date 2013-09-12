@@ -75,7 +75,7 @@ describe "Coreon.Modules.EmbedsMany", ->
       @model.get("submodels").should.eql [foo: "bar"]
   
     it "syncs attr when submodel is removed", ->
-      @model.set "submodels", [_id: "bar"], silent: true
+      @model.set "submodels", [id: "bar"], silent: true
       @model.submodels().remove "bar"
       @model.get("submodels").should.eql []
 

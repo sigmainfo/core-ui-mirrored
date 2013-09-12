@@ -33,7 +33,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
           </fieldset>
           <fieldset id="new-term" class="term not-persisted">
             <a class="remove-term">Remove term</a>
-            <input type="hidden" name="concept[terms][42][_id]">
+            <input type="hidden" name="concept[terms][42][id]">
           </fieldset>
           '''
         @event = $.Event "click"

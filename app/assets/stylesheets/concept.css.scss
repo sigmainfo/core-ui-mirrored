@@ -160,14 +160,7 @@ div.concept {
       }
 /*    @include background(linear-gradient(rgba($browncolor, 0.03), rgba($browncolor, 0)));*/
     
-    /*TODO: merged stuff, I don't know which to use…
-      section.language {
-      @include retina-separator;
-         
-      padding-top: 8px;
-      min-height: 19px;
-      
-      margin-top: 50px;*/
+
     
     section.language {
       margin-top: 12px;
@@ -225,7 +218,6 @@ div.concept {
       }
       &>div {
         margin-left: 112px;
-        /*border-top: 1px solid $greycolor;*/
         @include dottedline;
       }
     }
@@ -276,7 +268,6 @@ div.concept {
       min-height: 1em;
       padding: 2px 6px 3px 16px;
       margin-bottom: 6px;
-/*      margin-right: 0px;*/
       @include concept-icon;
     }
     

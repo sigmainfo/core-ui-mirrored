@@ -22,12 +22,47 @@
 
 Coreon.Modules.Droppable =
 
-  _droppable_onEnter: (el, cssClass) ->
-    $(el).addClass cssClass
+  _droppable_onEnter: (evt, ui) ->
+    el = ui.helper
+    cssClass = @options.dragElClass
 
-  _droppable_onLeave: (el, cssClass) ->
+    @disableForeigners() if @options.disableForeigners
+    if @options.fake
+      $.ui.ddmanager.current.element.draggable "option", "revert", true
+    else
+      $.ui.ddmanager.current.element.draggable "option", "revert", "invalid"
+      $(el).addClass cssClass
+
+  _droppable_onLeave: (evt, ui) ->
+    el = ui.helper
+    cssClass = @options.dragElClass
+
+    @enableForeigners() if @options.disableForeigners
+    if @options.fake
+      $.ui.ddmanager.current.element.draggable "option", "revert", "invalid"
+    else
+      $.ui.ddmanager.current.element.draggable "option", "revert", true
     $(el).removeClass cssClass
 
+  _droppable_onDrop: (evt, ui) ->
+    _.defer =>
+      @enableForeigners() if @options.disableForeigners
+
+  disableForeigners: ->
+    @_disabledForeigners = []
+    for el in $('.ui-droppable', '#coreon-main')
+      $el = $(el)
+      if $el.data("uiDroppable") and $el.droppable("option", "disabled") == false
+        @_disabledForeigners.push $el
+        dragElClass = $el.droppable "option", "dragElClass"
+        $.ui.ddmanager.current.helper.removeClass dragElClass
+        $el.droppable("option", "disabled", true)
+
+  enableForeigners: ->
+    for $el in @_disabledForeigners
+      $el.droppable("option", "disabled", false)
+      if $el.hasClass "ui-state-hovered"
+        $.ui.ddmanager.current.helper.addClass $el.droppable("option", "dragElClass")
 
   droppableOn: (el, dragElClass="ui-droppable-hovered", options={})->
     _dropzone = $(el)
@@ -37,11 +72,15 @@ Coreon.Modules.Droppable =
       activeClass: "ui-state-highlight"
       hoverClass: "ui-state-hovered"
       tolerance: "pointer"
-      over: (evt, ui) => @_droppable_onEnter(ui.helper, dragElClass)
-      out: (evt, ui) => @_droppable_onLeave(ui.helper, dragElClass)
+      over: (evt, ui) => @_droppable_onEnter(evt, ui)
+      out: (evt, ui) => @_droppable_onLeave(evt, ui)
+      dragElClass: dragElClass
+      disableForeigners: false
+      fake: false
+      drop: (evt, ui) => @_droppable_onDrop(evt, ui)
 
-    options = _.extend defaults, options
-    _dropzone.droppable options
+    @options = _.extend defaults, options
+    _dropzone.droppable @options
     _dropzone.droppable "enable"
 
   droppableOff: (el)->

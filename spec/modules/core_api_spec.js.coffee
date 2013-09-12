@@ -339,20 +339,20 @@ describe "Coreon.Modules.CoreAPI", ->
             models.push model
           promise.done spy for promise in promises
 
-          @requests[0].resolve {_id: "m-1"}, "success", @requests[0]
+          @requests[0].resolve {id: "m-1"}, "success", @requests[0]
           spy.should.have.been.calledOnce
 
           spy.should.have.been.calledOn models[0]
-          spy.should.have.been.calledWith {_id: "m-1"}, @requests[0]
+          spy.should.have.been.calledWith {id: "m-1"}, @requests[0]
 
-          @requests[1].resolve [{_id: "m-2"}, {_id: "m-3"}], "success", @requests[1]
+          @requests[1].resolve [{id: "m-2"}, {id: "m-3"}], "success", @requests[1]
           spy.should.have.been.calledThrice
 
           spy.secondCall.should.have.been.calledOn models[1]
-          spy.secondCall.should.have.been.calledWith {_id: "m-2"}, @requests[1]
+          spy.secondCall.should.have.been.calledWith {id: "m-2"}, @requests[1]
 
           spy.thirdCall.should.have.been.calledOn models[2]
-          spy.thirdCall.should.have.been.calledWith {_id: "m-3"}, @requests[1]
+          spy.thirdCall.should.have.been.calledWith {id: "m-3"}, @requests[1]
 
         it "triggers success callbacks individually", ->
           models = []
@@ -364,16 +364,16 @@ describe "Coreon.Modules.CoreAPI", ->
             spy = sinon.spy()
             spies.push spy
             model.sync "read", model, batch: on, success: spy
-          @requests[0].resolve {_id: "m-1"}, "success", @requests[0]
-          @requests[1].resolve [{_id: "m-2"}, {_id: "m-3"}], "success", @requests[1]
+          @requests[0].resolve {id: "m-1"}, "success", @requests[0]
+          @requests[1].resolve [{id: "m-2"}, {id: "m-3"}], "success", @requests[1]
 
           Backbone.sync.firstCall.args[2].should.have.property "success", spies[0]
 
           spies[1].should.have.been.calledOnce
-          spies[1].should.have.been.calledWith {_id: "m-2"}, "success", @requests[1]
+          spies[1].should.have.been.calledWith {id: "m-2"}, "success", @requests[1]
 
           spies[2].should.have.been.calledOnce
-          spies[2].should.have.been.calledWith {_id: "m-3"}, "success", @requests[1]
+          spies[2].should.have.been.calledWith {id: "m-3"}, "success", @requests[1]
 
       context "fail", ->
 
@@ -418,7 +418,7 @@ describe "Coreon.Modules.CoreAPI", ->
             spies.push spy
             model.sync "read", model, batch: on, error: spy
 
-          @requests[0].resolve {_id: "m-1"}, "success", @requests[0]
+          @requests[0].resolve {id: "m-1"}, "success", @requests[0]
           @requests[1].status = 404
           @requests[1].statusText = "Not Found"
           @requests[1].reject @requests[1], "error", "Not Found"

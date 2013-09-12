@@ -1,4 +1,0 @@
-%ul.super
-%p.self= @concept.get "label"
-.subContainer
-  %ul.sub

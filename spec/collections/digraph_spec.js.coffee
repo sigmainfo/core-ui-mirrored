@@ -18,8 +18,8 @@ describe "Coreon.Collections.Digraph", ->
       
     it "creates edges from targetIds", ->
       @graph.reset [
-        { _id: "source", targetIds: [ "target" ] }
-        { _id: "target" }
+        { id: "source", targetIds: [ "target" ] }
+        { id: "target" }
       ], silent: true
       @graph.edges().should.have.length 1
       @graph.edges().should.have.deep.property "[0].source.id", "source"
@@ -27,8 +27,8 @@ describe "Coreon.Collections.Digraph", ->
 
     it "creates edges from sourceIds", ->
       @graph.reset [
-        { _id: "source" }
-        { _id: "target", sourceIds: [ "source" ]}
+        { id: "source" }
+        { id: "target", sourceIds: [ "source" ]}
       ], silent: true
       @graph.edges().should.have.length 1
       @graph.edges().should.have.deep.property "[0].source.id", "source"
@@ -36,23 +36,23 @@ describe "Coreon.Collections.Digraph", ->
 
     it "ignores target to outer nodes", ->
       @graph.reset [
-        _id: "source", targetIds: [ "outer" ]
+        id: "source", targetIds: [ "outer" ]
       ], silent: true
       @graph.edges().should.be.empty
 
     it "does not create duplicates", ->
       @graph.reset [
-        { _id: "source", targetIds: [ "target", "target" ] }
-        { _id: "target", sourceIds: [ "source", "source" ]}
+        { id: "source", targetIds: [ "target", "target" ] }
+        { id: "target", sourceIds: [ "source", "source" ]}
       ], silent: true
       @graph.edges().should.have.length 1
 
     it "can be configured", ->
       @graph.reset [
-        { _id: "source_1", outIds: [ "target_1" ] }
-        { _id: "target_1" }
-        { _id: "source_2" }
-        { _id: "target_2", inIds: [ "source_2" ] }
+        { id: "source_1", outIds: [ "target_1" ] }
+        { id: "target_1" }
+        { id: "source_2" }
+        { id: "target_2", inIds: [ "source_2" ] }
       ], silent: true
       @graph.initialize [], sourceIds: "inIds", targetIds: "outIds"
       @graph.edges().should.have.length 2
@@ -63,24 +63,24 @@ describe "Coreon.Collections.Digraph", ->
       
       it "always returns a copy", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
+          { id: "source", targetIds: [ "target" ] }
+          { id: "target" }
         ], silent: true
         @graph.edges().pop()
         @graph.edges().should.have.length 1
 
       it "is reevaluated after add", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
+          { id: "source", targetIds: [ "target" ] }
         ], silent: true
         @graph.edges()
-        @graph.add _id: "target"
+        @graph.add id: "target"
         @graph.edges().should.have.length 1
 
       it "is reevaluated after remove", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
+          { id: "source", targetIds: [ "target" ] }
+          { id: "target" }
         ], silent: true
         @graph.edges()
         @graph.remove "target"
@@ -89,15 +89,15 @@ describe "Coreon.Collections.Digraph", ->
       it "is reevaluated after reset", ->
         @graph.edges()
         @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
+          { id: "source", targetIds: [ "target" ] }
+          { id: "target" }
         ]
         @graph.edges().should.have.length 1
 
       it "is reevaluated after change of targetIds", ->
         @graph.reset [
-          { _id: "source" }
-          { _id: "target" }
+          { id: "source" }
+          { id: "target" }
         ], silent: true
         @graph.edges()
         @graph.get("source").set "targetIds", [ "target" ]
@@ -105,8 +105,8 @@ describe "Coreon.Collections.Digraph", ->
         
       it "is reevaluated after change of sourceIds", ->
         @graph.reset [
-          { _id: "source" }
-          { _id: "target" }
+          { id: "source" }
+          { id: "target" }
         ], silent: true
         @graph.edges()
         @graph.get("target").set "sourceIds", [ "source" ]
@@ -116,10 +116,10 @@ describe "Coreon.Collections.Digraph", ->
   
     it "filters edges by target", ->
       @graph.reset [
-        { _id: "source_1", targetIds: [ "target_1" ] }
-        { _id: "source_2", targetIds: [ "target_2" ] }
-        { _id: "target_1" }
-        { _id: "target_2" }
+        { id: "source_1", targetIds: [ "target_1" ] }
+        { id: "source_2", targetIds: [ "target_2" ] }
+        { id: "target_1" }
+        { id: "target_2" }
       ], silent: true
       target = @graph.get "target_1"
       @graph.edgesIn(target).should.have.length 1
@@ -128,10 +128,10 @@ describe "Coreon.Collections.Digraph", ->
 
     it "accepts id as argument", ->
       @graph.reset [
-        { _id: "source_1", targetIds: [ "target_1" ] }
-        { _id: "source_2", targetIds: [ "target_2" ] }
-        { _id: "target_1" }
-        { _id: "target_2" }
+        { id: "source_1", targetIds: [ "target_1" ] }
+        { id: "source_2", targetIds: [ "target_2" ] }
+        { id: "target_1" }
+        { id: "target_2" }
       ], silent: true
       @graph.edgesIn("target_2").should.have.length 1
       @graph.edgesIn("target_2").should.have.deep.property "[0].source.id", "source_2"
@@ -144,10 +144,10 @@ describe "Coreon.Collections.Digraph", ->
   
     it "filters edges by target", ->
       @graph.reset [
-        { _id: "source_1", targetIds: [ "target_1" ] }
-        { _id: "source_2", targetIds: [ "target_2" ] }
-        { _id: "target_1" }
-        { _id: "target_2" }
+        { id: "source_1", targetIds: [ "target_1" ] }
+        { id: "source_2", targetIds: [ "target_2" ] }
+        { id: "target_1" }
+        { id: "target_2" }
       ], silent: true
       source = @graph.get "source_1"
       @graph.edgesOut(source).should.have.length 1
@@ -156,10 +156,10 @@ describe "Coreon.Collections.Digraph", ->
 
     it "accepts id as argument", ->
       @graph.reset [
-        { _id: "source_1", targetIds: [ "target_1" ] }
-        { _id: "source_2", targetIds: [ "target_2" ] }
-        { _id: "target_1" }
-        { _id: "target_2" }
+        { id: "source_1", targetIds: [ "target_1" ] }
+        { id: "source_2", targetIds: [ "target_2" ] }
+        { id: "target_1" }
+        { id: "target_2" }
       ], silent: true
       @graph.edgesOut("source_2").should.have.length 1
       @graph.edgesOut("source_2").should.have.deep.property "[0].source.id", "source_2"
@@ -176,18 +176,18 @@ describe "Coreon.Collections.Digraph", ->
 
     it "filters models that do not have an incoming edge", ->
       @graph.reset [
-        { _id: "source", targetIds: [ "target" ] }
-        { _id: "target" }
+        { id: "source", targetIds: [ "target" ] }
+        { id: "target" }
       ], silent: true
       @graph.roots().should.have.length 1
       @graph.roots().should.have.deep.property "[0].id", "source"
 
     it "filters roots that are connected to given nodes", ->
       @graph.reset [
-        { _id: "source_1", targetIds: [ "target_1" ] }
-        { _id: "target_1" }
-        { _id: "source_2", targetIds: [ "target_2" ] }
-        { _id: "target_2" }
+        { id: "source_1", targetIds: [ "target_1" ] }
+        { id: "target_1" }
+        { id: "source_2", targetIds: [ "target_2" ] }
+        { id: "target_2" }
       ], silent: true
       @graph.roots("target_1").should.have.length 1
       @graph.roots().should.have.deep.property "[0].id", "source_1"
@@ -200,18 +200,18 @@ describe "Coreon.Collections.Digraph", ->
 
     it "filters models that do not have an incoming edge", ->
       @graph.reset [
-        { _id: "source", targetIds: [ "target" ] }
-        { _id: "target" }
+        { id: "source", targetIds: [ "target" ] }
+        { id: "target" }
       ], silent: true
       @graph.leaves().should.have.length 1
       @graph.leaves().should.have.deep.property "[0].id", "target"
 
     it "filters leaves that are connected to given nodes", ->
       @graph.reset [
-        { _id: "source_1", targetIds: [ "target_1" ] }
-        { _id: "target_1" }
-        { _id: "source_2", targetIds: [ "target_2" ] }
-        { _id: "target_2" }
+        { id: "source_1", targetIds: [ "target_1" ] }
+        { id: "target_1" }
+        { id: "source_2", targetIds: [ "target_2" ] }
+        { id: "target_2" }
       ], silent: true
       @graph.leaves("source_1").should.have.length 1
       @graph.leaves().should.have.deep.property "[0].id", "target_1"
@@ -223,8 +223,8 @@ describe "Coreon.Collections.Digraph", ->
   
     it "invokes callback for every node", ->
       @graph.reset [
-        { _id: "node_1" }
-        { _id: "node_2" }
+        { id: "node_1" }
+        { id: "node_2" }
       ], silent: true
       node_1 = @graph.get "node_1"
       node_2 = @graph.get "node_2"
@@ -236,10 +236,10 @@ describe "Coreon.Collections.Digraph", ->
 
     it "invokes callback breadth first", ->
       @graph.reset [
-        { _id: "root", targetIds: [ "child_1", "child_2" ] }
-        { _id: "child_1", targetIds: [ "child_of_child"] }
-        { _id: "child_2" }
-        { _id: "child_of_child" }
+        { id: "root", targetIds: [ "child_1", "child_2" ] }
+        { id: "child_1", targetIds: [ "child_of_child"] }
+        { id: "child_2" }
+        { id: "child_of_child" }
       ], silent: true
       @graph.breadthFirstIn @callback 
       @callback.getCall(0).should.have.deep.property "args[0].id", "root"
@@ -249,19 +249,19 @@ describe "Coreon.Collections.Digraph", ->
 
     it "invokes callback only once per node", ->
       @graph.reset [
-        { _id: "root", targetIds: [ "child_1", "child_2" ] }
-        { _id: "child_1", targetIds: [ "child_of_child"] }
-        { _id: "child_2", targetIds: [ "child_of_child"] }
-        { _id: "child_of_child" }
+        { id: "root", targetIds: [ "child_1", "child_2" ] }
+        { id: "child_1", targetIds: [ "child_of_child"] }
+        { id: "child_2", targetIds: [ "child_of_child"] }
+        { id: "child_of_child" }
       ], silent: true
       @graph.breadthFirstIn @callback 
       @callback.should.have.property "callCount", 4
 
     it "takes starting nodes as an option", ->
       @graph.reset [
-        { _id: "root", targetIds: [ "child" ] }
-        { _id: "child", targetIds: [ "child_of_child"] }
-        { _id: "child_of_child" }
+        { id: "root", targetIds: [ "child" ] }
+        { id: "child", targetIds: [ "child_of_child"] }
+        { id: "child_of_child" }
       ], silent: true
       @graph.breadthFirstIn @callback, start: "child"
       @callback.should.have.been.calledTwice
@@ -274,8 +274,8 @@ describe "Coreon.Collections.Digraph", ->
   
     it "invokes callback for every node", ->
       @graph.reset [
-        { _id: "node_1" }
-        { _id: "node_2" }
+        { id: "node_1" }
+        { id: "node_2" }
       ], silent: true
       node_1 = @graph.get "node_1"
       node_2 = @graph.get "node_2"
@@ -287,10 +287,10 @@ describe "Coreon.Collections.Digraph", ->
 
     it "invokes callback breadth first", ->
       @graph.reset [
-        { _id: "leaf", sourceIds: [ "parent_1", "parent_2" ] }
-        { _id: "parent_1", sourceIds: [ "parent_of_parent"] }
-        { _id: "parent_2" }
-        { _id: "parent_of_parent" }
+        { id: "leaf", sourceIds: [ "parent_1", "parent_2" ] }
+        { id: "parent_1", sourceIds: [ "parent_of_parent"] }
+        { id: "parent_2" }
+        { id: "parent_of_parent" }
       ], silent: true
       @graph.breadthFirstOut @callback 
       @callback.getCall(0).should.have.deep.property "args[0].id", "leaf"
@@ -300,19 +300,19 @@ describe "Coreon.Collections.Digraph", ->
 
     it "invokes callback only once per node", ->
       @graph.reset [
-        { _id: "leaf", sourceIds: [ "parent_1", "parent_2" ] }
-        { _id: "parent_1", sourceIds: [ "parent_of_parent"] }
-        { _id: "parent_2", sourceIds: [ "parent_of_parent"] }
-        { _id: "parent_of_parent" }
+        { id: "leaf", sourceIds: [ "parent_1", "parent_2" ] }
+        { id: "parent_1", sourceIds: [ "parent_of_parent"] }
+        { id: "parent_2", sourceIds: [ "parent_of_parent"] }
+        { id: "parent_of_parent" }
       ], silent: true
       @graph.breadthFirstOut @callback 
       @callback.should.have.property "callCount", 4
 
     it "takes starting nodes as argument", ->
       @graph.reset [
-        { _id: "leaf", sourceIds: [ "parent" ] }
-        { _id: "parent", sourceIds: [ "parent_of_parent"] }
-        { _id: "parent_of_parent" }
+        { id: "leaf", sourceIds: [ "parent" ] }
+        { id: "parent", sourceIds: [ "parent_of_parent"] }
+        { id: "parent_of_parent" }
       ], silent: true
       @graph.breadthFirstOut @callback, start: "parent"
       @callback.should.have.been.calledTwice

@@ -46,19 +46,19 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'given a broader concept with label "weapon"' do    
-    weapon = create_concept properties: [{key: 'label', value: 'weapon'}], sub_concepts: [@handgun['_id']]
+    weapon = create_concept properties: [{key: 'label', value: 'weapon'}], subconcepts: [@handgun['id']]
   end
 
   And 'given a narrower concept with label "pistol"' do
-    pistol = create_concept properties: [{key: 'label', value: 'pistol'}], super_concepts: [@handgun['_id']]
+    pistol = create_concept properties: [{key: 'label', value: 'pistol'}], superconcepts: [@handgun['id']]
   end
 
   And 'given a narrower concept with label "revolver"' do
-    revolver = create_concept properties: [{key: 'label', value: 'revolver'}], super_concepts: [@handgun['_id']]
+    revolver = create_concept properties: [{key: 'label', value: 'revolver'}], superconcepts: [@handgun['id']]
   end
 
   And 'this property has an attribute "author" of "William"' do
-    update_concept_property @handgun, @prop, author: 'William'
+    update_concept_property @handgun, @prop, admin: {author: 'William'}
   end
 
   And 'this concept has a property "notes" with value "I\'m not dead. Am I?"' do
@@ -66,7 +66,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this property has an attribute "author" of "Nobody"' do
-    update_concept_property @handgun, @prop, author: 'Nobody'
+    update_concept_property @handgun, @prop, admin: {author: 'Nobody'}
   end
 
   And 'this concept has a term "shot gun"' do
@@ -74,7 +74,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this term has an attribute "legacy_id" of "543"' do
-    update_concept_term @handgun, @term, legacy_id: '543'
+    update_concept_term @handgun, @term, admin: {legacy_id: '543'}
   end
 
   And 'this term has a property "parts of speach" with value "noun"' do
@@ -82,7 +82,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this property has an attribute "author" of "Mr. Blake"' do
-    update_concept_term_property @handgun, @term, @prop, author: "Mr. Blake"
+    update_concept_term_property @handgun, @term, @prop, admin: {author: "Mr. Blake"}
   end
 
   And 'I click on the label "handgun"' do
@@ -90,7 +90,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should be on the show concept page for "handgun"' do
-    current_path.should == "/concepts/#{@handgun['_id']}"
+    current_path.should == "/concepts/#{@handgun['id']}"
   end
 
   And 'I should see the label "handgun"' do
@@ -201,7 +201,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should see "id" of the "handgun" concept' do
-    page.find(".concept > .system-info").find(:xpath, ".//th[text()='id']/following-sibling::td[1]").should have_content(@handgun["_id"])
+    page.find(".concept > .system-info").find(:xpath, ".//th[text()='id']/following-sibling::td[1]").should have_content(@handgun["id"])
   end
 
   And 'I should see "author" with value "William" for property "NOTES"' do

@@ -4,8 +4,11 @@
 #= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
 #= require collections/concept_nodes
+#= require modules/droppable
 
 class Coreon.Views.Widgets.WidgetsView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Droppable
 
   id: "coreon-widgets"
 
@@ -17,6 +20,10 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @$el.width settings.widgets.width if settings.widgets.width?
     @subviews = []
 
+    @droppableOn @$el, "ui-droppable-widgets",
+      greedy: false
+      disableForeigners: true
+      fake: true
 
   localSettings: ->
     cache_id = Coreon.application.cacheId()
