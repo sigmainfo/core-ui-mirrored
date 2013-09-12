@@ -48,12 +48,12 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
           {
             score: 1.567
             result:
-              id: "50506ebdd19879161b000019"
+              _id: "50506ebdd19879161b000019"
           }
           {
             score: 0.431
             result:
-              id: "50506ebdd19879161b000015"
+              _id: "50506ebdd19879161b000015"
           }
         ], {silent: true}
       @view.render()
@@ -62,7 +62,7 @@ describe "Coreon.Views.Concepts.ConceptListView", ->
       @view.subviews[0].model.should.equal concept
       @view.$el.should.have ".concept-list-item"
       @view.$(".concept-list-item").eq(0).should.have ".concept-label"
-      Coreon.Models.Concept.upsert.should.have.been.calledWith id: "50506ebdd19879161b000019"
+      Coreon.Models.Concept.upsert.should.have.been.calledWith _id: "50506ebdd19879161b000019"
 
     it "is triggered by model changes", ->
       @view.render = sinon.spy()

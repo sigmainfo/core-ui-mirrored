@@ -11,7 +11,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I am on the show concept page of "beaver hat"' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 
   step 'I click "Delete concept"' do
@@ -24,7 +24,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
 
 
   step 'I should still be on the show concept page' do
-    page.current_path.should == "/#{@repository.id}/concepts/#{@concept['id']}"
+    page.current_path.should == "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 
   step 'I should be on the repository root page' do
@@ -55,7 +55,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I navigate to the show concept of "hat"' do
-    page.execute_script "Backbone.history.navigate('#{@repository.id}/concepts/#{@superconcept['id']}', {trigger: true})"
+    page.execute_script "Backbone.history.navigate('#{@repository.id}/concepts/#{@superconcept['_id']}', {trigger: true})"
     page.should have_css("h2.label", text: "hat")
   end
 

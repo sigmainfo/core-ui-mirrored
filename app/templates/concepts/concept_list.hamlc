@@ -2,4 +2,4 @@
   %thead
     %tr
       %th.label= I18n.t "concepts.list.header.label"
-      %th.super= I18n.t "concepts.list.header.superconcepts"
+      %th.super= I18n.t "concepts.list.header.super_concepts"

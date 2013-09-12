@@ -33,7 +33,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     roles = repo?.get "user_roles"
     if roles and "maintainer" in roles
       attrs =
-        superconcept_ids: [parent_id]
+        super_concept_ids: [parent_id]
       concept = new Coreon.Models.Concept attrs
       @view.switch new Coreon.Views.Concepts.NewConceptView
         model: concept

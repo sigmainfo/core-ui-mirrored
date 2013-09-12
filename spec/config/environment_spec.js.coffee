@@ -43,7 +43,7 @@ describe "config/environment", ->
     HAML.globals().should.equal Coreon.Helpers
 
   it "configures models for use with Mongoid id field", ->
-    model = new Backbone.Model id: "1234"
+    model = new Backbone.Model _id: "1234"
     model.id.should.equal "1234"
 
   it "sets Views prototpye for destroy() to call remove()", ->

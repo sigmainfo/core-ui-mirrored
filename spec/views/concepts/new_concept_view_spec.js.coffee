@@ -11,7 +11,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       model: new Backbone.Model
         properties: []
         terms: []
-        superconcept_ids: []
+        super_concept_ids: []
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null

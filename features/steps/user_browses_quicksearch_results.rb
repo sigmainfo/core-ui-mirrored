@@ -55,7 +55,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   Then 'I should be on the page of concept "versify"' do
-    current_path.should == "/#{@repository.id}/concepts/#{@versify['id']}"
+    current_path.should == "/#{@repository.id}/concepts/#{@versify['_id']}"
   end
 
   Given 'the a concept with label "dead"' do
@@ -85,10 +85,10 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   And '"poet" is a subconcept of "poetry"' do
     create_edge({
       source_node_type: 'Concept', 
-      source_node_id: @poetry['id'],
+      source_node_id: @poetry['_id'],
       edge_type: 'SUPERCONCEPT_OF',
       target_node_type: 'Concept',
-      target_node_id: @poet['id']
+      target_node_id: @poet['_id']
     })
   end
 
@@ -114,7 +114,7 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   end
 
   Then 'I should be on the concept page of "poetry"' do
-    current_path.should == "/#{@repository.id}/concepts/#{@poetry['id']}"
+    current_path.should == "/#{@repository.id}/concepts/#{@poetry['_id']}"
   end
 
   Given 'a taxonomy "Professions"' do
@@ -136,10 +136,10 @@ class UserBrowsesQuicksearchResults < Spinach::FeatureSteps
   And '"poet" is a subnode of "artist"' do
     create_edge({
       source_node_type: 'TaxonomyNode', 
-      source_node_id: @artist['id'],
+      source_node_id: @artist['_id'],
       edge_type: 'SUPERNODE_OF',
       target_node_type: 'TaxonomyNode',
-      target_node_id: @poet['id']
+      target_node_id: @poet['_id']
     })
   end
 

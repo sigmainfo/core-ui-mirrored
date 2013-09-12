@@ -1,7 +1,7 @@
 != @render "concepts/caption", label: @concept.get "label"
 != @form_for "concept", @concept, null, ->
-  - for scid in @concept.get("superconcept_ids")
-    %input( type="hidden" name="concept[superconcept_ids][]" value="#{scid}" )
+  - for scid in @concept.get("super_concept_ids")
+    %input( type="hidden" name="concept[super_concept_ids][]" value="#{scid}" )
   %section.properties
     %h3= I18n.t "properties.title"
     - for property, index in @concept.properties().models

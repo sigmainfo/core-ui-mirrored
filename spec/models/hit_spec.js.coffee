@@ -4,7 +4,7 @@
 describe "Coreon.Models.Hit", ->
 
   beforeEach ->
-    @hit = new Coreon.Models.Hit id: "1234"
+    @hit = new Coreon.Models.Hit _id: "1234"
 
   it "is a Backbone model", ->
     @hit.should.be.an.instanceof Backbone.Model

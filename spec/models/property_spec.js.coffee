@@ -25,7 +25,7 @@ describe "Coreon.Models.Property", ->
         value: ""
         lang: ""
       @model.set {
-        id: "abcd1234"
+        _id: "abcd1234"
         author: "Nobody"
         key: "label"
         value: "hat"

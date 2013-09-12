@@ -14,7 +14,7 @@ module Api
       end
 
       def create_concept_property concept, attributes
-        response = CoreAPI.post( "concepts/#{concept['id']}/properties", property: attributes )
+        response = CoreAPI.post( "concepts/#{concept['_id']}/properties", property: attributes )
         unless response.success?
           raise response.body
         end
@@ -22,14 +22,14 @@ module Api
       end
       
       def update_concept_property concept, property, attributes
-        response = CoreAPI.put( "concepts/#{concept['id']}/properties/#{property['id']}", property: attributes )
+        response = CoreAPI.put( "concepts/#{concept['_id']}/properties/#{property['_id']}", property: attributes )
         unless response.success?
           raise response.body
         end
       end
       
       def create_concept_term concept, attributes
-        response = CoreAPI.post( "concepts/#{concept['id']}/terms", term: attributes )
+        response = CoreAPI.post( "concepts/#{concept['_id']}/terms", term: attributes )
         unless response.success?
           raise response.body
         end
@@ -37,14 +37,14 @@ module Api
       end
       
       def update_concept_term concept, term, attributes
-        response = CoreAPI.put( "concepts/#{concept['id']}/terms/#{term['id']}", term: attributes )
+        response = CoreAPI.put( "concepts/#{concept['_id']}/terms/#{term['_id']}", term: attributes )
         unless response.success?
           raise response.body
         end
       end
       
       def create_concept_term_property concept, term, attributes
-        response = CoreAPI.post( "concepts/#{concept['id']}/terms/#{term['id']}/properties", property: attributes )
+        response = CoreAPI.post( "concepts/#{concept['_id']}/terms/#{term['_id']}/properties", property: attributes )
         unless response.success?
           raise response.body
         end
@@ -52,7 +52,7 @@ module Api
       end
       
       def update_concept_term_property concept, term, prop, attributes
-        response = CoreAPI.put( "concepts/#{concept['id']}/terms/#{term['id']}/properties/#{prop['id']}", property: attributes )
+        response = CoreAPI.put( "concepts/#{concept['_id']}/terms/#{term['_id']}/properties/#{prop['_id']}", property: attributes )
         unless response.success?
           raise response.body
         end
@@ -69,10 +69,10 @@ module Api
       def link_narrower_to_broader narrower, broader
         create_edge({
           source_node_type: 'Concept', 
-          source_node_id: broader['id'],
+          source_node_id: broader['_id'],
           edge_type: 'SUPERCONCEPT_OF',
           target_node_type: 'Concept',
-          target_node_id: narrower['id']
+          target_node_id: narrower['_id']
         })
       end
 
@@ -85,7 +85,7 @@ module Api
       end
 
       def create_taxonomy_taxonomy_node taxonomy, attributes
-        response = CoreAPI.post( "taxonomies/#{taxonomy['id']}/taxonomy_nodes", taxonomy_node: attributes )
+        response = CoreAPI.post( "taxonomies/#{taxonomy['_id']}/taxonomy_nodes", taxonomy_node: attributes )
         unless response.success?
           raise response.body
         end

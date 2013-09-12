@@ -24,12 +24,12 @@ class Coreon.Views.Search.SearchResultsConceptsView extends Coreon.Views.Composi
     @$("tbody td.label").append (index) ->
       new Coreon.Views.Concepts.ConceptLabelView(id: concepts[index].id).render().$el
     @$("tbody td.super").append (index) ->
-      for concept_id, index in concepts[index].superconcept_ids
+      for concept_id, index in concepts[index].super_concept_ids
         new Coreon.Views.Concepts.ConceptLabelView(id: concept_id).render().el
     @
 
   extractConcepts: (hits) ->
     _(hits).pluck("result").map (result) ->
-      id: result.id
+      id: result._id
       label: _(result.properties)?.find((prop)-> prop.key == "label")?.value
-      superconcept_ids: result.superconcept_ids
+      super_concept_ids: result.super_concept_ids

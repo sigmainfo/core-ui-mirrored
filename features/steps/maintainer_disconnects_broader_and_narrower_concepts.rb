@@ -7,15 +7,15 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
   include Api::Graph::Factory
 
   step 'a concept with label "panopticum", superconcept "surveillance" and subconcept "camera" exists' do
-    @superconcept = create_concept_with_label "surveillance"
-    @subconcept = create_concept_with_label "camera"
+    @superConcept = create_concept_with_label "surveillance"
+    @subConcept = create_concept_with_label "camera"
     @concept = create_concept_with_label "panopticum",
-      superconcept_ids: [@superconcept['id']],
-      subconcept_ids: [@subconcept['id']]
+      super_concept_ids: [@superConcept['_id']],
+      sub_concept_ids: [@subConcept['_id']]
   end
 
   step 'I am on the show concept page of "panopticum"' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 
   step 'I click "Edit concept"' do

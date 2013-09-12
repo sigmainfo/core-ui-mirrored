@@ -53,7 +53,7 @@ describe "Coreon.Models.Term", ->
 
     it "returns hash with system info attributes", ->
       @model.set {
-        id: "abcd1234"
+        _id: "abcd1234"
         author: "Nobody"
         properties : [ "foo", "bar" ]
       }, silent: true

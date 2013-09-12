@@ -35,6 +35,6 @@ module EditSteps
   end
 
   step 'I visit the page of this concept' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{@repository.id}/concepts/#{@concept['_id']}"
   end
 end

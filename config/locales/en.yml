@@ -39,7 +39,7 @@ en:
         headline: "Concepts"
         header:
           label: "Concept"
-          superconcepts: "Broader"
+          super_concepts: "Broader"
           id: "ID"
         show_all: "Concepts only"
       tnodes:
@@ -51,7 +51,7 @@ en:
     list:
       header:
         label: "Concept"
-        superconcepts: "Broader"
+        super_concepts: "Broader"
         id: "ID"
       props:
         definition: "Definition"

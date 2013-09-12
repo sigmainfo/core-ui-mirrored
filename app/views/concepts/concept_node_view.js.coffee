@@ -69,13 +69,13 @@ class Coreon.Views.Concepts.ConceptNodeView extends Coreon.Views.SVGView
     if @model.has "hit"
       @bg.attr("filter", "url(#coreon-drop-shadow-filter)")
 
-    if @model.get("subconcept_ids")?.length > 0
+    if @model.get("sub_concept_ids")?.length > 0
       @_renderToggle(@model.get "expandedOut")
         .classed("toggle-children", true)
         .attr("transform", "translate(#{box.width}, 0)")
         .on("click", (datum) => @toggleChildren() )
 
-    if @model.get("superconcept_ids")?.length > 0
+    if @model.get("super_concept_ids")?.length > 0
       @_renderToggle(@model.get "expandedIn")
         .classed("toggle-parents", true)
         .attr("transform", "translate(0, #{box.height}) rotate(180)")

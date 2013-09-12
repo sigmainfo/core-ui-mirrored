@@ -10,7 +10,7 @@ describe "Coreon.Collections.Terms", ->
     @collection.should.be.an.instanceof Backbone.Collection
 
   it "creates Term models", ->
-    @collection.add id: "term"
+    @collection.add _id: "term"
     @collection.get("term").should.be.an.instanceof Coreon.Models.Term
   
   describe "toJSON()", ->
