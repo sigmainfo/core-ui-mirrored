@@ -9,7 +9,7 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
       super_concept_ids: ["daddee"]
       sub_concept_ids: ["babee"]
       label: "coffee"
-    @model = new Coreon.Models.BroaderAndNarrowerForm @concept
+    @model = new Coreon.Models.BroaderAndNarrowerForm {}, concept:@concept
 
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
@@ -27,18 +27,6 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
 
   it "delivers label", ->
     @model.get("label").should.equal "coffee"
-
-  it "updates superconcept ids", ->
-    @concept.set "super_concept_ids", ["daddee", "daddaa"]
-    @model.get("super_concept_ids").should.eql ["daddee", "daddaa"]
-
-  it "updates subconcept ids", ->
-    @concept.set "sub_concept_ids", ["babee", "bibii"]
-    @model.get("sub_concept_ids").should.eql ["babee", "bibii"]
-
-  it "updates label", ->
-    @concept.set "label", "espresso"
-    @model.get("label").should.equal "espresso"
 
   it "fascades isNew()", ->
     @concept.isNew = -> true
@@ -59,13 +47,4 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
     @model.set "sub_concept_ids", ["babee", "bibii"]
     @concept.get("super_concept_ids").should.eql ["daddee"]
     @concept.get("sub_concept_ids").should.eql ["babee"]
-
-  it "keeps temporary changes when original concept changes", ->
-    @model.set "super_concept_ids", ["daddee", "daddaa"]
-    @concept.set "super_concept_ids", ["daddee", "diddie"]
-    @model.get("super_concept_ids").sort().should.eql ["daddaa", "daddee", "diddie"]
-
-    @model.set "sub_concept_ids", ["babee", "bibii"]
-    @concept.set "sub_concept_ids", ["babee", "bubuu"]
-    @model.get("sub_concept_ids").sort().should.eql ["babee", "bibii", "bubuu"]
 

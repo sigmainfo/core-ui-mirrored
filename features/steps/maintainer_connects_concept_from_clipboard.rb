@@ -49,29 +49,29 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'I drag the clipped concept to the subconcept dropzone' do
-    drop = find(".concept.edit .broader-and-narrower .narrower.ui-droppable ul")
+    drop = find(".concept.edit .broader-and-narrower .narrower ul")
     find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to drop
   end
 
   step 'I drag the clipped concept to the superconcept dropzone' do
-    drop = find(".concept.edit .broader-and-narrower .broader.ui-droppable ul")
+    drop = find(".concept.edit .broader-and-narrower .broader ul")
     find('#coreon-clipboard li a.concept-label.ui-draggable').drag_to drop
   end
 
   step 'I should see "panopticum" unsaved as narrower concept' do
-    within ".concept.edit .broader-and-narrower .narrower.ui-droppable" do
+    within ".concept.edit .broader-and-narrower .narrower" do
       find "li .concept-label", text: "panopticum"
     end
   end
 
   step 'I should see "panopticum" unsaved as broader concept' do
-    within ".concept.edit .broader-and-narrower .broader.ui-droppable" do
+    within ".concept.edit .broader-and-narrower .broader" do
       find "li .concept-label", text: "panopticum"
     end
   end
 
   step 'I should see reset, cancel and save buttons' do
-    within ".concept.edit .broader-and-narrower form.active" do
+    within ".concept.edit .broader-and-narrower form" do
       find(".submit .reset")
       find(".submit .cancel")
       find(".submit [type=submit]")
@@ -79,13 +79,13 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'the concept should have a new narrower connection' do
-    within ".concept.edit .broader-and-narrower .narrower.static" do
+    within ".concept.edit .broader-and-narrower .narrower" do
       find "li .concept-label", text: "panopticum"
     end
   end
 
   step 'the concept should have a new broader connection' do
-    within ".concept.edit .broader-and-narrower .broader.static" do
+    within ".concept.edit .broader-and-narrower .broader" do
       find "li .concept-label", text: "panopticum"
     end
   end
@@ -95,24 +95,23 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'I should not see drop zones' do
-    page.should have_css(".broader-and-narrower form.static")
-    page.should have_no_css(".broader-and-narrower form.active")
+    page.should have_no_css(".broader-and-narrower form")
   end
 
   step 'I click Save' do
-    within ".concept.edit .broader-and-narrower form.active" do
+    within ".concept.edit .broader-and-narrower form" do
       click_link_or_button "Save"
     end
   end
 
   step 'I click Cancel' do
-    within ".concept.edit .broader-and-narrower form.active" do
+    within ".concept.edit .broader-and-narrower form" do
       click_link_or_button "Cancel"
     end
   end
 
   step 'I click Reset' do
-    within ".concept.edit .broader-and-narrower form.active" do
+    within ".concept.edit .broader-and-narrower form" do
       click_link_or_button "Reset"
     end
   end
