@@ -24,19 +24,22 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     "click .zoom-in":  "zoomIn"
     "click .zoom-out": "zoomOut"
     "click .toggle-orientation": "toggleOrientation"
+    "click .toggle-children": "toggleChildren"
+    "click .toggle-parents": "toggleParents"
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
-    @stopListening()
-    @listenTo @model, "reset add remove change:label", _.throttle(@render, 100)
     @_renderMarkupSkeleton()
 
     @renderStrategies = [
       Coreon.Views.Widgets.ConceptMap.LeftToRight
       Coreon.Views.Widgets.ConceptMap.TopDown
     ]
+
+    @map = d3.select(@$("svg g.concept-map").get 0)
+    @renderStrategy = new @renderStrategies[0] @map
 
     settings = {}
     if cache_id = Coreon.application?.cacheId()
@@ -50,11 +53,25 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     else
       @resize @options.size...
     d3.select(@$("svg").get 0).call @navigator
-    @map = d3.select(@$("svg g.concept-map").get 0)
-    @renderStrategy = new @renderStrategies[0] @map
+
+    @stopListening()
+    @listenTo @model, "add remove change:label change:hit", _.throttle(@render, 100)
+    @listenTo @model, "reset", @renderAndCenterSelection
 
   render: ->
-    @renderStrategy.render @model.tree(), size: [@_svgWidth, @_svgHeight]
+    @renderStrategy.render @model.tree()
+    @
+
+  renderAndCenterSelection: ->
+    width = @width / 2
+    height = @svgHeight / 2
+    if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
+      width -= 300
+    else
+      height -= 300
+    @navigator.translate [width, height]
+    @_panAndZoom()
+    @render()
     @
 
   zoomIn: ->
@@ -70,14 +87,16 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   resize: (width, height) ->
     svg = @$("svg")
     if height?
+      @height = height
+      @svgHeight = height - @options.svgOffset 
       @$el.height height
-      @_svgHeight = height - @options.svgOffset
-      svg.attr "height", "#{ height - @options.svgOffset }px"
+      svg.attr "height", "#{@svgHeight}px"
     if width?
+      @width = width
       @$el.width width
-      @_svgWidth = width
       svg.attr "width", "#{ width }px"
-    @saveLayout width: @$el.width(), height: @$el.height()
+    @renderStrategy.resize @width, @height - @options.svgOffset
+    @saveLayout width: @width, height: @height
     
   saveLayout = (layout) ->
     settings = {}
@@ -105,4 +124,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     views = @renderStrategy.views
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
-    @render()
+    @renderAndCenterSelection()
+
+  toggleChildren: (event) ->
+    datum = d3.select(event.target).datum()
+    datum.expandedOut = not datum.expandedOut
+    @model.get(datum.id).set "expandedOut", datum.expandedOut
+
+  toggleParents: (event) ->
+    datum = d3.select(event.target).datum()
+    datum.expandedIn = not datum.expandedIn
+    @model.get(datum.id).set "expandedIn", datum.expandedIn

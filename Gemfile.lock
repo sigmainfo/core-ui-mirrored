@@ -138,6 +138,8 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
+    pry-rails (0.3.2)
+      pry (>= 0.9.10)
     pry-theme (0.2.0)
       json
     rack (1.4.5)
@@ -236,6 +238,7 @@ DEPENDENCIES
   capistrano-ext
   capybara-webkit
   coffee-rails (~> 3.2.1)
+  colorize
   compass-rails
   core_client!
   execjs
@@ -247,6 +250,7 @@ DEPENDENCIES
   launchy
   poltergeist
   pry
+  pry-rails
   pry-theme
   rack-cors
   rails (= 3.2.12)

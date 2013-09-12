@@ -32,8 +32,7 @@ gem 'jquery-ui-rails'
 gem 'rack-cors', require: 'rack/cors'
 
 group :development do
-  gem "thin"
-  gem "konacha"
+  gem 'thin'
   gem 'capistrano'
   gem 'capistrano-ext'
 end
@@ -47,9 +46,12 @@ group :test do
 end
 
 group :test, :development do
+  gem 'awesome_print'
+  gem 'colorize'
+  gem 'konacha'
   gem 'capybara-webkit'
   gem 'rspec-rails', require: false
   gem 'pry'
   gem 'pry-theme'
-  gem 'awesome_print'
+  gem 'pry-rails'
 end

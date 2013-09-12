@@ -7,6 +7,7 @@
     float: left;
     background-position: -50px -700px;
   }
+
   ul {
     border-top: 1px solid rgba(white, 0.2);
     padding: 8px 20px;
@@ -17,10 +18,24 @@
     li {
       list-style: none;
       padding: 1px;
+      position: relative;
+      @include opacity(0.8);
+      &:after {
+        @include before-icon;
+        background-position: 0 -803px;
+        position: absolute;
+        bottom: 0;
+        left: -5px;
+      };
+
       .concept-label {
         font-size: 0.9em;
         line-height: 1.3em;
         padding-top: 2px;
+        padding-left: 16px;
+        &:before {
+          left: 6px;
+        };
         @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
       }
     }

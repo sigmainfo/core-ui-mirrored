@@ -1,49 +1,62 @@
 #= require environment
 #= require views/widgets/concept_map/render_strategy
+#= require helpers/text
 
 class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
-  initialize: ->
-    @stencil = d3.svg.diagonal().projection (datum) -> [datum.y, datum.x]
+  constructor: (parent) ->
     super
+    @layout.nodeSize [25, 190]
+    @diagonal.projection (datum) -> [datum.y, datum.x]
 
-  renderNodes: (root, options) ->
-    @layout.size [ @size[1], @size[0] ]
-
-    data  = @layout.nodes root
-    views = @views
-
-    nodes = @selection.selectAll(".concept-node")
-      .data( data[1..], (datum) -> datum.model.cid )
-
-    nodes.enter()
-      .append("g")
-      .attr("class", "concept-node")
+  updateNodes: (nodes) ->
+    super
+    nodes.attr("transform", (datum) ->
+        "translate(#{datum.y}, #{datum.x})"
+      )
+    
+    nodes.select("text.label")
+      .attr("text-anchor", "start")
+      .attr("x", 7)
+      .attr("y", "0.35em")
+      .html("")
+      .text( (datum) ->
+        Coreon.Helpers.Text.shorten datum.label, 24
+      )
       .each( (datum) ->
-        view = new Coreon.Views.Concepts.ConceptNodeView
-          el: @
-          model: datum.model
-        views[datum.model.cid] = view.render()
+        datum.textWidth = @getBBox().width
       )
 
-    nodes.exit()
-      .each( (datum) ->
-        views[datum.model.cid].stopListening()
-        delete views[datum.model.cid]
+    nodes.select("rect.background")
+      .attr("height", (datum) ->
+        if datum.hit then 20 else 17
       )
-      .remove()
+      .attr("width", (datum) ->
+        datum.textWidth + 20
+      )
+      .attr("x", -7)
+      .attr("y", (datum) ->
+        if datum.hit then -10 else -8.5
+      )
+    
+    nodes.select("g.toggle-parents")
+      .attr("transform", (datum) ->
+        "translate(-15, 0) rotate(#{if datum.expandedIn then 90 else 0})" 
+      )
 
-    minY = @options.offsetY
-    for datum in data
-      if datum.children?.length > 1
-        minY = Math.min minY, datum.children[1].x - datum.children[0].x
-    scaleY = @options.offsetY / minY
+    nodes.select("g.toggle-children")
+      .attr("transform", (datum) ->
+        "translate(#{datum.textWidth + 21}, 0) rotate(#{if datum.expandedOut then 90 else 0})" 
+      )
 
-    nodes
-      .each( (datum) =>
-        datum.y = datum.x * scaleY + @options.padding
-        datum.x = ( datum.depth - 1 ) * @options.offsetX + @options.padding
-      )
-      .attr( "transform", (datum) ->
-        "translate(#{datum.x}, #{datum.y})"
-      )
+  updateEdges: (edges) ->
+    diagonal = @diagonal
+    edges.attr("d", (datum) ->
+      diagonal
+        source:
+          x: datum.source.x
+          y: datum.source.y + datum.source.textWidth + 14
+        target:
+          x: datum.target.x
+          y: datum.target.y - 7
+    )

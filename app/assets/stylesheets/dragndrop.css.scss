@@ -13,7 +13,7 @@
   max-width: 400px;
 }
 .ui-draggable-dragged {
-  @include opacity(0.7);
+  @include opacity(0.5);
 }
 .ui-droppable-clipboard, .ui-droppable-connect, .ui-droppable-disconnect {
   &:after {

@@ -83,7 +83,11 @@ $edge-color: #bfc5c0;
         }
 
         .toggle {
-          fill: transparent;
+
+          .background {
+            fill: transparent;
+          }
+
           .icon {
             stroke: darken($edge-color, 10);
             stroke-width: 2px;
