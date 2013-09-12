@@ -21,9 +21,14 @@ describe "Coreon.Modules.SystemInfo", ->
       @model.defaults = -> terms: []
       @model.set {
         id: "abcd1234"
-        author: "Nobody"
+        admin: {author: "Nobody"}
         terms : [ "foo", "bar" ]
+        created_at: '2013-09-12 13:48'
+        updated_at: '2013-09-12 13:50'
       }, silent: true
       @model.info().should.eql
         id: "abcd1234"
         author: "Nobody"
+        created_at: '2013-09-12 13:48'
+        updated_at: '2013-09-12 13:50'
+

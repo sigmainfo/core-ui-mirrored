@@ -58,7 +58,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this property has an attribute "author" of "William"' do
-    update_concept_property @handgun, @prop, author: 'William'
+    update_concept_property @handgun, @prop, admin: {author: 'William'}
   end
 
   And 'this concept has a property "notes" with value "I\'m not dead. Am I?"' do
@@ -66,7 +66,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this property has an attribute "author" of "Nobody"' do
-    update_concept_property @handgun, @prop, author: 'Nobody'
+    update_concept_property @handgun, @prop, admin: {author: 'Nobody'}
   end
 
   And 'this concept has a term "shot gun"' do
@@ -74,7 +74,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this term has an attribute "legacy_id" of "543"' do
-    update_concept_term @handgun, @term, legacy_id: '543'
+    update_concept_term @handgun, @term, admin: {legacy_id: '543'}
   end
 
   And 'this term has a property "parts of speach" with value "noun"' do
@@ -82,7 +82,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'this property has an attribute "author" of "Mr. Blake"' do
-    update_concept_term_property @handgun, @term, @prop, author: "Mr. Blake"
+    update_concept_term_property @handgun, @term, @prop, admin: {author: "Mr. Blake"}
   end
 
   And 'I click on the label "handgun"' do
