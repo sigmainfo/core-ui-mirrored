@@ -19,10 +19,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     sinon.stub Coreon.Models.Concept, "find", (id) ->
       concepts[id] ?= new Backbone.Model id: id, label: id
 
+    sinon.stub _, "defer", (func)-> func()
+
   afterEach ->
     I18n.t.restore()
     Coreon.Helpers.can.restore()
     Coreon.Models.Concept.find.restore()
+    _.defer.restore()
 
   it "is a Backbone view", ->
    @view.should.be.an.instanceof Backbone.View
@@ -151,11 +154,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.render()
         @view.$(".broader ul li.legacy").should.have.lengthOf 0
 
-      xit "rerenders items on model change", ->
+      it "rerenders items on model change", ->
         @view.model.set "superconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.model.set "superconcept_ids", [ "c45" ]
-        #TODO: needs to handle defered rendering (_.defer)
         @view.$("[data-drag-ident=c1]").length.should.equal 0
         @view.$("[data-drag-ident=c45]").length.should.equal 1
 
@@ -184,12 +186,11 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
           @view.render()
           @view.$(".broader ul").should.not.have ".repository-label"
 
-        xit "rerenders on blank state change", ->
+        it "rerenders on blank state change", ->
           @view.model.blank = true
           @view.render()
           @view.model.blank = false
           @view.model.trigger "nonblank"
-          #TODO: needs to handle defered rendering (_.defer)
           @view.$(".broader ul").should.have ".repository-label"
           
 
@@ -226,11 +227,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.render()
         @view.$(".narrower ul li").should.have.lengthOf 0
 
-      xit "rerenders items on model change", ->
+      it "rerenders items on model change", ->
         @view.model.set "subconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.model.set "subconcept_ids", [ "c45" ]
-        #TODO: needs to handle defered rendering (_.defer)
         @view.narrower.should.have.lengthOf 1
         @view.$el.find("[data-drag-ident=c45]").length.should.equal 1
 
@@ -342,11 +342,9 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         $(window).trigger event
         spy.should.have.been.calledOnce
 
-      xit "makes drop zones available", ->
-        should.exist @view.$(".broader.ui-droppable ul").data("uiDroppable")
-        should.exist @view.$(".narrower.ui-droppable ul").data("uiDroppable")
-        should.not.exist @view.$(".broader.static ul").data("uiDroppable")
-        should.not.exist @view.$(".narrower.static ul").data("uiDroppable")
+      it "makes drop zones available", ->
+        should.exist @view.$("form .broader ul").data("uiDroppable")
+        should.exist @view.$("form .narrower ul").data("uiDroppable")
 
       it "has drop methods", ->
         @dropFunBroad.should.be.a.function
@@ -356,9 +354,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$(".broader ul").data("uiDroppable").options.accept.should.be.a.function
         @view.$(".narrower ul").data("uiDroppable").options.accept.should.be.a.function
 
-      xit "renders new connected concepts", ->
+      it "renders new connected concepts", ->
         @view.onDrop "broader", @el_foreign
-        #TODO: needs to handle defered rendering (_.defer)
         @view.$(".broader [data-drag-ident=bad1dea]").should.exist
 
   describe "onDisconnect()", ->
@@ -453,39 +450,18 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.$("form").submit()
       @view.updateConceptConnections.should.have.been.calledOnce
 
-    xit "adds new ids", ->
-      @view.$(".broader.ui-droppable ul").append $('<li><div data-drag-ident="bad1dea" data-new-connection="true"></div></li>')
-      @view.$(".narrower.ui-droppable ul").append $('<li><div data-drag-ident="babee" data-new-connection="true"></div></li>')
-      @view.updateConceptConnections @event
-      @view.model.save.should.have.been.calledOnce
-      dataArg = @view.model.save.firstCall.args[0]
-      dataArg.should.be.an.object
-      dataArg.superconcept_ids.should.be.an.array
-      dataArg.superconcept_ids.should.contain "bad1dea"
-      dataArg.subconcept_ids.should.be.an.array
-      dataArg.subconcept_ids.should.contain "babee"
-
-    xit "removes deleted ids", ->
-      @view.$(".broader.ui-droppable [data-drag-ident=c0ffee]").attr "data-deleted-connection", true
-      @view.$(".narrower.ui-droppable [data-drag-ident=deadbeef]").attr "data-deleted-connection", true
-      @view.updateConceptConnections @event
-      dataArg = @view.model.save.firstCall.args[0]
-      dataArg.superconcept_ids.should.not.contain "c0ffee"
-      dataArg.subconcept_ids.should.not.contain "deadbeef"
-
-    it "adds non-deleted ids", ->
-      @view.updateConceptConnections @event
-      dataArg = @view.model.save.firstCall.args[0]
-      dataArg.superconcept_ids.should.contain "c0ffee"
-      dataArg.subconcept_ids.should.contain "deadbeef"
-
     it "disables all form fields", ->
       @view.updateConceptConnections @event
       @view.$("form").hasClass("disabled").should.be.true
       $(el).hasClass("disabled").should.be.true for el in @view.$(".submit a")
       $(el).should.be.disabled for el in @view.$("input,textarea,button")
 
-    xit "disables droppables", ->
+    it "disables draggables", ->
+      @view.updateConceptConnections @event
+      for el in @view.$('.ui-draggable')
+        $(el).draggable("option", "disabled").should.be.true if $(el).data("uiDraggable")
+
+    it "disables droppables", ->
       @view.updateConceptConnections @event
       for el in @view.$('.ui-droppable')
         $(el).droppable("option", "disabled").should.be.true if $(el).data("uiDroppable")
