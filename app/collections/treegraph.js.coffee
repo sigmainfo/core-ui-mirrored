@@ -7,8 +7,8 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     super
     @on "change:label", @_updateLabel, @
     @on "change:hit", @_updateHit, @
-    @on "change:super_concept_ids", @_updateRoot, @
-    @on "change:sub_concept_ids", @_updateLeaf, @
+    @on "change:superconcept_ids", @_updateRoot, @
+    @on "change:subconcept_ids", @_updateLeaf, @
 
   tree: ->
     @_createTree() unless @_tree?
@@ -37,8 +37,8 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
       label: model.get "label"
       hit: model.has("hit")
       children: []
-      root: model.get("super_concept_ids")?.length is 0
-      leaf: model.get("sub_concept_ids")?.length is 0
+      root: model.get("superconcept_ids")?.length is 0
+      leaf: model.get("subconcept_ids")?.length is 0
       expandedIn: model.has("expandedIn") and model.get("expandedIn")
       expandedOut: model.has("expandedOut") and model.get("expandedOut")
 

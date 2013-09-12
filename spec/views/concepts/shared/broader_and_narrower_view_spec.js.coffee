@@ -7,8 +7,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     sinon.stub I18n, "t"
     sinon.stub(Coreon.Helpers, "can").returns true
     model = new Backbone.Model
-      super_concept_ids: []
-      sub_concept_ids: []
+      superconcept_ids: []
+      subconcept_ids: []
     model.acceptsConnection = -> true
     model.url = "/concepts/123"
     model.concept = model
@@ -17,7 +17,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     @view = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: model
     concepts = {}
     sinon.stub Coreon.Models.Concept, "find", (id) ->
-      concepts[id] ?= new Backbone.Model _id: id, label: id
+      concepts[id] ?= new Backbone.Model id: id, label: id
 
   afterEach ->
     I18n.t.restore()
@@ -121,7 +121,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     context "broader", ->
 
       it "creates concept label view", ->
-        @view.model.set "super_concept_ids", [ "c1", "c2", "c3" ], silent: true
+        @view.model.set "superconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.broader.should.have.lengthOf 3
         ( view.model.id for view in @view.broader ).should.eql [ "c1", "c2", "c3" ]
@@ -133,12 +133,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         parent.remove.should.have.been.calledOnce
 
       it "creates list item for every concept", ->
-        @view.model.set "super_concept_ids", [ "c1", "c2", "c3" ], silent: true
+        @view.model.set "superconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.$(".broader ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
-        @view.model.set "super_concept_ids", [ "c1" ], silent: true
+        @view.model.set "superconcept_ids", [ "c1" ], silent: true
         @view.render()
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledOnce
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
@@ -146,15 +146,15 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$el.find(".broader ul li [data-drag-ident=c1]").length.should.equal 1
 
       it "removes old list items", ->
-        @view.model.set "super_concept_ids", [], silent: true
+        @view.model.set "superconcept_ids", [], silent: true
         @view.$(".broader ul").append $('<li class="legacy">')
         @view.render()
         @view.$(".broader ul li.legacy").should.have.lengthOf 0
 
       xit "rerenders items on model change", ->
-        @view.model.set "super_concept_ids", [ "c1", "c2", "c3" ], silent: true
+        @view.model.set "superconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
-        @view.model.set "super_concept_ids", [ "c45" ]
+        @view.model.set "superconcept_ids", [ "c45" ]
         #TODO: needs to handle defered rendering (_.defer)
         @view.$("[data-drag-ident=c1]").length.should.equal 0
         @view.$("[data-drag-ident=c45]").length.should.equal 1
@@ -163,9 +163,9 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         
         beforeEach ->
           @repo.set
-            _id: "coffeebabe23"
+            id: "coffeebabe23"
             name: "delicious data"
-          @view.model.set "super_concept_ids", [], silent: true
+          @view.model.set "superconcept_ids", [], silent: true
           @view.model.isNew = -> false
           @view.initialize()
 
@@ -196,7 +196,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     context "narrower", ->
 
       it "creates concept label view", ->
-        @view.model.set "sub_concept_ids", [ "c1", "c2", "c3" ], silent: true
+        @view.model.set "subconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.narrower.should.have.lengthOf 3
         ( view.model.id for view in @view.narrower ).should.eql [ "c1", "c2", "c3" ]
@@ -208,12 +208,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         child.remove.should.have.been.calledOnce
 
       it "creates list item for every concept", ->
-        @view.model.set "sub_concept_ids", [ "c1", "c2", "c3" ], silent: true
+        @view.model.set "subconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
         @view.$(".narrower ul li").should.have.lengthOf 3
 
       it "renders concept label into list item", ->
-        @view.model.set "sub_concept_ids", [ "c1" ], silent: true
+        @view.model.set "subconcept_ids", [ "c1" ], silent: true
         @view.render()
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledOnce
         Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledWithNew
@@ -221,15 +221,15 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$el.find("[data-drag-ident=c1]").length.should.equal 1
 
       it "removes old list items", ->
-        @view.model.set "sub_concept_ids", [], silent: true
+        @view.model.set "subconcept_ids", [], silent: true
         @view.$(".narrower ul").append $("<li>")
         @view.render()
         @view.$(".narrower ul li").should.have.lengthOf 0
 
       xit "rerenders items on model change", ->
-        @view.model.set "sub_concept_ids", [ "c1", "c2", "c3" ], silent: true
+        @view.model.set "subconcept_ids", [ "c1", "c2", "c3" ], silent: true
         @view.render()
-        @view.model.set "sub_concept_ids", [ "c45" ]
+        @view.model.set "subconcept_ids", [ "c45" ]
         #TODO: needs to handle defered rendering (_.defer)
         @view.narrower.should.have.lengthOf 1
         @view.$el.find("[data-drag-ident=c45]").length.should.equal 1
@@ -304,10 +304,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       beforeEach ->
         sinon.stub @view, "createConcept", (id)->
-          new Backbone.View model: new Backbone.Model _id:id
+          new Backbone.View model: new Backbone.Model id:id
 
-        @view.model.set "super_concept_ids", ["c0ffee"], silent: true
-        @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+        @view.model.set "superconcept_ids", ["c0ffee"], silent: true
+        @view.model.set "subconcept_ids", ["deadbeef"], silent: true
         @view.model.addedBroaderConcepts = -> 0
         @view.model.addedNarrowerConcepts = -> 0
         @view.model.removedBroaderConcepts = -> 0
@@ -323,8 +323,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
 
       afterEach ->
-        @view.model.set "super_concept_ids", [], silent: true
-        @view.model.set "sub_concept_ids", [], silent: true
+        @view.model.set "superconcept_ids", [], silent: true
+        @view.model.set "subconcept_ids", [], silent: true
 
       it "calls preventLabelClicks on click", ->
         clickEvent = $.Event "click"
@@ -370,8 +370,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @el_broad = $("<div data-drag-ident='c0ffee'>")
       @el_narrow = $("<div data-drag-ident='deadbeef'>")
 
-      @view.model.set "super_concept_ids", ["c0ffee"], silent: true
-      @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+      @view.model.set "superconcept_ids", ["c0ffee"], silent: true
+      @view.model.set "subconcept_ids", ["deadbeef"], silent: true
 
       @view.initialize()
       @view.render()
@@ -380,16 +380,16 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.toggleEditMode()
 
     afterEach ->
-      @view.model.set "super_concept_ids", [], silent: true
-      @view.model.set "sub_concept_ids", [], silent: true
+      @view.model.set "superconcept_ids", [], silent: true
+      @view.model.set "subconcept_ids", [], silent: true
 
     it "deletes items", ->
       @view.onDisconnect(@el_broad)
       @view.onDisconnect(@el_narrow)
       @view.$(".broader [data-drag-ident=c0ffee]").should.not.exist
       @view.$(".narrower [data-drag-ident=deadbeef]").should.not.exist
-      @view.model.get("super_concept_ids").should.not.contain "c0ffee"
-      @view.model.get("sub_concept_ids").should.not.contain "deadbeef"
+      @view.model.get("superconcept_ids").should.not.contain "c0ffee"
+      @view.model.get("subconcept_ids").should.not.contain "deadbeef"
 
     it "reconnects items", ->
       @view.onDisconnect(@el_narrow)
@@ -433,8 +433,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         </form>
       ')
 
-      @view.model.set "super_concept_ids", ["c0ffee"], silent: true
-      @view.model.set "sub_concept_ids", ["deadbeef"], silent: true
+      @view.model.set "superconcept_ids", ["c0ffee"], silent: true
+      @view.model.set "subconcept_ids", ["deadbeef"], silent: true
       @view.model.addedBroaderConcepts = -> 0
       @view.model.addedNarrowerConcepts = -> 0
       @view.model.removedBroaderConcepts = -> 0
@@ -460,24 +460,24 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.model.save.should.have.been.calledOnce
       dataArg = @view.model.save.firstCall.args[0]
       dataArg.should.be.an.object
-      dataArg.super_concept_ids.should.be.an.array
-      dataArg.super_concept_ids.should.contain "bad1dea"
-      dataArg.sub_concept_ids.should.be.an.array
-      dataArg.sub_concept_ids.should.contain "babee"
+      dataArg.superconcept_ids.should.be.an.array
+      dataArg.superconcept_ids.should.contain "bad1dea"
+      dataArg.subconcept_ids.should.be.an.array
+      dataArg.subconcept_ids.should.contain "babee"
 
     xit "removes deleted ids", ->
       @view.$(".broader.ui-droppable [data-drag-ident=c0ffee]").attr "data-deleted-connection", true
       @view.$(".narrower.ui-droppable [data-drag-ident=deadbeef]").attr "data-deleted-connection", true
       @view.updateConceptConnections @event
       dataArg = @view.model.save.firstCall.args[0]
-      dataArg.super_concept_ids.should.not.contain "c0ffee"
-      dataArg.sub_concept_ids.should.not.contain "deadbeef"
+      dataArg.superconcept_ids.should.not.contain "c0ffee"
+      dataArg.subconcept_ids.should.not.contain "deadbeef"
 
     it "adds non-deleted ids", ->
       @view.updateConceptConnections @event
       dataArg = @view.model.save.firstCall.args[0]
-      dataArg.super_concept_ids.should.contain "c0ffee"
-      dataArg.sub_concept_ids.should.contain "deadbeef"
+      dataArg.superconcept_ids.should.contain "c0ffee"
+      dataArg.subconcept_ids.should.contain "deadbeef"
 
     it "disables all form fields", ->
       @view.updateConceptConnections @event

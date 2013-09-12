@@ -34,8 +34,8 @@ class Coreon.Models.Concept extends Backbone.Model
   defaults: ->
     properties: []
     terms: []
-    super_concept_ids: []
-    sub_concept_ids: []
+    superconcept_ids: []
+    subconcept_ids: []
     label: ""
     hit: null
 
@@ -88,8 +88,8 @@ class Coreon.Models.Concept extends Backbone.Model
 
   acceptsConnection: (item_id)->
     item_id != @id &&
-      @get("super_concept_ids").indexOf(item_id) == -1 &&
-        @get("sub_concept_ids").indexOf(item_id) == -1
+      @get("superconcept_ids").indexOf(item_id) == -1 &&
+        @get("subconcept_ids").indexOf(item_id) == -1
 
   sync: (method, model, options = {}) ->
     @once "sync", @onCreate, @ if method is "create"

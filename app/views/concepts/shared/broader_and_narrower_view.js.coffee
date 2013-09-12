@@ -38,9 +38,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   _bindChangeEvents: ->
     @listenTo @model, "change:label", @renderSelf
-    @listenTo @model, "change:super_concept_ids nonblank", =>
+    @listenTo @model, "change:superconcept_ids nonblank", =>
       _.defer => @renderBroader()
-    @listenTo @model, "change:sub_concept_ids", =>
+    @listenTo @model, "change:subconcept_ids", =>
       _.defer => @renderNarrower()
 
   render: ->
@@ -82,19 +82,19 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   renderSelf: ->
     @$(".self").html @model.escape "label"
-    @$(".self").attr "data-drag-ident", @model.get("_id")
+    @$(".self").attr "data-drag-ident", @model.get("id")
 
   renderBroader: ->
     @clearBroader()
-    super_concept_ids = @model.get "super_concept_ids"
-    if super_concept_ids.length > 0
-      @broader = @renderConcepts @$(".broader ul"), super_concept_ids
+    superconcept_ids = @model.get "superconcept_ids"
+    if superconcept_ids.length > 0
+      @broader = @renderConcepts @$(".broader ul"), superconcept_ids
     else unless @model.blank or @editMode
       @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
-    @narrower = @renderConcepts @$(".narrower ul"), @model.get "sub_concept_ids"
+    @narrower = @renderConcepts @$(".narrower ul"), @model.get "subconcept_ids"
 
   renderConcepts: (container, ids) ->
     container.empty()
@@ -143,20 +143,20 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     return false unless @model.acceptsConnection(ident)
 
     if broaderNarrower is "broader"
-      conceptIds = (id for id in @model.get("super_concept_ids"))
+      conceptIds = (id for id in @model.get("superconcept_ids"))
       conceptIds.push(ident)
-      @model.set "super_concept_ids", conceptIds
+      @model.set "superconcept_ids", conceptIds
     else
-      conceptIds = (id for id in @model.get("sub_concept_ids"))
+      conceptIds = (id for id in @model.get("subconcept_ids"))
       conceptIds.push(ident)
-      @model.set "sub_concept_ids", conceptIds
+      @model.set "subconcept_ids", conceptIds
 
   onDisconnect: (item)->
     ident = item.data("drag-ident")
-    broader = @model.get "super_concept_ids"
-    narrower = @model.get "sub_concept_ids"
-    @model.set "super_concept_ids", _.without broader, ident if ident in broader
-    @model.set "sub_concept_ids", _.without narrower, ident if ident in narrower
+    broader = @model.get "superconcept_ids"
+    narrower = @model.get "subconcept_ids"
+    @model.set "superconcept_ids", _.without broader, ident if ident in broader
+    @model.set "subconcept_ids", _.without narrower, ident if ident in narrower
 
   resetConceptConnections: (evt) ->
     evt.preventDefault()
@@ -177,8 +177,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     $(el).droppable "disable" for el in @$("form .ui-droppable")
 
     data =
-      super_concept_ids: @model.get("super_concept_ids")
-      sub_concept_ids: @model.get("sub_concept_ids")
+      superconcept_ids: @model.get("superconcept_ids")
+      subconcept_ids: @model.get("subconcept_ids")
 
     addedBroaderConcepts = (Coreon.Models.Concept.find(id).get("label") for id in @model.addedBroaderConcepts())
     addedNarrowerConcepts = (Coreon.Models.Concept.find(id).get("label") for id in @model.addedNarrowerConcepts())

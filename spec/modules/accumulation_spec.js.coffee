@@ -8,7 +8,7 @@ describe "Coreon.Modules.Accumulation", ->
 
       _(@).extend Coreon.Modules.Accumulation
 
-      idAttribute: "_id"
+      idAttribute: "id"
 
       sync: ->
 
@@ -78,19 +78,19 @@ describe "Coreon.Modules.Accumulation", ->
     context "on already loaded model", ->
 
       it "returns model from collection", ->
-        model = new Coreon.Models.MyModel _id: "123"
+        model = new Coreon.Models.MyModel id: "123"
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123").should.equal model
 
       it "does not fetch model by default", ->
-        model = new Coreon.Models.MyModel _id: "123"
+        model = new Coreon.Models.MyModel id: "123"
         model.fetch = sinon.spy()
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123").should.equal model
         model.fetch.should.not.have.been.called
         
       it "fetches model when option is set", ->
-        model = new Coreon.Models.MyModel _id: "123"
+        model = new Coreon.Models.MyModel id: "123"
         model.fetch = sinon.spy()
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123", fetch: yes).should.equal model
@@ -100,7 +100,7 @@ describe "Coreon.Modules.Accumulation", ->
 
     beforeEach ->
       @original = new Coreon.Models.MyModel
-        _id: "123"
+        id: "123"
         profession: "poet"
       Coreon.Models.MyModel.collection().add @original
   
@@ -108,7 +108,7 @@ describe "Coreon.Modules.Accumulation", ->
 
       it "updates existing model", ->
         model = Coreon.Models.MyModel.upsert
-          _id: "123"
+          id: "123"
           profession: "killer"
         model.should.equal @original
         Coreon.Models.MyModel.find("123").should.equal model
@@ -116,7 +116,7 @@ describe "Coreon.Modules.Accumulation", ->
 
       it "inserts new model", ->
         model = Coreon.Models.MyModel.upsert
-          _id: "777"
+          id: "777"
           profession: "cowboy"
         Coreon.Models.MyModel.find("777").should.equal model
         model.should.be.an.instanceof Coreon.Models.MyModel
@@ -127,8 +127,8 @@ describe "Coreon.Modules.Accumulation", ->
       
       it "upserts and returns all affected models", ->
         models = Coreon.Models.MyModel.upsert [
-          { _id: "123", profession: "killer" }
-          { _id: "777", profession: "cowboy" }
+          { id: "123", profession: "killer" }
+          { id: "777", profession: "cowboy" }
         ]
         models.should.eql [
           Coreon.Models.MyModel.find "123" 

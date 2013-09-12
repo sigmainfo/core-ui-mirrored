@@ -18,9 +18,9 @@ class Coreon.Models.ConceptNode extends Backbone.Model
     @set "concept", Coreon.Models.Concept.find(@id), silent: true unless @has "concept"
     @on "change:concept", @_updateConcept, @
     @_updateConcept()
-    @on "change:expandedOut change:sub_concept_ids", @_updateSubnodeIds, @
+    @on "change:expandedOut change:subconcept_ids", @_updateSubnodeIds, @
     @_updateSubnodeIds()
-    @on "change:expandedIn change:super_concept_ids", @_updateSupernodeIds, @
+    @on "change:expandedIn change:superconcept_ids", @_updateSupernodeIds, @
     @_updateSupernodeIds()
 
   get: (attr) ->
@@ -36,14 +36,14 @@ class Coreon.Models.ConceptNode extends Backbone.Model
 
   _updateSubnodeIds: (model, value, options) ->
     newValue = if @get "expandedOut"
-      @get("sub_concept_ids")?[..] ? []
+      @get("subconcept_ids")?[..] ? []
     else
       []
     @set "subnodeIds", newValue, options
 
   _updateSupernodeIds: (model, value, options) ->
     newValue = if @get "expandedIn"
-      @get("super_concept_ids")?[..] ? []
+      @get("superconcept_ids")?[..] ? []
     else
       []
     @set "supernodeIds", newValue, options

@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:gmah/core-client.git
-  revision: a69fac6c630fe4694ae996d85ec54d7ca38dd0f4
+  revision: 1be43f7eb71c278e76f233e2875176d4403b0f89
   specs:
     core_client (0.0.3)
       rails (>= 3.2)
@@ -92,7 +92,7 @@ GEM
     highline (1.6.19)
     hike (1.2.3)
     http_parser.rb (0.5.3)
-    i18n (0.6.4)
+    i18n (0.6.5)
     i18n-js (2.1.2)
       i18n
     journey (1.0.4)
@@ -117,9 +117,9 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     method_source (0.8.2)
-    mime-types (1.23)
+    mime-types (1.25)
     mini_portile (0.5.1)
-    multi_json (1.7.8)
+    multi_json (1.8.0)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -218,7 +218,7 @@ GEM
       rack (>= 1.0.0)
     thor (0.18.1)
     tilt (1.4.1)
-    treetop (1.4.14)
+    treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.37)

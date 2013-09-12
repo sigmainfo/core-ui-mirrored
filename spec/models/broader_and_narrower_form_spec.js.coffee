@@ -5,9 +5,9 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
 
   beforeEach ->
     @concept = new Backbone.Model
-      _id: "c0ffee"
-      super_concept_ids: ["daddee"]
-      sub_concept_ids: ["babee"]
+      id: "c0ffee"
+      superconcept_ids: ["daddee"]
+      subconcept_ids: ["babee"]
       label: "coffee"
     @model = new Coreon.Models.BroaderAndNarrowerForm {}, concept:@concept
 
@@ -18,12 +18,12 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
     @model.id.should.equal "c0ffee"
 
   it "delivers superconcept ids", ->
-    @model.get("super_concept_ids").should.be.instanceOf Array
-    @model.get("super_concept_ids").should.eql ["daddee"]
+    @model.get("superconcept_ids").should.be.instanceOf Array
+    @model.get("superconcept_ids").should.eql ["daddee"]
 
   it "delivers subconcept ids", ->
-    @model.get("sub_concept_ids").should.be.instanceOf Array
-    @model.get("sub_concept_ids").should.eql ["babee"]
+    @model.get("subconcept_ids").should.be.instanceOf Array
+    @model.get("subconcept_ids").should.eql ["babee"]
 
   it "delivers label", ->
     @model.get("label").should.equal "coffee"
@@ -35,16 +35,16 @@ describe "Coreon.Models.BroaderAndNarrowerForm", ->
     @model.isNew().should.be.false
 
   it "ignores doublettes", ->
-    @model.set "super_concept_ids", ["daddaa", "daddaa"]
-    @model.get("super_concept_ids").should.eql ["daddaa"]
-    @model.set "sub_concept_ids", ["bibii", "bibii"]
-    @model.get("sub_concept_ids").should.eql ["bibii"]
+    @model.set "superconcept_ids", ["daddaa", "daddaa"]
+    @model.get("superconcept_ids").should.eql ["daddaa"]
+    @model.set "subconcept_ids", ["bibii", "bibii"]
+    @model.get("subconcept_ids").should.eql ["bibii"]
 
   it "doesn't propagate changes", ->
-    @concept.set "super_concept_ids", ["daddee"]
-    @concept.set "sub_concept_ids", ["babee"]
-    @model.set "super_concept_ids", ["daddee", "daddaa"]
-    @model.set "sub_concept_ids", ["babee", "bibii"]
-    @concept.get("super_concept_ids").should.eql ["daddee"]
-    @concept.get("sub_concept_ids").should.eql ["babee"]
+    @concept.set "superconcept_ids", ["daddee"]
+    @concept.set "subconcept_ids", ["babee"]
+    @model.set "superconcept_ids", ["daddee", "daddaa"]
+    @model.set "subconcept_ids", ["babee", "bibii"]
+    @concept.get("superconcept_ids").should.eql ["daddee"]
+    @concept.get("subconcept_ids").should.eql ["babee"]
 

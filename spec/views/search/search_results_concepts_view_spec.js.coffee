@@ -35,7 +35,7 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
 
     it "renders table header", ->
       I18n.t.withArgs("search.results.concepts.header.label").returns "Label"
-      I18n.t.withArgs("search.results.concepts.header.super_concepts").returns "Superconcepts"
+      I18n.t.withArgs("search.results.concepts.header.superconcepts").returns "Superconcepts"
       @view.render()
       @view.$el.should.have "table.concepts"
       @view.$(".concepts th").eq(0).should.have.text "Label"
@@ -44,12 +44,12 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
     it "renders concepts", ->
       @view.model.set "hits", [
         result:
-          _id: "503e248cd198795712000005"
+          id: "503e248cd198795712000005"
           properties: [
             key: "label"
             value: "poet"
           ]
-          super_concept_ids: [
+          superconcept_ids: [
             "503e248cd198795712000002"
             "504e248cd198795712000042"
           ]
@@ -65,12 +65,12 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
       @view.model.set "hits",
         for n in [1..25]
           result:
-            _id: "503e248cd198795712000005"
+            id: "503e248cd198795712000005"
             properties: [
               key: "label"
               value: "poet"
             ]
-            super_concept_ids: []
+            superconcept_ids: []
       @view.render()
       @view.$("tbody tr").length.should.equal 10
 

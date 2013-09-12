@@ -911,7 +911,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           <h4 class="value">beaver hat</h4>
         </li>
         '''
-      term = new Backbone.Model _id: "518d2569edc797ef6d000008"
+      term = new Backbone.Model id: "518d2569edc797ef6d000008"
       term.destroy = sinon.spy()
       terms = new Backbone.Collection [ term ]
       @view.model.terms = -> terms
