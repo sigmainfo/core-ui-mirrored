@@ -26,10 +26,15 @@ describe "Coreon.Models.Property", ->
         lang: ""
       @model.set {
         id: "abcd1234"
-        author: "Nobody"
+        admin: {author: "Nobody"}
         key: "label"
         value: "hat"
+        created_at: '2013-09-12 13:48'
+        updated_at: '2013-09-12 13:50'
       }, silent: true
       @model.info().should.eql
         id: "abcd1234"
         author: "Nobody"
+        created_at: '2013-09-12 13:48'
+        updated_at: '2013-09-12 13:50'
+
