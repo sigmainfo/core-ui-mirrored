@@ -47,7 +47,7 @@ describe "Coreon.Models.ConceptSearch", ->
 
       it "updates current hits", ->
         result = new Backbone.Model
-        Coreon.Models.Concept.upsert.withArgs(_id: "1234").returns result
+        Coreon.Models.Concept.upsert.withArgs(id: "1234").returns result
         Coreon.Models.Search::fetch.yieldsTo "success", @search,
           hits: [ score: 1.56, result: id: "1234" ]
         @search.fetch()
