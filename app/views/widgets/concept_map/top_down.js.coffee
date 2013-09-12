@@ -17,26 +17,11 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
       .attr("text-anchor", "middle")
       .attr("x", "0")
       .attr("y", "17")
-      .text("")
+      .text( (datum) ->
+        Coreon.Helpers.Text.shorten datum.label, 24
+      )
       .each( (datum) ->
-        text = d3.select(@)
-        text.selectAll("tspan").remove()
-        if datum.hit
-          lineHeight = 17
-          paddingTop = 4
-        else
-          lineHeight = 14
-          paddingTop = 1
-
-        words = datum.label.split(/\s+/)
-        for word, i in words
-          console.log i
-          text.append("tspan")
-            .text(word)
-            .attr("dy", if i is 0 then paddingTop else lineHeight)
-            .attr("x", 0)
         datum.textBox = @.getBBox()
-
       )
 
     nodes.select("rect.background")

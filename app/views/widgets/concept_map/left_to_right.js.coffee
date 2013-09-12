@@ -16,12 +16,10 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       )
     
     nodes.select("text.label")
+      .attr("text-anchor", "start")
       .attr("x", 7)
       .attr("y", "0.35em")
-      .attr("text-anchor", "start")
-      .each( (datum) ->
-        d3.select(@).select("tspan").remove()
-      )
+      .html("")
       .text( (datum) ->
         Coreon.Helpers.Text.shorten datum.label, 24
       )
