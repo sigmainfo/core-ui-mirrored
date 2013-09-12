@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require views/widgets/concept_map/top_down
 
-describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
+xdescribe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
 
   beforeEach ->
     @svg = $ "<svg:g class='map'>"

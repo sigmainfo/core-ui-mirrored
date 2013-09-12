@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require views/widgets/concept_map/left_to_right
 
-describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
+xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
 
   beforeEach ->
     @svg = $ "<svg:g class='map'>"
