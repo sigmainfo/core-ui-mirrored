@@ -4,7 +4,7 @@
 describe "Coreon.Models.TaxonomyNode", ->
 
   beforeEach ->
-    @node = new Coreon.Models.TaxonomyNode _id: "123"
+    @node = new Coreon.Models.TaxonomyNode id: "123"
 
   it "is a Backbone model", ->
     @node.should.be.an.instanceof Backbone.Model

@@ -20,7 +20,7 @@ describe "Coreon.Modules.SystemInfo", ->
     it "returns hash with system info attributes", ->
       @model.defaults = -> terms: []
       @model.set {
-        _id: "abcd1234"
+        id: "abcd1234"
         author: "Nobody"
         terms : [ "foo", "bar" ]
       }, silent: true

@@ -19,7 +19,7 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
         Coreon.Models.Concept.find options.id
 
     @model.on "change", @render, @
-    @$el.attr "data-drag-ident", @model.get "_id"
+    @$el.attr "data-drag-ident", @model.get "id"
     @draggableOn(@$el)
 
   appendTo: (target) ->

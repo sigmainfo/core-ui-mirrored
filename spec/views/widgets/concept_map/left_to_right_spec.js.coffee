@@ -170,7 +170,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       context "updating view instances", ->
 
         beforeEach ->
-          @node = new Backbone.Model _id: "node", label: "Node", concept: new Backbone.Model(_id: "node")
+          @node = new Backbone.Model id: "node", label: "Node", concept: new Backbone.Model(_id: "node")
           @node.cid = "c123"
 
         it "creates view for newly created node", ->

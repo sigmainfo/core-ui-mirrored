@@ -139,7 +139,7 @@ describe "Coreon.Routers.ConceptsRouter", ->
         Coreon.Views.Concepts.NewConceptView.should.have.been.calledWith
           model: @concept
         @concept.isNew().should.be.true
-        @concept.get("super_concept_ids").should.eql ["c0ffeebabe42c0ffeebabe23"]
+        @concept.get("superconcept_ids").should.eql ["c0ffeebabe42c0ffeebabe23"]
 
     context "without maintainer privileges", ->
       beforeEach ->

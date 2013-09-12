@@ -17,7 +17,7 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.tree().root.should.eql children: []
 
      it "accumulates data from models", ->
-        @graph.reset [ _id: "node" ], silent: true
+        @graph.reset [ id: "node" ], silent: true
         @graph.tree()
         node = @graph.get "node"
         @graph.tree().should.have.deep.property "root.children[0].id", "node"
@@ -26,9 +26,9 @@ describe "Coreon.Collections.Treegraph", ->
 
      it "creates complete branch downto leaves", ->
         @graph.reset [
-          { _id: "parent", targetIds: [ "child" ] }
-          { _id: "child", targetIds: [ "child_of_child" ] }
-          { _id: "child_of_child" }
+          { id: "parent", targetIds: [ "child" ] }
+          { id: "child", targetIds: [ "child_of_child" ] }
+          { id: "child_of_child" }
         ], silent: true
         @graph.tree().should.have.deep.property "root.children[0].id", "parent"
         @graph.tree().should.have.deep.property "root.children[0].children[0].id", "child"
@@ -36,9 +36,9 @@ describe "Coreon.Collections.Treegraph", ->
 
      it "uses longest path for multiparented nodes", ->
         @graph.reset [
-          { _id: "parent", targetIds: [ "child", "child_of_child" ] }
-          { _id: "child", targetIds: [ "child_of_child" ] }
-          { _id: "child_of_child" }
+          { id: "parent", targetIds: [ "child", "child_of_child" ] }
+          { id: "child", targetIds: [ "child_of_child" ] }
+          { id: "child_of_child" }
         ], silent: true
         @graph.tree().should.have.deep.property "root.children[0].children.length", 1
         @graph.tree().should.have.deep.property "root.children[0].children[0].id", "child"
@@ -52,9 +52,9 @@ describe "Coreon.Collections.Treegraph", ->
 
      it "creates data vectors for edges", ->
         @graph.reset [
-          { _id: "parent", targetIds: [ "child", "child_of_child" ] }
-          { _id: "child", targetIds: [ "child_of_child" ] }
-          { _id: "child_of_child" }
+          { id: "parent", targetIds: [ "child", "child_of_child" ] }
+          { id: "child", targetIds: [ "child_of_child" ] }
+          { id: "child_of_child" }
         ], silent: true
         @graph.tree().should.have.deep.property "edges.length", 3
         @graph.tree().should.have.deep.property "edges[0].source", @graph.tree().root.children[0]
@@ -68,24 +68,24 @@ describe "Coreon.Collections.Treegraph", ->
 
      it "is recreated on reset", ->
         memo = @graph.tree()
-        @graph.reset [ _id: "node" ]
+        @graph.reset [ id: "node" ]
         @graph.tree().should.have.deep.property "root.children[0].id", "node"
 
      it "is recreated on add", ->
         memo = @graph.tree()
-        @graph.add _id: "node"
+        @graph.add id: "node"
         @graph.tree().should.have.deep.property "root.children[0].id", "node"
 
      it "is recreated on remove", ->
-        @graph.reset [ _id: "node" ], silent: true
+        @graph.reset [ id: "node" ], silent: true
         memo = @graph.tree()
         @graph.remove "node"
         @graph.tree().should.have.deep.property "root.children.length", 0
 
      it "is recreated when an edge was added", ->
         @graph.reset [
-          { _id: "source" }
-          { _id: "target" }
+          { id: "source" }
+          { id: "target" }
         ], silent: true
         memo = @graph.tree()
         @graph.get("source").set "targetIds", [ "target" ]
@@ -93,8 +93,8 @@ describe "Coreon.Collections.Treegraph", ->
 
      it "is recreated when an edge was removed", ->
         @graph.reset [
-          { _id: "source", targetIds: [ "target" ] }
-          { _id: "target" }
+          { id: "source", targetIds: [ "target" ] }
+          { id: "target" }
         ], silent: true
         memo = @graph.tree()
         @graph.get("source").set "targetIds", []

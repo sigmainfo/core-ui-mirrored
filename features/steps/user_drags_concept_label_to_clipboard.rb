@@ -11,7 +11,7 @@ class UserDragsConceptLabelToClipboard < Spinach::FeatureSteps
 
   step 'a concept "panopticum" with super concept "surveillance" exists' do
     @surveillance = create_concept_with_label "surveillance"
-    @panopticum = create_concept_with_label "panopticum", super_concept_ids:[@surveillance['_id']]
+    @panopticum = create_concept_with_label "panopticum", superconcept_ids:[@surveillance['id']]
   end
 
   step 'I search for "panopticum"' do
@@ -27,7 +27,7 @@ class UserDragsConceptLabelToClipboard < Spinach::FeatureSteps
   end
 
   step 'I drag the label of "panopticum" into the clipboard' do
-    find("[data-drag-ident='#{@panopticum["_id"]}']").drag_to page.find("#coreon-clipboard ul")
+    find("[data-drag-ident='#{@panopticum["id"]}']").drag_to page.find("#coreon-clipboard ul")
   end
 
   step 'I drag the title of the concept to the clipboard' do

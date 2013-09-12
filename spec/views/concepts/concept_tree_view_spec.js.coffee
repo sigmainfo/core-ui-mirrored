@@ -7,7 +7,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
   beforeEach ->
     Coreon.application = hits: new Backbone.Collection
     Coreon.application.hits.findByResult = -> null
-    @model = new Coreon.Models.Concept _id: "123"
+    @model = new Coreon.Models.Concept id: "123"
     @view = new Coreon.Views.Concepts.ConceptTreeView
       model: @model
 
@@ -31,7 +31,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
 
       sinon.stub I18n, "t"
       sinon.stub Coreon.Models.Concept, "find", (id) ->
-        new Coreon.Models.Concept _id: id
+        new Coreon.Models.Concept id: id
 
     afterEach ->
       I18n.t.restore()
@@ -56,7 +56,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       @view.$(".self").should.have.text "handgun"
 
     it "renders superconcepts", ->
-      @view.model.set "super_concept_ids", ["71", "75"], silent: true
+      @view.model.set "superconcept_ids", ["71", "75"], silent: true
       @view.render()
       @view.$el.should.have ".super"
       @view.$(".super").find("li .concept-label").length.should.equal 2
@@ -64,7 +64,7 @@ describe "Coreon.Views.Concepts.ConceptTreeView", ->
       @view.$(".super .concept-label").eq(1).should.have.text "75"
 
     it "renders subconcepts", ->
-      @view.model.set "sub_concept_ids", ["84", "53", "56"], silent: true
+      @view.model.set "subconcept_ids", ["84", "53", "56"], silent: true
       @view.render()
       @view.$el.should.have ".sub"
       @view.$(".sub").find("li .concept-label").length.should.equal 3

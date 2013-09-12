@@ -44,10 +44,10 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   And 'this concept is a subconcept of "handgun"' do
     create_edge({
       source_node_type: 'Concept', 
-      source_node_id: @handgun['_id'],
+      source_node_id: @handgun['id'],
       edge_type: 'SUPERCONCEPT_OF',
       target_node_type: 'Concept',
-      target_node_id: @pistol['_id']
+      target_node_id: @pistol['id']
     })
   end
 

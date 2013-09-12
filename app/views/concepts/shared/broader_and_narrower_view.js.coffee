@@ -33,8 +33,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @narrower = []
     @$el.html @template id: @model.id, editable: !@model.isNew()
     @listenTo @model, "change:label", @renderSelf
-    @listenTo @model, "change:super_concept_ids nonblank", @renderBroader
-    @listenTo @model, "change:sub_concept_ids", @renderNarrower
+    @listenTo @model, "change:superconcept_ids nonblank", @renderBroader
+    @listenTo @model, "change:subconcept_ids", @renderNarrower
 
   render: ->
     @renderSelf()
@@ -44,21 +44,21 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   renderSelf: ->
     @$(".self").html @model.escape "label"
-    @$(".self").attr "data-drag-ident", @model.get("_id")
+    @$(".self").attr "data-drag-ident", @model.get("id")
 
   renderBroader: ->
     @clearBroader()
-    super_concept_ids = @model.get "super_concept_ids"
-    if super_concept_ids.length > 0
-      @broader = @renderConcepts @$(".broader.static ul"), super_concept_ids
-      @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), super_concept_ids
+    superconcept_ids = @model.get "superconcept_ids"
+    if superconcept_ids.length > 0
+      @broader = @renderConcepts @$(".broader.static ul"), superconcept_ids
+      @broader.concat @renderConcepts @$(".broader.ui-droppable ul"), superconcept_ids
     else unless @model.blank
       @$(".broader.static ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
     @clearNarrower()
-    @narrower = @renderConcepts @$(".narrower.static ul"), @model.get "sub_concept_ids"
-    @narrower.concat @renderConcepts @$(".narrower.ui-droppable ul"), @model.get "sub_concept_ids"
+    @narrower = @renderConcepts @$(".narrower.static ul"), @model.get "subconcept_ids"
+    @narrower.concat @renderConcepts @$(".narrower.ui-droppable ul"), @model.get "subconcept_ids"
 
   renderConcepts: (container, ids) ->
     container.empty()
@@ -134,13 +134,13 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   updateConceptConnections: (evt) ->
     evt.preventDefault()
-    data = { super_concept_ids: [], sub_concept_ids: [] }
+    data = { superconcept_ids: [], subconcept_ids: [] }
 
     for item in @$(".broader.ui-droppable [data-drag-ident]")
-      data.super_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
+      data.superconcept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
 
     for item in @$(".narrower.ui-droppable [data-drag-ident]")
-      data.sub_concept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
+      data.subconcept_ids.push $(item).data("drag-ident") unless $(item).data "deleted-connection"
 
     @$("form, .submit a").addClass "disabled"
     @$(".submit button").prop "disabled", true

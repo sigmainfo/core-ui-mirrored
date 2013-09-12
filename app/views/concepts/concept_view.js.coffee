@@ -175,7 +175,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     evt.preventDefault()
     form = $ evt.target
     data = form.serializeJSON()?.term or {}
-    data._id = form.find("input[name=id]").val()
+    data.id = form.find("input[name=id]").val()
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
@@ -188,7 +188,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
-    model = @model.terms().get data._id
+    model = @model.terms().get data.id
 
     if elements_to_delete.length > 0
       @confirm

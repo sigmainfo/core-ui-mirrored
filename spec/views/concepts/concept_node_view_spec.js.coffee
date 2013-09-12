@@ -110,7 +110,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     context "toggle for subconcepts", ->
 
       beforeEach ->
-        @view.model.set "sub_concept_ids", ["123"], silent: true
+        @view.model.set "subconcept_ids", ["123"], silent: true
       
       it "renders toggle", ->
         @view.render()
@@ -122,7 +122,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
         @view.$(".toggle-children").attr("transform").should.equal "translate(50, 0)"
       
       it "does not create children toggle for leaves", ->
-        @view.model.set "sub_concept_ids", [], silent: true
+        @view.model.set "subconcept_ids", [], silent: true
         @view.render()
         @view.$el.should.not.have ".toggle-children"
 
@@ -149,7 +149,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     context "toggle for superconcepts", ->
 
       beforeEach ->
-        @view.model.set "super_concept_ids", ["123"], silent: true
+        @view.model.set "superconcept_ids", ["123"], silent: true
       
       it "renders toggle", ->
         @view.render()
@@ -161,7 +161,7 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
         @view.$(".toggle-parents").attr("transform").should.equal "translate(0, 20) rotate(180)"
       
       it "does not create parents toggle for roots", ->
-        @view.model.set "super_concept_ids", [], silent: true
+        @view.model.set "superconcept_ids", [], silent: true
         @view.render()
         @view.$el.should.not.have ".toggle-parents"
 
@@ -201,8 +201,8 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     beforeEach ->
       @view.model.id = "1234"
       @view.model.set {
-        super_concept_ids: ["456"],
-        sub_concept_ids: ["333"]
+        superconcept_ids: ["456"],
+        subconcept_ids: ["333"]
       }, silent: true
       @event = document.createEvent "MouseEvents"
       @event.initMouseEvent "click", true, true, window,
@@ -226,8 +226,8 @@ describe "Coreon.Views.Concepts.ConceptNodeView", ->
     beforeEach ->
       @view.model.id = "1234"
       @view.model.set {
-        super_concept_ids: ["456"],
-        sub_concept_ids: ["333"]
+        superconcept_ids: ["456"],
+        subconcept_ids: ["333"]
       }, silent: true
       @event = document.createEvent "MouseEvents"
       @event.initMouseEvent "click", true, true, window,

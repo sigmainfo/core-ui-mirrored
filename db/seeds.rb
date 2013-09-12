@@ -40,8 +40,8 @@
 # 
 # poem = Api::Graph::Concept.elem_match(properties: { value: "poem" }).first
 # superconcept = Api::Graph::Concept.elem_match(properties: { value: "poetry" }).first
-# poem.super_concepts << superconcept
-# poem.sub_concepts = Api::Graph::Term.where(:value.in => %w|Weihnachtsgedicht Osterreim Muttertagsgedicht Auszählreim|).map {|t| t.concept}
+# poem.superconcepts << superconcept
+# poem.subconcepts = Api::Graph::Term.where(:value.in => %w|Weihnachtsgedicht Osterreim Muttertagsgedicht Auszählreim|).map {|t| t.concept}
 # poem.save!
 # 
 # taxonomy = Api::Graph::Taxonomy.create! name: "Professions"

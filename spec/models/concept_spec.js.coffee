@@ -7,7 +7,7 @@ describe "Coreon.Models.Concept", ->
     @hits = new Backbone.Collection
     @hits.findByResult = -> null
     sinon.stub Coreon.Collections.Hits, "collection", => @hits
-    @model = new Coreon.Models.Concept _id: "123"
+    @model = new Coreon.Models.Concept id: "123"
 
   afterEach ->
     Coreon.Collections.Hits.collection.restore()
@@ -33,8 +33,8 @@ describe "Coreon.Models.Concept", ->
       @model.get("terms").should.eql []
 
     it "has empty sets for superconcept and subconcept ids", ->
-      @model.get("super_concept_ids").should.eql []
-      @model.get("sub_concept_ids").should.eql []
+      @model.get("superconcept_ids").should.eql []
+      @model.get("subconcept_ids").should.eql []
 
   describe "attributes", ->
 
@@ -113,7 +113,7 @@ describe "Coreon.Models.Concept", ->
       context "on changes", ->
 
         it "updates label on id attribute changes", ->
-          @model.set "_id", "abc123"
+          @model.set "id", "abc123"
           @model.get("label").should.equal "abc123"
 
         it "updates label on property changes", ->
@@ -134,7 +134,7 @@ describe "Coreon.Models.Concept", ->
     describe "hit", ->
 
       beforeEach ->
-        @hits.add _id: "hit", result: @model
+        @hits.add id: "hit", result: @model
         @hit = @hits.at 0
         @hits.findByResult = (result) =>
           for hit in @hits.models
@@ -181,7 +181,7 @@ describe "Coreon.Models.Concept", ->
 
     it "returns hash with system info attributes", ->
       @model.set {
-        _id: "abcd1234"
+        id: "abcd1234"
         author: "Nobody"
         terms : [ "foo", "bar" ]
       }, silent: true
@@ -223,13 +223,13 @@ describe "Coreon.Models.Concept", ->
 
     it "returns wrapped attributes hash", ->
       @model.set
-        _id: "my-concept"
-        super_concept_ids: [ "super_1", "super_2" ]
-        sub_concept_ids: [ "sub_1", "sub_2" ]
+        id: "my-concept"
+        superconcept_ids: [ "super_1", "super_2" ]
+        subconcept_ids: [ "sub_1", "sub_2" ]
       json = @model.toJSON()
-      json.should.have.deep.property "concept._id", "my-concept"
-      json.should.have.deep.property("concept.super_concept_ids").that.eql [ "super_1", "super_2" ]
-      json.should.have.deep.property("concept.sub_concept_ids").that.eql [ "sub_1", "sub_2" ]
+      json.should.have.deep.property "concept.id", "my-concept"
+      json.should.have.deep.property("concept.superconcept_ids").that.eql [ "super_1", "super_2" ]
+      json.should.have.deep.property("concept.subconcept_ids").that.eql [ "sub_1", "sub_2" ]
 
     it "drops client-side attributes", ->
       @model.toJSON().should.not.have.deep.property "concept.label"
@@ -313,8 +313,8 @@ describe "Coreon.Models.Concept", ->
   describe "acceptsConnection()", ->
     beforeEach ->
       @model.id = "c0ffee"
-      @model.set "sub_concept_ids", ["bad1dea"], silent: true
-      @model.set "super_concept_ids", ["deadbeef"], silent: true
+      @model.set "subconcept_ids", ["bad1dea"], silent: true
+      @model.set "superconcept_ids", ["deadbeef"], silent: true
 
     it "forbids simple circular connections", ->
       @model.acceptsConnection("c0ffee").should.be.false
