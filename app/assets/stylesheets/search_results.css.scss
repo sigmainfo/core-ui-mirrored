@@ -3,6 +3,9 @@
 
 .search-results-terms, .search-results-concepts, .search-results-tnodes, .concept-list {
   margin-right: 270px;
+  .concept-label {
+    margin-right: 4px;
+  }
 
   &>table {  
     @include table-list;
