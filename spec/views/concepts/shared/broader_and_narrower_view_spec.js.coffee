@@ -501,4 +501,53 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @deferred.resolve()
 
         Coreon.Models.Notification.info.callCount.should.be 4
-        #TODO: be more verbose
+
+  describe "cancelConceptConnections()", ->
+
+    beforeEach ->
+      @view.$el.html '''
+        <div class="submit">
+          <a class="cancel" href="javascript:void(0)">Cancel</a>
+        </div>
+      '''
+      @link = @view.$(".cancel")
+      @event = $.Event "click"
+
+    it "is triggered by click on cancel button", ->
+      @view.cancelConceptConnections = sinon.spy()
+      @view.delegateEvents()
+      @link.trigger @event
+      @view.cancelConceptConnections.should.have.been.calledOnce
+      @view.cancelConceptConnections.should.have.been.calledWith @event
+
+    it "is not triggered when link is disabled", ->
+      @view.cancelConceptConnections = sinon.spy()
+      @view.delegateEvents()
+      @link.addClass "disabled"
+      @link.trigger @event
+      @view.cancelConceptConnections.should.not.have.been.called
+
+  describe "resetConceptConnections()", ->
+  
+    beforeEach ->
+      @view.$el.html '''
+        <div class="submit">
+          <a class="reset" href="javascript:void(0)">Cancel</a>
+        </div>
+      '''
+      @link = @view.$(".reset")
+      @event = $.Event "click"
+
+    it "is triggered by click on cancel button", ->
+      @view.resetConceptConnections = sinon.spy()
+      @view.delegateEvents()
+      @link.trigger @event
+      @view.resetConceptConnections.should.have.been.calledOnce
+      @view.resetConceptConnections.should.have.been.calledWith @event
+
+    it "is not triggered when link is disabled", ->
+      @view.resetConceptConnections = sinon.spy()
+      @view.delegateEvents()
+      @link.addClass "disabled"
+      @link.trigger @event
+      @view.resetConceptConnections.should.not.have.been.called

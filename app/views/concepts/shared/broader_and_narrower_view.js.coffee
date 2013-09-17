@@ -23,11 +23,11 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
   repositoryLabel: Coreon.Templates["repositories/repository_label"]
 
   events:
-    "click  .submit .cancel":   "cancelConceptConnections"
-    "click  .submit .reset":    "resetConceptConnections"
-    "submit  form":             "updateConceptConnections"
-    "click  .concept-label":    "preventLabelClicks"
-    "click  .edit-connections": "toggleEditMode"
+    "click  .submit .cancel:not(.disabled)" : "cancelConceptConnections"
+    "click  .submit .reset:not(.disabled)"  : "resetConceptConnections"
+    "submit  form"                          : "updateConceptConnections"
+    "click  .concept-label"                 : "preventLabelClicks"
+    "click  .edit-connections"              : "toggleEditMode"
 
   concepts: null
 
