@@ -8,17 +8,23 @@
 -if @editMode
   != @form_for "concept", @model, {reset: yes}, ->
     .list
-      .broader
-        %ul
-      .concept-label.hit.self
-      .narrower
-        %ul
+      .left
+        .broader
+          %ul
+      .center
+        .concept-label.hit.self
+      .right
+        .narrower
+          %ul
 
 -else
   .list
-    .broader
-      %ul
-    .concept-label.hit.self
-    .narrower
-      %ul
+    .left
+      .broader
+        %ul
+    .center
+      .concept-label.hit.self
+    .right
+      .narrower
+        %ul
 
