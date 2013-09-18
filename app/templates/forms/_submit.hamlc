@@ -1,6 +1,0 @@
-.submit
-  - if @reset?
-    %a.reset{href: "javascript:void(0)"}= @reset
-  - if @cancel?
-    %a.cancel{href: "javascript:history.back()"}= @cancel
-  %button{type: "submit"}= @submit

@@ -75,7 +75,6 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         I18n.t.withArgs("form.cancel").returns "Cancel"
         @view.render()
         @view.$el.should.have "a.cancel"
-        @view.$("a.cancel").should.have.attr "href", "javascript:history.back()"
         @view.$("a.cancel").should.have.text "Cancel"
 
     context "properties", ->
@@ -414,6 +413,42 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         @view.model.errors = -> {}
         @view.model.trigger "error"
         @view.$el.should.have "form .error-summary"
+
+  describe "cancel()", ->
+
+    beforeEach ->
+      Coreon.application = repository: -> id: "my-repository"
+      sinon.stub Backbone.history, "navigate"
+    
+    afterEach ->
+      Coreon.application = null
+      Backbone.history.navigate.restore()
+
+    it "is triggered by click on cancel link", ->
+      @view.cancel = sinon.spy()
+      @view.delegateEvents()
+      @view.$el.html '''
+        <a class="cancel">Cancel</a>
+      '''
+      @view.$(".cancel").click()
+      @view.cancel.should.have.been.calledOnce
+
+    context "without parent concept", ->
+      
+      it "navigates to repository root page", ->
+        Coreon.application = repository: -> id: "my-repository"
+        @view.cancel()
+        Backbone.history.navigate.should.have.been.calledOnce
+        Backbone.history.navigate.should.have.been.calledWith "/my-repository", trigger: yes
+      
+    context "with parent concept", ->
+      
+      it "navigates to parent concept", ->
+        Coreon.application = repository: -> id: "my-repository"
+        @view.model.set "superconcept_ids", ["def345"], silent: yes
+        @view.cancel()
+        Backbone.history.navigate.should.have.been.calledOnce
+        Backbone.history.navigate.should.have.been.calledWith "/my-repository/def345", trigger: yes
 
   describe "remove()", ->
 
