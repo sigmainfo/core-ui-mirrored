@@ -19,7 +19,7 @@ ajax = (deferred, method, model, options) ->
 
   options.url ?= urlFor model.url()
 
-  request = Backbone.sync(method, model, options)
+  request = Backbone.sync method, model, options
   Coreon.Modules.CoreAPI.trigger "start" if xhrs.length is 0
   xhrs.push request
   Coreon.Modules.CoreAPI.trigger "request", method, options.url, request

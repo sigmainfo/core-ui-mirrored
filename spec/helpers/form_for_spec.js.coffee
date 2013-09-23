@@ -17,6 +17,14 @@ describe "Coreon.Helpers.form_for()", ->
     form.should.match "form"
     form.should.have 'input[type="text"][name="title"][value="Wahappan?"]'
 
+  it "maks form for disable on submit", ->
+    markup = @helper "my_model", @model, ->
+    $(markup).should.have.attr "data-xhr-form", "disable"
+
+  it "turns off client side browser validations", ->
+    markup = @helper "my_model", @model, ->
+    $(markup).should.have.attr "novalidate"
+
   it "classifies form", ->
     markup = @helper "my_model", @model, ->
     $(markup).should.have.class "my-model"

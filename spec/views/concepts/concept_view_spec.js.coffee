@@ -215,15 +215,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       beforeEach ->
         sinon.stub Coreon.Templates, "concepts/info"
-
-      afterEach ->
-        Coreon.Templates["concepts/info"].restore()
-
-      beforeEach ->
         @concept.set "terms", [ lang: "de", value: "top head" ], silent: true
         @term = new Backbone.Model value: "top head" 
         @term.info = -> {}
         @concept.termsByLang = => de: [ @term ]
+
+      afterEach ->
+        Coreon.Templates["concepts/info"].restore()
 
       it "renders container", ->
         @view.render()
@@ -323,7 +321,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           @view.$(".term").should.have ".edit a.edit-term"
           @view.$(".term a.edit-term").should.have.text "Edit term"
           @view.$(".term a.edit-term").should.have.data "id", "56789fghj"
-
 
       context "without edit privileges", ->
 
@@ -500,7 +497,6 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.$el.should.have.class "edit"
       @view.$el.should.not.have.class "show"
 
-
   describe "toggleEditConceptProperties()", ->
 
     beforeEach ->
@@ -650,6 +646,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
   describe "createTerm()", ->
 
     beforeEach ->
+      @attrs = {}
+      sinon.stub Coreon.Models, "Term", =>
+        @term = new Backbone.Model @attrs
+        @term.save = sinon.spy => @request = $.Deferred()
+        @term.errors = => @errors
+        @term.persistedAttributes = => @persistedAttributes
+        @term
       @view.$el.append '''
         <form class="term create">
           <div class="submit">
@@ -661,11 +664,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @trigger = @view.$("form")
       @event.target = @trigger[0]
       terms = new Backbone.Collection
-      terms.create = sinon.stub()
       @view.model.terms = -> terms
 
+    afterEach ->
+      Coreon.Models.Term.restore()
+
     it "is triggered by submit", ->
-      @view.createTerm = sinon.stub().returns false
+      @view.createTerm = sinon.spy()
       @view.delegateEvents()
       @view.$("form").submit()
       @view.createTerm.should.have.been.calledOnce
@@ -675,99 +680,98 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.createTerm @event
       @event.preventDefault.should.have.been.calledOnce
 
-    it "disables button to prevent second click", ->
-      @view.createTerm @event
-      @view.$('form.term.create button[type="submit"]').should.be.disabled
-
     it "creates term", ->
       @view.model.id = "3456ghj"
       @view.createTerm @event
-      @view.model.terms().create.should.have.been.calledOnce
-      @view.model.terms().create.firstCall.args[0].should.have.property "concept_id", "3456ghj"
+      Coreon.Models.Term.should.have.been.calledOnce
+      Coreon.Models.Term.should.have.been.calledWithNew
+      Coreon.Models.Term.should.have.been.calledWith
+        concept_id: "3456ghj"
+        properties: []
+      @term.save.should.have.been.calledOnce
+      @term.save.should.have.been.calledWith null, wait: yes
 
     it "notifies about success", ->
-      I18n.t.withArgs("notifications.term.created").returns "Yay!"
+      @attrs = value: "Cowboyhut"
+      I18n.t.withArgs("notifications.term.created", value: "Cowboyhut")
+        .returns 'Successfully created "Cowboyhut".'
       Coreon.Models.Notification.info = sinon.spy()
       @view.createTerm @event
-
-      @view.model.terms().create.firstCall.args[1].success()
+      @request.resolve()
       Coreon.Models.Notification.info.should.have.been.calledOnce
-      Coreon.Models.Notification.info.should.have.been.calledWith "Yay!"
+      Coreon.Models.Notification.info.should.have.been.calledWith 'Successfully created "Cowboyhut".'
 
     it "updates term from form", ->
       @view.$("form.term.create").prepend '''
         <input type="text" name="term[value]" value="high hat"/>
         <input type="text" name="term[lang]" value="en"/>
-        '''
+      '''
       @view.createTerm @event
-      @view.model.terms().create.firstCall.args[0].should.have.property "value", "high hat"
-      @view.model.terms().create.firstCall.args[0].should.have.property "lang", "en"
+      Coreon.Models.Term.firstCall.args[0].should.have.property "value", "high hat"
+      Coreon.Models.Term.firstCall.args[0].should.have.property "lang", "en"
 
     it "cleans up properties", ->
       @view.$("form.term.create").prepend '''
         <input type="text" name="term[properties][3][key]" value="status"/>
         '''
       @view.createTerm @event
-      @view.model.terms().create.firstCall.args[0].should.have.property("properties").with.lengthOf 1
-      @view.model.terms().create.firstCall.args[0].properties[0].should.have.property "key", "status"
+      Coreon.Models.Term.firstCall.args[0].should.have.property("properties").with.lengthOf 1
+      Coreon.Models.Term.firstCall.args[0].properties[0].should.have.property "key", "status"
 
     it "deletes previously set properties when empty", ->
       @view.createTerm @event
-      @view.model.terms().create.firstCall.args[0].should.have.property("properties").that.eql []
+      Coreon.Models.Term.firstCall.args[0].should.have.property("properties").that.eql []
 
     context "error", ->
 
       beforeEach ->
-        @term = new Backbone.Model
-        @term.persistedAttributes = -> {}
-        @term.errors = -> {}
-        sinon.stub Coreon.Models, "Term", => @term
-        @view.model.terms().create = (attrs, options = {}) =>
-          options.error @term
-          @term.trigger "error", @term
-
-      afterEach ->
-        Coreon.Models.Term.restore()
+        @persistedAttributes = {}
+        @errors = {}
 
       it "rerenders form with errors", ->
         @view.createTerm @event
+        @request.reject()
         @view.$el.should.have("form.term.create")
         @view.$("form.term.create").should.have.lengthOf 1
         @view.$("form.term.create").should.have ".error-summary"
 
       it "renders properties within form", ->
+        @view.createTerm @event
         @term.set "properties", [ key: "status" ], silent: true
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
-        @view.createTerm @event
+        @request.reject()
         @view.$("form.term.create").should.have ".property"
         @view.$("form.term.create .property").should.have.lengthOf 1
 
       it "renders errors on properties", ->
+        @view.createTerm @event
         @term.set "properties", [ key: "status" ], silent: true
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
         @term.errors = -> { nested_errors_on_properties: [ value: ["can't be blank"] ] }
-        @view.createTerm @event
+        @request.reject()
         @view.$("form.term.create .property").should.have ".error-message"
         @view.$("form.term.create .property .error-message").should.have.text "can't be blank"
 
       it "increases index on add property link", ->
+        @view.createTerm @event
         @term.set "properties", [ key: "status" ], silent: true
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
-        @view.createTerm @event
+        @request.reject()
         @view.$("form.term.create .add-property").should.have.data "index", 1        
 
-
   describe "updateTerm()", ->
+
     beforeEach ->
       @event = $.Event "submit"
       @form = @view.$("form.term.update")
       @event.target = @form
-      @view.model.terms = -> new Backbone.Collection
+      @view.model.terms = =>
+        get: =>
+          @term = new Backbone.Model
+          @term.save = sinon.spy => @request = $.Deferred()
+          @term
 
-    it "needs to be fully tested!"
-
-    it "prevents event default", ->
-      @view.saveTerm = ->     # lesser dependencies
+    it "prevents default", ->
       @event.preventDefault = sinon.spy()
       @view.updateTerm @event
       @event.preventDefault.should.have.been.calledOnce
@@ -777,19 +781,18 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.updateTerm @event
       @view.saveTerm.should.have.been.calledOnce
 
-
   describe "saveTerm()", ->
+
     it "notifies about update", ->
       I18n.t.withArgs("notifications.term.saved").returns "wohoow!"
       Coreon.Models.Notification.info = sinon.spy()
       model =
-        save: (data, options)-> options.success()
+        save: => @request = $.Deferred()
         get: ->
       @view.saveTerm(model, {})
-
+      @request.resolve()
       Coreon.Models.Notification.info.should.have.been.calledOnce
       Coreon.Models.Notification.info.should.have.been.calledWith "wohoow!"
-
 
   describe "cancel()", ->
 
@@ -918,9 +921,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event = $.Event "click"
       @trigger = @view.$("a.remove-term")
       @event.target = @trigger[0]
-
-    afterEach ->
-      $(window).off ".coreonConfirm"
+      @view.confirm = sinon.spy()
 
     it "is triggered by click on remove term link", ->
       @view.removeTerm = sinon.spy()
@@ -931,52 +932,37 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "renders confirmation dialog", ->
       I18n.t.withArgs("term.confirm_delete").returns "This term will be deleted permanently."
       @view.removeTerm @event
-      $("#coreon-modal .confirm .message").should.have.text "This term will be deleted permanently."
+      @view.confirm.should.have.been.calledOnce
+      options = @view.confirm.firstCall.args[0]
+      options.should.have.property "message", "This term will be deleted permanently."
 
     it "marks term for deletetion", ->
       @view.removeTerm @event
-      @view.$(".term").should.have.class "delete"
-
-    context "cancel", ->
-
-      beforeEach ->
-        @view.removeTerm @event
-
-      it "unmarks term for deletion", ->
-        $(".modal-shim").click()
-        @view.$(".term").should.not.have.class "delete"
+      options = @view.confirm.firstCall.args[0]
+      options.container[0].should.equal @view.$(".term")[0]
 
     context "destroy", ->
 
       beforeEach ->
         @view.removeTerm @event
+        @action = @view.confirm.firstCall.args[0].action
 
       it "removes term from listing", ->
         li = @view.$(".term")[0]
-        @view.$el.append '''
-        <li class="term">
-          <div class="edit">
-            <a class="remove-term" href="javascript:void(0)">Remove term</a>
-          </divoutput>
-          <h4 class="value">beaver hat</h4>
-        </li>
-        '''
-        $(".confirm").click()
+        @action()
         $.contains(@view.$el[0], li).should.be.false
-        @view.$(".term").should.have.lengthOf 1
 
       it "destroys model", ->
         term = @view.model.terms().at 0
-        $(".confirm").click()
+        @action()
         term.destroy.should.have.been.calledOnce
 
       it "notifies about destruction", ->
         I18n.t.withArgs("notifications.term.deleted").returns "baaam!"
         Coreon.Models.Notification.info = sinon.spy()
-        $(".confirm").click()
+        @action()
         Coreon.Models.Notification.info.should.have.been.calledOnce
         Coreon.Models.Notification.info.should.have.been.calledWith "baaam!"
-
 
   describe "delete()", ->
 
@@ -996,9 +982,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @trigger = @view.$("a.delete-concept")
       @event = $.Event "click"
       @event.target = @trigger[0]
-
-    afterEach ->
-      $(window).off ".coreonConfirm"
+      @view.confirm = sinon.spy()
 
     it "is triggered by click on remove concept link", ->
       @view.delete = sinon.spy()
@@ -1009,53 +993,47 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     it "renders confirmation dialog", ->
       I18n.t.withArgs("concept.confirm_delete").returns "This concept will be deleted permanently."
       @view.delete @event
-      $("#coreon-modal .confirm .message").should.have.text "This concept will be deleted permanently."
+      @view.confirm.should.have.been.calledOnce
+      options = @view.confirm.firstCall.args[0]
+      options.should.have.property "message", "This concept will be deleted permanently."
 
     it "marks concept for deletetion", ->
       @view.delete @event
-      @view.$(".concept").should.have.class "delete"
+      options = @view.confirm.firstCall.args[0]
+      options.container[0].should.equal @view.$(".concept")[0]
 
-    context "cancel", ->
-
-      beforeEach ->
-        @view.delete @event
-
-      it "unmarks term for deletion", ->
-        $(".modal-shim").click()
-        @view.$(".concept").should.not.have.class "delete"
-
-    context "destroy", ->
+    context "confirm", ->
 
       beforeEach ->
         Coreon.application = repository: -> id: "8765jhgf"
-        @history = Backbone.history
-        Backbone.history = navigate: sinon.spy()
-        @view.model.destroy = sinon.spy()
+        sinon.stub Backbone.history, "navigate"
         @view.delete @event
+        @action = @view.confirm.firstCall.args[0].action
 
       afterEach ->
         Coreon.application = null
-        Backbone.history = @history
-        
+        Backbone.history.navigate.restore()
+
       it "redirects to repository root when done", ->
         Coreon.application = repository: -> id: "8765jhgf"
-        $(".confirm").click()
+        @action()
         Backbone.history.navigate.should.have.been.calledOnce
         Backbone.history.navigate.should.have.been.calledWith "/8765jhgf", trigger: true
       
       it "destroys model", ->
-        Coreon.application
-        $(".confirm").click()
+        @view.model.destroy = sinon.spy()
+        @action()
         @view.model.destroy.should.have.been.calledOnce
 
       it "notifies about destruction", ->
         I18n.t.withArgs("notifications.concept.deleted").returns "baaam!"
         Coreon.Models.Notification.info = sinon.spy()
-        $(".confirm").click()
+        @action()
         Coreon.Models.Notification.info.should.have.been.calledOnce
         Coreon.Models.Notification.info.should.have.been.calledWith "baaam!"
 
   describe "clipboard interaction", ->
+
     beforeEach ->
       @collection = new Backbone.Collection
       sinon.stub Coreon.Collections.Clips, "collection", => @collection
@@ -1070,4 +1048,3 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @collection.add @concept
       @collection.reset []
       @view.setClipboardButton.should.have.been.calledTwice
-

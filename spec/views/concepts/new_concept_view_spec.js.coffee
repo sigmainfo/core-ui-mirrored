@@ -330,26 +330,24 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
     beforeEach ->
       @event = $.Event "submit"
       sinon.stub Backbone.history, "navigate"
-      @view.model.save = sinon.stub()
+      sinon.stub @view.model, "save", =>
+        @request = $.Deferred()
       @view.render()
     
     afterEach ->
       Backbone.history.navigate.restore()
 
     it "is triggered on form submit", ->
-      @view.create = sinon.stub().returns false
+      @view.create = sinon.spy()
       @view.delegateEvents()
       @view.$("form").trigger @event
       @view.create.should.have.been.calledOne
       @view.create.should.have.been.calledWith @event
 
     it "prevents default action", ->
+      @event.preventDefault = sinon.spy()
       @view.create @event
-      @event.isDefaultPrevented().should.be.true
-
-    it "disables button to prevent second click", ->
-      @view.create @event
-      @view.$('button[type="submit"]').should.be.disabled
+      @event.preventDefault.should.have.been.calledOnce
 
     it "updates model from form", ->
       @view.$(".properties").append '<input name="concept[properties][0][key]" value="label"/>'
@@ -381,7 +379,6 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
         collection = new Backbone.Collection
         sinon.stub Coreon.Models.Concept, "collection", -> collection
         @view.model.url = -> ""
-        @view.model.save.yieldsTo "success"
 
       afterEach ->
         Coreon.Models.Concept.collection.restore()
@@ -389,29 +386,29 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       it "accumulates newly created model", ->
         @view.model.id = "babe42"
         @view.create @event
+        @request.resolve()
         Coreon.Models.Concept.collection().get("babe42").should.equal @view.model
 
       it "redirects to show concept page", ->
         @view.model.id = "babe42"
         @view.create @event
+        @request.resolve()
         Backbone.history.navigate.should.have.been.calledWith "coffee23/concepts/babe42", trigger: true
 
       it "notifies about success", ->
         I18n.t.withArgs("notifications.concept.created").returns "yay!"
         Coreon.Models.Notification.info = sinon.spy()
         @view.create @event
+        @request.resolve()
         Coreon.Models.Notification.info.should.have.been.calledOnce
         Coreon.Models.Notification.info.should.have.been.calledWith "yay!"
 
     context "error", ->
 
-      beforeEach ->
-        @view.model.save.yieldsTo "error"
-
       it "renders error summary", ->
         @view.create @event
         @view.model.errors = -> {}
-        @view.model.trigger "error"
+        @request.reject()
         @view.$el.should.have "form .error-summary"
 
   describe "cancel()", ->

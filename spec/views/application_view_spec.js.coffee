@@ -22,7 +22,19 @@ describe "Coreon.Views.ApplicationView", ->
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
 
+  it "includes xml form handling", ->
+    should.exist @view.xhrFormsOn
+    @view.xhrFormsOn.should.equal Coreon.Modules.XhrForms.xhrFormsOn
+
+  describe "initialize()", ->
+    
+    it "enables xml form handling", ->
+      @view.xhrFormsOn = sinon.spy()
+      @view.initialize()
+      @view.xhrFormsOn.should.have.been.calledOnce
+
   describe "render()", ->
+
     beforeEach ->
       Coreon.application.cacheId = -> "coffee23"
 

@@ -14,6 +14,7 @@
 #= require views/concepts/shared/broader_and_narrower_view
 #= require collections/clips
 #= require models/broader_and_narrower_form
+#= require models/term
 #= require models/notification
 #= require modules/helpers
 #= require modules/nested_fields_for
@@ -65,14 +66,15 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @subviews = []
     @
 
-  render: ->
+  render: (model, options = {}) ->
+    return @ if options.internal
     subview.remove() for subview in @subviews
     @subviews = []
 
     @$el.html @template
-      concept: @model,
-      editMode: @editMode,
-      editProperties: @editProperties,
+      concept: @model
+      editMode: @editMode
+      editProperties: @editProperties
       editTerm: @editTerm
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -104,7 +106,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     target.siblings().not(".edit").slideToggle()
 
   selectProperty: (evt) ->
-    target = $ evt.target
+    target = $(evt.target)
     container = target.closest "td"
     container.find("li.selected").removeClass "selected"
     container.find(".values > li").eq(target.data "index").add(target)
@@ -139,13 +141,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     terms.append @term term: new Coreon.Models.Term
 
   saveConceptProperties: (attrs) ->
-    @model.save attrs,
-      success: =>
-        @toggleEditConceptProperties()
-      error: (model) =>
-        model.once "error", @render, @
-      attrs:
-        concept: attrs
+    request = @model.save attrs, wait: yes, attrs: concept: attrs
+    request.done => @toggleEditConceptProperties()
+    request.fail => @model.set attrs
 
   updateConceptProperties: (evt) ->
     evt.preventDefault()
@@ -155,12 +153,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     attrs.properties = if data.properties?
       property for property in data.properties when property?
     else []
-    form
-      .find("input,textarea,button")
-        .prop("disabled", true)
-      .end()
-      .find("a")
-        .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
 
@@ -168,8 +160,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       @confirm
         trigger: trigger
         message: I18n.t "concept.confirm_update", count: elements_to_delete.length
-        action: =>
-          @saveConceptProperties attrs
+        action: => @saveConceptProperties attrs
     else
       @saveConceptProperties attrs
 
@@ -182,12 +173,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       property for property in data.properties when property?
     else []
 
-    form
-      .find("input,textarea,button")
-        .prop("disabled", true)
-      .end()
-      .find("a")
-        .addClass("disabled")
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
     model = @model.terms().get data.id
@@ -201,15 +186,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     else
       @saveTerm(model, data)
 
-  saveTerm: (model, data) ->
-    model.save data,
-      success: =>
-        Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: data.value)
-        @toggleEditTerm()
-      error: (model) =>
-        model.once "error", @render, @
-      attrs: term: data
-
+  saveTerm: (model, attrs) ->
+    request = model.save attrs, wait: yes, attrs: term: attrs
+    request.done =>
+      Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: model.get "value")
+      @toggleEditTerm()
+    request.fail =>
+      model.set attrs
+      @render()
 
   createTerm: (evt) ->
     evt.preventDefault()
@@ -220,20 +204,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       property for property in data.properties when property?
     else []
 
-    target
-      .find("input,textarea,button")
-        .prop("disabled", true)
-      .end()
-      .find("a")
-        .addClass("disabled")
-        
-    @model.terms().create data,
-      wait: true
-      success: =>
-        Coreon.Models.Notification.info I18n.t("notifications.term.created", value: data.value)
-      error: (model, xhr, options) =>
-        model.once "error", =>
-          @$("form.term.create").replaceWith @term term: model
+    term = new Coreon.Models.Term data
+    request = term.save null, wait: yes
+    request.done =>
+      Coreon.Models.Notification.info I18n.t("notifications.term.created", value: term.get("value"))
+      @model.terms().add term
+      @toggleEditTerm()
+    request.fail =>
+      @$("form.term.create").replaceWith @term term: term
 
   cancelForm: (evt) ->
     evt.preventDefault()
@@ -257,11 +235,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       trigger: trigger
       container: container
       message: I18n.t "term.confirm_delete"
-      action: ->
+      action: =>
         value = model.get "value"
-        container.remove()
         model.destroy()
         Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value:value)
+        @render()
 
   delete: (evt) ->
     trigger = $ evt.target
