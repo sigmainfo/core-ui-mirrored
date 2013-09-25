@@ -40,12 +40,14 @@ $widget-width: 320px;
   background-color: $greencolor;
   @include border-radius(4px);
   @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 2px, false, inset);
-  &:hover {
-    cursor: pointer;
-    color: white;
-    background-color: $button-color;
-    @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-  };
+  &:not(.disabled){
+    &:hover {
+      cursor: pointer;
+      color: white;
+      background-color: $button-color;
+      @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+    };
+  }
 }
 
 @mixin toggle {
@@ -205,7 +207,7 @@ $widget-width: 320px;
   background-image: image-url('layout/icons.png');
   @media only screen and (-webkit-min-device-pixel-ratio: 2) {
       background-image: image-url('layout/icons@2x.png');
-      @include background-size(100px 800px);
+      @include background-size(100px 1000px);
   } 
 }
 
