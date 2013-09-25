@@ -359,7 +359,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       $("#konacha").append @view.$el
   
     it "is triggered by click on system info toggle", ->
-      @view.toggleInfo = sinon.spy()
+      @view.toggleInfo = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("#outer-trigger").click()
       @view.toggleInfo.should.have.been.calledOnce
@@ -402,13 +402,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event = $.Event()
     
     it "is triggered by click on caption for section", ->
-      @view.toggleSection = sinon.spy()
+      @view.toggleSection = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("section *:first-child").first().click()
       @view.toggleSection.should.have.been.calledOnce
     
     it "is not triggered for section within a form", ->
-      @view.toggleSection = sinon.spy()
+      @view.toggleSection = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("section").wrap "<form>"
       @view.$("section *:first-child").first().click()
@@ -452,7 +452,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @tab[0]
 
     it "is triggered by click on selector", ->
-      @view.selectProperty = sinon.spy()
+      @view.selectProperty = sinon.stub().returns false
       @view.delegateEvents()
       @tab.trigger @event
       @view.selectProperty.should.have.been.calledOnce
@@ -472,7 +472,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
 
     it "is triggered by click on edit mode toggle", ->
-      @view.toggleEditMode = sinon.spy()
+      @view.toggleEditMode = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".edit-concept").click()
       @view.toggleEditMode.should.have.been.calledOnce
@@ -507,7 +507,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
 
     it "is triggered by click on edit-properties toggle", ->
-      @view.toggleEditConceptProperties = sinon.spy()
+      @view.toggleEditConceptProperties = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".edit-properties").click()
       @view.toggleEditConceptProperties.should.have.been.calledOnce
@@ -542,7 +542,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.render()
 
     it "is triggered by click on add-term link", ->
-      @view.addTerm = sinon.spy()
+      @view.addTerm = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".add-term").click()
       @view.addTerm.should.have.been.calledOnce
@@ -608,7 +608,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @trigger[0]
 
     it "is triggered by click on add property link", ->
-      @view.addProperty = sinon.spy()
+      @view.addProperty = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".add-property").click()
       @view.addProperty.should.have.been.calledOnce
@@ -633,7 +633,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       Coreon.Helpers.input.restore()
 
     it "is triggered by click on remove action", ->
-      @view.removeProperty = sinon.spy()
+      @view.removeProperty = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".property a.remove-property").trigger @event
       @view.removeProperty.should.have.been.calledOnce
@@ -670,7 +670,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       Coreon.Models.Term.restore()
 
     it "is triggered by submit", ->
-      @view.createTerm = sinon.spy()
+      @view.createTerm = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("form").submit()
       @view.createTerm.should.have.been.calledOnce
@@ -777,7 +777,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.preventDefault.should.have.been.calledOnce
 
     it "calls saveTerm()", ->
-      @view.saveTerm = sinon.spy()
+      @view.saveTerm = sinon.stub().returns false
       @view.updateTerm @event
       @view.saveTerm.should.have.been.calledOnce
 
@@ -815,13 +815,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @trigger[0]
 
     it "is triggered by click on cancel link", ->
-      @view.cancelForm = sinon.spy()
+      @view.cancelForm = sinon.stub().returns false
       @view.delegateEvents()
       @trigger.click()
       @view.cancelForm.should.have.been.calledOnce
 
     it "is not triggered when link is disabled", ->
-      @view.cancelForm = sinon.spy()
+      @view.cancelForm = sinon.stub().returns false
       @view.delegateEvents()
       @trigger.addClass "disabled"
       @trigger.click()
@@ -866,13 +866,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @event.target = @trigger[0]
 
     it "is triggered by click on reset link", ->
-      @view.reset = sinon.spy()
+      @view.reset = sinon.stub().returns false
       @view.delegateEvents()
       @trigger.click()
       @view.reset.should.have.been.calledOnce
 
     it "is not triggered when link is disabled", ->
-      @view.reset = sinon.spy()
+      @view.reset = sinon.stub().returns false
       @view.delegateEvents()
       @trigger.addClass "disabled"
       @trigger.click()
@@ -894,7 +894,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.model.should.have.property "remoteError", null
 
     it "restores previous state", ->
-      @view.model.revert = sinon.spy()
+      @view.model.revert = sinon.stub().returns false
       @view.reset @event
       @view.model.revert.should.have.been.calledOnce
 
@@ -924,7 +924,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.confirm = sinon.spy()
 
     it "is triggered by click on remove term link", ->
-      @view.removeTerm = sinon.spy()
+      @view.removeTerm = sinon.stub().returns false
       @view.delegateEvents()
       @trigger.click()
       @view.removeTerm.should.have.been.calledOnce
@@ -985,7 +985,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.confirm = sinon.spy()
 
     it "is triggered by click on remove concept link", ->
-      @view.delete = sinon.spy()
+      @view.delete = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".edit .delete-concept").trigger @event
       @view.delete.should.have.been.calledOnce
