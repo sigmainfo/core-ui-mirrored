@@ -44,12 +44,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
     context "rendering markup skeleton", ->
 
-      beforeEach ->
-        sinon.stub(localStorage, "getItem").returns null
-
-      afterEach ->
-        localStorage.getItem.restore()
-
       it "renders titlebar", ->
         I18n.t.withArgs("concept-map.title").returns "Concept Map"
         @view.initialize()

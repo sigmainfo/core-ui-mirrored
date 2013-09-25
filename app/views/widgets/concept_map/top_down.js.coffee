@@ -1,11 +1,12 @@
 #= require environment
 #= require views/widgets/concept_map/render_strategy
+#= require helpers/text
 
 class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   constructor: (parent) ->
     super
-    @layout.nodeSize [190, 100]
+    @layout.nodeSize [150, 100]
 
   updateNodes: (nodes) ->
     super
@@ -16,27 +17,22 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
     nodes.select("text.label")
       .attr("text-anchor", "middle")
       .attr("x", "0")
-      .attr("y", "17")
-      .text( (datum) ->
-        Coreon.Helpers.Text.shorten datum.label, 24
+      .attr("y", (datum) ->
+        if datum.hit then 21 else 20
       )
-      .each( (datum) ->
-        datum.textBox = @.getBBox()
+      .text( (datum) ->
+        chars = if datum.hit then 27 else 34
+        Coreon.Helpers.Text.shorten datum.label, chars
       )
 
     nodes.select("rect.background")
       .attr("height", (datum) ->
-        datum.textBox.height + 6
+        if datum.hit then 20 else 19
       )
-      .attr("width", (datum) ->
-        datum.textBox.width + 10
-      )
-      .attr("x", (datum) ->
-        datum.textBox.x - 5
-      )
+      .attr("width", 140)
+      .attr("x", -70)
       .attr("y", (datum) ->
-        offset = if datum.hit then 4 else 3
-        datum.textBox.y - offset
+        if datum.hit then 6 else 7
       )
 
     nodes.select("g.toggle-parents")
@@ -46,18 +42,16 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
 
     nodes.select("g.toggle-children")
       .attr("transform", (datum) ->
-        paddingBottom = if datum.hit then 5 else 3
-        "translate(0, #{datum.textBox.y + datum.textBox.height + 15}) rotate(#{if datum.expandedIn then 90 else 0})" 
+        "translate(0, 35) rotate(#{if datum.expandedOut then 90 else 0})" 
       )
 
   updateEdges: (edges) ->
     diagonal = @diagonal
     edges.attr("d", (datum) ->
-      paddingBottom = if datum.hit then 5 else 3
       diagonal
         source:
           x: datum.source.x
-          y: datum.source.y + datum.source.textBox.y + datum.source.textBox.height + paddingBottom
+          y: datum.source.y + 26
         target:
           x: datum.target.x
           y: datum.target.y - 3.5

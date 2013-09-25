@@ -6,7 +6,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
 
   constructor: (parent) ->
     super
-    @layout.nodeSize [25, 190]
+    @layout.nodeSize [25, 260]
     @diagonal.projection (datum) -> [datum.y, datum.x]
 
   updateNodes: (nodes) ->
@@ -19,21 +19,16 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       .attr("text-anchor", "start")
       .attr("x", 7)
       .attr("y", "0.35em")
-      .html("")
       .text( (datum) ->
-        Coreon.Helpers.Text.shorten datum.label, 24
-      )
-      .each( (datum) ->
-        datum.textWidth = @getBBox().width
+        chars = if datum.hit then 27 else 34
+        Coreon.Helpers.Text.shorten datum.label, chars
       )
 
     nodes.select("rect.background")
       .attr("height", (datum) ->
         if datum.hit then 20 else 17
       )
-      .attr("width", (datum) ->
-        datum.textWidth + 20
-      )
+      .attr("width", 200)
       .attr("x", -7)
       .attr("y", (datum) ->
         if datum.hit then -10 else -8.5
@@ -46,7 +41,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
 
     nodes.select("g.toggle-children")
       .attr("transform", (datum) ->
-        "translate(#{datum.textWidth + 21}, 0) rotate(#{if datum.expandedOut then 90 else 0})" 
+        "translate(200, 0) rotate(#{if datum.expandedOut then 90 else 0})" 
       )
 
   updateEdges: (edges) ->
@@ -55,7 +50,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       diagonal
         source:
           x: datum.source.x
-          y: datum.source.y + datum.source.textWidth + 14
+          y: datum.source.y + 193
         target:
           x: datum.target.x
           y: datum.target.y - 7
