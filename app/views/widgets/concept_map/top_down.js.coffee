@@ -10,9 +10,10 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
 
   updateNodes: (nodes) ->
     super
-    nodes.attr("transform", (datum) ->
-      "translate(#{datum.x}, #{datum.y})"
-    )
+    nodes
+      .attr("transform", (datum) ->
+        "translate(#{datum.x}, #{datum.y})"
+      )
 
     nodes.select("text.label")
       .attr("text-anchor", "middle")
@@ -29,20 +30,18 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
       .attr("height", (datum) ->
         if datum.hit then 20 else 19
       )
-      .attr("width", 140)
-      .attr("x", -70)
       .attr("y", (datum) ->
         if datum.hit then 6 else 7
       )
 
     nodes.select("g.toggle-parents")
       .attr("transform", (datum) ->
-        "translate(0, -15) rotate(#{if datum.expandedIn then 90 else 0})" 
+        "translate(0, -15) rotate(#{if datum.expandedIn then 0 else 90})" 
       )
 
     nodes.select("g.toggle-children")
       .attr("transform", (datum) ->
-        "translate(0, 35) rotate(#{if datum.expandedOut then 90 else 0})" 
+        "translate(0, 35) rotate(#{if datum.expandedOut then 0 else 90})" 
       )
 
   updateEdges: (edges) ->
@@ -56,3 +55,17 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
           x: datum.target.x
           y: datum.target.y - 3.5
     )
+
+  updateLayout: (nodes, edges) ->
+    nodes.select("text.label")
+      .each( (datum) ->
+        datum.labelWidth = @getBBox().width + 10
+      )
+
+    nodes.select("rect.background")
+      .attr("width", (datum) ->
+        datum.labelWidth
+      )
+      .attr("x", (datum) ->
+        datum.labelWidth / -2
+      )

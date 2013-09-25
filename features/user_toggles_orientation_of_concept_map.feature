@@ -13,8 +13,8 @@ Feature: user toggles orientation of concept map
     When I visit the single concept page for "handgun"
     Then I should see "handgun" being selected in the concept map
     And it should be connected to "weapon"
-    And "weapon" should be rendered left of "handgun"
+    And "weapon" should be rendered above "handgun"
     When I click "Toggle orientation"
     Then "handgun" should still be selected
     And it should be connected to "weapon"
-    But "weapon" should be rendered above "handgun"
+    But "weapon" should be rendered left of "handgun"

@@ -74,7 +74,6 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
       background = @selection.append("rect").attr("class", "background")
       nodes = @selection.data [ label: "node" ]
       @strategy.updateNodes nodes
-      background.attr("x").should.equal "-70"
       background.attr("y").should.equal "7"
 
     it "updates background dimensions", ->
@@ -83,7 +82,6 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         label: "node"
       ]
       @strategy.updateNodes nodes
-      background.attr("width").should.equal "140"
       background.attr("height").should.equal "19"
 
     it "positions toggle for parents", ->
@@ -108,8 +106,8 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         expandedOut: no
       ]
       @strategy.updateNodes nodes
-      toggleParents.attr("transform").should.include "rotate(0)"
-      toggleChildren.attr("transform").should.include "rotate(0)"
+      toggleParents.attr("transform").should.include "rotate(90)"
+      toggleChildren.attr("transform").should.include "rotate(90)"
 
     it "rotates expanded toggles", ->
       toggleParents = @selection.append("g").attr("class", "toggle-parents")
@@ -121,8 +119,8 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         expandedOut: yes
       ]
       @strategy.updateNodes nodes
-      toggleParents.attr("transform").should.include "rotate(90)"
-      toggleChildren.attr("transform").should.include "rotate(90)"
+      toggleParents.attr("transform").should.include "rotate(0)"
+      toggleChildren.attr("transform").should.include "rotate(0)"
       
     context "hits", ->
 
@@ -160,3 +158,19 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
       ).returns  "M179,123C119.5,123 119.5,123 60,123"
       @strategy.updateEdges edges
       edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,123"
+
+  describe "updateLayout()", ->
+
+    beforeEach ->
+      @selection = @parent.append("g").attr("class", "concept-node")
+  
+    it "resizes and repositions background", ->
+      background = @selection.append("rect").attr("class", "background")
+      label = @selection.append("text").attr("class", "label")
+      label.node().getBBox = -> width: 100
+      nodes = @selection.data [ label: "node 12345" ]
+      @strategy.updateLayout nodes
+      background.attr("width").should.equal "110"
+      background.attr("x").should.equal "-55"
+
+      
