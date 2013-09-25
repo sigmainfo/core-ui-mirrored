@@ -1,4 +1,4 @@
-%form{class: @form.className, novalidate: true}
+%form{class: "#{ @form.name.replace /_/g, '-' } #{@form.action}", action: "javascript:void(0)", novalidate: on, "data-xhr-form": "disable"}
   - if @form.errors?
     .error-summary
       %p= I18n.t "form.errors.summary.#{@form.action}", name: @form.name
@@ -6,4 +6,8 @@
         - for attr, count of @form.errorCounts
           %li= I18n.t "form.errors.attribute", name: attr, count: count
   != @form.yield()
-  != @render "forms/submit", submit: @form.submitButton, cancel: @form.cancelButton, reset: @form.resetButton
+  .submit
+    - unless @form.model.isNew()
+      %a.reset{href: "javascript:void(0)"}= I18n.t "form.reset" 
+    %a.cancel{href: "javascript:void(0)"}= I18n.t "form.cancel"
+    %button{type: "submit"}= I18n.t "#{@form.name}.#{@form.action}"

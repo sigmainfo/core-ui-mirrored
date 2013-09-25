@@ -67,4 +67,3 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       model: search
 
     search.fetch()
-

@@ -30,6 +30,7 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     "click  a.add-term"        : "addTerm"
     "click  a.remove-term"     : "removeTerm"
     "submit form"              : "create"
+    "click .cancel"            : "cancel"
 
   initialize: ->
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -53,14 +54,20 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     attrs.terms = if data.terms?
       term for term in data.terms when term?
     else []
-    @$("form").find("input,textarea,button").prop "disabled", true
-    @model.save attrs,
-      success: =>
-        Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
-        Coreon.Models.Concept.collection().add @model
-        Backbone.history.navigate "#{Coreon.application.get("session").currentRepository().id}/concepts/#{@model.id}", trigger: true
-      error: =>
-        @model.once "error", @render, @
+
+    request = @model.save attrs
+
+    request.done =>
+      Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
+      Coreon.Models.Concept.collection().add @model
+      Backbone.history.navigate "#{Coreon.application.get("session").currentRepository().id}/concepts/#{@model.id}", trigger: true
+
+    request.fail => @render()
+
+  cancel: ->
+    path = "/#{Coreon.application.repository().id}"
+    path += "/#{parentId}" if parentId = @model.get("superconcept_ids")?[0]
+    Backbone.history.navigate path, trigger: true
 
   remove: ->
     @broaderAndNarrower.remove()

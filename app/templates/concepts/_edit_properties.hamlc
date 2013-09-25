@@ -1,4 +1,4 @@
-!= @form_for "concept", @concept, {reset:true}, ->
+!= @form_for "concept", @concept, ->
   %section.properties.edit{class: "collapsed" if @collapsed}
     %h3= I18n.t "properties.title"
     - persisted = @concept.persistedAttributes().properties?.length or 0

@@ -8,11 +8,13 @@
 #= require views/layout/progress_indicator_view
 #= require modules/helpers
 #= require modules/prompt
+#= require modules/xhr_forms
 
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
   Coreon.Modules.include @, Coreon.Modules.Prompt
+  Coreon.Modules.include @, Coreon.Modules.XhrForms
 
   template: Coreon.Templates["application"]
 
@@ -27,6 +29,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @listenTo @model, "change:session", @render
     @listenTo Coreon.Models.Notification.collection(), "add", @notify
     @listenTo Coreon.Models.Notification.collection(), "reset", @clearNotifications
+    @xhrFormsOn()
 
   render: ->
     subview.remove() for subview in @subviews if @subviews

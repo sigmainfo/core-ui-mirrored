@@ -3,7 +3,6 @@
 #= require helpers/render
 #= require helpers/input
 #= require templates/forms/_form_for
-#= require templates/forms/_submit
 
 errorCounts = (errorsHash) ->
   counts = {}
@@ -31,24 +30,14 @@ class Form extends Coreon.Lib.FormContext
 
   template: Coreon.Templates["forms/form_for"]
 
-  constructor: (@name, @model, buttons, context, block) ->
+  constructor: (@name, @model, context, block) ->
     super context, block
     @action = if @model.isNew() then "create" else "update"
-    @className = "#{ name.replace /_/g, '-' } #{@action}"
-
-    buttons = {} unless buttons?
-    buttons.submit = true unless buttons.submit?
-    buttons.cancel = true unless buttons.cancel?
-    buttons.reset = false unless buttons.reset?
-    @submitButton = I18n.t "#{@name}.#{@action}" if buttons.submit
-    @cancelButton = I18n.t "form.cancel" if buttons.cancel
-    @resetButton = I18n.t "form.reset" if buttons.reset
-
     @errors = @model?.errors?()
     @errorCounts = errorCounts @errors if @errors?
   
   input: (attr, options = {}) ->
     Coreon.Helpers.input @name, attr, @model, options
 
-Coreon.Helpers.form_for = (name, model, buttons, block) ->
-  (new Form name, model, buttons, @, block).render()
+Coreon.Helpers.form_for = (name, model, block) ->
+  (new Form name, model, @, block).render()

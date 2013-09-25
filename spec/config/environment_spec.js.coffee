@@ -6,12 +6,15 @@ describe "config/environment", ->
   context "require", ->
     
     it "loads core dependencies", ->
-      lib for lib in [jQuery, _, Backbone, HAML]
+      should.exist lib for lib in [jQuery, _, Backbone, HAML]
 
     it "prepares translations", ->
       should.exist I18n
       should.exist I18n.translations
       I18n.translations.en.date.day_names[0].should.equal "Sunday"
+
+    it "makes helpers available to template context", ->
+      HAML.globals().should.equal Coreon.Helpers
 
   context "namespaces", ->
     
@@ -39,17 +42,14 @@ describe "config/environment", ->
       should.exist Coreon.Views.Properties
       should.exist Coreon.Views.Terms
 
-  it "makes helpers available to template context", ->
-    HAML.globals().should.equal Coreon.Helpers
+  describe "Backbone.View::destroy()", ->
 
-  it "configures models for use with Mongoid id field", ->
-    model = new Backbone.Model id: "1234"
-    model.id.should.equal "1234"
-
-  it "sets Views prototpye for destroy() to call remove()", ->
-    Backbone.View::remove = sinon.spy()
-    Backbone.View::destroy()
-    Backbone.View::remove.should.have.been.calledOnce
+    it "calls remove", ->
+      @view = new Backbone.View
+      @view.remove = sinon.spy()
+      @view.destroy()
+      @view.remove.should.have.been.calledOnce
+      @view.remove.should.have.been.calledOn @view
 
   context "error notifications", ->
 
@@ -74,5 +74,3 @@ describe "config/environment", ->
     it "fails gracefully when no error notifications handler is loaded", ->
       Coreon.Modules.ErrorNotifications = null
       (-> Backbone.ajax() ).should.not.throw Error
-      
-       

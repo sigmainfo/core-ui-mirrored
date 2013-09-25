@@ -6,7 +6,7 @@
       %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@model.id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
 
 -if @editMode
-  != @form_for "concept", @model, {reset: yes}, ->
+  != @form_for "concept", @model, ->
     .list
       .left
         .broader

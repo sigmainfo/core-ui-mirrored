@@ -60,6 +60,10 @@ describe "Coreon.Modules.CoreAPI", ->
         @model.sync "read", @model
         Backbone.sync.firstCall.args[2].should.have.property "url", "https://123-456-789.coreon.com/concepts/1234asdfg"
 
+      it "allows changing the default for wait option", ->
+        @model.sync "read", @model, wait: no
+        Backbone.sync.firstCall.args[2].should.have.property "wait", no
+
       it "triggers global request event", ->
         spy = sinon.spy()
         Coreon.Modules.CoreAPI.on "request", spy 

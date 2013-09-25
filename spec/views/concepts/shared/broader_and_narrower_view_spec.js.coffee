@@ -4,6 +4,10 @@
 describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
   beforeEach ->
+    @repo = new Backbone.Model
+    @session = new Backbone.Model
+    @session.currentRepository = => @repo
+    Coreon.application = new Backbone.Model session: @session
     sinon.stub I18n, "t"
     sinon.stub(Coreon.Helpers, "can").returns true
     model = new Backbone.Model
@@ -18,7 +22,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     concepts = {}
     sinon.stub Coreon.Models.Concept, "find", (id) ->
       concepts[id] ?= new Backbone.Model id: id, label: id
-
     sinon.stub _, "defer", (func)-> func()
 
   afterEach ->
@@ -26,6 +29,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     Coreon.Helpers.can.restore()
     Coreon.Models.Concept.find.restore()
     _.defer.restore()
+    Coreon.application = null
 
   it "is a Backbone view", ->
    @view.should.be.an.instanceof Backbone.View
@@ -39,14 +43,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
   describe "initialize()", ->
 
     beforeEach ->
-      @repo = new Backbone.Model
-      @session = new Backbone.Model
-      @session.currentRepository = => @repo
-      Coreon.application = new Backbone.Model session: @session
-
       @view.model.id = "1234"
       @view.initialize()
-
 
     it "creates empty array for broader concepts", ->
       should.exist @view.broader
@@ -297,12 +295,13 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     context "inside edit mode", ->
 
       before ->
+        @foo = "bar"
+
+      beforeEach ->
         @el_broad = $("<div data-drag-ident='c0ffee'>")
         @el_narrow = $("<div data-drag-ident='deadbeef'>")
         @el_foreign = $("<div data-drag-ident='bad1dea'>")
         @el_own = $("<div data-drag-ident='#{@view.model.id}'>")
-
-      beforeEach ->
         sinon.stub @view, "createConcept", (id)->
           new Backbone.View model: new Backbone.Model id:id
 
@@ -320,11 +319,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
         @dropFunBroad = @view.$("form .broader ul").data("uiDroppable").options.drop
         @dropFunNarrow = @view.$("form .narrower ul").data("uiDroppable").options.drop
-
-
-      afterEach ->
-        @view.model.set "superconcept_ids", [], silent: true
-        @view.model.set "subconcept_ids", [], silent: true
 
       it "calls preventLabelClicks on click", ->
         clickEvent = $.Event "click"

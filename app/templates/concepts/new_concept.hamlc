@@ -1,5 +1,5 @@
 != @render "concepts/caption", label: @concept.get "label"
-!= @form_for "concept", @concept, null, ->
+!= @form_for "concept", @concept, ->
   - for scid in @concept.get("superconcept_ids")
     %input( type="hidden" name="concept[superconcept_ids][]" value="#{scid}" )
   %section.properties
