@@ -75,7 +75,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
   updateLayout: (nodes, edges) ->
     nodes.select("text.label")
       .each( (datum) ->
-        datum.labelWidth = @getBBox().width + 10
+        datum.labelWidth = @getBBox().width + 20
       )
 
     nodes.select("rect.background")

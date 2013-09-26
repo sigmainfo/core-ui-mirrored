@@ -210,7 +210,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       nodes = @selection.data [ label: "node 12345" ]
       @label.node().getBBox = -> width: 200
       @strategy.updateLayout nodes
-      background.attr("width").should.equal "210"
+      background.attr("width").should.equal "220"
 
     it "updates edges", ->
       nodes = @selection.data []
@@ -224,5 +224,5 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [ leaf: no ]
       @strategy.updateLayout nodes
-      toggle.attr("transform").should.include "translate(110, 0)"
+      toggle.attr("transform").should.include "translate(120, 0)"
       should.not.exist toggle.attr("style")

@@ -2,6 +2,11 @@ class Spinach::Features::UserBrowsesTreeView < Spinach::FeatureSteps
 
   include AuthSteps
   include Api::Graph::Factory
+  include EdgesHelpers
+
+  def get_position(label)
+    page.evaluate_script "$('.concept-node:contains(#{label})').position()"
+  end
 
   step 'a concept "double action revolver with a swing out cylinder firing mechanism and barrel" exists' do
     @concept = create_concept_with_label "double action revolver with a swing out cylinder firing mechanism and barrel"
@@ -19,9 +24,19 @@ class Spinach::Features::UserBrowsesTreeView < Spinach::FeatureSteps
   step 'I should see a multiline label representing the currently selected concept within the concept map' do
     within "#coreon-concept-map" do
       page.should have_css(".concept-node.hit a text",
-        text: "double action revolver with a swing out cylinder firing mechanism and barrel"
+        text: "double action revolver"
       )
       page.all(".concept-node.hit a text tspan").count.should > 1
     end
+  end
+
+  step 'I should see a label "weapon" above it' do
+    weapon_position = get_position "weapon"
+    handgun_position = get_position "double action"
+    weapon_position["top"].should < handgun_position["top"]
+  end
+
+  step 'both concepts should be connected' do
+    collect_edges.first.should start_with "weapon -> double action revolver"
   end
 end

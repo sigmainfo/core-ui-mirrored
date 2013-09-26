@@ -21,4 +21,14 @@ describe "Coreon.Helpers.Text", ->
     it "takes max length as second argument", ->
       @helper.shorten("12345", 5).should.equal "12345"
       @helper.shorten("12345x", 5).should.equal "1234…"
+
+  describe "wrap()", ->
+
+    it "creates an array of strings", ->
+      @helper.wrap("foo").should.eql [ "foo" ]
+
+    it "word wraps lines after given length", ->
+      @helper.wrap("lorem ipsum dolor sic amet", 12).should.eql [ "lorem ipsum", "dolor sic", "amet" ]
       
+    it "defaults to 24 chars per line", ->
+      @helper.wrap("lorem ipsum dolor sic amet").should.eql [ "lorem ipsum dolor sic", "amet" ]
