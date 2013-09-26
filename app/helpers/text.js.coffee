@@ -4,7 +4,10 @@
 Coreon.Helpers.Text =
 
   shorten: (text = "", max = 10) ->
-    text = text[0..max - 2] + "…" if text.length > max
+    if text.length > max
+      start = Math.ceil max / 2
+      end = start - max
+      text = text[0...start] + "…" + text[end..] 
     text
 
   wrap: (text = "", length = 24) ->
