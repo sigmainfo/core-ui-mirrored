@@ -6,7 +6,11 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
 
   constructor: (parent) ->
     super
-    @layout.nodeSize [160, 100]
+    @layout
+      .nodeSize([160, 100])
+      .separation( (a, b) ->
+        if a.parent is b.parent then 1 else 1.3
+      )
 
   updateNodes: (nodes) ->
     super
@@ -25,7 +29,7 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
     labels
       .each( (datum) ->
         node = d3.select @
-        chars = if datum.hit then 25 else 28
+        chars = if datum.hit then 22 else 28
         lines = Coreon.Helpers.Text.wrap(datum.label, chars)[0..3]
         lineHeight = if datum.hit then 17 else 15
         paddingBottom = if datum.hit then 4 else 3

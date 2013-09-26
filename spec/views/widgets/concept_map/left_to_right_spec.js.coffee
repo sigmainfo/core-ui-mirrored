@@ -104,16 +104,6 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       ]
       @strategy.updateNodes nodes
       toggle.attr("transform").should.include "translate(234, 0)"
-      should.not.exist toggle.attr("style")
-
-    it "hides toggle for children when label width is unknown", ->
-      toggle = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [
-        leaf: no
-        labelWidth: undefined
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("style").should.include "display: none"
 
     it "does not rotate collapsed toggles", ->
       toggleParents = @selection.append("g").attr("class", "toggle-parents")
@@ -210,7 +200,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       nodes = @selection.data [ label: "node 12345" ]
       @label.node().getBBox = -> width: 200
       @strategy.updateLayout nodes
-      background.attr("width").should.equal "220"
+      background.attr("width").should.equal "225"
 
     it "updates edges", ->
       nodes = @selection.data []
@@ -224,5 +214,5 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [ leaf: no ]
       @strategy.updateLayout nodes
-      toggle.attr("transform").should.include "translate(120, 0)"
+      toggle.attr("transform").should.include "translate(125, 0)"
       should.not.exist toggle.attr("style")
