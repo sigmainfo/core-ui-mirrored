@@ -38,6 +38,15 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
         else
           "javascript:void(0)"
       )
+      .on("mouseover", (datum) ->
+        d3.select(@).classed "hover", true
+      )
+      .on("mouseout", (datum) ->
+        d3.select(@).classed "hover", false
+      )
+      .on("click", (datum) ->
+        d3.select(@).classed "hover", false
+      )
 
     links.append("rect").attr("class", "background")
     links.append("circle").attr("class", "bullet")
