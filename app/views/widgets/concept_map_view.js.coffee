@@ -34,8 +34,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_renderMarkupSkeleton()
 
     @renderStrategies = [
-      Coreon.Views.Widgets.ConceptMap.LeftToRight
       Coreon.Views.Widgets.ConceptMap.TopDown
+      Coreon.Views.Widgets.ConceptMap.LeftToRight
     ]
 
     @map = d3.select(@$("svg g.concept-map").get 0)

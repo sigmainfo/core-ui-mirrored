@@ -6,7 +6,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
 
   constructor: (parent) ->
     super
-    @layout.nodeSize [25, 190]
+    @layout.nodeSize [25, 260]
     @diagonal.projection (datum) -> [datum.y, datum.x]
 
   updateNodes: (nodes) ->
@@ -19,12 +19,9 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       .attr("text-anchor", "start")
       .attr("x", 7)
       .attr("y", "0.35em")
-      .html("")
       .text( (datum) ->
-        Coreon.Helpers.Text.shorten datum.label, 24
-      )
-      .each( (datum) ->
-        datum.textWidth = @getBBox().width
+        chars = if datum.hit then 27 else 34
+        Coreon.Helpers.Text.shorten datum.label, chars
       )
 
     nodes.select("rect.background")
@@ -32,11 +29,11 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
         if datum.hit then 20 else 17
       )
       .attr("width", (datum) ->
-        datum.textWidth + 20
+        datum.labelWidth
       )
       .attr("x", -7)
       .attr("y", (datum) ->
-        if datum.hit then -10 else -8.5
+        if datum.hit then -11 else -8.5
       )
     
     nodes.select("g.toggle-parents")
@@ -44,19 +41,47 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
         "translate(-15, 0) rotate(#{if datum.expandedIn then 90 else 0})" 
       )
 
-    nodes.select("g.toggle-children")
-      .attr("transform", (datum) ->
-        "translate(#{datum.textWidth + 21}, 0) rotate(#{if datum.expandedOut then 90 else 0})" 
-      )
+    @updateToggleChildren nodes
 
   updateEdges: (edges) ->
     diagonal = @diagonal
     edges.attr("d", (datum) ->
-      diagonal
-        source:
-          x: datum.source.x
-          y: datum.source.y + datum.source.textWidth + 14
-        target:
-          x: datum.target.x
-          y: datum.target.y - 7
+      source = datum.source
+      target = datum.target
+      if labelWidth = source.labelWidth
+        diagonal
+          source:
+            x: source.x
+            y: source.y + labelWidth - 7
+          target:
+            x: target.x
+            y: target.y - 7
+      else
+        "m 0,0"
     )
+
+  updateToggleChildren: (nodes) ->
+    nodes.select("g.toggle-children")
+      .attr("transform", (datum) ->
+        if labelWidth = datum.labelWidth
+          "translate(#{datum.labelWidth}, 0) rotate(#{if datum.expandedOut then 90 else 0})" 
+        else
+          null
+      )
+      .style("display", (datum) ->
+        if datum.labelWidth? then null else "none"
+      )
+
+  updateLayout: (nodes, edges) ->
+    nodes.select("text.label")
+      .each( (datum) ->
+        datum.labelWidth = @getBBox().width + 20
+      )
+
+    nodes.select("rect.background")
+      .attr("width", (datum) ->
+        datum.labelWidth
+      )
+    
+    @updateEdges edges
+    @updateToggleChildren nodes

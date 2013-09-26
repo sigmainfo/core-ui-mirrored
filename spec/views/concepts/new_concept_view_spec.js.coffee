@@ -187,7 +187,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Coreon.Helpers.input.restore()
     
     it "is triggered by click on action", ->
-      @view.addProperty = sinon.spy()
+      @view.addProperty = sinon.stub().returns false
       @view.delegateEvents() 
       @view.$("a.add-property").trigger @event
       @view.addProperty.should.have.been.calledOnce
@@ -240,7 +240,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Coreon.Helpers.input.restore()
 
     it "is triggered by click on remove action", ->
-      @view.removeProperty = sinon.spy()
+      @view.removeProperty = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".property a.remove-property").trigger @event
       @view.removeProperty.should.have.been.calledOnce
@@ -263,7 +263,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Coreon.Helpers.input.restore()
     
     it "is triggered by click on action", ->
-      @view.addTerm = sinon.spy()
+      @view.addTerm = sinon.stub().returns false
       @view.delegateEvents() 
       @view.$("a.add-term").trigger @event
       @view.addTerm.should.have.been.calledOnce
@@ -315,7 +315,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Coreon.Helpers.input.restore()
 
     it "is triggered by click on remove action", ->
-      @view.removeTerm = sinon.spy()
+      @view.removeTerm = sinon.stub().returns false
       @view.delegateEvents()
       @view.$(".term a.remove-term").trigger @event
       @view.removeTerm.should.have.been.calledOnce
@@ -338,7 +338,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Backbone.history.navigate.restore()
 
     it "is triggered on form submit", ->
-      @view.create = sinon.spy()
+      @view.create = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("form").trigger @event
       @view.create.should.have.been.calledOne
@@ -422,7 +422,7 @@ describe "Coreon.Views.Concepts.NewConceptView", ->
       Backbone.history.navigate.restore()
 
     it "is triggered by click on cancel link", ->
-      @view.cancel = sinon.spy()
+      @view.cancel = sinon.stub().returns false
       @view.delegateEvents()
       @view.$el.html '''
         <a class="cancel">Cancel</a>

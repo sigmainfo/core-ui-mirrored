@@ -101,10 +101,12 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'I click to toggle the children of "long gun"' do
+    sleep 0.5
     page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children").click
   end
   
   step 'I click to toggle the children of "weapon"' do
+    sleep 0.5
     page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-children").click
   end
 

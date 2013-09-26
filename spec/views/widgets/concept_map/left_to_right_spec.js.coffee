@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require views/widgets/concept_map/left_to_right
 
-xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
+describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
 
   beforeEach ->
     @svg = $ "<svg:g class='map'>"
@@ -59,7 +59,6 @@ xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
     it "updates label", ->
       Coreon.Helpers.Text.shorten.withArgs("node 1234567890").returns "node 123…"
       label = @selection.append("text").attr("class", "label")
-      label.node().getBBox = -> width: 120
       nodes = @selection.data [
         label: "node 1234567890"
       ]
@@ -68,11 +67,10 @@ xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
 
     it "positions label", ->
       label = @selection.append("text").attr("class", "label")
-      label.node().getBBox = -> width: 120
       nodes = @selection.data [ label: "node" ]
       @strategy.updateNodes nodes
-      label.attr("dx").should.equal "7"
-      label.attr("dy").should.equal "0.35em"
+      label.attr("x").should.equal "7"
+      label.attr("y").should.equal "0.35em"
       label.attr("text-anchor").should.equal "start"
 
     it "positions background", ->
@@ -80,27 +78,17 @@ xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       nodes = @selection.data [ label: "node" ]
       @strategy.updateNodes nodes
       background.attr("x").should.equal "-7"
+      background.attr("y").should.equal "-8.5"
 
-    it "updates background width to fit label text", ->
-      label = @selection.append("text").attr("class", "label")
-      label.node().getBBox = -> width: 123
+    it "updates background dimensions", ->
       background = @selection.append("rect").attr("class", "background")
       nodes = @selection.data [
         label: "node"
+        labelWidth: 200
       ]
       @strategy.updateNodes nodes
-      background.attr("width").should.equal "143"
-
-    it "updates background position and height according to hit state", ->
-      background = @selection.append("rect").attr("class", "background")
-      nodes = @selection.data [ hit: no ]
-      @strategy.updateNodes nodes
+      background.attr("width").should.equal "200"
       background.attr("height").should.equal "17"
-      background.attr("y").should.equal "-8.5"
-      nodes = @selection.data [ hit: yes ]
-      @strategy.updateNodes nodes
-      background.attr("height").should.equal "20"
-      background.attr("y").should.equal "-10"
 
     it "positions toggle for parents", ->
       toggle = @selection.append("g").attr("class", "toggle-parents")
@@ -108,45 +96,62 @@ xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       @strategy.updateNodes nodes
       toggle.attr("transform").should.include "translate(-15, 0)"
 
-    it "rotates toggle for parents depending on expansion state", ->
-      toggle = @selection.append("g").attr("class", "toggle-parents")
-      nodes = @selection.data [
-        root: no
-        expandedIn: yes
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "rotate(90)"
-      nodes = @selection.data [
-        root: no
-        expandedIn: no
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "rotate(0)"
-
     it "positions toggle for children", ->
       toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         leaf: no
-        textWidth: 120
+        labelWidth: 234
       ]
       @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "translate(141, 0)"
+      toggle.attr("transform").should.include "translate(234, 0)"
+      should.not.exist toggle.attr("style")
 
-    it "rotates toggle for children depending on expansion state", ->
+    it "hides toggle for children when label width is unknown", ->
       toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         leaf: no
-        expandedOut: yes
+        labelWidth: undefined
       ]
       @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "rotate(90)"
+      toggle.attr("style").should.include "display: none"
+
+    it "does not rotate collapsed toggles", ->
+      toggleParents = @selection.append("g").attr("class", "toggle-parents")
+      toggleChildren = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
+        root: no
+        expandedIn: no
         leaf: no
         expandedOut: no
+        labelWidth: 100
       ]
       @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "rotate(0)"
+      toggleParents.attr("transform").should.include "rotate(0)"
+      toggleChildren.attr("transform").should.include "rotate(0)"
+
+    it "rotates expanded toggles", ->
+      toggleParents = @selection.append("g").attr("class", "toggle-parents")
+      toggleChildren = @selection.append("g").attr("class", "toggle-children")
+      nodes = @selection.data [
+        root: no
+        expandedIn: yes
+        leaf: no
+        expandedOut: yes
+        labelWidth: 100
+      ]
+      @strategy.updateNodes nodes
+      toggleParents.attr("transform").should.include "rotate(90)"
+      toggleChildren.attr("transform").should.include "rotate(90)"
       
+
+    context "hits", ->
+
+      it "updates background position and height", ->
+        background = @selection.append("rect").attr("class", "background")
+        nodes = @selection.data [ hit: yes ]
+        @strategy.updateNodes nodes
+        background.attr("height").should.equal "20"
+        background.attr("y").should.equal "-11"
 
   describe "updateEdges()", ->
     
@@ -160,7 +165,7 @@ xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           id: "source"
           x: 123
           y: 45
-          textWidth: 120
+          labelWidth: 123
         target:
           id: "target"
           x: 123
@@ -169,12 +174,55 @@ xdescribe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       @strategy.diagonal.withArgs(
         source:
           x: 123
-          y: 45 + 120 +14
+          y: 45 + 123 - 7
         target:
           x: 123
           y: 67 - 7
       ).returns  "M179,123C119.5,123 119.5,123 60,123"
       @strategy.updateEdges edges
       edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,123"
-      
-    
+
+    it "hides path when label width is unknown", ->
+      edges = @selection.data [
+        source:
+          id: "source"
+          x: 123
+          y: 45
+          labelWidth: undefined
+        target:
+          id: "target"
+          x: 123
+          y: 67
+      ]
+      @strategy.updateEdges edges
+      edges.attr("d").should.equal "m 0,0"
+
+  describe "updateLayout()", ->
+
+    beforeEach ->
+      @selection = @parent.append("g").attr("class", "concept-node")
+      @label = @selection.append("text").attr("class", "label")
+      @label.node().getBBox = -> width: 100
+      @strategy.updateEdges = sinon.spy()
+  
+    it "resizes background", ->
+      background = @selection.append("rect").attr("class", "background")
+      nodes = @selection.data [ label: "node 12345" ]
+      @label.node().getBBox = -> width: 200
+      @strategy.updateLayout nodes
+      background.attr("width").should.equal "220"
+
+    it "updates edges", ->
+      nodes = @selection.data []
+      edges = []
+      @strategy.renderEdges = -> edges
+      @strategy.updateLayout nodes, edges
+      @strategy.updateEdges.should.have.been.calledOnce
+      @strategy.updateEdges.should.have.been.calledWith edges
+
+    it "positions toggle for children", ->
+      toggle = @selection.append("g").attr("class", "toggle-children")
+      nodes = @selection.data [ leaf: no ]
+      @strategy.updateLayout nodes
+      toggle.attr("transform").should.include "translate(120, 0)"
+      should.not.exist toggle.attr("style")

@@ -11,8 +11,9 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   resize: (@width, @height) ->
 
   render: (tree) ->
-    @renderNodes tree.root
-    @renderEdges tree.edges
+    nodes = @renderNodes tree.root
+    edges = @renderEdges tree.edges
+    _.defer @updateLayout, nodes, edges
 
   renderNodes: (root) ->
     nodes = @parent.selectAll(".concept-node")
@@ -127,3 +128,6 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   updateEdges: (edges) ->
     edges
+
+  updateLayout: (nodes, edges) =>
+    [nodes, edges]

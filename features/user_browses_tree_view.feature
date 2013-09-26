@@ -1,4 +1,3 @@
-@wip
 Feature: user browses tree view
   In order to understand the hierarchy of the concept graph
   As a user browsing the concept map
@@ -13,5 +12,5 @@ Feature: user browses tree view
     And this concept is narrower than "weapon"
     When I visit the show concept page of this concept
     Then I should see a multiline label representing the currently selected concept within the concept map
-    And I shouls see a label "weapon" above it
+    And I should see a label "weapon" above it
     And both concepts should be connected

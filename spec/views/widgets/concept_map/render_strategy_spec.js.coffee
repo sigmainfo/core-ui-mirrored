@@ -10,10 +10,12 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       nodes: sinon.stub().returns []
     sinon.stub d3.svg, "diagonal", => @diagonal = {}
     @strategy = new Coreon.Views.Widgets.ConceptMap.RenderStrategy @parent, d3.layout.tree() 
+    sinon.stub _, "defer", (@deferred) =>
 
   afterEach ->
     d3.layout.tree.restore()
     d3.svg.diagonal.restore()
+    _.defer.restore()
   
   describe "constructor()", ->
   
@@ -51,6 +53,16 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.render @tree
       @strategy.renderEdges.should.have.been.calledOnce
       @strategy.renderEdges.should.have.been.calledWith @tree.edges
+
+    it "defers update of layout", ->
+      nodes = []
+      edges = []
+      @strategy.updateLayout = sinon.spy()
+      @strategy.renderNodes = -> nodes
+      @strategy.renderEdges = -> edges
+      @strategy.render @tree
+      @strategy.updateLayout.should.not.have.been.called
+      _.defer.should.have.been.calledWith @strategy.updateLayout, nodes, edges
 
   describe "renderNodes()", ->
 
@@ -105,6 +117,8 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       nodes = @strategy.renderNodes @root
       @strategy.updateNodes.should.have.been.calledOnce
       @strategy.updateNodes.should.have.been.calledWith nodes
+
+      
 
   describe "createNodes()", ->
 
