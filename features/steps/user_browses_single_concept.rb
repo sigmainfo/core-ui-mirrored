@@ -46,15 +46,15 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'given a broader concept with label "weapon"' do    
-    weapon = create_concept properties: [{key: 'label', value: 'weapon'}], subconcepts: [@handgun['id']]
+    weapon = create_concept properties: [{key: 'label', value: 'weapon'}], subconcept_ids: [@handgun['id']]
   end
 
   And 'given a narrower concept with label "pistol"' do
-    pistol = create_concept properties: [{key: 'label', value: 'pistol'}], superconcepts: [@handgun['id']]
+    pistol = create_concept properties: [{key: 'label', value: 'pistol'}], superconcept_ids: [@handgun['id']]
   end
 
   And 'given a narrower concept with label "revolver"' do
-    revolver = create_concept properties: [{key: 'label', value: 'revolver'}], superconcepts: [@handgun['id']]
+    revolver = create_concept properties: [{key: 'label', value: 'revolver'}], superconcept_ids: [@handgun['id']]
   end
 
   And 'this property has an attribute "author" of "William"' do
@@ -90,7 +90,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should be on the show concept page for "handgun"' do
-    current_path.should == "/concepts/#{@handgun['id']}"
+    current_path.should == "/#{@repository.id}/concepts/#{@handgun['id']}"
   end
 
   And 'I should see the label "handgun"' do
