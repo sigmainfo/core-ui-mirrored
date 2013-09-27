@@ -17,7 +17,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   renderNodes: (root) ->
     nodes = @parent.selectAll(".concept-node")
-      .data( @layout.nodes(root)[1..], (datum) ->
+      .data( @layout.nodes(root), (datum) ->
         datum.id
       )
     @createNodes nodes.enter()
@@ -28,15 +28,19 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   createNodes: (enter) ->
     nodes = enter.append("g")
       .attr("class", "concept-node")
+      .classed("repository-root", (datum) -> not datum.parent? )
 
     nodes.append("title")
 
     links = nodes.append("a")
       .attr("xlink:href", (datum) ->
-        if datum.id?
-          Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
-        else
-          "javascript:void(0)"
+        switch
+          when datum.root
+            Coreon.Helpers.repositoryPath()
+          when datum.id?
+            Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
+          else
+            "javascript:void(0)"
       )
       .on("mouseover", (datum) ->
         d3.select(@).classed "hover", true

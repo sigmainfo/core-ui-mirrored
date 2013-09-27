@@ -16,6 +16,8 @@ Feature: user browses concept map by levels
     And "billiards" has a narrower concept "types"
     And "types" has a narrower concept "pool"
     And "pool" has narrower concepts "8-ball", "nine ball"
+    When I visit the repository root page
+    Then I should see a repository root node "Games"
     When I do a search for "ball"
     Then I should see hits "ball", "8-ball", "nine ball" in the concept map
     And I should see a repository root node "Games"
@@ -24,3 +26,5 @@ Feature: user browses concept map by levels
     And I should see "ball", "pool" at level 3
     And I should see "8-ball", "nine ball" at level 4
     And "billiards", "equipment", "types", "pool" should be more prominent than "cue", "table"
+    When I click on "Games" within the concept map
+    Then I should be on the repository root page

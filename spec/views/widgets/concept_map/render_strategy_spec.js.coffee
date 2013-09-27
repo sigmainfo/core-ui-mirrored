@@ -89,18 +89,19 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     afterEach ->
       Coreon.Helpers.repositoryPath.restore()
 
-    it "maps nodes to data skipping root node", ->
+    it "maps nodes to data", ->
       nodes = @strategy.renderNodes @root
       nodes.data().should.eql [
+        { id: "root" }
         { id: "create" }
         { id: "update" }
       ]
 
-    it "creates missing nodes", ->
+    it "creates missing nodes including root node", ->
       @strategy.createNodes = sinon.spy()
       enter = @strategy.renderNodes(@root).enter()
       data = (node.__data__ for i, node of enter[0] when node.__data__?)
-      data.should.eql [ id: "create" ]
+      data.should.eql [ { id: "root" }, { id: "create" } ]
       @strategy.createNodes.should.have.been.calledOnce
       @strategy.createNodes.should.have.been.calledWith enter
 
@@ -117,8 +118,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       nodes = @strategy.renderNodes @root
       @strategy.updateNodes.should.have.been.calledOnce
       @strategy.updateNodes.should.have.been.calledWith nodes
-
-      
 
   describe "createNodes()", ->
 
@@ -142,6 +141,17 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       link = @parent.select(".concept-node a")
       should.exist link.node()
       link.attr("xlink:href").should.equal "/my-repo/concepts/node1"
+
+    it "renders link to repository for root node", ->
+      Coreon.Helpers.repositoryPath.withArgs().returns "/my-repo-123"
+      @enter = @parent
+        .selectAll(".concept-node")
+        .data([ root: yes ])
+        .enter()
+      @strategy.createNodes @enter
+      link = @parent.select(".concept-node a")
+      should.exist link.node()
+      link.attr("xlink:href").should.equal "/my-repo-123"
 
     it "renders dummy link for new concept", ->
       @enter = @parent

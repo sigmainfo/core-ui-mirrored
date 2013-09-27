@@ -5,20 +5,21 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
 
   initialize: ->
     super
-    @on "change:label", @_updateLabel, @
-    @on "change:hit", @_updateHit, @
-    @on "change:superconcept_ids", @_updateRoot, @
-    @on "change:subconcept_ids", @_updateLeaf, @
+    @on "change", @_updateDatum, @
 
   tree: ->
     @_createTree() unless @_tree?
     @_tree
 
   _createTree: ->
+    repository = Coreon.application.repository()
     @_data = {}
     @_parents = {}
     @_tree =
       root:
+        id: repository.id
+        label: repository.get("name")
+        root: yes
         children: []
       edges:
         []
@@ -37,7 +38,6 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
       label: model.get "label"
       hit: model.has("hit")
       children: []
-      root: model.get("superconcept_ids")?.length is 0
       leaf: model.get("subconcept_ids")?.length is 0
       expandedIn: model.has("expandedIn") and model.get("expandedIn")
       expandedOut: model.has("expandedOut") and model.get("expandedOut")
@@ -69,18 +69,9 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
     @_parents = null
     @_data    = null
 
-  _updateLabel: (model, value) ->
+  _updateDatum: (model, options) ->
     key = model.id or model.cid
-    @_data?[key]?.label = value
-
-  _updateHit: (model, value) ->
-    key = model.id or model.cid
-    @_data?[key]?.hit = value?
-
-  _updateRoot: (model, value) ->
-    key = model.id or model.cid
-    @_data?[key]?.root = value?.length is 0
-
-  _updateLeaf: (model, value) ->
-    key = model.id or model.cid
-    @_data?[key]?.leaf = value?.length is 0
+    if datum = @_data?[key]
+      datum.label = model.get "label"
+      datum.hit = model.has "hit"
+      datum.leaf = model.get("subconcept_ids").length is 0

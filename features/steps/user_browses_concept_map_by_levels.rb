@@ -34,6 +34,16 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
     @nine_ball = create_concept_with_label "nine ball", superconcept_ids: [ @pool["id"] ]
   end
 
+  step 'I visit the repository root page' do
+    visit "/#{@repository.id}"
+  end
+
+  step 'I should see a repository root node "Games"' do
+    within "#coreon-concept-map" do
+      page.should have_css(".repository-root", text: "Games")
+    end
+  end
+
   step 'I do a search for "ball"' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "ball"
@@ -46,12 +56,6 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
       page.should have_css(".concept-node.hit")
       hits = page.all(".concept-node.hit text").map(&:text).sort
       hits.should == ["8-ball", "ball", "nine ball"]
-    end
-  end
-
-  step 'I should see a repository root node "Games"' do
-    within "#coreon-concept-map" do
-      page.should have_css(".repository-root-node", text: "Games")
     end
   end
 
