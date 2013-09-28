@@ -4,12 +4,16 @@
 describe "Coreon.Collections.ConceptNodes", ->
 
   beforeEach ->
+    Coreon.application = repository: ->
+      id: "my-repo"
+      get: -> "MY REPO"
     sinon.stub Coreon.Models.Concept, "find"
     @collection = new Coreon.Collections.ConceptNodes
 
   afterEach ->
     @collection.stopListening()
     Coreon.Models.Concept.find.restore()
+    delete Coreon.application
 
   it "is a Treegraph collection", ->
     @collection.should.be.an.instanceof Coreon.Collections.Treegraph
@@ -59,6 +63,78 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.should.have.length 1
         @collection.at(0).get("concept").should.equal other
 
+  describe "root()", ->
+
+     it "returns root node", ->
+        Coreon.application.repository = ->
+          id: "repo-123"
+          get: (attr) -> "repo 123" if attr is "name"
+        @collection.tree().should.have.deep.property "root.id", "repo-123"
+        @collection.tree().should.have.deep.property "root.label", "repo 123"
+        @collection.tree().should.have.deep.property "root.root", yes
+        @collection.tree().should.have.deep.property("root.children").with.lengthOf 0
+
+     it "accumulates data from models", ->
+        @collection.reset [
+          id: "123"
+          label: "node"
+          hit: yes
+          expandedIn: yes
+          expandedOut: yes
+        ], silent: true
+        node = @collection.get "123"
+        @collection.tree().should.have.deep.property "root.children[0].id", "123"
+        @collection.tree().should.have.deep.property "root.children[0].label", "node"
+        @collection.tree().should.have.deep.property "root.children[0].hit", yes
+        @collection.tree().should.have.deep.property "root.children[0].expandedIn", yes
+        @collection.tree().should.have.deep.property "root.children[0].expandedOut", yes
+        @collection.tree().should.have.deep.property("root.children[0].children").with.length 0
+
+     it "identifies leaf nodes", ->
+        @collection.reset [ subconcept_ids: [] ]
+        @collection.tree().should.have.deep.property "root.children[0].leaf", yes
+        @collection.reset [ subconcept_ids: [ "child" ] ]
+        @collection.tree().should.have.deep.property "root.children[0].leaf", no
+
+     it "defaults hit attribute to false", ->
+        @collection.reset [ id: "123" ], silent: true
+        node = @collection.get "123"
+        @collection.tree().root.children[0].hit.should.be.false
+
+     it "defaults expansion states to false", ->
+        @collection.reset [ id: "123" ], silent: true
+        node = @collection.get "123"
+        @collection.tree().should.have.deep.property "root.children[0].expandedIn", no
+        @collection.tree().should.have.deep.property "root.children[0].expandedOut", no
+
+     context "datum updates on model changes", ->
+
+       it "updates label", ->
+         @collection.reset [
+           id: "123"
+           label: "before123"
+           subconcept_ids: []
+         ], silent: true
+         node = @collection.get "123"
+         @collection.tree()
+         node.set "label", "after123"
+         @collection.tree().root.children[0].should.have.property "label", "after123"
+
+       it "updates hit status", ->
+         @collection.reset [
+           hit: null
+           subconcept_ids: []
+         ], silent: true
+         @collection.tree()
+         @collection.first().set "hit", { score: "2.67" }
+         @collection.tree().root.children[0].should.have.property "hit", yes
+
+       it "updates leaf status", ->
+         @collection.reset [ subconcept_ids: [ "child" ] ], silent: true
+         @collection.tree()
+         @collection.first().set "subconcept_ids", []
+         @collection.tree().root.children[0].should.have.property "leaf", yes
+    
   describe "remove()", ->
 
     context "removing subnodes", ->

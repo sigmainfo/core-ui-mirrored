@@ -15,6 +15,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
       @hits = hits
       @listenTo @hits, "reset", @_resetFromHits
       @_resetFromHits()
+    @on "change", @update, @
     @on "remove", @_removeSubnodes, @
     @on "add", @_spreadOut, @
     @on "reset", @_spreadOutAll, @
@@ -52,6 +53,28 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
 
   focus: (models, options = {}) ->
     @remove @roots(models), except: models
+
+  update: (model) ->
+    @_updateDatum @_getDatum(model), model if @_tree
+
+  _createRoot: ->
+    root = super
+    repository = Coreon.application.repository()
+    root.id = repository.id
+    root.label = repository.get "name"
+    root.root = yes
+    root
+
+  _createDatum: (model) ->
+    @_updateDatum super, model
+
+  _updateDatum: (datum, model) ->
+    datum.hit = model.has("hit")
+    datum.label = model.get "label"
+    datum.leaf = model.get("subconcept_ids")?.length is 0
+    datum.expandedIn = model.has("expandedIn") and model.get("expandedIn")
+    datum.expandedOut = model.has("expandedOut") and model.get("expandedOut")
+    datum
 
   _resetFromHits: ->
     model.set "hit", null for model in @models
