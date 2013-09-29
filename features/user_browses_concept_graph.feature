@@ -17,7 +17,7 @@ Feature: user browses concept graph
     And "weapon", "pen" are narrower than "tool"
     When I enter the application
     Then I should see the widget "Concept Map"
-    And it should be empty
+    And it should show the repository root node only
     When I search for "handgun"
     And select "handgun" from the result list
     Then I should see "handgun" displayed in the concept map

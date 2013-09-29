@@ -47,8 +47,9 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css(".widget h4", text: "Concept Map")
   end
 
-  step 'it should be empty' do
-    page.all("#coreon-concept-map .concept-node").count.should == 0
+  step 'it should show the repository root node only' do
+    page.should have_css("#coreon-concept-map .concept-node.repository-root")
+    page.all("#coreon-concept-map .concept-node").count.should == 1
   end
 
   step 'select "handgun" from the result list' do
@@ -101,12 +102,12 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'I click to toggle the children of "long gun"' do
-    sleep 0.5
+    sleep 0.2
     page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children").click
   end
   
   step 'I click to toggle the children of "weapon"' do
-    sleep 0.5
+    sleep 0.2
     page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-children").click
   end
 
