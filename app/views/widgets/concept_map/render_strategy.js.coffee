@@ -99,6 +99,9 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
       )
 
     nodes.select("rect.background")
+      .attr("rx", (datum) ->
+        if datum.root then 5 else null
+      )
       .attr("filter", (datum) ->
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null
       )

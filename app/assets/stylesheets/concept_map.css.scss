@@ -32,6 +32,21 @@ $edge-color: #bfc5c0;
           stroke: $greytext-color;
         }
 
+        &.repository-root {
+          
+          circle {
+            display: none;
+          }
+
+          text {
+            fill: $text-color;
+          }
+
+          .background {
+            fill: rgba($hit-color, 0.1);
+          }
+        }
+
         &.hit {
 
           circle {
@@ -51,10 +66,12 @@ $edge-color: #bfc5c0;
         }
         
         &.new {
+
           text {
             fill: $button-color;
             font-size: 13px;
           }
+
           .background {
             fill: white;
             fill-opacity: 1;
@@ -70,11 +87,11 @@ $edge-color: #bfc5c0;
           text {
             fill: $link-color;
           }
+
           .background {
             fill-opacity: 1;
           }
         }
-
 
         .background {
 

@@ -297,6 +297,19 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateNodes nodes
       should.not.exist background.attr("filter")
 
+    it "rounds corners of root node", ->
+      background = @selection.append("rect").attr("class", "background")
+      nodes = @selection.data [
+        root: yes
+      ]
+      @strategy.updateNodes nodes
+      background.attr("rx").should.eql "5"
+      nodes = @selection.data [
+        root: no
+      ]
+      @strategy.updateNodes nodes
+      should.not.exist background.attr("rx")
+
     it "hides toggle for parents on root nodes", ->
       toggle = @selection.append("g").attr("class", "toggle-parents")
       nodes = @selection.data [
