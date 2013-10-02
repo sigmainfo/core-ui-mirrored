@@ -8,7 +8,6 @@ class Coreon.Models.ConceptNode extends Backbone.Model
   defaults: ->
     hit:  null
     concept: null
-    expandedIn: false
     expandedOut: false
     subnodeIds: []
     supernodeIds: []
@@ -20,8 +19,6 @@ class Coreon.Models.ConceptNode extends Backbone.Model
     @_updateConcept()
     @on "change:expandedOut change:subconcept_ids", @_updateSubnodeIds, @
     @_updateSubnodeIds()
-    @on "change:expandedIn change:superconcept_ids", @_updateSupernodeIds, @
-    @_updateSupernodeIds()
 
   get: (attr) ->
     concept = super "concept"
@@ -40,13 +37,6 @@ class Coreon.Models.ConceptNode extends Backbone.Model
     else
       []
     @set "subnodeIds", newValue, options
-
-  _updateSupernodeIds: (model, value, options) ->
-    newValue = if @get "expandedIn"
-      @get("superconcept_ids")?[..] ? []
-    else
-      []
-    @set "supernodeIds", newValue, options
 
   _updateConcept: ->
     if concept = @get "concept"

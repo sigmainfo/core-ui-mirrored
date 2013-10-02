@@ -25,7 +25,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     "click .zoom-out": "zoomOut"
     "click .toggle-orientation": "toggleOrientation"
     "click .toggle-children": "toggleChildren"
-    "click .toggle-parents": "toggleParents"
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
@@ -130,8 +129,3 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     datum = d3.select(event.target).datum()
     datum.expandedOut = not datum.expandedOut
     @model.get(datum.id).set "expandedOut", datum.expandedOut
-
-  toggleParents: (event) ->
-    datum = d3.select(event.target).datum()
-    datum.expandedIn = not datum.expandedIn
-    @model.get(datum.id).set "expandedIn", datum.expandedIn

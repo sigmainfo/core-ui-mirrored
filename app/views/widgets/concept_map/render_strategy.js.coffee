@@ -56,7 +56,6 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     links.append("circle").attr("class", "bullet")
     links.append("text").attr("class", "label")
 
-    @createToggles nodes, "toggle-parents"
     @createToggles nodes, "toggle-children"
 
     nodes
@@ -104,14 +103,6 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
       )
       .attr("filter", (datum) ->
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null
-      )
-
-    nodes.select("g.toggle-parents")
-      .attr("style", (datum) ->
-        if datum.root then "display: none" else null
-      )
-      .classed("expanded", (datum) ->
-        datum.expandedIn
       )
 
     nodes.select("g.toggle-children")

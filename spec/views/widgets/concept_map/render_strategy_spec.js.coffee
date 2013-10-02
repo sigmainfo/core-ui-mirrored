@@ -186,9 +186,8 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     it "renders toggles", ->
       @strategy.createToggles = sinon.spy()
       nodes = @strategy.createNodes @enter
-      @strategy.createToggles.should.have.been.calledTwice
+      @strategy.createToggles.should.have.been.calledOnce
       @strategy.createToggles.should.have.been.calledWith nodes, "toggle-children"
-      @strategy.createToggles.should.have.been.calledWith nodes, "toggle-parents"
 
     it "returns selection of newly created nodes", ->
       nodes = @strategy.createNodes @enter
@@ -310,20 +309,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateNodes nodes
       should.not.exist background.attr("rx")
 
-    it "hides toggle for parents on root nodes", ->
-      toggle = @selection.append("g").attr("class", "toggle-parents")
-      nodes = @selection.data [
-        root: yes
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("style").should.equal "display: none"
-      nodes = @selection.data [
-        root: no
-      ]
-      @strategy.updateNodes nodes
-      should.equal toggle.attr("style"), null
-
-    it "hides toggle for children on root nodes", ->
+    it "hides toggle for children on leaf nodes", ->
       toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         leaf: yes
@@ -351,22 +337,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateNodes nodes
       toggle.attr("class").split(" ").should.not.include "expanded"
       
-    it "classifies expanded toggle for parents", ->
-      toggle = @selection.append("g").attr("class", "toggle-parents")
-      nodes = @selection.data [
-        root: no
-        expandedIn: yes
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("class").split(" ").should.include "expanded"
-      nodes = @selection.data [
-        root: no
-        expandedIn: no
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("class").split(" ").should.not.include "expanded"
-
-
   describe "renderEdges()", ->
 
     beforeEach ->

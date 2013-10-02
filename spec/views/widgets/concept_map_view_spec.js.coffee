@@ -72,14 +72,6 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.$(".toggle-orientation").should.have.text "Toggle orientation"
         @view.$(".toggle-orientation").should.have.attr "title", "Toggle orientation"
 
-      # it "renders viewport", ->
-      #   @view.options.size = [150, 120]
-      #   @view.options.svgOffset = 25
-      #   @view.initialize() 
-      #   @view.$el.should.have "svg"
-      #   @view.$("svg").attr("height").should.equal "95px"
-      #   @view.$("svg").attr("width").should.equal "150px"
-
       it "creates resize handle", ->
         @view.initialize()
         @view.$el.should.have ".ui-resizable-s"
@@ -346,24 +338,3 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.toggleChildren event
       model.get("expandedOut").should.be.false
 
-  describe "toggleParents()", ->
-
-    it "is triggered by click on toggle", ->
-      @view.$el.append('<svg:g class="toggle-parents">')
-      @view.toggleParents = sinon.spy()
-      @view.delegateEvents()
-      @view.$(".toggle-parents").click()
-      @view.toggleParents.should.have.been.calledOnce
-
-    it "toggles expansion state of corresponding node", ->
-      model = new Backbone.Model id: "abc1234", expandedIn: false
-      @view.model.reset [ model ]
-      event = $.Event "click"
-      toggle = @view.map.append("g")
-        .attr("class", "toggle-parents")
-        .datum( id: "abc1234", expandedIn: false )
-      event.target = toggle.node()
-      @view.toggleParents event
-      model.get("expandedIn").should.be.true
-      @view.toggleParents event
-      model.get("expandedIn").should.be.false

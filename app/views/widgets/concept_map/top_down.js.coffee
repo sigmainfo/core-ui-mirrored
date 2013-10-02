@@ -52,11 +52,6 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
         if datum.hit then 6 else 7
       )
 
-    nodes.select("g.toggle-parents")
-      .attr("transform", (datum) ->
-        "translate(0, -15) rotate(#{if datum.expandedIn then 0 else 90})" 
-      )
-
     @updateToggleChildren nodes
 
   updateToggleChildren: (nodes) ->

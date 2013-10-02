@@ -36,11 +36,6 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
         if datum.hit then -11 else -8.5
       )
     
-    nodes.select("g.toggle-parents")
-      .attr("transform", (datum) ->
-        "translate(-15, 0) rotate(#{if datum.expandedIn then 90 else 0})" 
-      )
-
     @updateToggleChildren nodes
 
   updateEdges: (edges) ->

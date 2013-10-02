@@ -94,12 +94,6 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
       nodes.datum().should.have.property "labelHeight", 33
       background.attr("height").should.equal "33"
 
-    it "positions toggle for parents", ->
-      toggle = @selection.append("g").attr("class", "toggle-parents")
-      nodes = @selection.data [ root: no ]
-      @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "translate(0, -15)"
-
     it "positions toggle for children", ->
       toggle = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
@@ -110,7 +104,6 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
       toggle.attr("transform").should.include "translate(0, 55)"
 
     it "does not rotate collapsed toggles", ->
-      toggleParents = @selection.append("g").attr("class", "toggle-parents")
       toggleChildren = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         root: no
@@ -119,11 +112,9 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         expandedOut: no
       ]
       @strategy.updateNodes nodes
-      toggleParents.attr("transform").should.include "rotate(90)"
       toggleChildren.attr("transform").should.include "rotate(90)"
 
     it "rotates expanded toggles", ->
-      toggleParents = @selection.append("g").attr("class", "toggle-parents")
       toggleChildren = @selection.append("g").attr("class", "toggle-children")
       nodes = @selection.data [
         root: no
@@ -132,7 +123,6 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         expandedOut: yes
       ]
       @strategy.updateNodes nodes
-      toggleParents.attr("transform").should.include "rotate(0)"
       toggleChildren.attr("transform").should.include "rotate(0)"
       
     context "hits", ->
