@@ -119,39 +119,52 @@ describe "Coreon.Collections.ConceptNodes", ->
 
   describe "tree()", ->
 
-     it "creates repository root node", ->
-        Coreon.application.repository = ->
-          id: "repo-123"
-          get: (attr) -> "repo 123" if attr is "name"
-        @collection.tree().should.have.deep.property "root.id", "repo-123"
-        @collection.tree().should.have.deep.property "root.label", "repo 123"
-        @collection.tree().should.have.deep.property "root.root", yes
-        @collection.tree().should.have.deep.property("root.children").with.lengthOf 0
+    it "creates repository root node", ->
+      Coreon.application.repository = ->
+        id: "repo-123"
+        get: (attr) -> "repo 123" if attr is "name"
+      @collection.tree().should.have.deep.property "root.id", "repo-123"
+      @collection.tree().should.have.deep.property "root.label", "repo 123"
+      @collection.tree().should.have.deep.property "root.root", yes
+      @collection.tree().should.have.deep.property("root.children").with.lengthOf 0
 
-     it "accumulates data from models", ->
-        @collection.reset [
-          id: "123"
-          label: "node"
-          hit: yes
-          expanded: yes
-        ], silent: true
-        node = @collection.get "123"
-        @collection.tree().should.have.deep.property "root.children[0].id", "123"
-        @collection.tree().should.have.deep.property "root.children[0].label", "node"
-        @collection.tree().should.have.deep.property "root.children[0].hit", yes
-        @collection.tree().should.have.deep.property "root.children[0].expanded", yes
-        @collection.tree().should.have.deep.property("root.children[0].children").with.length 0
+    it "accumulates data from models", ->
+      @collection.reset [
+        id: "123"
+        label: "node"
+        hit: yes
+        expanded: yes
+      ], silent: true
+      node = @collection.get "123"
+      @collection.tree().should.have.deep.property "root.children[0].id", "123"
+      @collection.tree().should.have.deep.property "root.children[0].label", "node"
+      @collection.tree().should.have.deep.property "root.children[0].hit", yes
+      @collection.tree().should.have.deep.property "root.children[0].expanded", yes
+      @collection.tree().should.have.deep.property("root.children[0].children").with.length 0
 
-     it "identifies leaf nodes", ->
-        @collection.reset [ subconcept_ids: [] ]
-        @collection.tree().should.have.deep.property "root.children[0].leaf", yes
-        @collection.reset [ subconcept_ids: [ "child" ] ]
-        @collection.tree().should.have.deep.property "root.children[0].leaf", no
+    it "identifies leaf nodes", ->
+      @collection.reset [ subconcept_ids: [] ]
+      @collection.tree().should.have.deep.property "root.children[0].leaf", yes
+      @collection.reset [ subconcept_ids: [ "child" ] ]
+      @collection.tree().should.have.deep.property "root.children[0].leaf", no
 
-     it "defaults hit attribute to false", ->
-        @collection.reset [ id: "123" ], silent: true
-        node = @collection.get "123"
-        @collection.tree().root.children[0].hit.should.be.false
+    it "defaults hit attribute to false", ->
+      @collection.reset [ id: "123" ], silent: true
+      node = @collection.get "123"
+      @collection.tree().root.children[0].hit.should.be.false
+
+    it "creates edges to repository root", ->
+      @collection.reset [
+        { id: "top_1" }
+        { id: "top_2", subconcept_ids: [ "child_of_top_2" ] }
+        { id: "child_of_top_2", superconcept_ids: [ "top_2" ] }
+      ]
+      root = @collection.tree().root
+      edges = @collection.tree().edges
+      edges.should.have.lengthOf 3
+      rootEdges = (edge for edge in edges when edge.source is root)
+      rootEdges[0].should.have.property "target", root.children[0]
+      rootEdges[1].should.have.property "target", root.children[1]
   
   describe "updateDatum()", ->
   
@@ -183,7 +196,7 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.updateDatum node
       @collection.tree().should.have.deep.property "root.children[0].label", "after"
 
-    it "updates label", ->
+    it "updates hit state", ->
       @collection.reset [ hit: null ], silent: yes
       @collection.tree()
       node = @collection.at(0)

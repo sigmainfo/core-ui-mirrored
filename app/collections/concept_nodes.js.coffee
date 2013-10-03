@@ -56,3 +56,13 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     if datum = @_getDatum model
       datum.label = model.get "label"
       datum.hit = model.has "hit"
+
+  _createTree: ->
+    super
+    root = @_tree.root
+    edges = @_tree.edges
+    for child in root.children
+      edges.push
+        source: root
+        target: child
+
