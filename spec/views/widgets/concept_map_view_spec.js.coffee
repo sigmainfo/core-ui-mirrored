@@ -315,26 +315,3 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.render = sinon.spy()
       @view.toggleOrientation()
       @view.render.should.have.been.calledOnce 
-
-  describe "toggleChildren()", ->
-
-    it "is triggered by click on toggle", ->
-      @view.$el.append('<svg:g class="toggle-children">')
-      @view.toggleChildren = sinon.spy()
-      @view.delegateEvents()
-      @view.$(".toggle-children").click()
-      @view.toggleChildren.should.have.been.calledOnce
-
-    it "toggles expansion state of corresponding node", ->
-      model = new Backbone.Model id: "abc1234", expandedOut: false
-      @view.model.reset [ model ]
-      event = $.Event "click"
-      toggle = @view.map.append("g")
-        .attr("class", "toggle-children")
-        .datum( id: "abc1234", expandedOut: false )
-      event.target = toggle.node()
-      @view.toggleChildren event
-      model.get("expandedOut").should.be.true
-      @view.toggleChildren event
-      model.get("expandedOut").should.be.false
-

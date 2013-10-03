@@ -38,19 +38,25 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
   describe "render()", ->
 
     beforeEach ->
+      @clock = sinon.useFakeTimers()
       @tree =
         root: {}
         edges: {}
 
+    afterEach ->
+      @clock.restore()
+
     it "renders nodes", ->
       @strategy.renderNodes = sinon.spy()
       @strategy.render @tree
+      @clock.tick 500
       @strategy.renderNodes.should.have.been.calledOnce
       @strategy.renderNodes.should.have.been.calledWith @tree.root
       
     it "renders edges", ->
       @strategy.renderEdges = sinon.spy()
       @strategy.render @tree
+      @clock.tick 500
       @strategy.renderEdges.should.have.been.calledOnce
       @strategy.renderEdges.should.have.been.calledWith @tree.edges
 
@@ -61,6 +67,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.renderNodes = -> nodes
       @strategy.renderEdges = -> edges
       @strategy.render @tree
+      @clock.tick 500
       @strategy.updateLayout.should.not.have.been.called
       _.defer.should.have.been.calledWith @strategy.updateLayout, nodes, edges
 
@@ -183,46 +190,11 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       title = @parent.select('.concept-node title')
       should.exist title.node()
 
-    it "renders toggles", ->
-      @strategy.createToggles = sinon.spy()
-      nodes = @strategy.createNodes @enter
-      @strategy.createToggles.should.have.been.calledOnce
-      @strategy.createToggles.should.have.been.calledWith nodes, "toggle-children"
-
     it "returns selection of newly created nodes", ->
       nodes = @strategy.createNodes @enter
       nodes.node().should.equal @parent.select(".concept-node").node()
 
-  describe "createToggles()", ->
-
-    beforeEach ->
-      @enter = @parent
-        .selectAll(".concept-node")
-        .data([ id: null ])
-        .enter()
-  
-    it "creates container", ->
-      toggles = @strategy.createToggles @enter, "toggle-nodes"
-      should.exist toggles.node()
-      toggles.attr("class").split(" ").should.include "toggle"
-      toggles.attr("class").split(" ").should.include "toggle-nodes"
-
-    it "renders background", ->
-      toggles = @strategy.createToggles @enter, "toggle-nodes"
-      background = toggles.select("rect.background")
-      should.exist background.node()
-      background.attr("width").should.equal "20"
-      background.attr("height").should.equal "20"
-      background.attr("x").should.equal "-10"
-      background.attr("y").should.equal "-10"
-
-    it "rendwers icon", ->
-      toggles = @strategy.createToggles @enter, "toggle-nodes"
-      icon = toggles.select("path.icon")
-      should.exist icon.node()
-      icon.attr("d").should.equal "M -3.5 -2 h 7 m 0 4 h -7"
-
-  describe "deleteNodes()", ->
+   describe "deleteNodes()", ->
   
     it "removes nodes", ->
       exit = remove: sinon.spy()
@@ -309,34 +281,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateNodes nodes
       should.not.exist background.attr("rx")
 
-    it "hides toggle for children on leaf nodes", ->
-      toggle = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [
-        leaf: yes
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("style").should.equal "display: none"
-      nodes = @selection.data [
-        leaf: no
-      ]
-      @strategy.updateNodes nodes
-      should.equal toggle.attr("style"), null
-
-    it "classifies expanded toggle for children", ->
-      toggle = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [
-        leaf: no
-        expandedOut: yes
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("class").split(" ").should.include "expanded"
-      nodes = @selection.data [
-        leaf: no
-        expandedOut: no
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("class").split(" ").should.not.include "expanded"
-      
   describe "renderEdges()", ->
 
     beforeEach ->

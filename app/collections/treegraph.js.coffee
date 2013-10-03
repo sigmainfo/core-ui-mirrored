@@ -5,7 +5,6 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
 
   initialize: ->
     super
-    # @on "change", @_updateDatum, @
 
   tree: ->
     @_createTree() unless @_tree?
@@ -30,7 +29,7 @@ class Coreon.Collections.Treegraph extends Coreon.Collections.Digraph
 
   _getDatum: (model) ->
     key = model.id or model.cid
-    @_data[key] ?= @_createDatum model
+    @_data?[key] ?= @_createDatum model
 
   _createDatum: (model) ->
     id: model.id

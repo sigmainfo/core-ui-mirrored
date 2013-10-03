@@ -24,7 +24,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     "click .zoom-in":  "zoomIn"
     "click .zoom-out": "zoomOut"
     "click .toggle-orientation": "toggleOrientation"
-    "click .toggle-children": "toggleChildren"
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
@@ -54,7 +53,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(@$("svg").get 0).call @navigator
 
     @stopListening()
-    @listenTo @model, "add remove change:label change:hit", _.throttle(@render, 100)
+    @listenTo @model, "add remove change:label change:hit", @render
     @listenTo @model, "reset", @renderAndCenterSelection
 
   render: ->
@@ -124,8 +123,3 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
     @renderAndCenterSelection()
-
-  toggleChildren: (event) ->
-    datum = d3.select(event.target).datum()
-    datum.expandedOut = not datum.expandedOut
-    @model.get(datum.id).set "expandedOut", datum.expandedOut

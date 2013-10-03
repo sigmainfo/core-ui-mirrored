@@ -3,22 +3,20 @@
 
 class Coreon.Models.ConceptNode extends Backbone.Model
 
-  concept: null
-
   defaults: ->
-    hit:  null
     concept: null
-    expandedOut: false
-    subnodeIds: []
-    supernodeIds: []
-
-  initialize: (attributes = {}, options = {}) ->
+    expanded: no
+  
+  initialize: ->
     @stopListening()
-    @set "concept", Coreon.Models.Concept.find(@id), silent: true unless @has "concept"
-    @on "change:concept", @_updateConcept, @
-    @_updateConcept()
-    @on "change:expandedOut change:subconcept_ids", @_updateSubnodeIds, @
-    @_updateSubnodeIds()
+    @on "change:concept", @initConcept, @
+    @initConcept()
+
+  initConcept: ->
+    @stopListening previous if previous = @previous "concept"
+    if concept = @get "concept"
+      @id = concept.id
+      @listenTo concept, "all", @triggerConceptChange
 
   get: (attr) ->
     concept = super "concept"
@@ -27,19 +25,6 @@ class Coreon.Models.ConceptNode extends Backbone.Model
     else
       super attr
 
-  _onConceptChange: (type, model, args...) ->
-    @id = model.id if type is "change:#{Coreon.Models.Concept::idAttribute}"
+  triggerConceptChange: (type, model, args...) ->
+    @id = args[0] if type is "change:id"
     @trigger type, @, args... if type.indexOf("change") is 0
-
-  _updateSubnodeIds: (model, value, options) ->
-    newValue = if @get "expandedOut"
-      @get("subconcept_ids")?[..] ? []
-    else
-      []
-    @set "subnodeIds", newValue, options
-
-  _updateConcept: ->
-    if concept = @get "concept"
-      @id = concept.id
-      @listenTo concept, "all", @_onConceptChange if concept
-    @stopListening previous if previous = @previous "concept"

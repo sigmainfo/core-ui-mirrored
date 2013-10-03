@@ -32,39 +32,94 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.initialize [ id: "node" ]
         Coreon.Collections.Treegraph::initialize.should.have.been.calledOnce
         Coreon.Collections.Treegraph::initialize.should.have.been.calledWith [ id: "node" ]
+    
       finally
         Coreon.Collections.Treegraph::initialize.restore()
 
-    context "connecting hits", ->
-        
-      beforeEach ->
-        @concept = new Backbone.Model
-        @hit = new Backbone.Model result: @concept
-        @hits = new Backbone.Collection [ @hit ]
-        @collection.initialize [], hits: @hits
+  describe "resetFromHits()", ->
+
+    beforeEach ->
+      @hits = new Backbone.Collection
+
+    it "is triggered on init", ->
+      @collection.resetFromHits = sinon.spy()
+      @collection.initialize [], hits: @hits
+      @collection.resetFromHits.should.have.been.calledOnce
+      @collection.resetFromHits.should.have.been.calledWith @hits
+
+    it 'is triggered when hits are reset', ->
+      @collection.resetFromHits = sinon.spy()
+      @collection.initialize [], hits: @hits
+      @collection.resetFromHits.reset()
+      @hits.trigger "reset"
+      @collection.resetFromHits.should.have.been.calledOnce
+
+    it "creates nodes from hits", ->
+      @collection.reset = sinon.spy()
+      concept1 = new Backbone.Model
+      concept2 = new Backbone.Model
+      hit1 = new Backbone.Model result: concept1
+      hit2 = new Backbone.Model result: concept2
+      @hits.reset [ hit1, hit2 ], silent: yes
+      @collection.resetFromHits @hits
+      @collection.reset.should.have.been.calledOnce
+      @collection.reset.should.have.been.calledWith [
+        { concept: concept1 } 
+        { concept: concept2 } 
+      ]
       
-      it "assigns hits from options", ->
-        @collection.hits.should.equal @hits
-    
-      it "resets from hits", ->
-        @concept.id = "concept"
-        @collection.initialize [], hits: @hits
-        @collection.should.have.length 1
-        @collection.at(0).get("hit").should.equal @hit
-        @collection.at(0).should.have.property "id", "concept"
+  describe "addSupernodes()", ->
 
-      it "expands nodes from hits", ->
-        @collection.at(0).get("expandedOut").should.be.true
+    beforeEach ->
+      @concept = new Backbone.Model id: "concept"
 
-      it "is updated when hits are reset", ->
-        other = new Backbone.Model
-        @hits.reset [ result: other ]
-        @collection.should.have.length 1
-        @collection.at(0).get("concept").should.equal other
+    it "is triggered when a concept was added", ->
+      @collection.addSupernodes = sinon.spy()
+      @collection.initialize()
+      @collection.addSupernodes.reset()
+      @collection.add concept: @concept
+      @collection.addSupernodes.should.have.been.calledOnce
+      @collection.addSupernodes.should.have.been.calledOn @collection
+      @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
 
-  describe "root()", ->
+    it "is triggerd for every model on reset", ->
+      @collection.addSupernodes = sinon.spy()
+      @collection.initialize()
+      @collection.addSupernodes.reset()
+      @collection.reset [ concept: @concept ]
+      @collection.addSupernodes.should.have.been.calledOnce
+      @collection.addSupernodes.should.have.been.calledOn @collection
+      @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
 
-     it "returns root node", ->
+    it "is triggered on changes of superconcept ids", ->
+      @collection.addSupernodes = sinon.spy()
+      @collection.initialize()
+      @collection.add concept: @concept, silent: yes
+      @collection.addSupernodes.reset()
+      node = @collection.at(0)
+      node.set "superconcept_ids", ["parent"]
+      @collection.addSupernodes.should.have.been.calledOnce
+      @collection.addSupernodes.should.have.been.calledOn @collection
+      @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
+
+    it "adds supernodes to collection", ->
+      parent1 = new Backbone.Model id: "parent_1"
+      parent2 = new Backbone.Model id: "parent_2"
+      Coreon.Models.Concept.find.withArgs("parent_1").returns parent1
+      Coreon.Models.Concept.find.withArgs("parent_2").returns parent2
+      @concept.set "superconcept_ids", ["parent_1", "parent_2"], silent: yes
+      @collection.add concept: @concept
+      @collection.should.have.lengthOf 3
+      node1 = @collection.get "parent_1"
+      should.exist node1
+      node1.get("concept").should.equal parent1
+      node2 = @collection.get "parent_2"
+      should.exist node2
+      node2.get("concept").should.equal parent2
+
+  describe "tree()", ->
+
+     it "creates repository root node", ->
         Coreon.application.repository = ->
           id: "repo-123"
           get: (attr) -> "repo 123" if attr is "name"
@@ -78,13 +133,13 @@ describe "Coreon.Collections.ConceptNodes", ->
           id: "123"
           label: "node"
           hit: yes
-          expandedOut: yes
+          expanded: yes
         ], silent: true
         node = @collection.get "123"
         @collection.tree().should.have.deep.property "root.children[0].id", "123"
         @collection.tree().should.have.deep.property "root.children[0].label", "node"
         @collection.tree().should.have.deep.property "root.children[0].hit", yes
-        @collection.tree().should.have.deep.property "root.children[0].expandedOut", yes
+        @collection.tree().should.have.deep.property "root.children[0].expanded", yes
         @collection.tree().should.have.deep.property("root.children[0].children").with.length 0
 
      it "identifies leaf nodes", ->
@@ -97,272 +152,41 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.reset [ id: "123" ], silent: true
         node = @collection.get "123"
         @collection.tree().root.children[0].hit.should.be.false
+  
+  describe "updateDatum()", ->
+  
+    it "is triggered on label changes", ->
+      @collection.updateDatum = sinon.spy()
+      @collection.initialize()
+      @collection.reset [ label: "before" ], silent: yes
+      node = @collection.at(0)
+      node.set "label", "after"
+      @collection.updateDatum.should.have.been.calledOnce
+      @collection.updateDatum.should.have.been.calledOn @collection
+      @collection.updateDatum.should.have.been.calledWith node
 
-     it "defaults expansion states to false", ->
-        @collection.reset [ id: "123" ], silent: true
-        node = @collection.get "123"
-        @collection.tree().should.have.deep.property "root.children[0].expandedOut", no
+    it "is triggered on hit changes", ->
+      @collection.updateDatum = sinon.spy()
+      @collection.initialize()
+      @collection.reset [ hit: null ], silent: yes
+      node = @collection.at(0)
+      node.set "hit", new Backbone.Model
+      @collection.updateDatum.should.have.been.calledOnce
+      @collection.updateDatum.should.have.been.calledOn @collection
+      @collection.updateDatum.should.have.been.calledWith node
 
-     context "datum updates on model changes", ->
+    it "updates label", ->
+      @collection.reset [ label: "before" ], silent: yes
+      @collection.tree()
+      node = @collection.at(0)
+      node.set "label", "after", silent: yes
+      @collection.updateDatum node
+      @collection.tree().should.have.deep.property "root.children[0].label", "after"
 
-       it "updates label", ->
-         @collection.reset [
-           id: "123"
-           label: "before123"
-           subconcept_ids: []
-         ], silent: true
-         node = @collection.get "123"
-         @collection.tree()
-         node.set "label", "after123"
-         @collection.tree().root.children[0].should.have.property "label", "after123"
-
-       it "updates hit status", ->
-         @collection.reset [
-           hit: null
-           subconcept_ids: []
-         ], silent: true
-         @collection.tree()
-         @collection.first().set "hit", { score: "2.67" }
-         @collection.tree().root.children[0].should.have.property "hit", yes
-
-       it "updates leaf status", ->
-         @collection.reset [ subconcept_ids: [ "child" ] ], silent: true
-         @collection.tree()
-         @collection.first().set "subconcept_ids", []
-         @collection.tree().root.children[0].should.have.property "leaf", yes
-    
-  describe "remove()", ->
-
-    context "removing subnodes", ->
-    
-      it "removes subnodes", ->
-        @collection.reset [
-          { id: "node" }
-          { id: "subnode_1", superconcept_ids: [ "node" ] }
-          { id: "subnode_2", superconcept_ids: [ "node" ] }
-          { id: "other" }
-        ], silent: true
-        @collection.remove "node"
-        @collection.should.have.length 1
-        @collection.at(0).should.have.property "id", "other"
-        
-      it "removes subnodes recursively", ->
-        @collection.reset [
-          { id: "node" }
-          { id: "subnode", superconcept_ids: [ "node" ] }
-          { id: "subnode_of_subnode", superconcept_ids: [ "subnode" ] }
-        ], silent: true
-        @collection.remove "node"
-        @collection.should.have.length 0
-
-      it "keeps nodes that belong to an expanded superconcept", ->
-        @collection.reset [
-          { id: "supernode", subconcept_ids: [ "subnode" ], expandedOut: true }
-          { id: "subnode" }
-        ], silent: true
-        @collection.remove "subnode"
-        @collection.should.have.length 2
-        should.exist @collection.get "subnode"
-
-      it "removes nodes that belong to a collapsed superconcept", ->
-        @collection.reset [
-          { id: "supernode", subconcept_ids: [ "subnode" ], expandedOut: false }
-          { id: "subnode" }
-        ], silent: true
-        @collection.remove "subnode"
-        @collection.should.have.length 1
-        should.not.exist @collection.get "subnode"
-
-      it "keeps subnodes that belong to another superconcept", ->
-        @collection.reset [
-          { id: "super_1", subconcept_ids: [ "subnode" ] }
-          { id: "super_2", subconcept_ids: [ "subnode" ] }
-          { id: "subnode" }
-        ], silent: true
-        @collection.remove "super_1"
-        @collection.should.have.length 2
-        should.exist @collection.get "subnode"
-
-      it "removes subnodes with more than one parent connected to superconcept", ->
-        @collection.reset [
-          { id: "super", subconcept_ids: [ "subnode_1", "subnode_2" ] }
-          { id: "subnode_1", subconcept_ids: [ "multiparent" ] }
-          { id: "subnode_2", subconcept_ids: [ "multiparent" ] }
-          { id: "multiparent" }
-        ], silent: true
-        @collection.remove "super"
-        @collection.should.have.length 0
-
-  describe "focus()", ->
-
-    it "removes supernodes", ->
-      @collection.reset [
-        { id: "root", subconcept_ids: [ "supernode" ] }
-        { id: "supernode", subconcept_ids: [ "subnode" ] }
-        { id: "subnode", subconcept_ids: [ "leaf"] }
-        { id: "leaf" }
-      ], silent: true
-      @collection.focus "subnode"
-      @collection.should.have.length 2
-      should.exist @collection.get "subnode"
-      should.exist @collection.get "leaf"
-
-    it "keeps supernodes that are not connected", ->
-      @collection.reset [
-        { id: "root_1" }
-        { id: "root_2", subconcept_ids: [ "subnode" ] }
-        { id: "subnode" }
-      ], silent: true
-      @collection.focus "subnode"
-      @collection.should.have.length 2
-      should.exist @collection.get "root_1"
-
-  describe "add()", ->
-
-    context "spreading out", ->
-
-      context "expanding edges out", ->
-
-        it "adds targets when expanded", ->
-          @collection.add [
-            id: "node"
-            subconcept_ids: [ "subnode_1", "subnode_2" ]
-            expandedOut: true
-          ]
-          @collection.should.have.length 3
-          should.exist @collection.get "subnode_1"
-          should.exist @collection.get "subnode_2"
-
-        it "does not add nodes when not expanded", ->
-          @collection.add [
-            id: "node"
-            subconcept_ids: [ "subnode_1", "subnode_2" ]
-            expandedOut: false
-          ]
-          @collection.should.have.length 1
-        
-        it "does not expand added nodes", ->
-          @collection.add [
-            id: "node"
-            subconcept_ids: [ "subnode" ]
-            expandedOut: true
-          ]
-          @collection.get("subnode").get("expandedOut").should.be.false
-
-      context "updating expansion states", ->
-
-        it "expands supernodes", ->
-          @collection.reset [
-            id: "supernode",
-            expandedOut: false
-            subconcept_ids: [ "node" ]
-          ], silent: true
-          @collection.add id: "node"
-          @collection.get("supernode").get("expandedOut").should.be.true
-
-  describe "reset()", ->
-
-    context "spreading out", ->
-
-      context "expanding edges out", ->
-
-        it "resets targets when expanded", ->
-          @collection.reset [
-            id: "node"
-            subconcept_ids: [ "subnode_1", "subnode_2" ]
-            expandedOut: true
-          ]
-          @collection.should.have.length 3
-          should.exist @collection.get "subnode_1"
-          should.exist @collection.get "subnode_2"
-
-        it "does not reset nodes when not expanded", ->
-          @collection.reset [
-            id: "node"
-            subconcept_ids: [ "subnode_1", "subnode_2" ]
-            expandedOut: false
-          ]
-          @collection.should.have.length 1
-        
-        it "does not expand reseted nodes", ->
-          @collection.reset [
-            id: "node"
-            subconcept_ids: [ "subnode" ]
-            expandedOut: true
-          ]
-          @collection.get("subnode").get("expandedOut").should.equal false
-
-      context "updating expansion states", ->
-
-        it "expands supernodes", ->
-          @collection.reset [
-            { id: "node" }
-            { id: "supernode", expandedOut: false, subconcept_ids: [ "node" ] }
-          ]
-          @collection.get("supernode").get("expandedOut").should.be.true
-
-  describe "on change:subconcept_ids", ->
-
-    context "spreading out", ->
-      
-      beforeEach ->
-        @collection.reset [
-          id: "node"
-          subconcept_ids: [ "subnode_1" ]
-          expandedOut: true
-        ]
-        @node = @collection.get "node"
-      
-      it "removes deprecated subnodes", ->
-        @node.set "subconcept_ids", []
-        @collection.should.have.length 1
-        should.not.exist @collection.get "subnode_1"
-
-      it "creates subnode for added ids", ->
-        @node.set "subconcept_ids", [ "subnode_1", "subnode_2" ]
-        @collection.should.have.length 3
-        should.exist @collection.get "subnode_2"
-
-      it "handles undefined targetIds gracefully", ->
-        @node.set "subconcept_ids", null
-        @node.set "subconcept_ids", [ "subnode_1", "subnode_2" ]
-        @collection.should.have.length 3
-        should.exist @collection.get "subnode_2"
-
-      it "does nothing when collapsed", ->
-        @node.set "expandedOut", false, silent: true
-        @node.set "subconcept_ids", [ "subnode_2" ]
-        @collection.should.have.length 2
-        should.not.exist @collection.get "subnode_2"
-
-    context "updating expansion states", ->
-
-      it "expands out", ->
-        @collection.reset [
-          { id: "node" }
-          { id: "supernode", expandedOut: false, subconcept_ids: [ "node", "other" ] }
-        ], silent: true
-        node = @collection.get("supernode")
-        node.set "subconcept_ids", [ "node" ]
-        node.get("expandedOut").should.be.true
-        
-  describe "on change:expandedOut", ->
-
-    beforeEach ->
-      @collection.reset [
-        id: "node"
-        subconcept_ids: [ "subnode" ]
-        expandedOut: false
-      ], silent: true
-      @node = @collection.get "node"
-
-    it "expands children when set to true", ->
-      @node.set "expandedOut", true
-      @collection.should.have.length 2
-      should.exist @collection.get "subnode"
-
-    it "removes children when set to false", ->
-      @node.set "expandedOut", true
-      @node.set "expandedOut", false
-      @collection.should.have.length 1
-      should.not.exist @collection.get "subnode"
+    it "updates label", ->
+      @collection.reset [ hit: null ], silent: yes
+      @collection.tree()
+      node = @collection.at(0)
+      node.set "hit", new Backbone.Model
+      @collection.updateDatum node
+      @collection.tree().should.have.deep.property "root.children[0].hit", yes
