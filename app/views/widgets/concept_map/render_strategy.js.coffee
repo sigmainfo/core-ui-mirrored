@@ -65,10 +65,13 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   updateNodes: (nodes) ->
     nodes
       .classed("hit", (datum) ->
-        if datum.hit then "hit" else no
+        datum.hit
+      )
+      .classed("parent-of-hit", (datum) ->
+        datum.parent_of_hit
       )
       .classed("new", (datum) ->
-        if datum.id then no else "new"
+        not datum.id?
       )
     
     nodes.select("title")

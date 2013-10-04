@@ -25,13 +25,17 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
   resetFromHits: (hits) ->
     attrs = for hit in hits.models
       concept: hit.get "result"
+      hit: hit
     @reset attrs
 
   addSupernodes: (model) ->
     if superconceptIds = model.get "superconcept_ids"
       for superconceptId in superconceptIds
         if concept = Coreon.Models.Concept.find superconceptId
-          @add concept: concept
+          attrs = concept: concept
+          if model.has("hit") or model.get("parent_of_hit")
+            attrs.parent_of_hit = yes
+          @add attrs, merge: yes
   
   addAllSupernodes: ->
     @addSupernodes model for model in @models
@@ -50,6 +54,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     datum.label = model.get "label"
     datum.leaf = model.get("subconcept_ids")?.length is 0
     datum.expanded = model.get "expanded"
+    datum.parent_of_hit = model.get "parent_of_hit"
     datum
 
   updateDatum: (model) ->

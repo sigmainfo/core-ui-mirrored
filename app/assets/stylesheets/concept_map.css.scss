@@ -26,6 +26,7 @@ $edge-color: #bfc5c0;
 
       .concept-node {
         cursor: pointer;
+
         circle {
           fill: none;
           stroke-width: 1.5px;
@@ -62,6 +63,18 @@ $edge-color: #bfc5c0;
           .background {
             fill: white;
             fill-opacity: 1;
+          }
+        }
+
+        &.parent-of-hit {
+
+          circle {
+            stroke: $text-color;
+            stroke-width: 1.6px;
+          }
+
+          text {
+            fill: $text-color;
           }
         }
         

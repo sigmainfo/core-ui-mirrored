@@ -64,8 +64,8 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.resetFromHits @hits
       @collection.reset.should.have.been.calledOnce
       @collection.reset.should.have.been.calledWith [
-        { concept: concept1 } 
-        { concept: concept2 } 
+        { concept: concept1, hit: hit1 } 
+        { concept: concept2, hit: hit2 } 
       ]
       
   describe "addSupernodes()", ->
@@ -108,7 +108,8 @@ describe "Coreon.Collections.ConceptNodes", ->
       Coreon.Models.Concept.find.withArgs("parent_1").returns parent1
       Coreon.Models.Concept.find.withArgs("parent_2").returns parent2
       @concept.set "superconcept_ids", ["parent_1", "parent_2"], silent: yes
-      @collection.add concept: @concept
+      @collection.reset [ concept: @concept ], silent: yes
+      @collection.addSupernodes @collection.get("concept")
       @collection.should.have.lengthOf 3
       node1 = @collection.get "parent_1"
       should.exist node1
@@ -116,6 +117,41 @@ describe "Coreon.Collections.ConceptNodes", ->
       node2 = @collection.get "parent_2"
       should.exist node2
       node2.get("concept").should.equal parent2
+
+    context "parent of hit", ->
+
+    it "marks newly added nodes", ->
+      parent = new Backbone.Model id: "parent"
+      Coreon.Models.Concept.find.withArgs("parent").returns parent
+      @concept.set {
+        superconcept_ids: ["parent"]
+        hit: new Backbone.Model
+      }, silent: yes
+      @collection.reset [ concept: @concept ], silent: yes
+      @collection.addSupernodes @collection.get("concept")
+      node = @collection.get "parent"
+      node.get("parent_of_hit").should.be.true
+
+    it "marks existing nodes", ->
+      parent = new Backbone.Model id: "parent"
+      Coreon.Models.Concept.find.withArgs("parent").returns parent
+      @concept.set {
+        superconcept_ids: ["parent"]
+        hit: new Backbone.Model
+      }, silent: yes
+      @collection.reset [ {concept: @concept}, {concept: parent} ], silent: yes
+      @collection.addSupernodes @collection.get("concept")
+      node = @collection.get "parent"
+      node.get("parent_of_hit").should.be.true
+
+    it "marks parent of parent nodes", ->
+      parent = new Backbone.Model id: "parent"
+      Coreon.Models.Concept.find.withArgs("parent").returns parent
+      @concept.set "superconcept_ids", ["parent"], silent: yes
+      @collection.reset [ {concept: @concept, parent_of_hit: yes}, {concept: parent} ], silent: yes
+      @collection.addSupernodes @collection.get("concept")
+      node = @collection.get "parent"
+      node.get("parent_of_hit").should.be.true
 
   describe "tree()", ->
 
@@ -134,11 +170,13 @@ describe "Coreon.Collections.ConceptNodes", ->
         label: "node"
         hit: yes
         expanded: yes
+        parent_of_hit: yes
       ], silent: true
       node = @collection.get "123"
       @collection.tree().should.have.deep.property "root.children[0].id", "123"
       @collection.tree().should.have.deep.property "root.children[0].label", "node"
       @collection.tree().should.have.deep.property "root.children[0].hit", yes
+      @collection.tree().should.have.deep.property "root.children[0].parent_of_hit", yes
       @collection.tree().should.have.deep.property "root.children[0].expanded", yes
       @collection.tree().should.have.deep.property("root.children[0].children").with.length 0
 

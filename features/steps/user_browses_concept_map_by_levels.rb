@@ -59,23 +59,36 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
     end
   end
 
+  def collect_node_levels
+    tops_and_labels = page.evaluate_script <<-JS
+      $("#coreon-concept-map .concept-node").map( function() {
+        return [$(this).position().top, $(this).find("tspan").text()]
+      }).get();
+    JS
+    levels = tops_and_labels.each_slice(2).to_a.group_by { |node| (node.shift / 10).round }
+    levels.each_value { |val| val.flatten! }.values
+  end
+
   step 'I should see "billiards" at level 1' do
-    pending 'step not implemented'
+    @levels = collect_node_levels
+    @levels[1].should == ["billiards"]
   end
 
   step 'I should see "equipment", "types" on level 2' do
-    pending 'step not implemented'
+    @levels[2].should == ["equipment", "types"]
   end
 
   step 'I should see "ball", "pool" at level 3' do
-    pending 'step not implemented'
+    @levels[3].should == ["ball", "pool"]
   end
 
   step 'I should see "8-ball", "nine ball" at level 4' do
-    pending 'step not implemented'
+    @levels[4].should == ["8-ball", "nine ball"]
   end
 
-  step '"billiards", "equipment", "types", "pool" should be more prominent than "cue", "table"' do
-    pending 'step not implemented'
+  step '"billiards", "equipment", "types", "pool" should be rendered as parents of hit' do
+    %w|billiards equipment types pool|.each do |label|
+      page.should have_css("#coreon-concept-map .concept-node.parent-of-hit", text: label)
+    end
   end
 end

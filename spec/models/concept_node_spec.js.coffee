@@ -17,6 +17,9 @@ describe "Coreon.Models.ConceptNode", ->
     it "is not expanded", ->
       @model.get("expanded").should.eql no
 
+    it "is not parent of hit", ->
+      @model.get("parent_of_hit").should.eql no
+
   describe "get()", ->
 
     it "returns attr from concept", ->
@@ -26,6 +29,12 @@ describe "Coreon.Models.ConceptNode", ->
     it "returns attr from node", ->
       @model.set "bar", "baz", silent: yes
       @model.get("bar").should.equal "baz"
+
+    it "prefers attr from node", ->
+      @concept.set "foo", "bar", silent: yes
+      @model.set "foo", "baz", silent: yes
+      @model.get("foo").should.equal "baz"
+      
 
   describe "change", ->
 

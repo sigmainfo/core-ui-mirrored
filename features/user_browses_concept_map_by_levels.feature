@@ -25,6 +25,6 @@ Feature: user browses concept map by levels
     And I should see "equipment", "types" on level 2
     And I should see "ball", "pool" at level 3
     And I should see "8-ball", "nine ball" at level 4
-    And "billiards", "equipment", "types", "pool" should be more prominent than "cue", "table"
+    And "billiards", "equipment", "types", "pool" should be rendered as parents of hit
     When I click on "Games" within the concept map
     Then I should be on the repository root page

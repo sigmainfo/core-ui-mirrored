@@ -217,6 +217,13 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateNodes nodes
       nodes.attr("class").split(" ").should.include "hit"
 
+    it "classifies parents of hit", ->
+      nodes = @selection.data [
+        parent_of_hit: yes
+      ]
+      @strategy.updateNodes nodes
+      nodes.attr("class").split(" ").should.include "parent-of-hit"
+
     it "classifies new concepts", ->
       nodes = @selection.data [
         id: null

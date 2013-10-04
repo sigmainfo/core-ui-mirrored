@@ -6,6 +6,7 @@ class Coreon.Models.ConceptNode extends Backbone.Model
   defaults: ->
     concept: null
     expanded: no
+    parent_of_hit: no
   
   initialize: ->
     @stopListening()
@@ -19,11 +20,10 @@ class Coreon.Models.ConceptNode extends Backbone.Model
       @listenTo concept, "all", @triggerConceptChange
 
   get: (attr) ->
-    concept = super "concept"
-    if concept?.attributes.hasOwnProperty attr
+    if @attributes.hasOwnProperty attr
+      @attributes[attr]
+    else if concept = @attributes.concept
       concept.get attr
-    else
-      super attr
 
   triggerConceptChange: (type, model, args...) ->
     @id = args[0] if type is "change:id"
