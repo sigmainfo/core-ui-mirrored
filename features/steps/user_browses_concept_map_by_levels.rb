@@ -91,4 +91,13 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
       page.should have_css("#coreon-concept-map .concept-node.parent-of-hit", text: label)
     end
   end
+
+  step 'I click on "Games" within the concept map' do
+    page.find("#coreon-concept-map .concept-node a", text: "Games").click
+  end
+
+  step 'I should be on the repository root page' do
+    page.should have_css(".repository.show h2.name", text: "Games")
+    page.current_path.should == "/#{@repository.id}"
+  end
 end

@@ -1,4 +1,3 @@
-@wip
 Feature: user browses concept map by levels
   In order to understand the position of a concept within the overall hierarchy
   As a user exploringing the concept map
