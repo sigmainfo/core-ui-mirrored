@@ -56,7 +56,7 @@ $edge-color: #bfc5c0;
           }
 
           text {
-            fill: $hit-color;
+            fill: $hit-color !important;
             font-size: 13px;
           }
           
