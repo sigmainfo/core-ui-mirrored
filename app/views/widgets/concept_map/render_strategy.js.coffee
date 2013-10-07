@@ -10,11 +10,12 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   resize: (@width, @height) ->
 
-  render: _.debounce ( (tree) ->
+  render = (tree) ->
     nodes = @renderNodes tree.root
     edges = @renderEdges tree.edges
     _.defer @updateLayout, nodes, edges
-  ), 250
+
+  render: _.debounce render, 250
 
   renderNodes: (root) ->
     nodes = @parent.selectAll(".concept-node")

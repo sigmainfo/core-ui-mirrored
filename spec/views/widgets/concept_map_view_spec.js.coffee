@@ -144,15 +144,15 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @clock.tick 200
         @view.render.should.have.been.calledOnce
 
-  describe "renderAndCenterSelection()", ->
+  describe "renderSelection()", ->
   
     it "can be chained", ->
-      @view.renderAndCenterSelection().should.equal @view
+      @view.renderSelection().should.equal @view
 
     it "calls render", ->
       @view.render = sinon.spy()
       @view.initialize()
-      @view.renderAndCenterSelection()
+      @view.renderSelection()
       @view.render.should.have.been.calledOnce
 
   describe "zoomIn()", ->
