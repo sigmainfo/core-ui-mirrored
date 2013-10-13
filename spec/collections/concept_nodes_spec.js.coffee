@@ -241,3 +241,37 @@ describe "Coreon.Collections.ConceptNodes", ->
       node.set "hit", new Backbone.Model
       @collection.updateDatum node
       @collection.tree().should.have.deep.property "root.children[0].hit", yes
+
+  describe "isCompletelyLoaded()", ->
+
+    it "returns true when collection is empty", ->
+      @collection.reset [], silent: yes
+      @collection.isCompletelyLoaded().should.be.true
+    
+    it "returns false when at least one node is not loaded", ->
+      @collection.reset [
+        { loaded: yes }
+        { loaded: no  }
+      ], silent: yes
+      @collection.isCompletelyLoaded().should.be.false
+
+  describe "loaded", ->
+
+    beforeEach ->
+      @collection.reset [
+        { loaded: no }
+        { loaded: no }
+      ], silent: yes
+  
+    it "triggers event when all nodes are loaded", ->
+      spy = sinon.spy()
+      @collection.on "loaded", spy
+      @collection.at(0).set "loaded", yes
+      @collection.at(1).set "loaded", yes
+      spy.should.have.been.calledOnce
+
+    it "does not trigger event when only some nodes are loaded", ->
+      spy = sinon.spy()
+      @collection.on "loaded", spy
+      @collection.at(0).set "loaded", yes
+      spy.should.not.have.been.called

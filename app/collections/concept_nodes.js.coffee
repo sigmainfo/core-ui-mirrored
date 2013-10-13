@@ -21,6 +21,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     @listenTo @, "add change:superconcept_ids", @addSupernodes
     @listenTo @, "reset", @addAllSupernodes
     @listenTo @, "change:label change:hit", @updateDatum
+    @listenTo @, "change:loaded", @updateLoadedState
 
   resetFromHits: (hits) ->
     attrs = for hit in hits.models
@@ -71,3 +72,9 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
         source: root
         target: child
 
+  isCompletelyLoaded: ->
+    return false for model in @models when not model.get("loaded")
+    true
+
+  updateLoadedState: ->
+    @trigger "loaded" if @isCompletelyLoaded()
