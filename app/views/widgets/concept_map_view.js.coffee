@@ -26,7 +26,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     "click .toggle-orientation": "toggleOrientation"
 
   initialize: (options = {}) ->
-    @stopListening()
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
       .on("zoom", @_panAndZoom)
@@ -55,11 +54,19 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
     @stopListening()
     @listenTo @model, "add remove change:label change:hit", @render
-    @listenTo @model, "reset", @renderSelection
+    @listenTo @model, "reset loaded", @renderSelection
 
   renderSelection: ->
-    @render()
-    @centerSelection()
+    if @model.isCompletelyLoaded()
+      @hideLoadingAnimation()
+      @render() 
+      @centerSelection()
+    else
+      @showLoadingAnimation()
+    @
+
+  render: ->
+    @renderStrategy.render @model.tree()
     @
 
   centerSelection: ->
@@ -72,10 +79,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @navigator.translate [width, height]
     @_panAndZoom()
 
-  render: ->
-    @renderStrategy.render @model.tree()
-    @
+  showLoadingAnimation: ->
+    @$(".concept-node").not(".repository-root").fadeOut()
 
+  hideLoadingAnimation: ->
+    @$(".concept-node").show()
+     
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
     @navigator.scale zoom

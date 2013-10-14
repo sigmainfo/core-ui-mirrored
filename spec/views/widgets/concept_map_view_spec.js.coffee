@@ -13,6 +13,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       root:
         children: []
       edges: []
+    nodes.isCompletelyLoaded = -> true
 
     sinon.stub Coreon.Views.Widgets.ConceptMap, "LeftToRight", =>
       @leftToRight = 
@@ -145,15 +146,96 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
         @view.render.should.have.been.calledOnce
 
   describe "renderSelection()", ->
+
   
     it "can be chained", ->
       @view.renderSelection().should.equal @view
 
-    it "calls render", ->
-      @view.render = sinon.spy()
+    it "is triggered on collection reset", ->
+      @view.renderSelection = sinon.spy()
       @view.initialize()
-      @view.renderSelection()
-      @view.render.should.have.been.calledOnce
+      @view.model.trigger "reset"
+      @view.renderSelection.should.have.been.calledOnce
+
+    it "is triggered on collection load", ->
+      @view.renderSelection = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "loaded"
+      @view.renderSelection.should.have.been.calledOnce
+
+    context "loaded", ->
+
+      beforeEach ->
+        @view.model.isCompletelyLoaded = -> yes
+
+      it "hides loading animation", ->
+        @view.hideLoadingAnimation = sinon.spy()
+        @view.renderSelection()
+        @view.hideLoadingAnimation.should.have.been.calledOnce
+
+      it "calls render", ->
+        @view.render = sinon.spy()
+        @view.renderSelection()
+        @view.render.should.have.been.calledOnce
+
+      it "centers selection", ->
+        @view.centerSelection = sinon.spy()
+        @view.renderSelection()
+        @view.centerSelection.should.have.been.calledOnce
+
+    context "pending", ->
+
+      beforeEach ->
+        @view.model.isCompletelyLoaded = -> no
+
+      it "does not render immediately", ->
+        @view.render = sinon.spy()
+        @view.initialize()
+        @view.renderSelection()
+        @view.render.should.not.have.been.called
+
+      it "does not center selection", ->
+        @view.centerSelection = sinon.spy()
+        @view.renderSelection()
+        @view.centerSelection.should.not.have.been.called
+
+      it "shows loading animation", ->
+        @view.showLoadingAnimation = sinon.spy()
+        @view.renderSelection()
+        @view.showLoadingAnimation.should.have.been.calledOnce
+
+  describe "showLoadingAnimation()", ->
+
+    beforeEach ->
+      @svg = d3.select @view.$(".concept-map")[0]
+      @view.$el.appendTo "#konacha"
+  
+    it "hides concept nodes", ->
+      @svg.append("g").attr("class", "concept-node")
+      @view.showLoadingAnimation()
+      @view.$(".concept-node").attr("style").should.include "display: none"
+
+    it "does not hide root node", ->
+      @svg.append("g").attr("class", "concept-node repository-root")
+      @view.showLoadingAnimation()
+      should.not.exist @view.$(".concept-node").attr("style")
+
+    it "renders progress indicator"
+
+  describe "hideLoadingAnimation()", ->
+   
+    beforeEach ->
+      @svg = d3.select @view.$(".concept-map")[0]
+      @view.$el.appendTo "#konacha"
+  
+    it "shows concept nodes", ->
+      @svg.append("g")
+        .attr("class", "concept-node")
+        .style("display", "none")
+      @view.hideLoadingAnimation()
+      @view.$(".concept-node").attr("style").should.be.empty
+
+    it "hides progress indicator"
 
   describe "zoomIn()", ->
 
