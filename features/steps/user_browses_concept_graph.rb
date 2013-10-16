@@ -16,27 +16,9 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     link_narrower_to_broader @concept, @weapon
   end
 
-  step 'this concept is broader than "pistol", "revolver"' do
-    @pistol = create_concept_with_label "pistol"
-    link_narrower_to_broader @pistol, @concept
-    @revolver = create_concept_with_label "revolver"
-    link_narrower_to_broader @revolver, @concept
-  end
-
-  step 'given a concept "long gun"' do
-    @concept = create_concept_with_label "long gun"
-  end
-
-  step 'this concept is broader than "rifle"' do
-    @rifle = create_concept_with_label "rifle"
-    link_narrower_to_broader @rifle, @concept
-  end
-
-  step '"weapon", "pen" are narrower than "tool"' do
+  step '"weapon" is narrower than "tool"' do
     @tool ||= create_concept_with_label "tool"
-    @pen  ||= create_concept_with_label "pen"
     link_narrower_to_broader @weapon, @tool
-    link_narrower_to_broader @pen, @tool
   end
 
   step 'I enter the application' do
@@ -60,19 +42,9 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: "handgun")
   end
   
-  step 'I should see nodes for "pistol" and "revolver"' do
-    ["pistol", "revolver"].each do |label|
-      page.should have_css("#coreon-concept-map .concept-node", text: label)
-    end
-  end
-  
   step 'I should see a node "weapon"' do
     # use Nokogiri directly to fix matching of SVG nodes
     Nokogiri::HTML(page.body).css(".concept-node text").map(&:text).should include("weapon")
-  end
-
-  step 'I should see a node "long gun"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "long gun")
   end
 
   step 'only "handgun" should be marked as being selected' do
@@ -84,72 +56,18 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     @edges = collect_edges
     @edges.should include("weapon -> handgun")
   end
-
-  step '"weapon" should be connected to "long gun"' do
-    @edges.should include("weapon -> long gun")
-  end
-
-  step '"handgun" should be connected to "pistol"' do
-    @edges.should include("handgun -> pistol")
-  end
-
-  step '"handgun" should be connected to "revolver"' do
-    @edges.should include("handgun -> revolver")
-  end
-
-  step 'I should not see "rifle"' do
-    page.should have_no_css("#coreon-concept-map .concept-node", text: "rifle")
-  end
-
-  step 'I click to toggle the children of "long gun"' do
-    sleep 0.2
-    page.find("#coreon-concept-map .concept-node", text: "long gun").find(".toggle-children").click
-  end
   
-  step 'I click to toggle the children of "weapon"' do
-    sleep 0.2
-    page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-children").click
-  end
-
-  step 'I should see "rifle"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "rifle")
-  end
-
-  step '"long gun" should be connected to "rifle"' do
-    @edges = collect_edges
-    @edges.should include("long gun -> rifle")
-  end
-
-  step '"weapon" should be the only node left' do
-    sleep 0.2
-    nodes = page.all("#coreon-concept-map .concept-node")
-    nodes.should have(1).item
-    Nokogiri::HTML(page.body).css(".concept-node text").first.text.should == "weapon"
-  end
-
-  step 'there should be no more connections' do
-    page.should have_no_css("#coreon-concept-map .concept-edge")
-  end
-
-  step 'I click to toggle the parents of "weapon"' do
-    page.find("#coreon-concept-map .concept-node", text: "weapon").find(".toggle-parents").click
-  end
-
-  step 'I should see "tool"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "tool")
-  end
-
-  step 'I should see "pen"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "pen")
+  step 'I should see a node "tool"' do
+    # use Nokogiri directly to fix matching of SVG nodes
+    Nokogiri::HTML(page.body).css(".concept-node text").map(&:text).should include("tool")
   end
 
   step '"tool" should be connected to "weapon"' do
-    @edges = collect_edges
     @edges.should include("tool -> weapon")
   end
 
-  step '"tool" should be connected to "pen"' do
-    @edges.should include("tool -> pen")
+  step 'the repository root node should be connected to "tool"' do
+    @edges.should include("Nobody's Repository -> tool")
   end
 
   step 'a concept "hand"' do
