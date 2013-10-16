@@ -37,7 +37,7 @@ Feature: user browses single concept
     And I should see a section for locale "DE"
     And it shoud have the following terms "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
     When I click on toggle "PROPERTIES" of term "Schusswaffe"
-    Then I should see property "gender" with value "f"
+    Then I should see property "GENDER" with value "f"
 
   Scenario: toggle sections
     Given a concept with label "handgun"

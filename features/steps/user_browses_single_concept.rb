@@ -163,7 +163,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should see property "GENDER" with value "f"' do
-    page.should have_css(".term .properties th", text: "GENDER")
+    sleep 1
     page.find(:xpath, "//th[text() = 'gender']/following-sibling::td").text.should == "f"
   end
 
