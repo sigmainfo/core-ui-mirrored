@@ -5,8 +5,12 @@ describe "Coreon.Views.ApplicationView", ->
   
   beforeEach ->
     Coreon.application = new Backbone.Model
-    Coreon.Views.Layout.ProgressIndicatorView =-> new Backbone.View
-    Coreon.Views.Repositories.RepositorySelectView =-> new Backbone.View
+    sinon.stub Coreon.Views.Layout, "ProgressIndicatorView", -> new Backbone.View
+    sinon.stub Coreon.Views.Repositories, "RepositorySelectView", -> new Backbone.View
+    sinon.stub Coreon.Views.Widgets, "WidgetsView", =>
+      @widgets = new Backbone.View
+      @widgets.render = sinon.stub().returns @widgets
+      @widgets
     @session = new Backbone.Model
       current_repository_id: "coffeebabe23"
       user: name: "Nobody"
@@ -17,7 +21,11 @@ describe "Coreon.Views.ApplicationView", ->
       model: Coreon.application
 
   afterEach ->
+    delete Coreon.application
     I18n.t.restore()
+    Coreon.Views.Layout.ProgressIndicatorView.restore()
+    Coreon.Views.Repositories.RepositorySelectView.restore()
+    Coreon.Views.Widgets.WidgetsView.restore()
 
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
@@ -73,16 +81,11 @@ describe "Coreon.Views.ApplicationView", ->
     context "with session", ->
 
       beforeEach ->
-        sinon.stub Coreon.Views.Widgets, "WidgetsView", =>
-          @widgets = new Backbone.View
-          @widgets.render = sinon.stub().returns @widgets
-          @widgets
         sinon.stub Backbone.history, "start"
         @view.model.set "session", @session, silent: on
         @session.set "repositories", [], silent: on
 
       afterEach ->
-        Coreon.Views.Widgets.WidgetsView.restore()
         Backbone.history.start.restore()
 
       it "creates widgets", ->

@@ -3,53 +3,36 @@
 
 class Coreon.Models.ConceptNode extends Backbone.Model
 
-  concept: null
-
   defaults: ->
-    hit:  null
     concept: null
-    expandedIn: false
-    expandedOut: false
-    subnodeIds: []
-    supernodeIds: []
-
-  initialize: (attributes = {}, options = {}) ->
+    expanded: no
+    parent_of_hit: no
+    loaded: yes
+  
+  initialize: ->
     @stopListening()
-    @set "concept", Coreon.Models.Concept.find(@id), silent: true unless @has "concept"
-    @on "change:concept", @_updateConcept, @
-    @_updateConcept()
-    @on "change:expandedOut change:subconcept_ids", @_updateSubnodeIds, @
-    @_updateSubnodeIds()
-    @on "change:expandedIn change:superconcept_ids", @_updateSupernodeIds, @
-    @_updateSupernodeIds()
+    @on "change:concept", @initConcept, @
+    @initConcept @get("concept"), silent: yes
+
+  initConcept: (concept, options = {}) ->
+    @stopListening previous if previous = @previous "concept"
+    if concept?
+      @set {
+        id: concept.id
+        loaded: not concept.blank
+      }, options
+      @listenTo concept, "all", @handleConceptEvent
 
   get: (attr) ->
-    concept = super "concept"
-    if concept?.attributes.hasOwnProperty attr
+    if @attributes.hasOwnProperty attr
+      @attributes[attr]
+    else if concept = @attributes.concept
       concept.get attr
-    else
-      super attr
 
-  _onConceptChange: (type, model, args...) ->
-    @id = model.id if type is "change:#{Coreon.Models.Concept::idAttribute}"
-    @trigger type, @, args... if type.indexOf("change") is 0
-
-  _updateSubnodeIds: (model, value, options) ->
-    newValue = if @get "expandedOut"
-      @get("subconcept_ids")?[..] ? []
-    else
-      []
-    @set "subnodeIds", newValue, options
-
-  _updateSupernodeIds: (model, value, options) ->
-    newValue = if @get "expandedIn"
-      @get("superconcept_ids")?[..] ? []
-    else
-      []
-    @set "supernodeIds", newValue, options
-
-  _updateConcept: ->
-    if concept = @get "concept"
-      @id = concept.id
-      @listenTo concept, "all", @_onConceptChange if concept
-    @stopListening previous if previous = @previous "concept"
+  handleConceptEvent: (type, model, args...) ->
+    switch
+      when type.indexOf("change") is 0
+        @set "id", model.id, silent: yes if type is "change:id"
+        @trigger type, @, args...
+      when type is "nonblank"
+        @set "loaded", yes

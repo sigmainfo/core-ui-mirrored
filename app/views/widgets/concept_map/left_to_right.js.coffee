@@ -35,13 +35,6 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       .attr("y", (datum) ->
         if datum.hit then -11 else -8.5
       )
-    
-    nodes.select("g.toggle-parents")
-      .attr("transform", (datum) ->
-        "translate(-15, 0) rotate(#{if datum.expandedIn then 90 else 0})" 
-      )
-
-    @updateToggleChildren nodes
 
   updateEdges: (edges) ->
     diagonal = @diagonal
@@ -60,16 +53,6 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
         "m 0,0"
     )
 
-  updateToggleChildren: (nodes) ->
-    nodes.select("g.toggle-children")
-      .attr("transform", (datum) ->
-        if labelWidth = datum.labelWidth
-          "translate(#{datum.labelWidth}, 0) rotate(#{if datum.expandedOut then 90 else 0})" 
-        else
-          null
-      )
-
-
   updateLayout: (nodes, edges) ->
     nodes.select("text.label")
       .each( (datum) ->
@@ -82,4 +65,3 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       )
     
     @updateEdges edges
-    @updateToggleChildren nodes

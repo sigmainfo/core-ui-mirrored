@@ -14,46 +14,15 @@ describe "Coreon.Collections.Treegraph", ->
     describe "root", ->
     
      it "returns root node", ->
-        @graph.tree().root.should.eql children: []
+        @graph.tree().root.should.eql
+          children: []
 
      it "accumulates data from models", ->
         @graph.reset [
           id: "123"
-          label: "node"
-          hit: yes
-          expandedIn: yes
-          expandedOut: yes
         ], silent: true
         node = @graph.get "123"
         @graph.tree().should.have.deep.property "root.children[0].id", "123"
-        @graph.tree().should.have.deep.property "root.children[0].label", "node"
-        @graph.tree().should.have.deep.property "root.children[0].hit", yes
-        @graph.tree().should.have.deep.property "root.children[0].expandedIn", yes
-        @graph.tree().should.have.deep.property "root.children[0].expandedOut", yes
-        @graph.tree().should.have.deep.property("root.children[0].children").with.length 0
-
-     it "identifies leaf nodes", ->
-        @graph.reset [ subconcept_ids: [] ]
-        @graph.tree().should.have.deep.property "root.children[0].leaf", yes
-        @graph.reset [ subconcept_ids: [ "child" ] ]
-        @graph.tree().should.have.deep.property "root.children[0].leaf", no
-
-     it "identifies root nodes", ->
-        @graph.reset [ superconcept_ids: [] ]
-        @graph.tree().should.have.deep.property "root.children[0].root", yes
-        @graph.reset [ superconcept_ids: [ "parent" ] ]
-        @graph.tree().should.have.deep.property "root.children[0].root", no
-
-     it "defaults hit attribute to false", ->
-        @graph.reset [ id: "123" ], silent: true
-        node = @graph.get "123"
-        @graph.tree().root.children[0].hit.should.be.false
-
-     it "defaults expansion states to false", ->
-        @graph.reset [ id: "123" ], silent: true
-        node = @graph.get "123"
-        @graph.tree().root.children[0].expandedIn.should.be.false
-        @graph.tree().root.children[0].expandedOut.should.be.false
 
      it "creates complete branch downto leaves", ->
         @graph.reset [
@@ -131,29 +100,3 @@ describe "Coreon.Collections.Treegraph", ->
         @graph.get("source").set "targetIds", []
         @graph.tree().should.have.deep.property "root.children.length", 2
 
-   context "datum updates on model changes", ->
-
-     it "updates label", ->
-       @graph.reset [ id: "123", label: "before123" ], silent: true
-       node = @graph.get "123"
-       @graph.tree()
-       node.set "label", "after123"
-       @graph.tree().root.children[0].should.have.property "label", "after123"
-
-     it "updates hit status", ->
-       @graph.reset [ hit: null ], silent: true
-       @graph.tree()
-       @graph.first().set "hit", { score: "2.67" }
-       @graph.tree().root.children[0].should.have.property "hit", yes
-
-     it "updates root status", ->
-       @graph.reset [ superconcept_ids: [ "parent" ] ], silent: true
-       @graph.tree()
-       @graph.first().set "superconcept_ids", []
-       @graph.tree().root.children[0].should.have.property "root", yes
-        
-     it "updates leaf status", ->
-       @graph.reset [ subconcept_ids: [ "child" ] ], silent: true
-       @graph.tree()
-       @graph.first().set "subconcept_ids", []
-       @graph.tree().root.children[0].should.have.property "leaf", yes

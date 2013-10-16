@@ -10,14 +10,16 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   resize: (@width, @height) ->
 
-  render: (tree) ->
+  render = (tree) ->
     nodes = @renderNodes tree.root
     edges = @renderEdges tree.edges
     _.defer @updateLayout, nodes, edges
 
+  render: _.debounce render, 250
+
   renderNodes: (root) ->
     nodes = @parent.selectAll(".concept-node")
-      .data( @layout.nodes(root)[1..], (datum) ->
+      .data( @layout.nodes(root), (datum) ->
         datum.id
       )
     @createNodes nodes.enter()
@@ -28,15 +30,19 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   createNodes: (enter) ->
     nodes = enter.append("g")
       .attr("class", "concept-node")
+      .classed("repository-root", (datum) -> not datum.parent? )
 
     nodes.append("title")
 
     links = nodes.append("a")
       .attr("xlink:href", (datum) ->
-        if datum.id?
-          Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
-        else
-          "javascript:void(0)"
+        switch
+          when datum.root
+            Coreon.Helpers.repositoryPath()
+          when datum.id?
+            Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
+          else
+            "javascript:void(0)"
       )
       .on("mouseover", (datum) ->
         d3.select(@).classed "hover", true
@@ -52,25 +58,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     links.append("circle").attr("class", "bullet")
     links.append("text").attr("class", "label")
 
-    @createToggles nodes, "toggle-parents"
-    @createToggles nodes, "toggle-children"
-
     nodes
-
-  createToggles: (nodes, className) ->
-    toggles = nodes.append("g")
-      .attr("class", "toggle #{className}")
-
-    toggles.append("rect")
-      .attr("class", "background")
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("x", -10)
-      .attr("y", -10)
-    toggles.append("path")
-      .attr("class", "icon")
-      .attr("d", "M -3.5 -2 h 7 m 0 4 h -7")
-    toggles
 
   deleteNodes: (exit) ->
     exit.remove()
@@ -78,10 +66,13 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   updateNodes: (nodes) ->
     nodes
       .classed("hit", (datum) ->
-        if datum.hit then "hit" else no
+        datum.hit
+      )
+      .classed("parent-of-hit", (datum) ->
+        datum.parent_of_hit
       )
       .classed("new", (datum) ->
-        if datum.id then no else "new"
+        not datum.id?
       )
     
     nodes.select("title")
@@ -95,24 +86,11 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
       )
 
     nodes.select("rect.background")
+      .attr("rx", (datum) ->
+        if datum.root then 5 else null
+      )
       .attr("filter", (datum) ->
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null
-      )
-
-    nodes.select("g.toggle-parents")
-      .attr("style", (datum) ->
-        if datum.root then "display: none" else null
-      )
-      .classed("expanded", (datum) ->
-        datum.expandedIn
-      )
-
-    nodes.select("g.toggle-children")
-      .attr("style", (datum) ->
-        if datum.leaf then "display: none" else null
-      )
-      .classed("expanded", (datum) ->
-        datum.expandedOut
       )
 
     nodes

@@ -22,6 +22,7 @@ class Spinach::Features::UserBrowsesTreeView < Spinach::FeatureSteps
   end
 
   step 'I should see a multiline label representing the currently selected concept within the concept map' do
+    sleep 0.2
     within "#coreon-concept-map" do
       page.should have_css(".concept-node.hit a text",
         text: "double action revolver"

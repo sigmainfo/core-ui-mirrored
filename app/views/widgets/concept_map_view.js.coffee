@@ -5,8 +5,12 @@
 #= require d3
 #= require views/widgets/concept_map/left_to_right
 #= require views/widgets/concept_map/top_down
+#= require modules/helpers
+#= require modules/loop
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
+
+  Coreon.Modules.include @, Coreon.Modules.Loop
 
   id: "coreon-concept-map"
 
@@ -24,8 +28,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     "click .zoom-in":  "zoomIn"
     "click .zoom-out": "zoomOut"
     "click .toggle-orientation": "toggleOrientation"
-    "click .toggle-children": "toggleChildren"
-    "click .toggle-parents": "toggleParents"
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
@@ -33,12 +35,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .on("zoom", @_panAndZoom)
     @_renderMarkupSkeleton()
 
+    @showLoadingAnimation()
+
     @renderStrategies = [
       Coreon.Views.Widgets.ConceptMap.TopDown
       Coreon.Views.Widgets.ConceptMap.LeftToRight
     ]
 
-    @map = d3.select(@$("svg g.concept-map").get 0)
+    @map = d3.select @$("svg g.concept-map")[0]
     @renderStrategy = new @renderStrategies[0] @map
 
     settings = {}
@@ -52,17 +56,26 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       @resize settings.conceptMap.width, settings.conceptMap.height
     else
       @resize @options.size...
-    d3.select(@$("svg").get 0).call @navigator
+    d3.select(@$("svg")[0]).call @navigator
 
     @stopListening()
-    @listenTo @model, "add remove change:label change:hit", _.throttle(@render, 100)
-    @listenTo @model, "reset", @renderAndCenterSelection
+    @listenTo @model, "add remove change:label change:hit", @render
+    @listenTo @model, "reset loaded", @renderSelection
 
-  render: ->
-    @renderStrategy.render @model.tree()
+  renderSelection: ->
+    if @model.isCompletelyLoaded()
+      @hideLoadingAnimation()
+      @render() 
+      @centerSelection()
+    else
+      @showLoadingAnimation()
     @
 
-  renderAndCenterSelection: ->
+  render: ->
+    @renderStrategy.render @model.tree() if @model.isCompletelyLoaded()
+    @
+
+  centerSelection: ->
     width = @width / 2
     height = @svgHeight / 2
     if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
@@ -71,9 +84,19 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       height -= 300
     @navigator.translate [width, height]
     @_panAndZoom()
-    @render()
-    @
 
+  showLoadingAnimation: ->
+    @$(".concept-node").not(".repository-root").add(".concept-edge").fadeOut "fast"
+    @$(".progress-indicator").fadeIn "slow"
+    spinner = d3.select @$(".progress-indicator .spinner")[0]
+    @startLoop (animation) ->
+      angle = animation.duration * 0.4 % 360
+      spinner.attr("transform", "rotate(#{angle})")
+
+  hideLoadingAnimation: ->
+    @$(".progress-indicator").fadeOut "slow", => @stopLoop()
+    @$(".concept-node").add(".concept-edge").fadeIn "fast"
+     
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
     @navigator.scale zoom
@@ -124,14 +147,4 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     views = @renderStrategy.views
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
-    @renderAndCenterSelection()
-
-  toggleChildren: (event) ->
-    datum = d3.select(event.target).datum()
-    datum.expandedOut = not datum.expandedOut
-    @model.get(datum.id).set "expandedOut", datum.expandedOut
-
-  toggleParents: (event) ->
-    datum = d3.select(event.target).datum()
-    datum.expandedIn = not datum.expandedIn
-    @model.get(datum.id).set "expandedIn", datum.expandedIn
+    @renderSelection()

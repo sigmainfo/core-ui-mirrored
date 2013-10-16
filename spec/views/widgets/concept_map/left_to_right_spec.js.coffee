@@ -90,50 +90,6 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       background.attr("width").should.equal "200"
       background.attr("height").should.equal "17"
 
-    it "positions toggle for parents", ->
-      toggle = @selection.append("g").attr("class", "toggle-parents")
-      nodes = @selection.data [ root: no ]
-      @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "translate(-15, 0)"
-
-    it "positions toggle for children", ->
-      toggle = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [
-        leaf: no
-        labelWidth: 234
-      ]
-      @strategy.updateNodes nodes
-      toggle.attr("transform").should.include "translate(234, 0)"
-
-    it "does not rotate collapsed toggles", ->
-      toggleParents = @selection.append("g").attr("class", "toggle-parents")
-      toggleChildren = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [
-        root: no
-        expandedIn: no
-        leaf: no
-        expandedOut: no
-        labelWidth: 100
-      ]
-      @strategy.updateNodes nodes
-      toggleParents.attr("transform").should.include "rotate(0)"
-      toggleChildren.attr("transform").should.include "rotate(0)"
-
-    it "rotates expanded toggles", ->
-      toggleParents = @selection.append("g").attr("class", "toggle-parents")
-      toggleChildren = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [
-        root: no
-        expandedIn: yes
-        leaf: no
-        expandedOut: yes
-        labelWidth: 100
-      ]
-      @strategy.updateNodes nodes
-      toggleParents.attr("transform").should.include "rotate(90)"
-      toggleChildren.attr("transform").should.include "rotate(90)"
-      
-
     context "hits", ->
 
       it "updates background position and height", ->
@@ -209,10 +165,3 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       @strategy.updateLayout nodes, edges
       @strategy.updateEdges.should.have.been.calledOnce
       @strategy.updateEdges.should.have.been.calledWith edges
-
-    it "positions toggle for children", ->
-      toggle = @selection.append("g").attr("class", "toggle-children")
-      nodes = @selection.data [ leaf: no ]
-      @strategy.updateLayout nodes
-      toggle.attr("transform").should.include "translate(125, 0)"
-      should.not.exist toggle.attr("style")
