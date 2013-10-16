@@ -147,7 +147,7 @@ $edge-color: #bfc5c0;
         }
       }
 
-      .concept-edge {
+      .concept-edge, .edge {
         fill: none;
         stroke: $edge-color;
         stroke-width: 1.5px;
@@ -156,6 +156,27 @@ $edge-color: #bfc5c0;
         &.hit {
           stroke: $text-color;
           stroke-opacity: 0.5;
+        }
+      }
+
+      .progress-indicator {
+        
+        .background {
+          fill: $edge-color;
+          stroke: none;
+        }
+
+        .track {
+          fill: none;
+          stroke: white;
+          stroke-width: 3px;
+          stroke-opacity: 0.5;
+        }
+
+        .spinner {
+          fill: none;
+          stroke: white;
+          stroke-width: 3px;
         }
       }
     }

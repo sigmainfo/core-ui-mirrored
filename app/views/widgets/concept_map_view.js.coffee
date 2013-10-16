@@ -5,8 +5,12 @@
 #= require d3
 #= require views/widgets/concept_map/left_to_right
 #= require views/widgets/concept_map/top_down
+#= require modules/helpers
+#= require modules/loop
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
+
+  Coreon.Modules.include @, Coreon.Modules.Loop
 
   id: "coreon-concept-map"
 
@@ -31,12 +35,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .on("zoom", @_panAndZoom)
     @_renderMarkupSkeleton()
 
+    @showLoadingAnimation()
+
     @renderStrategies = [
       Coreon.Views.Widgets.ConceptMap.TopDown
       Coreon.Views.Widgets.ConceptMap.LeftToRight
     ]
 
-    @map = d3.select(@$("svg g.concept-map").get 0)
+    @map = d3.select @$("svg g.concept-map")[0]
     @renderStrategy = new @renderStrategies[0] @map
 
     settings = {}
@@ -50,7 +56,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       @resize settings.conceptMap.width, settings.conceptMap.height
     else
       @resize @options.size...
-    d3.select(@$("svg").get 0).call @navigator
+    d3.select(@$("svg")[0]).call @navigator
 
     @stopListening()
     @listenTo @model, "add remove change:label change:hit", @render
@@ -66,7 +72,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @
 
   render: ->
-    @renderStrategy.render @model.tree()
+    @renderStrategy.render @model.tree() if @model.isCompletelyLoaded()
     @
 
   centerSelection: ->
@@ -80,10 +86,16 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_panAndZoom()
 
   showLoadingAnimation: ->
-    @$(".concept-node").not(".repository-root").fadeOut()
+    @$(".concept-node").not(".repository-root").add(".concept-edge").fadeOut "fast"
+    @$(".progress-indicator").fadeIn "slow"
+    spinner = d3.select @$(".progress-indicator .spinner")[0]
+    @startLoop (animation) ->
+      angle = animation.duration * 0.4 % 360
+      spinner.attr("transform", "rotate(#{angle})")
 
   hideLoadingAnimation: ->
-    @$(".concept-node").show()
+    @$(".progress-indicator").fadeOut "slow", => @stopLoop()
+    @$(".concept-node").add(".concept-edge").fadeIn "fast"
      
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
