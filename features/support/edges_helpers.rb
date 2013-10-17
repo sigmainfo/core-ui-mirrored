@@ -8,4 +8,16 @@ module EdgesHelpers
       }).get();
     JS
   end
+
+  def collect_placeholder_edges
+    page.evaluate_script <<-JS
+      $("#coreon-concept-map .concept-edge")
+        .filter( function() {
+          this.__data__.target.type == "placeholder"
+        })
+        .map( function() {
+          return "+[" + this.__data__.source.label + "]";
+        }).get();
+    JS
+  end
 end
