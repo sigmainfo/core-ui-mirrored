@@ -30,16 +30,18 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   createNodes: (enter) ->
     nodes = enter.append("g")
       .attr("class", "concept-node")
-      .classed("repository-root", (datum) -> not datum.parent? )
+      .classed("repository-root", (datum) ->
+        datum.type is "repository"
+      )
 
     nodes.append("title")
 
     links = nodes.append("a")
       .attr("xlink:href", (datum) ->
         switch
-          when datum.root
+          when datum.type is "repository"
             Coreon.Helpers.repositoryPath()
-          when datum.id?
+          when datum.type is "concept" and datum.id?
             Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
           else
             "javascript:void(0)"
@@ -87,7 +89,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     nodes.select("rect.background")
       .attr("rx", (datum) ->
-        if datum.root then 5 else null
+        if datum.type is "repository" then 5 else null
       )
       .attr("filter", (datum) ->
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null

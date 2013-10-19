@@ -132,7 +132,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       sinon.stub Coreon.Helpers, "repositoryPath"
       @enter = @parent
         .selectAll(".concept-node")
-        .data([ id: "node1" ])
+        .data([ id: "node1", type: "concept" ])
         .enter()
 
     afterEach ->
@@ -141,6 +141,15 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     it "appends concept node container", ->
       @strategy.createNodes @enter
       should.exist @parent.select("g.concept-node").node()
+
+    it "classifies root node", ->
+      @enter = @parent
+        .selectAll(".concept-node")
+        .data([ type: "repository" ])
+        .enter()    
+      @strategy.createNodes @enter
+      node = @parent.select(".concept-node")
+      node.attr("class").split(" ").should.include "repository-root"
 
     it "renders link", ->
       Coreon.Helpers.repositoryPath.withArgs("concepts/node1").returns "/my-repo/concepts/node1"
@@ -153,7 +162,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       Coreon.Helpers.repositoryPath.withArgs().returns "/my-repo-123"
       @enter = @parent
         .selectAll(".concept-node")
-        .data([ root: yes ])
+        .data([ type: "repository" ])
         .enter()
       @strategy.createNodes @enter
       link = @parent.select(".concept-node a")
@@ -163,7 +172,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     it "renders dummy link for new concept", ->
       @enter = @parent
         .selectAll(".concept-node")
-        .data([ id: null ])
+        .data([ id: null, type: "concept" ])
         .enter()
       @strategy.createNodes @enter
       link = @parent.select(".concept-node a")
@@ -278,12 +287,12 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     it "rounds corners of root node", ->
       background = @selection.append("rect").attr("class", "background")
       nodes = @selection.data [
-        root: yes
+        type: "repository"
       ]
       @strategy.updateNodes nodes
       background.attr("rx").should.eql "5"
       nodes = @selection.data [
-        root: no
+        type: "concept"
       ]
       @strategy.updateNodes nodes
       should.not.exist background.attr("rx")
