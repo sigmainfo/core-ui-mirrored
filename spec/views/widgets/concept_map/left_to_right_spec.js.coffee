@@ -105,15 +105,17 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       @strategy.diagonal = sinon.stub()
       @selection = @parent.append("path").attr("class", "concept-edge")
 
-    it "updates path", ->
+    it "updates path between concepts", ->
       edges = @selection.data [
         source:
           id: "source"
+          type: "concept"
           x: 123
           y: 45
           labelWidth: 123
         target:
           id: "target"
+          type: "concept"
           x: 123
           y: 67
       ]
@@ -127,6 +129,31 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       ).returns  "M179,123C119.5,123 119.5,123 60,123"
       @strategy.updateEdges edges
       edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,123"
+
+    it "updates path to placeholder", ->
+      edges = @selection.data [
+        source:
+          id: "source"
+          type: "concept"
+          x: 123
+          y: 45
+          labelWidth: 123
+        target:
+          id: "target"
+          type: "placeholder"
+          x: 123
+          y: 67
+      ]
+      @strategy.diagonal.withArgs(
+        source:
+          x: 123
+          y: 45 + 123 - 7
+        target:
+          x: 123
+          y: 67 - 10
+      ).returns  "M179,123C119.5,123 119.5,123 60,113"
+      @strategy.updateEdges edges
+      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,113"
 
     it "hides path when label width is unknown", ->
       edges = @selection.data [

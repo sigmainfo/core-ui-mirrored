@@ -36,10 +36,17 @@ describe "Coreon.Collections.ConceptNodes", ->
       finally
         Coreon.Collections.Treegraph::initialize.restore()
 
+    it "defaults loading tree state to false", ->
+      @collection.loadingTree.should.be.false
+
   describe "resetFromHits()", ->
 
     beforeEach ->
-      @hits = new Backbone.Collection
+      @concept1 = new Backbone.Model
+      @concept2 = new Backbone.Model
+      @hit1 = new Backbone.Model result: @concept1
+      @hit2 = new Backbone.Model result: @concept2
+      @hits = new Backbone.Collection [ @hit1, @hit2 ]
 
     it "is triggered on init", ->
       @collection.resetFromHits = sinon.spy()
@@ -56,18 +63,40 @@ describe "Coreon.Collections.ConceptNodes", ->
 
     it "creates nodes from hits", ->
       @collection.reset = sinon.spy()
-      concept1 = new Backbone.Model
-      concept2 = new Backbone.Model
-      hit1 = new Backbone.Model result: concept1
-      hit2 = new Backbone.Model result: concept2
-      @hits.reset [ hit1, hit2 ], silent: yes
       @collection.resetFromHits @hits
       @collection.reset.should.have.been.calledOnce
       @collection.reset.should.have.been.calledWith [
-        { concept: concept1, hit: hit1 } 
-        { concept: concept2, hit: hit2 } 
+        { concept: @concept1, hit: @hit1} 
+        { concept: @concept2, hit: @hit2 } 
       ]
-      
+
+    it "adds supernodes for each model", ->
+      @collection.addSupernodes = sinon.spy()
+      @collection.resetFromHits @hits
+      @collection.addSupernodes.should.have.been.calledTwice
+      @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
+      @collection.addSupernodes.should.have.been.calledWith @collection.at(1)
+
+    it "triggers reset event after supernodes have been added", ->
+      ids = null
+      spy = sinon.spy (collection, models) -> ids = (model.id for model in collection.models)
+      prev = new Backbone.Model
+      @collection.models = [ prev ]
+      @collection.addSupernodes = -> @add id: "parent"
+      @collection.isCompletelyLoaded = -> no
+      @collection.on "reset", spy
+      @collection.resetFromHits @hits
+      spy.should.have.been.calledOnce
+      spy.should.have.been.calledWith @collection,
+        previousModels: [ prev ]
+        loadingTree: yes
+      ids.should.include "parent"
+
+    it "updates loading tree state", ->
+      @collection.isCompletelyLoaded = -> no
+      @collection.resetFromHits @hits
+      @collection.loadingTree.should.be.true
+
   describe "addSupernodes()", ->
 
     beforeEach ->
@@ -78,15 +107,6 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.initialize()
       @collection.addSupernodes.reset()
       @collection.add concept: @concept
-      @collection.addSupernodes.should.have.been.calledOnce
-      @collection.addSupernodes.should.have.been.calledOn @collection
-      @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
-
-    it "is triggerd for every model on reset", ->
-      @collection.addSupernodes = sinon.spy()
-      @collection.initialize()
-      @collection.addSupernodes.reset()
-      @collection.reset [ concept: @concept ]
       @collection.addSupernodes.should.have.been.calledOnce
       @collection.addSupernodes.should.have.been.calledOn @collection
       @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
@@ -161,8 +181,12 @@ describe "Coreon.Collections.ConceptNodes", ->
         get: (attr) -> "repo 123" if attr is "name"
       @collection.tree().should.have.deep.property "root.id", "repo-123"
       @collection.tree().should.have.deep.property "root.label", "repo 123"
-      @collection.tree().should.have.deep.property "root.root", yes
+      @collection.tree().should.have.deep.property "root.type", "repository"
       @collection.tree().should.have.deep.property("root.children").with.lengthOf 0
+
+    it "defaults type to concept", ->
+      @collection.reset [ id: "123" ], silent: true
+      @collection.tree().root.children[0].should.have.property "type", "concept"
 
     it "accumulates data from models", ->
       @collection.reset [
@@ -203,7 +227,37 @@ describe "Coreon.Collections.ConceptNodes", ->
       rootEdges = (edge for edge in edges when edge.source is root)
       rootEdges[0].should.have.property "target", root.children[0]
       rootEdges[1].should.have.property "target", root.children[1]
+
+    context "loading hits", ->
+      
+      beforeEach ->
+        @concept1 = new Backbone.Model
+        @concept2 = new Backbone.Model
+        @hit1 = new Backbone.Model result: @concept1
+        @hit2 = new Backbone.Model result: @concept2
+        @hits = new Backbone.Collection [ @hit1, @hit2 ]
+        @collection.isCompletelyLoaded = -> false
+        @collection.resetFromHits @hits
   
+      it "inserts placeholder for concept nodes", ->
+        Coreon.application = repository: ->
+          id: "my-repo-123"
+          get: -> "MY REPO 123"
+        @collection.tree().root.children.should.have.lengthOf 1
+        placeholder = @collection.tree().root.children[0]
+        placeholder.should.have.property "type", "placeholder"
+        placeholder.should.have.property("children").that.is.empty
+        placeholder.should.have.property "id", "+my-repo-123"
+
+      it "removes placeholder when completely loaded", ->
+        @collection.tree()
+        @collection.isCompletelyLoaded = -> yes
+        @collection.trigger "change:loaded"
+        children = @collection.tree().root.children
+        children.should.have.lengthOf 2
+        types = child.type for child in children
+        types.should.not.include "placeholder"
+        
   describe "updateDatum()", ->
   
     it "is triggered on label changes", ->

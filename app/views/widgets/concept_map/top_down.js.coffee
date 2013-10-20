@@ -55,13 +55,16 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
   updateEdges: (edges) ->
     diagonal = @diagonal
     edges.attr("d", (datum) ->
+      offsetTargetY = switch datum.target.type
+        when "concept" then 3.5
+        when "placeholder" then 10
       diagonal
         source:
           x: datum.source.x
           y: datum.source.y + datum.source.labelHeight + 7
         target:
           x: datum.target.x
-          y: datum.target.y - 3.5
+          y: datum.target.y - offsetTargetY
     )
 
   updateLayout: (nodes, edges) ->
