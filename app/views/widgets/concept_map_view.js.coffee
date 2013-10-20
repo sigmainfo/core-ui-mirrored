@@ -10,7 +10,6 @@
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
-  Coreon.Modules.include @, Coreon.Modules.Loop
 
   id: "coreon-concept-map"
 
@@ -35,14 +34,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       .on("zoom", @_panAndZoom)
     @_renderMarkupSkeleton()
 
-    @showLoadingAnimation()
-
     @renderStrategies = [
       Coreon.Views.Widgets.ConceptMap.TopDown
       Coreon.Views.Widgets.ConceptMap.LeftToRight
     ]
 
     @map = d3.select @$("svg g.concept-map")[0]
+    Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
 
     settings = {}
@@ -59,20 +57,18 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(@$("svg")[0]).call @navigator
 
     @stopListening()
-    @listenTo @model, "add remove change:label change:hit", @render
-    @listenTo @model, "reset loaded", @renderSelection
-
-  renderSelection: ->
-    if @model.isCompletelyLoaded()
-      @hideLoadingAnimation()
-      @render() 
-      @centerSelection()
-    else
-      @showLoadingAnimation()
-    @
+    @listenTo @model, "reset loaded", @render
 
   render: ->
-    @renderStrategy.render @model.tree() if @model.isCompletelyLoaded()
+    @stopListening @model, "add remove change:label change:hit", @update
+    unless @model.loadingTree
+      @listenTo @model, "add remove change:label change:hit", @update
+    @update() 
+    @centerSelection()
+    @
+
+  update: ->
+    @renderStrategy.render @model.tree()
     @
 
   centerSelection: ->
@@ -85,18 +81,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @navigator.translate [width, height]
     @_panAndZoom()
 
-  showLoadingAnimation: ->
-    @$(".concept-node").not(".repository-root").add(".concept-edge").fadeOut "fast"
-    @$(".progress-indicator").fadeIn "slow"
-    spinner = d3.select @$(".progress-indicator .spinner")[0]
-    @startLoop (animation) ->
-      angle = animation.duration * 0.4 % 360
-      spinner.attr("transform", "rotate(#{angle})")
-
-  hideLoadingAnimation: ->
-    @$(".progress-indicator").fadeOut "slow", => @stopLoop()
-    @$(".concept-node").add(".concept-edge").fadeIn "fast"
-     
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
     @navigator.scale zoom
@@ -147,4 +131,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     views = @renderStrategy.views
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
-    @renderSelection()
+    @render()
+
+  remove: ->
+    @map.stopLoop()
+    super

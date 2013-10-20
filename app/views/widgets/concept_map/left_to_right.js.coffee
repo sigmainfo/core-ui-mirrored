@@ -42,13 +42,16 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       source = datum.source
       target = datum.target
       if labelWidth = source.labelWidth
+        offsetTargetY = switch datum.target.type
+          when "concept" then 7
+          when "placeholder" then 10
         diagonal
           source:
             x: source.x
             y: source.y + labelWidth - 7
           target:
             x: target.x
-            y: target.y - 7
+            y: target.y - offsetTargetY
       else
         "m 0,0"
     )

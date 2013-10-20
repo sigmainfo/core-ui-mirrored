@@ -6,6 +6,10 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
   beforeEach ->
     @svg = $('<svg:g class="map">')
     @parent = d3.select @svg[0]
+    loops = []
+    @parent.startLoop = (callback) -> loops.push callback
+    @parent.stopLoop = -> loops = []
+    @nextFrame = -> callback arguments... for callback in loops
     sinon.stub d3.layout, "tree", => @layout =
       nodes: sinon.stub().returns []
     sinon.stub d3.svg, "diagonal", => @diagonal = {}
@@ -77,46 +81,39 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       sinon.stub Coreon.Helpers, "repositoryPath"
       @parent.append("g")
         .attr("class", "concept-node")
-        .datum(id: "remove")
+        .datum(id: "remove", type: "concept")
       @parent.append("g")
-        .attr("class", "concept-node")
+        .attr("class", "concept-node", type: "concept")
         .datum(id: "update")
-      @root =
-        id: "root"
-        children: [
-          { id: "create" }
-          { id: "update" }
-        ]
-      @layout.nodes.withArgs(@root).returns [
-        { id: "root" }
-        { id: "create" }
-        { id: "update" }
+      @data = [
+        { id: "root", type: "repository" }
+        { id: "create", type: "concept" }
+        { id: "update", type: "concept" }
       ]
+      @root = @data[0]
+      @root.children = @data[1..]
+      @layout.nodes.withArgs(@root).returns @data
 
     afterEach ->
       Coreon.Helpers.repositoryPath.restore()
 
     it "maps nodes to data", ->
       nodes = @strategy.renderNodes @root
-      nodes.data().should.eql [
-        { id: "root" }
-        { id: "create" }
-        { id: "update" }
-      ]
+      nodes.data().should.eql @data
 
     it "creates missing nodes including root node", ->
       @strategy.createNodes = sinon.spy()
       enter = @strategy.renderNodes(@root).enter()
-      data = (node.__data__ for i, node of enter[0] when node.__data__?)
-      data.should.eql [ { id: "root" }, { id: "create" } ]
+      ids = (node.__data__.id for i, node of enter[0] when node.__data__?)
+      ids.should.eql [ "root", "create" ]
       @strategy.createNodes.should.have.been.calledOnce
       @strategy.createNodes.should.have.been.calledWith enter
 
     it "deletes deprecated nodes", ->
       @strategy.deleteNodes = sinon.spy()
       exit = @strategy.renderNodes(@root).exit()
-      data = (node.__data__ for i, node of exit[0] when node.__data__?)
-      data.should.eql [ id: "remove" ]
+      ids = (node.__data__.id for i, node of exit[0] when node.__data__?)
+      ids.should.eql [ "remove" ]
       @strategy.deleteNodes.should.have.been.calledOnce
       @strategy.deleteNodes.should.have.been.calledWith exit
 
@@ -132,83 +129,146 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       sinon.stub Coreon.Helpers, "repositoryPath"
       @enter = @parent
         .selectAll(".concept-node")
-        .data([ id: "node1", type: "concept" ])
+        .data([
+          { id: "repository", type: "repository" }
+          { id: "concept", type: "concept" }
+          { id: "placeholder", type: "placeholder" }
+        ])
         .enter()
 
     afterEach ->
       Coreon.Helpers.repositoryPath.restore()
-
-    it "appends concept node container", ->
-      @strategy.createNodes @enter
-      should.exist @parent.select("g.concept-node").node()
-
-    it "classifies root node", ->
-      @enter = @parent
-        .selectAll(".concept-node")
-        .data([ type: "repository" ])
-        .enter()    
-      @strategy.createNodes @enter
-      node = @parent.select(".concept-node")
-      node.attr("class").split(" ").should.include "repository-root"
-
-    it "renders link", ->
-      Coreon.Helpers.repositoryPath.withArgs("concepts/node1").returns "/my-repo/concepts/node1"
-      @strategy.createNodes @enter
-      link = @parent.select(".concept-node a")
-      should.exist link.node()
-      link.attr("xlink:href").should.equal "/my-repo/concepts/node1"
-
-    it "renders link to repository for root node", ->
-      Coreon.Helpers.repositoryPath.withArgs().returns "/my-repo-123"
-      @enter = @parent
-        .selectAll(".concept-node")
-        .data([ type: "repository" ])
-        .enter()
-      @strategy.createNodes @enter
-      link = @parent.select(".concept-node a")
-      should.exist link.node()
-      link.attr("xlink:href").should.equal "/my-repo-123"
-
-    it "renders dummy link for new concept", ->
-      @enter = @parent
-        .selectAll(".concept-node")
-        .data([ id: null, type: "concept" ])
-        .enter()
-      @strategy.createNodes @enter
-      link = @parent.select(".concept-node a")
-      should.exist link.node()
-      link.attr("xlink:href").should.equal "javascript:void(0)"
-
-    it "renders bullet", ->
-      @strategy.createNodes @enter
-      bullet = @parent.select(".concept-node a circle.bullet")
-      should.exist bullet.node()
-
-    it "renders empty label", ->
-      @strategy.createNodes @enter
-      label = @parent.select(".concept-node a text.label")
-      should.exist label.node()
-
-    it "inserts background", ->
-      @strategy.createNodes @enter
-      bg = @parent.select('.concept-node a rect.background')
-      should.exist bg.node()
-
-    it "renders title", ->
-      @strategy.createNodes @enter
-      title = @parent.select('.concept-node title')
-      should.exist title.node()
-
+      
     it "returns selection of newly created nodes", ->
       nodes = @strategy.createNodes @enter
       nodes.node().should.equal @parent.select(".concept-node").node()
 
-   describe "deleteNodes()", ->
+    it "appends concept node container", ->
+      @strategy.createNodes @enter
+      @parent.selectAll("g.concept-node")[0].should.have.lengthOf 3
+
+    it "classifies repository node", ->
+      @strategy.createNodes @enter
+      node = @parent.selectAll(".concept-node").filter(
+        (datum) -> datum.type is "repository"
+      )
+      node.attr("class").split(" ").should.include "repository-root"
+
+    context "regular nodes", ->
+
+      it "renders link to concept", ->
+        Coreon.Helpers.repositoryPath.withArgs("concepts/concept").returns "/my-repo/concepts/concept"
+        @strategy.createNodes @enter
+        concept = @parent.selectAll(".concept-node").filter(
+          (datum) -> datum.type is "concept"
+        )
+        link = concept.select("a")
+        should.exist link.node()
+        link.attr("xlink:href").should.equal "/my-repo/concepts/concept"
+
+      it "renders link to repository", ->
+        Coreon.Helpers.repositoryPath.withArgs().returns "/my-repo-123"
+        @strategy.createNodes @enter
+        link = @parent.select(".concept-node a")
+        should.exist link.node()
+        link.attr("xlink:href").should.equal "/my-repo-123"
+
+      it "renders dummy link for new concept", ->
+        @enter = @parent
+          .selectAll(".concept-node")
+          .data([ id: null, type: "concept" ])
+          .enter()
+        @strategy.createNodes @enter
+        link = @parent.select(".concept-node a")
+        should.exist link.node()
+        link.attr("xlink:href").should.equal "javascript:void(0)"
+
+      it "renders bullet", ->
+        @strategy.createNodes @enter
+        bullet = @parent.select(".concept-node a circle.bullet")
+        should.exist bullet.node()
+
+      it "renders empty label", ->
+        @strategy.createNodes @enter
+        label = @parent.select(".concept-node a text.label")
+        should.exist label.node()
+
+      it "inserts background", ->
+        @strategy.createNodes @enter
+        bg = @parent.select('.concept-node a rect.background')
+        should.exist bg.node()
+
+      it "renders title", ->
+        @strategy.createNodes @enter
+        title = @parent.select('.concept-node title')
+        should.exist title.node()
+
+      it "is not classified as placeholder", ->
+        @strategy.createNodes @enter
+        node = @parent.selectAll(".concept-node").filter(
+          (datum) -> datum.type isnt "placeholder"
+        )
+        node.attr("class").split(" ").should.not.include "placeholder"
+
+    context "placeholder nodes", ->
+
+      beforeEach ->
+        @strategy.createNodes @enter
+        @placeholder = @parent.selectAll('.concept-node').filter(
+          (datum) -> datum.type is "placeholder"
+        )
+
+      it "classifies nodes", ->
+        @strategy.createNodes @enter
+        @placeholder.attr("class").split(" ").should.include "placeholder"
+
+      it "renders background", ->
+        background = @placeholder.select("circle.background")
+        should.exist background.node()
+        background.attr("r").should.equal "10"
+
+      it "renders progress indicator", ->
+        indicator = @placeholder.select("g.progress-indicator")
+        should.exist indicator.node()
+        track = indicator.select("circle.track")
+        should.exist track.node()
+        track.attr("r").should.equal "6"
+        cursor = indicator.select("path.cursor")
+        should.exist cursor.node()
+        cursor.attr("d").should.equal "M 6 0 A 6 6 0 0 1 3 5.19"
+
+      it "starts animation loop", ->
+        cursor = @placeholder.select("g.progress-indicator .cursor")
+        @nextFrame duration: 30
+        cursor.attr("transform").should.equal "rotate(12)"
+
+      it "does not create title element", ->
+        should.not.exist @placeholder.select("title").node()
+
+      it "does not create link", ->
+        should.not.exist @placeholder.select("a").node()
+
+  describe "deleteNodes()", ->
+   
+    beforeEach ->
+      @animation = duration: 123
+      @parent.append("g")
+        .attr("class", "concept-node placeholder")
+        .datum(id: "remove", type: "placeholder", loop: @animation)
+      @exit = @parent.selectAll(".concept-node")
+        .data([])
+        .exit()
+
+    it "stops loop of placeholders", ->
+      @parent.stopLoop = sinon.spy()
+      @strategy.deleteNodes @exit
+      @parent.stopLoop.should.have.been.calledOnce
+      @parent.stopLoop.should.have.been.calledWith @animation
   
     it "removes nodes", ->
-      exit = remove: sinon.spy()
-      @strategy.deleteNodes exit
-      exit.remove.should.have.been.calledOnce
+      @exit.remove = sinon.spy()
+      @strategy.deleteNodes @exit
+      @exit.remove.should.have.been.calledOnce
 
   describe "updateNodes()", ->
     

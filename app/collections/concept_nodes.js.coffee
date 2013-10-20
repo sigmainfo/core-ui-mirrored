@@ -14,7 +14,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     options.targetIds = "subconcept_ids"
     super models, options
 
-    @loadingHits = no
+    @loadingTree = no
     if hits = options.hits
       @listenTo hits, "reset", @resetFromHits
       @resetFromHits hits
@@ -24,12 +24,16 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     @listenTo @, "change:loaded", @updateLoadedState
 
   resetFromHits: (hits) ->
+    previousModels = (model for model in @models)
     attrs = for hit in hits.models
       concept: hit.get "result"
       hit: hit
-    @reset attrs
+    @reset attrs, silent: yes
     @addSupernodes model for model in @models
-    @loadingHits = not @isCompletelyLoaded()
+    @loadingTree = not @isCompletelyLoaded()
+    @trigger "reset", @,
+      previousModels: previousModels
+      loadingTree: @loadingTree
 
   addSupernodes: (model) ->
     if superconceptIds = model.get "superconcept_ids"
@@ -69,7 +73,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
       datum.hit = model.has "hit"
 
   _createTree: ->
-    if @loadingHits
+    if @loadingTree
       repository = @_createRoot()
       placeholder = @_createPlaceholder repository
       repository.children.push placeholder
@@ -94,6 +98,6 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
 
   updateLoadedState: ->
     if @isCompletelyLoaded()
-      @loadingHits = no
+      @loadingTree = no
       @_invalidateGraph()
       @trigger "loaded"

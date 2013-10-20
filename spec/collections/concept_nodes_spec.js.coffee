@@ -36,8 +36,8 @@ describe "Coreon.Collections.ConceptNodes", ->
       finally
         Coreon.Collections.Treegraph::initialize.restore()
 
-    it "defaults loading hits state to false", ->
-      @collection.loadingHits.should.be.false
+    it "defaults loading tree state to false", ->
+      @collection.loadingTree.should.be.false
 
   describe "resetFromHits()", ->
 
@@ -76,6 +76,26 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.addSupernodes.should.have.been.calledTwice
       @collection.addSupernodes.should.have.been.calledWith @collection.at(0)
       @collection.addSupernodes.should.have.been.calledWith @collection.at(1)
+
+    it "triggers reset event after supernodes have been added", ->
+      ids = null
+      spy = sinon.spy (collection, models) -> ids = (model.id for model in collection.models)
+      prev = new Backbone.Model
+      @collection.models = [ prev ]
+      @collection.addSupernodes = -> @add id: "parent"
+      @collection.isCompletelyLoaded = -> no
+      @collection.on "reset", spy
+      @collection.resetFromHits @hits
+      spy.should.have.been.calledOnce
+      spy.should.have.been.calledWith @collection,
+        previousModels: [ prev ]
+        loadingTree: yes
+      ids.should.include "parent"
+
+    it "updates loading tree state", ->
+      @collection.isCompletelyLoaded = -> no
+      @collection.resetFromHits @hits
+      @collection.loadingTree.should.be.true
 
   describe "addSupernodes()", ->
 

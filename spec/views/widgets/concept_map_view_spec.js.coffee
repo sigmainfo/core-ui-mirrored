@@ -53,7 +53,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     @view.$el.should.have.class "widget"
 
   it "can loop animation", ->
-    @view.startLoop.should.equal Coreon.Modules.Loop.startLoop
+    @view.map.startLoop.should.equal Coreon.Modules.Loop.startLoop
+    @view.map.stopLoop.should.equal Coreon.Modules.Loop.stopLoop
 
   describe "initialize()", ->
 
@@ -109,176 +110,81 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     #     @view.resize.should.have.been.calledWith 347, 456
 
   describe "render()", ->
+  
+    it "can be chained", ->
+      @view.render().should.equal @view
+
+    it "is triggered on collection reset", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "reset"
+      @view.render.should.have.been.calledOnce
+
+    it "is triggered on collection load", ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger "loaded"
+      @view.render.should.have.been.calledOnce
+
+    it "updates view", ->
+      @view.update = sinon.spy()
+      @view.render()
+      @view.update.should.have.been.calledOnce
+
+    it "centers Selection", ->
+      @view.centerSelection = sinon.spy()
+      @view.render()
+      @view.centerSelection.should.have.been.calledOnce
+
+  describe "update()", ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
   
     it "can be chained", ->
-      @view.render().should.equal @view
+      @view.update().should.equal @view
 
     it "delegates rendering to strategy", ->
       tree = root: {id: "root"}, edges: []
       @view.model.tree = -> tree
       strategy = render: sinon.spy()
       @view.renderStrategy = strategy
-      @view.render()
+      @view.update()
       strategy.render.should.have.been.calledWith tree
 
-    it "skips rendering when not yet loaded", ->
-      tree = root: {id: "root"}, edges: []
-      @view.model.tree = -> tree
-      strategy = render: sinon.spy()
-      @view.renderStrategy = strategy
-      @view.model.isCompletelyLoaded = -> no
-      @view.render()
-      strategy.render.should.not.have.been.called
+    context "triggers", ->
 
-    context "updates", ->
-      
       beforeEach ->
-        @clock = sinon.useFakeTimers()
-        @view.render = sinon.spy()
-        @view.initialize renderInterval: 0
+        @view.update = sinon.spy()
+        @view.model.loadingTree = no
+        @view.render()
+        @view.update.reset()
 
-      afterEach ->
-        @clock.restore()
-
-      it "is triggered after a reset", ->
-        @view.model.trigger "reset"
-        @clock.tick 200
-        @view.render.should.have.been.calledOnce
-
-      it "is triggered when a node was added", ->
+      it "is triggered when node was added", ->
         @view.model.trigger "add"
-        @clock.tick 200
-        @view.render.should.have.been.calledOnce
+        @view.update.should.have.been.calledOnce
 
-      it "is triggered when a node was removed", ->
+      it "is triggered when node was removed", ->
         @view.model.trigger "remove"
-        @clock.tick 200
-        @view.render.should.have.been.calledOnce
+        @view.update.should.have.been.calledOnce
 
-      it "is triggered when a label changed", ->
+      it "is triggered on label change", ->
         @view.model.trigger "change:label"
-        @clock.tick 200
-        @view.render.should.have.been.calledOnce
+        @view.update.should.have.been.calledOnce
 
-      it "is triggered when hit state changed", ->
+      it "is triggered on hit change", ->
         @view.model.trigger "change:hit"
-        @clock.tick 200
-        @view.render.should.have.been.calledOnce
+        @view.update.should.have.been.calledOnce
 
-  describe "renderSelection()", ->
-  
-    it "can be chained", ->
-      @view.renderSelection().should.equal @view
-
-    it "is triggered on collection reset", ->
-      @view.renderSelection = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "reset"
-      @view.renderSelection.should.have.been.calledOnce
-
-    it "is triggered on collection load", ->
-      @view.renderSelection = sinon.spy()
-      @view.initialize()
-      @view.model.trigger "loaded"
-      @view.renderSelection.should.have.been.calledOnce
-
-    context "loaded", ->
-
-      beforeEach ->
-        @view.model.isCompletelyLoaded = -> yes
-
-      it "hides loading animation", ->
-        @view.hideLoadingAnimation = sinon.spy()
-        @view.renderSelection()
-        @view.hideLoadingAnimation.should.have.been.calledOnce
-
-      it "calls render", ->
-        @view.render = sinon.spy()
-        @view.renderSelection()
-        @view.render.should.have.been.calledOnce
-
-      it "centers selection", ->
-        @view.centerSelection = sinon.spy()
-        @view.renderSelection()
-        @view.centerSelection.should.have.been.calledOnce
-
-    context "pending", ->
-
-      beforeEach ->
-        @view.model.isCompletelyLoaded = -> no
-
-      it "does not render immediately", ->
-        @view.render = sinon.spy()
-        @view.initialize()
-        @view.renderSelection()
-        @view.render.should.not.have.been.called
-
-      it "does not center selection", ->
-        @view.centerSelection = sinon.spy()
-        @view.renderSelection()
-        @view.centerSelection.should.not.have.been.called
-
-      it "shows loading animation", ->
-        @view.showLoadingAnimation = sinon.spy()
-        @view.renderSelection()
-        @view.showLoadingAnimation.should.have.been.calledOnce
-
-  describe "showLoadingAnimation()", ->
-
-    beforeEach ->
-      @svg = d3.select @view.$(".concept-map")[0]
-      @view.$el.appendTo "#konacha"
-  
-    it "hides concept nodes", ->
-      @svg.append("g").attr("class", "concept-node")
-      @view.showLoadingAnimation()
-      @view.$(".concept-node").attr("style").should.include "display: none"
-
-    it "does not hide root node", ->
-      @svg.append("g").attr("class", "concept-node repository-root")
-      @view.showLoadingAnimation()
-      should.not.exist @view.$(".concept-node").attr("style")
-
-    it "hides edges", ->
-      @svg.append("g").attr("class", "concept-edge")
-      @view.showLoadingAnimation()
-      @view.$(".concept-edge").attr("style").should.include "display: none"
-
-    it "shows progress indicator", ->
-      @svg.append("g")
-        .attr("class", "progress-indicator")
-        .style("display", "none")
-      @view.showLoadingAnimation()
-      @view.$(".progress-indicator").attr("style").should.not.include "display: none"
-
-  describe "hideLoadingAnimation()", ->
-   
-    beforeEach ->
-      @svg = d3.select @view.$(".concept-map")[0]
-      @view.$el.appendTo "#konacha"
-  
-    it "reveals concept nodes", ->
-      @svg.append("g")
-        .attr("class", "concept-node")
-        .style("display", "none")
-      @view.hideLoadingAnimation()
-      @view.$(".concept-node").attr("style").should.be.empty
-
-    it "reveals edges", ->
-      @svg.append("g")
-        .attr("class", "concept-edge")
-        .style("display", "none")
-      @view.hideLoadingAnimation()
-      @view.$(".concept-edge").attr("style").should.be.empty
-
-    it "hides progress indicator", ->
-      @svg.append("g")
-        .attr("class", "progress-indicator")
-      @view.hideLoadingAnimation()
-      @view.$(".progress-indicator").attr("style").should.include "display: none"
+      it "is never triggered when loading tree", ->
+        @view.model.loadingTree = yes
+        @view.render()
+        @view.update.reset()
+        @view.model.trigger "add"
+        @view.model.trigger "remove"
+        @view.model.trigger "change:label"
+        @view.model.trigger "change:hit"
+        @view.update.should.not.have.been.called
 
   describe "zoomIn()", ->
 
@@ -307,7 +213,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     it "applies zoom", ->
       @view.navigator.scale(1)
       @view.options.scaleStep = 0.5
-      @view.render()
+      @view.update()
       @view.zoomIn()
       @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
       
@@ -338,7 +244,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     it "applies zoom", ->
       @view.navigator.scale(1)
       @view.options.scaleStep = 0.5
-      @view.render()
+      @view.update()
       @view.zoomIn()
       @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
 

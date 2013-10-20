@@ -28,11 +28,15 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     nodes
 
   createNodes: (enter) ->
-    nodes = enter.append("g")
+    all = enter.append("g")
       .attr("class", "concept-node")
       .classed("repository-root", (datum) ->
         datum.type is "repository"
       )
+
+    nodes = all.filter(
+      (datum) -> datum.type isnt "placeholder"
+    )
 
     nodes.append("title")
 
@@ -60,9 +64,43 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     links.append("circle").attr("class", "bullet")
     links.append("text").attr("class", "label")
 
-    nodes
+    placeholders = all.filter(
+      (datum) -> datum.type is "placeholder"
+    )
+
+    placeholders.classed("placeholder", true)
+
+    placeholders.append("circle")
+      .attr("class", "background")
+      .attr("r", 10)
+
+    indicators = placeholders.append("g")
+      .attr("class", "progress-indicator")
+
+    tracks = indicators.append("circle")
+      .attr("class", "track")
+      .attr("r", "6")
+
+    cursors = indicators.append("path")
+      .attr("class", "cursor")
+      .attr("d", "M 6 0 A 6 6 0 0 1 3 5.19")
+    
+    parent = @parent
+    cursors.each( (datum) ->
+      cursor = d3.select @
+      datum.loop = parent.startLoop (animation) ->
+        cursor.attr("transform", ->
+          "rotate(#{animation.duration * 0.4 % 360})"
+        )     
+    )
+
+    all
 
   deleteNodes: (exit) ->
+    exit.each( (datum) =>
+      if animation = datum.loop
+        @parent.stopLoop animation
+    )
     exit.remove()
 
   updateNodes: (nodes) ->
