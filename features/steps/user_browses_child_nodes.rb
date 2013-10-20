@@ -3,6 +3,10 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   include Api::Graph::Factory
   include EdgesHelpers
 
+  step 'I have selected a repository "Billiards"' do
+    @repository.update_attributes name: "Billiards"
+  end
+
   step 'a concept "pocket billiards" exists' do
     @pocket_billiards = create_concept_with_label "pocket billiards"
   end
@@ -40,7 +44,7 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
     within("#coreon-concept-map") do
       page.should have_css(".concept-node.placeholder")
     end
-    collect_placeholder_edges.should contain("+[My Repository]")
+    collect_placeholder_edges.should include("+[Billiards]")
   end
 
   step 'this placeholder should have no object count' do

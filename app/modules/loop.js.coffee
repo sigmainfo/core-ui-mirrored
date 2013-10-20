@@ -20,8 +20,9 @@ Coreon.Modules.Loop =
     status
 
   stopLoop: (status) ->
-    @_loops = for current in @_loops
-      if not status? or current is status
-        cancelAnimationFrame current._currentHandle
-        continue
-      current
+    if @_loops?
+      @_loops = for current in @_loops
+        if not status? or current is status
+          cancelAnimationFrame current._currentHandle
+          continue
+        current

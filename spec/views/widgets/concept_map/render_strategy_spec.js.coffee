@@ -219,13 +219,15 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         )
 
       it "classifies nodes", ->
-        @strategy.createNodes @enter
         @placeholder.attr("class").split(" ").should.include "placeholder"
 
       it "renders background", ->
         background = @placeholder.select("circle.background")
         should.exist background.node()
-        background.attr("r").should.equal "10"
+
+      it "renders icon", ->
+        icon = @placeholder.select("path.icon")
+        should.exist icon.node()
 
       it "renders progress indicator", ->
         indicator = @placeholder.select("g.progress-indicator")
@@ -236,11 +238,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         cursor = indicator.select("path.cursor")
         should.exist cursor.node()
         cursor.attr("d").should.equal "M 6 0 A 6 6 0 0 1 3 5.19"
-
-      it "starts animation loop", ->
-        cursor = @placeholder.select("g.progress-indicator .cursor")
-        @nextFrame duration: 30
-        cursor.attr("transform").should.equal "rotate(12)"
 
       it "does not create title element", ->
         should.not.exist @placeholder.select("title").node()
@@ -275,87 +272,196 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     beforeEach ->
       @selection = @parent.append("g").attr("class", "concept-node")
 
-    it "can be chained", ->
-      nodes = @selection.data []
-      @strategy.updateNodes(nodes).should.equal nodes
+    context "regular nodes", ->
 
-    it "classifies hits", ->
-      nodes = @selection.data [
-        hit: yes
-      ]
-      @strategy.updateNodes nodes
-      nodes.attr("class").split(" ").should.include "hit"
+      it "can be chained", ->
+        nodes = @selection.data []
+        @strategy.updateNodes(nodes).should.equal nodes
 
-    it "classifies parents of hit", ->
-      nodes = @selection.data [
-        parent_of_hit: yes
-      ]
-      @strategy.updateNodes nodes
-      nodes.attr("class").split(" ").should.include "parent-of-hit"
+      it "classifies hits", ->
+        nodes = @selection.data [
+          hit: yes
+        ]
+        @strategy.updateNodes nodes
+        nodes.attr("class").split(" ").should.include "hit"
 
-    it "classifies new concepts", ->
-      nodes = @selection.data [
-        id: null
-      ]
-      @strategy.updateNodes nodes
-      nodes.attr("class").split(" ").should.include "new"
+      it "classifies parents of hit", ->
+        nodes = @selection.data [
+          parent_of_hit: yes
+        ]
+        @strategy.updateNodes nodes
+        nodes.attr("class").split(" ").should.include "parent-of-hit"
 
-    it "does not classify ordinary nodes", ->
-      nodes = @selection.data [
-        id: "node1"
-        hit: no
-      ]
-      @strategy.updateNodes nodes
-      classNames = nodes.attr("class").split(" ")
-      classNames.should.not.include "hit"
-      classNames.should.not.include "new"
+      it "classifies new concepts", ->
+        nodes = @selection.data [
+          id: null
+        ]
+        @strategy.updateNodes nodes
+        nodes.attr("class").split(" ").should.include "new"
 
-    it "updates title", ->
-      title = @selection.append("title")
-      nodes = @selection.data [
-        label: "node 123"
-      ]
-      @strategy.updateNodes nodes
-      title.text().should.equal "node 123"
+      it "does not classify ordinary nodes", ->
+        nodes = @selection.data [
+          id: "node1"
+          hit: no
+        ]
+        @strategy.updateNodes nodes
+        classNames = nodes.attr("class").split(" ")
+        classNames.should.not.include "hit"
+        classNames.should.not.include "new"
 
-    it "updates bullet size depending on hit status", ->
-      bullet = @selection.append("circle").attr("class", "bullet")
-      nodes = @selection.data [
-        hit: no
-      ]
-      @strategy.updateNodes nodes
-      bullet.attr("r").should.equal "2.5"
-      nodes = @selection.data [
-        hit: yes
-      ]
-      @strategy.updateNodes nodes
-      bullet.attr("r").should.equal "2.8"
+      it "updates title", ->
+        title = @selection.append("title")
+        nodes = @selection.data [
+          label: "node 123"
+        ]
+        @strategy.updateNodes nodes
+        title.text().should.equal "node 123"
 
-    it "applies drop shadow depending on hit status", ->
-      background = @selection.append("rect").attr("class", "background")
-      nodes = @selection.data [
-        hit: yes
-      ]
-      @strategy.updateNodes nodes
-      background.attr("filter").should.equal "url(#coreon-drop-shadow-filter)"
-      nodes = @selection.data [
-        hit: no
-      ]
-      @strategy.updateNodes nodes
-      should.not.exist background.attr("filter")
+      it "updates bullet size depending on hit status", ->
+        bullet = @selection.append("circle").attr("class", "bullet")
+        nodes = @selection.data [
+          hit: no
+        ]
+        @strategy.updateNodes nodes
+        bullet.attr("r").should.equal "2.5"
+        nodes = @selection.data [
+          hit: yes
+        ]
+        @strategy.updateNodes nodes
+        bullet.attr("r").should.equal "2.8"
 
-    it "rounds corners of root node", ->
-      background = @selection.append("rect").attr("class", "background")
-      nodes = @selection.data [
-        type: "repository"
-      ]
-      @strategy.updateNodes nodes
-      background.attr("rx").should.eql "5"
-      nodes = @selection.data [
-        type: "concept"
-      ]
-      @strategy.updateNodes nodes
-      should.not.exist background.attr("rx")
+      it "applies drop shadow depending on hit status", ->
+        background = @selection.append("rect").attr("class", "background")
+        nodes = @selection.data [
+          hit: yes
+        ]
+        @strategy.updateNodes nodes
+        background.attr("filter").should.equal "url(#coreon-drop-shadow-filter)"
+        nodes = @selection.data [
+          hit: no
+        ]
+        @strategy.updateNodes nodes
+        should.not.exist background.attr("filter")
+
+      it "rounds corners of root node", ->
+        background = @selection.append("rect").attr("class", "background")
+        nodes = @selection.data [
+          type: "repository"
+        ]
+        @strategy.updateNodes nodes
+        background.attr("rx").should.eql "5"
+        nodes = @selection.data [
+          type: "concept"
+        ]
+        @strategy.updateNodes nodes
+        should.not.exist background.attr("rx")
+
+    context "placeholders", ->
+
+      context "collapsed", ->
+
+        it "resets background radius", ->
+          background = @selection.append("circle").attr("class", "background")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: no
+          ]
+          @strategy.updateNodes nodes
+          background.attr("r").should.equal "7"
+
+        it "shows icon", ->
+          icon = @selection.append("path").attr("class", "icon")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: no
+          ]
+          @strategy.updateNodes nodes
+          should.not.exist icon.attr("style")
+
+        it "hides progress indicator", ->
+          indicator = @selection.append("g").attr("class", "progress-indicator")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: no
+          ]
+          @strategy.updateNodes nodes
+          indicator.attr("style").should.include "display: none;"
+
+        it "does not start animation loop", ->
+          cursor = @selection.append("path").attr("class", "cursor")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: no
+            loop: null
+          ]
+          @strategy.updateNodes nodes
+          @nextFrame duration: 30
+          should.not.exist cursor.attr("transform")
+
+        it "stops running animation loop", ->
+          cursor = @selection.append("path").attr("class", "cursor")
+          animation = duration: 12
+          @parent.stopLoop = sinon.spy()
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: no
+            loop: animation
+          ]
+          @strategy.updateNodes nodes
+          @parent.stopLoop.should.have.been.calledOnce
+          @parent.stopLoop.should.have.been.calledWith animation
+
+      context "loading", ->
+
+        it "increases background radius", ->
+          background = @selection.append("circle").attr("class", "background")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: yes
+          ]
+          @strategy.updateNodes nodes
+          background.attr("r").should.equal "10"
+
+        it "hides icon", ->
+          icon = @selection.append("path").attr("class", "icon")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: yes
+          ]
+          @strategy.updateNodes nodes
+          icon.attr("style").should.include "display: none;"
+
+        it "shows progress indicator", ->
+          indicator = @selection.append("g").attr("class", "progress-indicator")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: yes
+          ]
+          @strategy.updateNodes nodes
+          should.not.exist indicator.attr("style")
+
+        it "starts animation loop", ->
+          cursor = @selection.append("path").attr("class", "cursor")
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: yes
+          ]
+          @strategy.updateNodes nodes
+          @nextFrame duration: 30
+          cursor.attr("transform").should.equal "rotate(12)"
+
+        it "does not start animation more than once", ->
+          cursor = @selection.append("path").attr("class", "cursor")
+          animation = duration: 12
+          @parent.startLoop = sinon.spy()
+          nodes = @selection.data [
+            type: "placeholder"
+            parent: expanded: yes
+            loop: animation
+          ]
+          @strategy.updateNodes nodes
+          @parent.startLoop.should.not.have.been.called
+          
 
   describe "renderEdges()", ->
 

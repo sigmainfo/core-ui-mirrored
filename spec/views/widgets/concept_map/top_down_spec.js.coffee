@@ -138,7 +138,7 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
       @strategy.updateEdges edges
       edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,123"
 
-    it "updates path to placeholder", ->
+    it "updates path to idle placeholder", ->
       edges = @selection.data [
         source:
           id: "source"
@@ -146,6 +146,33 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
           x: 123
           y: 45
           labelHeight: 50
+          expanded: no
+        target:
+          id: "target"
+          type: "placeholder"
+          x: 123
+          y: 67
+      ]
+      @strategy.diagonal.withArgs(
+        source:
+          x: 123
+          y: 45 + 50 + 7
+        target:
+          x: 123
+          y: 67 - 7
+      ).returns  "M179,123C119.5,123 119.5,123 60,110"
+      @strategy.updateEdges edges
+      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,110"
+
+    it "updates path to loading placeholder", ->
+      edges = @selection.data [
+        source:
+          id: "source"
+          type: "concept"
+          x: 123
+          y: 45
+          labelHeight: 50
+          expanded: yes
         target:
           id: "target"
           type: "placeholder"

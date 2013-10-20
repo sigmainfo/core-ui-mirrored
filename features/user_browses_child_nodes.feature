@@ -9,7 +9,8 @@ Feature: user browses child nodes
     And I am logged in
 
   Scenario: expand child nodes
-    Given a concept "pocket billiards" exists
+    Given I have selected a repository "Billiards"
+    And a concept "pocket billiards" exists
     And this concept has narrower concepts "pool", "snooker", "English billiards"
     And "pool" has narrower concepts "8-ball", "nine ball"
     And a concept "carom billiards" exists

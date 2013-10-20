@@ -182,7 +182,6 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.tree().should.have.deep.property "root.id", "repo-123"
       @collection.tree().should.have.deep.property "root.label", "repo 123"
       @collection.tree().should.have.deep.property "root.type", "repository"
-      @collection.tree().should.have.deep.property("root.children").with.lengthOf 0
 
     it "defaults type to concept", ->
       @collection.reset [ id: "123" ], silent: true
@@ -204,12 +203,6 @@ describe "Coreon.Collections.ConceptNodes", ->
       @collection.tree().should.have.deep.property "root.children[0].expanded", yes
       @collection.tree().should.have.deep.property("root.children[0].children").with.length 0
 
-    it "identifies leaf nodes", ->
-      @collection.reset [ subconcept_ids: [] ]
-      @collection.tree().should.have.deep.property "root.children[0].leaf", yes
-      @collection.reset [ subconcept_ids: [ "child" ] ]
-      @collection.tree().should.have.deep.property "root.children[0].leaf", no
-
     it "defaults hit attribute to false", ->
       @collection.reset [ id: "123" ], silent: true
       node = @collection.get "123"
@@ -228,6 +221,22 @@ describe "Coreon.Collections.ConceptNodes", ->
       rootEdges[0].should.have.property "target", root.children[0]
       rootEdges[1].should.have.property "target", root.children[1]
 
+    context "empty collection", ->
+
+      beforeEach ->
+        @collection.resetFromHits models: []
+
+      it "inserts placeholder for top level concept nodes", ->
+        repository = new Backbone.Model id: "my-repo-1234"
+        Coreon.application = repository: -> repository
+        @collection.tree().root.children.should.have.lengthOf 1
+        root = @collection.tree().root
+        placeholder = root.children[0]
+        placeholder.should.have.property "type", "placeholder"
+        placeholder.should.have.property("children").that.is.empty
+        placeholder.should.have.property "id", "+[my-repo-1234]"
+        root.should.have.property "expanded", no
+
     context "loading hits", ->
       
       beforeEach ->
@@ -240,14 +249,15 @@ describe "Coreon.Collections.ConceptNodes", ->
         @collection.resetFromHits @hits
   
       it "inserts placeholder for concept nodes", ->
-        Coreon.application = repository: ->
-          id: "my-repo-123"
-          get: -> "MY REPO 123"
+        repository = new Backbone.Model id: "my-repo-1234"
+        Coreon.application = repository: -> repository
         @collection.tree().root.children.should.have.lengthOf 1
-        placeholder = @collection.tree().root.children[0]
+        root = @collection.tree().root
+        placeholder = root.children[0]
         placeholder.should.have.property "type", "placeholder"
         placeholder.should.have.property("children").that.is.empty
-        placeholder.should.have.property "id", "+my-repo-123"
+        placeholder.should.have.property "id", "+[my-repo-1234]"
+        root.should.have.property "expanded", yes
 
       it "removes placeholder when completely loaded", ->
         @collection.tree()

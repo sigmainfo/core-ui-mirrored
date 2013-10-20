@@ -130,7 +130,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       @strategy.updateEdges edges
       edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,123"
 
-    it "updates path to placeholder", ->
+    it "updates path to idle placeholder", ->
       edges = @selection.data [
         source:
           id: "source"
@@ -138,6 +138,33 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           x: 123
           y: 45
           labelWidth: 123
+          expanded: no
+        target:
+          id: "target"
+          type: "placeholder"
+          x: 123
+          y: 67
+      ]
+      @strategy.diagonal.withArgs(
+        source:
+          x: 123
+          y: 45 + 123 - 7
+        target:
+          x: 123
+          y: 67 - 7
+      ).returns  "M179,123C119.5,123 119.5,123 60,113"
+      @strategy.updateEdges edges
+      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,113"
+
+    it "updates path to loading placeholder", ->
+      edges = @selection.data [
+        source:
+          id: "source"
+          type: "concept"
+          x: 123
+          y: 45
+          labelWidth: 123
+          expanded: yes
         target:
           id: "target"
           type: "placeholder"
@@ -151,9 +178,9 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         target:
           x: 123
           y: 67 - 10
-      ).returns  "M179,123C119.5,123 119.5,123 60,113"
+      ).returns  "M179,123C119.5,123 119.5,123 60,110"
       @strategy.updateEdges edges
-      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,113"
+      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,110"
 
     it "hides path when label width is unknown", ->
       edges = @selection.data [

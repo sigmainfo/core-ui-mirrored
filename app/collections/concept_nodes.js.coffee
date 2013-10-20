@@ -45,27 +45,27 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
           @add attrs, merge: yes
 
   _createRoot: ->
+    repository = Coreon.application.repository()
     root = super
     root.type = "repository"
-    repository = Coreon.application.repository()
     root.id = repository.id
     root.label = repository.get "name"
+    root.expanded = @models.length > 0
     root
 
   _createDatum: (model) ->
     datum = super
     datum.type = "concept"
-    datum.hit = model.has "hit"
     datum.label = model.get "label"
-    datum.leaf = model.get("subconcept_ids")?.length is 0
-    datum.expanded = model.get "expanded"
+    datum.hit = model.has "hit"
     datum.parent_of_hit = model.get "parent_of_hit"
+    datum.expanded = model.get "expanded"
     datum
 
   _createPlaceholder: (model) ->
     type: "placeholder"
     children: []
-    id: "+#{model.id}"
+    id: "+[#{model.id}]"
 
   updateDatum: (model) ->
     if datum = @_getDatum model
@@ -73,7 +73,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
       datum.hit = model.has "hit"
 
   _createTree: ->
-    if @loadingTree
+    if @loadingTree or @models.length is 0
       repository = @_createRoot()
       placeholder = @_createPlaceholder repository
       repository.children.push placeholder

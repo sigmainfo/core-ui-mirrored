@@ -10,7 +10,6 @@
 
 class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
 
-
   id: "coreon-concept-map"
 
   className: "widget"

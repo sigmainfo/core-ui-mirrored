@@ -72,27 +72,21 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     placeholders.append("circle")
       .attr("class", "background")
-      .attr("r", 10)
+
+    placeholders.append("path")
+      .attr("class", "icon")
+      .attr("d", "M 0 -4 v 8 M -4 0 h 8")
 
     indicators = placeholders.append("g")
       .attr("class", "progress-indicator")
 
-    tracks = indicators.append("circle")
+    indicators.append("circle")
       .attr("class", "track")
       .attr("r", "6")
 
-    cursors = indicators.append("path")
+    indicators.append("path")
       .attr("class", "cursor")
       .attr("d", "M 6 0 A 6 6 0 0 1 3 5.19")
-    
-    parent = @parent
-    cursors.each( (datum) ->
-      cursor = d3.select @
-      datum.loop = parent.startLoop (animation) ->
-        cursor.attr("transform", ->
-          "rotate(#{animation.duration * 0.4 % 360})"
-        )     
-    )
 
     all
 
@@ -103,7 +97,13 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     )
     exit.remove()
 
-  updateNodes: (nodes) ->
+  updateNodes: (all) ->
+    all
+
+    nodes = all.filter(
+      (datum) -> datum.type isnt "placeholder"
+    )
+
     nodes
       .classed("hit", (datum) ->
         datum.hit
@@ -133,7 +133,39 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
         if datum.hit then "url(#coreon-drop-shadow-filter)" else null
       )
 
-    nodes
+    placeholders = all.filter(
+      (datum) -> datum.type is "placeholder"
+    )
+
+    placeholders.select("circle.background")
+      .attr("r", (datum) ->
+        if datum.parent.expanded then 10 else 7
+      )
+
+    placeholders.select("path.icon")
+      .style("display", (datum) ->
+        if datum.parent.expanded then "none" else null
+      )
+
+    placeholders.select("g.progress-indicator")
+      .style("display", (datum) ->
+        if datum.parent.expanded then null else "none"
+      )
+
+    parent = @parent
+    placeholders.select("path.cursor")
+      .each( (datum) ->
+        if datum.parent.expanded
+          cursor = d3.select @
+          datum.loop ?= parent.startLoop (animation) ->
+            cursor.attr("transform", ->
+              "rotate(#{animation.duration * 0.4 % 360})"
+            )     
+        else
+          parent.stopLoop datum.loop
+      )
+
+    all
 
   renderEdges: (edges) ->
     edges = @parent.selectAll(".concept-edge")
