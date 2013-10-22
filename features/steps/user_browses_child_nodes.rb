@@ -44,22 +44,29 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
     within("#coreon-concept-map") do
       page.should have_css(".concept-node.placeholder")
     end
-    collect_placeholder_edges.should include("+[Billiards]")
+    collect_placeholder_edges.should == ["+[Billiards]"]
   end
 
   step 'this placeholder should have no object count' do
-    pending 'step not implemented'
+    within("#coreon-concept-map") do
+      page.should have_no_css(".concept-node.placeholder .nodes-count")
+    end
   end
 
   step 'I click this placeholder' do
-    pending 'step not implemented'
-  end
-
-  step 'I should not see this placeholder anymore' do
-    pending 'step not implemented'
+    within("#coreon-concept-map") do
+      page.find(".concept-node.placeholder").click
+    end
   end
 
   step 'I should see two concept nodes "pocket billiards" and "carom billiards"' do
+    within("#coreon-concept-map") do
+      page.should have_css(".concept-node", text: "pocket billiards")
+      page.should have_css(".concept-node", text: "carom billiards")
+    end
+  end
+
+  step 'I should not see this placeholder anymore' do
     pending 'step not implemented'
   end
 

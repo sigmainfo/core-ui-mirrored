@@ -20,15 +20,15 @@ Feature: user browses child nodes
     And I should see a placeholder node deriving from it
     And this placeholder should have no object count
     When I click this placeholder
-    Then I should not see this placeholder anymore
-    But I should see two concept nodes "pocket billiards" and "carom billiards" 
+    Then I should see two concept nodes "pocket billiards" and "carom billiards" 
+    But I should not see this placeholder anymore
     And both should be connected to the repository node
     And I should see a placeholder deriving from each of them
     And I should see object count "1" for placeholder connected to "carom billiards"
     And I should see object count "3" for placeholder connected to "pocket billiards"
     When I click the placeholder connected to "pocket billiards"
-    Then I should not see this placeholder anymore
-    But I should see three concept nodes "pool", "snooker", "English billiards"
+    Then I should see three concept nodes "pool", "snooker", "English billiards"
     And these should be connected to "pocket billiards"
+    But I should not see the placeholder connected to "pocket billiards" anymore
     And I should see a placeholder deriving from "pool" only
     And I should see object count "2" for placeholder connected to "pool"
