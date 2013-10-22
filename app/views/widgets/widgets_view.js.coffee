@@ -4,6 +4,7 @@
 #= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
 #= require collections/concept_nodes
+#= require modules/helpers
 #= require modules/droppable
 
 class Coreon.Views.Widgets.WidgetsView extends Backbone.View
@@ -76,3 +77,8 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     localStorage.setItem cache_id, JSON.stringify settings
 
   saveLayout: _.debounce saveLayout, 500
+
+  remove: ->
+    super
+    subview.remove() for subview in @subviews
+    @subviews = []
