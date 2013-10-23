@@ -1,10 +1,13 @@
 class Spinach::Features::UserSelectsSourceLanguage < Spinach::FeatureSteps
+
+  include AuthSteps
+
   step 'the languages "English", "German", and "French" are available' do
-    pending 'step not implemented'
+    @repository.update_attributes languages: %w{en de fr}
   end
 
   step 'I visit the repository root page' do
-    pending 'step not implemented'
+    visit "/#{@repository.id}"
   end
 
   step 'I should see a widget "Languages"' do
@@ -36,14 +39,6 @@ class Spinach::Features::UserSelectsSourceLanguage < Spinach::FeatureSteps
   end
 
   step 'I reload the page' do
-    pending 'step not implemented'
-  end
-
-  step 'my name is "William Blake" with email "nobody@blake.com" and password "se7en!"' do
-    pending 'step not implemented'
-  end
-
-  step 'I am logged in' do
     pending 'step not implemented'
   end
 end
