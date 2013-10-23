@@ -106,6 +106,7 @@ en:
     copyright: "Copyright"
     info: "Info"
     contact: "Contact"
+    languages: "Languages"
   
   repositories:
     select: "Select repository"
@@ -175,3 +176,8 @@ en:
   user:
     name: "Name"
     email: "Email"
+    
+  languages:
+    en: "English"
+    de: "German"
+    fr: "French"

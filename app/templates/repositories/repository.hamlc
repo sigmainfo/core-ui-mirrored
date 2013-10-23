@@ -14,6 +14,9 @@
     %tr
       %th= I18n.t "repository.info"
       %td= @repository.get "info"
+    %tr
+      %th= I18n.t "repository.languages"
+      %td= ((@repository.get("languages") || []).map (lang) -> " #{I18n.t "languages.#{lang}"} (#{lang})").toString().trim()
 %section.contact
   %h3= I18n.t "repository.contact"
   %table.managers

@@ -14,3 +14,6 @@ describe "Coreon.Models.Repository", ->
     it "creates empty set for managers", ->
       @model.get("managers").should.eql []
     
+    it "creates empty set for languages", ->
+      @model.get("languages").should.eql []
+    

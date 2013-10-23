@@ -6,3 +6,4 @@ class Coreon.Models.Repository extends Backbone.Model
 
   defaults: ->
     managers: []
+    languages: []

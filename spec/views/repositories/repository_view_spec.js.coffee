@@ -42,10 +42,16 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
       I18n.t.withArgs("repository.created").returns "Created at"
       I18n.t.withArgs("repository.copyright").returns "Copyright"
       I18n.t.withArgs("repository.info").returns "Info"
+      I18n.t.withArgs("repository.languages").returns "Languages"
+      I18n.t.withArgs("languages.en").returns "English"
+      I18n.t.withArgs("languages.de").returns "German"
+      I18n.t.withArgs("languages.fr").returns "French"
+      
       @view.model.set
         created_at: "2013-06-17T09:46:52.297Z"
         copyright: "(c) 512 BC SunTzu"
         info: "Verses from the book occur in modern daily Chinese idioms and phrases."
+        languages: ["en", "de", "fr"]
       @view.render()
 
       @view.$el.should.have "table th"
@@ -58,6 +64,9 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
 
       @view.$("table tr:eq(2) th").should.have.text "Info"
       @view.$("table tr:eq(2) td").should.have.text  "Verses from the book occur in modern daily Chinese idioms and phrases."
+
+      @view.$("table tr:eq(3) th").should.have.text "Languages"
+      @view.$("table tr:eq(3) td").should.have.text  "English (en), German (de), French (fr)"
 
     it "renders contact information", ->
       I18n.t.withArgs("repository.contact").returns "Contact"
