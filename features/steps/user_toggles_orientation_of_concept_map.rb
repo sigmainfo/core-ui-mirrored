@@ -31,6 +31,7 @@ class Spinach::Features::UserTogglesOrientationOfConceptMap < Spinach::FeatureSt
   end
 
   step '"weapon" should be rendered left of "handgun"' do
+    sleep 0.2
     weapon_position = get_position "weapon"
     handgun_position = get_position "handgun"
     weapon_position["left"].should < handgun_position["left"]
