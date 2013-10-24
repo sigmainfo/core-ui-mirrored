@@ -1,6 +1,7 @@
 #= require environment
 #= require jquery.ui.resizable
 #= require views/widgets/search_view
+#= require views/widgets/languages_view
 #= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
 #= require collections/concept_nodes
@@ -57,13 +58,17 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @$el.append search.render().$el
     @subviews.push search
 
+    languages= new Coreon.Views.Widgets.LanguagesView
+    @$el.append languages.render().$el
+    @subviews.push languages
+
     clipboard = new Coreon.Views.Widgets.ClipboardView
     @$el.append clipboard.render().$el
     @subviews.push clipboard
 
     @map = new Coreon.Views.Widgets.ConceptMapView
       model: new Coreon.Collections.ConceptNodes [],
-        hits: Coreon.Collections.Hits.collection()
+      hits: Coreon.Collections.Hits.collection()
     @$el.append @map.render().$el
     @subviews.push @map
 

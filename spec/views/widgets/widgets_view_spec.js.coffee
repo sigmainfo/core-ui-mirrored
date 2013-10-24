@@ -20,6 +20,11 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @search = new Backbone.View
       @search.render = sinon.stub().returns @search
       @search
+      
+    sinon.stub Coreon.Views.Widgets, "LanguagesView", =>
+      @languages = new Backbone.View
+      @languages.render = sinon.stub().returns @languages
+      @languages
 
     sinon.stub Coreon.Views.Widgets, "ClipboardView", =>
       @clips = new Backbone.View
@@ -41,6 +46,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.Collections.Hits.collection.restore()
     Coreon.Models.SearchType.restore()
     Coreon.Views.Widgets.SearchView.restore()
+    Coreon.Views.Widgets.LanguagesView.restore()
     Coreon.Views.Widgets.ClipboardView.restore()
     Coreon.Views.Widgets.ConceptMapView.restore()
     Coreon.application = null
@@ -90,6 +96,15 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @search.render.should.have.been.calledOnce
       $.contains(@view.el, @search.el).should.be.true
       @view.subviews.should.contain @search
+
+    it "renders languages view", ->
+      @view.render()
+      Coreon.Views.Widgets.LanguagesView.should.have.been.calledOnce
+      Coreon.Views.Widgets.LanguagesView.should.have.been.calledWithNew
+      #Coreon.Views.Widgets.LanguagesView.should.have.been.calledWith model: @searchType
+      @languages.render.should.have.been.calledOnce
+      $.contains(@view.el, @languages.el).should.be.true
+      @view.subviews.should.contain @languages
 
     it "renders clipboard view", ->
       @view.render()

@@ -11,7 +11,7 @@ class Spinach::Features::UserSelectsSourceLanguage < Spinach::FeatureSteps
   end
 
   step 'I should see a widget "Languages"' do
-    pending 'step not implemented'
+    page.should have_css(".widget h4", text: "Languages")
   end
 
   step 'I should see selection "None" for "Source language"' do

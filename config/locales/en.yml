@@ -46,7 +46,7 @@ en:
         headline: "Taxonomies"
         header:
           name: "Name"
-
+          
   concepts:
     list:
       header:
@@ -169,15 +169,20 @@ en:
   confirm:
     ok: "OK"
 
-  clipboard:
-    title: "Clipboard"
-    clear: "Clear"
+  widgets:
+    languages:
+      title: "Languages"
+
+    clipboard:
+      title: "Clipboard"
+      clear: "Clear"
 
   user:
     name: "Name"
     email: "Email"
     
   languages:
+    none: "None"
     en: "English"
     de: "German"
     fr: "French"
