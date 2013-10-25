@@ -5,13 +5,13 @@
   font-size: 0.94em;
   height: 22px;
   
-  h4, a {
+  h4, a, .coreon-select {
     display: inline-block;
     height: 18px;  
     padding: 2px;
   }
   
-  h4 {
+  h4, .coreon-select {
     background-color: rgba($hit-color, 0.2);
     @include border-radius(8px);
     @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);

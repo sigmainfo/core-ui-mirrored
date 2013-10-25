@@ -50,7 +50,9 @@
   }
 }
 
-#coreon-search-target-select-dropdown, #coreon-repository-select-dropdown {
+.coreon-select-dropdown, 
+#coreon-search-target-select-dropdown, 
+#coreon-repository-select-dropdown {
   position: absolute;
   top: 0;
   width: 100%;
@@ -105,6 +107,7 @@
   }  
 }
 
+.coreon-select-dropdown,
 #coreon-repository-select-dropdown {
   
   ul.options {
@@ -121,11 +124,11 @@
         @include border-top-radius(8px);
       };
 
-      &.selected a {
+      &.selected a, &.selected span {
         color: $bluecolor;
       }
       
-      a {
+      a, span {
         @include box-sizing(border-box);
         color: $browncolor;
         display: block;

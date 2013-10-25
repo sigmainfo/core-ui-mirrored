@@ -3,9 +3,15 @@
 prompt = null
 
 Coreon.Modules.Prompt =
-
-  prompt: (widget) ->
+  
+  modal: ->
+    $("#coreon-modal")
+  
+  unprompt: ->
     prompt?.remove()
-    modal = $("#coreon-modal").empty()
+    @modal().empty()
+    
+  prompt: (widget) ->
+    modal = @unprompt()
     if prompt = widget
       modal.append widget.render().$el

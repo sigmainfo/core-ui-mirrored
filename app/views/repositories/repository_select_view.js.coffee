@@ -3,6 +3,7 @@
 #= require views/repositories/repository_select_dropdown_view
 #= require modules/helpers
 #= require modules/prompt
+#= require lib/coreon_select
 #= require jquery.ui.position
 
 class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
@@ -15,6 +16,7 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
 
   events:
     "click .select": "select"
+    "change select": "changedSelect"
 
   initialize: ->
     @listenTo @model, "change:current_repository_id change:repositories", @render
@@ -23,8 +25,16 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     if repository = @model.currentRepository()
       @$el.html @template
         repository: repository
+        repositories: @model.get("repositories")
         single: @model.get("repositories")?.length is 1
+        
+      @$('select').val(repository.id).coreonSelect()
+    else
+      @$el.html ''
     @
+
+  changedSelect: (e) ->
+    Backbone.history.navigate "/#{$(event.target).val()}", trigger: yes
 
   select: (event) ->
     event.preventDefault()
