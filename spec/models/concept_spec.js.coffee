@@ -257,9 +257,6 @@ describe "Coreon.Models.Concept", ->
         Coreon.Modules.CoreAPI.sync.should.have.been.calledOnce
         Coreon.Modules.CoreAPI.sync.firstCall.args[2].should.have.property "batch", on
         
-
-    
-
   describe "save()", ->
 
     context "application sync", ->
@@ -327,3 +324,16 @@ describe "Coreon.Models.Concept", ->
 
     it "allows valid connections", ->
       @model.acceptsConnection("f00baa").should.be.true
+
+  describe "#path()", ->
+  
+    it "composes path from repository and id", ->
+      Coreon.application = repository: ->
+        path: -> "/hjkl9876"
+      @model.id = "1234sdfg"
+      expect( @model.path() ).to.equal "/hjkl9876/concepts/1234sdfg"
+
+    it "returns null path for new model", ->
+      @model.isNew = -> true
+      expect( @model.path() ).to.equal "javascript:void(0)"
+      

@@ -97,4 +97,10 @@ class Coreon.Models.Concept extends Backbone.Model
     Coreon.Modules.CoreAPI.sync method, model, options
 
   onCreate: ->
-    @trigger "create", @, @.id
+    @trigger "create", @, @id
+
+  path: ->
+    if @isNew()
+      "javascript:void(0)"
+    else
+      "#{Coreon.application.repository().path()}/concepts/#{@id}"
