@@ -17,12 +17,15 @@ describe "Coreon.Models.ConceptMapNode", ->
     it "has a null type", ->
       expect( @model.get "type" ).to.be.null
 
-    it "creates empty set for child_node_ids", ->
-      child_node_ids = @model.get "child_node_ids"
-      expect( child_node_ids ).to.be.an.instanceOf Array
-      expect( child_node_ids ).to.be.empty
+    it "is loaded", ->
+      expect( @model.get "loaded" ).to.be.true
+
+    it "creates empty set for parent_node_ids", ->
+      parent_node_ids = @model.get "parent_node_ids"
+      expect( parent_node_ids ).to.be.an.instanceOf Array
+      expect( parent_node_ids ).to.be.empty
       other = new Coreon.Models.ConceptMapNode
-      expect( child_node_ids ).to.not.equal other.get("child_node_ids")
+      expect( parent_node_ids ).to.not.equal other.get("parent_node_ids")
 
     it "is not expanded", ->
       expect( @model.get "expanded" ).to.be.false
@@ -75,6 +78,14 @@ describe "Coreon.Models.ConceptMapNode", ->
       spy.reset()
       @concept.trigger "change", @concept
       expect( spy ).to.have.been.calledOnce
+
+    it "is triggered when model is fully loaded", ->
+      spy = sinon.spy()
+      @model.update = spy
+      @model.initialize()
+      spy.reset()
+      @concept.trigger "nonblank", @concept
+      expect( spy ).to.have.been.calledOnce
   
     it "defers label from model", ->
       @concept.set "label", "Billiards", silent: yes
@@ -86,6 +97,21 @@ describe "Coreon.Models.ConceptMapNode", ->
       @concept.set "name", "Repository", silent: yes
       @model.update @concept
       expect( @model.get "label" ).to.equal "Repository"
+
+    it "defers loaded state from model", ->
+      @concept.blank = yes
+      @model.update @concept
+      expect( @model.get "loaded" ).to.be.false
+
+    it "defers parent node ids from superconcept ids", ->
+      @concept.set "superconcept_ids", [ "abc123", "fgh789" ]
+      @model.update @concept
+      expect( @model.get "parent_node_ids" ).to.eql [ "abc123", "fgh789" ]
+
+    it "leaves parent node ids unchanged when model has no superconcept ids", ->
+      @concept.unset "superconcept_ids"
+      @model.update @concept
+      expect( @model.get "parent_node_ids" ).to.eql []
 
   describe "#path()", ->
     

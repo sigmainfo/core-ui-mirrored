@@ -74,6 +74,8 @@ describe "Coreon.Modules.Accumulation", ->
         model.on "nonblank", spy
         model.trigger "sync", model
         spy.should.have.been.calledOnce
+        spy.should.have.been.calledOn model
+        spy.should.have.been.calledWith model
 
     context "on already loaded model", ->
 

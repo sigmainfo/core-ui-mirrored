@@ -5,10 +5,11 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
   defaults: ->
     model: null
     type: null
-    child_node_ids: []
-    expanded: false
-    hit: false
-    parent_of_hit: false
+    parent_node_ids: []
+    loaded: yes
+    expanded: no
+    hit: no
+    parent_of_hit: no
 
   initialize: ->
     @stopListening()
@@ -20,11 +21,15 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
         hit: model.has "hit"
       }, silent: yes
       @update model, silent: yes
-      @listenTo model, "change", @update
+      @listenTo model, "change nonblank", @update
 
   update: (model, options) ->
-    label = model.get("label") or model.get("name")
-    @set "label", label, options
+    attrs =
+      label: model.get("label") or model.get("name")
+      loaded: not model.blank
+    if model.has "superconcept_ids"
+      attrs.parent_node_ids = model.get "superconcept_ids"
+    @set attrs, options
 
   path: ->
     if model = @get "model"

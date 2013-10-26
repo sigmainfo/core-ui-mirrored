@@ -39,4 +39,4 @@ Coreon.Modules.Accumulation =
   _fetched: (model) ->
     if model.blank
       model.blank = false
-      model.trigger "nonblank"
+      model.trigger "nonblank", model
