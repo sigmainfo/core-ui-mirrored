@@ -6,6 +6,7 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
     model: null
     type: null
     parent_node_ids: []
+    child_node_ids: []
     loaded: yes
     expanded: no
     hit: no
@@ -29,6 +30,8 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
       loaded: not model.blank
     if model.has "superconcept_ids"
       attrs.parent_node_ids = model.get "superconcept_ids"
+    if model.has "subconcept_ids"
+      attrs.child_node_ids = model.get "subconcept_ids"
     @set attrs, options
 
   path: ->

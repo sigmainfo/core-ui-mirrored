@@ -20,6 +20,13 @@ describe "Coreon.Models.ConceptMapNode", ->
     it "is loaded", ->
       expect( @model.get "loaded" ).to.be.true
 
+    it "creates empty set for child_node_ids", ->
+      child_node_ids = @model.get "child_node_ids"
+      expect( child_node_ids ).to.be.an.instanceOf Array
+      expect( child_node_ids ).to.be.empty
+      other = new Coreon.Models.ConceptMapNode
+      expect( child_node_ids ).to.not.equal other.get("child_node_ids")
+
     it "creates empty set for parent_node_ids", ->
       parent_node_ids = @model.get "parent_node_ids"
       expect( parent_node_ids ).to.be.an.instanceOf Array
@@ -112,6 +119,16 @@ describe "Coreon.Models.ConceptMapNode", ->
       @concept.unset "superconcept_ids"
       @model.update @concept
       expect( @model.get "parent_node_ids" ).to.eql []
+
+    it "defers child node ids from subconcept ids", ->
+      @concept.set "subconcept_ids", [ "abc123", "fgh789" ]
+      @model.update @concept
+      expect( @model.get "child_node_ids" ).to.eql [ "abc123", "fgh789" ]
+
+    it "leaves child node ids unchanged when model has no subconcept ids", ->
+      @concept.unset "subconcept_ids"
+      @model.update @concept
+      expect( @model.get "child_node_ids" ).to.eql []
 
   describe "#path()", ->
     

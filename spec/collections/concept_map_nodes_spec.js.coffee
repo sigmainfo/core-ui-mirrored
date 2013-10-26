@@ -99,10 +99,31 @@ describe "Coreon.Collections.ConceptMapNode", ->
         expect( spy ).to.have.been.calledOn @collection
         expect( spy ).to.have.been.calledWith nodes
 
+  describe "#isLoaded()", ->
+
+    it "is true when all nodes are loaded", ->
+      @collection.reset [
+        { loaded: yes }
+        { loaded: yes }
+        { loaded: yes }
+      ], silent: yes
+      expect( @collection.isLoaded() ).to.be.true
+    
+    it "is false when at least one node is not loaded", ->
+      @collection.reset [
+        { loaded: yes }
+        { loaded: no }
+        { loaded: yes }
+      ], silent: yes
+      expect( @collection.isLoaded() ).to.be.false
+
   describe "#addParentNodes()", ->
 
     beforeEach ->
-      @node = new Backbone.Model id: "sdfg0987"
+      @node = new Backbone.Model
+        id: "sdfg0987"
+        parent_node_ids: []
+        child_node_ids: []
 
     it "is triggered when a node was added", ->
       spy = sinon.spy()
@@ -131,20 +152,38 @@ describe "Coreon.Collections.ConceptMapNode", ->
       expect( parent ).to.exist
       expect( parent.get "model" ).to.equal concept
 
-  describe "#isLoaded()", ->
+  describe "#addChildNodes", ->
+  
+    beforeEach ->
+      @node = new Backbone.Model
+        id: "sdfg0987"
+        parent_node_ids: []
+        child_node_ids: []
 
-    it "is true when all nodes are loaded", ->
-      @collection.reset [
-        { loaded: yes }
-        { loaded: yes }
-        { loaded: yes }
-      ], silent: yes
-      expect( @collection.isLoaded() ).to.be.true
-    
-    it "is false when at least one node is not loaded", ->
-      @collection.reset [
-        { loaded: yes }
-        { loaded: no }
-        { loaded: yes }
-      ], silent: yes
-      expect( @collection.isLoaded() ).to.be.false
+    it "is triggered when a node was added", ->
+      spy = sinon.spy()
+      @collection.addChildNodes = spy
+      @collection.initialize()
+      @collection.trigger "add", @node
+      expect( spy ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledOn @collection
+      expect( spy ).to.have.been.calledWith @node
+
+    it "is triggered when child node ids change", ->
+      spy = sinon.spy()
+      @collection.addChildNodes = spy
+      @collection.initialize()
+      @collection.trigger "change:child_node_ids", @node
+      expect( spy ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledOn @collection
+      expect( spy ).to.have.been.calledWith @node
+
+    context "expanded", ->
+
+      it "creates nodes from child node ids"
+
+    context "not expanded", ->
+
+      it "creates placeholder node"
+
+      it "creates only one placeholder node"
