@@ -57,6 +57,15 @@ describe "Coreon.Collections.ConceptMapNode", ->
         expect( spy ).to.have.been.calledOn @collection
         expect( spy ).to.have.been.calledWith @collection.models
 
+      it "adds placeholder nodes", ->
+        callback = sinon.spy()
+        spy = sinon.spy()
+        @collection.addPlaceholderNodes = spy
+        promise = @collection.build()
+        promise.done callback
+        expect( spy ).to.have.been.calledOnce
+        expect( callback ).to.have.been.calledAfter spy
+
     context "when loading parent nodes", ->
       
       beforeEach ->
@@ -78,6 +87,18 @@ describe "Coreon.Collections.ConceptMapNode", ->
         expect( spy ).to.have.been.calledOnce
         expect( spy ).to.have.been.calledOn @collection
         expect( spy ).to.have.been.calledWith @collection.models
+
+      it "adds placeholder nodes when nodes are loaded", ->
+        callback = sinon.spy()
+        spy = sinon.spy()
+        @collection.addPlaceholderNodes = spy
+        promise = @collection.build()
+        promise.done callback
+        expect( spy ).to.not.have.been.called
+        @collection.isLoaded = -> yes
+        @collection.trigger "change:loaded"
+        expect( spy ).to.have.been.calledOnce
+        expect( callback ).to.have.been.calledAfter spy
         
       it "fails when build is called again", ->
         spy = sinon.spy()
@@ -152,38 +173,94 @@ describe "Coreon.Collections.ConceptMapNode", ->
       expect( parent ).to.exist
       expect( parent.get "model" ).to.equal concept
 
-  describe "#addChildNodes", ->
-  
+  describe "#addPlaceholderNodes()", ->
+
     beforeEach ->
-      @node = new Backbone.Model
-        id: "sdfg0987"
-        parent_node_ids: []
-        child_node_ids: []
 
-    it "is triggered when a node was added", ->
-      spy = sinon.spy()
-      @collection.addChildNodes = spy
-      @collection.initialize()
-      @collection.trigger "add", @node
-      expect( spy ).to.have.been.calledOnce
-      expect( spy ).to.have.been.calledOn @collection
-      expect( spy ).to.have.been.calledWith @node
+    context "concept nodes", ->
+      
+      it "creates placeholder for collapsed children", ->
+        @collection.reset [
+          id: "fghj567"
+          child_node_ids: [ "5678jkl" ]
+          expanded: no
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.at(1)
+        expect( node ).to.exist
+        expect( node.get "type" ).to.equal "placeholder"
+        expect( node.id ).to.equal "+[fghj567]"
+        expect( node.get "parent_node_ids" ).to.eql ["fghj567"]
 
-    it "is triggered when child node ids change", ->
-      spy = sinon.spy()
-      @collection.addChildNodes = spy
-      @collection.initialize()
-      @collection.trigger "change:child_node_ids", @node
-      expect( spy ).to.have.been.calledOnce
-      expect( spy ).to.have.been.calledOn @collection
-      expect( spy ).to.have.been.calledWith @node
+      it "does not create placeholder when expanded", ->
+        @collection.reset [
+          id: "fghj567"
+          child_node_ids: [ "5678jkl" ]
+          expanded: yes
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node ).to.not.exist
 
-    context "expanded", ->
+      it "does not create placeholder when no children exist", ->
+        @collection.reset [
+          id: "fghj567"
+          child_node_ids: []
+          expanded: no
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node ).to.not.exist
 
-      it "creates nodes from child node ids"
+      it "does not create placeholder when no children are hidden", ->
 
-    context "not expanded", ->
+        @collection.reset [
+          { id: "fghj567", child_node_ids: [ "dgfgj67" ] }
+          { id: "dgfgj67", child_node_ids: [] }
+        ], silent: yes
 
-      it "creates placeholder node"
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node ).to.not.exist
 
-      it "creates only one placeholder node"
+      it "sets label to hidden children count", ->
+        @collection.reset [
+          { id: "fghj567", child_node_ids: [ "5678jkl", "dgfgj67", "tzu743a" ] }
+          { id: "dgfgj67", child_node_ids: [] }
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node.get "label" ).to.equal "2"
+
+    context "repository", ->
+
+      it "creates placeholder when not expanded", ->
+        @collection.reset [
+          id: "fghj567"
+          type: "repository"
+          expanded: no
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node ).to.exist
+
+      it "does not create placeholder when expanded", ->
+        @collection.reset [
+          id: "fghj567"
+          type: "repository"
+          expanded: yes
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node ).to.not.exist
+
+      it "does not set label", ->
+        @collection.reset [
+          id: "fghj567"
+          type: "repository"
+          expanded: no
+        ], silent: yes
+        @collection.addPlaceholderNodes()
+        node = @collection.get "+[fghj567]"
+        expect( node.get "label" ).to.be.null
+        
