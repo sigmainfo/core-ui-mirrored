@@ -4,10 +4,10 @@
       - for repository in @repositories
         %option{value: repository.id}= repository.name
     
-    
-%h4.current{class: "single" if @single}
-  - unless @single
-    %a.select{title: I18n.t "repositories.select"}= I18n.t "repositories.select"
-  = @repository.get "name"
+- if false 
+  %h4.current{class: "single" if @single}
+    - unless @single
+      %a.select{title: I18n.t "repositories.select"}= I18n.t "repositories.select"
+    = @repository.get "name"
 
 

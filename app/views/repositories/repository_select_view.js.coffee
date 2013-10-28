@@ -34,11 +34,11 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
     @
 
   changedSelect: (e) ->
-    Backbone.history.navigate "/#{$(event.target).val()}", trigger: yes
+    Backbone.history.navigate "/#{$(e.target).val()}", trigger: yes
 
-  select: (event) ->
-    event.preventDefault()
-    event.stopPropagation()
+  select: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
     dropdown = new Coreon.Views.Repositories.RepositorySelectDropdownView
       model: @model
     @prompt dropdown
