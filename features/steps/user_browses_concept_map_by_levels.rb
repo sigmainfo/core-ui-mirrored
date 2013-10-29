@@ -93,7 +93,7 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
   end
 
   step 'I click on "Games" within the concept map' do
-    page.find("#coreon-concept-map .concept-node a", text: "Games").click
+    page.find("#coreon-concept-map .concept-node", text: "Games").find("a").click
   end
 
   step 'I should be on the repository root page' do
