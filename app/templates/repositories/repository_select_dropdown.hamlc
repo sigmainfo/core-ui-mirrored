@@ -1,4 +1,0 @@
-%ul.options
-  - for repository in @repositories
-    %li.option{class: "selected" if repository.id is @currentRepository.id}
-      %a{href: "/#{repository.id}", title: repository.id}= repository.name

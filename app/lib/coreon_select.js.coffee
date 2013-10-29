@@ -110,7 +110,11 @@ class CoreonSelect
   constructor: (@formField, @options={}) ->
     selectOptions = []
     @$select = $ @formField
-    @$el = $ "<div class='coreon-select'>#{$("option[value=#{@$select.val()}]", @$select).first().text()}</div>"
+    
+    selected = $("option[value=#{@$select.val()}]", @$select).first()
+    selected = $("option", @$select).first() if selected.length == 0
+    
+    @$el = $ "<div class='coreon-select'>#{selected.text()}</div>"
     
     $('option', @$select).each (i) ->
       $option = $ this

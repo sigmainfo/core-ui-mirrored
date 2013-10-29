@@ -12,13 +12,13 @@ Feature: user selects repository
     When I visit the application root
     Then I should see the repository "Wild West" within the filters bar
     And I should be on the root page of "Wild West"
-    When I click the toggle of the repository selector
+    When I click the repository selector
     Then I should see a dropdown with "Wild West" and "Branch of Service"
     And I should see "Wild West" being the currently selected repository
     When I click on "Branch of Service"
     Then I should see the repository "Branch of Service" within the filters bar
     And I should be on the root page of "Branch of Service"
-    When I click the toggle of the repository selector
+    When I click the repository selector
     Then I should see "Branch of Service" being the currently selected repository
     When I press the Escape key
     Then I should not see the dropdown
@@ -28,4 +28,3 @@ Feature: user selects repository
     Given I have access to a single repository "Gunnery"
     When I visit the application root
     Then I should see the repository "Gunnery" within the filters bar
-    And I should not see a repository selector toggle

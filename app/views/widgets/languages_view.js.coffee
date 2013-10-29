@@ -1,4 +1,7 @@
 #= require environment
+#= require modules/prompt
+#= require lib/coreon_select
+#= require jquery.ui.position
 #= require templates/widgets/languages
 #= require helpers/repository_path
 
@@ -18,16 +21,11 @@ class Coreon.Views.Widgets.LanguagesView extends Backbone.View
 
   render: ->
     @$el.html @template()
+    
+    @$('select').coreonSelect()
+    
     @
 
   submitHandler: (event) ->
     event.preventDefault()
-    type = @model.getSelectedType()
-    query = @$('input#coreon-search-query').val()
-    path = if type is "all"
-      Coreon.Helpers.repositoryPath("search/#{query}")
-    else
-      Coreon.Helpers.repositoryPath("concepts/search/#{type}/#{query}")
-
-    Backbone.history.navigate path[1..]
-    Backbone.history.loadUrl()
+    

@@ -20,25 +20,27 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
     current_path.should == "/#{@repository.id}"
   end
 
-  step 'I click the toggle of the repository selector' do
-    page.find("#coreon-repository-select a.select").click
+  step 'I click the repository selector' do
+    page.find("#coreon-repository-select .coreon-select").click
   end
 
   step 'I should see a dropdown with "Wild West" and "Branch of Service"' do
-    within "#coreon-repository-select-dropdown" do
-      page.should have_css("a", text: "Wild West")
-      page.should have_css("a", text: "Branch of Service")
+    within "#coreon-modal .coreon-select-dropdown" do
+      page.should have_css("li", text: "Wild West")
+      page.should have_css("li", text: "Branch of Service")
     end
   end
 
   step 'I should see "Wild West" being the currently selected repository' do
-    within "#coreon-repository-select-dropdown" do
-      page.should have_css(".selected", text: "Wild West")
+    within "#coreon-modal .coreon-select-dropdown" do
+      page.should have_css("li.selected", text: "Wild West")
     end
   end
 
   step 'I click on "Branch of Service"' do
-    click_link "Branch of Service"
+    within "#coreon-modal .coreon-select-dropdown" do
+      page.find("li", text: "Branch of Service").click
+    end
   end
 
   step 'I should see the repository "Branch of Service" within the filters bar' do
@@ -50,17 +52,17 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
   end
 
   step 'I should see "Branch of Service" being the currently selected repository' do
-    within "#coreon-repository-select-dropdown" do
+    within "#coreon-modal .coreon-select-dropdown" do
       page.should have_css(".selected", text: "Branch of Service")
     end
   end
 
   step 'I press the Escape key' do
-    page.find("#coreon-repository-select-dropdown").native.send_keys :escape
+    page.find("#coreon-modal .coreon-select-dropdown").native.send_keys :escape
   end
 
   step 'I should not see the dropdown' do
-    page.should have_no_css("#coreon-repository-select-dropdown")
+    page.should have_no_css("#coreon-modal .coreon-select-dropdown")
   end
 
   step 'I have access to a single repository "Gunnery"' do
@@ -69,9 +71,5 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
 
   step 'I should see the repository "Gunnery" within the filters bar' do
     page.find("#coreon-filters").should have_text("Gunnery")
-  end
-
-  step 'I should not see a repository selector toggle' do
-    page.should have_no_css("#coreon-repository-select .select")
   end
 end

@@ -2,20 +2,7 @@
   %h4= I18n.t "widgets.languages.title"
     %span.selected
   
-- # TODO: Is this ok to get actual repo by Coreon.application.repository()?
-- # TODO: Use 3 views like in repo select or build stylable select input/transform select
-  
-%p
-  .select#coreon-source-lang{title: "Source Language"}
-    .value{data-value: 'none'}
-      - # TODO: Replace by saved source lang
-      = I18n.t "languages.none"
-    %ul.options{style: "display: none"}  
-      - for lang in (['none'].concat Coreon.application.repository().get('languages'))
-        %li{data-value: lang}
-          = I18n.t "languages.#{lang}"
-  
-%form
+%form.languages
   %select{title: "Source Language"}
     - for lang in (['none'].concat Coreon.application.repository().get('languages'))
       %option{value: "#{lang}"} 

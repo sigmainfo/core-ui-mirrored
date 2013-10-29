@@ -1,6 +1,5 @@
 #= require environment
 #= require templates/repositories/repository_select
-#= require views/repositories/repository_select_dropdown_view
 #= require modules/helpers
 #= require modules/prompt
 #= require lib/coreon_select
@@ -15,7 +14,6 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
   template: Coreon.Templates["repositories/repository_select"]
 
   events:
-    "click .select": "select"
     "change select": "changedSelect"
 
   initialize: ->
@@ -35,14 +33,3 @@ class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
 
   changedSelect: (e) ->
     Backbone.history.navigate "/#{$(e.target).val()}", trigger: yes
-
-  select: (e) ->
-    e.preventDefault()
-    e.stopPropagation()
-    dropdown = new Coreon.Views.Repositories.RepositorySelectDropdownView
-      model: @model
-    @prompt dropdown
-    dropdown.$el.position
-      my: "left top"
-      at: "left bottom"
-      of: @$("h4.current")
