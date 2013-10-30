@@ -6,6 +6,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   beforeEach ->
     Coreon.application = new Backbone.Model
     Coreon.application.cacheId =-> "face42"
+    Coreon.application.repositorySettings =-> {}
 
     sinon.stub Coreon.Collections, "ConceptNodes", =>
       @nodes = new Backbone.Collection

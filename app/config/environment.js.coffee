@@ -1,6 +1,6 @@
 #= require jquery
-#= require underscore
-#= require backbone
+#= require underscore-1.4.4
+#= require backbone-1.0.0
 #= require hamlcoffee
 #= require i18n
 #= require i18n/translations

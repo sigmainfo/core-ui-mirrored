@@ -2,8 +2,8 @@
   %h4= I18n.t "widgets.languages.title"
     %span.selected
   
-%form.languages
-  %select{title: "Source Language"}
+%form.languages{action: 'javascript:void(0)'}
+  %select{title: "Source Language", name: "source_language"}
     - for lang in (['none'].concat Coreon.application.repository().get('languages'))
       %option{value: "#{lang}"} 
         = I18n.t "languages.#{lang}"

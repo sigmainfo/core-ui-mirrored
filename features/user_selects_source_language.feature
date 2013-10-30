@@ -13,7 +13,7 @@ Feature: user selects source language
     When I visit the repository root page
     Then I should see a widget "Languages"
     And I should see selection "None" for "Source language"
-    When I click the trigger next to "Source Language"
+    When I click the "Source Language" selector
     Then I should see a dropdown with "None", "English", "German", and "French"
     When I select "German" from the dropdown
     Then I should see selection "German" for "Source language"

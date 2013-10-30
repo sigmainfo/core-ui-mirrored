@@ -54,7 +54,22 @@ class CoreonSelectPopup extends Backbone.View
     $(document).on 'keydown.coreonSelectPopup', @onKeydown
     
     @
+      
+  remove: ->
+    super
+    $(document).off ".coreonSelectPopup"  
+    @
     
+  setItem: (elem) ->
+    @widget.changeTo elem.data('value'), elem.text()
+    @
+    
+  focusItem: (elem) ->
+    @$("li.option.focus").removeClass "focus"
+    if elem?
+      elem.addClass "focus"
+    @
+  
   onItemClick: (e) ->
     el = $(e.target).closest('li')
     @setItem el
@@ -64,20 +79,6 @@ class CoreonSelectPopup extends Backbone.View
     
   onItemBlur: (e) ->
     @focusItem false
-    
-  setItem: (elem) ->
-    @widget.changeTo elem.data('value'), elem.text()
-    
-  focusItem: (elem) ->
-    console.log "itemFocus", elem
-    
-    @$("li.option.focus").removeClass "focus"
-    if elem?
-      elem.addClass "focus"
-      
-  remove: ->
-    super
-    $(document).off ".coreonSelectPopup"
     
   onKeydown: (e) =>
     current = @$("li.option.focus").first()
@@ -115,6 +116,8 @@ class CoreonSelect
     selected = $("option", @$select).first() if selected.length == 0
     
     @$el = $ "<div class='coreon-select'>#{selected.text()}</div>"
+    @$el.attr('data-select-name', @$select.attr('name'))
+      
     
     $('option', @$select).each (i) ->
       $option = $ this
@@ -145,7 +148,6 @@ class CoreonSelect
     view.$('ul').position
       my: "left top"
       at: "left bottom"
-      of: $ @$el
-      
+      of: $ @$el   
     
     @

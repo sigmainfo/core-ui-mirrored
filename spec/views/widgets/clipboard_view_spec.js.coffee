@@ -42,10 +42,6 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
     it "renders template skeleton", ->
       I18n.t.withArgs("widgets.clipboard.title").returns "Clipboard"
       @view.initialize()
-      
-
-      console.log @view.$el.html()
-      
       @view.$el.should.have ".titlebar h4"
       @view.$(".titlebar h4").should.have.text "Clipboard"
 

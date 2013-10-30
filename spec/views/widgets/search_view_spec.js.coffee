@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require views/widgets/search_view
 
-describe "Coreon.Views.SearchView", ->
+describe "Coreon.Views.Widgets.SearchView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"

@@ -17,21 +17,14 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     resizeDelay: 500
 
   initialize: ->
-    settings = @localSettings()
-    @$el.width settings.widgets.width if settings.widgets.width?
+    settings = Coreon.application.repositorySettings('widgets')
+    @$el.width settings.width if settings.width?
     @subviews = []
 
     @droppableOn @$el, "ui-droppable-widgets",
       greedy: false
       disableForeigners: true
       fake: true
-
-  localSettings: ->
-    cache_id = Coreon.application.cacheId()
-    try settings = JSON.parse localStorage.getItem cache_id
-    finally settings ?= {}
-    settings.widgets ?= {}
-    settings
 
   setElement: (element, delegate) ->
     super
@@ -75,9 +68,6 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @
 
   saveLayout = (layout) ->
-    settings = @localSettings()
-    settings.widgets = layout
-    cache_id = Coreon.application.cacheId()
-    localStorage.setItem cache_id, JSON.stringify settings
+    Coreon.application.repositorySettings('widgets', layout)
 
   saveLayout: _.debounce saveLayout, 500

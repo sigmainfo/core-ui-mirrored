@@ -35,3 +35,14 @@ class Coreon.Application extends Backbone.Model
 
   repository: ->
     @get("session")?.currentRepository() or null
+
+  repositorySettings: (key = false, value = null) ->
+    cache = if repository = @repository() then repository.localCache() else null
+    if cache? and key
+      if value is null
+        cache.get(key) || {}
+      else
+        cache.set(key, value)
+        cache.save()
+    else
+      cache

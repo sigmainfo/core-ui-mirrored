@@ -18,7 +18,9 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     sinon.stub I18n, "t"
     Coreon.application =
       cacheId: -> "face42"
-
+      repositorySettings: (key = null) -> 
+        setting: key
+        
     nodes = new Backbone.Collection
     nodes.tree = ->
       root:

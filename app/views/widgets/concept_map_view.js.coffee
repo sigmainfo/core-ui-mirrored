@@ -42,16 +42,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @map = d3.select @$("svg g.concept-map")[0]
     Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
-
-    settings = {}
-    if cache_id = Coreon.application?.cacheId()
-      try
-        settings = JSON.parse localStorage.getItem cache_id
-      finally
-        settings ?= {}
-    settings.conceptMap ?= {}
-    if settings.conceptMap.width?
-      @resize settings.conceptMap.width, settings.conceptMap.height
+    
+    settings = Coreon.application.repositorySettings('conceptMap')
+        
+    if settings.width?
+      @resize settings.width, settings.height
     else
       @resize @options.size...
     d3.select(@$("svg")[0]).call @navigator
@@ -106,11 +101,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @saveLayout width: @width, height: @height
     
   saveLayout = (layout) ->
-    settings = {}
-    if cache_id = Coreon.application?.cacheId?()
-      settings = JSON.parse(localStorage.getItem(cache_id)) or {}
-      settings.conceptMap = layout
-      localStorage.setItem cache_id, JSON.stringify settings
+    Coreon.application.repositorySettings('conceptMap', layout)
 
   saveLayout: _.debounce saveLayout, 500
 

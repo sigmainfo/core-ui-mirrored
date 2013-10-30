@@ -3,7 +3,7 @@
 #= require views/repositories/repository_select_view
 
 describe "Coreon.Views.Repositories.RepositorySelectView", ->
-
+  
   beforeEach ->
     @repositories = [
       {id:0, name:"c0ffee"},
@@ -21,24 +21,24 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
     I18n.t.restore()
 
   it "is a Backbone view", ->
-    @view.should.be.an.instanceof Backbone.View
+    expect( @view ).to.be.an.instanceof Backbone.View
 
   describe "prompt()", ->
-  
+    
     it "includes method from module", ->
-      should.exist Coreon.Modules.Prompt
-      @view.prompt.should.equal Coreon.Modules.Prompt.prompt
+      expect( Coreon.Modules.Prompt ).to.exist
+      expect( @view.prompt ).to.equal Coreon.Modules.Prompt.prompt
 
   describe "render()", ->
-
+    
     it "is chainable", ->
-      @view.render().should.equal @view
+      expect( @view.render() ).to.equal @view
 
     it "is triggered by model changes", ->
       @view.render = sinon.spy()
       @view.initialize()
       @model.trigger "change:repositories"
-      @view.render.should.have.been.calledOnce
+      expect( @view.render ).to.have.been.calledOnce
 
     it "renders current repository", ->
       sinon.stub @model, 'currentRepository', =>
@@ -48,8 +48,9 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
         { id: 0, name: "My Repository" }
       ], silent: true
       @view.render()
-      @view.$el.should.have ".coreon-select"
-      @view.$(".coreon-select").should.contain "My Repository"
+      
+      expect( @view.$el ).to.have ".coreon-select"
+      expect( @view.$(".coreon-select") ).to.contain "My Repository"
       
       @model.currentRepository.restore
 
@@ -57,7 +58,7 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
 
       it "does not mark single", ->
         @view.render()
-        @view.$(".coreon-select").should.not.have.class "single"
+        expect( @view.$(".coreon-select") ).to.not.have.class "single"
 
     context "single repository", ->
       
@@ -66,11 +67,11 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
 
       it "renders selector", ->
         @view.render()
-        @view.$el.should.not.have "a.select"
+        expect( @view.$el ).to.not.have "a.select"
 
       it "marks single", ->
         @view.render()
-        @view.$(".coreon-select").should.have.class "single"
+        expect( @view.$(".coreon-select") ).to.have.class "single"
 
   #
   # Not needed anymore, but a test for CoreonSelectPopup would be nice 
@@ -87,11 +88,11 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
   #     Coreon.Views.Repositories.RepositorySelectDropdownView.reset()
   #     @view.prompt = sinon.spy()
   #     @view.select @event
-  #     Coreon.Views.Repositories.RepositorySelectDropdownView.should.have.been.calledOnce
-  #     Coreon.Views.Repositories.RepositorySelectDropdownView.should.have.been.calledWithNew
-  #     Coreon.Views.Repositories.RepositorySelectDropdownView.should.have.been.calledWith model: @model
-  #     @view.prompt.should.have.been.calledOnce
-  #     @view.prompt.should.have.been.calledWith @dropdown
+  #     expect( Coreon.Views.Repositories.RepositorySelectDropdownView ).to.have.been.calledOnce
+  #     expect( Coreon.Views.Repositories.RepositorySelectDropdownView ).to.have.been.calledWithNew
+  #     expect( Coreon.Views.Repositories.RepositorySelectDropdownView ).to.have.been.calledWith model: @model
+  #     expect( @view.prompt ).to.have.been.calledOnce
+  #     expect( @view.prompt ).to.have.been.calledWith @dropdown
   # 
   #   it "positions dropdown relative to current", ->
   #     @view.$("h4").css
@@ -101,5 +102,5 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
   #       height: 16
   #     @view.select @event
   #     pos = @dropdown.$el.position()
-  #     pos.left.should.equal 44
-  #     pos.top.should.equal 28
+  #     expect( pos.left ).to.equal 44
+  #     expect( pos.top ).to.equal 28

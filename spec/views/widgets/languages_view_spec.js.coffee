@@ -19,16 +19,16 @@ describe "Coreon.Views.LanguagesView", ->
     delete Coreon.application
 
   it "is a Backbone view", ->
-    @view.should.be.an.instanceOf Backbone.View
+    expect( @view ).to.be.an.instanceOf Backbone.View
 
   it "creates container", ->
-    @view.$el.should.have.id "coreon-languages"
+    expect( @view.$el ).to.have.id "coreon-languages"
 
   describe "render()", ->
 
     it "can be chained", ->
-      @view.render().should.equal @view
+      expect( @view.render() ).to.equal @view
 
     it "renders form", ->
       @view.render()
-      @view.$el.should.have "form.languages"
+      expect( @view.$el ).to.have "form.languages"
