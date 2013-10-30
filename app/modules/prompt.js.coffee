@@ -4,12 +4,9 @@ prompt = null
 
 Coreon.Modules.Prompt =
   
-  modal: ->
-    $("#coreon-modal")
-  
   unprompt: ->
     prompt?.remove()
-    @modal().empty()
+    $("#coreon-modal").empty()
     
   prompt: (widget) ->
     modal = @unprompt()
