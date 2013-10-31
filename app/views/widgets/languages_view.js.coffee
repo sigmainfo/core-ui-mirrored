@@ -1,7 +1,6 @@
 #= require environment
 #= require modules/prompt
-#= require lib/coreon_select
-#= require jquery.ui.position
+#= require lib/select
 #= require templates/widgets/languages
 #= require helpers/repository_path
 

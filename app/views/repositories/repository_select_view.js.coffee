@@ -2,7 +2,7 @@
 #= require templates/repositories/repository_select
 #= require modules/helpers
 #= require modules/prompt
-#= require lib/coreon_select
+#= require lib/select
 #= require jquery.ui.position
 
 class Coreon.Views.Repositories.RepositorySelectView extends Backbone.View
