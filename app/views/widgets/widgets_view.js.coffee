@@ -17,7 +17,7 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     resizeDelay: 500
 
   initialize: ->
-    settings = Coreon.application.repositorySettings('widgets')
+    settings = Coreon.application?.repositorySettings('widgets')
     @$el.width settings.width if settings.width?
     @subviews = []
 
@@ -68,6 +68,6 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @
 
   saveLayout = (layout) ->
-    Coreon.application.repositorySettings('widgets', layout)
+    Coreon.application?.repositorySettings('widgets', layout)
 
   saveLayout: _.debounce saveLayout, 500

@@ -61,18 +61,19 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   describe "initialize()", ->
 
     beforeEach ->
-      sinon.stub localStorage, "getItem"
-      localStorage.getItem.returns JSON.stringify(widgets: width: 347)
+      sinon.stub Coreon.application, "repositorySettings"
+      Coreon.application.repositorySettings.withArgs('widgets').returns width: 347
 
     afterEach ->
-      localStorage.getItem.restore()
+      Coreon.application.repositorySettings.restore()
 
     it "creates resize handle", ->
-      @view.$el.should.have ".ui-resizable-w"
+      expect( @view.$el).to.have ".ui-resizable-w"
 
     it "restores width from session", ->
       @view.initialize()
-      @view.$el.width().should.equal 347
+      expect( Coreon.application.repositorySettings ).to.be.calledWith("widgets")
+      expect( @view.$el.width() ).to.equal 347
 
   describe "render()", ->
 
@@ -134,8 +135,9 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   describe "resizing", ->
 
     beforeEach ->
-      sinon.stub localStorage, "getItem", -> JSON.stringify(widgets: {})
-      sinon.stub localStorage, "setItem"
+      sinon.stub Coreon.application, "repositorySettings"
+      Coreon.application.repositorySettings.withArgs('widgets').returns width: 347
+
       @clock = sinon.useFakeTimers()
       $("#konacha").append @view.render().$el
       @handle = @view.$(".ui-resizable-w")
@@ -144,8 +146,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
         @handle.simulate "drag", dx: deltaX, moves: 1
 
     afterEach ->
-      localStorage.getItem.restore()
-      localStorage.setItem.restore()
+      Coreon.application.repositorySettings.restore()
       @clock.restore()
 
     it "adjusts width when dragging resize handler", ->
@@ -173,4 +174,4 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.$el.width 300
       @handle.drag -20
       @clock.tick 1000
-      localStorage.setItem.should.have.been.calledWith "face42", JSON.stringify(widgets: width: 320)
+      Coreon.application.repositorySettings.should.have.been.calledWith "widgets", width: 320

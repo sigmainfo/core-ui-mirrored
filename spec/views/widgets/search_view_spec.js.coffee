@@ -179,4 +179,4 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.onChangeSelectedType.should.have.been.calledOnce
 
     it "empties select", ->
-      @view.$("input#coreon-search-query").val().should.equal ""
+      expect( @view.$("input#coreon-search-query").val() ).to.equal ""

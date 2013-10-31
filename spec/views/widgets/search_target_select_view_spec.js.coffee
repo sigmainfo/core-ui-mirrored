@@ -16,7 +16,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Widgets.SearchTargetSelectDropdownView.restore()
-
+     
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
 

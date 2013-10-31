@@ -43,7 +43,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
     
-    settings = Coreon.application.repositorySettings('conceptMap')
+    settings = Coreon.application?.repositorySettings('conceptMap')
         
     if settings.width?
       @resize settings.width, settings.height
@@ -101,7 +101,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @saveLayout width: @width, height: @height
     
   saveLayout = (layout) ->
-    Coreon.application.repositorySettings('conceptMap', layout)
+    Coreon.application?.repositorySettings('conceptMap', layout)
 
   saveLayout: _.debounce saveLayout, 500
 
