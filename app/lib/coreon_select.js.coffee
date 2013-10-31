@@ -43,6 +43,7 @@ class CoreonSelectPopup extends Backbone.View
   render: ->
     list = $("<ul class='options'>")
     @$el.append list
+    @$el.addClass @widget.$select.attr('class')
     
     for option in @selectOptions
       item = $("<li class='option' data-value='#{option[0]}'><span>#{option[1]}</span></li>")    
@@ -117,6 +118,7 @@ class CoreonSelect
     
     @$el = $ "<div class='coreon-select'>#{selected.text()}</div>"
     @$el.attr('data-select-name', @$select.attr('name'))
+    @$el.addClass(@$select.attr('class'))
       
     
     $('option', @$select).each (i) ->

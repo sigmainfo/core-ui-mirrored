@@ -13,19 +13,20 @@ class Coreon.Views.Widgets.LanguagesView extends Backbone.View
   template: Coreon.Templates["widgets/languages"]
 
   events:
-    "submit form#coreon-languages-form"  : "submitHandler"
+    "change select[name=source_language]"  : "onChangeSourceLanguage"
 
   initialize: ->
-    #@listenTo @model, "change:selectedTypeIndex", @onChangeSelectedType
-    #@select = null
 
   render: ->
     @$el.html @template()
     
+    @$('select[name=source_language]').val(Coreon.application?.repositorySettings 'sourceLanguage')
     @$('select').coreonSelect()
     
     @
 
-  submitHandler: (event) ->
-    event.preventDefault()
+  onChangeSourceLanguage: (e) ->
+    Coreon.application?.repositorySettings 'sourceLanguage', $(e.target).val()
+    
+
     

@@ -1,4 +1,3 @@
-@wip
 Feature: user selects source language
   In order to display and search terms from a source language
   As a user browsing the repository

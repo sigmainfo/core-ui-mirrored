@@ -123,4 +123,8 @@
     };
   }
   
+  &.blue-widget {
+    @include background(linear-gradient(lighten($darkerbluecolor, 8), darken($darkerbluecolor, 1)));
+  }
+  
 }

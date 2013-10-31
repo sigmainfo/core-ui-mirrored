@@ -3,7 +3,7 @@
     %span.selected
   
 %form.languages{action: 'javascript:void(0)'}
-  %select{title: "Source Language", name: "source_language"}
+  %select.widget-select.blue{title: "Source Language", name: "source_language"}
     - for lang in (['none'].concat Coreon.application.repository().get('languages'))
       %option{value: "#{lang}"} 
         = I18n.t "languages.#{lang}"

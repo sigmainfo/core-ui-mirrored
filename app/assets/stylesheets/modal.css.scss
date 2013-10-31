@@ -51,8 +51,7 @@
 }
 
 .coreon-select-dropdown, 
-#coreon-search-target-select-dropdown, 
-#coreon-repository-select-dropdown {
+#coreon-search-target-select-dropdown {
   position: absolute;
   top: 0;
   width: 100%;
@@ -94,6 +93,7 @@
   }
 
 }
+
 #coreon-search-target-select-dropdown {
   
   ul.options {
@@ -107,8 +107,7 @@
   }  
 }
 
-.coreon-select-dropdown,
-#coreon-repository-select-dropdown {
+.coreon-select-dropdown {
   
   ul.options {
     position: relative;
@@ -137,4 +136,10 @@
       }
     }
   }  
+  
+  &.blue {
+    ul.options {
+      background-color: $darkerbluecolor;
+    }
+  }
 }
