@@ -10,7 +10,7 @@
     height: 14px;
     width: 18px;
     left: 0;
-    background: image-url("layout/icons.png") no-repeat 5px -102px;
+    background: image-url("layout/icons.png") no-repeat 3px -104px;
     @include retina-icons;
     text-indent: -2000px;
     overflow: hidden;
@@ -22,12 +22,13 @@
   
   position: relative;
   display: inline-block;
-  height: 14px;
-  font-size: 11px;
+//  height: 14px;
+  font-size: 0.86em;
+  line-height: 1.4em;
   background-color: rgba($hit-color, 0.2);
-  @include border-radius(6px);
+  @include border-radius(4px);
   @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
-  padding: 2px 12px 2px 20px;
+  padding: 2px 12px 1px 22px;
   &.single {
     &:before {
       display: none;
@@ -38,19 +39,19 @@
   }
   
   &.blue {
-    background-color: rgba($darkerbluecolor, 0.2);
+    background-color: lighten($darkerbluecolor, 5);
+    @include retina-stripes("white");
   }
   
   &.filters-select {
-    height: 18px;
     @include border-radius(8px);
-    padding: 2px 12px 2px 26px;
-    font-size: 12px;
+    padding: 3px 12px 2px 26px;
+    font-size: 1em;
     
     &:before {
       height: 18px;
       width: 22px;
-      
+      background-position: 5px -103px;
     };
   }
   

@@ -124,7 +124,8 @@
   }
   
   &.blue-widget {
-    @include background(linear-gradient(lighten($darkerbluecolor, 8), darken($darkerbluecolor, 1)));
+    @include background(linear-gradient(lighten($darkerbluecolor, 8), darken($darkerbluecolor, 3)));
+    @include box-shadow(rgba(white, 0.3) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
   }
   
 }
