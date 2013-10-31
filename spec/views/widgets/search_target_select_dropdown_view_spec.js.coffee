@@ -68,7 +68,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.alignTo @parent
       opts = @view.$("ul")
       opts.position().left.should.be.closeTo 56, 2
-      opts.position().top.should.be.closeTo 74, 2
+      opts.position().top.should.be.closeTo 64, 2
 
     it "keeps aligment on resize", ->
       @view.alignTo @parent
