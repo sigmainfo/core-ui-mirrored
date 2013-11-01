@@ -14,7 +14,6 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
 
   initialize: ->
     @stopListening()
-
     if model = @get "model"
       @set {
         id: model.id
@@ -45,4 +44,5 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
     delete json.model
     delete json.parent_node_ids
     delete json.child_node_ids
+    json.path = @path()
     json

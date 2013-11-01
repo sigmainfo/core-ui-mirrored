@@ -40,7 +40,7 @@ describe "Coreon.Models.ConceptNode", ->
       @concept.id = "concept_1234"
       @model.initConcept @concept
       @model.id.should.equal "concept_1234"
-    
+
     it "derives loaded state from concept", ->
       @concept.blank = yes
       @model.initConcept @concept

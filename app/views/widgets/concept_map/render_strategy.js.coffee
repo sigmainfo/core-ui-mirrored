@@ -10,9 +10,9 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   resize: (@width, @height) ->
 
-  render = (tree) ->
-    nodes = @renderNodes tree.root
-    edges = @renderEdges tree.edges
+  render = (graph) ->
+    nodes = @renderNodes graph.tree
+    edges = @renderEdges graph.edges
     _.defer @updateLayout, nodes, edges
 
   render: _.debounce render, 250
@@ -42,13 +42,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     links = nodes.append("a")
       .attr("xlink:href", (datum) ->
-        switch
-          when datum.type is "repository"
-            Coreon.Helpers.repositoryPath()
-          when datum.type is "concept" and datum.id?
-            Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
-          else
-            "javascript:void(0)"
+        datum.path
       )
       .on("mouseover", (datum) ->
         d3.select(@).classed "hover", true
@@ -114,7 +108,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
       .classed("new", (datum) ->
         not datum.id?
       )
-    
+
     nodes.select("title")
       .text( (datum) ->
         datum.label
@@ -160,7 +154,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
           datum.loop ?= parent.startLoop (animation) ->
             cursor.attr("transform", ->
               "rotate(#{animation.duration * 0.4 % 360})"
-            )     
+            )
         else
           parent.stopLoop datum.loop
       )

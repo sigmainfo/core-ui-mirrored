@@ -160,3 +160,8 @@ describe 'Coreon.Models.ConceptMapNode', ->
       expect( json ).to.not.have.property 'model'
       expect( json ).to.not.have.property 'parent_node_ids'
       expect( json ).to.not.have.property 'child_node_ids'
+
+    it 'adds path', ->
+      @model.path = -> '/123-repo/concepts/5678'
+      json = @model.toJSON()
+      expect( json ).to.have.property 'path', '/123-repo/concepts/5678'

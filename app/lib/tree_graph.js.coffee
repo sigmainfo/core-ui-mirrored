@@ -9,7 +9,7 @@ class Coreon.Lib.TreeGraph
     @setRoot()
     @generateEdges()
     @enforceTree()
-    root: @root
+    tree: @root
     edges: @edges
 
   generateNodes: ->

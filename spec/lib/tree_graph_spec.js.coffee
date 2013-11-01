@@ -20,7 +20,7 @@ describe 'Coreon.Lib.TreeGraph', ->
         new Backbone.Model id: '787acf6', parent_node_ids: []
       ]
       tree = @graph.generate()
-      expect( tree ).to.have.property 'root', @graph.root
+      expect( tree ).to.have.property 'tree', @graph.root
       expect( tree ).to.have.property 'edges', @graph.edges
 
     context 'root', ->

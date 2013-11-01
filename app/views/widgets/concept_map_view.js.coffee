@@ -1,6 +1,5 @@
 #= require environment
 #= require jquery.ui.resizable
-#= require views/simple_view
 #= require templates/widgets/concept_map
 #= require d3
 #= require views/widgets/concept_map/left_to_right
@@ -8,7 +7,7 @@
 #= require modules/helpers
 #= require modules/loop
 
-class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
+class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
   id: "coreon-concept-map"
 
@@ -56,18 +55,18 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     d3.select(@$("svg")[0]).call @navigator
 
     @stopListening()
-    @listenTo @model, "reset loaded", @render
+    @hits = options.hits
+    @listenTo @hits, "reset", @render
 
   render: ->
-    @stopListening @model, "add remove change:label change:hit", @update
-    unless @model.loadingTree
-      @listenTo @model, "add remove change:label change:hit", @update
-    @update() 
-    @centerSelection()
+    @model.build(model.get 'result' for model in @hits.models)
+      .done =>
+        @update()
+        @centerSelection()
     @
 
   update: ->
-    @renderStrategy.render @model.tree()
+    @renderStrategy.render @model.graph()
     @
 
   centerSelection: ->
@@ -94,7 +93,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     svg = @$("svg")
     if height?
       @height = height
-      @svgHeight = height - @options.svgOffset 
+      @svgHeight = height - @options.svgOffset
       @$el.height height
       svg.attr "height", "#{@svgHeight}px"
     if width?
@@ -103,7 +102,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       svg.attr "width", "#{ width }px"
     @renderStrategy.resize @width, @height - @options.svgOffset
     @saveLayout width: @width, height: @height
-    
+
   saveLayout = (layout) ->
     settings = {}
     if cache_id = Coreon.application?.cacheId?()

@@ -65,8 +65,8 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
         return [$(this).position().top, $(this).find("tspan").text()]
       }).get();
     JS
-    levels = tops_and_labels.each_slice(2).to_a.group_by { |node| (node.shift / 10).round }
-    levels.each_value { |val| val.flatten! }.values
+    levels = tops_and_labels.each_slice(2).to_a.group_by { |node| (node.shift / 100).round }
+    levels.each_value { |val| val.flatten!.delete_if &:empty? }.values
   end
 
   step 'I should see "billiards" at level 1' do
