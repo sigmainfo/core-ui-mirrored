@@ -14,3 +14,7 @@ class Coreon.Collections.Hits extends Backbone.Collection
     for hit in @models
       return hit if hit.get("result") is result
     null
+
+  reset: (models, options = {})->
+    super
+    @trigger "update", @, options unless options.silent

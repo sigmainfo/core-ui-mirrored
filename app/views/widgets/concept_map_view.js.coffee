@@ -56,7 +56,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
     @stopListening()
     @hits = options.hits
-    @listenTo @hits, "reset", @render
+    @listenTo @hits, "update", @render
 
   render: ->
     @model.build(model.get 'result' for model in @hits.models)

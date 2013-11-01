@@ -126,10 +126,10 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     it 'can be chained', ->
       @view.render().should.equal @view
 
-    it 'is triggered on hits reset', ->
+    it 'is triggered on hits update', ->
       @view.render = sinon.spy()
       @view.initialize hits: @view.hits
-      @view.hits.trigger 'reset'
+      @view.hits.trigger 'update'
       @view.render.should.have.been.calledOnce
 
     it 'builds up concept map', ->
