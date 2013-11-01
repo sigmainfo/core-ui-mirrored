@@ -10,7 +10,7 @@ $.fn.extend
   coreonSelect: (options) ->
     this.each (input_field) ->
       $this = $ this
-      coreonSelect= $this.data('coreonSelect')
+      coreonSelect = $this.data('coreonSelect')
       if options is 'destroy' && coreonSelect
         coreonSelect.destroy()
       else unless coreonSelect
@@ -24,12 +24,16 @@ class Coreon.Lib.Select
   Coreon.Modules.include @, Coreon.Modules.Prompt
   
   constructor: (@$select, @options={}) ->
+    @$el = $ "<div class='coreon-select'>"
+    @render()
+  
+  render: ->
     selectOptions = []
     
     selected = $("option[value=#{@$select.val()}]", @$select).first()
     selected = $("option", @$select).first() if selected.length == 0
     
-    @$el = $ "<div class='coreon-select'>#{selected.text()}</div>"
+    @$el.text selected.text()
     @$el.attr('data-select-name', @$select.attr('name'))
     @$el.addClass(@$select.attr('class'))
       
@@ -46,6 +50,7 @@ class Coreon.Lib.Select
       @$el.click @showDropdown
       
     @$select.hide().after @$el
+    @
     
   changeTo: (val, label) =>
     @$el.text(label)
@@ -57,6 +62,7 @@ class Coreon.Lib.Select
       widget: @
       value: @$select.val()
       selectOptions: @selectOptions
+      widgetClasses: @$select.attr('class')
     
     @prompt view
     

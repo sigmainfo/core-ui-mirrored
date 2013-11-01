@@ -38,21 +38,18 @@ describe 'Coreon.Views.LanguagesView', ->
       @view.render()
       expect( @view.$el ).to.have 'form.languages'
       
-    it 'sets the source language select to stored value', ->
+    describe 'with stubbed repositorySettings', ->
       
-      sinon.stub Coreon.application, 'repositorySettings'
-      Coreon.application.repositorySettings.withArgs('sourceLanguage').returns 'de'
-      
-      try
-        @view.render()
-      catch error
-        console.log error
-      finally
+      beforeEach ->
+        sinon.stub Coreon.application, 'repositorySettings'
+        Coreon.application.repositorySettings.withArgs('sourceLanguage').returns 'de'
+        
+      afterEach ->
         Coreon.application.repositorySettings.restore()
         
-      console.log @view.$el.html()
-        
-      expect( @view.$('select[name=source_language]').val() ).to.equal 'de'
+      it 'sets the source language select to stored value', ->
+        @view.render()
+        expect( @view.$('select[name=source_language]').val() ).to.equal 'de'
       
   describe 'onChangeSourceLanguage', ->
     beforeEach ->
