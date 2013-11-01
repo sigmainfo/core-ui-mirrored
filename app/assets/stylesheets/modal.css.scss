@@ -60,10 +60,8 @@
   ul.options {
     list-style: none;
     background-color: $beigecolor;
-    @include border-bottom-radius(6px);
     @include single-box-shadow(rgba($text-color, 0.5), 1px, 2px, 2px, false);
     padding: 1px 0 0 0;
-    margin-top: 10px;
     
     .option {
       font-size: 0.86em;
@@ -98,6 +96,7 @@
   
   ul.options {
     @include dottedline;
+    @include border-bottom-radius(6px);
     .option {
         padding: 2px 10px 1px 26px;
       &:first-child {
