@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require collections/concept_map_nodes
 
-describe "Coreon.Collections.ConceptMapNode", ->
+describe "Coreon.Collections.ConceptMapNodes", ->
 
   beforeEach ->
     @repository = new Backbone.Model
@@ -22,7 +22,7 @@ describe "Coreon.Collections.ConceptMapNode", ->
     @collection.at(0).should.be.an.instanceof Coreon.Models.ConceptMapNode
 
   describe "#build()", ->
-      
+
     it "removes old nodes", ->
       @collection.reset [ id: "node" ], silent: yes
       node = @collection.at(0)
@@ -47,7 +47,7 @@ describe "Coreon.Collections.ConceptMapNode", ->
 
       beforeEach ->
         @collection.isLoaded = -> yes
-      
+
       it "succeeds immediately", ->
         spy = sinon.spy()
         promise = @collection.build()
@@ -67,10 +67,10 @@ describe "Coreon.Collections.ConceptMapNode", ->
         expect( callback ).to.have.been.calledAfter spy
 
     context "when loading parent nodes", ->
-      
+
       beforeEach ->
         @collection.isLoaded = -> no
-      
+
       it "defers callbacks", ->
         spy = sinon.spy()
         promise = @collection.build()
@@ -99,7 +99,7 @@ describe "Coreon.Collections.ConceptMapNode", ->
         @collection.trigger "change:loaded"
         expect( spy ).to.have.been.calledOnce
         expect( callback ).to.have.been.calledAfter spy
-        
+
       it "fails when build is called again", ->
         spy = sinon.spy()
         promise = @collection.build()
@@ -129,7 +129,7 @@ describe "Coreon.Collections.ConceptMapNode", ->
         { loaded: yes }
       ], silent: yes
       expect( @collection.isLoaded() ).to.be.true
-    
+
     it "is false when at least one node is not loaded", ->
       @collection.reset [
         { loaded: yes }
@@ -175,10 +175,8 @@ describe "Coreon.Collections.ConceptMapNode", ->
 
   describe "#addPlaceholderNodes()", ->
 
-    beforeEach ->
-
     context "concept nodes", ->
-      
+
       it "creates placeholder for collapsed children", ->
         @collection.reset [
           id: "fghj567"
@@ -263,4 +261,24 @@ describe "Coreon.Collections.ConceptMapNode", ->
         @collection.addPlaceholderNodes()
         node = @collection.get "+[fghj567]"
         expect( node.get "label" ).to.be.null
-        
+
+  describe "graph()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Lib, "TreeGraph", =>
+        generate: =>
+          @graph =
+            root:
+              children: []
+            edges: []
+
+    afterEach ->
+      Coreon.Lib.TreeGraph.restore()
+
+    it "creates a TreeGraph instance", ->
+      graph = @collection.graph()
+      constructor = Coreon.Lib.TreeGraph
+      expect( constructor ).to.have.been.calledOnce
+      expect( constructor ).to.have.been.calledWithNew
+      expect( constructor ).to.have.been.calledWith @collection.models
+      expect( graph ).to.equal @graph

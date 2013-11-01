@@ -1,6 +1,7 @@
 #= require environment
 #= require models/concept_map_node
 #= require models/concept
+#= require lib/tree_graph
 
 class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
@@ -60,3 +61,6 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
           parent_node_ids: [model.id]
           label: label
     @add attrs
+
+  graph: ->
+    (new Coreon.Lib.TreeGraph @models).generate()

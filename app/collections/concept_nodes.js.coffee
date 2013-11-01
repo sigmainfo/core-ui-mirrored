@@ -18,7 +18,7 @@ class Coreon.Collections.ConceptNodes extends Coreon.Collections.Treegraph
     if hits = options.hits
       @listenTo hits, "reset", @resetFromHits
       @resetFromHits hits
-    
+
     @listenTo @, "add change:superconcept_ids", @addSupernodes
     @listenTo @, "change:label change:hit", @updateDatum
     @listenTo @, "change:loaded", @updateLoadedState

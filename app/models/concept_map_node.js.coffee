@@ -1,7 +1,7 @@
 #= require environment
 
 class Coreon.Models.ConceptMapNode extends Backbone.Model
-  
+
   defaults: ->
     model: null
     type: null
@@ -39,3 +39,10 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
       model.path()
     else
       "javascript:void(0)"
+
+  toJSON: ->
+    json = super
+    delete json.model
+    delete json.parent_node_ids
+    delete json.child_node_ids
+    json

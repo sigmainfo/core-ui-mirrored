@@ -23,5 +23,3 @@ describe "Coreon.Models.Repository", ->
     it "returns repository path", ->
       @model.id = "345hjksdfg321"
       expect( @model.path() ).to.equal "/345hjksdfg321"
-  
-    

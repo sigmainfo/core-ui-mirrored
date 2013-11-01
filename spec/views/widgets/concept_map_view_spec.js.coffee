@@ -27,7 +27,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     nodes.isCompletelyLoaded = -> true
 
     sinon.stub Coreon.Views.Widgets.ConceptMap, "LeftToRight", =>
-      @leftToRight = 
+      @leftToRight =
         resize: sinon.spy()
         render: => @lefttoright
 
@@ -110,7 +110,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     #     @view.resize.should.have.been.calledWith 347, 456
 
   describe "render()", ->
-  
+
     it "can be chained", ->
       @view.render().should.equal @view
 
@@ -140,7 +140,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
-  
+
     it "can be chained", ->
       @view.update().should.equal @view
 
@@ -189,8 +189,8 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
   describe "zoomIn()", ->
 
     beforeEach ->
-      @view.renderStrategy = render: -> 
-  
+      @view.renderStrategy = render: ->
+
     it "is triggered by click on button", ->
       @view.zoomIn = sinon.spy()
       @view.delegateEvents()
@@ -216,12 +216,12 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       @view.update()
       @view.zoomIn()
       @view.$(".concept-map").attr("transform").should.contain "scale(1.5)"
-      
+
   describe "zoomOut()", ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
-  
+
     it "is triggered by click on button", ->
       @view.zoomOut = sinon.spy()
       @view.delegateEvents()
@@ -330,7 +330,7 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
       Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledWithNew
       Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledWith @view.map
       @view.renderStrategy.should.equal @leftToRight
-      
+
     it "toggles between render strategies", ->
       @view.toggleOrientation()
       Coreon.Views.Widgets.ConceptMap.LeftToRight.reset()
@@ -345,4 +345,4 @@ describe "Coreon.Views.Widgets.ConceptMapView", ->
     it "renders view", ->
       @view.render = sinon.spy()
       @view.toggleOrientation()
-      @view.render.should.have.been.calledOnce 
+      @view.render.should.have.been.calledOnce
