@@ -20,7 +20,15 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       cacheId: -> 'face42'
 
     nodes = new Backbone.Collection
-    nodes.build = -> $.Deferred().resolve()
+
+    nodes.build = =>
+      nodes.add [
+        new Backbone.Model type: 'repository'
+        new Backbone.Model type: 'placeholder'
+      ]
+      @deferred = $.Deferred()
+      @deferred.promise()
+
     nodes.graph = ->
       tree:
         children: []
@@ -120,8 +128,9 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
   describe '#render()', ->
 
     beforeEach ->
-      sinon.stub @view.model, 'build', =>
-        @deferred = $.Deferred()
+      sinon.spy @view.model, 'build'
+      @view.update = sinon.spy()
+      @view.centerSelection = sinon.spy()
 
     it 'can be chained', ->
       @view.render().should.equal @view
@@ -132,7 +141,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.hits.trigger 'update'
       @view.render.should.have.been.calledOnce
 
-    it 'builds up concept map', ->
+    it 'clears and rebuilds map', ->
       concept1 = new Backbone.Model
       concept2 = new Backbone.Model
       @view.hits.reset [
@@ -140,27 +149,35 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         { result: concept2 }
       ], silent: yes
       @view.render()
-      expect( @view.model.build ).to.have.been.calledOnce
-      expect( @view.model.build ).to.have.been.calledWith [concept1, concept2]
+      expect( @view.model.build ).to.have.been.calledTwice
+      expect( @view.model.build.firstCall ).to.have.been.calledWith []
+      expect( @view.model.build.secondCall ).to.have.been.calledWith [
+        concept1
+        concept2
+      ]
 
-    it 'defers update', ->
-      @view.update = sinon.spy()
-      @view.render()
-      expect( @view.update ).to.not.have.been.called
-
-    it 'updates view when fully loaded', ->
-      @view.update = sinon.spy()
+    it 'updates after clearing and rebuilding, respectively', ->
       @view.render()
       @deferred.resolve()
-      @view.update.should.have.been.calledOnce
+      build = @view.model.build
+      update = @view.update
+      expect( update ).to.have.been.calledTwice
+      expect( update.firstCall ).to.have.been.calledAfter build.firstCall
+      expect( update.secondCall ).to.have.been.calledAfter build.secondCall
 
-    it 'centers selection after update', ->
-      @view.update = sinon.spy()
-      @view.centerSelection = sinon.spy()
+    it 'centers selection after both updates, respectively', ->
       @view.render()
       @deferred.resolve()
-      @view.centerSelection.should.have.been.calledOnce
-      @view.centerSelection.should.have.been.calledAfter @view.update
+      update = @view.update
+      center = @view.centerSelection
+      expect( center ).to.have.been.calledTwice
+      expect( center.firstCall ).to.have.been.calledAfter update.firstCall
+      expect( center.secondCall ).to.have.been.calledAfter update.secondCall
+
+    it 'marks placeholder as busy', ->
+      @view.render()
+      placeholder = @view.model.at(1)
+      expect( placeholder.get 'busy' ).to.be.true
 
   describe '#update()', ->
 

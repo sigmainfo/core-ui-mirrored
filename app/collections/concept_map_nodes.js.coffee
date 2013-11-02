@@ -62,6 +62,7 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
           type: 'placeholder'
           parent_node_ids: [model.id]
           label: label
+          busy: false
     @add attrs, silent: yes
 
   graph: ->

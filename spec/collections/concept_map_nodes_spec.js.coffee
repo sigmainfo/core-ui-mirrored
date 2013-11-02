@@ -183,103 +183,89 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
 
   describe '#addPlaceholderNodes()', ->
 
-    context 'concept nodes', ->
+    it 'creates placeholder for collapsed children', ->
+      @collection.reset [
+        id: 'fghj567'
+        child_node_ids: [ '5678jkl' ]
+        expanded: no
+      ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.at(1)
+      expect( node ).to.exist
+      expect( node.get 'type' ).to.equal 'placeholder'
+      expect( node.id ).to.equal '+[fghj567]'
+      expect( node.get 'parent_node_ids' ).to.eql ['fghj567']
 
-      it 'creates placeholder for collapsed children', ->
-        @collection.reset [
-          id: 'fghj567'
-          child_node_ids: [ '5678jkl' ]
-          expanded: no
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.at(1)
-        expect( node ).to.exist
-        expect( node.get 'type' ).to.equal 'placeholder'
-        expect( node.id ).to.equal '+[fghj567]'
-        expect( node.get 'parent_node_ids' ).to.eql ['fghj567']
+    it 'silently adds placeholder', ->
+      @collection.reset [
+        id: 'fghj567'
+        child_node_ids: [ '5678jkl' ]
+        expanded: no
+      ], silent: yes
+      spy = sinon.spy()
+      @collection.on "add", spy
+      @collection.addPlaceholderNodes()
+      expect( spy ).to.not.have.been.called
 
-      it 'silently adds placeholder', ->
-        @collection.reset [
-          id: 'fghj567'
-          child_node_ids: [ '5678jkl' ]
-          expanded: no
-        ], silent: yes
-        spy = sinon.spy()
-        @collection.on "add", spy
-        @collection.addPlaceholderNodes()
-        expect( spy ).to.not.have.been.called
+    it 'does not create placeholder when expanded', ->
+      @collection.reset [
+        id: 'fghj567'
+        child_node_ids: [ '5678jkl' ]
+        expanded: yes
+      ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.get '+[fghj567]'
+      expect( node ).to.not.exist
 
-      it 'does not create placeholder when expanded', ->
-        @collection.reset [
-          id: 'fghj567'
-          child_node_ids: [ '5678jkl' ]
-          expanded: yes
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node ).to.not.exist
+    it 'does not create placeholder when it does not have children', ->
+      @collection.reset [
+        id: 'fghj567'
+        child_node_ids: []
+        expanded: no
+      ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.get '+[fghj567]'
+      expect( node ).to.not.exist
 
-      it 'does not create placeholder when no children exist', ->
-        @collection.reset [
-          id: 'fghj567'
-          child_node_ids: []
-          expanded: no
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node ).to.not.exist
+    it 'does not create placeholder when there are no more children', ->
 
-      it 'does not create placeholder when no children are hidden', ->
+      @collection.reset [
+        { id: 'fghj567', child_node_ids: [ 'dgfgj67' ] }
+        { id: 'dgfgj67', child_node_ids: [] }
+      ], silent: yes
 
-        @collection.reset [
-          { id: 'fghj567', child_node_ids: [ 'dgfgj67' ] }
-          { id: 'dgfgj67', child_node_ids: [] }
-        ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.get '+[fghj567]'
+      expect( node ).to.not.exist
 
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node ).to.not.exist
+    it 'sets label to hidden children count', ->
+      @collection.reset [
+        { id: 'fghj567', child_node_ids: [ '5678jkl', 'dgfgj67', 'tzu743a' ] }
+        { id: 'dgfgj67', child_node_ids: [] }
+      ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.get '+[fghj567]'
+      expect( node.get 'label' ).to.equal '2'
 
-      it 'sets label to hidden children count', ->
-        @collection.reset [
-          { id: 'fghj567', child_node_ids: [ '5678jkl', 'dgfgj67', 'tzu743a' ] }
-          { id: 'dgfgj67', child_node_ids: [] }
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node.get 'label' ).to.equal '2'
+    it 'does not set label for repository', ->
+      @collection.reset [
+        id: 'fghj567'
+        type: 'repository'
+        expanded: no
+      ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.get '+[fghj567]'
+      expect( node.get 'label' ).to.be.null
 
-    context 'repository', ->
-
-      it 'creates placeholder when not expanded', ->
-        @collection.reset [
-          id: 'fghj567'
-          type: 'repository'
-          expanded: no
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node ).to.exist
-
-      it 'does not create placeholder when expanded', ->
-        @collection.reset [
-          id: 'fghj567'
-          type: 'repository'
-          expanded: yes
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node ).to.not.exist
-
-      it 'does not set label', ->
-        @collection.reset [
-          id: 'fghj567'
-          type: 'repository'
-          expanded: no
-        ], silent: yes
-        @collection.addPlaceholderNodes()
-        node = @collection.get '+[fghj567]'
-        expect( node.get 'label' ).to.be.null
+    it 'default busy state to idle', ->
+      @collection.reset [
+        id: 'fghj567'
+        child_node_ids: [ '5678jkl' ]
+        expanded: no
+      ], silent: yes
+      @collection.addPlaceholderNodes()
+      node = @collection.at(1)
+      expect( node.get 'busy' ).to.be.false
 
   describe '#graph()', ->
 

@@ -393,13 +393,13 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           @parent.stopLoop.should.have.been.calledOnce
           @parent.stopLoop.should.have.been.calledWith animation
 
-      context 'loading', ->
+      context 'busy', ->
 
         it 'increases background radius', ->
           background = @selection.append('circle').attr('class', 'background')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: yes
+            busy: yes
           ]
           @strategy.updateNodes nodes
           background.attr('r').should.equal '10'
@@ -408,7 +408,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           icon = @selection.append('path').attr('class', 'icon')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: yes
+            busy: yes
           ]
           @strategy.updateNodes nodes
           icon.attr('style').should.include 'display: none;'
@@ -417,7 +417,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           indicator = @selection.append('g').attr('class', 'progress-indicator')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: yes
+            busy: yes
           ]
           @strategy.updateNodes nodes
           should.not.exist indicator.attr('style')
@@ -426,7 +426,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           cursor = @selection.append('path').attr('class', 'cursor')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: yes
+            busy: yes
           ]
           @strategy.updateNodes nodes
           @nextFrame duration: 30
@@ -438,7 +438,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           @parent.startLoop = sinon.spy()
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: yes
+            busy: yes
             loop: animation
           ]
           @strategy.updateNodes nodes

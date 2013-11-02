@@ -133,23 +133,23 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     placeholders.select("circle.background")
       .attr("r", (datum) ->
-        if datum.parent.expanded then 10 else 7
+        if datum.busy then 10 else 7
       )
 
     placeholders.select("path.icon")
       .style("display", (datum) ->
-        if datum.parent.expanded then "none" else null
+        if datum.busy then "none" else null
       )
 
     placeholders.select("g.progress-indicator")
       .style("display", (datum) ->
-        if datum.parent.expanded then null else "none"
+        if datum.busy then null else "none"
       )
 
     parent = @parent
     placeholders.select("path.cursor")
       .each( (datum) ->
-        if datum.parent.expanded
+        if datum.busy
           cursor = d3.select @
           datum.loop ?= parent.startLoop (animation) ->
             cursor.attr("transform", ->
