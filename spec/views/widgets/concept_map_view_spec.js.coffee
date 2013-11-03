@@ -245,11 +245,37 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       expect( set ).to.have.been.calledWith 'busy', on
       expect( @view.update ).to.have.been.calledAfter set
 
-    it 'updates after model finished expanding', ->
-      @view.expand @event
-      @view.update.reset()
-      @deferred.resolve()
-      expect( @view.update ).to.have.been.calledOnce
+    context 'done', ->
+
+      it 'updates after model finished expanding', ->
+        @view.expand @event
+        @view.update.reset()
+        @deferred.resolve()
+        expect( @view.update ).to.have.been.calledOnce
+
+      it 'resets busy state to idle before updating', ->
+        sinon.spy @model, 'set'
+        @view.expand @event
+        @view.update.reset()
+        @deferred.resolve()
+        expect( @model.get 'busy' ).to.be.false
+        expect( @model.set ).to.have.been.calledBefore @view.update
+
+    context 'fail', ->
+
+      it 'updates map', ->
+        @view.expand @event
+        @view.update.reset()
+        @deferred.reject()
+        expect( @view.update ).to.have.been.calledOnce
+
+      it 'resets busy state to idle before updating', ->
+        sinon.spy @model, 'set'
+        @view.expand @event
+        @view.update.reset()
+        @deferred.reject()
+        expect( @model.get 'busy' ).to.be.false
+        expect( @model.set ).to.have.been.calledBefore @view.update
 
   describe '#zoomIn()', ->
 

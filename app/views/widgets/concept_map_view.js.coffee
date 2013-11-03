@@ -93,7 +93,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     placeholder.set 'busy', on
     @update()
     @model.expand(datum.parent.id)
-      .done => @update()
+      .always =>
+        placeholder.set 'busy', off
+        @update()
 
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
