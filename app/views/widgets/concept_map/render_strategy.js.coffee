@@ -160,7 +160,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
               "rotate(#{animation.duration * 0.4 % 360})"
             )
         else
-          parent.stopLoop datum.loop
+          parent.stopLoop datum.loop if datum.loop
       )
 
     all

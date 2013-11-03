@@ -402,6 +402,18 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           @parent.stopLoop.should.have.been.calledOnce
           @parent.stopLoop.should.have.been.calledWith animation
 
+        it 'does not stop loop that does not exist', ->
+          cursor = @selection.append('path').attr('class', 'cursor')
+          @parent.stopLoop = sinon.spy()
+          nodes = @selection.data [
+            type: 'placeholder'
+            busy: no
+            loop: null
+          ]
+          @strategy.updateNodes nodes
+          expect( @parent.stopLoop ).to.not.have.been.called
+
+
       context 'busy', ->
 
         it 'classifies as busy', ->
