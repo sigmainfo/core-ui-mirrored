@@ -16,17 +16,21 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
   build: (models = []) ->
     @rejectBuild()
     deferred = @build.deferred = $.Deferred()
-
     @reset []
-    @add model: Coreon.application.repository()
-    @add model: model for model in models
-    @resolveBuild()
 
+    @add model: Coreon.application.repository()
+    repository = @at(0)
+    @rootIds().done (rootIds) =>
+      repository.set 'child_node_ids', rootIds
+      @updatePlaceholderNode repository, rootIds unless @build.deferred?
+    @add model: model for model in models
+
+    @resolveBuild()
     deferred.promise()
 
   resolveBuild: ->
     if (deferred = @build.deferred) and @isLoaded()
-      @addPlaceholderNodes()
+      @updateAllPlaceholderNodes()
       deferred.resolveWith @, [ @models ]
       delete @build.deferred
 
@@ -40,30 +44,45 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
       return false unless model.get 'loaded'
     true
 
+  rootIds: (force = false) ->
+    deferred = $.Deferred()
+    if @_rootIds? and not force
+      deferred.resolve @_rootIds
+    else
+      Coreon.Models.Concept.roots()
+        .done (@_rootIds) =>
+          deferred.resolve @_rootIds
+        .fail ->
+          deferred.reject()
+    deferred.promise()
+
   addParentNodes: (node) ->
     for parentNodeId in node.get 'parent_node_ids'
       @add
         model: Coreon.Models.Concept.find parentNodeId
         parent_of_hit: yes
 
-  addPlaceholderNodes: ->
-    attrs = []
-    for model in @models when not model.get 'expanded'
-      if isRepository = model.get('type') is 'repository'
-        label = null
-      else
-        count = 0
-        for childNodeId in model.get 'child_node_ids'
-          count += 1 unless @get childNodeId
-        label = "#{count}"
-      if isRepository or count > 0
-        attrs.push
-          id: "+[#{model.id}]"
-          type: 'placeholder'
-          parent_node_ids: [model.id]
-          label: label
-          busy: false
-    @add attrs, silent: yes
+  updateAllPlaceholderNodes: ->
+    for model in @models
+      @updatePlaceholderNode model, model.get('child_node_ids'), silent: yes
+
+  updatePlaceholderNode: (model, childNodeIds, options = {}) ->
+    id = "+[#{model.id}]"
+    count = 0
+    for childNodeId in childNodeIds
+      count += 1 unless @get(childNodeId)?
+    enforce = model.get('type') is 'repository' and not @_rootIds?
+    label = if enforce then null else "#{count}"
+    if count > 0 or enforce
+      @add {
+        id: id
+        type: 'placeholder'
+        parent_node_ids: [model.id]
+        label: label
+      }, silent: yes, merge: yes
+    else
+      @remove id
+    @trigger 'placeholder:update' unless options.silent
 
   graph: ->
     (new Coreon.Lib.TreeGraph @models).generate()
@@ -74,7 +93,7 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
     model.set 'expanded', yes
 
     if model.get('type') is 'repository'
-      Coreon.Models.Concept.roots()
+      @rootIds(yes)
         .done (rootIds) =>
           @addAndLoad rootIds, deferred
     else

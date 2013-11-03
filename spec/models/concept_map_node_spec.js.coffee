@@ -43,6 +43,9 @@ describe 'Coreon.Models.ConceptMapNode', ->
     it 'is not a parent of hit', ->
       expect( @model.get 'parent_of_hit' ).to.be.false
 
+    it 'is idle', ->
+      expect( @model.get 'busy' ).to.be.false
+
   describe '#initialize()', ->
 
     beforeEach ->

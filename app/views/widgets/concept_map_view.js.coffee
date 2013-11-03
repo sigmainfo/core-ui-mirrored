@@ -58,16 +58,19 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     @stopListening()
     @hits = options.hits
     @listenTo @hits, 'update', @render
+    @listenTo @model, 'placeholder:update', @update
 
   render: ->
-    @model.build []
-    placeholder = @model.at(1)
-    placeholder.set 'busy', on
-    @update()
-    @centerSelection()
     concepts = ( model.get 'result' for model in @hits.models )
-    @model.build(concepts)
-      .done =>
+
+    @model.build([]).done =>
+      repository = @model.at(0)
+      placeholder = @model.at(1)
+      placeholder.set 'busy', on
+      @update()
+      @centerSelection()
+
+      @model.build(concepts).done =>
         @update()
         @centerSelection()
     @

@@ -141,43 +141,53 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.hits.trigger 'update'
       @view.render.should.have.been.calledOnce
 
-    it 'clears and rebuilds map', ->
-      concept1 = new Backbone.Model
-      concept2 = new Backbone.Model
-      @view.hits.reset [
-        { result: concept1 }
-        { result: concept2 }
-      ], silent: yes
-      @view.render()
-      expect( @view.model.build ).to.have.been.calledTwice
-      expect( @view.model.build.firstCall ).to.have.been.calledWith []
-      expect( @view.model.build.secondCall ).to.have.been.calledWith [
-        concept1
-        concept2
-      ]
+    context 'clear', ->
 
-    it 'updates after clearing and rebuilding, respectively', ->
-      @view.render()
-      @deferred.resolve()
-      build = @view.model.build
-      update = @view.update
-      expect( update ).to.have.been.calledTwice
-      expect( update.firstCall ).to.have.been.calledAfter build.firstCall
-      expect( update.secondCall ).to.have.been.calledAfter build.secondCall
+      it 'resets map', ->
+        @view.render()
+        expect( @view.model.build ).to.have.been.calledOnce
+        expect( @view.model.build ).to.have.been.calledWith []
 
-    it 'centers selection after both updates, respectively', ->
-      @view.render()
-      @deferred.resolve()
-      update = @view.update
-      center = @view.centerSelection
-      expect( center ).to.have.been.calledTwice
-      expect( center.firstCall ).to.have.been.calledAfter update.firstCall
-      expect( center.secondCall ).to.have.been.calledAfter update.secondCall
+      it 'defers update and center', ->
+        @view.render()
+        expect( @view.update ).to.not.have.been.called
+        expect( @view.centerSelection ).to.not.have.been.called
 
-    it 'marks placeholder as busy', ->
-      @view.render()
-      placeholder = @view.model.at(1)
-      expect( placeholder.get 'busy' ).to.be.true
+      it 'marks placeholder as busy', ->
+        @view.render()
+        @deferred.resolve()
+        placeholder = @view.model.at(1)
+        expect( placeholder.get 'busy' ).to.be.true
+
+      it 'updates and centers map when cleared', ->
+        @view.render()
+        @deferred.resolve()
+        expect( @view.update ).to.have.been.calledOnce
+        expect( @view.centerSelection ).to.have.been.calledOnce
+        expect( @view.centerSelection ).to.have.been.calledAfter @view.update
+
+      it 'builds up map from hits', ->
+        concept1 = new Backbone.Model
+        concept2 = new Backbone.Model
+        @view.hits.reset [
+          { result: concept1 }
+          { result: concept2 }
+        ], silent: yes
+        @view.render()
+        @view.model.build.reset()
+        @deferred.resolve()
+        expect( @view.model.build ).to.have.been.calledOnce
+        expect( @view.model.build ).to.have.been.calledWith [ concept1, concept2 ]
+
+      it 'updates and centers map when loaded', ->
+        @view.render()
+        @deferred.resolve()
+        @view.update.reset()
+        @view.centerSelection.reset()
+        @deferred.resolve()
+        expect( @view.update ).to.have.been.calledOnce
+        expect( @view.centerSelection ).to.have.been.calledOnce
+        expect( @view.centerSelection ).to.have.been.calledAfter @view.update
 
   describe '#update()', ->
 
@@ -186,6 +196,12 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     it 'can be chained', ->
       @view.update().should.equal @view
+
+    it 'is triggered on placeholder updates', ->
+      @view.update = sinon.spy()
+      @view.initialize hits: @view.hits
+      @view.model.trigger 'placeholder:update'
+      expect( @view.update ).to.have.been.calledOnce
 
     it 'delegates rendering to strategy', ->
       graph = root: {id: 'root'}, edges: []

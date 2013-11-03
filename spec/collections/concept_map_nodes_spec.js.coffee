@@ -7,10 +7,14 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
     @repository = new Backbone.Model
     Coreon.application = repository: => @repository
     sinon.stub Coreon.Models.Concept, 'find'
+    sinon.stub Coreon.Models.Concept, 'roots', =>
+      @deferred = $.Deferred()
+      @deferred.promise()
     @collection = new Coreon.Collections.ConceptMapNodes
 
   afterEach ->
     Coreon.Models.Concept.find.restore()
+    Coreon.Models.Concept.roots.restore()
     delete Coreon.application
 
   it 'is a Backbone collection', ->
@@ -36,6 +40,37 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( root ).to.exist
       expect( root.get 'model' ).to.equal @repository
 
+    it 'sets top level concept ids on root', ->
+      deferred = $.Deferred()
+      @collection.rootIds = -> deferred.promise()
+      @collection.build()
+      deferred.resolve ['8fa451', '4156fe']
+      root = @collection.at(0)
+      expect( root.get 'child_node_ids' ).to.eql ['8fa451', '4156fe']
+
+    it 'updates placeholders when updating root ids after build', ->
+      deferred = $.Deferred()
+      @collection.rootIds = -> deferred.promise()
+      update = @collection.updatePlaceholderNode = sinon.spy()
+      @collection.build()
+      delete @collection.build.deferred
+      update.reset()
+      deferred.resolve ['8fa451', '4156fe']
+      root = @collection.at(0)
+      expect( update ).to.have.been.calledOnce
+      expect( update ).to.have.been.calledWith root, ['8fa451', '4156fe']
+
+    it 'it does not update placeholders when setting root ids during build', ->
+      deferred = $.Deferred()
+      @collection.rootIds = -> deferred.promise()
+      update = @collection.updatePlaceholderNode = sinon.spy()
+      @collection.build()
+      @collection.build.deferred = $.Deferred()
+      update.reset()
+      deferred.resolve ['8fa451', '4156fe']
+      root = @collection.at(0)
+      expect( update ).to.not.have.been.called
+
     it 'creates nodes for passed in models', ->
       concept = new Backbone.Model id: 'concept-123'
       @collection.build [ concept ]
@@ -60,7 +95,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       it 'adds placeholder nodes', ->
         callback = sinon.spy()
         spy = sinon.spy()
-        @collection.addPlaceholderNodes = spy
+        @collection.updateAllPlaceholderNodes = spy
         promise = @collection.build()
         promise.done callback
         expect( spy ).to.have.been.calledOnce
@@ -91,7 +126,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       it 'adds placeholder nodes when nodes are loaded', ->
         callback = sinon.spy()
         spy = sinon.spy()
-        @collection.addPlaceholderNodes = spy
+        @collection.updateAllPlaceholderNodes = spy
         promise = @collection.build()
         promise.done callback
         expect( spy ).to.not.have.been.called
@@ -130,13 +165,45 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       ], silent: yes
       expect( @collection.isLoaded() ).to.be.true
 
-    it 'is false when at least one node is not loaded', ->
+    it 'is false when at least one node is not yet loaded', ->
       @collection.reset [
         { loaded: yes }
         { loaded: no }
         { loaded: yes }
       ], silent: yes
       expect( @collection.isLoaded() ).to.be.false
+
+  describe '#rootIds()', ->
+
+    it 'fetches root ids', ->
+      @collection.rootIds()
+      expect( Coreon.Models.Concept.roots ).to.have.been.calledOnce
+
+    it 'resolves with root ids', ->
+      spy = sinon.spy()
+      @collection.rootIds().done spy
+      @deferred.resolve ['8fa451', '4156fe']
+      expect( spy ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledWith ['8fa451', '4156fe']
+
+    it 'memoizes root ids', ->
+      spy = sinon.spy()
+      @collection.rootIds().done spy
+      @deferred.resolve ['8fa451', '4156fe']
+      @collection.rootIds()
+      expect( Coreon.Models.Concept.roots ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledWith ['8fa451', '4156fe']
+
+    it 'can be forced to fetch root ids again', ->
+      spy = sinon.spy()
+      @collection.rootIds()
+      @deferred.resolve ['8fa451', '4156fe']
+      @collection.rootIds(yes).done spy
+      @deferred.resolve []
+      expect( Coreon.Models.Concept.roots ).to.have.been.calledTwice
+      expect( spy ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledWith []
 
   describe '#addParentNodes()', ->
 
@@ -181,91 +248,96 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       parent = @collection.get 'sdfg0987'
       expect( parent.get 'parent_of_hit' ).to.be.true
 
-  describe '#addPlaceholderNodes()', ->
+  describe '#updateAllPlaceholderNodes()', ->
 
-    it 'creates placeholder for collapsed children', ->
+    it 'silently updates every single model', ->
+      update = @collection.updatePlaceholderNode = sinon.spy()
+      node1 = new Backbone.Model id: 'fghj567', child_node_ids: ['58765fh']
+      node2 = new Backbone.Model id: '58765fh', child_node_ids: []
       @collection.reset [
-        id: 'fghj567'
-        child_node_ids: [ '5678jkl' ]
-        expanded: no
+        node1
+        node2
       ], silent: yes
-      @collection.addPlaceholderNodes()
-      node = @collection.at(1)
-      expect( node ).to.exist
-      expect( node.get 'type' ).to.equal 'placeholder'
-      expect( node.id ).to.equal '+[fghj567]'
-      expect( node.get 'parent_node_ids' ).to.eql ['fghj567']
+      @collection.updateAllPlaceholderNodes()
+      expect( update ).to.have.been.calledTwice
+      expect( update ).to.have.been.calledWith node1, ['58765fh'], silent: yes
+      expect( update ).to.have.been.calledWith node2, [], silent: yes
+
+  describe '#updatePlaceholderNode()', ->
+
+    beforeEach ->
+      @node = new Backbone.Model id: 'fghj567', child_node_ids: []
+
+    it 'creates placeholder for children', ->
+      @node.id = 'fghj567'
+      @collection.updatePlaceholderNode @node, ['5678jkl']
+      placeholder = @collection.at(0)
+      expect( placeholder.get 'type' ).to.equal 'placeholder'
+      expect( placeholder.id ).to.equal '+[fghj567]'
+      expect( placeholder.get 'parent_node_ids' ).to.eql ['fghj567']
 
     it 'silently adds placeholder', ->
-      @collection.reset [
-        id: 'fghj567'
-        child_node_ids: [ '5678jkl' ]
-        expanded: no
-      ], silent: yes
       spy = sinon.spy()
       @collection.on "add", spy
-      @collection.addPlaceholderNodes()
+      @collection.updatePlaceholderNode @node, ['5678jkl']
       expect( spy ).to.not.have.been.called
 
-    it 'does not create placeholder when expanded', ->
-      @collection.reset [
-        id: 'fghj567'
-        child_node_ids: [ '5678jkl' ]
-        expanded: yes
-      ], silent: yes
-      @collection.addPlaceholderNodes()
-      node = @collection.get '+[fghj567]'
-      expect( node ).to.not.exist
-
-    it 'does not create placeholder when it does not have children', ->
-      @collection.reset [
-        id: 'fghj567'
-        child_node_ids: []
-        expanded: no
-      ], silent: yes
-      @collection.addPlaceholderNodes()
-      node = @collection.get '+[fghj567]'
-      expect( node ).to.not.exist
-
-    it 'does not create placeholder when there are no more children', ->
-
-      @collection.reset [
-        { id: 'fghj567', child_node_ids: [ 'dgfgj67' ] }
-        { id: 'dgfgj67', child_node_ids: [] }
-      ], silent: yes
-
-      @collection.addPlaceholderNodes()
-      node = @collection.get '+[fghj567]'
-      expect( node ).to.not.exist
-
     it 'sets label to hidden children count', ->
-      @collection.reset [
-        { id: 'fghj567', child_node_ids: [ '5678jkl', 'dgfgj67', 'tzu743a' ] }
-        { id: 'dgfgj67', child_node_ids: [] }
-      ], silent: yes
-      @collection.addPlaceholderNodes()
-      node = @collection.get '+[fghj567]'
-      expect( node.get 'label' ).to.equal '2'
+      @collection.reset [ id: '5678jkl' ], silent: yes
+      @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
+      placeholder = @collection.get "+[fghj567]"
+      expect( placeholder.get 'label' ).to.equal '1'
 
-    it 'does not set label for repository', ->
+    it 'removes placeholder when child nodes are empty', ->
       @collection.reset [
-        id: 'fghj567'
-        type: 'repository'
-        expanded: no
+        id: '+[fghj567]'
       ], silent: yes
-      @collection.addPlaceholderNodes()
-      node = @collection.get '+[fghj567]'
-      expect( node.get 'label' ).to.be.null
+      @collection.updatePlaceholderNode @node, []
+      placeholder = @collection.get "+[fghj567]"
+      expect( placeholder ).to.not.exist
 
-    it 'default busy state to idle', ->
+    it 'removes placeholder when no more children are hidden', ->
       @collection.reset [
-        id: 'fghj567'
-        child_node_ids: [ '5678jkl' ]
-        expanded: no
+        { id: '+[fghj567]' }
+        { id: '5678jkl'    }
       ], silent: yes
-      @collection.addPlaceholderNodes()
-      node = @collection.at(1)
-      expect( node.get 'busy' ).to.be.false
+      @collection.updatePlaceholderNode @node, ['5678jkl']
+      placeholder = @collection.get "+[fghj567]"
+      expect( placeholder ).to.not.exist
+
+    it 'updates existing placeholder', ->
+      @collection.reset [
+        id: '+[fghj567]'
+        child_node_ids: ['5678jkl']
+      ], silent: yes
+      @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf' ]
+      placeholder = @collection.get "+[fghj567]"
+      expect( placeholder.get 'label' ).to.equal '2'
+
+    it 'triggers event', ->
+      spy = sinon.spy()
+      @collection.on 'placeholder:update', spy
+      @collection.updatePlaceholderNode @node, ['5678jkl']
+      expect( spy ).to.have.been.calledOnce
+
+    it 'does not trigger event when silent', ->
+      spy = sinon.spy()
+      @collection.on 'placeholder:update', spy
+      @collection.updatePlaceholderNode @node, ['5678jkl'], silent: yes
+      expect( spy ).to.not.have.been.called
+
+    it 'enforces placeholder on repository whith unknown root ids', ->
+      @node.set 'type', 'repository', silent: yes
+      @collection.updatePlaceholderNode @node, []
+      placeholder = @collection.get "+[fghj567]"
+      expect( placeholder ).to.exist
+
+    it 'does not enforce placeholder on repository whith known root ids', ->
+      @node.set 'type', 'repository', silent: yes
+      @collection._rootIds = ['523345', '58765fh']
+      @collection.updatePlaceholderNode @node, []
+      placeholder = @collection.get "+[fghj567]"
+      expect( placeholder ).to.not.exist
 
   describe '#graph()', ->
 
@@ -290,18 +362,12 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
   describe '#expand()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Models.Concept, 'roots', =>
-        @deferred = $.Deferred()
-        @deferred.promise()
       @model = new Backbone.Model id: '8fa451', child_node_ids: []
       @collection.add @model, silent: yes
       @concept1 = new Backbone.Model id: '523345'
       @concept2 = new Backbone.Model id: '4156fe'
       Coreon.Models.Concept.find.withArgs('523345').returns @concept1
       Coreon.Models.Concept.find.withArgs('4156fe').returns @concept2
-
-    afterEach ->
-      Coreon.Models.Concept.roots.restore()
 
     it 'updates expansion state', ->
       @model.set 'expanded', no, silent: yes
@@ -313,9 +379,11 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       beforeEach ->
         @model.set 'type', 'repository', silent: yes
 
-      it 'fetches root node ids', ->
+      it 'refetches root node ids', ->
+        sinon.spy @collection, 'rootIds'
         @collection.expand '8fa451'
-        expect( Coreon.Models.Concept.roots ).to.have.been.calledOnce
+        expect( @collection.rootIds ).to.have.been.calledOnce
+        expect( @collection.rootIds ).to.have.been.calledWith yes
 
       it 'creates nodes from root node ids', ->
         @collection.expand '8fa451'
@@ -327,7 +395,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( node2 ).to.exist
         expect( node2.get 'model' ).to.equal @concept2
 
-      it 'succeeds immediately if all concepts are already loaded', ->
+      it 'succeeds when all concepts are already loaded', ->
         spy = sinon.spy()
         @concept1.blank = no
         @concept2.blank = no

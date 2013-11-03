@@ -3,6 +3,14 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   include Api::Graph::Factory
   include EdgesHelpers
 
+  def collect_placeholders
+    page.evaluate_script <<-JS
+      $("#coreon-concept-map .placeholder").map(function() {
+        return this.__data__.parent.label + " (" + this.__data__.label + ")"
+      }).get();
+    JS
+  end
+
   step 'I have selected a repository "Billiards"' do
     @repository.update_attributes name: "Billiards"
   end
@@ -12,14 +20,19 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'this concept has narrower concepts "pool", "snooker", "English billiards"' do
-    @pool = create_concept_with_label "pool", superconcept_ids: [ @pocket_billiards["id"] ]
-    @snooker = create_concept_with_label "snooker", superconcept_ids: [ @pocket_billiards["id"] ]
-    @english = create_concept_with_label "English billiards", superconcept_ids: [ @pocket_billiards["id"] ]
+    @pool = create_concept_with_label "pool",
+      superconcept_ids: [ @pocket_billiards["id"] ]
+    @snooker = create_concept_with_label "snooker",
+      superconcept_ids: [ @pocket_billiards["id"] ]
+    @english = create_concept_with_label "English billiards",
+      superconcept_ids: [ @pocket_billiards["id"] ]
   end
 
   step '"pool" has narrower concepts "8-ball", "nine ball"' do
-    @eight_ball = create_concept_with_label "eight ball", superconcept_ids: [ @pool["id"] ]
-    @nine_ball = create_concept_with_label "nine ball", superconcept_ids: [ @pool["id"] ]
+    @eight_ball = create_concept_with_label "eight ball",
+      superconcept_ids: [ @pool["id"] ]
+    @nine_ball = create_concept_with_label "nine ball",
+      superconcept_ids: [ @pool["id"] ]
   end
 
   step 'a concept "carom billiards" exists' do
@@ -27,7 +40,8 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'this concept has a narrower concept "five pin billiards"' do
-    @five_pin_billiards = create_concept_with_label "five pin billiards", superconcept_ids: [ @carom_billiards["id"] ]
+    @five_pin_billiards = create_concept_with_label "five pin billiards",
+      superconcept_ids: [ @carom_billiards["id"] ]
   end
 
   step 'I visit the repository root page' do
@@ -41,22 +55,19 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'I should see a placeholder node deriving from it' do
-    within("#coreon-concept-map") do
-      page.should have_css(".concept-node.placeholder")
+    @placeholder = collect_placeholders.find do |p|
+      p.start_with? "Billiards ("
     end
+    @placeholder.should_not be_nil
     collect_placeholder_edges.should == ["+[Billiards]"]
   end
 
-  step 'this placeholder should have no object count' do
-    within("#coreon-concept-map") do
-      page.should have_no_css(".concept-node.placeholder .nodes-count")
-    end
+  step 'this placeholder should have an object count of "2"' do
+    @placeholder[/\(\d+\)/].should == 2
   end
 
   step 'I click this placeholder' do
-    within("#coreon-concept-map") do
-      page.find(".concept-node.placeholder").click
-    end
+    click_placeholder "+[Billiards]"
   end
 
   step 'I should see two concept nodes "pocket billiards" and "carom billiards"' do
@@ -67,7 +78,10 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'I should not see this placeholder anymore' do
-    pending 'step not implemented'
+    collect_placeholder_edges.should_not include("+[Billiards]")
+    within("#coreon-concept-map") do
+      page.should have_no_css(".concept-node.placeholder")
+    end
   end
 
   step 'both should be connected to the repository node' do

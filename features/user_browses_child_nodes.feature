@@ -18,11 +18,11 @@ Feature: user browses child nodes
     When I visit the repository root page
     Then I should see the repository node within the concept map
     And I should see a placeholder node deriving from it
-    And this placeholder should have no object count
+    And this placeholder should have an object count of "2"
     When I click this placeholder
-    Then I should see two concept nodes "pocket billiards" and "carom billiards" 
+    Then I should see two concept nodes "pocket billiards" and "carom billiards"
     But I should not see this placeholder anymore
-    And both should be connected to the repository node
+    And both concepts should be connected to the repository node
     And I should see a placeholder deriving from each of them
     And I should see object count "1" for placeholder connected to "carom billiards"
     And I should see object count "3" for placeholder connected to "pocket billiards"
