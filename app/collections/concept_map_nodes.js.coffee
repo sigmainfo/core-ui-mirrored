@@ -67,3 +67,39 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
   graph: ->
     (new Coreon.Lib.TreeGraph @models).generate()
+
+  expand: (id) ->
+    deferred = $.Deferred()
+    model = @get id
+    model.set 'expanded', yes
+
+    if model.get('type') is 'repository'
+      Coreon.Models.Concept.roots()
+        .done (rootIds) =>
+          @addAndLoad rootIds, deferred
+    else
+      @addAndLoad model.get('child_node_ids'), deferred
+
+    deferred.promise()
+
+  addAndLoad: (ids, deferred = $.Deferred()) ->
+    nodes = []
+
+    for id in ids
+      @add model: Coreon.Models.Concept.find id
+      nodes.push @get id
+
+    resolve = =>
+      loaded = yes
+      for node in nodes
+        unless node.get 'loaded'
+          loaded = no
+          break
+      if loaded
+        @stopListening @, 'change:loaded', resolve
+        deferred.resolve nodes
+
+    @listenTo @, 'change:loaded', resolve
+    resolve()
+
+    deferred.promise()

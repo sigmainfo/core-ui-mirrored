@@ -19,6 +19,11 @@ class Coreon.Models.Concept extends Backbone.Model
   @collection = ->
     @_collection ||= new Coreon.Collections.Concepts
 
+  @roots = ->
+    graphUri = Coreon.application.graphUri().replace /\/$/, ''
+    url = "#{graphUri}#{@::urlRoot}/roots"
+    Coreon.Modules.CoreAPI.sync 'read', @collection(), url: url
+
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
 
   @embedsMany "properties", model: Coreon.Models.Property

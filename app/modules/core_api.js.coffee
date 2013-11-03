@@ -69,9 +69,9 @@ next = (url, options) ->
   chunk = queues[url].splice 0, max
 
   opts = {}
-  for key, value of options when key not in ["error", "success"] 
+  for key, value of options when key not in ["error", "success"]
     opts[key] = value
-  
+
   if chunk.length is 0
     delete queues[url]
   else
@@ -128,7 +128,7 @@ Coreon.Modules.CoreAPI =
       batch deferred, method, model, options
     else
       ajax deferred, method, model, options
-      
+
     deferred.promise()
 
 Coreon.Modules.extend Coreon.Modules.CoreAPI, Backbone.Events

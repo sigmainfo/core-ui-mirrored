@@ -289,7 +289,122 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
 
   describe '#expand()', ->
 
+    beforeEach ->
+      sinon.stub Coreon.Models.Concept, 'roots', =>
+        @deferred = $.Deferred()
+        @deferred.promise()
+      @model = new Backbone.Model id: '8fa451', child_node_ids: []
+      @collection.add @model, silent: yes
+      @concept1 = new Backbone.Model id: '523345'
+      @concept2 = new Backbone.Model id: '4156fe'
+      Coreon.Models.Concept.find.withArgs('523345').returns @concept1
+      Coreon.Models.Concept.find.withArgs('4156fe').returns @concept2
+
+    afterEach ->
+      Coreon.Models.Concept.roots.restore()
+
+    it 'updates expansion state', ->
+      @model.set 'expanded', no, silent: yes
+      @collection.expand '8fa451'
+      expect( @model.get 'expanded' ).to.be.true
+
     context 'repository', ->
 
+      beforeEach ->
+        @model.set 'type', 'repository', silent: yes
+
       it 'fetches root node ids', ->
-        todo()
+        @collection.expand '8fa451'
+        expect( Coreon.Models.Concept.roots ).to.have.been.calledOnce
+
+      it 'creates nodes from root node ids', ->
+        @collection.expand '8fa451'
+        @deferred.resolve ['523345', '4156fe']
+        node1 = @collection.get '523345'
+        expect( node1 ).to.exist
+        expect( node1.get 'model' ).to.equal @concept1
+        node2 = @collection.get '4156fe'
+        expect( node2 ).to.exist
+        expect( node2.get 'model' ).to.equal @concept2
+
+      it 'succeeds immediately if all concepts are already loaded', ->
+        spy = sinon.spy()
+        @concept1.blank = no
+        @concept2.blank = no
+        @collection.expand('8fa451').done spy
+        @deferred.resolve ['523345', '4156fe']
+        node1 = @collection.get '523345'
+        node2 = @collection.get '4156fe'
+        expect( spy ).to.have.been.calledOnce
+        expect( spy ).to.have.been.calledWith [node1, node2]
+
+      it 'defers callback if not all concepts are already loaded', ->
+        spy = sinon.spy()
+        @concept1.blank = no
+        @concept2.blank = yes
+        @collection.expand('8fa451').done spy
+        @deferred.resolve ['523345', '4156fe']
+        expect( spy ).to.not.have.been.called
+
+      it 'triggers callback when all concepts are loaded', ->
+        spy = sinon.spy()
+        @concept1.blank = yes
+        @concept2.blank = yes
+        @collection.expand('8fa451').done spy
+        @deferred.resolve ['523345', '4156fe']
+        node1 = @collection.get '523345'
+        node1.set 'loaded', yes
+        node2 = @collection.get '4156fe'
+        node2.set 'loaded', yes
+        expect( spy ).to.have.been.calledOnce
+        expect( spy ).to.have.been.calledWith [node1, node2]
+
+    context 'concept', ->
+
+      beforeEach ->
+        @model.set {
+          type: 'concept'
+          child_node_ids: ['523345', '4156fe']
+        }, silent: yes
+
+      it 'does not fetch root node ids', ->
+        @collection.expand '8fa451'
+        expect( Coreon.Models.Concept.roots ).to.not.have.been.called
+
+      it 'creates nodes from child node ids', ->
+        @collection.expand '8fa451'
+        node1 = @collection.get '523345'
+        expect( node1 ).to.exist
+        expect( node1.get 'model' ).to.equal @concept1
+        node2 = @collection.get '4156fe'
+        expect( node2 ).to.exist
+        expect( node2.get 'model' ).to.equal @concept2
+
+      it 'succeeds immediately if all concepts are already loaded', ->
+        spy = sinon.spy()
+        @concept1.blank = no
+        @concept2.blank = no
+        @collection.expand('8fa451').done spy
+        node1 = @collection.get '523345'
+        node2 = @collection.get '4156fe'
+        expect( spy ).to.have.been.calledOnce
+        expect( spy ).to.have.been.calledWith [node1, node2]
+
+      it 'defers callback if not all concepts are already loaded', ->
+        spy = sinon.spy()
+        @concept1.blank = no
+        @concept2.blank = yes
+        @collection.expand('8fa451').done spy
+        expect( spy ).to.not.have.been.called
+
+      it 'triggers callback when all concepts are loaded', ->
+        spy = sinon.spy()
+        @concept1.blank = yes
+        @concept2.blank = yes
+        @collection.expand('8fa451').done spy
+        node1 = @collection.get '523345'
+        node1.set 'loaded', yes
+        node2 = @collection.get '4156fe'
+        node2.set 'loaded', yes
+        expect( spy ).to.have.been.calledOnce
+        expect( spy ).to.have.been.calledWith [node1, node2]
