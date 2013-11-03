@@ -131,6 +131,10 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
       (datum) -> datum.type is "placeholder"
     )
 
+    placeholders.classed('busy', (datum) ->
+      datum.busy
+    )
+
     placeholders.select("circle.background")
       .attr("r", (datum) ->
         if datum.busy then 10 else 7

@@ -195,6 +195,62 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.update()
       strategy.render.should.have.been.calledWith graph
 
+  describe '#expand()', ->
+
+    beforeEach ->
+      @model = new Backbone.Model id: '+[86f14a]'
+      @view.model.add @model
+      @placeholder = $ '<g class="concept-node placeholder"></g>'
+      d3.select(@placeholder[0]).datum
+        id: '+[86f14a]'
+        parent:
+          id: '86f14a'
+      @view.$('.concept-map').append @placeholder
+      @event = $.Event 'click'
+      @event.target = @placeholder[0]
+      @deferred = $.Deferred()
+      @view.update = sinon.spy()
+      @view.model.expand = sinon.stub().returns @deferred.promise()
+
+    it 'is triggered by click on placeholder', ->
+      @view.expand = sinon.spy()
+      @view.delegateEvents()
+      @placeholder.trigger @event
+      expect( @view.expand.callCount ).to.equal 1
+      expect( @view.expand.firstCall.args[0] ).to.equal @event
+      expect( @view.expand.thisValues[0] ).to.equal @view
+
+    it 'is not triggered when placeholder is busy', ->
+      @view.expand = sinon.spy()
+      @view.delegateEvents()
+      @placeholder.addClass 'busy'
+      @placeholder.trigger @event
+      expect( @view.expand.callCount ).to.equal 0
+
+    it 'marks placeholder as busy', ->
+      @view.expand @event
+      expect( @model.get 'busy' ).to.be.true
+
+    it 'expands parent node', ->
+      @view.expand @event
+      expect( @view.model.expand ).to.have.been.calledOnce
+      expect( @view.model.expand ).to.have.been.calledWith '86f14a'
+
+    it 'updates view to render progress indicator', ->
+      set = sinon.spy()
+      @model.set = set
+      @view.expand @event
+      expect( @view.update ).to.have.been.calledOnce
+      expect( set ).to.have.been.calledOnce
+      expect( set ).to.have.been.calledWith 'busy', on
+      expect( @view.update ).to.have.been.calledAfter set
+
+    it 'updates after model finished expanding', ->
+      @view.expand @event
+      @view.update.reset()
+      @deferred.resolve()
+      expect( @view.update ).to.have.been.calledOnce
+
   describe '#zoomIn()', ->
 
     beforeEach ->

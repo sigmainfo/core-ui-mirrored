@@ -340,13 +340,22 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
 
     context 'placeholders', ->
 
-      context 'collapsed', ->
+      context 'idle', ->
+
+        it 'classifies as idle', ->
+          nodes = @selection.data [
+            type: 'placeholder'
+            busy: no
+          ]
+          @strategy.updateNodes nodes
+          classes = @selection.attr('class').split ' '
+          expect( classes ).to.not.contain 'busy'
 
         it 'resets background radius', ->
           background = @selection.append('circle').attr('class', 'background')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: no
+            busy: no
           ]
           @strategy.updateNodes nodes
           background.attr('r').should.equal '7'
@@ -355,7 +364,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           icon = @selection.append('path').attr('class', 'icon')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: no
+            busy: no
           ]
           @strategy.updateNodes nodes
           should.not.exist icon.attr('style')
@@ -364,7 +373,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           indicator = @selection.append('g').attr('class', 'progress-indicator')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: no
+            busy: no
           ]
           @strategy.updateNodes nodes
           indicator.attr('style').should.include 'display: none;'
@@ -373,7 +382,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           cursor = @selection.append('path').attr('class', 'cursor')
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: no
+            busy: no
             loop: null
           ]
           @strategy.updateNodes nodes
@@ -386,7 +395,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           @parent.stopLoop = sinon.spy()
           nodes = @selection.data [
             type: 'placeholder'
-            parent: expanded: no
+            busy: no
             loop: animation
           ]
           @strategy.updateNodes nodes
@@ -394,6 +403,15 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           @parent.stopLoop.should.have.been.calledWith animation
 
       context 'busy', ->
+
+        it 'classifies as busy', ->
+          nodes = @selection.data [
+            type: 'placeholder'
+            busy: yes
+          ]
+          @strategy.updateNodes nodes
+          classes = @selection.attr('class').split ' '
+          expect( classes ).to.contain 'busy'
 
         it 'increases background radius', ->
           background = @selection.append('circle').attr('class', 'background')

@@ -286,3 +286,10 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( Coreon.Lib.TreeGraph ).to.have.been.calledWithNew
       expect( Coreon.Lib.TreeGraph ).to.have.been.calledWith @collection.models
       expect( graph ).to.equal @graph
+
+  describe '#expand()', ->
+
+    context 'repository', ->
+
+      it 'fetches root node ids', ->
+        todo()
