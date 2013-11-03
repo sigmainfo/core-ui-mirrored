@@ -16,7 +16,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         @strategy = new Coreon.Views.Widgets.ConceptMap.LeftToRight @parent
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledOnce
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledOn @strategy
-        Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledWith @parent 
+        Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledWith @parent
       finally
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.restore()
 
@@ -47,14 +47,14 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledWith nodes
       finally
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateNodes.restore()
-    
+
     it "updates node position", ->
       nodes = @selection.data [
         x: "45"
         y: "123"
       ]
       @strategy.updateNodes nodes
-      nodes.attr("transform").should.equal "translate(123, 45)" 
+      nodes.attr("transform").should.equal "translate(123, 45)"
 
     it "updates label", ->
       Coreon.Helpers.Text.shorten.withArgs("node 1234567890").returns "node 123…"
@@ -100,7 +100,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         background.attr("y").should.equal "-11"
 
   describe "updateEdges()", ->
-    
+
     beforeEach ->
       @strategy.diagonal = sinon.stub()
       @selection = @parent.append("path").attr("class", "concept-edge")
@@ -138,10 +138,10 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           x: 123
           y: 45
           labelWidth: 123
-          expanded: no
         target:
           id: "target"
           type: "placeholder"
+          busy: no
           x: 123
           y: 67
       ]
@@ -164,10 +164,10 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
           x: 123
           y: 45
           labelWidth: 123
-          expanded: yes
         target:
           id: "target"
           type: "placeholder"
+          busy: yes
           x: 123
           y: 67
       ]
@@ -204,7 +204,7 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       @label = @selection.append("text").attr("class", "label")
       @label.node().getBBox = -> width: 100
       @strategy.updateEdges = sinon.spy()
-  
+
     it "resizes background", ->
       background = @selection.append("rect").attr("class", "background")
       nodes = @selection.data [ label: "node 12345" ]

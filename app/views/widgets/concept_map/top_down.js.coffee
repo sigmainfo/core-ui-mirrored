@@ -56,7 +56,7 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
     diagonal = @diagonal
     edges.attr("d", (datum) ->
       offsetTargetY = if datum.target.type is "placeholder"
-          if datum.source.expanded then 10 else 7
+          if datum.target.busy then 10 else 7
         else
           3.5
       diagonal

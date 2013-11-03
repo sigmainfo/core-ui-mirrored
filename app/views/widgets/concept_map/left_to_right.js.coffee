@@ -14,7 +14,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
     nodes.attr("transform", (datum) ->
         "translate(#{datum.y}, #{datum.x})"
       )
-    
+
     nodes.select("text.label")
       .attr("text-anchor", "start")
       .attr("x", 7)
@@ -43,7 +43,7 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       target = datum.target
       if labelWidth = source.labelWidth
         offsetTargetY = if datum.target.type is "placeholder"
-            if datum.source.expanded then 10 else 7
+            if datum.target.busy then 10 else 7
           else
             7
         diagonal
@@ -67,5 +67,5 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       .attr("width", (datum) ->
         datum.labelWidth
       )
-    
+
     @updateEdges edges

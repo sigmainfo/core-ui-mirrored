@@ -20,7 +20,7 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         @strategy = new Coreon.Views.Widgets.ConceptMap.TopDown @parent
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledOnce
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledOn @strategy
-        Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledWith @parent 
+        Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledWith @parent
       finally
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.restore()
 
@@ -55,8 +55,8 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         y: "123"
       ]
       @strategy.updateNodes nodes
-      nodes.attr("transform").should.equal "translate(45, 123)" 
-    
+      nodes.attr("transform").should.equal "translate(45, 123)"
+
     it "updates label", ->
       Coreon.Helpers.Text.wrap.withArgs("lorem ipsum dolor sic amet")
         .returns ["lorem ipsum dolor", "sic amet"]
@@ -108,7 +108,7 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
         background.attr("y").should.equal "6"
 
   describe "updateEdges()", ->
-    
+
     beforeEach ->
       @strategy.diagonal = sinon.stub()
       @selection = @parent.append("path").attr("class", "concept-edge")
@@ -146,10 +146,10 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
           x: 123
           y: 45
           labelHeight: 50
-          expanded: no
         target:
           id: "target"
           type: "placeholder"
+          busy: no
           x: 123
           y: 67
       ]
@@ -172,10 +172,10 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
           x: 123
           y: 45
           labelHeight: 50
-          expanded: yes
         target:
           id: "target"
           type: "placeholder"
+          busy: yes
           x: 123
           y: 67
       ]
@@ -196,7 +196,7 @@ describe "Coreon.Views.Widgets.ConceptMap.TopDown", ->
       @selection = @parent.append("g").attr("class", "concept-node")
       @nodes = @selection.data [ label: "node 12345" ]
       @edges = @selection.data []
-  
+
     it "resizes and repositions background", ->
       label = @selection.append("text").attr("class", "label")
       label.node().getBBox = -> width: 100
