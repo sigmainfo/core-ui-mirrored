@@ -42,6 +42,8 @@ class Coreon.Models.Concept extends Backbone.Model
   initialize: (attrs, options) ->
     @set "label", @_label(), silent: true
     @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
+    if Coreon.application?.repositorySettings()
+      @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @_updateLabel, @
     @_updateHit()
     @listenTo Coreon.Collections.Hits.collection(), "reset add remove", @_updateHit
     @remoteValidationOn()
@@ -79,11 +81,20 @@ class Coreon.Models.Concept extends Backbone.Model
 
   _termLabel: ->
     terms = @get "terms"
+    
+    unless lang = Coreon.application?.repositorySettings('sourceLanguage')
+      lang = 'en'
+      
+    langRegexp = new RegExp("^#{lang}", 'i')
+    fallbackLangRegexp = /^en/i
+    
     for term in terms
-      if term.lang?.match /^en/i
+      if !!term.lang?.match langRegexp 
         label = term.value
         break
-    label ?= terms[0]?.value
+      if not fallbackLabel? and !!term.lang?.match fallbackLangRegexp 
+        fallbackLabel = term.value
+    label ?= fallbackLabel || terms[0]?.value
     label
 
   acceptsConnection: (item_id)->

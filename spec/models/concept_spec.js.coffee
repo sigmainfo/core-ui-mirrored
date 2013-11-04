@@ -55,32 +55,86 @@ describe "Coreon.Models.Concept", ->
           @model.get("label").should.equal "<new concept>"
 
       context "after save", ->
+        context "by term", ->
+          it "uses first English term when no source language set", ->
+            @model.set terms: [
+                {
+                  lang: "fr"
+                  value: "poésie"
+                }
+                {
+                  lang: "en"
+                  value: "poetry"
+                }
+                {
+                  lang: "en"
+                  value: "poetics"
+                }
+              ]
+            @model.initialize()
+            @model.get("label").should.equal "poetry"
 
-        it "uses first English term", ->
-          @model.set terms: [
+          it "falls back to term in other language", ->
+            @model.set terms: [
+              lang: "fr"
+              value: "poésie"
+            ]
+            @model.initialize()
+            @model.get("label").should.equal "poésie"
+          
+          it "handles term lang gracefully", ->
+            @model.set terms: [
               {
                 lang: "fr"
                 value: "poésie"
               }
               {
-                lang: "en"
+                lang: "EN_US"
                 value: "poetry"
               }
-              {
-                lang: "en"
-                value: "poetics"
-              }
             ]
-          @model.initialize()
-          @model.get("label").should.equal "poetry"
+            @model.initialize()
+            @model.get("label").should.equal "poetry"  
+            
+          context "with source language set", ->  
+          
+            beforeEach ->
+              Coreon.application = 
+                repositorySettings: (arg) -> 
+                  return 'fr' if arg == 'sourceLanguage'
+                  
+            afterEach ->
+              delete Coreon.application
+          
+            it "uses term in selected source language", ->
+              #console.log Coreon.application.repositorySettings
+              
+              @model.set terms: [
+                {
+                  lang: "fr"
+                  value: "poésie"
+                }
+                {
+                  lang: "en"
+                  value: "poetry"
+                }
+              ]
+              @model.initialize()
+              @model.get("label").should.equal "poésie"
 
-        it "falls back to term in other language", ->
-          @model.set terms: [
-            lang: "fr"
-            value: "poésie"
-          ]
-          @model.initialize()
-          @model.get("label").should.equal "poésie"
+            it "uses English term if not available in selected source language", ->
+              @model.set terms: [
+                {
+                  lang: "de"
+                  value: "Poesie"
+                }
+                {
+                  lang: "en"
+                  value: "poetry"
+                }
+              ]
+              @model.initialize()
+              @model.get("label").should.equal "poetry"
 
         it "is overwritten by property", ->
           @model.set {
@@ -96,19 +150,7 @@ describe "Coreon.Models.Concept", ->
           @model.initialize()
           @model.get("label").should.equal "My_label"
 
-        it "handles term lang gracefully", ->
-          @model.set terms: [
-            {
-              lang: "fr"
-              value: "poésie"
-            }
-            {
-              lang: "EN_US"
-              value: "poetry"
-            }
-          ]
-          @model.initialize()
-          @model.get("label").should.equal "poetry"
+
 
       context "on changes", ->
 
