@@ -135,6 +135,62 @@ describe "Coreon.Models.Concept", ->
               ]
               @model.initialize()
               @model.get("label").should.equal "poetry"
+            
+            context "with source and target language set", ->
+              
+              beforeEach ->
+                Coreon.application = 
+                  repositorySettings: (arg) -> 
+                    return 'fr' if arg == 'sourceLanguage'
+                    return 'de' if arg == 'targetLanguage'
+                  
+              afterEach ->
+                delete Coreon.application
+          
+              it "uses term in selected source language", ->
+                #console.log Coreon.application.repositorySettings
+              
+                @model.set terms: [
+                  {
+                    lang: "fr"
+                    value: "poésie"
+                  }
+                  {
+                    lang: "en"
+                    value: "poetry"
+                  }
+                ]
+                @model.initialize()
+                @model.get("label").should.equal "poésie"
+
+              it "uses term in target language if not available in selected source language", ->
+                @model.set terms: [
+                  {
+                    lang: "de"
+                    value: "Poesie"
+                  }
+                  {
+                    lang: "en"
+                    value: "poetry"
+                  }
+                ]
+                @model.initialize()
+                @model.get("label").should.equal "Poesie"
+            
+              it "uses English term if not available in selected source or target language", ->
+                @model.set terms: [
+                  {
+                    lang: "ru"
+                    value: "поэзия"
+                  }
+                  {
+                    lang: "en"
+                    value: "poetry"
+                  }
+                ]
+                @model.initialize()
+                @model.get("label").should.equal "poetry"
+              
 
         it "is overwritten by property", ->
           @model.set {

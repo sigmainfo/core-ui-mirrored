@@ -44,6 +44,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
     if Coreon.application?.repositorySettings()
       @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @_updateLabel, @
+      @listenTo Coreon.application.repositorySettings(), 'change:targetLanguage', @_updateLabel, @
     @_updateHit()
     @listenTo Coreon.Collections.Hits.collection(), "reset add remove", @_updateHit
     @remoteValidationOn()
@@ -82,19 +83,25 @@ class Coreon.Models.Concept extends Backbone.Model
   _termLabel: ->
     terms = @get "terms"
     
-    unless lang = Coreon.application?.repositorySettings('sourceLanguage')
-      lang = 'en'
+    unless sourceLang = Coreon.application?.repositorySettings('sourceLanguage')
+      sourceLang = false
       
-    langRegexp = new RegExp("^#{lang}", 'i')
-    fallbackLangRegexp = /^en/i
+    unless targetLang = Coreon.application?.repositorySettings('targetLanguage')
+      targetLang = false
+      
+    langRegexp = new RegExp("^#{sourceLang}", 'i') if sourceLang
+    fallbackLangRegexp = new RegExp("^#{targetLang}", 'i') if targetLang
+    enLangRegexp = /^en/i
     
     for term in terms
-      if !!term.lang?.match langRegexp 
+      if sourceLang and !!term.lang?.match langRegexp 
         label = term.value
         break
-      if not fallbackLabel? and !!term.lang?.match fallbackLangRegexp 
+      if targetLang and not fallbackLabel? and !!term.lang?.match fallbackLangRegexp 
         fallbackLabel = term.value
-    label ?= fallbackLabel || terms[0]?.value
+      if not enLabel? and !!term.lang?.match enLangRegexp 
+        enLabel = term.value
+    label ?= fallbackLabel || enLabel || terms[0]?.value
     label
 
   acceptsConnection: (item_id)->

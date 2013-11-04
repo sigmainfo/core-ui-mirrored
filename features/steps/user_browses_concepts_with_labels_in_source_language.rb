@@ -7,6 +7,10 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
     "#coreon-languages .coreon-select[data-select-name=source_language]"
   end
   
+  def target_language_css
+    "#coreon-languages .coreon-select[data-select-name=target_language]"
+  end
+  
   def dropdown_css
     "#coreon-modal .coreon-select-dropdown"
   end
@@ -33,6 +37,10 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
     within dropdown_css do
       page.find("li", text: "None").click
     end
+  end
+  
+  step 'I click the "Target Language" selector' do
+    page.find(target_language_css).click
   end
   
   step 'I enter "firearm" in the search field' do

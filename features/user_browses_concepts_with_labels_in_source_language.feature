@@ -14,6 +14,8 @@ Feature: user browses concepts with labels in source language
 
     When I click the "Source Language" selector
     And I select "None" from the dropdown
+    And I click the "Target Language" selector
+    And I select "None" from the dropdown
     
     And I enter "firearm" in the search field
     And I click the search button
@@ -29,3 +31,13 @@ Feature: user browses concepts with labels in source language
     And I select "French" from the dropdown
     Then I should see the concept hit "gun"
     And I should not see the concept hit "Schusswaffe"
+    
+    When I click the "Source Language" selector
+    And I select "None" from the dropdown
+    And I click the "Target Language" selector
+    And I select "German" from the dropdown
+    
+    Then I should see the concept hit "Schusswaffe"
+    And I should not see the concept hit "gun"
+    
+    
