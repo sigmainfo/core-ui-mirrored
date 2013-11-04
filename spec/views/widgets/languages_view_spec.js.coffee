@@ -43,6 +43,7 @@ describe 'Coreon.Views.LanguagesView', ->
       beforeEach ->
         sinon.stub Coreon.application, 'repositorySettings'
         Coreon.application.repositorySettings.withArgs('sourceLanguage').returns 'de'
+        Coreon.application.repositorySettings.withArgs('targetLanguage').returns 'fr'
         
       afterEach ->
         Coreon.application.repositorySettings.restore()
@@ -50,6 +51,10 @@ describe 'Coreon.Views.LanguagesView', ->
       it 'sets the source language select to stored value', ->
         @view.render()
         expect( @view.$('select[name=source_language]').val() ).to.equal 'de'
+      
+      it 'sets the target language select to stored value', ->
+        @view.render()
+        expect( @view.$('select[name=target_language]').val() ).to.equal 'fr'
       
   describe 'onChangeSourceLanguage', ->
     beforeEach ->
@@ -63,4 +68,17 @@ describe 'Coreon.Views.LanguagesView', ->
       @view.$('select[name=source_language]').val('fr').change()
       
       expect( Coreon.application.repositorySettings ).to.be.calledWith('sourceLanguage', 'fr')
+      
+  describe 'onChangeTargetLanguage', ->
+    beforeEach ->
+      sinon.spy Coreon.application, 'repositorySettings'
+      
+    afterEach ->
+      Coreon.application.repositorySettings.restore()
+    
+    it 'stores selected target language on selects change event', ->
+      @view.render()
+      @view.$('select[name=target_language]').val('fr').change()
+      
+      expect( Coreon.application.repositorySettings ).to.be.calledWith('targetLanguage', 'fr')
       

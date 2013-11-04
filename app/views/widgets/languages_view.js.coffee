@@ -13,6 +13,7 @@ class Coreon.Views.Widgets.LanguagesView extends Backbone.View
 
   events:
     "change select[name=source_language]"  : "onChangeSourceLanguage"
+    "change select[name=target_language]"  : "onChangeTargetLanguage"
 
   initialize: ->
 
@@ -20,12 +21,16 @@ class Coreon.Views.Widgets.LanguagesView extends Backbone.View
     @$el.html @template()
     
     @$('select[name=source_language]').val(Coreon.application?.repositorySettings 'sourceLanguage')
+    @$('select[name=target_language]').val(Coreon.application?.repositorySettings 'targetLanguage')
     @$('select').coreonSelect()
     
     @
 
   onChangeSourceLanguage: (e) ->
     Coreon.application?.repositorySettings 'sourceLanguage', $(e.target).val()
+    
+  onChangeTargetLanguage: (e) ->
+    Coreon.application?.repositorySettings 'targetLanguage', $(e.target).val()
     
 
     
