@@ -213,16 +213,16 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         label = @placeholder.select('text.count')
         expect( label.node() ).to.exist
         expect( label.attr('text-anchor') ).to.equal 'start'
-        expect( label.attr('x') ).to.equal '22'
-        expect( label.attr('y') ).to.equal '0.4em'
+        expect( label.attr('x') ).to.equal '18'
+        expect( label.attr('y') ).to.equal '4'
 
       it 'renders background for count', ->
         background = @placeholder.select('rect.count-background')
         expect( background.node() ).to.exist
-        expect( background.attr('height') ).to.equal '1em'
+        expect( background.attr('height') ).to.equal '1.1em'
         expect( background.attr('rx') ).to.equal '0.5em'
-        expect( background.attr('x') ).to.equal '15'
-        expect( background.attr('y') ).to.equal '-0.5em'
+        expect( background.attr('x') ).to.equal '12'
+        expect( background.attr('y') ).to.equal '-0.55em'
 
       it 'renders circle', ->
         background = @placeholder.select('circle.background')
@@ -613,4 +613,4 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       label.node().getBBox = -> width: 100
       background = @selection.append('rect').attr('class', 'count-background')
       @strategy.updateLayout @nodes
-      background.attr('width').should.equal '114'
+      background.attr('width').should.equal '112'

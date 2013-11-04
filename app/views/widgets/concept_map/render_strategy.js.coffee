@@ -76,8 +76,8 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     placeholders.append('text')
       .attr('class', 'count')
       .attr('text-anchor', 'start')
-      .attr('x', '18px')
-      .attr('y', '4px')
+      .attr('x', '18')
+      .attr('y', '4')
 
     placeholders.append('circle')
       .attr('class', 'background')
