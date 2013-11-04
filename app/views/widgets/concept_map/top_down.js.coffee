@@ -83,3 +83,4 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
       )
 
     @updateEdges edges
+    super

@@ -69,3 +69,4 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       )
 
     @updateEdges edges
+    super

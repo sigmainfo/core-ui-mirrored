@@ -209,9 +209,24 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         title = @placeholder.select('title')
         expect( title.node() ).to.exist
 
-      it 'renders background', ->
+      it 'creates empty count', ->
+        label = @placeholder.select('text.count')
+        expect( label.node() ).to.exist
+        expect( label.attr('text-anchor') ).to.equal 'start'
+        expect( label.attr('x') ).to.equal '22'
+        expect( label.attr('y') ).to.equal '0.4em'
+
+      it 'renders background for count', ->
+        background = @placeholder.select('rect.count-background')
+        expect( background.node() ).to.exist
+        expect( background.attr('height') ).to.equal '1em'
+        expect( background.attr('rx') ).to.equal '0.5em'
+        expect( background.attr('x') ).to.equal '15'
+        expect( background.attr('y') ).to.equal '-0.5em'
+
+      it 'renders circle', ->
         background = @placeholder.select('circle.background')
-        should.exist background.node()
+        expect( background.node() ).to.exist
 
       it 'renders icon', ->
         icon = @placeholder.select('path.icon')
@@ -357,6 +372,24 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         ]
         @strategy.updateNodes nodes
         expect( title.text() ).to.equal '123 more concepts for Billiards'
+
+      it 'updates count', ->
+        count = @selection.append('text').attr('class', 'count')
+        nodes = @selection.data [
+          type: 'placeholder'
+          label: '123'
+        ]
+        @strategy.updateNodes nodes
+        expect( count.text() ).to.equal '123'
+
+      it 'hides background when not given', ->
+        count = @selection.append('rect').attr('class', 'count-background')
+        nodes = @selection.data [
+          type: 'placeholder'
+          label: null
+        ]
+        @strategy.updateNodes nodes
+        expect( count.attr('style') ).to.contain 'display: none'
 
       context 'idle', ->
 
@@ -565,3 +598,19 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       exit = remove: sinon.spy()
       @strategy.deleteEdges exit
       exit.remove.should.have.been.calledOnce
+
+  describe '#updateLayout()', ->
+
+    beforeEach ->
+      @selection = @parent.append('g').attr('class', 'concept-node placeholder')
+      @nodes = @selection.data [
+        type: 'placeholder'
+        label: 'node 12345'
+      ]
+
+    it 'resizes background od count', ->
+      label = @selection.append('text').attr('class', 'count')
+      label.node().getBBox = -> width: 100
+      background = @selection.append('rect').attr('class', 'count-background')
+      @strategy.updateLayout @nodes
+      background.attr('width').should.equal '114'

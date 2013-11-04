@@ -1,17 +1,17 @@
 #= require spec_helper
 #= require views/widgets/concept_map/left_to_right
 
-describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
+describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
 
   beforeEach ->
-    @svg = $ "<svg:g class='map'>"
+    @svg = $ '<svg:g class="map">'
     @parent = d3.select @svg[0]
     @strategy = new Coreon.Views.Widgets.ConceptMap.LeftToRight @parent
 
-  describe "constructor()", ->
+  describe '#constructor()', ->
 
-    it "calls super", ->
-      sinon.spy Coreon.Views.Widgets.ConceptMap.RenderStrategy::, "constructor"
+    it 'calls super', ->
+      sinon.spy Coreon.Views.Widgets.ConceptMap.RenderStrategy::, 'constructor'
       try
         @strategy = new Coreon.Views.Widgets.ConceptMap.LeftToRight @parent
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.should.have.been.calledOnce
@@ -20,25 +20,25 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       finally
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::constructor.restore()
 
-    it "sets node size of layout", ->
+    it 'sets node size of layout', ->
       nodeSize = @strategy.layout.nodeSize()
       should.exist nodeSize
       nodeSize[0].should.be.lt nodeSize[1]
 
-    it "changes projection of diagonal stencil", ->
+    it 'changes projection of diagonal stencil', ->
       @strategy.diagonal.projection()(x: 5, y: 8).should.eql [8, 5]
 
-  describe "updateNodes()", ->
+  describe '#updateNodes()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers.Text, "shorten"
-      @selection = @parent.append("g").attr("class", "concept-node")
+      sinon.stub Coreon.Helpers.Text, 'shorten'
+      @selection = @parent.append('g').attr('class', 'concept-node')
 
     afterEach ->
       Coreon.Helpers.Text.shorten.restore()
 
-    it "calls super", ->
-      sinon.spy Coreon.Views.Widgets.ConceptMap.RenderStrategy::, "updateNodes"
+    it 'calls super', ->
+      sinon.spy Coreon.Views.Widgets.ConceptMap.RenderStrategy::, 'updateNodes'
       try
         nodes = @selection.data []
         @strategy.updateNodes nodes
@@ -48,74 +48,74 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
       finally
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateNodes.restore()
 
-    it "updates node position", ->
+    it 'updates node position', ->
       nodes = @selection.data [
-        x: "45"
-        y: "123"
+        x: '45'
+        y: '123'
       ]
       @strategy.updateNodes nodes
-      nodes.attr("transform").should.equal "translate(123, 45)"
+      nodes.attr('transform').should.equal 'translate(123, 45)'
 
-    it "updates label", ->
-      Coreon.Helpers.Text.shorten.withArgs("node 1234567890").returns "node 123…"
-      label = @selection.append("text").attr("class", "label")
+    it 'updates label', ->
+      Coreon.Helpers.Text.shorten.withArgs('node 1234567890').returns 'node 123…'
+      label = @selection.append('text').attr('class', 'label')
       nodes = @selection.data [
-        label: "node 1234567890"
+        label: 'node 1234567890'
       ]
       @strategy.updateNodes nodes
-      label.text().should.equal "node 123…"
+      label.text().should.equal 'node 123…'
 
-    it "positions label", ->
-      label = @selection.append("text").attr("class", "label")
-      nodes = @selection.data [ label: "node" ]
+    it 'positions label', ->
+      label = @selection.append('text').attr('class', 'label')
+      nodes = @selection.data [ label: 'node' ]
       @strategy.updateNodes nodes
-      label.attr("x").should.equal "7"
-      label.attr("y").should.equal "0.35em"
-      label.attr("text-anchor").should.equal "start"
+      label.attr('x').should.equal '7'
+      label.attr('y').should.equal '0.35em'
+      label.attr('text-anchor').should.equal 'start'
 
-    it "positions background", ->
-      background = @selection.append("rect").attr("class", "background")
-      nodes = @selection.data [ label: "node" ]
+    it 'positions background', ->
+      background = @selection.append('rect').attr('class', 'background')
+      nodes = @selection.data [ label: 'node' ]
       @strategy.updateNodes nodes
-      background.attr("x").should.equal "-7"
-      background.attr("y").should.equal "-8.5"
+      background.attr('x').should.equal '-7'
+      background.attr('y').should.equal '-8.5'
 
-    it "updates background dimensions", ->
-      background = @selection.append("rect").attr("class", "background")
+    it 'updates background dimensions', ->
+      background = @selection.append('rect').attr('class', 'background')
       nodes = @selection.data [
-        label: "node"
+        label: 'node'
         labelWidth: 200
       ]
       @strategy.updateNodes nodes
-      background.attr("width").should.equal "200"
-      background.attr("height").should.equal "17"
+      background.attr('width').should.equal '200'
+      background.attr('height').should.equal '17'
 
-    context "hits", ->
+    context 'hits', ->
 
-      it "updates background position and height", ->
-        background = @selection.append("rect").attr("class", "background")
+      it 'updates background position and height', ->
+        background = @selection.append('rect').attr('class', 'background')
         nodes = @selection.data [ hit: yes ]
         @strategy.updateNodes nodes
-        background.attr("height").should.equal "20"
-        background.attr("y").should.equal "-11"
+        background.attr('height').should.equal '20'
+        background.attr('y').should.equal '-11'
 
-  describe "updateEdges()", ->
+  describe '#updateEdges()', ->
 
     beforeEach ->
       @strategy.diagonal = sinon.stub()
-      @selection = @parent.append("path").attr("class", "concept-edge")
+      @selection = @parent.append('path').attr('class', 'concept-edge')
 
-    it "updates path between concepts", ->
+    it 'updates path between concepts', ->
       edges = @selection.data [
         source:
-          id: "source"
-          type: "concept"
+          id: 'source'
+          type: 'concept'
           x: 123
           y: 45
           labelWidth: 123
         target:
-          id: "target"
-          type: "concept"
+          id: 'target'
+          type: 'concept'
           x: 123
           y: 67
       ]
@@ -126,21 +126,21 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         target:
           x: 123
           y: 67 - 7
-      ).returns  "M179,123C119.5,123 119.5,123 60,123"
+      ).returns  'M179,123C119.5,123 119.5,123 60,123'
       @strategy.updateEdges edges
-      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,123"
+      edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,123'
 
-    it "updates path to idle placeholder", ->
+    it 'updates path to idle placeholder', ->
       edges = @selection.data [
         source:
-          id: "source"
-          type: "concept"
+          id: 'source'
+          type: 'concept'
           x: 123
           y: 45
           labelWidth: 123
         target:
-          id: "target"
-          type: "placeholder"
+          id: 'target'
+          type: 'placeholder'
           busy: no
           x: 123
           y: 67
@@ -152,21 +152,21 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         target:
           x: 123
           y: 67 - 7
-      ).returns  "M179,123C119.5,123 119.5,123 60,113"
+      ).returns  'M179,123C119.5,123 119.5,123 60,113'
       @strategy.updateEdges edges
-      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,113"
+      edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,113'
 
-    it "updates path to loading placeholder", ->
+    it 'updates path to loading placeholder', ->
       edges = @selection.data [
         source:
-          id: "source"
-          type: "concept"
+          id: 'source'
+          type: 'concept'
           x: 123
           y: 45
           labelWidth: 123
         target:
-          id: "target"
-          type: "placeholder"
+          id: 'target'
+          type: 'placeholder'
           busy: yes
           x: 123
           y: 67
@@ -178,44 +178,54 @@ describe "Coreon.Views.Widgets.ConceptMap.LeftToRight", ->
         target:
           x: 123
           y: 67 - 10
-      ).returns  "M179,123C119.5,123 119.5,123 60,110"
+      ).returns  'M179,123C119.5,123 119.5,123 60,110'
       @strategy.updateEdges edges
-      edges.attr("d").should.equal "M179,123C119.5,123 119.5,123 60,110"
+      edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,110'
 
-    it "hides path when label width is unknown", ->
+    it 'hides path when label width is unknown', ->
       edges = @selection.data [
         source:
-          id: "source"
+          id: 'source'
           x: 123
           y: 45
           labelWidth: undefined
         target:
-          id: "target"
+          id: 'target'
           x: 123
           y: 67
       ]
       @strategy.updateEdges edges
-      edges.attr("d").should.equal "m 0,0"
+      edges.attr('d').should.equal 'm 0,0'
 
-  describe "updateLayout()", ->
+  describe '#updateLayout()', ->
 
     beforeEach ->
-      @selection = @parent.append("g").attr("class", "concept-node")
-      @label = @selection.append("text").attr("class", "label")
+      @selection = @parent.append('g').attr('class', 'concept-node')
+      @label = @selection.append('text').attr('class', 'label')
       @label.node().getBBox = -> width: 100
       @strategy.updateEdges = sinon.spy()
 
-    it "resizes background", ->
-      background = @selection.append("rect").attr("class", "background")
-      nodes = @selection.data [ label: "node 12345" ]
+    it 'resizes background', ->
+      background = @selection.append('rect').attr('class', 'background')
+      nodes = @selection.data [ label: 'node 12345' ]
       @label.node().getBBox = -> width: 200
       @strategy.updateLayout nodes
-      background.attr("width").should.equal "225"
+      background.attr('width').should.equal '225'
 
-    it "updates edges", ->
+    it 'updates edges', ->
       nodes = @selection.data []
       edges = []
       @strategy.renderEdges = -> edges
       @strategy.updateLayout nodes, edges
       @strategy.updateEdges.should.have.been.calledOnce
       @strategy.updateEdges.should.have.been.calledWith edges
+
+    it 'calls super', ->
+      nodes = @selection.data []
+      edges = []
+      @strategy.renderEdges = -> edges
+      updateOfSuper = sinon.spy()
+      Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout = updateOfSuper
+      @strategy.updateLayout nodes, edges
+      expect( updateOfSuper ).to.have.been.calledOnce
+      expect( updateOfSuper ).to.have.been.calledWith nodes, edges
