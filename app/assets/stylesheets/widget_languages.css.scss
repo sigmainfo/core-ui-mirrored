@@ -6,4 +6,11 @@
     border-top: 1px solid rgba(white, 0.1);
     padding: 8px 20px;
   }
+  .arrow {
+    display: inline-block;
+    width: 30px;
+    height: 11px;
+    @include retina-icons;
+    background-position: -42px -800px;
+  }
 }
