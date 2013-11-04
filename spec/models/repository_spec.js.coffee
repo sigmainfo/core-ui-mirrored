@@ -12,5 +12,14 @@ describe "Coreon.Models.Repository", ->
   context "defaults", ->
 
     it "creates empty set for managers", ->
-      @model.get("managers").should.eql []
-    
+      managers = @model.get "managers"
+      expect( managers ).to.be.an.instanceOf Array
+      expect( managers ).to.be.empty
+      other = new Coreon.Models.Repository
+      expect( managers ).to.not.equal other.get "managers"
+
+  describe "#path()", ->
+
+    it "returns repository path", ->
+      @model.id = "345hjksdfg321"
+      expect( @model.path() ).to.equal "/345hjksdfg321"

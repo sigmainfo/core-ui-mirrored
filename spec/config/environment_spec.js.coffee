@@ -4,7 +4,7 @@
 describe "config/environment", ->
 
   context "require", ->
-    
+
     it "loads core dependencies", ->
       should.exist lib for lib in [jQuery, _, Backbone, HAML]
 
@@ -17,7 +17,7 @@ describe "config/environment", ->
       HAML.globals().should.equal Coreon.Helpers
 
   context "namespaces", ->
-    
+
     it "opens up namespace", ->
       should.exist Coreon
 
@@ -63,7 +63,7 @@ describe "config/environment", ->
       Backbone.ajax "https://auth.coreon.com/login"
       Backbone.$.ajax.should.have.been.calledOnce
       Backbone.$.ajax.should.have.been.calledWith "https://auth.coreon.com/login"
-    
+
     it "uses error notifications when possible", ->
       Coreon.Modules.ErrorNotifications = failHandler: sinon.spy()
       request = Backbone.ajax()

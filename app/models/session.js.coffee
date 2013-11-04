@@ -7,7 +7,7 @@
 repository = null
 
 class Coreon.Models.Session extends Backbone.Model
-  
+
   @auth_root = null
 
   @load = () ->

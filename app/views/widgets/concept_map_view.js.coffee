@@ -1,6 +1,5 @@
 #= require environment
 #= require jquery.ui.resizable
-#= require views/simple_view
 #= require templates/widgets/concept_map
 #= require d3
 #= require views/widgets/concept_map/left_to_right
@@ -8,14 +7,13 @@
 #= require modules/helpers
 #= require modules/loop
 
-class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
+class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
+  id: 'coreon-concept-map'
 
-  id: "coreon-concept-map"
+  className: 'widget'
 
-  className: "widget"
-
-  template: Coreon.Templates["widgets/concept_map"]
+  template: Coreon.Templates['widgets/concept_map']
 
   options:
     size: [320, 240]
@@ -24,14 +22,15 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     scaleStep: 0.2
 
   events:
-    "click .zoom-in":  "zoomIn"
-    "click .zoom-out": "zoomOut"
-    "click .toggle-orientation": "toggleOrientation"
+    'click .placeholder:not(.busy)' : 'expand'
+    'click .zoom-in'                : 'zoomIn'
+    'click .zoom-out'               : 'zoomOut'
+    'click .toggle-orientation'     : 'toggleOrientation'
 
   initialize: (options = {}) ->
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
-      .on("zoom", @_panAndZoom)
+      .on('zoom', @_panAndZoom)
     @_renderMarkupSkeleton()
 
     @renderStrategies = [
@@ -39,7 +38,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       Coreon.Views.Widgets.ConceptMap.LeftToRight
     ]
 
-    @map = d3.select @$("svg g.concept-map")[0]
+    @map = d3.select @$('svg g.concept-map')[0]
     Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
 
@@ -54,21 +53,30 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
       @resize settings.conceptMap.width, settings.conceptMap.height
     else
       @resize @options.size...
-    d3.select(@$("svg")[0]).call @navigator
+    d3.select(@$('svg')[0]).call @navigator
 
     @stopListening()
-    @listenTo @model, "reset loaded", @render
+    @hits = options.hits
+    @listenTo @hits, 'update', @render
+    @listenTo @model, 'placeholder:update', @update
 
   render: ->
-    @stopListening @model, "add remove change:label change:hit", @update
-    unless @model.loadingTree
-      @listenTo @model, "add remove change:label change:hit", @update
-    @update() 
-    @centerSelection()
+    concepts = ( model.get 'result' for model in @hits.models )
+
+    @model.build([]).done =>
+      repository = @model.at(0)
+      if placeholder = @model.at(1)
+        placeholder.set 'busy', on
+      @update()
+      @centerSelection()
+
+      @model.build(concepts).done =>
+        @update()
+        @centerSelection()
     @
 
   update: ->
-    @renderStrategy.render @model.tree()
+    @renderStrategy.render @model.graph()
     @
 
   centerSelection: ->
@@ -81,6 +89,17 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @navigator.translate [width, height]
     @_panAndZoom()
 
+  expand: (event) ->
+    node = $(event.target).closest '.placeholder'
+    datum = d3.select(node[0]).datum()
+    placeholder = @model.get datum.id
+    placeholder.set 'busy', on
+    @update()
+    @model.expand(datum.parent.id)
+      .always =>
+        placeholder.set 'busy', off
+        @update()
+
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
     @navigator.scale zoom
@@ -92,19 +111,19 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
     @_panAndZoom()
 
   resize: (width, height) ->
-    svg = @$("svg")
+    svg = @$('svg')
     if height?
       @height = height
-      @svgHeight = height - @options.svgOffset 
+      @svgHeight = height - @options.svgOffset
       @$el.height height
-      svg.attr "height", "#{@svgHeight}px"
+      svg.attr 'height', "#{@svgHeight}px"
     if width?
       @width = width
       @$el.width width
-      svg.attr "width", "#{ width }px"
+      svg.attr 'width', "#{ width }px"
     @renderStrategy.resize @width, @height - @options.svgOffset
     @saveLayout width: @width, height: @height
-    
+
   saveLayout = (layout) ->
     settings = {}
     if cache_id = Coreon.application?.cacheId?()
@@ -115,16 +134,16 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.SimpleView
   saveLayout: _.debounce saveLayout, 500
 
   _renderMarkupSkeleton: ->
-    @$el.resizable "destroy" if @$el.hasClass "ui-resizable"
+    @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
     @$el.html @template
     @$el.resizable
-      handles: "s"
+      handles: 's'
       minHeight: 80
       resize: (event, ui) =>
         @resize null, ui.size.height
 
   _panAndZoom: =>
-    @map.attr("transform", "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+    @map.attr('transform', "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
 
   toggleOrientation: ->
     @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1

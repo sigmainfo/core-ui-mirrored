@@ -55,9 +55,10 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
   updateEdges: (edges) ->
     diagonal = @diagonal
     edges.attr("d", (datum) ->
-      offsetTargetY = switch datum.target.type
-        when "concept" then 3.5
-        when "placeholder" then 10
+      offsetTargetY = if datum.target.type is "placeholder"
+          if datum.target.busy then 10 else 7
+        else
+          3.5
       diagonal
         source:
           x: datum.source.x
@@ -82,3 +83,4 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
       )
 
     @updateEdges edges
+    super

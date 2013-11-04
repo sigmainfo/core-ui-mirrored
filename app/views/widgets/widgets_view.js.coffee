@@ -3,7 +3,8 @@
 #= require views/widgets/search_view
 #= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
-#= require collections/concept_nodes
+#= require collections/concept_map_nodes
+#= require modules/helpers
 #= require modules/droppable
 
 class Coreon.Views.Widgets.WidgetsView extends Backbone.View
@@ -51,7 +52,7 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
   render: ->
     subview.remove() for subview in @subviews
     @subviews = []
-    
+
     search = new Coreon.Views.Widgets.SearchView
       model: new Coreon.Models.SearchType
     @$el.append search.render().$el
@@ -62,8 +63,8 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @subviews.push clipboard
 
     @map = new Coreon.Views.Widgets.ConceptMapView
-      model: new Coreon.Collections.ConceptNodes [],
-        hits: Coreon.Collections.Hits.collection()
+      model: new Coreon.Collections.ConceptMapNodes
+      hits: Coreon.Collections.Hits.collection()
     @$el.append @map.render().$el
     @subviews.push @map
 
@@ -76,3 +77,8 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     localStorage.setItem cache_id, JSON.stringify settings
 
   saveLayout: _.debounce saveLayout, 500
+
+  remove: ->
+    super
+    subview.remove() for subview in @subviews
+    @subviews = []

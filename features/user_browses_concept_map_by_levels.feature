@@ -11,7 +11,7 @@ Feature: user browses concept map by levels
     Given I am browsing a repository called "Games"
     And a top level concept "billiards" exists
     And "billiards" has a narrower concept "equipment"
-    And "equipment" has narrower concepts "ball", "cue", "table" 
+    And "equipment" has narrower concepts "ball", "cue", "table"
     And "billiards" has a narrower concept "types"
     And "types" has a narrower concept "pool"
     And "pool" has narrower concepts "8-ball", "nine ball"
