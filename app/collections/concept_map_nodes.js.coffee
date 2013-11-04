@@ -90,7 +90,6 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
   expand: (id) ->
     deferred = $.Deferred()
     model = @get id
-    model.set 'expanded', yes
 
     if model.get('type') is 'repository'
       @rootIds(yes)

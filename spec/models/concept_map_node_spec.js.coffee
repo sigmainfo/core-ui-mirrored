@@ -34,9 +34,6 @@ describe 'Coreon.Models.ConceptMapNode', ->
       other = new Coreon.Models.ConceptMapNode
       expect( parent_node_ids ).to.not.equal other.get('parent_node_ids')
 
-    it 'is not expanded', ->
-      expect( @model.get 'expanded' ).to.be.false
-
     it 'is not a hit', ->
       expect( @model.get 'hit' ).to.be.false
 
@@ -154,7 +151,6 @@ describe 'Coreon.Models.ConceptMapNode', ->
       json = @model.toJSON()
       expect( json ).to.have.property 'type', 'repository'
       expect( json ).to.have.property 'loaded', yes
-      expect( json ).to.have.property 'expanded', no
       expect( json ).to.have.property 'hit', no
       expect( json ).to.have.property 'parent_of_hit', no
 

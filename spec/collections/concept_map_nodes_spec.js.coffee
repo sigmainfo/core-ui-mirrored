@@ -369,11 +369,6 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       Coreon.Models.Concept.find.withArgs('523345').returns @concept1
       Coreon.Models.Concept.find.withArgs('4156fe').returns @concept2
 
-    it 'updates expansion state', ->
-      @model.set 'expanded', no, silent: yes
-      @collection.expand '8fa451'
-      expect( @model.get 'expanded' ).to.be.true
-
     it 'updates placeholders before resolving', ->
         done = sinon.spy()
         update = @collection.updateAllPlaceholderNodes = sinon.spy()
