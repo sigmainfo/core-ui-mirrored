@@ -133,7 +133,7 @@ describe 'Coreon.Lib.SelectPopup', ->
         view.render()
         view.$el.trigger 'click'
         
-        expect( view.remove ).to.be.called
+        expect( view.remove ).to.be.calledOnce
 
     it 'is chainable', ->
       expect( @view.remove() ).to.equal @view
@@ -154,14 +154,14 @@ describe 'Coreon.Lib.SelectPopup', ->
         view.render()
         view.$('li:first').click()
         
-        expect( view.onItemClick ).to.be.called
+        expect( view.onItemClick ).to.be.calledOnce
     
       it 'is called by click on span in li', ->
         view = new Coreon.Lib.SelectPopup @viewParams
         view.render()
         view.$('li:first span').click()
         
-        expect( view.onItemClick ).to.be.called
+        expect( view.onItemClick ).to.be.calledOnce
     
     context 'with spy on setItem', ->
       beforeEach ->
@@ -175,7 +175,8 @@ describe 'Coreon.Lib.SelectPopup', ->
         @view.onItemClick
           target: @view.$('li:first span')
         
-        expect( @view.setItem ).to.be.called
+        expect( @view.setItem ).to.be.calledOnce
+        expect( @view.setItem.firstCall.args[0] ).to.be @view.$('li:first')
     
   describe 'onItemFocus()', ->
     
@@ -191,14 +192,14 @@ describe 'Coreon.Lib.SelectPopup', ->
         view.render()
         view.$('li:first').mouseover()
         
-        expect( view.onItemFocus ).to.be.called
+        expect( view.onItemFocus ).to.be.calledOnce
         
       it 'is called by mouse over span in li', ->
         view = new Coreon.Lib.SelectPopup @viewParams
         view.render()
         view.$('li:first span').mouseover()
         
-        expect( view.onItemFocus ).to.be.called
+        expect( view.onItemFocus ).to.be.calledOnce
     
     describe 'with spy on @focusItem', ->
       beforeEach ->
@@ -213,14 +214,16 @@ describe 'Coreon.Lib.SelectPopup', ->
         @view.onItemFocus
           target: @view.$('li:first')
           
-        expect( @view.focusItem ).to.be.called
+        expect( @view.focusItem ).to.be.calledOnce
+        expect( @view.focusItem.firstCall.args[0] ).to.be @view.$('li:first')
     
       it 'calls @focusItem with no param if event target is span in li', ->
         @view.render()
         @view.onItemFocus
           target: @view.$('li:first span')
           
-        expect( @view.focusItem ).to.be.called
+        expect( @view.focusItem ).to.be.calledOnce
+        expect( @view.focusItem.firstCall.args[0] ).to.be @view.$('li:first')
     
   describe 'onItemBlur()',->
     
@@ -236,14 +239,14 @@ describe 'Coreon.Lib.SelectPopup', ->
         view.render()
         view.$('li:first').mouseout()
         
-        expect( view.onItemBlur ).to.be.called
+        expect( view.onItemBlur ).to.be.calledOnce
         
       it 'is called by click mouse out span in li', ->
         view = new Coreon.Lib.SelectPopup @viewParams
         view.render()
         view.$('li:first span').mouseout()
         
-        expect( view.onItemBlur ).to.be.called
+        expect( view.onItemBlur ).to.be.calledOnce
         
     describe 'with spy on @focusItem', ->
       beforeEach ->
@@ -257,7 +260,7 @@ describe 'Coreon.Lib.SelectPopup', ->
         @view.onItemBlur
           target: @view.$('li:first')
           
-        expect( @view.focusItem ).to.be.called
+        expect( @view.focusItem ).to.be.calledOnce
     
   describe 'onKeydown()', ->
     
@@ -272,6 +275,6 @@ describe 'Coreon.Lib.SelectPopup', ->
         @view.render()
         $(document).trigger('keydown', 20)
         
-        expect( @view.onKeydown ).to.be.called
+        expect( @view.onKeydown ).to.be.calledOnce
         
     xit 'handles different key events'
