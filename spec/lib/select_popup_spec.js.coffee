@@ -175,7 +175,7 @@ describe 'Coreon.Lib.SelectPopup', ->
         @view.onItemClick
           target: @view.$('li:first span')
         
-        expect( @view.setItem ).to.be.calledWith $ @view.$('li:first')
+        expect( @view.setItem ).to.be.called
     
   describe 'onItemFocus()', ->
     
@@ -211,16 +211,16 @@ describe 'Coreon.Lib.SelectPopup', ->
         @view.render()
         console.log @view.$el.html()
         @view.onItemFocus
-          target: @view.$('li:first')[0]
+          target: @view.$('li:first')
           
-        expect( @view.focusItem ).to.be.calledWith(@view.$('li:first'))
+        expect( @view.focusItem ).to.be.called
     
       it 'calls @focusItem with no param if event target is span in li', ->
         @view.render()
         @view.onItemFocus
           target: @view.$('li:first span')
           
-        expect( @view.focusItem ).to.be.calledWith(@view.$('li:first'))
+        expect( @view.focusItem ).to.be.called
     
   describe 'onItemBlur()',->
     
