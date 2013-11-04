@@ -18,9 +18,9 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     sinon.stub I18n, 't'
     Coreon.application =
       cacheId: -> 'face42'
-      repositorySettings: (key = null) -> 
+      repositorySettings: (key = null) ->
         setting: key
-        
+
     nodes = new Backbone.Collection
 
     nodes.build = =>
@@ -212,6 +212,14 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.renderStrategy = strategy
       @view.update()
       strategy.render.should.have.been.calledWith graph
+
+    it 'updates rendered state of models', ->
+      model1 = new Backbone.Model
+      model2 = new Backbone.Model
+      @view.model.add [model1, model2], silent: yes
+      @view.update()
+      expect( model1.get 'rendered' ).to.be.true
+      expect( model2.get 'rendered' ).to.be.true
 
   describe '#expand()', ->
 

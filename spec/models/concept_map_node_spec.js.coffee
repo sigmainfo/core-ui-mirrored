@@ -43,6 +43,9 @@ describe 'Coreon.Models.ConceptMapNode', ->
     it 'is idle', ->
       expect( @model.get 'busy' ).to.be.false
 
+    it 'is not rendered', ->
+      expect( @model.get 'rendered' ).to.be.false
+
   describe '#initialize()', ->
 
     beforeEach ->

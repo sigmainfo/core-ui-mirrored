@@ -11,6 +11,7 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
     hit: no
     parent_of_hit: no
     busy: false
+    rendered: false
 
   initialize: ->
     @stopListening()
