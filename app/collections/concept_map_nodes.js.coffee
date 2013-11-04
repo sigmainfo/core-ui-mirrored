@@ -116,6 +116,7 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
           break
       if loaded
         @stopListening @, 'change:loaded', resolve
+        @updateAllPlaceholderNodes()
         deferred.resolve nodes
 
     @listenTo @, 'change:loaded', resolve

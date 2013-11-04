@@ -374,6 +374,14 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       @collection.expand '8fa451'
       expect( @model.get 'expanded' ).to.be.true
 
+    it 'updates placeholders before resolving', ->
+        done = sinon.spy()
+        update = @collection.updateAllPlaceholderNodes = sinon.spy()
+        @collection.expand('8fa451').done done
+        expect( update ).to.have.been.calledOnce
+        expect( update ).to.have.been.calledBefore done
+
+
     context 'repository', ->
 
       beforeEach ->
