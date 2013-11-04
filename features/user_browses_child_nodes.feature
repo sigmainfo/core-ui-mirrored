@@ -1,4 +1,3 @@
-@wip
 Feature: user browses child nodes
   In order to explore specifics of a concept
   As a user browsing the concept map
@@ -29,6 +28,6 @@ Feature: user browses child nodes
     When I click the placeholder connected to "pocket billiards"
     Then I should see three concept nodes "pool", "snooker", "English billiards"
     And these should be connected to "pocket billiards"
+    And I should see a placeholder deriving from "pool" and "carom billiards"
     But I should not see the placeholder connected to "pocket billiards" anymore
-    And I should see a placeholder deriving from "pool" only
     And I should see object count "2" for placeholder connected to "pool"

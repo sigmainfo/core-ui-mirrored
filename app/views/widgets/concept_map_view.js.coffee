@@ -65,8 +65,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
     @model.build([]).done =>
       repository = @model.at(0)
-      placeholder = @model.at(1)
-      placeholder.set 'busy', on
+      if placeholder = @model.at(1)
+        placeholder.set 'busy', on
       @update()
       @centerSelection()
 

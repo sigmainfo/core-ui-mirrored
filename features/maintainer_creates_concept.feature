@@ -100,7 +100,7 @@ Feature: maintainer creates concept
     Then I should be on the start page again
     And I should not see "<New concept>"
     But I should see link "New concept"
-  
+
   Scenario: term from recent search
     When I do a search for "corpse"
     And I click on "New concept"

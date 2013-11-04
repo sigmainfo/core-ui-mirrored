@@ -53,9 +53,9 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
 
   step 'I should see hits "ball", "8-ball", "nine ball" in the concept map' do
     within "#coreon-concept-map" do
-      page.should have_css(".concept-node.hit")
-      hits = page.all(".concept-node.hit text").map(&:text).sort
-      hits.should == ["8-ball", "ball", "nine ball"]
+      page.should have_css('.concept-node.hit', text: 'ball')
+      page.should have_css('.concept-node.hit', text: '8-ball')
+      page.should have_css('.concept-node.hit', text: 'nine ball')
     end
   end
 
