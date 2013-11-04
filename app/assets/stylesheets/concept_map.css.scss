@@ -113,37 +113,37 @@ $edge-color: #bfc5c0;
 
         }
 
-        .toggle {
-
-          .background {
-            fill: transparent;
-          }
-
-          .icon {
-            stroke: darken($edge-color, 10);
-            stroke-width: 2px;
-          }
-
-          &:hover {
-            .icon {
-              stroke: $bluecolor;
-            }
-
-          }
-
-          &.expanded {
-            fill: transparent;
-            .icon {
-              stroke: none;
-            }
-
-            &:hover {
-              .icon {
-                stroke: $bluecolor;
-              }
-            }
-          }
-        }
+//        .toggle {
+//
+//          .background {
+//            fill: transparent;
+//          }
+//
+//          .icon {
+//            stroke: darken($edge-color, 10);
+//            stroke-width: 2px;
+//          }
+//
+//          &:hover {
+//            .icon {
+//              stroke: $bluecolor;
+//            }
+//
+//          }
+//
+//          &.expanded {
+//            fill: transparent;
+//            .icon {
+//              stroke: none;
+//            }
+//
+//            &:hover {
+//              .icon {
+//                stroke: $bluecolor;
+//              }
+//            }
+//          }
+//        }
 
         &.placeholder {
 
@@ -151,6 +151,14 @@ $edge-color: #bfc5c0;
             fill: $edge-color;
             stroke: none;
           }
+          .count-background {
+            fill: white;
+          }
+          &:hover {
+            .background {
+              fill:$link-color;
+            }
+          };
 
           .icon {
             stroke: white;

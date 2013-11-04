@@ -68,16 +68,16 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     placeholders.append('rect')
       .attr('class', 'count-background')
-      .attr("y", '-0.5em')
-      .attr("x", '15')
-      .attr("height", '1em')
+      .attr("y", '-0.55em')
+      .attr("x", '12')
+      .attr("height", '1.1em')
       .attr("rx", '0.5em')
 
     placeholders.append('text')
       .attr('class', 'count')
       .attr('text-anchor', 'start')
-      .attr('x', '22')
-      .attr('y', '0.4em')
+      .attr('x', '18px')
+      .attr('y', '4px')
 
     placeholders.append('circle')
       .attr('class', 'background')
@@ -226,7 +226,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     placeholders.select("text.count")
       .each( (datum) ->
-        datum.countWidth = @getBBox().width + 14
+        datum.countWidth = @getBBox().width + 12
       )
 
     placeholders.select('rect.count-background')
