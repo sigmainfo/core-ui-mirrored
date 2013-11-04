@@ -210,7 +210,6 @@ describe 'Coreon.Lib.SelectPopup', ->
         
       it 'calls @focusItem with no param if event target is li', ->
         @view.render()
-        console.log @view.$el.html()
         @view.onItemFocus
           target: @view.$('li:first')
           

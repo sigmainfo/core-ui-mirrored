@@ -4,7 +4,7 @@
 describe 'Coreon.Lib.Select', ->
   
   beforeEach ->
-    @select = $('<select class="my-selector"><option value="a">The Letter A</option><option value="1" selected>The Number One</option></select>')
+    @select = $('<select name="some_value" class="my-selector"><option value="a">The Letter A</option><option value="1" selected>The Number One</option></select>')
       
     @subject = new Coreon.Lib.Select @select
     
@@ -45,7 +45,37 @@ describe 'Coreon.Lib.Select', ->
     it 'can be chained', ->
       expect( @subject.render() ).to.equal @subject
       
-    xit 'render details'
+    it 'tranfers the css class to the CoreonSelect', ->
+      @subject.render()
+      expect( @subject.$el.attr('class') ).to.equal 'coreon-select my-selector'
+      
+    it 'tranfers the name attribute to the CoreonSelect´s data-select-name', ->
+      @subject.render()
+      expect( @subject.$el.attr('data-select-name') ).to.equal 'some_value'
+      
+    it 'displays the label of the selected option', ->
+      @subject.render()
+      expect( @subject.$el.text() ).to.equal 'The Number One'
+      
+    it 'hides the original select', ->
+      @subject.render()
+      expect( @subject.$el ).to.be.hidden
+
+    it 'sets single class if only one option exist', ->
+      select = $('<select><option value="x">X</option></select>')
+      subject = new Coreon.Lib.Select select
+      subject.render()
+      console.log subject.$el.html()
+      expect( subject.$el ).to.have.class 'single'
+    
+  describe '_buildSelectOptions()', ->
+    
+    it 'parses given select options to array of tuples', ->
+      @subject._buildSelectOptions()
+      expect( @subject.selectOptions ).to.eql [
+        ["a", "The Letter A"]
+        ["1", "The Number One"]
+      ]
     
   describe 'changeTo()', ->
     
@@ -88,12 +118,14 @@ describe 'Coreon.Lib.Select', ->
               
       @el = 'ELEMENT'
       
-      sinon.stub Coreon.Lib, 'SelectPopup', =>
+      @popup = 
         $: (query) =>
           @listEl if query == 'ul'
         render: -> @
         $el: @el
         remove: -> @
+      
+      sinon.stub Coreon.Lib, 'SelectPopup', => @popup
       
     afterEach ->
       Coreon.Lib.SelectPopup.restore()
@@ -116,7 +148,11 @@ describe 'Coreon.Lib.Select', ->
         my: "left top",
         of: $ @subject.$el
         
-    xit 'prompts the view'
+    it 'prompts the dropdown view', ->
+      @subject.prompt = sinon.spy()
+      @subject.showDropdown()
+      expect( @subject.prompt ).to.be.calledOnce
+      expect( @subject.prompt.firstCall.args[0]).to.equal @popup
       
     
   describe 'jQuery.coreonSelect', ->
