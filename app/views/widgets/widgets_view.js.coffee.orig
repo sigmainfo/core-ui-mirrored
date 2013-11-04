@@ -61,7 +61,11 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @subviews.push clipboard
 
     @map = new Coreon.Views.Widgets.ConceptMapView
+<<<<<<< HEAD
+      model: new Coreon.Collections.ConceptNodes [],
+=======
       model: new Coreon.Collections.ConceptMapNodes
+>>>>>>> develop
       hits: Coreon.Collections.Hits.collection()
     @$el.append @map.render().$el
     @subviews.push @map

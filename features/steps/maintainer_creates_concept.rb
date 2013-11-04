@@ -6,7 +6,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
 
   step 'I visit the start page' do
-    visit "/"
+    visit "/#{@repository.id}"
   end
 
   step 'I click on "New concept"' do
@@ -233,14 +233,14 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
       fill_in "Language", with: "en"
     end
   end
-  
+
   step 'I should not see an error summary' do
     page.should have_no_css("form .error-summary")
   end
 
   step 'I click "Cancel"' do
     click_link "Cancel"
-  end 
+  end
 
   step 'I should be on the start page again' do
     page.current_path.should == "/#{@repository.id}"

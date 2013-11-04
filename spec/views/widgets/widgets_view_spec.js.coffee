@@ -8,7 +8,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.application.cacheId =-> "face42"
     Coreon.application.repositorySettings =-> {}
 
-    sinon.stub Coreon.Collections, "ConceptNodes", =>
+    sinon.stub Coreon.Collections, "ConceptMapNodes", =>
       @nodes = new Backbone.Collection
 
     sinon.stub Coreon.Collections.Hits, "collection", =>
@@ -43,7 +43,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
         hits: new Backbone.Collection
 
   afterEach ->
-    Coreon.Collections.ConceptNodes.restore()
+    Coreon.Collections.ConceptMapNodes.restore()
     Coreon.Collections.Hits.collection.restore()
     Coreon.Models.SearchType.restore()
     Coreon.Views.Widgets.SearchView.restore()
@@ -87,7 +87,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.render()
       subview.remove.should.have.been.calledOnce
       @view.subviews.should.not.contain subview
-    
+
     it "renders search view", ->
       @view.render()
       Coreon.Models.SearchType.should.have.been.calledOnce
@@ -118,12 +118,13 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     it "creates concept map view", ->
       @view.render()
-      Coreon.Collections.ConceptNodes.should.have.been.calledOnce
-      Coreon.Collections.ConceptNodes.should.have.been.calledWithNew
-      Coreon.Collections.ConceptNodes.should.have.been.calledWith [], hits: @hits
+      Coreon.Collections.ConceptMapNodes.should.have.been.calledOnce
+      Coreon.Collections.ConceptMapNodes.should.have.been.calledWithNew
       Coreon.Views.Widgets.ConceptMapView.should.have.been.calledOnce
       Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWithNew
-      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWith model: @nodes
+      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWith
+        model: @nodes
+        hits: @hits
       @view.map.should.equal @map
 
     it "renders concept map view", ->

@@ -46,7 +46,7 @@ en:
         headline: "Taxonomies"
         header:
           name: "Name"
-
+          
   concepts:
     list:
       header:
@@ -106,8 +106,12 @@ en:
     copyright: "Copyright"
     info: "Info"
     contact: "Contact"
+<<<<<<< HEAD
     languages: "Languages"
   
+=======
+
+>>>>>>> develop
   repositories:
     select: "Select repository"
 
@@ -180,12 +184,7 @@ en:
   user:
     name: "Name"
     email: "Email"
-
-  concept_map:
-    placeholder:
-      title:
-        one: '1 more concept for {{label}}'
-        other: '{{count}} more concepts for {{label}}'
+<<<<<<< HEAD
     
   languages:
     none: "None"
@@ -193,3 +192,11 @@ en:
     de: "German"
     fr: "French"
     es: "Spanish"
+=======
+
+  concept_map:
+    placeholder:
+      title:
+        one: '1 more concept for {{label}}'
+        other: '{{count}} more concepts for {{label}}'
+>>>>>>> develop

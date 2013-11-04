@@ -49,6 +49,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       concept = new Coreon.Models.Concept attrs
       @view.switch new Coreon.Views.Concepts.NewConceptView
         model: concept
+      console.log "reset"
       Coreon.Collections.Hits.collection().reset [ result: concept ]
     else
       Backbone.history.navigate "/", trigger: true

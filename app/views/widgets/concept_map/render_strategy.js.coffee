@@ -10,15 +10,15 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   resize: (@width, @height) ->
 
-  render = (tree) ->
-    nodes = @renderNodes tree.root
-    edges = @renderEdges tree.edges
+  render = (graph) ->
+    nodes = @renderNodes graph.tree
+    edges = @renderEdges graph.edges
     _.defer @updateLayout, nodes, edges
 
   render: _.debounce render, 250
 
   renderNodes: (root) ->
-    nodes = @parent.selectAll(".concept-node")
+    nodes = @parent.selectAll('.concept-node')
       .data( @layout.nodes(root), (datum) ->
         datum.id
       )
@@ -28,71 +28,74 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     nodes
 
   createNodes: (enter) ->
-    all = enter.append("g")
-      .attr("class", "concept-node")
-      .classed("repository-root", (datum) ->
-        datum.type is "repository"
+    all = enter.append('g')
+      .attr('class', 'concept-node')
+      .classed('repository-root', (datum) ->
+        datum.type is 'repository'
       )
 
     nodes = all.filter(
-      (datum) -> datum.type isnt "placeholder"
+      (datum) -> datum.type isnt 'placeholder'
     )
 
-    nodes.append("title")
+    nodes.append('title')
 
-    links = nodes.append("a")
-      .attr("xlink:href", (datum) ->
-        switch
-          when datum.type is "repository"
-            Coreon.Helpers.repositoryPath()
-          when datum.type is "concept" and datum.id?
-            Coreon.Helpers.repositoryPath "concepts/#{datum.id}"
-          else
-            "javascript:void(0)"
+    links = nodes.append('a')
+      .attr('xlink:href', (datum) ->
+        datum.path
       )
-      .on("mouseover", (datum) ->
-        d3.select(@).classed "hover", true
+      .on('mouseover', (datum) ->
+        d3.select(@).classed 'hover', true
       )
-      .on("mouseout", (datum) ->
-        d3.select(@).classed "hover", false
+      .on('mouseout', (datum) ->
+        d3.select(@).classed 'hover', false
       )
-      .on("click", (datum) ->
-        d3.select(@).classed "hover", false
+      .on('click', (datum) ->
+        d3.select(@).classed 'hover', false
       )
 
-    links.append("rect").attr("class", "background")
-    links.append("circle").attr("class", "bullet")
-    links.append("text").attr("class", "label")
+    links.append('rect').attr('class', 'background')
+    links.append('circle').attr('class', 'bullet')
+    links.append('text').attr('class', 'label')
 
     placeholders = all.filter(
-      (datum) -> datum.type is "placeholder"
+      (datum) -> datum.type is 'placeholder'
     )
 
-    placeholders.classed("placeholder", true)
+    placeholders.classed('placeholder', true)
 
-    placeholders.append("circle")
-      .attr("class", "background")
-      .attr("r", 10)
+    placeholders.append('title')
 
-    indicators = placeholders.append("g")
-      .attr("class", "progress-indicator")
+    placeholders.append('rect')
+      .attr('class', 'count-background')
+      .attr("y", '-0.55em')
+      .attr("x", '12')
+      .attr("height", '1.1em')
+      .attr("rx", '0.5em')
 
-    tracks = indicators.append("circle")
-      .attr("class", "track")
-      .attr("r", "6")
+    placeholders.append('text')
+      .attr('class', 'count')
+      .attr('text-anchor', 'start')
+      .attr('x', '18')
+      .attr('y', '4')
 
-    cursors = indicators.append("path")
-      .attr("class", "cursor")
-      .attr("d", "M 6 0 A 6 6 0 0 1 3 5.19")
-    
-    parent = @parent
-    cursors.each( (datum) ->
-      cursor = d3.select @
-      datum.loop = parent.startLoop (animation) ->
-        cursor.attr("transform", ->
-          "rotate(#{animation.duration * 0.4 % 360})"
-        )     
-    )
+    placeholders.append('circle')
+      .attr('class', 'background')
+
+    placeholders.append('path')
+      .attr('class', 'icon')
+      .attr('d', 'M 0 -4 v 8 M -4 0 h 8')
+
+    indicators = placeholders.append('g')
+      .attr('class', 'progress-indicator')
+
+    indicators.append('circle')
+      .attr('class', 'track')
+      .attr('r', '6')
+
+    indicators.append('path')
+      .attr('class', 'cursor')
+      .attr('d', 'M 6 0 A 6 6 0 0 1 3 5.19')
 
     all
 
@@ -103,40 +106,100 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     )
     exit.remove()
 
-  updateNodes: (nodes) ->
+  updateNodes: (all) ->
+    all
+
+    nodes = all.filter(
+      (datum) -> datum.type isnt 'placeholder'
+    )
+
     nodes
-      .classed("hit", (datum) ->
+      .classed('hit', (datum) ->
         datum.hit
       )
-      .classed("parent-of-hit", (datum) ->
+      .classed('parent-of-hit', (datum) ->
         datum.parent_of_hit
       )
-      .classed("new", (datum) ->
+      .classed('new', (datum) ->
         not datum.id?
       )
-    
-    nodes.select("title")
+
+    nodes.select('title')
       .text( (datum) ->
         datum.label
       )
 
-    nodes.select("circle.bullet")
-      .attr("r", (datum) ->
+    nodes.select('circle.bullet')
+      .attr('r', (datum) ->
         if datum.hit then 2.8 else 2.5
       )
 
-    nodes.select("rect.background")
-      .attr("rx", (datum) ->
-        if datum.type is "repository" then 5 else null
+    nodes.select('rect.background')
+      .attr('rx', (datum) ->
+        if datum.type is 'repository' then 5 else null
       )
-      .attr("filter", (datum) ->
-        if datum.hit then "url(#coreon-drop-shadow-filter)" else null
+      .attr('filter', (datum) ->
+        if datum.hit then 'url(#coreon-drop-shadow-filter)' else null
       )
 
-    nodes
+    placeholders = all.filter(
+      (datum) -> datum.type is 'placeholder'
+    )
+
+    placeholders.select('title')
+      .text( (datum) ->
+        if datum.label
+          I18n.t 'concept_map.placeholder.title',
+            count: datum.label * 1
+            label: datum.parent.label
+      )
+
+    placeholders.select('text.count')
+      .text( (datum) ->
+        datum.label
+      )
+
+    placeholders.select('rect.count-background')
+      .style("display", (datum) ->
+        'none' unless datum.label
+      )
+
+    placeholders.classed('busy', (datum) ->
+      datum.busy
+    )
+
+    placeholders.select('circle.background')
+      .attr('r', (datum) ->
+        if datum.busy then 10 else 7
+      )
+
+    placeholders.select('path.icon')
+      .style('display', (datum) ->
+        if datum.busy then 'none' else null
+      )
+
+    placeholders.select('g.progress-indicator')
+      .style('display', (datum) ->
+        if datum.busy then null else 'none'
+      )
+
+    parent = @parent
+    placeholders.select('path.cursor')
+      .each( (datum) ->
+        if datum.busy
+          cursor = d3.select @
+          datum.loop ?= parent.startLoop (animation) ->
+            cursor.attr('transform', ->
+              "rotate(#{animation.duration * 0.4 % 360})"
+            )
+        else
+          parent.stopLoop datum.loop if datum.loop
+      )
+
+    all
 
   renderEdges: (edges) ->
-    edges = @parent.selectAll(".concept-edge")
+    edges = @parent.selectAll('.concept-edge')
       .data(edges, (datum) ->
         "#{datum.source.id}|#{datum.target.id}"
       )
@@ -146,8 +209,8 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     edges
 
   createEdges: (enter) ->
-    edges = enter.insert("path", ".concept-node")
-      .attr("class", "concept-edge")
+    edges = enter.insert('path', '.concept-node')
+      .attr('class', 'concept-edge')
     edges
 
   deleteEdges: (exit) ->
@@ -157,4 +220,19 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     edges
 
   updateLayout: (nodes, edges) =>
+    placeholders = nodes.filter(
+      (datum) -> datum.type is 'placeholder'
+    )
+
+    placeholders.select("text.count")
+      .each( (datum) ->
+        datum.countWidth = @getBBox().width + 12
+      )
+
+    placeholders.select('rect.count-background')
+      .attr("width", (datum) ->
+        datum.countWidth
+      )
+
+
     [nodes, edges]

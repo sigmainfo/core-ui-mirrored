@@ -2,13 +2,13 @@ CoreUi::Application.routes.draw do
 
   namespace :api do
     namespace :auth do
-      
+
       resource :users, only: [:create, :show] do
         collection do
           get "purge"
         end
       end
-      
+
       post   "login" => "sessions#create"
       delete "login/:auth_token" => "sessions#destroy"
     end
@@ -32,7 +32,7 @@ CoreUi::Application.routes.draw do
         end
       end
     end
-  end 
+  end
 
   root to: "repository#show"
 

@@ -17,10 +17,15 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
   beforeEach ->
     sinon.stub I18n, 't'
     Coreon.application =
-      cacheId: -> 'face42'
+<<<<<<< HEAD
+      cacheId: -> "face42"
       repositorySettings: (key = null) -> 
         setting: key
         
+=======
+      cacheId: -> 'face42'
+
+>>>>>>> develop
     nodes = new Backbone.Collection
 
     nodes.build = =>
@@ -39,9 +44,9 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     hits = new Backbone.Collection
 
     sinon.stub Coreon.Views.Widgets.ConceptMap, 'LeftToRight', =>
-       @leftToRight =
-         resize: sinon.spy()
-         render: => @leftToRight
+      @leftToRight =
+        resize: sinon.spy()
+        render: => @lefttoright
 
     sinon.stub Coreon.Views.Widgets.ConceptMap, 'TopDown', =>
       @topDown =

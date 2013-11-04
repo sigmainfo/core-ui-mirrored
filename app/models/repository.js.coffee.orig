@@ -5,6 +5,7 @@ class Coreon.Models.Repository extends Backbone.Model
 
   defaults: ->
     managers: []
+<<<<<<< HEAD
     languages: []
 
   localCache: ->
@@ -14,5 +15,8 @@ class Coreon.Models.Repository extends Backbone.Model
     @cache
     
   
+=======
+
   path: ->
     "/#{@id}"
+>>>>>>> develop

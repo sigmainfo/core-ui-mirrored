@@ -53,9 +53,9 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
 
   step 'I should see hits "ball", "8-ball", "nine ball" in the concept map' do
     within "#coreon-concept-map" do
-      page.should have_css(".concept-node.hit")
-      hits = page.all(".concept-node.hit text").map(&:text).sort
-      hits.should == ["8-ball", "ball", "nine ball"]
+      page.should have_css('.concept-node.hit', text: 'ball')
+      page.should have_css('.concept-node.hit', text: '8-ball')
+      page.should have_css('.concept-node.hit', text: 'nine ball')
     end
   end
 
@@ -65,8 +65,8 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
         return [$(this).position().top, $(this).find("tspan").text()]
       }).get();
     JS
-    levels = tops_and_labels.each_slice(2).to_a.group_by { |node| (node.shift / 10).round }
-    levels.each_value { |val| val.flatten! }.values
+    levels = tops_and_labels.each_slice(2).to_a.group_by { |node| (node.shift / 100).round }
+    levels.each_value { |val| val.flatten!.delete_if &:empty? }.values
   end
 
   step 'I should see "billiards" at level 1' do
@@ -93,7 +93,7 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
   end
 
   step 'I click on "Games" within the concept map' do
-    page.find("#coreon-concept-map .concept-node a", text: "Games").click
+    page.find("#coreon-concept-map .concept-node", text: "Games").find("a").click
   end
 
   step 'I should be on the repository root page' do

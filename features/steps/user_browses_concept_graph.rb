@@ -31,7 +31,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
 
   step 'it should show the repository root node only' do
     page.should have_css("#coreon-concept-map .concept-node.repository-root")
-    page.all("#coreon-concept-map .concept-node").count.should == 1
+    page.all("#coreon-concept-map .concept-node:not(.placeholder)").count.should == 1
   end
 
   step 'select "handgun" from the result list' do

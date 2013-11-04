@@ -54,6 +54,7 @@ describe 'Coreon.Models.Concept', ->
           @model.set properties: [ key: 'label', value: 'gun' ]
           @model.get('label').should.equal '<new concept>'
 
+<<<<<<< HEAD
       context "after save", ->
         context "by term", ->
           it "uses first English term when no source language set", ->
@@ -84,11 +85,18 @@ describe 'Coreon.Models.Concept', ->
           
           it "handles term lang gracefully", ->
             @model.set terms: [
+=======
+      context 'after save', ->
+
+        it 'uses first English term', ->
+          @model.set terms: [
+>>>>>>> develop
               {
-                lang: "fr"
-                value: "poésie"
+                lang: 'fr'
+                value: 'poésie'
               }
               {
+<<<<<<< HEAD
                 lang: "EN_US"
                 value: "poetry"
               }
@@ -191,21 +199,58 @@ describe 'Coreon.Models.Concept', ->
                 @model.initialize()
                 @model.get("label").should.equal "poetry"
               
+=======
+                lang: 'en'
+                value: 'poetry'
+              }
+              {
+                lang: 'en'
+                value: 'poetics'
+              }
+            ]
+          @model.initialize()
+          @model.get('label').should.equal 'poetry'
 
-        it "is overwritten by property", ->
+        it 'falls back to term in other language', ->
+          @model.set terms: [
+            lang: 'fr'
+            value: 'poésie'
+          ]
+          @model.initialize()
+          @model.get('label').should.equal 'poésie'
+>>>>>>> develop
+
+        it 'is overwritten by property', ->
           @model.set {
             properties: [
-              key: "label"
-              value: "My_label"
+              key: 'label'
+              value: 'My_label'
             ]
             terms: [
-              lang: "en"
-              value: "poetry"
+              lang: 'en'
+              value: 'poetry'
             ]
           }, silent: true
           @model.initialize()
-          @model.get("label").should.equal "My_label"
+          @model.get('label').should.equal 'My_label'
 
+<<<<<<< HEAD
+
+=======
+        it 'handles term lang gracefully', ->
+          @model.set terms: [
+            {
+              lang: 'fr'
+              value: 'poésie'
+            }
+            {
+              lang: 'EN_US'
+              value: 'poetry'
+            }
+          ]
+          @model.initialize()
+          @model.get('label').should.equal 'poetry'
+>>>>>>> develop
 
       context 'on changes', ->
 
@@ -451,13 +496,6 @@ describe 'Coreon.Models.Concept', ->
       @model.acceptsConnection('f00baa').should.be.true
 
   describe '#path()', ->
-    
-    beforeEach ->
-      Coreon.application = 
-        repositorySettings: -> 
-          
-    afterEach ->
-      delete Coreon.application
 
     it 'composes path from repository and id', ->
       Coreon.application = repository: ->
