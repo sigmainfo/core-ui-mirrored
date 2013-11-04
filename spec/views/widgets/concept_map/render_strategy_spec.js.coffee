@@ -4,6 +4,7 @@
 describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
 
   beforeEach ->
+    sinon.stub I18n, 't'
     @svg = $('<svg:g class="map">')
     @parent = d3.select @svg[0]
     loops = []
@@ -17,6 +18,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     sinon.stub _, 'defer', (@deferred) =>
 
   afterEach ->
+    I18n.t.restore()
     d3.layout.tree.restore()
     d3.svg.diagonal.restore()
     _.defer.restore()
@@ -203,6 +205,10 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       it 'classifies nodes', ->
         @placeholder.attr('class').split(' ').should.include 'placeholder'
 
+      it 'creates empty title', ->
+        title = @placeholder.select('title')
+        expect( title.node() ).to.exist
+
       it 'renders background', ->
         background = @placeholder.select('circle.background')
         should.exist background.node()
@@ -220,9 +226,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         cursor = indicator.select('path.cursor')
         should.exist cursor.node()
         cursor.attr('d').should.equal 'M 6 0 A 6 6 0 0 1 3 5.19'
-
-      it 'does not create title element', ->
-        should.not.exist @placeholder.select('title').node()
 
       it 'does not create link', ->
         should.not.exist @placeholder.select('a').node()
@@ -340,6 +343,21 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
 
     context 'placeholders', ->
 
+      it 'updates title', ->
+        I18n.t.withArgs('concept_map.placeholder.title',
+          count: 123
+          label: 'Billiards'
+        ).returns '123 more concepts for Billiards'
+        title = @selection.append('title')
+        nodes = @selection.data [
+          type: 'placeholder'
+          label: '123'
+          parent:
+            label: 'Billiards'
+        ]
+        @strategy.updateNodes nodes
+        expect( title.text() ).to.equal '123 more concepts for Billiards'
+
       context 'idle', ->
 
         it 'classifies as idle', ->
@@ -413,7 +431,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           @strategy.updateNodes nodes
           expect( @parent.stopLoop ).to.not.have.been.called
 
-
       context 'busy', ->
 
         it 'classifies as busy', ->
@@ -473,7 +490,6 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
           ]
           @strategy.updateNodes nodes
           @parent.startLoop.should.not.have.been.called
-
 
   describe '#renderEdges()', ->
 

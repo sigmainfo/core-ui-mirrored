@@ -64,6 +64,8 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     placeholders.classed("placeholder", true)
 
+    placeholders.append("title")
+
     placeholders.append("circle")
       .attr("class", "background")
 
@@ -130,6 +132,13 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     placeholders = all.filter(
       (datum) -> datum.type is "placeholder"
     )
+
+    placeholders.select("title")
+      .text( (datum) ->
+        I18n.t 'concept_map.placeholder.title',
+          count: datum.label * 1
+          label: datum.parent.label
+      )
 
     placeholders.classed('busy', (datum) ->
       datum.busy

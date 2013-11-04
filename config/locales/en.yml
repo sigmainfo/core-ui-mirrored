@@ -27,7 +27,7 @@ en:
     submit: "Search"
     concepts:
       create: "Create Concept"
-    
+
     results:
       terms:
         headline: "Terms"
@@ -106,7 +106,7 @@ en:
     copyright: "Copyright"
     info: "Info"
     contact: "Contact"
-  
+
   repositories:
     select: "Select repository"
 
@@ -151,7 +151,7 @@ en:
       created: 'Successfully created term "{{value}}".'
       saved: 'Successfully saved term "{{value}}".'
       deleted: 'Successfully deleted term "{{value}}".'
-  
+
   errors:
     generic: "An error occured."
     login:
@@ -175,3 +175,9 @@ en:
   user:
     name: "Name"
     email: "Email"
+
+  concept_map:
+    placeholder:
+      title:
+        one: '1 more concept for {{label}}'
+        other: '{{count}} more concepts for {{label}}'

@@ -3,14 +3,6 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   include Api::Graph::Factory
   include EdgesHelpers
 
-  def collect_placeholders
-    page.evaluate_script <<-JS
-      $("#coreon-concept-map .placeholder").map(function() {
-        return this.__data__.parent.label + " (" + this.__data__.label + ")"
-      }).get();
-    JS
-  end
-
   step 'I have selected a repository "Billiards"' do
     @repository.update_attributes name: "Billiards"
   end
@@ -55,15 +47,16 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'I should see a placeholder node deriving from it' do
-    @placeholder = collect_placeholders.find do |p|
-      p.start_with? "Billiards ("
+    within('#coreon-concept-map') do
+      page.should have_css('.placeholder', text: 'Billiards')
     end
-    @placeholder.should_not be_nil
-    collect_placeholder_edges.should == ["+[Billiards]"]
+    collect_placeholder_edges.should include("+[Billiards]")
   end
 
   step 'this placeholder should have an object count of "2"' do
-    @placeholder[/\(\d+\)/].should == 2
+    within('#coreon-concept-map') do
+      page.find('.placeholder', text: 'Billiards').find('.label').should have_text('2')
+    end
   end
 
   step 'I click this placeholder' do
