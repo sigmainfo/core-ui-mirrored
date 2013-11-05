@@ -34,7 +34,8 @@ gem 'rack-cors', require: 'rack/cors'
 group :development do
   gem 'thin'
   gem 'capistrano'
-  gem 'capistrano-ext'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rails'
 end
 
 group :test do
