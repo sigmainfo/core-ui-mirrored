@@ -1,0 +1,22 @@
+namespace :deploy do
+
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      execute :mkdir, '-p', release_path.join('tmp')
+      execute :touch, release_path.join('tmp/restart.txt')
+    end
+  end
+
+  desc 'Build static HTML'
+  task :build_html do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      within release_path do
+        execute :rake, 'deploy:build_html'
+      end
+    end
+  end
+
+  after :updated, 'deploy:build_html'
+  after :finishing, 'deploy:cleanup'
+end

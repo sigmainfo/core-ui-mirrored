@@ -1,7 +1,7 @@
-set :deploy_to, "/var/www/rails"
-set :rails_env, "staging"
+set :stage, :staging
 set :branch, "staging" 
+set :rails_env, "staging"
 
-role :web, "10.43.1.10"
-role :app, "10.43.1.10"
-role :db,  "10.43.1.10", :primary => true
+server '10.43.1.10', user: 'www', roles: %w{web app db}
+
+fetch(:default_env).merge!(rails_env: :staging)

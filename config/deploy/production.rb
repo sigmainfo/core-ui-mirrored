@@ -1,7 +1,7 @@
-set :deploy_to, "/var/www/rails"
+set :stage, :production
+set :branch, "production"
 set :rails_env, "production"
-set :branch, "production" 
 
-role :web, "10.43.2.2"
-role :app, "10.43.2.2"
-role :db,  "10.43.2.2", :primary => true
+server '10.43.2.2', user: 'www', roles: %w{web app db}
+
+fetch(:default_env).merge!(rails_env: :production)
