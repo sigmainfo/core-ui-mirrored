@@ -48,8 +48,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @set "label", @_label(), silent: true
     @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
     if Coreon.application?.repositorySettings()
-      @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @_updateLabel, @
-      @listenTo Coreon.application.repositorySettings(), 'change:targetLanguage', @_updateLabel, @
+      @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage change:targetLanguage', @_updateLabel, @
     @_updateHit()
     @listenTo Coreon.Collections.Hits.collection(), "reset add remove", @_updateHit
     @remoteValidationOn()
@@ -58,10 +57,22 @@ class Coreon.Models.Concept extends Backbone.Model
 
   termsByLang: ->
     terms = {}
+    
+    if settings = Coreon.application?.repositorySettings()
+      sourceLang = settings.get('sourceLanguage')
+      targetLang = settings.get('targetLanguage')
+    
+      terms[sourceLang] = [] if sourceLang and sourceLang != 'none'
+      terms[targetLang] = [] if targetLang and targetLang != 'none'
+    
     for term in @terms().models
       lang = term.get "lang"
       terms[lang] ?= []
       terms[lang].push term
+      
+    #delete terms[sourceLang] if sourceLang and terms[sourceLang]?.length == 0
+    #delete terms[targetLang] if targetLang and terms[targetLang]?.length == 0
+      
     terms
 
   toJSON: (options) ->

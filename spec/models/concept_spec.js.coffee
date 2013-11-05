@@ -136,60 +136,60 @@ describe 'Coreon.Models.Concept', ->
               @model.initialize()
               @model.get("label").should.equal "poetry"
             
-            context "with source and target language set", ->
-              
-              beforeEach ->
-                Coreon.application = 
-                  repositorySettings: (arg) -> 
-                    return 'fr' if arg == 'sourceLanguage'
-                    return 'de' if arg == 'targetLanguage'
-                  
-              afterEach ->
-                delete Coreon.application
-          
-              it "uses term in selected source language", ->
-                #console.log Coreon.application.repositorySettings
-              
-                @model.set terms: [
-                  {
-                    lang: "fr"
-                    value: "poésie"
-                  }
-                  {
-                    lang: "en"
-                    value: "poetry"
-                  }
-                ]
-                @model.initialize()
-                @model.get("label").should.equal "poésie"
-
-              it "uses term in target language if not available in selected source language", ->
-                @model.set terms: [
-                  {
-                    lang: "de"
-                    value: "Poesie"
-                  }
-                  {
-                    lang: "en"
-                    value: "poetry"
-                  }
-                ]
-                @model.initialize()
-                @model.get("label").should.equal "Poesie"
+          context "with source and target language set", ->
             
-              it "uses English term if not available in selected source or target language", ->
-                @model.set terms: [
-                  {
-                    lang: "ru"
-                    value: "поэзия"
-                  }
-                  {
-                    lang: "en"
-                    value: "poetry"
-                  }
-                ]
-                @model.initialize()
-                @model.get("label").should.equal "poetry"
+            beforeEach ->
+              Coreon.application = 
+                repositorySettings: (arg) -> 
+                  return 'fr' if arg == 'sourceLanguage'
+                  return 'de' if arg == 'targetLanguage'
+                
+            afterEach ->
+              delete Coreon.application
+        
+            it "uses term in selected source language", ->
+              #console.log Coreon.application.repositorySettings
+            
+              @model.set terms: [
+                {
+                  lang: "fr"
+                  value: "poésie"
+                }
+                {
+                  lang: "en"
+                  value: "poetry"
+                }
+              ]
+              @model.initialize()
+              @model.get("label").should.equal "poésie"
+
+            it "uses term in target language if not available in selected source language", ->
+              @model.set terms: [
+                {
+                  lang: "de"
+                  value: "Poesie"
+                }
+                {
+                  lang: "en"
+                  value: "poetry"
+                }
+              ]
+              @model.initialize()
+              @model.get("label").should.equal "Poesie"
+          
+            it "uses English term if not available in selected source or target language", ->
+              @model.set terms: [
+                {
+                  lang: "ru"
+                  value: "поэзия"
+                }
+                {
+                  lang: "en"
+                  value: "poetry"
+                }
+              ]
+              @model.initialize()
+              @model.get("label").should.equal "poetry"
               
 
         it "is overwritten by property", ->
@@ -347,6 +347,91 @@ describe 'Coreon.Models.Concept', ->
       @model.termsByLang().should.eql
         en: [ term1 ]
         de: [ term2, term3 ]
+        
+    context 'with source language set to de', ->
+      
+      beforeEach ->
+        Coreon.application = 
+          repositorySettings: ->
+            get: (arg) ->
+              return 'de' if arg == 'sourceLanguage'
+      
+      afterEach ->
+        delete Coreon.application
+        
+      it 'gives source language´s terms first', ->
+      
+        term1 = new Backbone.Model lang: 'en'
+        term2 = new Backbone.Model lang: 'de'
+        term3 = new Backbone.Model lang: 'fr'
+        term4 = new Backbone.Model lang: 'de'
+        @model.terms = -> models: [ term1, term2, term3, term4 ]
+        
+        @model.termsByLang().should.eql
+          de: [ term2, term4 ]
+          en: [ term1 ]
+          fr: [ term3 ]
+
+    context 'with target language set to fr', ->
+      
+      beforeEach ->
+        Coreon.application = 
+          repositorySettings: ->
+            get: (arg) ->
+              return 'fr' if arg == 'targetLanguage'
+      
+      afterEach ->
+        delete Coreon.application
+        
+      it 'gives source language´s terms first', ->
+      
+        term1 = new Backbone.Model lang: 'en'
+        term2 = new Backbone.Model lang: 'de'
+        term3 = new Backbone.Model lang: 'fr'
+        term4 = new Backbone.Model lang: 'de'
+        @model.terms = -> models: [ term1, term2, term3, term4 ]
+        
+        @model.termsByLang().should.eql
+          fr: [ term3 ]
+          en: [ term1 ]
+          de: [ term2, term4 ]
+
+    context 'with source language set to de and target language set to fr', ->
+      
+      beforeEach ->
+        Coreon.application = 
+          repositorySettings: ->
+            get: (arg) ->
+              return 'de' if arg == 'sourceLanguage'
+              return 'fr' if arg == 'targetLanguage'
+      
+      afterEach ->
+        delete Coreon.application
+        
+      it 'gives source language´s terms first', ->
+      
+        term1 = new Backbone.Model lang: 'en'
+        term2 = new Backbone.Model lang: 'de'
+        term3 = new Backbone.Model lang: 'fr'
+        term4 = new Backbone.Model lang: 'de'
+        @model.terms = -> models: [ term1, term2, term3, term4 ]
+        
+        @model.termsByLang().should.eql
+          de: [ term2, term4 ]
+          fr: [ term3 ]
+          en: [ term1 ]
+          
+      it 'gives empty array for languages that are requested, but not found', ->
+        term1 = new Backbone.Model lang: 'en'
+        term2 = new Backbone.Model lang: 'de'
+        term3 = new Backbone.Model lang: 'de'
+        @model.terms = -> models: [ term1, term2, term3 ]
+        
+        @model.termsByLang().should.eql
+          de: [ term2, term3 ]
+          fr: [ ]
+          en: [ term1 ]
+        
 
   describe '#toJSON()', ->
 

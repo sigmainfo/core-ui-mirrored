@@ -23,12 +23,16 @@
     - for lang, terms of @concept.termsByLang()
       %section.language{class: lang}
         %h3= lang
-        %ul
-          - for term in terms
-            - if @editMode and @editTerm == term.id
-              != @render "terms/new_term", term:term, reset:true
-            - else
-              != @render "concepts/term", term:term
+        - if terms.length > 0
+          %ul
+            - for term in terms
+              - if @editMode and @editTerm == term.id
+                != @render "terms/new_term", term:term, reset:true
+              - else
+                != @render "concepts/term", term:term
+        - else
+          .no-terms
+            No terms for this language
 
   - if @can "create", Coreon.Models.Term
     .edit

@@ -6,6 +6,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
   beforeEach ->
     Coreon.application = new Backbone.Model
+    Coreon.application.repositorySettings = ->
     sinon.stub I18n, "t"
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", => @broaderAndNarrower
