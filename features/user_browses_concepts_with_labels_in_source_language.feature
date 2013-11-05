@@ -1,4 +1,3 @@
-@wip
 Feature: user browses concepts with labels in source language
   In order to explore related concepts
   As a user browsing a selection of concepts
