@@ -41,9 +41,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     @map = d3.select @$('svg g.concept-map')[0]
     Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
-    
+
     settings = Coreon.application?.repositorySettings('conceptMap')
-        
+
     if settings.width?
       @resize settings.width, settings.height
     else
@@ -54,6 +54,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     @hits = options.hits
     @listenTo @hits, 'update', @render
     @listenTo @model, 'placeholder:update', @update
+    @listenTo @model, 'change', @scheduleForUpdate
 
   render: ->
     concepts = ( model.get 'result' for model in @hits.models )
@@ -72,7 +73,15 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
   update: ->
     @renderStrategy.render @model.graph()
+    model.set 'rendered', yes for model in @model.models
     @
+
+  scheduleForUpdate: (model) ->
+    unless @scheduledForUpdate or not model.get('rendered')
+      @scheduledForUpdate = on
+      _.defer =>
+        @update()
+        @scheduledForUpdate = off
 
   centerSelection: ->
     width = @width / 2

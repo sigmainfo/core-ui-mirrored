@@ -18,9 +18,9 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     sinon.stub I18n, 't'
     Coreon.application =
       cacheId: -> 'face42'
-      repositorySettings: (key = null) -> 
+      repositorySettings: (key = null) ->
         setting: key
-        
+
     nodes = new Backbone.Collection
 
     nodes.build = =>
@@ -212,6 +212,66 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.renderStrategy = strategy
       @view.update()
       strategy.render.should.have.been.calledWith graph
+
+    it 'updates rendered state of models', ->
+      model1 = new Backbone.Model
+      model2 = new Backbone.Model
+      @view.model.add [model1, model2], silent: yes
+      @view.update()
+      expect( model1.get 'rendered' ).to.be.true
+      expect( model2.get 'rendered' ).to.be.true
+
+  describe '#scheduleForUpdate()', ->
+
+    beforeEach ->
+      callbacks = []
+      sinon.stub _, 'defer', (callback) =>
+        callbacks.push callback
+      @next = ->
+        callback() for callback in callbacks
+        callbacks = []
+      @view.update = sinon.spy()
+      @model = new Backbone.Model rendered: yes
+
+    afterEach ->
+      _.defer.restore()
+
+    it 'is triggered on concept node changes', ->
+      @view.scheduleForUpdate = sinon.spy()
+      @view.initialize hits: @view.hits
+      @view.model.trigger "change", @model
+      expect( @view.scheduleForUpdate ).to.have.been.calledOnce
+      expect( @view.scheduleForUpdate ).to.have.been.calledWith @model
+
+    it 'does not update immediately', ->
+      @view.scheduleForUpdate @model
+      expect( @view.update ).to.not.have.been.called
+
+    it 'defers update', ->
+      @view.scheduleForUpdate @model
+      @next()
+      expect( @view.update ).to.have.been.calledOnce
+      expect( @view.update.thisValues[0] ).to.equal @view
+
+    it 'combines multiple calls to a single update', ->
+      @view.scheduleForUpdate @model
+      @view.scheduleForUpdate @model
+      @next()
+      expect( @view.update ).to.have.been.calledOnce
+
+    it 'schedules next update after current', ->
+      @view.scheduleForUpdate @model
+      @next()
+      @view.update.reset()
+      @view.scheduleForUpdate @model
+      @next()
+      expect( @view.update ).to.have.been.calledOnce
+
+    it 'skips update for models that are not yet rendered', ->
+      @model.set 'rendered', no, silent: yes
+      @view.scheduleForUpdate @model
+      @next()
+      expect( @view.update ).to.not.have.been.called
 
   describe '#expand()', ->
 

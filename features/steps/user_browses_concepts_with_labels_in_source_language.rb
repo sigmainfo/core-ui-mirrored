@@ -2,15 +2,15 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
-  
+
   def source_language_css
     "#coreon-languages .coreon-select[data-select-name=source_language]"
   end
-  
+
   def target_language_css
     "#coreon-languages .coreon-select[data-select-name=target_language]"
   end
-  
+
   def dropdown_css
     "#coreon-modal .coreon-select-dropdown"
   end
@@ -38,11 +38,11 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
       page.find("li", text: "None").click
     end
   end
-  
+
   step 'I click the "Target Language" selector' do
     page.find(target_language_css).click
   end
-  
+
   step 'I enter "firearm" in the search field' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "firearm"
@@ -59,10 +59,16 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
     page.should have_css "table.terms .concept", text: 'gun'
   end
 
+  step 'I should see a concept node "gun" inside the concept map' do
+    within '#coreon-concept-map' do
+      page.should have_css('.concept-node', text: 'gun')
+    end
+  end
+
   step 'I should not see the concept hit "Schusswaffe"' do
     page.should_not have_css "table.terms .concept", text: 'Schusswaffe'
   end
-  
+
   step 'I select "German" from the dropdown' do
     within dropdown_css do
       page.find("li", text: "German").click
@@ -71,6 +77,12 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
 
   step 'I should see the concept hit "Schusswaffe"' do
     page.should have_css "table.terms .concept", text: 'Schusswaffe'
+  end
+
+  step 'I should see a concept node "Schusswaffe" inside the concept map' do
+    within '#coreon-concept-map' do
+      page.should have_css('.concept-node', text: 'Schusswaffe')
+    end
   end
 
   step 'I should not see the concept hit "gun"' do

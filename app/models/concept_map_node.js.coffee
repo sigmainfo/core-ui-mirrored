@@ -8,10 +8,10 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
     parent_node_ids: []
     child_node_ids: []
     loaded: yes
-    expanded: no
     hit: no
     parent_of_hit: no
     busy: false
+    rendered: false
 
   initialize: ->
     @stopListening()

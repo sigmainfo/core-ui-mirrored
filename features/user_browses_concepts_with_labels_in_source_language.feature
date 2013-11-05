@@ -16,28 +16,30 @@ Feature: user browses concepts with labels in source language
     And I select "None" from the dropdown
     And I click the "Target Language" selector
     And I select "None" from the dropdown
-    
+
     And I enter "firearm" in the search field
     And I click the search button
     Then I should see the concept hit "gun"
     And I should not see the concept hit "Schusswaffe"
-    
+    And I should see a concept node "gun" inside the concept map
+
     When I click the "Source Language" selector
     And I select "German" from the dropdown
     Then I should see the concept hit "Schusswaffe"
     And I should not see the concept hit "gun"
-    
+    And I should see a concept node "Schusswaffe" inside the concept map
+
     When I click the "Source Language" selector
     And I select "French" from the dropdown
     Then I should see the concept hit "gun"
     And I should not see the concept hit "Schusswaffe"
-    
+    And I should see a concept node "gun" inside the concept map
+
     When I click the "Source Language" selector
     And I select "None" from the dropdown
     And I click the "Target Language" selector
     And I select "German" from the dropdown
-    
+
     Then I should see the concept hit "Schusswaffe"
     And I should not see the concept hit "gun"
-    
-    
+    And I should see a concept node "Schusswaffe" inside the concept map
