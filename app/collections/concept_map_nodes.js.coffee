@@ -63,7 +63,8 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
         parent_of_hit: yes
 
   updateAllPlaceholderNodes: ->
-    for model in @models
+    models = (model for model in @models when model.get('type') isnt 'placeholder')
+    for model in models
       @updatePlaceholderNode model, model.get('child_node_ids'), silent: yes
 
   updatePlaceholderNode: (model, childNodeIds, options = {}) ->
