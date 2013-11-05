@@ -1,4 +1,6 @@
 #= require environment
+#= require models/concept
+#= require models/repository
 
 class Coreon.Models.ConceptMapNode extends Backbone.Model
 
@@ -13,12 +15,21 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
     busy: false
     rendered: false
 
+  detectType = (model) ->
+    switch
+      when model instanceof Coreon.Models.Concept
+        'concept'
+      when model instanceof Coreon.Models.Repository
+        'repository'
+      else
+        null
+
   initialize: ->
     @stopListening()
     if model = @get "model"
       @set {
         id: model.id
-        type: model.constructor.name.toLowerCase()
+        type: detectType model
         hit: model.has "hit"
       }, silent: yes
       @update model, silent: yes

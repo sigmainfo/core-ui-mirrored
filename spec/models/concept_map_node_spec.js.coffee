@@ -49,7 +49,7 @@ describe 'Coreon.Models.ConceptMapNode', ->
   describe '#initialize()', ->
 
     beforeEach ->
-      @concept = new Backbone.Model
+      @concept = new Coreon.Models.Concept
       @model.set 'model', @concept, silent: yes
 
     it 'derives id from model', ->
@@ -58,7 +58,6 @@ describe 'Coreon.Models.ConceptMapNode', ->
       expect( @model.id ).to.equal 'concept-123'
 
     it 'derives type from model', ->
-      @concept.constructor = name: 'Concept'
       @model.initialize()
       expect( @model.get 'type' ).to.equal 'concept'
 
