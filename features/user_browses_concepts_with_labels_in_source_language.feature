@@ -8,7 +8,8 @@ Feature: user browses concepts with labels in source language
     And I am logged in
 
   Scenario: explore concept tree
-    Given a concept
+    Given the languages "English", "German", and "French" are available
+    And a concept
     And this concept has the following English terms: "gun", "firearm"
     And this concept has the following German terms: "Schusswaffe", "Flinte"
 
