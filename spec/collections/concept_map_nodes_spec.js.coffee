@@ -263,6 +263,17 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( update ).to.have.been.calledWith node1, ['58765fh'], silent: yes
       expect( update ).to.have.been.calledWith node2, [], silent: yes
 
+    it 'does not call update on placeholders itself', ->
+      update = @collection.updatePlaceholderNode = sinon.spy()
+      node1 = new Backbone.Model id: 'fghj567', type: 'concept', child_node_ids: []
+      node2 = new Backbone.Model id: '58765fh', type: 'placeholder', child_node_ids: []
+      @collection.reset [
+        node1
+        node2
+      ], silent: yes
+      @collection.updateAllPlaceholderNodes()
+      expect( update ).to.have.been.calledOnce
+
   describe '#updatePlaceholderNode()', ->
 
     beforeEach ->
