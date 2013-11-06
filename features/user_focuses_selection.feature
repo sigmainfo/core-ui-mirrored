@@ -17,14 +17,13 @@ Feature: User focuses selection
     And this concept has a narrower concept "five pin billiards"
     When I visit the repository root page
     Then I should see the repository node being vertically centered
-    And it should be slightly above the center
+    And it should be somewhat below the top of the viewport
     When I click "Toggle orientation"
     Then I should see the repository node being horizontally centered
-    And it should be slightly left of the center
+    And it should be somewhat next to the left side of the viewport
     When I click "Toggle orientation"
     And I click the placeholder node
-    Then the repository node should have moved up by a level
-    When I click on pocket billiards
+    And I click on pocket billiards
     Then pocket billiards should be horizontally and vertically centered
     When I search for "billiard"
     Then "pocket billiards" and "English billiards" should be visible

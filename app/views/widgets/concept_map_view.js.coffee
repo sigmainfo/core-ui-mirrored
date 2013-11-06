@@ -63,18 +63,18 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       repository = @model.at(0)
       if placeholder = @model.at(1)
         placeholder.set 'busy', on
-      @update()
-      @centerSelection()
+      @update().done @centerSelection
 
       @model.build(concepts).done =>
-        @update()
-        @centerSelection()
+        @update().done @centerSelection
     @
 
   update: ->
-    @renderStrategy.render @model.graph()
+    deferred = $.Deferred()
+    @renderStrategy.render( @model.graph() ).done =>
+      deferred.resolveWith @
     model.set 'rendered', yes for model in @model.models
-    @
+    deferred.promise()
 
   scheduleForUpdate: (model) ->
     unless @scheduledForUpdate or not model.get('rendered')
@@ -84,13 +84,11 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
         @scheduledForUpdate = off
 
   centerSelection: ->
-    width = @width / 2
-    height = @svgHeight / 2
-    if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
-      width -= 300
-    else
-      height -= 300
-    @navigator.translate [width, height]
+    viewport =
+      width:  @width
+      height: @svgHeight
+    offset = @renderStrategy.center viewport
+    @navigator.translate [offset.x, offset.y]
     @_panAndZoom()
 
   expand: (event) ->

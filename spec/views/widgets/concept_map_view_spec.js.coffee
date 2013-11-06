@@ -131,7 +131,9 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       sinon.spy @view.model, 'build'
-      @view.update = sinon.spy()
+      deferred = $.Deferred()
+      @view.update = sinon.stub().returns deferred.promise()
+      @updated = -> deferred.resolveWith @view
       @view.centerSelection = sinon.spy()
 
     it 'can be chained', ->
@@ -161,12 +163,22 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         placeholder = @view.model.at(1)
         expect( placeholder.get 'busy' ).to.be.true
 
-      it 'updates and centers map when cleared', ->
+      it 'updates when cleared', ->
         @view.render()
         @deferred.resolve()
         expect( @view.update ).to.have.been.calledOnce
+
+      it 'defers centering selection', ->
+        @view.render()
+        @deferred.resolve()
+        expect( @view.centerSelection ).to.not.have.been.called
+
+      it 'centers selection when updated', ->
+        @view.render()
+        @deferred.resolve()
+        @updated()
         expect( @view.centerSelection ).to.have.been.calledOnce
-        expect( @view.centerSelection ).to.have.been.calledAfter @view.update
+        expect( @view.centerSelection.thisValues[0] ).to.equal @view
 
       it 'builds up map from hits', ->
         concept1 = new Backbone.Model
@@ -181,23 +193,68 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         expect( @view.model.build ).to.have.been.calledOnce
         expect( @view.model.build ).to.have.been.calledWith [ concept1, concept2 ]
 
-      it 'updates and centers map when loaded', ->
+      it 'updates map when loaded', ->
         @view.render()
         @deferred.resolve()
         @view.update.reset()
         @view.centerSelection.reset()
         @deferred.resolve()
         expect( @view.update ).to.have.been.calledOnce
+
+      it 'defers centering select after reset update', ->
+        @view.render()
+        @deferred.resolve()
+        @view.update.reset()
+        @view.centerSelection.reset()
+        @deferred.resolve()
+        expect( @view.centerSelection ).to.not.have.been.called
+
+      it 'centers selection when updated', ->
+        @view.render()
+        @deferred.resolve()
+        @view.update.reset()
+        @updated()
+        @view.centerSelection.reset()
+        @deferred.resolve()
+        @updated()
         expect( @view.centerSelection ).to.have.been.calledOnce
-        expect( @view.centerSelection ).to.have.been.calledAfter @view.update
+
+  describe '#centerSelection()', ->
+
+    beforeEach ->
+      offset = sinon.stub().returns x: 90, y: 30
+      @view.renderStrategy.center = offset
+      @view.navigator.translate = sinon.spy()
+      @view._panAndZoom = sinon.spy()
+
+    it 'delegates offset calculation to render strategy', ->
+      @view.width     = 300
+      @view.svgHeight = 200
+      @view.centerSelection()
+      offset = @view.renderStrategy.center
+      expect( offset ).to.have.been.calledOnce
+      expect( offset ).to.have.been.calledWith { width: 300, height: 200 }
+
+    it 'applies offset to map', ->
+      @view.renderStrategy.center.returns
+        x: 110
+        y: 45
+      @view.centerSelection()
+      translate = @view.navigator.translate
+      expect( translate ).to.have.been.calledOnce
+      expect( translate ).to.have.been.calledWith [110, 45]
+      pan = @view._panAndZoom
+      expect( pan ).to.have.been.calledOnce
+      expect( pan ).to.have.been.calledAfter translate
 
   describe '#update()', ->
 
     beforeEach ->
+      deferred = $.Deferred()
       @view.renderStrategy = render: ->
-
-    it 'can be chained', ->
-      @view.update().should.equal @view
+        deferred.promise()
+      @rendered = ->
+        deferred.resolve()
 
     it 'is triggered on placeholder updates', ->
       @view.update = sinon.spy()
@@ -208,7 +265,8 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     it 'delegates rendering to strategy', ->
       graph = root: {id: 'root'}, edges: []
       @view.model.graph = -> graph
-      strategy = render: sinon.spy()
+      strategy = @view.renderStrategy
+      sinon.spy strategy, 'render'
       @view.renderStrategy = strategy
       @view.update()
       strategy.render.should.have.been.calledWith graph
@@ -359,6 +417,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
+        done: ->
 
     it 'is triggered by click on button', ->
       @view.zoomIn = sinon.spy()
@@ -390,6 +449,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
+        done: ->
 
     it 'is triggered by click on button', ->
       @view.zoomOut = sinon.spy()

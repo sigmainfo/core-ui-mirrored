@@ -2,12 +2,44 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   include AuthSteps
   include Api::Graph::Factory
 
+  def transform(selector)
+    page.evaluate_script %|d3.select('#{selector}').attr('transform')|
+  end
+
+  def position(selector)
+    transform(selector).match /\btranslate\((?<x>[\d+-.]+),\s*(?<y>[\d+-.]+)\)/
+  end
+
+  def offset(selector)
+    map = position '#coreon-concept-map g.concept-map'
+    node = position selector
+    {
+      x: map['x'].to_i + node['x'].to_i,
+      y: map['y'].to_i + node['y'].to_i
+    }
+  end
+
   step 'I have selected a repository "Billiards"' do
     @repository.update_attributes name: 'Billiards'
   end
 
   step 'a concept "pocket billiards" exists' do
     @pocket_billiards = create_concept_with_label 'pocket billiards'
+  end
+
+  def viewport
+    {
+      width:  page.evaluate_script(%|$("#coreon-concept-map svg").innerWidth()|).to_i,
+      height: page.evaluate_script(%|$("#coreon-concept-map svg").innerHeight()|).to_i
+    }
+  end
+
+  def center
+    v = viewport
+    {
+      x: v[:width] / 2,
+      y: v[:height] / 2
+    }
   end
 
   step 'this concept has narrower concepts "pool", "snooker", "English billiards"' do
@@ -40,39 +72,44 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   step 'I should see the repository node being vertically centered' do
-    pending 'step not implemented'
+    page.should have_css('#coreon-concept-map .concept-node.repository-root')
+    @center = center
+    @offset = offset('#coreon-concept-map .concept-node.repository-root')
+    @offset[:x].should be_within(10).of @center[:x]
   end
 
-  step 'it should be slightly above the center' do
-    pending 'step not implemented'
+  step 'it should be somewhat below the top of the viewport' do
+    @viewport = viewport
+    @offset[:y].should > 0
+    @offset[:y].should < @viewport[:height] * 0.2
   end
 
   step 'I click "Toggle orientation"' do
-    pending 'step not implemented'
+    click_link "Toggle orientation"
   end
 
   step 'I should see the repository node being horizontally centered' do
-    pending 'step not implemented'
+    @offset = offset('#coreon-concept-map .concept-node.repository-root')
+    @offset[:y].should be_within(10).of @center[:y]
   end
 
-  step 'it should be slightly left of the center' do
-    pending 'step not implemented'
+  step 'it should be somewhat next to the left side of the viewport' do
+    @offset[:x].should > 0
+    @offset[:x].should < @viewport[:width] * 0.2
   end
 
   step 'I click the placeholder node' do
-    pending 'step not implemented'
-  end
-
-  step 'the repository node should have moved up by a level' do
-    pending 'step not implemented'
+    page.find('#coreon-concept-map .concept-node.placeholder').click
   end
 
   step 'I click on pocket billiards' do
-    pending 'step not implemented'
+    page.find('#coreon-concept-map .concept-node:not(.placeholder)', text: 'pocket billiards').find('a').click
   end
 
   step 'pocket billiards should be horizontally and vertically centered' do
-    pending 'step not implemented'
+    offset = offset('#coreon-concept-map .concept-node.hit')
+    offset[:x].should be_within(10).of @center[:x]
+    offset[:y].should be_within(10).of @center[:y]
   end
 
   step 'I search for "billiard"' do

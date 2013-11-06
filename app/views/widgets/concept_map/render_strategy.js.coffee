@@ -10,12 +10,12 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   resize: (@width, @height) ->
 
-  render = (graph) ->
+  render: (graph) ->
+    deferred = $.Deferred()
     nodes = @renderNodes graph.tree
     edges = @renderEdges graph.edges
-    _.defer @updateLayout, nodes, edges
-
-  render: _.debounce render, 250
+    _.defer @updateLayout, nodes, edges, deferred
+    deferred.promise()
 
   renderNodes: (root) ->
     nodes = @parent.selectAll('.concept-node')
@@ -219,7 +219,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   updateEdges: (edges) ->
     edges
 
-  updateLayout: (nodes, edges) =>
+  updateLayout: (nodes, edges, deferred) =>
     placeholders = nodes.filter(
       (datum) -> datum.type is 'placeholder'
     )
@@ -234,5 +234,4 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
         datum.countWidth
       )
 
-
-    [nodes, edges]
+    deferred.resolve nodes, edges
