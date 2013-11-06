@@ -45,6 +45,9 @@
     @include border-radius(8px);
     padding: 3px 12px 2px 26px;
     font-size: 0.94em;
+    &.single {
+      padding-left: 12px;
+    }
     
     &:before {
       height: 18px;
