@@ -97,6 +97,20 @@ $widget-width: 320px;
   padding: 9px 16px 8px 17px;
 }
 
+@mixin empty {
+  font: 1em Palatino;
+  font-style: italic;
+  color: lighten($greytext-color, 20%);
+  &:before{
+    content:"{";
+      font-size: 1.2em;
+  };
+  &:after{
+    content:"}";
+    font-size: 1.2em;
+  };
+}
+
 @mixin table-properties {
   border-spacing: 0;
   

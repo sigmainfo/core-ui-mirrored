@@ -161,7 +161,10 @@ div.concept {
 /*    @include background(linear-gradient(rgba($browncolor, 0.03), rgba($browncolor, 0)));*/
     
 
-    
+      .no-terms {
+        @include empty;
+        padding: 3px 30px;
+      }
     section.language {
       margin-top: 12px;
       min-height: 18px;            
