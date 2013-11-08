@@ -13,28 +13,28 @@ describe 'Coreon.Models.Concept', ->
     Coreon.Collections.Hits.collection.restore()
 
   it 'is a Backbone model', ->
-    @model.should.been.an.instanceof Backbone.Model
+    expect( @model ).to.been.an.instanceof Backbone.Model
 
   it 'is an accumulating model', ->
-    Coreon.Models.Concept.find.should.equal Coreon.Modules.Accumulation.find
+    expect( Coreon.Models.Concept.find ).to.equal Coreon.Modules.Accumulation.find
 
   it 'uses Concepts collection for accumulation', ->
     collection = Coreon.Models.Concept.collection()
-    collection.should.be.an.instanceof Coreon.Collections.Concepts
-    Coreon.Models.Concept.collection().should.equal collection
+    expect( collection ).to.be.an.instanceof Coreon.Collections.Concepts
+    expect( Coreon.Models.Concept.collection() ).to.equal collection
 
   it 'has an URL root', ->
-    @model.urlRoot.should.equal '/concepts'
+    expect( @model.urlRoot ).to.equal '/concepts'
 
   context 'defaults', ->
 
     it 'has an empty set for relations', ->
-      @model.get('properties').should.eql []
-      @model.get('terms').should.eql []
+      expect( @model.get('properties') ).to.eql []
+      expect( @model.get('terms') ).to.eql []
 
     it 'has empty sets for superconcept and subconcept ids', ->
-      @model.get('superconcept_ids').should.eql []
-      @model.get('subconcept_ids').should.eql []
+      expect( @model.get('superconcept_ids') ).to.eql []
+      expect( @model.get('subconcept_ids') ).to.eql []
 
   describe 'attributes', ->
 
@@ -52,7 +52,7 @@ describe 'Coreon.Models.Concept', ->
 
         it 'defaults to <new concept>', ->
           @model.set properties: [ key: 'label', value: 'gun' ]
-          @model.get('label').should.equal '<new concept>'
+          expect( @model.get('label') ).to.equal '<new concept>'
 
       context "after save", ->
         context "by term", ->
@@ -72,7 +72,7 @@ describe 'Coreon.Models.Concept', ->
                 }
               ]
             @model.initialize()
-            @model.get("label").should.equal "poetry"
+            expect( @model.get("label") ).to.equal "poetry"
 
           it "falls back to term in other language", ->
             @model.set terms: [
@@ -80,7 +80,7 @@ describe 'Coreon.Models.Concept', ->
               value: "poésie"
             ]
             @model.initialize()
-            @model.get("label").should.equal "poésie"
+            expect( @model.get("label") ).to.equal "poésie"
           
           it "handles term lang gracefully", ->
             @model.set terms: [
@@ -94,7 +94,7 @@ describe 'Coreon.Models.Concept', ->
               }
             ]
             @model.initialize()
-            @model.get("label").should.equal "poetry"  
+            expect( @model.get("label") ).to.equal "poetry"  
             
           context "with source language set", ->  
           
@@ -107,8 +107,6 @@ describe 'Coreon.Models.Concept', ->
               delete Coreon.application
           
             it "uses term in selected source language", ->
-              #console.log Coreon.application.repositorySettings
-              
               @model.set terms: [
                 {
                   lang: "fr"
@@ -120,7 +118,7 @@ describe 'Coreon.Models.Concept', ->
                 }
               ]
               @model.initialize()
-              @model.get("label").should.equal "poésie"
+              expect( @model.get("label") ).to.equal "poésie"
 
             it "uses English term if not available in selected source language", ->
               @model.set terms: [
@@ -134,7 +132,7 @@ describe 'Coreon.Models.Concept', ->
                 }
               ]
               @model.initialize()
-              @model.get("label").should.equal "poetry"
+              expect( @model.get("label") ).to.equal "poetry"
             
           context "with source and target language set", ->
             
@@ -148,8 +146,6 @@ describe 'Coreon.Models.Concept', ->
               delete Coreon.application
         
             it "uses term in selected source language", ->
-              #console.log Coreon.application.repositorySettings
-            
               @model.set terms: [
                 {
                   lang: "fr"
@@ -161,7 +157,7 @@ describe 'Coreon.Models.Concept', ->
                 }
               ]
               @model.initialize()
-              @model.get("label").should.equal "poésie"
+              expect( @model.get("label") ).to.equal "poésie"
 
             it "uses term in target language if not available in selected source language", ->
               @model.set terms: [
@@ -175,7 +171,7 @@ describe 'Coreon.Models.Concept', ->
                 }
               ]
               @model.initialize()
-              @model.get("label").should.equal "Poesie"
+              expect( @model.get("label") ).to.equal "Poesie"
           
             it "uses English term if not available in selected source or target language", ->
               @model.set terms: [
@@ -189,7 +185,7 @@ describe 'Coreon.Models.Concept', ->
                 }
               ]
               @model.initialize()
-              @model.get("label").should.equal "poetry"
+              expect( @model.get("label") ).to.equal "poetry"
               
 
         it "is overwritten by property", ->
@@ -202,30 +198,177 @@ describe 'Coreon.Models.Concept', ->
               lang: "en"
               value: "poetry"
             ]
-          }, silent: true
+          }
           @model.initialize()
-          @model.get("label").should.equal "My_label"
+          expect( @model.get("label") ).to.equal "My_label"
+          
+        context "with source language set to French", ->  
+        
+          beforeEach ->
+            Coreon.application = 
+              repositorySettings: () -> 
+                get: (arg)->
+                  return 'fr' if arg == 'sourceLanguage'
+                on: ->
+                
+          afterEach ->
+            delete Coreon.application
+        
+          it "is overwritten by property in French", ->
+            @model.set {
+              properties: [
+                {
+                  key: "label"
+                  value: "My_label"
+                  lang: "en"
+                }, {
+                  key: "label"
+                  value: "Mon_étiquette"
+                  lang: "fr"
+                }
+              ]
+              terms: [
+                lang: "en"
+                value: "poetry"
+              ]
+            }
+            @model.initialize()
+            expect( @model.get("label") ).to.equal "Mon_étiquette"
+        
+          it "is overwritten by first property if no French label property", ->
+            @model.set {
+              properties: [
+                {
+                  key: "label"
+                  value: "My_label"
+                }, {
+                  key: "label"
+                  value: "Mein_Label"
+                  lang: "de"
+                }
+              ]
+              terms: [
+                lang: "en"
+                value: "poetry"
+              ]
+            }
+            @model.initialize()
+            expect( @model.get("label") ).to.equal "My_label"
+        
+        context "with target language set to German", ->  
+        
+          beforeEach ->
+            Coreon.application = 
+              repositorySettings: () -> 
+                get: (arg)->
+                  return 'de' if arg == 'targetLanguage'
+                on: ->
+                
+          afterEach ->
+            delete Coreon.application
+        
+          it "is overwritten by property in German", ->
+            @model.set {
+              properties: [
+                {
+                  key: "label"
+                  value: "My_label"
+                  lang: "en"
+                }, {
+                  key: "label"
+                  value: "Mein_Label"
+                  lang: "de"
+                }
+              ]
+              terms: [
+                lang: "en"
+                value: "poetry"
+              ]
+            }
+            @model.initialize()
+            expect( @model.get("label") ).to.equal "Mein_Label"
+            
+          it "is overwritten by first property if no German label property", ->
+            @model.set {
+              properties: [
+                {
+                  key: "label"
+                  value: "My_label"
+                }, {
+                  key: "label"
+                  value: "Mon_étiquette"
+                  lang: "fr"
+                }
+              ]
+              terms: [
+                lang: "en"
+                value: "poetry"
+              ]
+            }
+            @model.initialize()
+            expect( @model.get("label") ).to.equal "My_label"
+        
+          
+        
+        context "with source language set to French and target language set to German", ->  
+        
+          beforeEach ->
+            Coreon.application = 
+              repositorySettings: () -> 
+                get: (arg)->
+                  return 'fr' if arg == 'sourceLanguage'
+                  return 'de' if arg == 'targetLanguage'
+                on: ->
+                
+          afterEach ->
+            delete Coreon.application
+        
+          it "is overwritten by property in German", ->
+            @model.set {
+              properties: [
+                {
+                  key: "label"
+                  value: "My_label"
+                  lang: "en"
+                }, {
+                  key: "label"
+                  value: "Mein_Label"
+                  lang: "de"
+                }, {
+                  key: "label"
+                  value: "Mon_étiquette"
+                  lang: "fr"
+                }
+              ]
+              terms: [
+                lang: "en"
+                value: "poetry"
+              ]
+            }
+            @model.initialize()
+            expect( @model.get("label") ).to.equal "Mon_étiquette"
+        
 
 
       context 'on changes', ->
 
         it 'updates label on id attribute changes', ->
           @model.set 'id', 'abc123'
-          @model.get('label').should.equal 'abc123'
+          expect( @model.get('label') ).to.equal 'abc123'
 
         it 'updates label on property changes', ->
           @model.set 'properties', [
             key: 'label'
             value: 'My Label'
           ]
-          @model.get('label').should.equal 'My Label'
+          expect( @model.get('label') ).to.equal 'My Label'
 
         it 'updates label on term changes', ->
           @model.set 'terms', [
             lang: 'en'
             value: 'poetry'
           ]
-          @model.get('label').should.equal 'poetry'
+          expect( @model.get('label') ).to.equal 'poetry'
 
 
     describe 'hit', ->
@@ -240,7 +383,7 @@ describe 'Coreon.Models.Concept', ->
         @model.initialize()
 
       it 'gets hit from id', ->
-        @model.get('hit').should.equal @hit
+        expect( @model.get('hit') ).to.equal @hit
 
       it 'updates hit on reset', ->
         @hits.reset []
@@ -254,7 +397,7 @@ describe 'Coreon.Models.Concept', ->
         other = new Backbone.Model
         @hits.add result: other
         added = hit for hit in @hits.models when hit.get('result') is @model
-        @model.get('hit').should.equal added
+        expect( @model.get('hit') ).to.equal added
 
   describe '.roots()', ->
 
@@ -288,19 +431,19 @@ describe 'Coreon.Models.Concept', ->
 
     it 'syncs with attr', ->
       @model.set 'properties', [key: 'label']
-      @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
-      @model.properties().at(0).get('key').should.equal 'label'
+      expect( @model.properties().at(0) ).to.be.an.instanceof Coreon.Models.Property
+      expect( @model.properties().at(0).get('key') ).to.equal 'label'
 
   describe '#terms()', ->
 
     it 'creates terms from attr', ->
       @model.set 'terms', [value: 'dead', lang: 'en']
-      @model.terms().at(0).should.be.an.instanceof Coreon.Models.Term
-      @model.terms().at(0).get('value').should.equal 'dead'
+      expect( @model.terms().at(0) ).to.be.an.instanceof Coreon.Models.Term
+      expect( @model.terms().at(0).get('value') ).to.equal 'dead'
 
     it 'updates attr from terms', ->
       @model.terms().reset [ value: 'dead', lang: 'en', properties: [] ]
-      @model.get('terms').should.eql [ value: 'dead', lang: 'en', properties: [] ]
+      expect( @model.get('terms') ).to.eql [ value: 'dead', lang: 'en', properties: [] ]
 
   describe '#info()', ->
 
@@ -312,7 +455,7 @@ describe 'Coreon.Models.Concept', ->
         created_at: '2013-09-12 13:48'
         updated_at: '2013-09-12 13:50'
       }, silent: true
-      @model.info().should.eql
+      expect( @model.info() ).to.eql
         id: 'abcd1234'
         author: 'Nobody'
         created_at: '2013-09-12 13:48'
@@ -322,14 +465,14 @@ describe 'Coreon.Models.Concept', ->
 
     it 'returns empty hash when empty', ->
       @model.properties = -> models: []
-      @model.propertiesByKey().should.eql {}
+      expect( @model.propertiesByKey() ).to.eql {}
 
     it 'returns properties grouped by key', ->
       prop1 = new Backbone.Model key: 'label'
       prop2 = new Backbone.Model key: 'definition'
       prop3 = new Backbone.Model key: 'definition'
       @model.properties = -> models: [ prop1, prop2, prop3 ]
-      @model.propertiesByKey().should.eql
+      expect( @model.propertiesByKey() ).to.eql
         label: [ prop1 ]
         definition: [ prop2, prop3 ]
 
@@ -337,14 +480,14 @@ describe 'Coreon.Models.Concept', ->
 
     it 'returns empty hash when empty', ->
       @model.terms = -> models: []
-      @model.termsByLang().should.eql {}
+      expect( @model.termsByLang() ).to.eql {}
 
     it 'returns terms grouped by lang', ->
       term1 = new Backbone.Model lang: 'en'
       term2 = new Backbone.Model lang: 'de'
       term3 = new Backbone.Model lang: 'de'
       @model.terms = -> models: [ term1, term2, term3 ]
-      @model.termsByLang().should.eql
+      expect( @model.termsByLang() ).to.eql
         en: [ term1 ]
         de: [ term2, term3 ]
         
@@ -367,7 +510,7 @@ describe 'Coreon.Models.Concept', ->
         term4 = new Backbone.Model lang: 'de'
         @model.terms = -> models: [ term1, term2, term3, term4 ]
         
-        @model.termsByLang().should.eql
+        expect( @model.termsByLang() ).to.eql
           de: [ term2, term4 ]
           en: [ term1 ]
           fr: [ term3 ]
@@ -391,7 +534,7 @@ describe 'Coreon.Models.Concept', ->
         term4 = new Backbone.Model lang: 'de'
         @model.terms = -> models: [ term1, term2, term3, term4 ]
         
-        @model.termsByLang().should.eql
+        expect( @model.termsByLang() ).to.eql
           fr: [ term3 ]
           en: [ term1 ]
           de: [ term2, term4 ]
@@ -416,7 +559,7 @@ describe 'Coreon.Models.Concept', ->
         term4 = new Backbone.Model lang: 'de'
         @model.terms = -> models: [ term1, term2, term3, term4 ]
         
-        @model.termsByLang().should.eql
+        expect( @model.termsByLang() ).to.eql
           de: [ term2, term4 ]
           fr: [ term3 ]
           en: [ term1 ]
@@ -427,7 +570,7 @@ describe 'Coreon.Models.Concept', ->
         term3 = new Backbone.Model lang: 'de'
         @model.terms = -> models: [ term1, term2, term3 ]
         
-        @model.termsByLang().should.eql
+        expect( @model.termsByLang() ).to.eql
           de: [ term2, term3 ]
           fr: [ ]
           en: [ term1 ]
@@ -441,18 +584,18 @@ describe 'Coreon.Models.Concept', ->
         superconcept_ids: [ 'super_1', 'super_2' ]
         subconcept_ids: [ 'sub_1', 'sub_2' ]
       json = @model.toJSON()
-      json.should.have.deep.property 'concept.id', 'my-concept'
-      json.should.have.deep.property('concept.superconcept_ids').that.eql [ 'super_1', 'super_2' ]
-      json.should.have.deep.property('concept.subconcept_ids').that.eql [ 'sub_1', 'sub_2' ]
+      expect( json ).to.have.deep.property 'concept.id', 'my-concept'
+      expect( json ).to.have.deep.property('concept.superconcept_ids').that.eql [ 'super_1', 'super_2' ]
+      expect( json ).to.have.deep.property('concept.subconcept_ids').that.eql [ 'sub_1', 'sub_2' ]
 
     it 'drops client-side attributes', ->
-      @model.toJSON().should.not.have.deep.property 'concept.label'
-      @model.toJSON().should.not.have.deep.property 'concept.hit'
+      expect( @model.toJSON() ).to.not.have.deep.property 'concept.label'
+      expect( @model.toJSON() ).to.not.have.deep.property 'concept.hit'
 
     it 'does not create wrapper for terms', ->
       @model.terms().reset [ { value: 'hat' }, { value: 'top hat' } ]
-      @model.toJSON().should.have.deep.property 'concept.terms[0].value', 'hat'
-      @model.toJSON().should.have.deep.property 'concept.terms[1].value', 'top hat'
+      expect( @model.toJSON() ).to.have.deep.property 'concept.terms[0].value', 'hat'
+      expect( @model.toJSON() ).to.have.deep.property 'concept.terms[1].value', 'top hat'
 
   describe '#fetch()', ->
 
@@ -464,8 +607,8 @@ describe 'Coreon.Models.Concept', ->
 
       it 'combines multiple subsequent calls into a single batch request', ->
         @model.fetch()
-        Coreon.Modules.CoreAPI.sync.should.have.been.calledOnce
-        Coreon.Modules.CoreAPI.sync.firstCall.args[2].should.have.property 'batch', on
+        expect( Coreon.Modules.CoreAPI.sync ).to.have.been.calledOnce
+        expect( Coreon.Modules.CoreAPI.sync.firstCall.args[2] ).to.have.property 'batch', on
 
   describe '#save()', ->
 
@@ -479,9 +622,9 @@ describe 'Coreon.Models.Concept', ->
 
       it 'delegates to application sync', ->
         @model.save {}, wait: true
-        Coreon.Modules.CoreAPI.sync.should.have.been.calledOnce
-        Coreon.Modules.CoreAPI.sync.should.have.been.calledWith 'update', @model
-        Coreon.Modules.CoreAPI.sync.firstCall.args[2].should.have.property 'wait', true
+        expect( Coreon.Modules.CoreAPI.sync ).to.have.been.calledOnce
+        expect( Coreon.Modules.CoreAPI.sync ).to.have.been.calledWith 'update', @model
+        expect( Coreon.Modules.CoreAPI.sync.firstCall.args[2] ).to.have.property 'wait', true
 
     context 'create', ->
 
@@ -499,15 +642,15 @@ describe 'Coreon.Models.Concept', ->
         @model.on 'create', spy
         @model.save 'label', 'dead man'
         @model.save 'label', 'nobody'
-        spy.should.have.been.calledOnce
-        spy.should.have.been.calledWith @model, @model.id
+        expect( spy ).to.have.been.calledOnce
+        expect( spy ).to.have.been.calledWith @model, @model.id
 
   describe '#errors()', ->
 
     it 'collects remote validation errors', ->
       @model.trigger 'error', @model,
         responseText: '{"errors":{"foo":["must be bar"]}}'
-      @model.errors().should.eql
+      expect( @model.errors() ).to.eql
         foo: ['must be bar']
 
   describe '#revert()', ->
@@ -518,7 +661,7 @@ describe 'Coreon.Models.Concept', ->
       @model.set 'label', 'xxxx', silent: true
       @model.set 'label', '****', silent: true
       @model.revert()
-      @model.get('label').should.equal 'high hat'
+      expect( @model.get('label') ).to.equal 'high hat'
 
 
   describe '#acceptsConnection()', ->
@@ -528,12 +671,12 @@ describe 'Coreon.Models.Concept', ->
       @model.set 'superconcept_ids', ['deadbeef'], silent: true
 
     it 'forbids simple circular connections', ->
-      @model.acceptsConnection('c0ffee').should.be.false
-      @model.acceptsConnection('bad1dea').should.be.false
-      @model.acceptsConnection('deadbeef').should.be.false
+      expect( @model.acceptsConnection('c0ffee') ).to.be.false
+      expect( @model.acceptsConnection('bad1dea') ).to.be.false
+      expect( @model.acceptsConnection('deadbeef') ).to.be.false
 
     it 'allows valid connections', ->
-      @model.acceptsConnection('f00baa').should.be.true
+      expect( @model.acceptsConnection('f00baa') ).to.be.true
 
   describe '#path()', ->
     

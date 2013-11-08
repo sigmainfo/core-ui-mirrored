@@ -65,7 +65,6 @@ describe 'Coreon.Lib.Select', ->
       select = $('<select><option value="x">X</option></select>')
       subject = new Coreon.Lib.Select select
       subject.render()
-      console.log subject.$el.html()
       expect( subject.$el ).to.have.class 'single'
     
   describe '_buildSelectOptions()', ->

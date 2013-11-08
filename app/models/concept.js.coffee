@@ -94,7 +94,7 @@ class Coreon.Models.Concept extends Backbone.Model
       @_propLabel() or @_termLabel() or @id
 
   _propLabel: ->
-    _(@get "properties")?.find( (prop) -> prop.key is "label" )?.value
+    @propertiesByKeyAndLang()['label']?[0]?.get('value')
 
   _termLabel: ->
     terms = @get "terms"
