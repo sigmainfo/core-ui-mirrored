@@ -74,6 +74,7 @@
       
       &.focus {
         background-color: rgba($text-color, 0.08);
+        cursor: pointer;
       }
       
       &.selected {
