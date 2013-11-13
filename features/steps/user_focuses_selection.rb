@@ -7,24 +7,16 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   def position(selector, options = {})
-    transform(selector).match /\btranslate\((?<x>[\d+-.]+),\s*(?<y>[\d+-.]+)\)/
+    transform(selector, options).match /\btranslate\((?<x>[\d+-.]+),\s*(?<y>[\d+-.]+)\)/
   end
 
   def offset(selector, options = {})
     map = position '#coreon-concept-map g.concept-map'
-    node = position selector
+    node = position selector, options
     {
       x: map['x'].to_i + node['x'].to_i,
       y: map['y'].to_i + node['y'].to_i
     }
-  end
-
-  step 'I have selected a repository "Billiards"' do
-    @repository.update_attributes name: 'Billiards'
-  end
-
-  step 'a concept "pocket billiards" exists' do
-    @pocket_billiards = create_concept_with_label 'pocket billiards'
   end
 
   def viewport
@@ -40,6 +32,14 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
       x: v[:width] / 2,
       y: v[:height] / 2
     }
+  end
+
+  step 'I have selected a repository "Billiards"' do
+    @repository.update_attributes name: 'Billiards'
+  end
+
+  step 'a concept "pocket billiards" exists' do
+    @pocket_billiards = create_concept_with_label 'pocket billiards'
   end
 
   step 'this concept has narrower concepts "pool", "snooker", "English billiards"' do
@@ -125,5 +125,11 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
       page.should have_css('.concept-node a', text: 'English billiards', visible: true)
       page.should have_css('.concept-node a', text: 'carom billiards', visible: false)
     end
+  end
+
+  step '"pocket billiards" should be centered vertically and horizontally' do
+    @offset = offset('#coreon-concept-map .concept-node:not(.placeholder)', text: 'pocket billiards')
+    @offset[:x].should be_within(10).of @center[:x]
+    @offset[:y].should be_within(10).of @center[:y]
   end
 end

@@ -238,120 +238,45 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.renderStrategy.center = center
       @view.navigator.translate = sinon.spy()
       @view._panAndZoom = sinon.spy()
-      @view.selectionBox = sinon.stub()
       @nodes = []
 
     it 'delegates center calculation to render strategy', ->
       @view.width     = 300
       @view.svgHeight = 200
+      @view.padding = -> 20
       @view.centerSelection @nodes
       center = @view.renderStrategy.center
       expect( center ).to.have.been.calledOnce
-      expect( center ).to.have.been.calledWith { width: 300, height: 200 }
+      expect( center ).to.have.been.calledWith { width: 300 - 2 * 20, height: 200 - 2 * 20 }
 
-    it 'passes selection box to render strategy', ->
-      nodes = []
-      box =
-        x: 30
-        y: 45
-        width: 200
-        height: 140
-      @view.selectionBox.withArgs(nodes).returns box
+    it 'passes hits to render strategy', ->
+      data = [
+        { id: "123", hit: no , score: 0 }
+        { id: "456", hit: yes, score: 1.234 }
+        { id: "789", hit: yes, score: 4.567 }
+      ]
+      nodes = filter: (filter) ->
+        filtered = data.filter filter
+        sort: (sorter) ->
+          filtered.sort sorter
       @view.centerSelection nodes
       center = @view.renderStrategy.center
-      expect( center.firstCall.args[1] ).to.equal box
+      expect( center.firstCall.args[1] ).to.have.lengthOf 2
+      expect( center.firstCall.args[1][0] ).to.have.property 'id', '789'
+      expect( center.firstCall.args[1][1] ).to.have.property 'id', '456'
 
-    it 'applies center to map', ->
+    it 'applies offset with padding to map', ->
       @view.renderStrategy.center.returns
         x: 110
         y: 45
+      @view.padding = -> 20
       @view.centerSelection @nodes
       translate = @view.navigator.translate
       expect( translate ).to.have.been.calledOnce
-      expect( translate ).to.have.been.calledWith [110, 45]
+      expect( translate ).to.have.been.calledWith [110 + 20, 45 + 20]
       pan = @view._panAndZoom
       expect( pan ).to.have.been.calledOnce
       expect( pan ).to.have.been.calledAfter translate
-
-  describe '#selectionBox()', ->
-
-    beforeEach ->
-      @nodes =
-        filter: (filter) =>
-          filtered = @data.filter filter
-          sort: (sort) =>
-            filtered.sort sort
-            data: -> filtered
-      @viewport =
-        width:  3000
-        height: 2000
-
-    context 'no hits', ->
-
-      beforeEach ->
-        @data = [ id: 'fgh456', hit: no ]
-
-      it 'returns null', ->
-        box = @view.selectionBox @nodes, @viewport
-        expect( box ).to.be.null
-
-    context 'single hit', ->
-
-      beforeEach ->
-        @data = [
-          { id: 'fgh456', hit: no }
-          { id: '5kh423', hit: yes, x: 23, y: 45 }
-        ]
-
-      it 'takes coordinates from hit', ->
-        box = @view.selectionBox @nodes, @viewport
-        expect( box ).to.have.property 'x', 23
-        expect( box ).to.have.property 'y', 45
-
-      it 'returns zero extent box', ->
-        box = @view.selectionBox @nodes, @viewport
-        expect( box ).to.have.property 'width', 0
-        expect( box ).to.have.property 'height', 0
-
-    context 'multiple hits', ->
-
-      beforeEach ->
-        @data = [
-          { id: 'fgh456', hit: no }
-          { id: '5kh423', hit: yes, x: 23,  y: 145 }
-          { id: '7k0035', hit: yes, x: 53,  y: -26 }
-          { id: '34lk21', hit: yes, x: 123, y:  32 }
-        ]
-
-      it 'calculates top left corner for coordinates', ->
-        box = @view.selectionBox @nodes, @viewport
-        expect( box ).to.have.property 'x', 23
-        expect( box ).to.have.property 'y', -26
-
-      it 'calculates width and height from min and max coordinates', ->
-        box = @view.selectionBox @nodes, @viewport
-        expect( box ).to.have.property 'width', 100
-        expect( box ).to.have.property 'height', 171
-
-    context 'exceeding viewport', ->
-
-      beforeEach ->
-        @viewport =
-          width:  80
-          height: 200
-
-      it 'only takes top scored hits into account', ->
-        @data = [
-          { id: '7k0035', hit: yes, score: 4.24,  x: 53,  y: -26 }
-          { id: 'fgh456', hit: yes, score: 7.03,  x: 34,  y: -12 }
-          { id: '34lk21', hit: yes, score: 2.53,  x: 123, y:  32 }
-          { id: '5kh423', hit: yes, score: 3.26,  x: 23,  y: 145 }
-        ]
-        box = @view.selectionBox @nodes, @viewport
-        expect( box ).to.have.property 'x', 23
-        expect( box ).to.have.property 'y', -26
-        expect( box ).to.have.property 'width', 30
-        expect( box ).to.have.property 'height', 171
 
   describe '#update()', ->
 

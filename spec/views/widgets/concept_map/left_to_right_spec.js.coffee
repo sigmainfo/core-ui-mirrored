@@ -236,33 +236,45 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
 
   describe '#center()', ->
 
+    beforeEach ->
+      @data = []
+      @nodes = data: => @data
+
     context 'without selection', ->
 
-      it 'centers box horizontally', ->
-        viewport =
-          width:  300
-          height: 200
-        offset = @strategy.center viewport, null
-        expect( offset.y ).to.equal 200 / 2
+      beforeEach ->
+        @data = []
 
-      it 'aligns lefts of map and viewport', ->
+      it 'centers root horizontally', ->
         viewport =
           width:  300
           height: 200
-        offset = @strategy.center viewport, null
-        expect( offset.x ).to.equal 300 * 0.1
+        offset = @strategy.center viewport, @nodes
+        expect( offset.y ).to.equal 100
+
+      it 'aligns root with left', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, @nodes
+        expect( offset.x ).to.equal 0
 
     context 'with selection', ->
+
+      beforeEach ->
+        @data = [ x: 45, y: 789 ]
 
       it 'centers box inside viewport', ->
         viewport =
           width:  300
           height: 200
-        box =
+        @strategy.box = sinon.stub()
+        @strategy.box.withArgs(@data, 200, 300).returns
           x     : 12
           y     : 34
           width : 190
           height: 46
-        offset = @strategy.center viewport, box
-        expect( offset ).to.have.property 'x', (300 - 190) / 2 - 12
-        expect( offset ).to.have.property 'y', (200 - 46 ) / 2 - 34
+        offset = @strategy.center viewport, @nodes
+        expect( offset ).to.have.property 'x', (300 - 46 ) / 2 - 34
+        expect( offset ).to.have.property 'y', (200 - 190) / 2 - 12
+

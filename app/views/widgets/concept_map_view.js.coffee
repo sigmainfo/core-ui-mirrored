@@ -86,45 +86,24 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
         @update()
         @rendering = off
 
-  centerSelection: (nodes) ->
-    viewport =
-      width:  @width
-      height: @svgHeight
-    box = @selectionBox nodes, viewport
-    offset = @renderStrategy.center viewport, box
-    @navigator.translate [offset.x, offset.y]
-    @_panAndZoom()
+  padding: ->
+    Math.min(@width, @svgHeight) * 0.1
 
-  selectionBox: (nodes, viewport) ->
-    box = null
+  centerSelection: (nodes) ->
+    padding = @padding()
+    viewport =
+      width:  @width     - 2 * padding
+      height: @svgHeight - 2 * padding
     hits = nodes
       .filter( (datum) -> datum.hit )
       .sort( (a, b) -> b.score - a.score )
-      .data()
 
-    if hit = hits[0]
-      box =
-        x     : hit.x
-        y     : hit.y
-        width : 0
-        height: 0
+    offset = @renderStrategy.center viewport, hits
+    offset.x += padding
+    offset.y += padding
 
-    for hit in hits[1..]
-      left    = Math.min hit.x, box.x
-      right   = Math.max hit.x, box.x + box.width
-      top     = Math.min hit.y, box.y
-      bottom  = Math.max hit.y, box.y + box.height
-      width   = right - left
-      height  = bottom - top
-      if width < viewport.width and height < viewport.height
-        box =
-          x     : left
-          y     : top
-          width : width
-          height: height
-      else
-        return box
-    box
+    @navigator.translate [offset.x, offset.y]
+    @_panAndZoom()
 
   expand: (event) ->
     node = $(event.target).closest '.placeholder'

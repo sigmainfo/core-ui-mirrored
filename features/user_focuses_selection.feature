@@ -1,4 +1,3 @@
-@wip
 Feature: User focuses selection
   In order to focus on the selection at hand
   As a user browsing the concept map
@@ -8,7 +7,7 @@ Feature: User focuses selection
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
-  Scenario: navigate concept map
+  Scenario: center selection
     Given I have selected a repository "Billiards"
     And a concept "pocket billiards" exists
     And this concept has narrower concepts "pool", "snooker", "English billiards"
@@ -27,3 +26,5 @@ Feature: User focuses selection
     Then pocket billiards should be horizontally and vertically centered
     When I search for "billiard"
     Then "pocket billiards" and "English billiards" should be visible
+    When I click "Toggle orientation"
+    Then "pocket billiards" should be centered vertically and horizontally

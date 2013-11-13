@@ -85,10 +85,12 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
     @updateEdges edges
     super
 
-  center: (viewport, box) ->
-    if box?
+  center: (viewport, nodes) ->
+    data = nodes.data()
+    if data.length is 0
+      x: viewport.width / 2
+      y: 0
+    else
+      box = @box data, viewport.width, viewport.height
       x: (viewport.width  - box.width ) / 2 - box.x
       y: (viewport.height - box.height) / 2 - box.y
-    else
-      x: viewport.width / 2
-      y: viewport.height * 0.1

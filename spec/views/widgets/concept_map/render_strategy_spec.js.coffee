@@ -628,3 +628,71 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateLayout @nodes, edges, deferred
       expect( deferred.resolve ).to.have.been.calledOnce
       expect( deferred.resolve ).to.have.been.calledWith @nodes, edges
+
+  describe '#box()', ->
+
+    context 'without nodes', ->
+
+      beforeEach ->
+        @data = []
+
+      it 'returns origin', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'x', 0
+        expect( box ).to.have.property 'y', 0
+
+      it 'returns zero extent box', ->
+        box = @strategy.box @data, @viewport
+        expect( box ).to.have.property 'width', 0
+        expect( box ).to.have.property 'height', 0
+
+    context 'single node', ->
+
+      beforeEach ->
+        @data = [ x: 23, y: 45 ]
+
+      it 'returns node position', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', 45
+
+      it 'returns zero extent box', ->
+        box = @strategy.box @data, @viewport
+        expect( box ).to.have.property 'width', 0
+        expect( box ).to.have.property 'height', 0
+
+    context 'multiple hits', ->
+
+      beforeEach ->
+        @data = [
+          { x:  23,  y: 145 }
+          { x:  53,  y: -26 }
+          { x:  12,  y:  32 }
+        ]
+
+      it 'calculates top left corner for coordinates', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'x', 12
+        expect( box ).to.have.property 'y', -26
+
+      it 'calculates width and height from min and max coordinates', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'width', 41
+        expect( box ).to.have.property 'height', 171
+
+    context 'exceeding viewport', ->
+
+      beforeEach ->
+        @data = [
+          { x: 34,  y: -12 }
+          { x: 53,  y: -26 }
+          { x: 23,  y: 145 }
+          { x: 123, y:  32 }
+        ]
+
+      it 'only takes top scored hits into account', ->
+        box = @strategy.box @data, 80, 200
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', -26
+        expect( box ).to.have.property 'width', 30
+        expect( box ).to.have.property 'height', 171

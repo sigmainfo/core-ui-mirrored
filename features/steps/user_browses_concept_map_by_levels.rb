@@ -75,15 +75,15 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
   end
 
   step 'I should see "equipment", "types" on level 2' do
-    @levels[2].should == ["equipment", "types"]
+    @levels[2].sort.should == ["equipment", "types"]
   end
 
   step 'I should see "ball", "pool" at level 3' do
-    @levels[3].should == ["ball", "pool"]
+    @levels[3].sort.should == ["ball", "pool"]
   end
 
   step 'I should see "8-ball", "nine ball" at level 4' do
-    @levels[4].should == ["8-ball", "nine ball"]
+    @levels[4].sort.should == ["8-ball", "nine ball"]
   end
 
   step '"billiards", "equipment", "types", "pool" should be rendered as parents of hit' do

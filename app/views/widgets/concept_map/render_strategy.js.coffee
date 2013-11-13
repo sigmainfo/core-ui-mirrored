@@ -235,3 +235,31 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
       )
 
     deferred.resolve nodes, edges
+
+
+  box: (positions, width, height) ->
+    box =
+      x      : 0
+      y      : 0
+      width  : 0
+      height : 0
+    if pos = positions[0]
+      box.x = pos.x
+      box.y = pos.y
+      for pos in positions[1..]
+        l = Math.min pos.x, box.x
+        r = Math.max pos.x, box.x + box.width
+        t = Math.min pos.y, box.y
+        b = Math.max pos.y, box.y + box.height
+        w = r - l
+        h = b - t
+
+        if w < width and h < height
+          box =
+            x      : l
+            y      : t
+            width  : w
+            height : h
+        else
+          break
+    box
