@@ -57,6 +57,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     @listenTo @model, 'change', @scheduleForUpdate
 
   render: ->
+    @rendering = on
     concepts = ( model.get 'result' for model in @hits.models )
 
     @model.build([]).done =>
@@ -66,30 +67,64 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       @update().done @centerSelection
 
       @model.build(concepts).done =>
-        @update().done @centerSelection
+        @update().done (nodes) =>
+          @centerSelection nodes
+          @rendering = false
     @
 
   update: ->
     deferred = $.Deferred()
     @renderStrategy.render( @model.graph() ).done =>
-      deferred.resolveWith @
+      deferred.resolveWith @, arguments
     model.set 'rendered', yes for model in @model.models
     deferred.promise()
 
   scheduleForUpdate: (model) ->
-    unless @scheduledForUpdate or not model.get('rendered')
-      @scheduledForUpdate = on
+    unless @rendering or not model.get('rendered')
+      @rendering = on
       _.defer =>
         @update()
-        @scheduledForUpdate = off
+        @rendering = off
 
-  centerSelection: ->
+  centerSelection: (nodes) ->
     viewport =
       width:  @width
       height: @svgHeight
-    offset = @renderStrategy.center viewport
+    box = @selectionBox nodes, viewport
+    offset = @renderStrategy.center viewport, box
     @navigator.translate [offset.x, offset.y]
     @_panAndZoom()
+
+  selectionBox: (nodes, viewport) ->
+    box = null
+    hits = nodes
+      .filter( (datum) -> datum.hit )
+      .sort( (a, b) -> b.score - a.score )
+      .data()
+
+    if hit = hits[0]
+      box =
+        x     : hit.x
+        y     : hit.y
+        width : 0
+        height: 0
+
+    for hit in hits[1..]
+      left    = Math.min hit.x, box.x
+      right   = Math.max hit.x, box.x + box.width
+      top     = Math.min hit.y, box.y
+      bottom  = Math.max hit.y, box.y + box.height
+      width   = right - left
+      height  = bottom - top
+      if width < viewport.width and height < viewport.height
+        box =
+          x     : left
+          y     : top
+          width : width
+          height: height
+      else
+        return box
+    box
 
   expand: (event) ->
     node = $(event.target).closest '.placeholder'

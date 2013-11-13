@@ -145,6 +145,18 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.hits.trigger 'update'
       @view.render.should.have.been.calledOnce
 
+    it 'sets rendering status to on', ->
+      @view.render()
+      expect( @view ).to.have.property 'rendering', on
+
+    it 'sets rendering status to off when finished', ->
+      @view.render()
+      @deferred.resolve()
+      @updated()
+      @deferred.resolve()
+      @updated()
+      expect( @view ).to.have.property 'rendering', off
+
     context 'clear', ->
 
       it 'resets map', ->
@@ -222,30 +234,124 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
   describe '#centerSelection()', ->
 
     beforeEach ->
-      offset = sinon.stub().returns x: 90, y: 30
-      @view.renderStrategy.center = offset
+      center = sinon.stub().returns x: 90, y: 30
+      @view.renderStrategy.center = center
       @view.navigator.translate = sinon.spy()
       @view._panAndZoom = sinon.spy()
+      @view.selectionBox = sinon.stub()
+      @nodes = []
 
-    it 'delegates offset calculation to render strategy', ->
+    it 'delegates center calculation to render strategy', ->
       @view.width     = 300
       @view.svgHeight = 200
-      @view.centerSelection()
-      offset = @view.renderStrategy.center
-      expect( offset ).to.have.been.calledOnce
-      expect( offset ).to.have.been.calledWith { width: 300, height: 200 }
+      @view.centerSelection @nodes
+      center = @view.renderStrategy.center
+      expect( center ).to.have.been.calledOnce
+      expect( center ).to.have.been.calledWith { width: 300, height: 200 }
 
-    it 'applies offset to map', ->
+    it 'passes selection box to render strategy', ->
+      nodes = []
+      box =
+        x: 30
+        y: 45
+        width: 200
+        height: 140
+      @view.selectionBox.withArgs(nodes).returns box
+      @view.centerSelection nodes
+      center = @view.renderStrategy.center
+      expect( center.firstCall.args[1] ).to.equal box
+
+    it 'applies center to map', ->
       @view.renderStrategy.center.returns
         x: 110
         y: 45
-      @view.centerSelection()
+      @view.centerSelection @nodes
       translate = @view.navigator.translate
       expect( translate ).to.have.been.calledOnce
       expect( translate ).to.have.been.calledWith [110, 45]
       pan = @view._panAndZoom
       expect( pan ).to.have.been.calledOnce
       expect( pan ).to.have.been.calledAfter translate
+
+  describe '#selectionBox()', ->
+
+    beforeEach ->
+      @nodes =
+        filter: (filter) =>
+          filtered = @data.filter filter
+          sort: (sort) =>
+            filtered.sort sort
+            data: -> filtered
+      @viewport =
+        width:  3000
+        height: 2000
+
+    context 'no hits', ->
+
+      beforeEach ->
+        @data = [ id: 'fgh456', hit: no ]
+
+      it 'returns null', ->
+        box = @view.selectionBox @nodes, @viewport
+        expect( box ).to.be.null
+
+    context 'single hit', ->
+
+      beforeEach ->
+        @data = [
+          { id: 'fgh456', hit: no }
+          { id: '5kh423', hit: yes, x: 23, y: 45 }
+        ]
+
+      it 'takes coordinates from hit', ->
+        box = @view.selectionBox @nodes, @viewport
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', 45
+
+      it 'returns zero extent box', ->
+        box = @view.selectionBox @nodes, @viewport
+        expect( box ).to.have.property 'width', 0
+        expect( box ).to.have.property 'height', 0
+
+    context 'multiple hits', ->
+
+      beforeEach ->
+        @data = [
+          { id: 'fgh456', hit: no }
+          { id: '5kh423', hit: yes, x: 23,  y: 145 }
+          { id: '7k0035', hit: yes, x: 53,  y: -26 }
+          { id: '34lk21', hit: yes, x: 123, y:  32 }
+        ]
+
+      it 'calculates top left corner for coordinates', ->
+        box = @view.selectionBox @nodes, @viewport
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', -26
+
+      it 'calculates width and height from min and max coordinates', ->
+        box = @view.selectionBox @nodes, @viewport
+        expect( box ).to.have.property 'width', 100
+        expect( box ).to.have.property 'height', 171
+
+    context 'exceeding viewport', ->
+
+      beforeEach ->
+        @viewport =
+          width:  80
+          height: 200
+
+      it 'only takes top scored hits into account', ->
+        @data = [
+          { id: '7k0035', hit: yes, score: 4.24,  x: 53,  y: -26 }
+          { id: 'fgh456', hit: yes, score: 7.03,  x: 34,  y: -12 }
+          { id: '34lk21', hit: yes, score: 2.53,  x: 123, y:  32 }
+          { id: '5kh423', hit: yes, score: 3.26,  x: 23,  y: 145 }
+        ]
+        box = @view.selectionBox @nodes, @viewport
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', -26
+        expect( box ).to.have.property 'width', 30
+        expect( box ).to.have.property 'height', 171
 
   describe '#update()', ->
 
@@ -278,6 +384,24 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.update()
       expect( model1.get 'rendered' ).to.be.true
       expect( model2.get 'rendered' ).to.be.true
+
+    it 'defers promise', ->
+      done = sinon.spy()
+      @view.renderStrategy = render: ->
+        done: (done) ->
+      @view.update().done done
+      expect( done ).to.not.have.been.called
+
+    it 'resolves promise when finished', ->
+      done = sinon.spy()
+      nodes = []
+      edges = []
+      @view.renderStrategy = render: ->
+        done: (callback) -> callback nodes, edges
+      @view.update(nodes, edges).done done
+      expect( done ).to.have.been.calledOnce
+      expect( done.thisValues[0] ).to.equal @view
+      expect( done ).to.have.been.calledWith nodes, edges
 
   describe '#scheduleForUpdate()', ->
 
@@ -327,6 +451,12 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     it 'skips update for models that are not yet rendered', ->
       @model.set 'rendered', no, silent: yes
+      @view.scheduleForUpdate @model
+      @next()
+      expect( @view.update ).to.not.have.been.called
+
+    it 'skips updates while rendering', ->
+      @view.rendering = on
       @view.scheduleForUpdate @model
       @next()
       expect( @view.update ).to.not.have.been.called

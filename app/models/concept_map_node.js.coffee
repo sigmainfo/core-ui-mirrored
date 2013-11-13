@@ -11,6 +11,7 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
     child_node_ids: []
     loaded: yes
     hit: no
+    score: 0
     parent_of_hit: no
     busy: false
     rendered: false
@@ -27,10 +28,14 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
   initialize: ->
     @stopListening()
     if model = @get "model"
+      score = 0
+      if hit = model.get 'hit'
+        score = hit.get 'score'
       @set {
         id: model.id
         type: detectType model
-        hit: model.has "hit"
+        hit: hit?
+        score: score
       }, silent: yes
       @update model, silent: yes
       @listenTo model, "change nonblank", @update

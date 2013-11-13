@@ -2,15 +2,15 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   include AuthSteps
   include Api::Graph::Factory
 
-  def transform(selector)
-    page.evaluate_script %|d3.select('#{selector}').attr('transform')|
+  def transform(selector, options = {})
+    page.find(selector, options)['transform']
   end
 
-  def position(selector)
+  def position(selector, options = {})
     transform(selector).match /\btranslate\((?<x>[\d+-.]+),\s*(?<y>[\d+-.]+)\)/
   end
 
-  def offset(selector)
+  def offset(selector, options = {})
     map = position '#coreon-concept-map g.concept-map'
     node = position selector
     {
@@ -113,10 +113,17 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   step 'I search for "billiard"' do
-    pending 'step not implemented'
+    within '#coreon-search' do
+      fill_in 'coreon-search-query', with: 'billiard'
+      find('input[type="submit"]').click
+    end
   end
 
   step '"pocket billiards" and "English billiards" should be visible' do
-    pending 'step not implemented'
+    within '#coreon-concept-map' do
+      page.should have_css('.concept-node a', text: 'pocket billiards', visible: true)
+      page.should have_css('.concept-node a', text: 'English billiards', visible: true)
+      page.should have_css('.concept-node a', text: 'carom billiards', visible: false)
+    end
   end
 end

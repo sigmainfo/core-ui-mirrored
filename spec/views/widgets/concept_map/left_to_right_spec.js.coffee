@@ -236,17 +236,33 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
 
   describe '#center()', ->
 
-    it 'centers box horizontally', ->
-      viewport =
-        width:  300
-        height: 200
-      offset = @strategy.center viewport
-      expect( offset.y ).to.equal 200 / 2
+    context 'without selection', ->
 
-    it 'aligns lefts of map and viewport', ->
-      viewport =
-        width:  300
-        height: 200
-      offset = @strategy.center viewport
-      expect( offset.x ).to.equal 300 * 0.1
+      it 'centers box horizontally', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, null
+        expect( offset.y ).to.equal 200 / 2
 
+      it 'aligns lefts of map and viewport', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, null
+        expect( offset.x ).to.equal 300 * 0.1
+
+    context 'with selection', ->
+
+      it 'centers box inside viewport', ->
+        viewport =
+          width:  300
+          height: 200
+        box =
+          x     : 12
+          y     : 34
+          width : 190
+          height: 46
+        offset = @strategy.center viewport, box
+        expect( offset ).to.have.property 'x', (300 - 190) / 2 - 12
+        expect( offset ).to.have.property 'y', (200 - 46 ) / 2 - 34
