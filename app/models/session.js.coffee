@@ -108,7 +108,4 @@ class Coreon.Models.Session extends Backbone.Model
 
   destroy: (options) ->
     localStorage.removeItem "coreon-session"
-    if @id?
-      request = super
-      request.abort()
-    request or null
+    super
