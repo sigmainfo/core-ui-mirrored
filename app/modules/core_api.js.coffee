@@ -38,7 +38,10 @@ ajax = (deferred, method, model, options) ->
         JSON.parse request.responseText
       catch exception
         {}
-    if request.status is 403
+        
+    console.log data   
+        
+    if request.status is 403 and data.required is 'relogin'
       session.unset "auth_token"
       session.once "change:auth_token", ->
         ajax deferred, method, model, options

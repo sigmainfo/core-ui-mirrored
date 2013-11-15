@@ -1,7 +1,7 @@
 module AuthSteps
   include Spinach::DSL
 
-  attr_accessor :me
+  attr_accessor :me, :repository
 
   step 'my name is "William Blake" with email "nobody@blake.com" and password "se7en!"' do
     @me_password = "se7en!"
@@ -44,4 +44,5 @@ module AuthSteps
   step 'I debug' do
     binding.pry
   end
+  
 end
