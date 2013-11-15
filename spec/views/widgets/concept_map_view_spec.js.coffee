@@ -131,9 +131,12 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       sinon.spy @view.model, 'build'
-      deferred = $.Deferred()
-      @view.update = sinon.stub().returns deferred.promise()
-      @updated = -> deferred.resolveWith @view
+      deferred = null
+      @view.update = sinon.spy ->
+        deferred = $.Deferred()
+        deferred.promise()
+      @updated = (nodes) =>
+        deferred.resolveWith @view, [nodes]
       @view.centerSelection = sinon.spy()
 
     it 'can be chained', ->
@@ -191,6 +194,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         @updated()
         expect( @view.centerSelection ).to.have.been.calledOnce
         expect( @view.centerSelection.thisValues[0] ).to.equal @view
+        expect( @view.centerSelection.firstCall.args[0] ).to.be.undefined
 
       it 'builds up map from hits', ->
         concept1 = new Backbone.Model
@@ -222,14 +226,16 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         expect( @view.centerSelection ).to.not.have.been.called
 
       it 'centers selection when updated', ->
+        nodes = []
         @view.render()
         @deferred.resolve()
         @view.update.reset()
         @updated()
         @view.centerSelection.reset()
         @deferred.resolve()
-        @updated()
+        @updated nodes
         expect( @view.centerSelection ).to.have.been.calledOnce
+        expect( @view.centerSelection ).to.have.been.calledWith nodes, animate: yes
 
   describe '#centerSelection()', ->
 
@@ -270,13 +276,14 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         x: 110
         y: 45
       @view.padding = -> 20
-      @view.centerSelection @nodes
+      @view.centerSelection @nodes, animate: yes
       translate = @view.navigator.translate
       expect( translate ).to.have.been.calledOnce
       expect( translate ).to.have.been.calledWith [110 + 20, 45 + 20]
       pan = @view._panAndZoom
       expect( pan ).to.have.been.calledOnce
       expect( pan ).to.have.been.calledAfter translate
+      expect( pan ).to.have.been.calledWith animate: yes
 
     context 'when scaled', ->
 
@@ -664,3 +671,20 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.render = sinon.spy()
       @view.toggleOrientation()
       @view.render.should.have.been.calledOnce
+
+  describe '#_panAndZoom()', ->
+
+    beforeEach ->
+      @view.navigator.translate [12, 345]
+      @view.navigator.scale 1.5
+
+    context 'animated', ->
+
+      it 'applies transition', ->
+        transition = d3.transition()
+        transition.attr = sinon.spy()
+        @view.map.transition = sinon.stub().returns transition
+        @view._panAndZoom animate: yes
+        expect( transition.attr ).to.have.been.calledOnce
+        expect( transition.attr ).to.have.been.calledWith 'transform',
+          'translate(12,345) scale(1.5)'

@@ -68,7 +68,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
       @model.build(concepts).done =>
         @update().done (nodes) =>
-          @centerSelection nodes
+          @centerSelection nodes, animate: yes
           @rendering = false
     @
 
@@ -89,7 +89,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
   padding: ->
     Math.min(@width, @svgHeight) * 0.1
 
-  centerSelection: (nodes) ->
+  centerSelection: (nodes, options) ->
     padding = @padding()
     viewport =
       width:  @width     / @navigator.scale() - 2 * padding
@@ -103,7 +103,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     offset.y = offset.y * @navigator.scale() + padding
 
     @navigator.translate [offset.x, offset.y]
-    @_panAndZoom()
+    @_panAndZoom options
 
   expand: (event) ->
     @rendering = on
@@ -156,8 +156,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       resize: (event, ui) =>
         @resize null, ui.size.height
 
-  _panAndZoom: =>
-    @map.attr('transform', "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+  _panAndZoom: (options = {}) =>
+    map = @map
+    if options.animate
+      map = @map.transition()
+        .delay(250)
+        .duration(1000)
+
+    map.attr('transform', "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
 
   toggleOrientation: ->
     @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1
