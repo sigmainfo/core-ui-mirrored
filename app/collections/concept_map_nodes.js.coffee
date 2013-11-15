@@ -75,10 +75,14 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
     enforce = model.get('type') is 'repository' and not @_rootIds?
     label = if enforce then null else "#{count}"
     if count > 0 or enforce
+      if count is childNodeIds.length
+        parentNodeIds = [model.id]
+      else
+        parentNodeIds = []
       @add {
         id: id
         type: 'placeholder'
-        parent_node_ids: [model.id]
+        parent_node_ids: parentNodeIds
         label: label
       }, silent: yes, merge: yes
     else

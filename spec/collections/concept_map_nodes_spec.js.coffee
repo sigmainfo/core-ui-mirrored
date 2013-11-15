@@ -285,7 +285,6 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       placeholder = @collection.at(0)
       expect( placeholder.get 'type' ).to.equal 'placeholder'
       expect( placeholder.id ).to.equal '+[fghj567]'
-      expect( placeholder.get 'parent_node_ids' ).to.eql ['fghj567']
 
     it 'silently adds placeholder', ->
       spy = sinon.spy()
@@ -325,30 +324,50 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       placeholder = @collection.get "+[fghj567]"
       expect( placeholder.get 'label' ).to.equal '2'
 
-    it 'triggers event', ->
-      spy = sinon.spy()
-      @collection.on 'placeholder:update', spy
-      @collection.updatePlaceholderNode @node, ['5678jkl']
-      expect( spy ).to.have.been.calledOnce
+    context 'events', ->
 
-    it 'does not trigger event when silent', ->
-      spy = sinon.spy()
-      @collection.on 'placeholder:update', spy
-      @collection.updatePlaceholderNode @node, ['5678jkl'], silent: yes
-      expect( spy ).to.not.have.been.called
+      it 'triggers event', ->
+        spy = sinon.spy()
+        @collection.on 'placeholder:update', spy
+        @collection.updatePlaceholderNode @node, ['5678jkl']
+        expect( spy ).to.have.been.calledOnce
 
-    it 'enforces placeholder on repository whith unknown root ids', ->
-      @node.set 'type', 'repository', silent: yes
-      @collection.updatePlaceholderNode @node, []
-      placeholder = @collection.get "+[fghj567]"
-      expect( placeholder ).to.exist
+      it 'does not trigger event when silent', ->
+        spy = sinon.spy()
+        @collection.on 'placeholder:update', spy
+        @collection.updatePlaceholderNode @node, ['5678jkl'], silent: yes
+        expect( spy ).to.not.have.been.called
 
-    it 'does not enforce placeholder on repository whith known root ids', ->
-      @node.set 'type', 'repository', silent: yes
-      @collection._rootIds = ['523345', '58765fh']
-      @collection.updatePlaceholderNode @node, []
-      placeholder = @collection.get "+[fghj567]"
-      expect( placeholder ).to.not.exist
+    context 'repository root', ->
+
+      it 'enforces placeholder on repository whith unknown root ids', ->
+        @node.set 'type', 'repository', silent: yes
+        @collection.updatePlaceholderNode @node, []
+        placeholder = @collection.get "+[fghj567]"
+        expect( placeholder ).to.exist
+
+      it 'does not enforce placeholder on repository whith known root ids', ->
+        @node.set 'type', 'repository', silent: yes
+        @collection._rootIds = ['523345', '58765fh']
+        @collection.updatePlaceholderNode @node, []
+        placeholder = @collection.get "+[fghj567]"
+        expect( placeholder ).to.not.exist
+
+    context 'with siblings', ->
+
+      it 'does not connect to parent', ->
+        @collection.reset [ id: '5678jkl' ], silent: yes
+        @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
+        placeholder = @collection.get "+[fghj567]"
+        expect( placeholder.get 'parent_node_ids' ).to.eql []
+
+    context 'without siblings', ->
+
+      it 'connects to parent', ->
+        @collection.reset [], silent: yes
+        @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
+        placeholder = @collection.get "+[fghj567]"
+        expect( placeholder.get 'parent_node_ids' ).to.eql ['fghj567']
 
   describe '#graph()', ->
 
