@@ -200,6 +200,7 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
   describe '#updateLayout()', ->
 
     beforeEach ->
+      @deferred = $.Deferred()
       @selection = @parent.append('g').attr('class', 'concept-node')
       @label = @selection.append('text').attr('class', 'label')
       @label.node().getBBox = -> width: 100
@@ -209,23 +210,71 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
       background = @selection.append('rect').attr('class', 'background')
       nodes = @selection.data [ label: 'node 12345' ]
       @label.node().getBBox = -> width: 200
-      @strategy.updateLayout nodes
+      @strategy.updateLayout nodes, [], @deferred
       background.attr('width').should.equal '225'
 
     it 'updates edges', ->
       nodes = @selection.data []
       edges = []
       @strategy.renderEdges = -> edges
-      @strategy.updateLayout nodes, edges
+      @strategy.updateLayout nodes, edges, @deferred
       @strategy.updateEdges.should.have.been.calledOnce
       @strategy.updateEdges.should.have.been.calledWith edges
 
     it 'calls super', ->
       nodes = @selection.data []
       edges = []
-      @strategy.renderEdges = -> edges
-      updateOfSuper = sinon.spy()
-      Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout = updateOfSuper
-      @strategy.updateLayout nodes, edges
-      expect( updateOfSuper ).to.have.been.calledOnce
-      expect( updateOfSuper ).to.have.been.calledWith nodes, edges
+      sinon.spy Coreon.Views.Widgets.ConceptMap.RenderStrategy::, 'updateLayout'
+      try
+        updateOfSuper = Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout
+        returnValue = @strategy.updateLayout nodes, edges, @deferred
+        expect( updateOfSuper ).to.have.been.calledOnce
+        expect( updateOfSuper ).to.have.been.calledWith nodes, edges, @deferred
+        expect( returnValue ).to.equal @deferred
+      finally
+        Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout.restore()
+
+  describe '#center()', ->
+
+    beforeEach ->
+      @data = []
+      @nodes = data: => @data
+
+    context 'without selection', ->
+
+      beforeEach ->
+        @data = []
+
+      it 'centers root horizontally', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, @nodes
+        expect( offset.y ).to.equal 100
+
+      it 'aligns root with left', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, @nodes
+        expect( offset.x ).to.equal 0
+
+    context 'with selection', ->
+
+      beforeEach ->
+        @data = [ x: 45, y: 789 ]
+
+      it 'centers box inside viewport', ->
+        viewport =
+          width:  300
+          height: 200
+        @strategy.box = sinon.stub()
+        @strategy.box.withArgs(@data, 200, 300).returns
+          x     : 12
+          y     : 34
+          width : 190
+          height: 46
+        offset = @strategy.center viewport, @nodes
+        expect( offset ).to.have.property 'x', (300 - 46 ) / 2 - 34
+        expect( offset ).to.have.property 'y', (200 - 190) / 2 - 12
+

@@ -57,43 +57,56 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     @listenTo @model, 'change', @scheduleForUpdate
 
   render: ->
+    @rendering = on
     concepts = ( model.get 'result' for model in @hits.models )
 
     @model.build([]).done =>
       repository = @model.at(0)
       if placeholder = @model.at(1)
         placeholder.set 'busy', on
-      @update()
-      @centerSelection()
+      @update().done @centerSelection
 
       @model.build(concepts).done =>
-        @update()
-        @centerSelection()
+        @update().done (nodes) =>
+          @centerSelection nodes, animate: yes
+          @rendering = false
     @
 
   update: ->
-    @renderStrategy.render @model.graph()
+    deferred = $.Deferred()
+    @renderStrategy.render( @model.graph() ).done =>
+      deferred.resolveWith @, arguments
     model.set 'rendered', yes for model in @model.models
-    @
+    deferred.promise()
 
   scheduleForUpdate: (model) ->
-    unless @scheduledForUpdate or not model.get('rendered')
-      @scheduledForUpdate = on
+    unless @rendering or not model.get('rendered')
+      @rendering = on
       _.defer =>
         @update()
-        @scheduledForUpdate = off
+        @rendering = off
 
-  centerSelection: ->
-    width = @width / 2
-    height = @svgHeight / 2
-    if @renderStrategy instanceof Coreon.Views.Widgets.ConceptMap.LeftToRight
-      width -= 300
-    else
-      height -= 300
-    @navigator.translate [width, height]
-    @_panAndZoom()
+  padding: ->
+    Math.min(@width, @svgHeight) * 0.1
+
+  centerSelection: (nodes, options) ->
+    padding = @padding()
+    viewport =
+      width:  @width     / @navigator.scale() - 2 * padding
+      height: @svgHeight / @navigator.scale() - 2 * padding
+    hits = nodes
+      .filter( (datum) -> datum.hit )
+      .sort( (a, b) -> b.score - a.score )
+
+    offset = @renderStrategy.center viewport, hits
+    offset.x = offset.x * @navigator.scale() + padding
+    offset.y = offset.y * @navigator.scale() + padding
+
+    @navigator.translate [offset.x, offset.y]
+    @_panAndZoom options
 
   expand: (event) ->
+    @rendering = on
     node = $(event.target).closest '.placeholder'
     datum = d3.select(node[0]).datum()
     placeholder = @model.get datum.id
@@ -103,6 +116,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       .always =>
         placeholder.set 'busy', off
         @update()
+        @rendering = off
 
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
@@ -142,8 +156,14 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       resize: (event, ui) =>
         @resize null, ui.size.height
 
-  _panAndZoom: =>
-    @map.attr('transform', "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+  _panAndZoom: (options = {}) =>
+    map = @map
+    if options.animate
+      map = @map.transition()
+        .delay(250)
+        .duration(1000)
+
+    map.attr('transform', "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
 
   toggleOrientation: ->
     @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1

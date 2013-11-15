@@ -193,6 +193,7 @@ describe 'Coreon.Views.Widgets.ConceptMap.TopDown', ->
   describe '#updateLayout()', ->
 
     beforeEach ->
+      @deferred = $.Deferred()
       @selection = @parent.append('g').attr('class', 'concept-node')
       @nodes = @selection.data [ label: 'node 12345' ]
       @edges = @selection.data []
@@ -201,19 +202,67 @@ describe 'Coreon.Views.Widgets.ConceptMap.TopDown', ->
       label = @selection.append('text').attr('class', 'label')
       label.node().getBBox = -> width: 100
       background = @selection.append('rect').attr('class', 'background')
-      @strategy.updateLayout @nodes, @edges
+      @strategy.updateLayout @nodes, @edges, @deferred
       background.attr('width').should.equal '116'
       background.attr('x').should.equal '-58'
 
     it 'updates edges', ->
       @strategy.updateEdges = sinon.spy()
-      @strategy.updateLayout @nodes, @edges
+      @strategy.updateLayout @nodes, @edges, @deferred
       @strategy.updateEdges.should.have.been.calledOnce
       @strategy.updateEdges.should.have.been.calledWith @edges
 
     it 'calls super', ->
-      updateOfSuper = sinon.spy()
-      Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout = updateOfSuper
-      @strategy.updateLayout @nodes, @edges
-      expect( updateOfSuper ).to.have.been.calledOnce
-      expect( updateOfSuper ).to.have.been.calledWith @nodes, @edges
+      sinon.spy Coreon.Views.Widgets.ConceptMap.RenderStrategy::, 'updateLayout'
+      try
+        updateOfSuper = Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout
+        returnValue = @strategy.updateLayout @nodes, @edges, @deferred
+        expect( updateOfSuper ).to.have.been.calledOnce
+        expect( updateOfSuper ).to.have.been.calledWith @nodes, @edges, @deferred
+        expect( returnValue ).to.equal @deferred
+      finally
+        Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateLayout.restore()
+
+  describe '#center()', ->
+
+    beforeEach ->
+      @data = []
+      @nodes = data: => @data
+
+    context 'without selection', ->
+
+      beforeEach ->
+        @data = []
+
+      it 'centers root vertically', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, @nodes
+        expect( offset.x ).to.equal 150
+
+      it 'aligns root with top', ->
+        viewport =
+          width:  300
+          height: 200
+        offset = @strategy.center viewport, @nodes
+        expect( offset.y ).to.equal 0
+
+    context 'with selection', ->
+
+      beforeEach ->
+        @data = [ x: 45, y: 789 ]
+
+      it 'centers box inside viewport', ->
+        viewport =
+          width:  300
+          height: 200
+        @strategy.box = sinon.stub()
+        @strategy.box.withArgs(@data, 300, 200).returns
+          x     : 12
+          y     : 34
+          width : 190
+          height: 46
+        offset = @strategy.center viewport, @nodes
+        expect( offset ).to.have.property 'x', (300 - 190) / 2 - 12
+        expect( offset ).to.have.property 'y', (200 - 46 ) / 2 - 34

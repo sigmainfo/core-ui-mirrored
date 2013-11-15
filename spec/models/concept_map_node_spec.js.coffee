@@ -46,6 +46,9 @@ describe 'Coreon.Models.ConceptMapNode', ->
     it 'is not rendered', ->
       expect( @model.get 'rendered' ).to.be.false
 
+    it 'has no score of 0', ->
+      expect( @model.get 'score' ).to.equal 0
+
   describe '#initialize()', ->
 
     beforeEach ->
@@ -62,9 +65,16 @@ describe 'Coreon.Models.ConceptMapNode', ->
       expect( @model.get 'type' ).to.equal 'concept'
 
     it 'derives hit state from model', ->
-      @concept.set 'hit', {score: 1.876, result: @concept}, silent: yes
+      hit = new Backbone.Model {score: 1.876, result: @concept}
+      @concept.set 'hit', hit, silent: yes
       @model.initialize()
       expect( @model.get 'hit' ).to.be.true
+
+    it 'derives score from model', ->
+      hit = new Backbone.Model {score: 1.876, result: @concept}
+      @concept.set 'hit', hit, silent: yes
+      @model.initialize()
+      expect( @model.get 'score' ).to.equal 1.876
 
     it 'updates from model', ->
       spy = sinon.spy()

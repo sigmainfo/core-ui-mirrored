@@ -131,7 +131,12 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       sinon.spy @view.model, 'build'
-      @view.update = sinon.spy()
+      deferred = null
+      @view.update = sinon.spy ->
+        deferred = $.Deferred()
+        deferred.promise()
+      @updated = (nodes) =>
+        deferred.resolveWith @view, [nodes]
       @view.centerSelection = sinon.spy()
 
     it 'can be chained', ->
@@ -142,6 +147,18 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.initialize hits: @view.hits
       @view.hits.trigger 'update'
       @view.render.should.have.been.calledOnce
+
+    it 'sets rendering status to on', ->
+      @view.render()
+      expect( @view ).to.have.property 'rendering', on
+
+    it 'sets rendering status to off when finished', ->
+      @view.render()
+      @deferred.resolve()
+      @updated()
+      @deferred.resolve()
+      @updated()
+      expect( @view ).to.have.property 'rendering', off
 
     context 'clear', ->
 
@@ -161,12 +178,23 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         placeholder = @view.model.at(1)
         expect( placeholder.get 'busy' ).to.be.true
 
-      it 'updates and centers map when cleared', ->
+      it 'updates when cleared', ->
         @view.render()
         @deferred.resolve()
         expect( @view.update ).to.have.been.calledOnce
+
+      it 'defers centering selection', ->
+        @view.render()
+        @deferred.resolve()
+        expect( @view.centerSelection ).to.not.have.been.called
+
+      it 'centers selection when updated', ->
+        @view.render()
+        @deferred.resolve()
+        @updated()
         expect( @view.centerSelection ).to.have.been.calledOnce
-        expect( @view.centerSelection ).to.have.been.calledAfter @view.update
+        expect( @view.centerSelection.thisValues[0] ).to.equal @view
+        expect( @view.centerSelection.firstCall.args[0] ).to.be.undefined
 
       it 'builds up map from hits', ->
         concept1 = new Backbone.Model
@@ -181,23 +209,115 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         expect( @view.model.build ).to.have.been.calledOnce
         expect( @view.model.build ).to.have.been.calledWith [ concept1, concept2 ]
 
-      it 'updates and centers map when loaded', ->
+      it 'updates map when loaded', ->
         @view.render()
         @deferred.resolve()
         @view.update.reset()
         @view.centerSelection.reset()
         @deferred.resolve()
         expect( @view.update ).to.have.been.calledOnce
+
+      it 'defers centering select after reset update', ->
+        @view.render()
+        @deferred.resolve()
+        @view.update.reset()
+        @view.centerSelection.reset()
+        @deferred.resolve()
+        expect( @view.centerSelection ).to.not.have.been.called
+
+      it 'centers selection when updated', ->
+        nodes = []
+        @view.render()
+        @deferred.resolve()
+        @view.update.reset()
+        @updated()
+        @view.centerSelection.reset()
+        @deferred.resolve()
+        @updated nodes
         expect( @view.centerSelection ).to.have.been.calledOnce
-        expect( @view.centerSelection ).to.have.been.calledAfter @view.update
+        expect( @view.centerSelection ).to.have.been.calledWith nodes, animate: yes
+
+  describe '#centerSelection()', ->
+
+    beforeEach ->
+      center = sinon.stub().returns x: 90, y: 30
+      @view.renderStrategy.center = center
+      @view.navigator.translate = sinon.spy()
+      @view._panAndZoom = sinon.spy()
+      @nodes = []
+
+    it 'delegates center calculation to render strategy', ->
+      @view.width     = 300
+      @view.svgHeight = 200
+      @view.padding = -> 20
+      @view.centerSelection @nodes
+      center = @view.renderStrategy.center
+      expect( center ).to.have.been.calledOnce
+      expect( center ).to.have.been.calledWith { width: 300 - 2 * 20, height: 200 - 2 * 20 }
+
+    it 'passes hits to render strategy', ->
+      data = [
+        { id: "123", hit: no , score: 0 }
+        { id: "456", hit: yes, score: 1.234 }
+        { id: "789", hit: yes, score: 4.567 }
+      ]
+      nodes = filter: (filter) ->
+        filtered = data.filter filter
+        sort: (sorter) ->
+          filtered.sort sorter
+      @view.centerSelection nodes
+      center = @view.renderStrategy.center
+      expect( center.firstCall.args[1] ).to.have.lengthOf 2
+      expect( center.firstCall.args[1][0] ).to.have.property 'id', '789'
+      expect( center.firstCall.args[1][1] ).to.have.property 'id', '456'
+
+    it 'applies offset with padding to map', ->
+      @view.renderStrategy.center.returns
+        x: 110
+        y: 45
+      @view.padding = -> 20
+      @view.centerSelection @nodes, animate: yes
+      translate = @view.navigator.translate
+      expect( translate ).to.have.been.calledOnce
+      expect( translate ).to.have.been.calledWith [110 + 20, 45 + 20]
+      pan = @view._panAndZoom
+      expect( pan ).to.have.been.calledOnce
+      expect( pan ).to.have.been.calledAfter translate
+      expect( pan ).to.have.been.calledWith animate: yes
+
+    context 'when scaled', ->
+
+      beforeEach ->
+        @view.navigator.scale 2
+
+      it 'adjusts viewport when calling center on render strategy', ->
+        @view.width     = 300
+        @view.svgHeight = 200
+        @view.padding = -> 20
+        @view.centerSelection @nodes
+        center = @view.renderStrategy.center
+        expect( center ).to.have.been.calledOnce
+        expect( center ).to.have.been.calledWith
+          width:  300 / 2 - 40
+          height: 200 / 2 - 40
+
+      it 'interpolates applied offset', ->
+        @view.renderStrategy.center.returns
+          x: 110
+          y: 45
+        @view.padding = -> 20
+        @view.centerSelection @nodes
+        translate = @view.navigator.translate
+        expect( translate ).to.have.been.calledWith [110 * 2 + 20, 45 * 2 + 20]
 
   describe '#update()', ->
 
     beforeEach ->
+      deferred = $.Deferred()
       @view.renderStrategy = render: ->
-
-    it 'can be chained', ->
-      @view.update().should.equal @view
+        deferred.promise()
+      @rendered = ->
+        deferred.resolve()
 
     it 'is triggered on placeholder updates', ->
       @view.update = sinon.spy()
@@ -208,7 +328,8 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     it 'delegates rendering to strategy', ->
       graph = root: {id: 'root'}, edges: []
       @view.model.graph = -> graph
-      strategy = render: sinon.spy()
+      strategy = @view.renderStrategy
+      sinon.spy strategy, 'render'
       @view.renderStrategy = strategy
       @view.update()
       strategy.render.should.have.been.calledWith graph
@@ -220,6 +341,24 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.update()
       expect( model1.get 'rendered' ).to.be.true
       expect( model2.get 'rendered' ).to.be.true
+
+    it 'defers promise', ->
+      done = sinon.spy()
+      @view.renderStrategy = render: ->
+        done: (done) ->
+      @view.update().done done
+      expect( done ).to.not.have.been.called
+
+    it 'resolves promise when finished', ->
+      done = sinon.spy()
+      nodes = []
+      edges = []
+      @view.renderStrategy = render: ->
+        done: (callback) -> callback nodes, edges
+      @view.update(nodes, edges).done done
+      expect( done ).to.have.been.calledOnce
+      expect( done.thisValues[0] ).to.equal @view
+      expect( done ).to.have.been.calledWith nodes, edges
 
   describe '#scheduleForUpdate()', ->
 
@@ -269,6 +408,12 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     it 'skips update for models that are not yet rendered', ->
       @model.set 'rendered', no, silent: yes
+      @view.scheduleForUpdate @model
+      @next()
+      expect( @view.update ).to.not.have.been.called
+
+    it 'skips updates while rendering', ->
+      @view.rendering = on
       @view.scheduleForUpdate @model
       @next()
       expect( @view.update ).to.not.have.been.called
@@ -323,7 +468,16 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       expect( set ).to.have.been.calledWith 'busy', on
       expect( @view.update ).to.have.been.calledAfter set
 
+    it 'sets rendering status to on', ->
+      @view.expand @event
+      expect( @view ).to.have.property 'rendering', on
+
     context 'done', ->
+
+      it 'sets rendering status to off when finished', ->
+        @view.expand @event
+        @deferred.resolve()
+        expect( @view ).to.have.property 'rendering', off
 
       it 'updates after model finished expanding', ->
         @view.expand @event
@@ -359,6 +513,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
+        done: ->
 
     it 'is triggered by click on button', ->
       @view.zoomIn = sinon.spy()
@@ -390,6 +545,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     beforeEach ->
       @view.renderStrategy = render: ->
+        done: ->
 
     it 'is triggered by click on button', ->
       @view.zoomOut = sinon.spy()
@@ -515,3 +671,20 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       @view.render = sinon.spy()
       @view.toggleOrientation()
       @view.render.should.have.been.calledOnce
+
+  describe '#_panAndZoom()', ->
+
+    beforeEach ->
+      @view.navigator.translate [12, 345]
+      @view.navigator.scale 1.5
+
+    context 'animated', ->
+
+      it 'applies transition', ->
+        transition = d3.transition()
+        transition.attr = sinon.spy()
+        @view.map.transition = sinon.stub().returns transition
+        @view._panAndZoom animate: yes
+        expect( transition.attr ).to.have.been.calledOnce
+        expect( transition.attr ).to.have.been.calledWith 'transform',
+          'translate(12,345) scale(1.5)'

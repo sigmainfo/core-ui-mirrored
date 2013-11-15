@@ -70,3 +70,14 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
 
     @updateEdges edges
     super
+
+  center: (viewport, nodes = []) ->
+    data = nodes.data()
+    if data.length is 0
+      x: 0
+      y: viewport.height / 2
+    else
+      box = @box data, viewport.height, viewport.width
+      x: (viewport.width  - box.height ) / 2 - box.y
+      y: (viewport.height - box.width  ) / 2 - box.x
+

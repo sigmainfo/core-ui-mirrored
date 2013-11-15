@@ -44,38 +44,45 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
   describe '#render()', ->
 
     beforeEach ->
-      @clock = sinon.useFakeTimers()
       @graph =
         tree: {}
         edges: {}
 
-    afterEach ->
-      @clock.restore()
-
     it 'renders nodes', ->
       @strategy.renderNodes = sinon.spy()
       @strategy.render @graph
-      @clock.tick 500
       @strategy.renderNodes.should.have.been.calledOnce
       @strategy.renderNodes.should.have.been.calledWith @graph.tree
 
     it 'renders edges', ->
       @strategy.renderEdges = sinon.spy()
       @strategy.render @graph
-      @clock.tick 500
       @strategy.renderEdges.should.have.been.calledOnce
       @strategy.renderEdges.should.have.been.calledWith @graph.edges
 
     it 'defers update of layout', ->
-      nodes = []
-      edges = []
-      @strategy.updateLayout = sinon.spy()
-      @strategy.renderNodes = -> nodes
-      @strategy.renderEdges = -> edges
-      @strategy.render @graph
-      @clock.tick 500
-      @strategy.updateLayout.should.not.have.been.called
-      _.defer.should.have.been.calledWith @strategy.updateLayout, nodes, edges
+      deferred = promise: ->
+      sinon.stub $, 'Deferred', -> deferred
+      try
+        nodes = []
+        edges = []
+        @strategy.updateLayout = sinon.spy()
+        @strategy.renderNodes = -> nodes
+        @strategy.renderEdges = -> edges
+        @strategy.render @graph
+        @strategy.updateLayout.should.not.have.been.called
+        _.defer.should.have.been.calledWith @strategy.updateLayout, nodes, edges, deferred
+      finally
+        $.Deferred.restore()
+
+    it 'returns promise', ->
+      promise = {}
+      deferred = promise: -> promise
+      sinon.stub $, 'Deferred', -> deferred
+      try
+        expect( @strategy.render @graph ).to.equal promise
+      finally
+        $.Deferred.restore()
 
   describe '#renderNodes()', ->
 
@@ -608,9 +615,84 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         label: 'node 12345'
       ]
 
-    it 'resizes background od count', ->
+    it 'resizes background of count', ->
       label = @selection.append('text').attr('class', 'count')
       label.node().getBBox = -> width: 100
       background = @selection.append('rect').attr('class', 'count-background')
-      @strategy.updateLayout @nodes
+      @strategy.updateLayout @nodes, null, resolve: ->
       background.attr('width').should.equal '112'
+
+    it 'reolves passed in deferred', ->
+      deferred = resolve: sinon.spy()
+      edges = []
+      @strategy.updateLayout @nodes, edges, deferred
+      expect( deferred.resolve ).to.have.been.calledOnce
+      expect( deferred.resolve ).to.have.been.calledWith @nodes, edges
+
+  describe '#box()', ->
+
+    context 'without nodes', ->
+
+      beforeEach ->
+        @data = []
+
+      it 'returns origin', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'x', 0
+        expect( box ).to.have.property 'y', 0
+
+      it 'returns zero extent box', ->
+        box = @strategy.box @data, @viewport
+        expect( box ).to.have.property 'width', 0
+        expect( box ).to.have.property 'height', 0
+
+    context 'single node', ->
+
+      beforeEach ->
+        @data = [ x: 23, y: 45 ]
+
+      it 'returns node position', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', 45
+
+      it 'returns zero extent box', ->
+        box = @strategy.box @data, @viewport
+        expect( box ).to.have.property 'width', 0
+        expect( box ).to.have.property 'height', 0
+
+    context 'multiple hits', ->
+
+      beforeEach ->
+        @data = [
+          { x:  23,  y: 145 }
+          { x:  53,  y: -26 }
+          { x:  12,  y:  32 }
+        ]
+
+      it 'calculates top left corner for coordinates', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'x', 12
+        expect( box ).to.have.property 'y', -26
+
+      it 'calculates width and height from min and max coordinates', ->
+        box = @strategy.box @data, 300, 200
+        expect( box ).to.have.property 'width', 41
+        expect( box ).to.have.property 'height', 171
+
+    context 'exceeding viewport', ->
+
+      beforeEach ->
+        @data = [
+          { x: 34,  y: -12 }
+          { x: 53,  y: -26 }
+          { x: 23,  y: 145 }
+          { x: 123, y:  32 }
+        ]
+
+      it 'only takes top scored hits into account', ->
+        box = @strategy.box @data, 80, 200
+        expect( box ).to.have.property 'x', 23
+        expect( box ).to.have.property 'y', -26
+        expect( box ).to.have.property 'width', 30
+        expect( box ).to.have.property 'height', 171
