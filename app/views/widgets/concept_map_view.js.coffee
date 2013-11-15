@@ -92,15 +92,15 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
   centerSelection: (nodes) ->
     padding = @padding()
     viewport =
-      width:  @width     - 2 * padding
-      height: @svgHeight - 2 * padding
+      width:  @width     / @navigator.scale() - 2 * padding
+      height: @svgHeight / @navigator.scale() - 2 * padding
     hits = nodes
       .filter( (datum) -> datum.hit )
       .sort( (a, b) -> b.score - a.score )
 
     offset = @renderStrategy.center viewport, hits
-    offset.x += padding
-    offset.y += padding
+    offset.x = offset.x * @navigator.scale() + padding
+    offset.y = offset.y * @navigator.scale() + padding
 
     @navigator.translate [offset.x, offset.y]
     @_panAndZoom()

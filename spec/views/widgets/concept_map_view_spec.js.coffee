@@ -278,6 +278,31 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       expect( pan ).to.have.been.calledOnce
       expect( pan ).to.have.been.calledAfter translate
 
+    context 'when scaled', ->
+
+      beforeEach ->
+        @view.navigator.scale 2
+
+      it 'adjusts viewport when calling center on render strategy', ->
+        @view.width     = 300
+        @view.svgHeight = 200
+        @view.padding = -> 20
+        @view.centerSelection @nodes
+        center = @view.renderStrategy.center
+        expect( center ).to.have.been.calledOnce
+        expect( center ).to.have.been.calledWith
+          width:  300 / 2 - 40
+          height: 200 / 2 - 40
+
+      it 'interpolates applied offset', ->
+        @view.renderStrategy.center.returns
+          x: 110
+          y: 45
+        @view.padding = -> 20
+        @view.centerSelection @nodes
+        translate = @view.navigator.translate
+        expect( translate ).to.have.been.calledWith [110 * 2 + 20, 45 * 2 + 20]
+
   describe '#update()', ->
 
     beforeEach ->
