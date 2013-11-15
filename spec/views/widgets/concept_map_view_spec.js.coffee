@@ -461,7 +461,16 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       expect( set ).to.have.been.calledWith 'busy', on
       expect( @view.update ).to.have.been.calledAfter set
 
+    it 'sets rendering status to on', ->
+      @view.expand @event
+      expect( @view ).to.have.property 'rendering', on
+
     context 'done', ->
+
+      it 'sets rendering status to off when finished', ->
+        @view.expand @event
+        @deferred.resolve()
+        expect( @view ).to.have.property 'rendering', off
 
       it 'updates after model finished expanding', ->
         @view.expand @event

@@ -106,6 +106,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     @_panAndZoom()
 
   expand: (event) ->
+    @rendering = on
     node = $(event.target).closest '.placeholder'
     datum = d3.select(node[0]).datum()
     placeholder = @model.get datum.id
@@ -115,6 +116,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       .always =>
         placeholder.set 'busy', off
         @update()
+        @rendering = off
 
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
