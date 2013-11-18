@@ -355,12 +355,6 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
 
     context 'with siblings', ->
 
-      it 'does not connect to parent', ->
-        @collection.reset [ id: '5678jkl' ], silent: yes
-        @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
-        placeholder = @collection.get "+[fghj567]"
-        expect( placeholder.get 'parent_node_ids' ).to.eql []
-
       it 'connects to siblings', ->
         @collection.reset [ id: '5678jkl' ], silent: yes
         @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']

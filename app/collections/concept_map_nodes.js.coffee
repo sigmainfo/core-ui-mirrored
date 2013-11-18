@@ -75,7 +75,7 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
       siblingNodeIds.push sibling.id if sibling = @get childNodeId
 
     parentNodeIds = []
-    parentNodeIds.push model.id if siblingNodeIds.length is 0
+    parentNodeIds.push model.id
 
     enforce = model.get('type') is 'repository' and not @_rootIds?
     count = childNodeIds.length - siblingNodeIds.length

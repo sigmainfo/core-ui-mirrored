@@ -9,8 +9,11 @@ class Coreon.Lib.TreeGraph
     @setRoot()
     @generateEdges()
     @enforceTree()
+    @sortChildren()
+    @connectSiblings()
     tree: @root
     edges: @edges
+    siblings: @siblings
 
   generateNodes: ->
     @nodes = {}
@@ -22,6 +25,7 @@ class Coreon.Lib.TreeGraph
       @meta[model.id] =
         visited: false
         parents: 0
+        tail: no
 
   setRoot: ->
     @root = if @models.length > 0
@@ -31,20 +35,23 @@ class Coreon.Lib.TreeGraph
 
   generateEdges: ->
     @edges = []
+    @siblings = []
     for model in @models
       target = @nodes[model.id]
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
-      #isTopLevel = ...
-      if parentNodeIds.length is 0 # and not model.has 'sibling_node_ids'
-        @connect @root, target
-      else
+      if parentNodeIds.length > 0
         for parentNodeId in parentNodeIds
           @connect @nodes[parentNodeId], target
+      else
+        @connect @root, target
 
   connect: (source, target) ->
-    source.children.push target
-    @meta[target.id].parents += 1
+    if target.sibling_node_ids?.length > 0
+      @siblings.push target
+    else
+      source.children.push target
+      @meta[target.id].parents += 1
     @edges.push
       source: source
       target: target
@@ -63,3 +70,19 @@ class Coreon.Lib.TreeGraph
           meta.parents -= 1
           continue
         child
+
+  sortChildren: ->
+    for id, node of @nodes
+      node.children.sort (a, b) ->
+        a.label.toLowerCase().localeCompare b.label.toLowerCase()
+      if count = node.children.length
+        tail = node.children[count - 1]
+        @meta[tail.id].tail = yes
+
+  connectSiblings: ->
+    for node in @siblings
+      for siblingId in node.sibling_node_ids
+        meta = @meta[siblingId]
+        if meta.tail
+          node.sibling = @nodes[siblingId]
+          break

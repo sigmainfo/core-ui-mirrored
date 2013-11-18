@@ -22,6 +22,7 @@ describe 'Coreon.Lib.TreeGraph', ->
       tree = @graph.generate()
       expect( tree ).to.have.property 'tree', @graph.root
       expect( tree ).to.have.property 'edges', @graph.edges
+      expect( tree ).to.have.property 'siblings', @graph.siblings
 
     context 'root', ->
 
@@ -48,6 +49,25 @@ describe 'Coreon.Lib.TreeGraph', ->
         @graph.generate()
         expect( @graph.root ).to.have.property('children').with.lengthOf 1
         expect( @graph.root.children[0] ).to.have.property 'id', '4287g7h'
+
+      it 'sorts children by label', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+                                          , label: 'Repository'
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+                                          , label: 'A top level node'
+          new Backbone.Model id: '508sdf' , parent_node_ids: []
+                                          , label: 'yet another top level node'
+          new Backbone.Model id: '1237g7h', parent_node_ids: []
+                                          , label: 'my concept'
+        ]
+        @graph.generate()
+        labels = (node.label for node in @graph.root.children)
+        expect( labels ).to.eql [
+          'A top level node'
+          'my concept'
+          'yet another top level node'
+        ]
 
       it 'creates empty children for leaf nodes', ->
         @graph.models = [
@@ -111,3 +131,69 @@ describe 'Coreon.Lib.TreeGraph', ->
         edge = edge for edge in @graph.edges when edge.source.id is '515fe41'
         expect( edge ).to.exist
         expect( edge ).to.have.deep.property 'target.id', '787acf6'
+
+    context 'siblings', ->
+
+      it 'is an empty set by default', ->
+        @graph.models = []
+        @graph.generate()
+        expect( @graph.siblings ).to.be.an.instanceOf(Array).that.is.empty
+
+      it 'collects sibling nodes', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+          new Backbone.Model id: '975fhg' , parent_node_ids: []
+                                          , sibling_node_ids: ['4287g7h']
+        ]
+        @graph.generate()
+        siblings = @graph.siblings
+        expect( siblings ).to.have.lengthOf 1
+        expect( siblings[0] ).to.have.property 'id', '975fhg'
+
+      it 'does not add siblings to children of parent', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+                                          , label: 'Repository'
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+                                          , label: 'top level node'
+          new Backbone.Model id: '508sdf' , parent_node_ids: ['4287g7h']
+                                          , label: 'child node'
+          new Backbone.Model id: '975fhg' , parent_node_ids: ['4287g7h']
+                                          , sibling_node_ids: ['508sdf']
+                                          , label: 'sibling node'
+        ]
+        @graph.generate()
+        parent = @graph.root.children[0]
+        expect( parent.children ).to.have.lengthOf 1
+        expect( parent.children[0] ).to.have.property 'id', '508sdf'
+
+      it 'connects sibling nodes to last child of parent', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+                                          , label: 'Repository'
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+                                          , label: 'A top level node'
+          new Backbone.Model id: '508sdf' , parent_node_ids: []
+                                          , label: 'yet another top level node'
+          new Backbone.Model id: '1237g7h', parent_node_ids: []
+                                          , label: 'Ä Begriffsknötsche'
+          new Backbone.Model id: '975fhg' , parent_node_ids: []
+                                          , sibling_node_ids: ['4287g7h', '508sdf', '1237g7h']
+        ]
+        @graph.generate()
+        sibling = @graph.siblings[0]
+        expect( sibling ).to.have.property 'sibling'
+        expect( sibling ).to.have.deep.property 'sibling.id'
+
+      it 'creates edge for sibling', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+          new Backbone.Model id: '975fhg' , parent_node_ids: []
+                                          , sibling_node_ids: ['4287g7h']
+        ]
+        @graph.generate()
+        edge = edge for edge in @graph.edges when edge.target.id is '975fhg'
+        expect( edge ).to.exist
+        expect( edge ).to.have.deep.property 'source.id', '515fe41'
