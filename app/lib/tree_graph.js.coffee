@@ -34,8 +34,9 @@ class Coreon.Lib.TreeGraph
     for model in @models
       target = @nodes[model.id]
       continue if target is @root
-      parentNodeIds = model.get "parent_node_ids"
-      if parentNodeIds.length is 0
+      parentNodeIds = model.get 'parent_node_ids'
+      #isTopLevel = ...
+      if parentNodeIds.length is 0 # and not model.has 'sibling_node_ids'
         @connect @root, target
       else
         for parentNodeId in parentNodeIds

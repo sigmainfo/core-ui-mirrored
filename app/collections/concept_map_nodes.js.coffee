@@ -69,24 +69,29 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
   updatePlaceholderNode: (model, childNodeIds, options = {}) ->
     id = "+[#{model.id}]"
-    count = 0
+
+    siblingNodeIds = []
     for childNodeId in childNodeIds
-      count += 1 unless @get(childNodeId)?
+      siblingNodeIds.push sibling.id if sibling = @get childNodeId
+
+    parentNodeIds = []
+    parentNodeIds.push model.id if siblingNodeIds.length is 0
+
     enforce = model.get('type') is 'repository' and not @_rootIds?
+    count = childNodeIds.length - siblingNodeIds.length
     label = if enforce then null else "#{count}"
+
     if count > 0 or enforce
-      if count is childNodeIds.length
-        parentNodeIds = [model.id]
-      else
-        parentNodeIds = []
       @add {
         id: id
         type: 'placeholder'
         parent_node_ids: parentNodeIds
+        sibling_node_ids: siblingNodeIds
         label: label
       }, silent: yes, merge: yes
     else
       @remove id
+
     @trigger 'placeholder:update' unless options.silent
 
   graph: ->

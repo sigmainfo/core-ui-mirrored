@@ -361,6 +361,12 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         placeholder = @collection.get "+[fghj567]"
         expect( placeholder.get 'parent_node_ids' ).to.eql []
 
+      it 'connects to siblings', ->
+        @collection.reset [ id: '5678jkl' ], silent: yes
+        @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
+        placeholder = @collection.get "+[fghj567]"
+        expect( placeholder.get 'sibling_node_ids' ).to.eql ['5678jkl']
+
     context 'without siblings', ->
 
       it 'connects to parent', ->
@@ -368,6 +374,12 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
         placeholder = @collection.get "+[fghj567]"
         expect( placeholder.get 'parent_node_ids' ).to.eql ['fghj567']
+
+      it 'disconnects siblings', ->
+        @collection.reset [], silent: yes
+        @collection.updatePlaceholderNode @node, ['5678jkl', '4522hf']
+        placeholder = @collection.get "+[fghj567]"
+        expect( placeholder.get 'sibling_node_ids' ).to.eql []
 
   describe '#graph()', ->
 

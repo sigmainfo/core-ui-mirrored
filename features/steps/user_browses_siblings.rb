@@ -37,14 +37,18 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   end
 
   step 'this concept node should be horizontally centered below "pocket billiards"' do
-    @parent = page.find('.concept-node:not(.placeholder)', text: 'pocket billiards')
-    @position = position(@node)
-    @position[:x].should be_within(10).of( position(@parent)[:x] )
-
+    within('#coreon-concept-map') do
+      @parent = page.find('.concept-node:not(.placeholder)', text: 'pocket billiards')
+      @position = position(@node)
+      @position[:x].should be_within(10).of( position(@parent)[:x] )
+    end
   end
 
   step 'I should see a placeholder node representing the siblings of "snooker"' do
-    pending 'step not implemented'
+    within('#coreon-concept-map') do
+      page.should have_css('.concept-node.placeholder', text: 'pocket billiards')
+      @siblings_placeholder = page.find('.concept-node.placeholder', text: 'pocket billiards')
+    end
   end
 
   step 'this placeholder should have a count of "2"' do
