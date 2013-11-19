@@ -40,7 +40,7 @@ module Api
         end
         response.json
       end
-      
+
       def update_concept_property concept, property, attributes
         response = CoreAPI.put( 
           "concepts/#{concept['id']}/properties/#{property['id']}", 
@@ -51,7 +51,7 @@ module Api
           raise response.body
         end
       end
-      
+
       def create_concept_term concept, attributes
         response = CoreAPI.post( 
           "concepts/#{concept['id']}/terms", 
@@ -63,7 +63,7 @@ module Api
         end
         response.json
       end
-      
+
       def update_concept_term concept, term, attributes
         response = CoreAPI.put( 
           "concepts/#{concept['id']}/terms/#{term['id']}", 
@@ -74,7 +74,7 @@ module Api
           raise response.body
         end
       end
-      
+
       def create_concept_term_property concept, term, attributes
         response = CoreAPI.post( 
           "concepts/#{concept['id']}/terms/#{term['id']}/properties", 
@@ -86,7 +86,7 @@ module Api
         end
         response.json
       end
-      
+
       def update_concept_term_property concept, term, prop, attributes
         response = CoreAPI.put( 
           "concepts/#{concept['id']}/terms/#{term['id']}/properties/#{prop['id']}", 
@@ -97,7 +97,7 @@ module Api
           raise response.body
         end
       end
-      
+
       def create_edge attributes
         response = CoreAPI.post( 
           "edges", 
@@ -112,7 +112,7 @@ module Api
 
       def link_narrower_to_broader narrower, broader
         create_edge({
-          source_node_type: 'Concept', 
+          source_node_type: 'Concept',
           source_node_id: broader['id'],
           edge_type: 'SUPERCONCEPT_OF',
           target_node_type: 'Concept',

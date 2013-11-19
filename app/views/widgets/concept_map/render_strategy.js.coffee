@@ -13,9 +13,13 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
   render: (graph) ->
     deferred = $.Deferred()
     nodes    = @renderNodes graph.tree
-    siblings = @renderSiblings graph.siblings, nodes
+    siblings = @renderSiblings graph.siblings
     edges    = @renderEdges graph.edges
-    _.defer @updateLayout, nodes, edges, deferred
+
+    all = @parent.selectAll('.concept-node, .sibling-node')
+      .data(nodes.data().concat siblings.data())
+    _.defer @updateLayout, all, edges, deferred
+
     deferred.promise()
 
   renderNodes: (root) ->
@@ -235,7 +239,10 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
     placeholders.select("text.count")
       .each( (datum) ->
-        datum.countWidth = @getBBox().width + 12
+        try
+          datum.countWidth = @getBBox().width + 12
+        catch
+          "fail gracefully"
       )
 
     placeholders.select('rect.count-background')

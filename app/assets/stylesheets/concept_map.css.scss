@@ -121,9 +121,11 @@ $edge-color: #bfc5c0;
             fill: $edge-color;
             stroke: none;
           }
+
           .count-background {
             fill: white;
           }
+
           &:hover {
             .background {
               fill:$link-color;
@@ -152,7 +154,6 @@ $edge-color: #bfc5c0;
           }
         }
       }
-      
 
       .concept-edge, .edge {
         fill: none;

@@ -48,20 +48,19 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         tree     : {}
         edges    : {}
         siblings : []
-      @strategy.renderSiblings = sinon.spy()
+      @strategy.renderNodes = sinon.spy -> data: -> []
+      @strategy.renderSiblings = sinon.spy -> data: -> []
 
     it 'renders nodes', ->
-      @strategy.renderNodes = sinon.spy()
       @strategy.render @graph
       @strategy.renderNodes.should.have.been.calledOnce
       @strategy.renderNodes.should.have.been.calledWith @graph.tree
 
     it 'renders siblings', ->
-      renderNodes = sinon.spy()
-      @strategy.renderNodes = renderNodes
       @strategy.render @graph
       @strategy.renderSiblings.should.have.been.calledOnce
       @strategy.renderSiblings.should.have.been.calledWith @graph.siblings
+      renderNodes = @strategy.renderNodes
       @strategy.renderSiblings.should.have.been.calledAfter renderNodes
 
     it 'renders edges', ->
@@ -74,14 +73,30 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       deferred = promise: ->
       sinon.stub $, 'Deferred', -> deferred
       try
-        nodes = []
+        nodes = ['node']
+        nodes.data = -> nodes
+        siblings = ['sibling']
+        siblings.data = -> siblings
         edges = []
+        selection = @strategy.parent.selectAll '.concept-node, .sibling-node'
+        selection.data = sinon.stub()
+        selection.data.withArgs(['node', 'sibling']).returns selection
         @strategy.updateLayout = sinon.spy()
         @strategy.renderNodes = -> nodes
+        @strategy.renderSiblings = -> siblings
         @strategy.renderEdges = -> edges
+        @strategy.parent.selectAll = sinon.stub()
+        @strategy.parent.selectAll
+          .withArgs('.concept-node, .sibling-node')
+          .returns selection
         @strategy.render @graph
-        @strategy.updateLayout.should.not.have.been.called
-        _.defer.should.have.been.calledWith @strategy.updateLayout, nodes, edges, deferred
+        expect( @strategy.updateLayout ).to.not.have.been.called
+        expect( _.defer ).to.have.been.calledOnce
+        expect( _.defer ).to.have.been.calledWith @strategy.updateLayout
+        expect( _.defer.firstCall.args[2] ).to.have.equal edges
+        expect( _.defer.firstCall.args[3] ).to.have.equal deferred
+        # expect( _.defer.firstCall.args[1] )
+        console.log _.defer.firstCall.args[1].data()
       finally
         $.Deferred.restore()
 
