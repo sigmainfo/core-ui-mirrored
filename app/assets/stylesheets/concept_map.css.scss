@@ -24,7 +24,7 @@ $edge-color: #bfc5c0;
         fill: $greytext-color;
       }
 
-      .concept-node {
+      .concept-node, .sibling-node {
         cursor: pointer;
 
         circle {
@@ -113,39 +113,9 @@ $edge-color: #bfc5c0;
 
         }
 
-//        .toggle {
-//
-//          .background {
-//            fill: transparent;
-//          }
-//
-//          .icon {
-//            stroke: darken($edge-color, 10);
-//            stroke-width: 2px;
-//          }
-//
-//          &:hover {
-//            .icon {
-//              stroke: $bluecolor;
-//            }
-//
-//          }
-//
-//          &.expanded {
-//            fill: transparent;
-//            .icon {
-//              stroke: none;
-//            }
-//
-//            &:hover {
-//              .icon {
-//                stroke: $bluecolor;
-//              }
-//            }
-//          }
-//        }
 
         &.placeholder {
+          cursor: pointer;
 
           .background {
             fill: $edge-color;
@@ -182,6 +152,7 @@ $edge-color: #bfc5c0;
           }
         }
       }
+      
 
       .concept-edge, .edge {
         fill: none;
