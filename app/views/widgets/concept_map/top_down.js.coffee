@@ -9,7 +9,10 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
     @layout
       .nodeSize([160, 100])
       .separation( (a, b) ->
-        if a.parent is b.parent then 1 else 1.3
+        switch
+          when a.parent is b.parent then 1
+          when a.tail then 2
+          else 1.5
       )
 
   updateNodes: (nodes) ->

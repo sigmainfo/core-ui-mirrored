@@ -69,6 +69,22 @@ describe 'Coreon.Lib.TreeGraph', ->
           'yet another top level node'
         ]
 
+      it 'marks tail', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+                                          , label: 'Repository'
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+                                          , label: 'A top level node'
+          new Backbone.Model id: '508sdf' , parent_node_ids: []
+                                          , label: 'yet another top level node'
+          new Backbone.Model id: '1237g7h', parent_node_ids: []
+                                          , label: 'my concept'
+        ]
+        @graph.generate()
+        expect( @graph.root.children[2] ).to.have.property 'tail', yes
+        expect( @graph.root.children[0] ).to.not.have.property 'tail'
+        expect( @graph.root.children[1] ).to.not.have.property 'tail'
+
       it 'creates empty children for leaf nodes', ->
         @graph.models = [
           new Backbone.Model id: '515fe41', parent_node_ids: []

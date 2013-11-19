@@ -6,7 +6,14 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
 
   constructor: (parent) ->
     super
-    @layout.nodeSize [25, 260]
+    @layout
+      .nodeSize([25, 260])
+      .separation( (a, b) ->
+        switch
+          when a.parent is b.parent then 1
+          when a.tail then 3
+          else 2
+      )
     @diagonal.projection (datum) -> [datum.y, datum.x]
 
   updateNodes: (nodes) ->

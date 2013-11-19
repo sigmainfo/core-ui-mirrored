@@ -78,14 +78,13 @@ class Coreon.Lib.TreeGraph
       node.children.sort (a, b) ->
         a.label.toLowerCase().localeCompare b.label.toLowerCase()
       if count = node.children.length
-        tail = node.children[count - 1]
-        @meta[tail.id].tail = yes
+        node.children[count - 1].tail = yes
 
   connectSiblings: ->
     for node in @siblings
       for siblingId in node.sibling_node_ids
-        meta = @meta[siblingId]
-        if meta.tail
-          node.sibling = @nodes[siblingId]
-          node.parent = node.sibling.parent
+        sibling = @nodes[siblingId]
+        if sibling.tail
+          node.sibling = sibling
+          node.parent = sibling.parent
           break
