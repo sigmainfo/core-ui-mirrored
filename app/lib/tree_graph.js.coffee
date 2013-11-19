@@ -70,6 +70,8 @@ class Coreon.Lib.TreeGraph
           meta.parents -= 1
           continue
         child
+      for child in node.children
+        child.parent = node
 
   sortChildren: ->
     for id, node of @nodes
@@ -85,4 +87,5 @@ class Coreon.Lib.TreeGraph
         meta = @meta[siblingId]
         if meta.tail
           node.sibling = @nodes[siblingId]
+          node.parent = node.sibling.parent
           break

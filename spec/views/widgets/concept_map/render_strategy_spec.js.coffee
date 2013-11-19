@@ -45,14 +45,24 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
 
     beforeEach ->
       @graph =
-        tree: {}
-        edges: {}
+        tree     : {}
+        edges    : {}
+        siblings : []
+      @strategy.renderSiblings = sinon.spy()
 
     it 'renders nodes', ->
       @strategy.renderNodes = sinon.spy()
       @strategy.render @graph
       @strategy.renderNodes.should.have.been.calledOnce
       @strategy.renderNodes.should.have.been.calledWith @graph.tree
+
+    it 'renders siblings', ->
+      renderNodes = sinon.spy()
+      @strategy.renderNodes = renderNodes
+      @strategy.render @graph
+      @strategy.renderSiblings.should.have.been.calledOnce
+      @strategy.renderSiblings.should.have.been.calledWith @graph.siblings
+      @strategy.renderSiblings.should.have.been.calledAfter renderNodes
 
     it 'renders edges', ->
       @strategy.renderEdges = sinon.spy()
@@ -132,6 +142,50 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
       @strategy.updateNodes.should.have.been.calledOnce
       @strategy.updateNodes.should.have.been.calledWith nodes
 
+  describe '#renderSiblings()', ->
+
+    beforeEach ->
+      @parent.append('g')
+        .attr('class', 'sibling-node')
+        .datum(id: 'remove', type: 'placeholder')
+      @parent.append('g')
+        .attr('class', 'sibling-node', type: 'placeholder')
+        .datum(id: 'update')
+      @data = [
+        { id: 'create', type: 'placeholder' }
+        { id: 'update', type: 'placeholder' }
+      ]
+      @strategy.layoutSiblings = sinon.stub()
+      @strategy.layoutSiblings.withArgs(@data).returns @data
+
+    it 'maps nodes to data', ->
+      nodes = @strategy.renderSiblings @data
+      nodes.data().should.eql @data
+
+    it 'creates missing nodes including root node', ->
+      @strategy.createNodes = sinon.spy()
+      nodes = @strategy.renderSiblings @data
+      enter = nodes.enter()
+      ids = (node.__data__.id for i, node of enter[0] when node.__data__?)
+      ids.should.eql [ 'create' ]
+      @strategy.createNodes.should.have.been.calledOnce
+      @strategy.createNodes.should.have.been.calledWith enter
+
+    it 'deletes deprecated nodes', ->
+      @strategy.deleteNodes = sinon.spy()
+      nodes = @strategy.renderSiblings @data
+      exit = nodes.exit()
+      ids = (node.__data__.id for i, node of exit[0] when node.__data__?)
+      ids.should.eql [ 'remove' ]
+      @strategy.deleteNodes.should.have.been.calledOnce
+      @strategy.deleteNodes.should.have.been.calledWith exit
+
+    it 'updates all nodes', ->
+      @strategy.updateNodes = sinon.spy()
+      nodes = @strategy.renderSiblings @data
+      @strategy.updateNodes.should.have.been.calledOnce
+      @strategy.updateNodes.should.have.been.calledWith nodes
+
   describe '#createNodes()', ->
 
     beforeEach ->
@@ -155,6 +209,17 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     it 'appends concept node container', ->
       @strategy.createNodes @enter
       @parent.selectAll('g.concept-node')[0].should.have.lengthOf 3
+
+    it 'appends sibling node container', ->
+      @enter = @parent
+        .selectAll('.sibling-node')
+        .data([
+          { id: 'sibling-a', type: 'placeholder', sibling: {} }
+          { id: 'sibling-b', type: 'placeholder', sibling: {} }
+        ])
+        .enter()
+      @strategy.createNodes @enter
+      @parent.selectAll('g.sibling-node')[0].should.have.lengthOf 2
 
     it 'classifies repository node', ->
       @strategy.createNodes @enter

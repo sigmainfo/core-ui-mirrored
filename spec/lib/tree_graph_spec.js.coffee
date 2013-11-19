@@ -173,18 +173,32 @@ describe 'Coreon.Lib.TreeGraph', ->
           new Backbone.Model id: '515fe41', parent_node_ids: []
                                           , label: 'Repository'
           new Backbone.Model id: '4287g7h', parent_node_ids: []
-                                          , label: 'A top level node'
+                                          , label: 'a top level node'
           new Backbone.Model id: '508sdf' , parent_node_ids: []
                                           , label: 'yet another top level node'
-          new Backbone.Model id: '1237g7h', parent_node_ids: []
-                                          , label: 'Ä Begriffsknötsche'
           new Backbone.Model id: '975fhg' , parent_node_ids: []
-                                          , sibling_node_ids: ['4287g7h', '508sdf', '1237g7h']
+                                          , sibling_node_ids: ['4287g7h', '508sdf']
         ]
         @graph.generate()
         sibling = @graph.siblings[0]
         expect( sibling ).to.have.property 'sibling'
-        expect( sibling ).to.have.deep.property 'sibling.id'
+        expect( sibling ).to.have.deep.property 'sibling.id', '508sdf'
+
+      it 'connects parent to sibling node', ->
+        @graph.models = [
+          new Backbone.Model id: '515fe41', parent_node_ids: []
+                                          , label: 'Repository'
+          new Backbone.Model id: '4287g7h', parent_node_ids: []
+                                          , label: 'A top level node'
+          new Backbone.Model id: '508sdf' , parent_node_ids: []
+                                          , label: 'yet another top level node'
+          new Backbone.Model id: '975fhg' , parent_node_ids: []
+                                          , sibling_node_ids: ['4287g7h', '508sdf']
+        ]
+        @graph.generate()
+        sibling = @graph.siblings[0]
+        expect( sibling ).to.have.property 'parent'
+        expect( sibling ).to.have.deep.property 'parent.id', '515fe41'
 
       it 'creates edge for sibling', ->
         @graph.models = [

@@ -12,24 +12,33 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
 
   render: (graph) ->
     deferred = $.Deferred()
-    nodes = @renderNodes graph.tree
-    edges = @renderEdges graph.edges
+    nodes    = @renderNodes graph.tree
+    siblings = @renderSiblings graph.siblings, nodes
+    edges    = @renderEdges graph.edges
     _.defer @updateLayout, nodes, edges, deferred
     deferred.promise()
 
   renderNodes: (root) ->
     nodes = @parent.selectAll('.concept-node')
-      .data( @layout.nodes(root), (datum) ->
-        datum.id
-      )
+      .data( @layout.nodes(root), (datum) -> datum.id )
     @createNodes nodes.enter()
     @deleteNodes nodes.exit()
     @updateNodes nodes
     nodes
 
+  renderSiblings: (data) ->
+    siblings = @parent.selectAll('.sibling-node')
+      .data( @layoutSiblings(data), (datum) -> datum.id )
+    @createNodes siblings.enter()
+    @deleteNodes siblings.exit()
+    @updateNodes siblings
+    siblings
+
   createNodes: (enter) ->
     all = enter.append('g')
-      .attr('class', 'concept-node')
+      .attr('class', (datum) ->
+        if datum.sibling then 'sibling-node' else 'concept-node'
+      )
       .classed('repository-root', (datum) ->
         datum.type is 'repository'
       )

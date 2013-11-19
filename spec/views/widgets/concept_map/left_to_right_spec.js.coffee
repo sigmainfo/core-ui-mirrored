@@ -278,3 +278,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
         expect( offset ).to.have.property 'x', (300 - 46 ) / 2 - 34
         expect( offset ).to.have.property 'y', (200 - 190) / 2 - 12
 
+  describe '#layoutSiblings()', ->
+
+    it 'positions node below sibling', ->
+      data = @strategy.layoutSiblings [ sibling: { x: 12, y: 345 } ]
+      expect( data[0] ).to.have.property 'x', 37
+      expect( data[0] ).to.have.property 'y', 345

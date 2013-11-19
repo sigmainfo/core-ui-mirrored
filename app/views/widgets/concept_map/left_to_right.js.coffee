@@ -81,3 +81,8 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       x: (viewport.width  - box.height ) / 2 - box.y
       y: (viewport.height - box.width  ) / 2 - box.x
 
+  layoutSiblings: (data) ->
+    for datum in data
+      datum.x = datum.sibling.x + 25
+      datum.y = datum.sibling.y
+    data

@@ -94,3 +94,9 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
       box = @box data, viewport.width, viewport.height
       x: (viewport.width  - box.width ) / 2 - box.x
       y: (viewport.height - box.height) / 2 - box.y
+
+  layoutSiblings: (data) ->
+    for datum in data
+      datum.x = datum.sibling.x + 100
+      datum.y = datum.sibling.y
+    data
