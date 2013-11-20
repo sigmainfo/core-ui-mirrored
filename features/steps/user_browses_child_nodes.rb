@@ -65,6 +65,12 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'I should see two concept nodes "pocket billiards" and "carom billiards"' do
+    page.execute_script '''
+      $("#coreon-concept-map").height(700);
+      $("#coreon-widgets").width(900);
+      $("#coreon-concept-map svg").height(700);
+      $("#coreon-concept-map svg").width(900);
+    '''
     within('#coreon-concept-map') do
       page.should have_css('.concept-node', text: 'pocket billiards')
       page.should have_css('.concept-node', text: 'carom billiards')
