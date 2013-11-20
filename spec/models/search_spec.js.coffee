@@ -47,31 +47,31 @@ describe "Coreon.Models.Search", ->
         "search[only]":  "properties/definition"
         "search[tolerance]": 2
          
-    it "adds source_language if set", ->
-      @repositoryCache.set 'sourceLanguage', 'de', silent: true
-              
-      expect( @model.params() ).to.eql
-        "search[query]": "gun"
-        "search[tolerance]": 2
-        "search[source_language]": 'de'
-      
-    it "adds target_language if set", ->
-      @repositoryCache.set 'targetLanguage', 'fr', silent: true
-              
-      expect( @model.params() ).to.eql
-        "search[query]": "gun"
-        "search[tolerance]": 2
-        "search[target_language]": 'fr'
-        
-    it "adds source and target language if both set", ->
-      @repositoryCache.set 'sourceLanguage', 'de', silent: true
-      @repositoryCache.set 'targetLanguage', 'fr', silent: true
-      
-      expect( @model.params() ).to.eql
-        "search[query]": "gun"
-        "search[tolerance]": 2
-        "search[source_language]": 'de'
-        "search[target_language]": 'fr'
+    # it "adds source_language if set", ->
+    #   @repositoryCache.set 'sourceLanguage', 'de', silent: true
+    #           
+    #   expect( @model.params() ).to.eql
+    #     "search[query]": "gun"
+    #     "search[tolerance]": 2
+    #     "search[source_language]": 'de'
+    #   
+    # it "adds target_language if set", ->
+    #   @repositoryCache.set 'targetLanguage', 'fr', silent: true
+    #           
+    #   expect( @model.params() ).to.eql
+    #     "search[query]": "gun"
+    #     "search[tolerance]": 2
+    #     "search[target_language]": 'fr'
+    #     
+    # it "adds source and target language if both set", ->
+    #   @repositoryCache.set 'sourceLanguage', 'de', silent: true
+    #   @repositoryCache.set 'targetLanguage', 'fr', silent: true
+    #   
+    #   expect( @model.params() ).to.eql
+    #     "search[query]": "gun"
+    #     "search[tolerance]": 2
+    #     "search[source_language]": 'de'
+    #     "search[target_language]": 'fr'
 
   describe "sync()", ->
 

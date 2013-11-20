@@ -20,11 +20,11 @@ class Coreon.Models.Search extends Backbone.Model
         else "properties/#{@get "target"}"
     params["search[tolerance]"] = 2
     
-    if settings = Coreon.application?.repositorySettings()
-      sourceLanguage = settings.get 'sourceLanguage'
-      targetLanguage = settings.get 'targetLanguage'
-      params['search[source_language]'] = sourceLanguage if sourceLanguage and sourceLanguage != 'none'
-      params['search[target_language]'] = targetLanguage if targetLanguage and targetLanguage != 'none'
+    # if settings = Coreon.application?.repositorySettings()
+    #   sourceLanguage = settings.get 'sourceLanguage'
+    #   targetLanguage = settings.get 'targetLanguage'
+    #   params['search[source_language]'] = sourceLanguage if sourceLanguage and sourceLanguage != 'none'
+    #   params['search[target_language]'] = targetLanguage if targetLanguage and targetLanguage != 'none'
     
     params
 
