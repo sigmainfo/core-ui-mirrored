@@ -2,15 +2,22 @@
   %h4= I18n.t "widgets.languages.title"
     %span.selected
   
+- langs = Coreon.application?.repository()?.usedLanguages()
+- if langs[0]
+  - source_langs = target_langs = ['none'].concat _(langs).sortBy (lang) -> [I18n.t "languages.#{lang}"]
+- else
+  - source_langs = [Coreon.application?.repositorySettings('sourceLanguage') || 'none']
+  - target_langs = [Coreon.application?.repositorySettings('targetLanguage') || 'none']
+
 %form.languages{action: 'javascript:void(0)'}
   %select.widget-select.blue{title: "Source Language", name: "source_language"}
-    - for lang in (['none'].concat Coreon.application.repository().get('languages'))
+    - for lang in (source_langs)
       %option{value: "#{lang}"} 
         = I18n.t "languages.#{lang}"
         
   %span.arrow
         
   %select.widget-select.blue{title: "Target Language", name: "target_language"}
-    - for lang in (['none'].concat Coreon.application.repository().get('languages'))
+    - for lang in (target_langs)
       %option{value: "#{lang}"} 
         = I18n.t "languages.#{lang}"

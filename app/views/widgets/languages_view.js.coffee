@@ -16,6 +16,8 @@ class Coreon.Views.Widgets.LanguagesView extends Backbone.View
     "change select[name=target_language]"  : "onChangeTargetLanguage"
 
   initialize: ->
+    Coreon.application?.repository()?.on 'remoteSettingChange', =>
+      @render()
 
   render: ->
     @$el.html @template()

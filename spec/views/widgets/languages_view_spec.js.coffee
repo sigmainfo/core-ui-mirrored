@@ -7,9 +7,8 @@ describe 'Coreon.Views.LanguagesView', ->
     Coreon.application = 
       repository: ->
         id: 'my-repo'
-        get: (p) -> 
-          switch p
-            when 'languages' then ['en', 'de', 'fr']
+        usedLanguages: ->
+          ['en', 'de', 'fr']
       repositorySettings: ->
         {}
     
