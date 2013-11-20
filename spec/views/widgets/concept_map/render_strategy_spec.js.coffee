@@ -95,8 +95,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
         expect( _.defer ).to.have.been.calledWith @strategy.updateLayout
         expect( _.defer.firstCall.args[2] ).to.have.equal edges
         expect( _.defer.firstCall.args[3] ).to.have.equal deferred
-        # expect( _.defer.firstCall.args[1] )
-        console.log _.defer.firstCall.args[1].data()
+        expect( _.defer.firstCall.args[1] ).to.equal selection
       finally
         $.Deferred.restore()
 

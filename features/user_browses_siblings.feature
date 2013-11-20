@@ -1,4 +1,3 @@
-@wip
 Feature: User browses siblings
   In order to explore a concept level
   As a user browsing the concept map

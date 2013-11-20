@@ -1,7 +1,7 @@
 module LanguageSelectSteps
   include Spinach::DSL
   include Api::Graph::Factory
-  
+
   def source_language_css
     "#coreon-languages .coreon-select[data-select-name=source_language]"
   end
@@ -13,10 +13,10 @@ module LanguageSelectSteps
   def dropdown_css
     "#coreon-modal .coreon-select-dropdown"
   end
-  
+
   step 'the languages "English", "German", and "French" are available' do
     @repository.update_attributes languages: %w{en de fr}
-    
+
     create_concept terms: [
       {lang: 'en', value: 'x'},
       {lang: 'de', value: 'x'},
@@ -31,25 +31,25 @@ module LanguageSelectSteps
   step 'I click the "Target Language" selector' do
     page.find(target_language_css).click
   end
-  
+
   step 'I select "None" from the dropdown' do
     within dropdown_css do
       page.find("li", text: "None").click
     end
   end
-  
+
   step 'I select "English" from the dropdown' do
     within dropdown_css do
       page.find("li", text: "English").click
     end
   end
-  
+
   step 'I select "German" from the dropdown' do
     within dropdown_css do
       page.find("li", text: "German").click
     end
   end
-  
+
   step 'I select "French" from the dropdown' do
     within dropdown_css do
       page.find("li", text: "French").click

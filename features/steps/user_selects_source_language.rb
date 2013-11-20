@@ -19,7 +19,7 @@ class Spinach::Features::UserSelectsSourceLanguage < Spinach::FeatureSteps
       page.should have_css "li", text: "French"
     end
   end
-  
+
   step 'I should see selection "None" for "Source language"' do
     page.should have_css source_language_css, text: "None"
   end

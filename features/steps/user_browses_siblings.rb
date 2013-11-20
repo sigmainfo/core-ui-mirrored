@@ -1,6 +1,7 @@
 class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   include AuthSteps
   include Api::Graph::Factory
+  include LanguageSelectSteps
 
   def position(node)
     pos = node['transform'].match /\btranslate\((?<x>[\d+-.]+),\s*(?<y>[\d+-.]+)\)/
@@ -153,14 +154,31 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   end
 
   step 'I should see "balkline billiards", "five pin billiards", "straight rail billiards" in this order' do
-    pending 'step not implemented'
+    within('#coreon-concept-map') do
+      page.should have_css('.concept-node', text: 'balkline billiards')
+      first  = position page.find('.concept-node', text: 'balkline billiards')
+      second = position page.find('.concept-node', text: 'five pin billiards')
+      last   = position page.find('.concept-node', text: 'straight rail billiards')
+      first[:x].should  < second[:x]
+      second[:x].should < last[:x]
+    end
   end
 
   step 'I select "German" as source language' do
-    pending 'step not implemented'
+    page.find('#coreon-languages .coreon-select[data-select-name=source_language]').click
+    within '#coreon-modal .coreon-select-dropdown' do
+      page.find('li', text: 'German').click
+    end
   end
 
   step 'I should see "Billiardkegeln", "Cadre-Disziplin", "Freie Partie" in this order' do
-    pending 'step not implemented'
+    within('#coreon-concept-map') do
+      page.should have_css('.concept-node', text: 'Billiardkegeln')
+      first  = position page.find('.concept-node', text: 'Billiardkegeln')
+      second = position page.find('.concept-node', text: 'Cadre-Disziplin')
+      last   = position page.find('.concept-node', text: 'Freie Partie')
+      first[:x].should  < second[:x]
+      second[:x].should < last[:x]
+    end
   end
 end
