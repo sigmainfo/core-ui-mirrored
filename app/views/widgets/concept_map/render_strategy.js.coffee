@@ -17,7 +17,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     edges    = @renderEdges graph.edges
 
     all = @parent.selectAll('.concept-node, .sibling-node')
-      .data(nodes.data().concat siblings.data())
+      .data(nodes.data().concat(siblings.data()), (datum) -> datum.id )
     _.defer @updateLayout, all, edges, deferred
 
     deferred.promise()
