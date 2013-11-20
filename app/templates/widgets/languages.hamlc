@@ -7,8 +7,8 @@
   - source_langs = target_langs = ['none'].concat _(langs).sortBy (lang) -> [I18n.t "languages.#{lang}"]
 - else
   - settings = Coreon.application?.repositorySettings()
-  - source_langs = [settings.sourceLanguage || 'none']
-  - target_langs = [settings.targetLanguage || 'none']
+  - source_langs = [settings.get('sourceLanguage') || 'none']
+  - target_langs = [settings.get('targetLanguage') || 'none']
 
 %form.languages{action: 'javascript:void(0)'}
   %select.widget-select.blue{title: "Source Language", name: "source_language"}
