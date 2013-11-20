@@ -130,5 +130,13 @@ Coreon.Modules.CoreAPI =
       ajax deferred, method, model, options
 
     deferred.promise()
+    
+  ajax: (url, options = {}) ->
+    session = Coreon.application.get "session"
+    options.headers ?= {}
+    options.headers["X-Core-Session"] = session.get "auth_token"
+    
+    Backbone.ajax url, options
+    
 
 Coreon.Modules.extend Coreon.Modules.CoreAPI, Backbone.Events
