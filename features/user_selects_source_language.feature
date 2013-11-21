@@ -5,11 +5,11 @@ Feature: user selects source language
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
-    And I am logged in
 
   Scenario: select source language
     Given the languages "English", "German", and "French" are available
-    When I visit the repository root page
+    And I am logged in
+  
     Then I should see a widget "Languages"
     And I should see selection "None" for "Source language"
     When I click the "Source Language" selector
