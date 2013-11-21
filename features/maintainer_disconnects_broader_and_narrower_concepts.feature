@@ -13,6 +13,7 @@ Feature: maintainer disconnects broader and narrower concepts
     And I click "Edit concept"
     And I click "Edit broader & narrower concepts"
 
+  @firefox
   Scenario: disconnect broader and narrower concepts
     Given I drag "surveillance" out of the super concept list
     Then I should see no super concept anymore
@@ -31,6 +32,7 @@ Feature: maintainer disconnects broader and narrower concepts
     Then I should not be in edit mode anymore
     But still see "surveillance" as broader and "camera" as narrower concept
 
+  @firefox
   Scenario: save changes
     Given I drag "surveillance" out of the super concept list
     And I drag "camera" out of the sub concept list

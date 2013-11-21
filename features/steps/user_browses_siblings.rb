@@ -149,7 +149,7 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   step 'I click the placeholder to expand the siblings of "five pin billiards"' do
     within('#coreon-concept-map') do
       page.should have_css('.placeholder', text: 'carom billiards')
-      page.find('.placeholder', text: 'carom billiards').click
+      page.find('.placeholder', text: 'carom billiards').find('.icon').click
     end
   end
 

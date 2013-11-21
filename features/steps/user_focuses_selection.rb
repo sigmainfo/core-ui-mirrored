@@ -99,11 +99,14 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   step 'I click the placeholder node' do
-    page.find('#coreon-concept-map .concept-node.placeholder').click
+    page.find('#coreon-concept-map .concept-node.placeholder').find('.icon').click
   end
 
   step 'I click on pocket billiards' do
-    page.find('#coreon-concept-map .concept-node:not(.placeholder)', text: 'pocket billiards').find('a').click
+    page.should have_css('#coreon-concept-map .concept-node:not(.placeholder)', text: 'pocket billiards')
+    pocket_billiards = page.find('#coreon-concept-map .concept-node:not(.placeholder)', text: 'pocket billiards')
+    pocket_billiards.find('a').click
+    sleep 1
   end
 
   step 'pocket billiards should be horizontally and vertically centered' do

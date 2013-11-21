@@ -61,7 +61,7 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'I click this placeholder' do
-    @placeholder.click
+    @placeholder.find('.icon').click
   end
 
   step 'I should see two concept nodes "pocket billiards" and "carom billiards"' do
@@ -108,7 +108,7 @@ class Spinach::Features::UserBrowsesChildNodes < Spinach::FeatureSteps
   end
 
   step 'I click the placeholder connected to "pocket billiards"' do
-    page.find('.placeholder', text: 'pocket billiards').click
+    page.find('.placeholder', text: 'pocket billiards').find('.icon').click
   end
 
   step 'I should see three concept nodes "pool", "snooker", "English billiards"' do

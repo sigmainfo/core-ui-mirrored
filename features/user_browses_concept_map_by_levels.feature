@@ -7,6 +7,7 @@ Feature: user browses concept map by levels
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
+  @firefox
   Scenario: browse concept hierarchy
     Given I am browsing a repository called "Games"
     And a top level concept "billiards" exists

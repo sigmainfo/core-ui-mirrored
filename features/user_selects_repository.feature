@@ -7,6 +7,7 @@ Feature: user selects repository
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
+  @firefox
   Scenario: multiple repositories
     Given I have access to the repositories "Wild West" and "Branch of Service"
     When I visit the application root

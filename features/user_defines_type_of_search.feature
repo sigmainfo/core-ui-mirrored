@@ -7,6 +7,7 @@ Feature: user defines type of search
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
+  @firefox
   Scenario: set search target
     Then I should see the hint "Search all" in the search input
     When I click on the triangle within the search input

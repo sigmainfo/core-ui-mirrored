@@ -48,7 +48,7 @@ Feature: maintainer adds term
     But I should see a message 'Successfully created term "high hat".'
 
   Scenario: cancel adding term
-    When I click "Edit concept" 
+    When I click "Edit concept"
     And I click "Add term"
     And I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs

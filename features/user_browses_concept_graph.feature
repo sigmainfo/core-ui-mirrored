@@ -23,7 +23,7 @@ Feature: user browses concept graph
     And I should see a node "tool"
     And "tool" should be connected to "weapon"
     And the repository root node should be connected to "tool"
-  
+
   Scenario: hit list
     Given a concept "handgun"
     And a concept "hand"
@@ -34,7 +34,7 @@ Feature: user browses concept graph
     And I should see a node "hand"
     And I should see a node "handkerchief"
     And all nodes should be classified as hits
-  
+
   Scenario: zoom and pan
     Given a concept "handgun"
     When I enter the application
@@ -44,4 +44,4 @@ Feature: user browses concept graph
     Then "handgun" should be bigger
     When I click on "Zoom out"
     Then "handgun" should have the original size again
-    
+

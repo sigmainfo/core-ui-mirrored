@@ -74,8 +74,10 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I should see a property "STATUS" for the term with value "pending"' do
-    within ".language.en .term .properties" do
-      find("th", text: "STATUS").find(:xpath, "./following-sibling::td[1]").should have_text("pending")
+    within '.language.en .term .properties' do
+      sleep 1
+      page.should have_css('th', text: 'STATUS')
+      find('th', text: 'STATUS').find(:xpath, './following-sibling::td[1]').should have_text('pending')
     end
   end
 
@@ -118,9 +120,9 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I should not see an error summary' do
-    page.should have_no_css(".error-summary") 
+    page.should have_no_css(".error-summary")
   end
-  
+
   step 'I click "Cancel"' do
     click_link "Cancel"
   end
