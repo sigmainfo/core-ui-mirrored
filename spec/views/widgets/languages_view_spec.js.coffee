@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require views/widgets/languages_view
 
-describe 'Coreon.Views.LanguagesView', ->
+describe 'Coreon.Views.Widgets.LanguagesView', ->
 
   beforeEach ->
     Coreon.application = 
@@ -9,6 +9,7 @@ describe 'Coreon.Views.LanguagesView', ->
         id: 'my-repo'
         usedLanguages: ->
           ['en', 'de', 'fr']
+        on: ->
       repositorySettings: ->
         {}
     

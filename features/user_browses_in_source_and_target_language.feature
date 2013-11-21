@@ -5,7 +5,6 @@ Feature: user browses in source and target language
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
-    And I am logged in
     
   Scenario: change label of concept by selected languages
     Given the languages "English", "German", and "French" are available
@@ -14,6 +13,7 @@ Feature: user browses in source and target language
     And this concept has the following English terms: "gun", "firearm"
     And this concept has the following Korean terms: "산탄 총", "총"
     And this concept has the following German terms: "Schusswaffe", "Flinte"
+    And I am logged in
 
     When I click the "Source Language" selector
     And I select "None" from the dropdown
@@ -54,6 +54,7 @@ Feature: user browses in source and target language
     And this concept has the English property "description": "gun"
     And this concept has the Korean property "description": "산탄 총"
     And this concept has the German property "description": "Schusswaffe"
+    And I am logged in
 
     When I click the "Source Language" selector
     And I select "None" from the dropdown
@@ -105,6 +106,7 @@ Feature: user browses in source and target language
     And this term has the English property "description": "gun"
     And this term has the Korean property "description": "산탄 총"
     And this term has the German property "description": "Schusswaffe"
+    And I am logged in
 
     When I click the "Source Language" selector
     And I select "None" from the dropdown

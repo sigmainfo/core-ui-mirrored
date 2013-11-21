@@ -3,15 +3,13 @@ Feature: user browses concepts with labels in source language
   As a user browsing a selection of concepts
   I want to see a rendering of matching subtrees with broader and narrower concepts
 
-  Background:
-    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
-    And I am logged in
-
   Scenario: explore concept tree
-    Given the languages "English", "German", and "French" are available
+    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    And the languages "English", "German", and "French" are available
     And a concept
     And this concept has the following English terms: "gun", "firearm"
     And this concept has the following German terms: "Schusswaffe", "Flinte"
+    And I am logged in
 
     When I click the "Source Language" selector
     And I select "None" from the dropdown

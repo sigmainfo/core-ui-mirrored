@@ -155,6 +155,7 @@ describe "Coreon.Modules.CoreAPI", ->
         promise.done done
         promise.fail fail
         @requests[0].status = 403
+        @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         done.should.not.have.been.called
         fail.should.not.have.been.called
@@ -164,6 +165,7 @@ describe "Coreon.Modules.CoreAPI", ->
         Coreon.Modules.CoreAPI.on "error error:403", spy
         @model.sync "read", @model
         @requests[0].status = 403
+        @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         spy.should.not.have.been.called
 
@@ -172,6 +174,7 @@ describe "Coreon.Modules.CoreAPI", ->
         Coreon.Modules.CoreAPI.on "stop", spy
         @model.sync "read", @model
         @requests[0].status = 403
+        @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         spy.should.not.have.been.called
 
@@ -179,12 +182,14 @@ describe "Coreon.Modules.CoreAPI", ->
         @session.set "auth_token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
         @requests[0].status = 403
+        @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         @session.has("auth_token").should.be.false
       
       it "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
         @requests[0].status = 403
+        @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         @session.set "auth_token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.should.have.been.calledTwice
@@ -195,6 +200,7 @@ describe "Coreon.Modules.CoreAPI", ->
         @session.set "auth_token", "148ba2d2361930cbeef48548969b04602", silent: true
         @model.sync "read", @model
         @requests[0].status = 403
+        @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         Backbone.sync.reset()
         @session.set "auth_token", "beef48548969b046148ba2d2361930c02"

@@ -1,5 +1,6 @@
 module LanguageSelectSteps
   include Spinach::DSL
+  include Api::Graph::Factory
   
   def source_language_css
     "#coreon-languages .coreon-select[data-select-name=source_language]"
@@ -15,6 +16,12 @@ module LanguageSelectSteps
   
   step 'the languages "English", "German", and "French" are available' do
     @repository.update_attributes languages: %w{en de fr}
+    
+    create_concept terms: [
+      {lang: 'en', value: 'x'},
+      {lang: 'de', value: 'x'},
+      {lang: 'fr', value: 'x'}
+    ]
   end
 
   step 'I click the "Source Language" selector' do

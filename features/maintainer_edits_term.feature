@@ -5,6 +5,7 @@ Feature: maintainer edits term
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    And I am a maintainer of the repository
     And I am logged in
     And a concept with an English term "ten-gallon hat" exists
 
