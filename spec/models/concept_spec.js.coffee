@@ -100,8 +100,10 @@ describe 'Coreon.Models.Concept', ->
           
             beforeEach ->
               Coreon.application = 
-                repositorySettings: (arg) -> 
-                  return 'fr' if arg == 'sourceLanguage'
+                repositorySettings: -> 
+                  get: (arg) -> 
+                    return 'fr' if arg == 'sourceLanguage'
+                  on: ->
                   
             afterEach ->
               delete Coreon.application
@@ -138,9 +140,11 @@ describe 'Coreon.Models.Concept', ->
             
             beforeEach ->
               Coreon.application = 
-                repositorySettings: (arg) -> 
-                  return 'fr' if arg == 'sourceLanguage'
-                  return 'de' if arg == 'targetLanguage'
+                repositorySettings: ->
+                  get: (arg) -> 
+                    return 'fr' if arg == 'sourceLanguage'
+                    return 'de' if arg == 'targetLanguage'
+                  on: ->
                 
             afterEach ->
               delete Coreon.application

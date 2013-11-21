@@ -99,15 +99,16 @@ class Coreon.Models.Concept extends Backbone.Model
   _termLabel: ->
     terms = @get "terms"
     
-    unless sourceLang = Coreon.application?.repositorySettings('sourceLanguage')
-      sourceLang = false
+    if settings = Coreon.application?.repositorySettings()
+      sourceLang = settings.get('sourceLanguage')
+      targetLang = settings.get('targetLanguage')
+      locale = settings.get('locale') 
       
-    unless targetLang = Coreon.application?.repositorySettings('targetLanguage')
-      targetLang = false
-      
+    locale ||= 'en'
+    
     langRegexp = new RegExp("^#{sourceLang}", 'i') if sourceLang
     fallbackLangRegexp = new RegExp("^#{targetLang}", 'i') if targetLang
-    enLangRegexp = /^en/i
+    localeRegexp = new RegExp("^#{locale}", 'i')
     
     for term in terms
       if sourceLang and !!term.lang?.match langRegexp 
@@ -115,9 +116,10 @@ class Coreon.Models.Concept extends Backbone.Model
         break
       if targetLang and not fallbackLabel? and !!term.lang?.match fallbackLangRegexp 
         fallbackLabel = term.value
-      if not enLabel? and !!term.lang?.match enLangRegexp 
-        enLabel = term.value
-    label ?= fallbackLabel || enLabel || terms[0]?.value
+      if not localeLabel? and !!term.lang?.match localeRegexp  
+        localeLabel = term.value
+        
+    label ?= fallbackLabel || localeLabel || terms[0]?.value
     label
 
   acceptsConnection: (item_id)->
