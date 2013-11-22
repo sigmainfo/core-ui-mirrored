@@ -194,10 +194,13 @@ div.concept {
   
   .term {
     position: relative;
+    overflow: hidden;
 
     h4.value {
       font: 1.4em Palatino;
-      padding: 12px 100px 6px 97px;
+      padding: 12px 100px 6px 112px;
+      position: relative;
+      z-index: 0;
     }
 
     >.system-info {
@@ -209,15 +212,32 @@ div.concept {
     
     .properties {
 
+
       h3 {
+        z-index: 0;
         position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         background-color: rgba($greencolor, 0.08);
         background-position: 2px -846px;
         margin: 0;
         padding: 0;
-        right: 10px;
-        top: 10px;
+        width: 100%;
+        height: 50px;
+//        right: 10px;
+//        top: 10px;
       }
+//      h3 {
+//        position: absolute;
+//        background-color: rgba($greencolor, 0.08);
+//        background-position: 2px -846px;
+//        margin: 0;
+//        padding: 0;
+//        right: 10px;
+//        top: 10px;
+//      }
       &>div {
         margin-left: 112px;
         @include dottedline;
