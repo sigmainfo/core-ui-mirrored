@@ -64,14 +64,14 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         id: '123'
         legacy_id: '543'
       @view.render()
-      expect( @view.$el ).to.have '> .system-info-toggle'
-      expect( @view.$('> .system-info-toggle') ).to.have.text 'System Info'
-      expect( @view.$el ).to.have '> .system-info'
-      expect( @view.$('> .system-info').css('display') ).to.equal 'none'
-      expect( @view.$('> .system-info th').eq(0) ).to.have.text 'id'
-      expect( @view.$('> .system-info td').eq(0) ).to.have.text '123'
-      expect( @view.$('> .system-info th').eq(1) ).to.have.text 'legacy_id'
-      expect( @view.$('> .system-info td').eq(1) ).to.have.text '543'
+      expect( @view.$el ).to.have "> .actions .system-info-toggle"
+      expect( @view.$("> .actions .system-info-toggle") ).to.have.text "System Info"
+      expect( @view.$el ).to.have "> .system-info"
+      expect( @view.$("> .system-info").css("display") ).to.equal "none"
+      expect( @view.$("> .system-info th").eq(0) ).to.have.text "id"
+      expect( @view.$("> .system-info td").eq(0) ).to.have.text "123"
+      expect( @view.$("> .system-info th").eq(1) ).to.have.text "legacy_id"
+      expect( @view.$("> .system-info td").eq(1) ).to.have.text "543"
 
     it 'renders tree', ->
       @broaderAndNarrower.render = sinon.stub().returns @broaderAndNarrower
@@ -369,56 +369,27 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     beforeEach ->
       @view.$el.append """
         <section>
-          <h3 class="system-info-toggle" id="outer-trigger">INFO</h3>
-          <div class="system-info">foo</div>
-          <ul class="properties">
-            <div class="system-info">bar</div>
-          </ul>
-          <div class="terms">
-            <h3 class="system-info-toggle" id="inner-trigger">INFO</h3>
-            <div class="system-info">baz</div>
-            <ul class="properties">
-              <div class="system-info">bar</div>
-            </ul>
+          <div class="actions">
+            <h3 class="system-info-toggle">INFO</h3>
           </div>
+          <div class="system-info">foo</div>
         </section>
-        """
-      @event = $.Event()
-      $('#konacha').append @view.$el
-
-    it 'is triggered by click on system info toggle', ->
-      @view.toggleInfo = sinon.stub().returns false
+      """
+      $("#konacha").append @view.$el
+          
+    it "is triggered by click on system info toggle", ->
+      @view.toggleInfo = sinon.spy()
       @view.delegateEvents()
-      @view.$('#outer-trigger').click()
+      @view.$(".system-info-toggle").click()
       expect( @view.toggleInfo ).to.have.been.calledOnce
 
-    it 'toggles outer system info', ->
-      @event.target = @view.$ '#outer-trigger'
-      @view.toggleInfo @event
-      expect( @view.$('section > .system-info') ).to.be.hidden
-      expect( @view.$('section .properties .system-info') ).to.be.hidden
-      expect( @view.$('section .terms .system-info') ).to.be.visible
-      expect( @view.$('section .terms .properties .system-info') ).to.be.visible
-      @view.toggleInfo @event
-      expect( @view.$('section > .system-info') ).to.be.visible
-      expect( @view.$('section .properties .system-info') ).to.be.visible
-      expect( @view.$('section .terms .system-info') ).to.be.visible
-      expect( @view.$('section .terms .properties .system-info') ).to.be.visible
+    it "toggles system info", ->
+      @view.toggleInfo()
+      expect( @view.$(".system-info") ).to.be.hidden
+      @view.toggleInfo()
+      expect( @view.$(".system-info") ).to.be.visible
 
-    it 'toggles inner system info', ->
-      @event.target = @view.$ '#inner-trigger'
-      @view.toggleInfo @event
-      expect( @view.$('section .terms .system-info') ).to.be.hidden
-      expect( @view.$('section .terms .properties .system-info') ).to.be.hidden
-      expect( @view.$('section > .system-info') ).to.be.visible
-      expect( @view.$('section .properties .system-info') ).to.be.visible
-      @view.toggleInfo @event
-      expect( @view.$('section .terms .system-info') ).to.be.visible
-      expect( @view.$('section .terms .properties .system-info') ).to.be.visible
-      expect( @view.$('section > .system-info') ).to.be.visible
-      expect( @view.$('section .properties .system-info') ).to.be.visible
-
-  describe '#toggleSection()', ->
+  describe "toggleSection()", ->
 
     beforeEach ->
       @view.$el.append """

@@ -115,9 +115,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @
 
   toggleInfo: (evt) ->
-    target = $ evt.target
-    target.next(".system-info")
-      .add( target.siblings(".properties").find ".system-info" )
+    @$(".system-info")
       .slideToggle()
 
   toggleSection: (evt) ->

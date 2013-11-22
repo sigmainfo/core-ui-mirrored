@@ -147,18 +147,17 @@ div.concept {
   
   .terms {
     margin-top: 60px;
-      &>h3 {
-        @include toggle;
-        padding: 2px 7px 1px 5px;
-        margin: 0px 0 1px 0;
-        color: $browncolor;
-
-        background: rgba($greencolor, 0.08);
-        &:before {
-          content: none;
-        };
-      }
-/*    @include background(linear-gradient(rgba($browncolor, 0.03), rgba($browncolor, 0)));*/
+//      &>h3 {
+//        @include toggle;
+//        padding: 2px 7px 1px 5px;
+//        margin: 0px 0 1px 0;
+//        color: $browncolor;
+//
+//        background: rgba($greencolor, 0.08);
+//        &:before {
+//          content: none;
+//        };
+//      }
     
 
       .no-terms {
@@ -197,10 +196,10 @@ div.concept {
     h4.value {
       font: 1.4em Palatino;
       padding: 12px 100px 6px 97px;
-      &:before {
-        content:"»\00a0";
-        font-size: 1.3em;
-      };
+//      &:before {
+//        content:"»\00a0";
+//        font-size: 1.3em;
+//      };
     }
     .system-info-toggle {
       top: 15px;

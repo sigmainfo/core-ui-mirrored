@@ -197,7 +197,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   When 'I click the toggle "System Info" on the concept' do
-    page.find(".concept > .system-info-toggle", text: "System Info").click
+    page.find(".concept .system-info-toggle", text: "System Info").click
   end
 
   Then 'I should see "id" of the "handgun" concept' do
@@ -216,22 +216,19 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td/ul[@class='values']/li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("Nobody")
   end
 
-  Then 'I should not see information for "id" or "author"' do
+  Then 'I should not see information for "id", "author", and "legacy_id"' do
     page.should_not have_css(".system-info th", text: "id")
     page.should_not have_css(".system-info th", text: "author")
+    page.should_not have_css(".system-info th", text: "legacy_id")
   end
 
-  When 'I click the toggle "System Info" on the term "shot gun"' do
-    page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[contains(@class, 'system-info-toggle') and text() = 'System Info']").click
-  end
-
-  Then 'I should see "legacy_id" with value "543" for this term' do
+  Then 'I should see "legacy_id" with value "543" for term "shot gun"' do
     info = page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'system-info']")
     info.should have_css("th", text: "legacy_id")
     info.should have_css("td", text: "543")
   end
 
-  When 'I click on the toggle "PROPERTIES" for this term' do
+  When 'I click on the toggle "PROPERTIES" for term "shot gun"' do
     page.find(".term .value", text: "shot gun").find(:xpath, "./following-sibling::section[contains(@class, 'properties')]/h3", text: "PROPERTIES").click
   end
 

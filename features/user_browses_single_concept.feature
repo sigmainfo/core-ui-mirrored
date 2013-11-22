@@ -74,9 +74,8 @@ Feature: user browses single concept
     And I should see "author" with value "William" for property "notes"
     When I click on index item "2" for property "NOTES"
     Then I should see "author" with value "Nobody" for property "notes"
-    When I click the toggle "System Info" on the concept
-    Then I should not see information for "id" or "author"
-    When I click the toggle "System Info" on the term "shot gun"
-    Then I should see "legacy_id" with value "543" for this term
-    When I click on the toggle "PROPERTIES" for this term
+    Then I should see "legacy_id" with value "543" for term "shot gun"
+    When I click on the toggle "PROPERTIES" for term "shot gun"
     Then I should see "author" with value "Mr. Blake" for property "parts of speach"
+    When I click the toggle "System Info" on the concept
+    Then I should not see information for "id", "author", and "legacy_id"

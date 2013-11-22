@@ -27,6 +27,7 @@ Feature: User browses siblings
     And I should see a placeholder node representing the children of "pool"
     And this placeholder should be on the right next to "pool"
 
+  @firefox
   Scenario: expand and reorder
     Given a concept "carom billiards" exists
     And "carom billiards" has a narrower concept with English term "five pin billiards"
