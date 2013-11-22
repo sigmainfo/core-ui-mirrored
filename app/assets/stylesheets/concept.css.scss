@@ -26,13 +26,14 @@ div.concept {
   .actions {
     float: right;
   }
-  .concept-to-clipboard, .system-info-toggle {
+  .concept-to-clipboard, .system-info-toggle, .term .properties h3 {
     text-indent: -2000px;
     overflow: hidden;
     display: inline-block;
     width: 18px;
     height: 18px;
-    background: image-url("layout/icons.png") no-repeat;
+    background-image: image-url("layout/icons.png");
+    background-repeat: no-repeat;
     @include retina-icons;
 
   }
@@ -160,20 +161,7 @@ div.concept {
   }
   
   .terms {
-    margin-top: 60px;
-//      &>h3 {
-//        @include toggle;
-//        padding: 2px 7px 1px 5px;
-//        margin: 0px 0 1px 0;
-//        color: $browncolor;
-//
-//        background: rgba($greencolor, 0.08);
-//        &:before {
-//          content: none;
-//        };
-//      }
-    
-
+    margin-top: 60px;   
       .no-terms {
         @include empty;
         padding: 3px 30px;
@@ -211,9 +199,7 @@ div.concept {
       font: 1.4em Palatino;
       padding: 12px 100px 6px 97px;
     }
-//    .system-info-toggle {
-//      top: 15px;
-//    }
+
     >.system-info {
       padding-left: 116px;
       table {
@@ -225,8 +211,12 @@ div.concept {
 
       h3 {
         position: absolute;
-        right: 26px;
-        top: 9px;
+        background-color: rgba($greencolor, 0.08);
+        background-position: 2px -846px;
+        margin: 0;
+        padding: 0;
+        right: 10px;
+        top: 10px;
       }
       &>div {
         margin-left: 112px;
@@ -239,7 +229,7 @@ div.concept {
   &.show, &.edit {
 
     section {
-      h3 {
+      &>h3 {
         @include toggle;
         padding: 0;
         margin: 6px 0 5px 0;
