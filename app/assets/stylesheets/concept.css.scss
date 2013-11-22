@@ -325,7 +325,7 @@ div.concept {
       line-height: 1.4em;
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
-      max-width: 100%;
+      max-width: 80%;
       @include concept-icon;
     }
     
@@ -408,7 +408,7 @@ div.concept {
     }
   }
   .concept-to-clipboard {
-    position: absolute;
-    right: -30px;
+//    position: absolute;
+//    right: -30px;
   }
 }
