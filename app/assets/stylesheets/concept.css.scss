@@ -5,6 +5,7 @@ div.concept {
   margin-right: 270px;
   min-width: 200px;
   position: relative;
+  padding-top: 10px;
   
   h2 {
     cursor: default;
@@ -13,13 +14,42 @@ div.concept {
     line-height: 1.4em;
     padding: 0px 10px 0px 20px;
     margin-bottom: 12px;
-    margin-right: 30px;
+    max-width: 85%;
     &:before {
       border: 2px solid lighten($text-color, 20%);
       @include border-radius(5px);
       width: 5px;
       height: 5px;
       top: 11px;
+    };
+  }
+  .actions {
+    float: right;
+  }
+  .concept-to-clipboard, .system-info-toggle {
+    text-indent: -2000px;
+    overflow: hidden;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: image-url("layout/icons.png") no-repeat;
+    @include retina-icons;
+
+  }
+  
+  .concept-to-clipboard {   
+    background-position: -3px -650px;
+    &.remove {
+      background-position: -53px -650px;
+    }
+  }
+  .system-info-toggle {
+    background-color: rgba($greencolor, 0.08);
+    background-position: -1px -201px;
+
+    &:hover {
+      cursor: pointer;
+      background-position: -51px -201px;
     };
   }
   
@@ -29,22 +59,6 @@ div.concept {
     overflow: hidden;
   }
   
-  .system-info-toggle {
-    display: block;
-    width: 18px;   
-    height: 17px;
-    background: rgba($greencolor, 0.08) image-url("layout/icons.png") no-repeat -1px -201px;
-    @include retina-icons;
-    text-indent: -2000px;
-    overflow: hidden;
-    position: absolute;
-    right: 6px;
-    top: 30px;
-    &:hover {
-      cursor: pointer;
-      background-position: -51px -201px;
-    };
-  }
   
   .system-info {
     line-height: 12px;
@@ -196,14 +210,10 @@ div.concept {
     h4.value {
       font: 1.4em Palatino;
       padding: 12px 100px 6px 97px;
-//      &:before {
-//        content:"»\00a0";
-//        font-size: 1.3em;
-//      };
     }
-    .system-info-toggle {
-      top: 15px;
-    }
+//    .system-info-toggle {
+//      top: 15px;
+//    }
     >.system-info {
       padding-left: 116px;
       table {
@@ -266,10 +276,11 @@ div.concept {
     
     h2 {
       font-size: 1.6em;
-      line-height: 1em;
+//      line-height: 1em;
       min-height: 1em;
       padding: 2px 6px 3px 16px;
       margin-bottom: 6px;
+      max-width: 80%;
       @include concept-icon;
     }
     
@@ -299,9 +310,6 @@ div.concept {
           margin-left: 64px;
         }
       }
-      .system-info-toggle {
-        top: 5px;
-      }
     }
 
   }
@@ -314,10 +322,10 @@ div.concept {
     
     h2 {
       font-size: 1.2em;
-      line-height: 1.3em;
+      line-height: 1.4em;
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
-      margin-right: 0px;
+      max-width: 100%;
       @include concept-icon;
     }
     
@@ -398,5 +406,9 @@ div.concept {
         top: -1px;
       }
     }
+  }
+  .concept-to-clipboard {
+    position: absolute;
+    right: -30px;
   }
 }

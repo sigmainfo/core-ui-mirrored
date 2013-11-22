@@ -1,12 +1,12 @@
 @import '_config';
 @import 'compass/css3';
 
-div.concept {
-  .actions {
-    width: 100%;
-    height: 24px;
-  }
-}
+//div.concept {
+//  .actions {
+//    width: 100%;
+//    height: 24px;
+//  }
+//}
 
 .button {
   float: left;
@@ -36,34 +36,12 @@ div.concept {
   &.edit-concept {
     @extend .big;
     padding-left: 6px;
-    float: right;
-    margin-left: 14px;
+    position: absolute;
+    left: 0;
+    top: -20px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
-    };
-  }
-}
-
-.concept-to-clipboard {
-  font-size: 0.9em;
-  display: inline-block;
-  float: right;
-  margin-left: 10px;
-  height: 18px;
-  &:before {
-    @include before-icon;
-    float: left;
-    width: 18px;
-    background-position: -3px -650px;
-  };
-  &:hover {
-    color: $hover-color;
-  }
-  &.remove {
-    color: $greytext-color;
-    &:before {
-      background-position: -53px -650px;
     };
   }
 }
@@ -369,9 +347,9 @@ form.create.term {
     .properties h3 {
       top: 22px;
     }
-    .system-info-toggle {
-      top: 28px;
-    }
+//    .system-info-toggle {
+//      top: 28px;
+//    }
     
   }
   
@@ -437,9 +415,9 @@ form.create.term {
       .properties h3 {
         top: 24px;
       }
-      .system-info-toggle {
-        top: 30px;
-      }
+//      .system-info-toggle {
+//        top: 30px;
+//      }
 
     }
     
@@ -509,14 +487,6 @@ form.create.term {
     
 
     
-  }
-  .concept-to-clipboard {
-    text-indent: -2000px;
-    overflow: hidden;
-    width: 16px;
-    height: 20px;
-    position: absolute;
-    right: -30px;
   }
   
 }
