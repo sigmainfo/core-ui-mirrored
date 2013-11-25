@@ -15,12 +15,24 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
           else 1.5
       )
 
-  updateNodes: (nodes) ->
+  createNodes: (enter) ->
     super
-    nodes
       .attr("transform", (datum) ->
         "translate(#{datum.x}, #{datum.y})"
       )
+      .style( 'opacity', 0 )
+
+  updateNodes: (nodes) ->
+    super
+      .transition()
+      .duration( 300 )
+        .attr("transform", (datum) ->
+          "translate(#{datum.x}, #{datum.y})"
+        )
+        .transition()
+        .duration( 700 )
+        .ease( 'cubic-out' )
+          .style( 'opacity', 1 )
 
     labels = nodes.select("text.label")
       .attr("text-anchor", "middle")
@@ -55,21 +67,32 @@ class Coreon.Views.Widgets.ConceptMap.TopDown extends Coreon.Views.Widgets.Conce
         if datum.hit then 6 else 7
       )
 
+  createEdges: (edges) ->
+    super
+      .style( 'opacity', 0 )
+
   updateEdges: (edges) ->
     diagonal = @diagonal
-    edges.attr("d", (datum) ->
-      offsetTargetY = if datum.target.type is "placeholder"
-          if datum.target.busy then 10 else 7
-        else
-          3.5
-      diagonal
-        source:
-          x: datum.source.x
-          y: datum.source.y + datum.source.labelHeight + 7
-        target:
-          x: datum.target.x
-          y: datum.target.y - offsetTargetY
-    )
+    edges
+      .transition()
+      .duration( 300 )
+        .attr("d", (datum) ->
+          offsetTargetY = if datum.target.type is "placeholder"
+            if datum.target.busy then 10 else 7
+          else
+            3.5
+          diagonal
+            source:
+              x: datum.source.x
+              y: datum.source.y + datum.source.labelHeight + 7
+            target:
+              x: datum.target.x
+              y: datum.target.y - offsetTargetY
+        )
+        .transition()
+        .duration( 700 )
+        .ease( 'cubic-out' )
+          .style( 'opacity', 1 )
 
   updateLayout: (nodes, edges) ->
     nodes.select("text.label")
