@@ -51,6 +51,7 @@ div.concept {
     &:hover {
       cursor: pointer;
       background-position: -51px -201px;
+      background-color: rgba($link-color, 0.15);  
     };
   }
   
@@ -192,7 +193,7 @@ div.concept {
 
   }
   
-  .term {
+  li.term {
     position: relative;
 
     h4.value {
@@ -216,7 +217,7 @@ div.concept {
     
     section.properties {
 
-      h3 {
+      h3, .collapsed h3 {
         text-indent: -2000px;
         overflow: hidden;
         position: absolute;
@@ -236,19 +237,24 @@ div.concept {
           right: 10px;
           width: 18px;
           height: 18px;
+          @include rotate(0deg);
           background-color: rgba($greencolor, 0.08);
           background-position: 2px -846px;
         };
         &:hover {
           background-color: rgba($greencolor, 0.04);
+          &:before { 
+            background-color: rgba($link-color, 0.2);   
+            background-position: -48px -846px;
+          };
         };
       }
-      &.collapsed h3 {
-        &:before {
-          @include rotate(0deg);
-          background-position: 2px -846px;
-        };
-      }
+//      &.collapsed h3 {
+//        &:before {
+//          @include rotate(0deg);
+//          background-position: 2px -846px;
+//        };
+//      }
       &>div {
         margin-left: 112px;
         @include dottedline;
@@ -321,17 +327,21 @@ div.concept {
         margin-left: 85px;
       }
       .term >.system-info {
-        padding-left: 80px;
+        padding-left: 85px;
         table {
           margin-top: 2px;
         }
       }
-      .properties {
+      li.term section.properties {
         h3 {
           top: -1px;
+          &:before {
+            top: 6px;
+            right: 6px;
+          };
         }
         &>div {
-          margin-left: 64px;
+          margin-left: 85px;
         }
       }
     }
@@ -406,16 +416,20 @@ div.concept {
       .term h4.value {
         font-size: 1.1em;
         padding: 4px 0 3px 0;
-        margin-left: 26px;
+        margin-left: 16px;
       }
 
       .language .properties {
         background: none;
         h3 {
           right: 0px;
+          &:before {
+            top: 2px;
+            right: 2px;
+          };
         }
         &>div {
-          margin-left: 12px;
+          margin-left: 16px;
           background: none;
           border-top: 1px solid white;
           &.edit {
@@ -425,13 +439,7 @@ div.concept {
       }  
     }
   }
-  div.concept {
-    .language .properties {
-      h3 {
-        top: -1px;
-      }
-    }
-  }
+
   .concept-to-clipboard {
 //    position: absolute;
 //    right: -30px;
