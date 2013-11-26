@@ -107,7 +107,7 @@ en:
     info: "Info"
     contact: "Contact"
     languages: "Languages"
-  
+
   repositories:
     select: "Select repository"
 
@@ -177,6 +177,9 @@ en:
       title: "Clipboard"
       clear: "Clear"
 
+    term_list:
+      title: 'Term List'
+
   user:
     name: "Name"
     email: "Email"
@@ -186,7 +189,7 @@ en:
       title:
         one: '1 more concept for {{label}}'
         other: '{{count}} more concepts for {{label}}'
-    
+
   languages:
     none: "None"
     aa:  "Afar"

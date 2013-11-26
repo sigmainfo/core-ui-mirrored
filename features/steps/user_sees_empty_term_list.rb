@@ -10,7 +10,7 @@ class Spinach::Features::UserSeesEmptyTermList < Spinach::FeatureSteps
     page.should have_css('.widget .titlebar h4', text: 'Term List')
   end
 
-  step 'this widget should contain "No source language selected"' do
+  step 'this widget should contain "No language selected"' do
     widget = page.find('.widget .titlebar h4', text: 'Term List').find(:xpath, '../..')
     widget.should have_text('No language selected')
   end

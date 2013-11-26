@@ -21,7 +21,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @search = new Backbone.View
       @search.render = sinon.stub().returns @search
       @search
-      
+
     sinon.stub Coreon.Views.Widgets, "LanguagesView", =>
       @languages = new Backbone.View
       @languages.render = sinon.stub().returns @languages
@@ -38,6 +38,11 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @map.resize = sinon.spy()
       @map
 
+    sinon.stub Coreon.Views.Widgets, "TermListView", =>
+      @terms = new Backbone.View
+      @terms.render = sinon.stub().returns @terms
+      @terms
+
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
         hits: new Backbone.Collection
@@ -50,6 +55,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.Views.Widgets.LanguagesView.restore()
     Coreon.Views.Widgets.ClipboardView.restore()
     Coreon.Views.Widgets.ConceptMapView.restore()
+    Coreon.Views.Widgets.TermListView.restore()
     Coreon.application = null
 
   it "is a Backbone view", ->
@@ -132,6 +138,13 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @map.render.should.have.been.calledOnce
       $.contains(@view.el, @map.el).should.be.true
       @view.subviews.should.contain @map
+
+    it "renders term list view", ->
+      @view.render()
+      expect( Coreon.Views.Widgets.TermListView ).to.have.been.calledOnce
+      expect( @terms.render ).to.have.been.calledOnce
+      expect( $.contains @view.el, @terms.el ).to.be.true
+      expect( @view.subviews ).to.contain @terms
 
   describe "resizing", ->
 
