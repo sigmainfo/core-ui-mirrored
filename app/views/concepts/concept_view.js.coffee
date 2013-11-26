@@ -45,7 +45,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
-    "click  .term"                               : "toggleProperty"
+    "click  .term .toggle"                       : "toggleProperty"
     "click  .properties .index li"               : "selectProperty"
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
@@ -126,7 +126,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     
   toggleProperty: (evt) ->
     target = $(evt.target)
-    target.toggleClass "click"
     target.siblings("section").toggleClass "collapsed"
     target.siblings("section").children("div").not(".edit").slideToggle()
 

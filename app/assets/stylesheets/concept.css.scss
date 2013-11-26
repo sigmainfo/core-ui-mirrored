@@ -199,6 +199,9 @@ div.concept {
       font: 1.4em Palatino;
       padding: 12px 100px 6px 112px;
       position: relative;
+      &.toggle:hover {
+        background-color: rgba($greencolor, 0.04);
+      };
     }
 
     >.system-info {
@@ -208,21 +211,10 @@ div.concept {
       }
     }
     
-    .property-toggle {
-      position: absolute;
-              top: 0;
-              bottom: 0;
-              right: 0;
-              left: 0;
-              background-color: rgba (red, 0.2);
-    }
     
     .properties {
 
       h3 {
-//        display: block;
-//        width: auto;
-//        height: auto;
         position: absolute;
         background-color: rgba($greencolor, 0.08);
         background-position: 2px -846px;
@@ -230,11 +222,6 @@ div.concept {
         padding: 0;
         right: 10px;
         top: 10px;
-//        top: 0;
-//        bottom: 0;
-//        right: 0;
-//        left: 0;
-//        z-index: 1;
       }
       &>div {
         margin-left: 112px;
