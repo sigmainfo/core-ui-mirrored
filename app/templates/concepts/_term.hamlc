@@ -5,10 +5,7 @@
     - if @can "edit", Coreon.Models.Term
       %a.edit-term{href: "javascript:void(0)", "data-id": @term.id}= I18n.t "term.edit"
       
-  - if @term.get("properties")?.length > 0
-    %h4.value.toggle= @term.get "value"
-  -else
-    %h4.value= @term.get "value"
+  %h4.value= @term.get "value"
     
   != @render "concepts/info", data: @term.info()
   - if @term.get("properties")?.length > 0
