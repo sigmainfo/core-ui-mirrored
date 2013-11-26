@@ -208,7 +208,9 @@ div.concept {
     }
 
     >.system-info {
-      padding-left: 116px;
+      margin-left: 116px;
+      position: relative;
+      z-index:1;
       table {
         margin-top: 2px;
       }
@@ -327,7 +329,7 @@ div.concept {
         margin-left: 85px;
       }
       .term >.system-info {
-        padding-left: 85px;
+        margin-left: 85px;
         table {
           margin-top: 2px;
         }
