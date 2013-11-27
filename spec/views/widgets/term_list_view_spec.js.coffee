@@ -30,6 +30,9 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( @view.$el ).to.have '.titlebar h4'
       expect( @view.$ '.titlebar h4' ).to.have.text 'Term List'
 
+    it 'renders resize handler', ->
+      expect( @view.$el ).to.have  '.ui-resizable-s'
+
   describe '#render()', ->
 
     it 'can be chained', ->
