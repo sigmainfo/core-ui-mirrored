@@ -388,6 +388,64 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.$(".system-info") ).to.be.hidden
       @view.toggleInfo()
       expect( @view.$(".system-info") ).to.be.visible
+      
+  describe "toggleProperties()", ->
+
+    beforeEach ->
+      @view.$el.append """
+        <h4 class="properties-toggle">PROPERTIES</h3>
+          <div class="term">
+            <section class="properties">
+              <h3>PROPERTIES</h3>
+              <div>foo</div>
+          </div>          
+          <div class="term">
+            <section class="properties">
+              <h3>PROPERTIES</h3>
+              <div>bar</div>
+          </div>
+        </section>
+      """
+      
+      $("#konacha").append @view.$el
+      
+    it "is triggered by click on all term properties toggle", ->
+      @view.toggleProperties = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".properties-toggle").click()
+      expect( @view.toggleProperties ).to.have.been.calledOnce
+
+    it "toggles visibility of section content", ->
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.hidden
+      expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.hidden
+      expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.visible
+      expect( @view.$(".term:first .properties") ).to.not.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.visible
+      expect( @view.$(".term:last .properties") ).to.not.have.class "collapsed"
+
+    it "expands all properties if some are open, some are closed", ->
+      @view.$('.term .properties:first').addClass 'collapsed'
+      @view.$('.term .properties:first div').hide()
+      expect( @view.$(".term:first .properties div") ).to.be.hidden
+      expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.visible
+      expect( @view.$(".term:last .properties") ).to.not.have.class "collapsed"
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.visible
+      expect( @view.$(".term:first .properties") ).to.not.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.visible
+      expect( @view.$(".term:last .properties") ).to.not.have.class "collapsed"
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.hidden
+      expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.hidden
+      expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
+      
+      
 
   describe "toggleSection()", ->
 
