@@ -4,6 +4,7 @@
 #= require views/widgets/languages_view
 #= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
+#= require views/widgets/term_list_view
 #= require collections/concept_map_nodes
 #= require modules/helpers
 #= require modules/droppable
@@ -65,6 +66,10 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
       hits: Coreon.Collections.Hits.collection()
     @$el.append @map.render().$el
     @subviews.push @map
+
+    termList = new Coreon.Views.Widgets.TermListView
+    @$el.append termList.render().$el
+    @subviews.push termList
 
     @
 

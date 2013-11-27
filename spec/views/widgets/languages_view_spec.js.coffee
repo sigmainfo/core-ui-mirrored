@@ -4,7 +4,7 @@
 describe 'Coreon.Views.Widgets.LanguagesView', ->
 
   beforeEach ->
-    Coreon.application = 
+    Coreon.application =
       repository: ->
         id: 'my-repo'
         usedLanguages: ->
@@ -12,7 +12,7 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
         on: ->
       repositorySettings: ->
         {}
-    
+
     sinon.stub I18n, 't'
 
     model = new Backbone.Model
@@ -37,48 +37,48 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
     it 'renders form', ->
       @view.render()
       expect( @view.$el ).to.have 'form.languages'
-      
+
     describe 'with stubbed repositorySettings', ->
-      
+
       beforeEach ->
         sinon.stub Coreon.application, 'repositorySettings'
         Coreon.application.repositorySettings.withArgs('sourceLanguage').returns 'de'
         Coreon.application.repositorySettings.withArgs('targetLanguage').returns 'fr'
-        
+
       afterEach ->
         Coreon.application.repositorySettings.restore()
-        
+
       it 'sets the source language select to stored value', ->
         @view.render()
         expect( @view.$('select[name=source_language]').val() ).to.equal 'de'
-      
+
       it 'sets the target language select to stored value', ->
         @view.render()
         expect( @view.$('select[name=target_language]').val() ).to.equal 'fr'
-      
+
   describe 'onChangeSourceLanguage', ->
     beforeEach ->
       sinon.spy Coreon.application, 'repositorySettings'
-      
+
     afterEach ->
       Coreon.application.repositorySettings.restore()
-    
+
     it 'stores selected source language on selects change event', ->
       @view.render()
       @view.$('select[name=source_language]').val('fr').change()
-      
+
       expect( Coreon.application.repositorySettings ).to.be.calledWith('sourceLanguage', 'fr')
-      
+
   describe 'onChangeTargetLanguage', ->
     beforeEach ->
       sinon.spy Coreon.application, 'repositorySettings'
-      
+
     afterEach ->
       Coreon.application.repositorySettings.restore()
-    
+
     it 'stores selected target language on selects change event', ->
       @view.render()
       @view.$('select[name=target_language]').val('fr').change()
-      
+
       expect( Coreon.application.repositorySettings ).to.be.calledWith('targetLanguage', 'fr')
-      
+

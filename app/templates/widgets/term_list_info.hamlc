@@ -1,0 +1,1 @@
+%li.empty= I18n.t 'widgets.term_list.empty'

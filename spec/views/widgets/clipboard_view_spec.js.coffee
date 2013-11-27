@@ -18,7 +18,7 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       label
 
     @view = new Coreon.Views.Widgets.ClipboardView
- 
+
   afterEach ->
     I18n.t.restore()
     Coreon.Collections.Clips.collection.restore()
@@ -77,8 +77,8 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       ], silent: yes
       @view.render()
       Coreon.Views.Concepts.ConceptLabelView.should.have.been.calledTwice
-      Coreon.Views.Concepts.ConceptLabelView.firstCall.should.have.been.calledWith model: @collection.at 0 
-      Coreon.Views.Concepts.ConceptLabelView.secondCall.should.have.been.calledWith model: @collection.at 1 
+      Coreon.Views.Concepts.ConceptLabelView.firstCall.should.have.been.calledWith model: @collection.at 0
+      Coreon.Views.Concepts.ConceptLabelView.secondCall.should.have.been.calledWith model: @collection.at 1
       for label in @labels
         label.render.should.have.been.calledOnce
         $.contains(@view.$("ul")[0], label.el).should.be.true
@@ -94,7 +94,7 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
       @view.$("ul").should.be.empty
 
   describe "clear()", ->
-  
+
     it "clears the collection", ->
       @clips.add new Backbone.Model, silent:true
       @clips.length.should.equal 1

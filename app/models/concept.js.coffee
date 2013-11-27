@@ -57,22 +57,22 @@ class Coreon.Models.Concept extends Backbone.Model
 
   termsByLang: ->
     terms = {}
-    
+
     if settings = Coreon.application?.repositorySettings()
       sourceLang = settings.get('sourceLanguage')
       targetLang = settings.get('targetLanguage')
-    
+
       terms[sourceLang] = [] if sourceLang and sourceLang != 'none'
       terms[targetLang] = [] if targetLang and targetLang != 'none'
-    
+
     for term in @terms().models
       lang = term.get "lang"
       terms[lang] ?= []
       terms[lang].push term
-      
+
     #delete terms[sourceLang] if sourceLang and terms[sourceLang]?.length == 0
     #delete terms[targetLang] if targetLang and terms[targetLang]?.length == 0
-      
+
     terms
 
   toJSON: (options) ->
@@ -98,27 +98,27 @@ class Coreon.Models.Concept extends Backbone.Model
 
   _termLabel: ->
     terms = @get "terms"
-    
+
     if settings = Coreon.application?.repositorySettings()
       sourceLang = settings.get('sourceLanguage')
       targetLang = settings.get('targetLanguage')
-      locale = settings.get('locale') 
-      
+      locale = settings.get('locale')
+
     locale ||= 'en'
-    
+
     langRegexp = new RegExp("^#{sourceLang}", 'i') if sourceLang
     fallbackLangRegexp = new RegExp("^#{targetLang}", 'i') if targetLang
     localeRegexp = new RegExp("^#{locale}", 'i')
-    
+
     for term in terms
-      if sourceLang and !!term.lang?.match langRegexp 
+      if sourceLang and !!term.lang?.match langRegexp
         label = term.value
         break
-      if targetLang and not fallbackLabel? and !!term.lang?.match fallbackLangRegexp 
+      if targetLang and not fallbackLabel? and !!term.lang?.match fallbackLangRegexp
         fallbackLabel = term.value
-      if not localeLabel? and !!term.lang?.match localeRegexp  
+      if not localeLabel? and !!term.lang?.match localeRegexp
         localeLabel = term.value
-        
+
     label ?= fallbackLabel || localeLabel || terms[0]?.value
     label
 
