@@ -179,6 +179,7 @@ en:
 
     term_list:
       title: 'Term List'
+      empty: 'No language selected'
 
   user:
     name: "Name"

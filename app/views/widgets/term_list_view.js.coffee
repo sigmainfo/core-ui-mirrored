@@ -1,5 +1,6 @@
 #= require environment
 #= require templates/widgets/term_list
+#= require templates/widgets/term_list_info
 
 class Coreon.Views.Widgets.TermListView extends Backbone.View
 
@@ -7,10 +8,18 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   className: 'widget'
 
-  markup: Coreon.Templates['widgets/term_list']
+  template: Coreon.Templates['widgets/term_list']
+  info    : Coreon.Templates['widgets/term_list_info']
 
   initialize: ->
-    @renderMarkup()
+    @$el.html @template()
+    @stopListening()
+    @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @render
 
-  renderMarkup: ->
-    @$el.html @markup()
+  render: ->
+    ul = @$ 'ul'
+    if Coreon.application.repositorySettings('sourceLanguage') is 'none'
+      ul.html @info()
+    else
+      ul.html ''
+    @
