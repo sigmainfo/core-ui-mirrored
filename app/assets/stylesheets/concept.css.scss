@@ -25,8 +25,9 @@ div.concept {
   }
   .actions {
     float: right;
+    padding-right: 6px;
   }
-  .concept-to-clipboard, .system-info-toggle {
+  .concept-to-clipboard, .system-info-toggle, .properties-toggle {
     text-indent: -2000px;
     overflow: hidden;
     display: inline-block;
@@ -53,6 +54,20 @@ div.concept {
       background-position: -51px -201px;
       background-color: rgba($link-color, 0.15);  
     };
+  }
+  
+  .properties-toggle {
+    background-color: rgba($greencolor, 0.08);
+    background-position: 2px -846px;
+    float: right;
+    margin: 6px;
+
+    &:hover {
+      cursor: pointer;
+      background-position: -48px -846px;
+      background-color: rgba($link-color, 0.15);  
+    };
+    
   }
   
   .broader-and-narrower, &>.properties, .concept .properties {
@@ -162,12 +177,14 @@ div.concept {
   }
   
   .terms {
-    margin-top: 60px;   
+    margin-top: 50px; 
+    @include dottedline;  
       .no-terms {
         @include empty;
         padding: 3px 30px;
       }
     section.language {
+      clear: both;
       margin-top: 12px;
       min-height: 18px;            
       &>h3 {
@@ -236,7 +253,7 @@ div.concept {
         &:before {
           position: absolute;
           top: 8px;
-          right: 10px;
+          right: 6px;
           width: 18px;
           height: 18px;
           @include rotate(0deg);

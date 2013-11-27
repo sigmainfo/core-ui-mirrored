@@ -86,6 +86,7 @@ en:
     confirm_update: "Saving the term will delete {{count}} properties permanently!"
 
   terms:
+    toggle: "Show all properties"
     title: "Terms"
     add: "Add term"
     empty: "No terms for this language"
