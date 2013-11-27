@@ -30,6 +30,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   className: "concept show"
   editMode: no
+  showMode: no
   editProperties: no
   editTerm: no
 
@@ -116,6 +117,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @
 
   toggleInfo: (evt) ->
+    target = $(evt.target)
+    target.toggleClass "show"
     @$(".system-info")
       .slideToggle()
 
@@ -127,10 +130,15 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   toggleProperties: (evt) ->
     toggle= $(evt.target)
     target = @$(".term .properties")
-    toggle.toggleClass "show"
-    if toggle(".show")
+    @showMode = !@showMode
+    if @showMode
+      toggle.addClass "show"
       target.removeClass "collapsed"
       target.children("div").not(".edit").slideDown()
+    else
+      toggle.removeClass "show"
+      target.addClass "collapsed"
+      target.children("div").not(".edit").slideUp()
 
   selectProperty: (evt) ->
     target = $(evt.target)
