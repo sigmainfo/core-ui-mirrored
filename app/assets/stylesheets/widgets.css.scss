@@ -16,8 +16,14 @@
     h4 {
       color: $browncolor;
       font-size: 0.86em;
+      line-height: 18px;
       padding: 2px 0 0 6px;
       float: left;
+      &:before {
+        @include before-icon;
+        float: left;
+        padding-right: 1px;
+      }
     }
 
     .actions {
@@ -35,67 +41,6 @@
         
         &:first-child {
           border-left: 1px solid rgba(black, 0.1);
-        }
-        &.clear {
-          width: 30px;
-          &:before {
-            width: 30px;
-            @include before-icon;
-            width: 30px;
-            background-position: 5px -600px;
-          }
-
-          &:hover {
-
-            &:before {
-              background-position: -45px -600px;
-            }
-          }
-        }
-        
-        &.zoom-in {
-
-          &:before {
-            @include before-icon;
-            background-position: 0 -300px;
-          }
-
-          &:hover {
-
-            &:before {
-              background-position: -50px -300px;
-            }
-          }
-        }
-        
-        &.zoom-out {
-
-          &:before {
-            @include before-icon;
-            background-position: 0 -250px;
-          }
-
-          &:hover {
-
-            &:before {
-              background-position: -50px -250px;
-            }
-          }
-        }
-        
-        &.toggle-orientation {
-
-          &:before {
-            @include before-icon;
-            background-position: 0 -450px;
-          }
-
-          &:hover {
-
-            &:before {
-              background-position: -50px -450px;
-            }
-          }
         }
       }
     }

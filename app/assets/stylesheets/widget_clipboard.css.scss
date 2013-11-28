@@ -3,9 +3,24 @@
 
 #coreon-clipboard {
   h4:before {
-    @include before-icon;
-    float: left;
     background-position: -50px -700px;
+  }
+  
+  .clear {
+    width: 30px;
+    &:before {
+      width: 30px;
+      @include before-icon;
+      width: 30px;
+      background-position: 5px -600px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -45px -600px;
+      }
+    }
   }
 
   ul {

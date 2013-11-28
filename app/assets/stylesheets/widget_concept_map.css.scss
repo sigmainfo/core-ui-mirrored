@@ -1,0 +1,54 @@
+@import '_config';
+@import 'compass/css3';
+
+#coreon-concept-map {
+  h4:before {
+    background-position: -50px -900px;
+  }
+  
+  .zoom-in {
+
+    &:before {
+      @include before-icon;
+      background-position: 0 -300px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -50px -300px;
+      }
+    }
+  }
+  
+  .zoom-out {
+
+    &:before {
+      @include before-icon;
+      background-position: 0 -250px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -50px -250px;
+      }
+    }
+  }
+  
+  .toggle-orientation {
+
+    &:before {
+      @include before-icon;
+      background-position: 0 -450px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -50px -450px;
+      }
+    }
+  }
+
+}
