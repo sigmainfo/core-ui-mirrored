@@ -44,6 +44,10 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   And 'the term "Schusswaffe" should have property "gender" with value "f"' do
     create_concept_term_property @handgun, @handgun_terms["Schusswaffe"], key: "gender", value: "f"
   end
+  
+  And 'the term "Flinte" should have property "status" with value "pending"' do
+    create_concept_term_property @handgun, @handgun_terms["Flinte"], key: "status", value: "pending"
+  end
 
   And 'given a broader concept with label "weapon"' do
     weapon = create_concept properties: [{key: 'label', value: 'weapon'}], subconcept_ids: [@handgun['id']]
@@ -166,6 +170,15 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     sleep 1
     page.find(:xpath, "//th[text() = 'gender']/following-sibling::td").text.should == "f"
   end
+  
+  When 'I click on toggle "TOGGLE ALL PROPERTIES"' do
+    page.find(".properties-toggle").click
+  end
+  
+  Then 'I should see property "status" with value "pending"' do
+    sleep 1
+    page.find(:xpath, "//th[text() = 'status']/following-sibling::td").text.should == "pending"
+  end
 
   When 'I click on the toggle of the locale "EN"' do
     click_on_toggle "EN"
@@ -222,17 +235,17 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.should_not have_css(".system-info th", text: "legacy_id")
   end
 
-  Then 'I should see "legacy_id" with value "543" for term "shot gun"' do
+  And 'I should see "legacy_id" with value "543" for term "shot gun"' do
     info = page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'system-info']")
     info.should have_css("th", text: "legacy_id")
     info.should have_css("td", text: "543")
   end
 
   When 'I click on the toggle "PROPERTIES" for term "shot gun"' do
-    page.find(".term .value", text: "shot gun").find(:xpath, "./following-sibling::section[contains(@class, 'properties')]/h3", text: "PROPERTIES").click
+    page.find(".term .value", text: "shot gun").find(:xpath, "./following-sibling::section[contains(@class, 'properties')]/h3").click
   end
 
-  Then 'I should see "author" with value "Mr. Blake" for property "parts of speach"' do
+  And 'I should see "author" with value "Mr. Blake" for property "parts of speach"' do
     td = page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'properties']//th[text() = 'parts of speach']/following-sibling::td")
     td.should have_css(".system-info th", text: "author")
     td.should have_css(".system-info td", text: "Mr. Blake")

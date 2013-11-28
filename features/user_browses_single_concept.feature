@@ -55,7 +55,21 @@ Feature: user browses single concept
     Then the section "BROADER & NARROWER" should be hidden
     When I click on the toggle "PROPERTIES"
     Then the concept properties should be hidden
-
+    
+  Scenario: toggle all term properties
+    Given a concept with label "handgun"
+    And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
+    And this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
+    And the term "Schusswaffe" should have property "gender" with value "f"
+    And the term "Flinte" should have property "status" with value "pending"
+    When I enter "gun" in the search field
+    And I click the search button
+    And I click on the label "handgun"
+    Then I should be on the show concept page for "handgun"
+    When I click on toggle "TOGGLE ALL PROPERTIES"
+    Then I should see property "GENDER" with value "f"
+    Then I should see property "status" with value "pending"
+    
   Scenario: browse system info
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
@@ -69,13 +83,13 @@ Feature: user browses single concept
     When I enter "gun" in the search field
     And I click the search button
     And I click on the label "handgun"
+    And I click on the toggle "PROPERTIES" for term "shot gun"
     When I click the toggle "System Info" on the concept
     Then I should see "id" of the "handgun" concept
+    And I should see "legacy_id" with value "543" for term "shot gun"
+    And I should see "author" with value "Mr. Blake" for property "parts of speach"
     And I should see "author" with value "William" for property "notes"
     When I click on index item "2" for property "NOTES"
     Then I should see "author" with value "Nobody" for property "notes"
-    Then I should see "legacy_id" with value "543" for term "shot gun"
-    When I click on the toggle "PROPERTIES" for term "shot gun"
-    Then I should see "author" with value "Mr. Blake" for property "parts of speach"
     When I click the toggle "System Info" on the concept
     Then I should not see information for "id", "author", and "legacy_id"
