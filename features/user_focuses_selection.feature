@@ -25,7 +25,3 @@ Feature: User focuses selection
     And I click the placeholder node
     And I click on pocket billiards
     Then pocket billiards should be horizontally and vertically centered
-    When I search for "billiard"
-    Then "pocket billiards" and "English billiards" should be visible
-    When I click "Toggle orientation"
-    Then "pocket billiards" and "English billiards" should be visible

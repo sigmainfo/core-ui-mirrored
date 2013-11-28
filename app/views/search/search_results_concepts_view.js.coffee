@@ -4,6 +4,7 @@
 #= require helpers/repository_path
 #= require templates/search/search_results_concepts
 #= require views/concepts/concept_label_view
+#= require models/concept
 
 class Coreon.Views.Search.SearchResultsConceptsView extends Coreon.Views.CompositeView
 
@@ -19,7 +20,7 @@ class Coreon.Views.Search.SearchResultsConceptsView extends Coreon.Views.Composi
     @model.off null, null, @
 
   render: ->
-    concepts = @extractConcepts(@model.get("hits")[0..9])
+    concepts = @extractConcepts @model.get("hits")[0..9]
     @$el.html @template concepts: concepts, query: @model.query()
     @$("tbody td.label").append (index) ->
       new Coreon.Views.Concepts.ConceptLabelView(id: concepts[index].id).render().$el
@@ -29,7 +30,18 @@ class Coreon.Views.Search.SearchResultsConceptsView extends Coreon.Views.Composi
     @
 
   extractConcepts: (hits) ->
-    _(hits).pluck("result").map (result) ->
-      id: result.id
-      label: _(result.properties)?.find((prop)-> prop.key == "label")?.value
-      superconcept_ids: result.superconcept_ids
+    @stopListening()
+    concepts = for hit in hits
+      concept = Coreon.Models.Concept.find hit.result.id
+      @listenTo  concept, 'change:label', @render
+      id               : concept.id
+      label            : concept.get 'label'
+      superconcept_ids : concept.get 'superconcept_ids'
+      score            : hit.score
+
+    concepts.sort ( a, b ) ->
+      diff = b.score - a.score
+      if diff is 0
+        a.label.localeCompare b.label
+      else
+        diff

@@ -114,25 +114,4 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
     offset[:x].should be_within(10).of @center[:x]
     offset[:y].should be_within(10).of @center[:y]
   end
-
-  step 'I search for "billiard"' do
-    within '#coreon-search' do
-      fill_in 'coreon-search-query', with: 'billiard'
-      find('input[type="submit"]').click
-    end
-  end
-
-  step '"pocket billiards" and "English billiards" should be visible' do
-    within '#coreon-concept-map' do
-      page.should have_css('.concept-node a', text: 'pocket billiards', visible: true)
-      page.should have_css('.concept-node a', text: 'English billiards', visible: true)
-      page.should have_css('.concept-node a', text: 'carom billiards', visible: false)
-    end
-  end
-
-  step '"pocket billiards" should be centered vertically and horizontally' do
-    @offset = offset('#coreon-concept-map .concept-node:not(.placeholder)', text: 'pocket billiards')
-    @offset[:x].should be_within(10).of @center[:x]
-    @offset[:y].should be_within(10).of @center[:y]
-  end
 end

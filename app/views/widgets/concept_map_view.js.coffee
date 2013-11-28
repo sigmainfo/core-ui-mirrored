@@ -96,7 +96,13 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       height: @svgHeight / @navigator.scale() - 2 * padding
     hits = nodes
       .filter( (datum) -> datum.hit )
-      .sort( (a, b) -> b.score - a.score )
+      .sort( (a, b) ->
+        diff = b.score - a.score
+        if diff is 0
+          a.label.localeCompare b.label
+        else
+          diff
+      )
 
     offset = @renderStrategy.center viewport, hits
     offset.x = offset.x * @navigator.scale() + padding

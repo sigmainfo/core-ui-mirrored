@@ -21,12 +21,19 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
     @view.$el.should.have.class "search-results-concepts"
 
   describe "render()", ->
+
     beforeEach ->
+      sinon.stub Coreon.Models.Concept, 'find'
+      Coreon.Models.Concept.find.returns new Backbone.Model
+        superconcept_ids: []
       Coreon.Helpers.can = -> true
+
+    afterEach ->
+      Coreon.Models.Concept.find.restore()
 
     it "is chainable", ->
       @view.render().should.equal @view
-    
+
     it "renders headline", ->
       I18n.t.withArgs("search.results.concepts.headline").returns "Concepts"
       @view.render()
@@ -42,24 +49,31 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
       @view.$(".concepts th").eq(1).should.have.text "Superconcepts"
 
     it "renders concepts", ->
-      @view.model.set "hits", [
-        result:
-          id: "503e248cd198795712000005"
-          properties: [
-            key: "label"
-            value: "poet"
-          ]
-          superconcept_ids: [
-            "503e248cd198795712000002"
-            "504e248cd198795712000042"
-          ]
-      ]
+      Coreon.Models.Concept.find.withArgs('503e248cd198795712000005').returns new Backbone.Model
+          id: '503e248cd198795712000005'
+          superconcept_ids: [ '503e248cd198795712000002', '504e248cd198795712000042' ]
+          label: 'My Concept'
+      Coreon.Models.Concept.find.withArgs('503e248cd198795712000002').returns new Backbone.Model
+        id: '503e248cd198795712000002'
+      Coreon.Models.Concept.find.withArgs('504e248cd198795712000042').returns new Backbone.Model
+        id: '504e248cd198795712000042'
+      @view.model.set 'hits', [ result: id: '503e248cd198795712000005' ], silent: yes
       @view.render()
       @view.$(".concepts tbody tr:first td.label").should.have "a[href='/coffee23/concepts/503e248cd198795712000005']"
-      @view.$("a[href='/coffee23/concepts/503e248cd198795712000005']").should.have.text "503e248cd198795712000005"
-
+      @view.$("a[href='/coffee23/concepts/503e248cd198795712000005']").should.have.text "My Concept"
       @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/coffee23/concepts/503e248cd198795712000002']"
       @view.$(".concepts tbody tr:first td.super").should.have "a.concept-label[href='/coffee23/concepts/504e248cd198795712000042']"
+
+    it 'is rendered on concept label changes', ->
+      concept = new Backbone.Model
+          id: '503e248cd198795712000005'
+          superconcept_ids: []
+          label: 'My Concept'
+      Coreon.Models.Concept.find.withArgs('503e248cd198795712000005').returns concept
+      @view.model.set 'hits', [ result: id: '503e248cd198795712000005' ], silent: yes
+      @view.render()
+      concept.set 'label', 'Changed Concept'
+      expect( @view.$el.text() ).to.include 'Changed Concept'
 
     it "renders top 10 concepts only", ->
       @view.model.set "hits",
@@ -73,6 +87,29 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
             superconcept_ids: []
       @view.render()
       @view.$("tbody tr").length.should.equal 10
+
+    it 'sorts concept list by score and label', ->
+      Coreon.Models.Concept.find.withArgs('top_hit').returns new Backbone.Model
+        id               : 'top_hit'
+        label            : 'Zebra'
+        superconcept_ids : []
+      Coreon.Models.Concept.find.withArgs('not_so_top_hit').returns new Backbone.Model
+        id               : 'not_so_top_hit'
+        label            : 'Affe'
+        superconcept_ids : []
+      Coreon.Models.Concept.find.withArgs('other_top_hit').returns new Backbone.Model
+        id               : 'other_top_hit'
+        label            : 'Pelikan'
+        superconcept_ids : []
+      @view.model.set 'hits', [
+        { result: { id: 'top_hit'        }, score: 100 }
+        { result: { id: 'not_so_top_hit' }, score: 0.1 }
+        { result: { id: 'other_top_hit'  }, score: 100 }
+      ], silent: yes
+      @view.render()
+      expect( @view.$('tbody tr:nth-child(1) td.label') ).to.have.text 'Pelikan'
+      expect( @view.$('tbody tr:nth-child(2) td.label') ).to.have.text 'Zebra'
+      expect( @view.$('tbody tr:nth-child(3) td.label') ).to.have.text 'Affe'
 
     it "is triggered on model change", ->
       @view.render = sinon.spy()
@@ -102,10 +139,10 @@ describe "Coreon.Views.Search.SearchResultsConceptsView", ->
 
 
     context "without maintainer privileges", ->
-    
+
       beforeEach ->
         Coreon.Helpers.can = -> false
-  
+
       it "renders link to new concept form", ->
         @view.render()
         @view.$el.should.not.have 'a[href="/coffee23/concepts/new"]'
