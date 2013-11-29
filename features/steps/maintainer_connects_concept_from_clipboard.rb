@@ -40,10 +40,6 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
     end
   end
 
-  step 'I click "Edit concept"' do
-    click_link_or_button "Edit concept"
-  end
-
   step 'I click "Edit broader & narrower concepts"' do
     click_link_or_button "Edit broader & narrower concepts"
   end

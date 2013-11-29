@@ -7,6 +7,10 @@ div.concept {
   position: relative;
   padding-top: 10px;
   
+  .concept-head {
+    position: relative;
+  }
+  
   h2 {
     cursor: default;
     font-size: 1.9em;
@@ -73,7 +77,7 @@ div.concept {
   .broader-and-narrower, &>.properties, .concept .properties {
     position: relative;
     @include dottedline;
-    overflow: hidden;
+//    overflow: hidden;
   }
   
   

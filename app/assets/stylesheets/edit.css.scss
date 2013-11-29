@@ -1,12 +1,6 @@
 @import '_config';
 @import 'compass/css3';
 
-//div.concept {
-//  .actions {
-//    width: 100%;
-//    height: 24px;
-//  }
-//}
 
 .button {
   float: left;
@@ -38,7 +32,7 @@
     padding-left: 6px;
     position: absolute;
     left: 0;
-    top: -20px;
+    top: -30px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -236,10 +230,10 @@ form.create.term {
    font-size: 0.9em;
    color:$greencolor;
    display: inline-block;
-   margin-right: 10px;
-   float: right;
    position: relative;
-   top: -10px;
+   overflow: hidden;
+   text-indent: -2000px;
+   width: 16px;
 
    &:before {
      @include before-icon;
@@ -263,50 +257,17 @@ form.create.term {
      background-position: -52px -351px;
    };
   }
-  a.remove-term, a.remove-property {
-   position: absolute;
-   top: 8px;
-   right: 0;
-  }
 
-  a.remove-term {
-   right: 24px;
-   margin-right: 4px;
-   width: 16px;
-   overflow: hidden;
-   top: 6px;
-   text-indent: -2000px;
-  }
-  a.edit-term {
-   position: absolute;
-   top: 6px;
-   right: 0;
-  }
-  a.delete-concept {
-   float: right;
-   top: 0px;
-  }
-  a.add-narrower {
-   position: absolute;
-   top: 6px;
-   right: 24px;
-  }
-  .terms a.remove-property {
-   width: 16px;
-   overflow: hidden;
-   text-indent: -2000px;
-  }
   a.edit-properties, a.edit-term, a.edit-connections {
-   position: absolute;
-   top: 6px;
-   right: 6px;
-   width: 16px;
-   overflow: hidden;
-   text-indent: -5000px;
-   margin-right: 0;
    &:before {
      background-position: -52px -502px;
    };
+  }
+  
+  a.add-term {
+    width: auto;
+    overflow: auto;
+    text-indent: 0;
   }
 }
 
@@ -319,38 +280,50 @@ form.create.term {
 }
 
 .concept.edit {
+  
+  div.edit {
+    background-color: $editmode-color;
+    width: 16px;
+    padding: 5px 9px;
+  }
+  
+  >section div.edit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -34px;
+    @include dottedline;
+  }
+  
+  .term div.edit, .concept-head div.edit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+  }
+
   &>section, form>section {
     background-color: rgba($greencolor, 0.05);
-
+    margin-left: 35px;
   }
+
+    h2 {
+      margin-left: 40px;
+    }
+
+
   .button.edit-concept {
-    background-color: $beigecolor;
+    background-color: $editmode-color;
     color: $greencolor;
     &:before {
       background-position: -4px -504px;
     };
   }
   
-  .terms >.edit {
-    height:20px;
-    .add-term {
-      top: 20px;
-    }
-  }
   
   .language li.term {
-    
-    background-color: rgba($greencolor, 0.05);
-    .edit {
-      height: 12px;
-    }
-    .properties h3 {
-      top: 22px;
-    }
-//    .system-info-toggle {
-//      top: 28px;
-//    }
-    
+    background-color: rgba($greencolor, 0.05);  
+    min-height: 44px;  
   }
   
   .term.delete {
