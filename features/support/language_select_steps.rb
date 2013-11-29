@@ -55,4 +55,18 @@ module LanguageSelectSteps
       page.find("li", text: "French").click
     end
   end
+
+  step 'I select "English" as source language' do
+    page.find(source_language_css).click
+    within dropdown_css do
+      page.find("li", text: "English").click
+    end
+  end
+
+  step 'I select "German" as source language' do
+    page.find(source_language_css).click
+    within dropdown_css do
+      page.find("li", text: "German").click
+    end
+  end
 end

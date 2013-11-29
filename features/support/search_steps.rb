@@ -39,6 +39,13 @@ module SearchSteps
     end
   end
 
+  When 'I do a search for "ball"' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "ball"
+      find('input[type="submit"]').click
+    end
+  end
+
   Then 'I should be on the search result page' do
     current_path.should =~ %r|^/#{@repository.id}/search|
   end
