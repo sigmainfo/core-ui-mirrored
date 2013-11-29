@@ -2,6 +2,7 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   include AuthSteps
   include Api::Graph::Factory
   include LanguageSelectSteps
+  include EdgesHelpers
 
   def position(node)
     pos = node['transform'].match /\btranslate\((?<x>[\d+-.]+),\s*(?<y>[\d+-.]+)\)/
@@ -179,6 +180,101 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
       last   = position page.find('.concept-node', text: 'Freie Partie')
       first[:x].should  < second[:x]
       second[:x].should < last[:x]
+    end
+  end
+
+  step 'a concept "Fyodor" exists' do
+    @fyodor = create_concept_with_label 'Fyodor'
+  end
+
+  step '"Fyodor" has narrower concepts "Dmitri", "Ivan", "Alexei", "Pavel"' do
+    %w(Dmitri Ivan Alexei Pavel).each do |label|
+      concept = create_concept_with_label label, superconcept_ids: [ @fyodor['id'] ]
+      instance_variable_set "@#{label.downcase}".to_sym, concept
+    end
+  end
+
+  step '"Dmitri" has a broader concept "Adelaida"' do
+    @adelaida = create_concept_with_label 'Adelaida', subconcept_ids: [ @dmitri['id'] ]
+  end
+
+  step 'both "Ivan" and "Alexei" have a broader concept "Sofia"' do
+    @sofia = create_concept_with_label 'Sofia', subconcept_ids: [ @ivan['id'], @alexei['id'] ]
+  end
+
+  step '"Pavel" has a broader concept "Lizaveta"' do
+    @lizaveta = create_concept_with_label 'Lizaveta', subconcept_ids: [ @pavel['id'] ]
+  end
+
+  step 'I visit the concept details page for "Pavel"' do
+    visit "/#{@repository.id}/concepts/#{@pavel['id']}"
+  end
+
+  step 'I should see "Pavel" horizontally centered below "Fyodor"' do
+    within('#coreon-concept-map') do
+      page.should have_css('.concept-node:not(.placeholder)', text: 'Fyodor')
+      fyodor_node = page.find '.concept-node:not(.placeholder)', text: 'Fyodor'
+      fyodor_position = position (fyodor_node )
+      page.should have_css('.concept-node:not(.placeholder)', text: 'Pavel')
+      pavel_node = page.find '.concept-node:not(.placeholder)', text: 'Pavel'
+      pavel_position = position( pavel_node )
+      pavel_position[:x].should be_within(10).of( fyodor_position[:x] )
+      pavel_position[:y].should > fyodor_position[:y]
+    end
+  end
+
+  step 'it should be connected both to "Fyodor" and "Lizaveta"' do
+    collect_edges.should include('Fyodor -> Pavel', 'Lizaveta -> Pavel')
+  end
+
+  step 'I should see a placeholder representing the siblings of "Pavel"' do
+    within('#coreon-concept-map') do
+      page.should have_css('.placeholder', text: 'Fyodor')
+      @placeholder = page.find('.placeholder', text: 'Fyodor')
+    end
+  end
+
+  step 'it should have a count of "3"' do
+    @placeholder.find('.count').should have_text('3')
+  end
+
+  step 'I click this placeholder' do
+    @placeholder.find('.icon').click
+  end
+
+  step 'I should see "Dmitri", "Ivan", and "Alexei"' do
+    within('#coreon-concept-map') do
+      %w(Dmitri Ivan Alexei).each do |label|
+        page.should have_css('.concept-node:not(.placeholder)', text: label)
+      end
+    end
+  end
+
+  step 'I visit the concept details page for "Dmitri"' do
+    visit "/#{@repository.id}/concepts/#{@dmitri['id']}"
+  end
+
+  step 'I should see "Dmitri" horizontally centered below "Adelaida"' do
+    within('#coreon-concept-map') do
+      page.should have_css('.concept-node:not(.placeholder)', text: 'Adelaida')
+      adelaida_node = page.find '.concept-node:not(.placeholder)', text: 'Adelaida'
+      adelaida_position = position (adelaida_node )
+      page.should have_css('.concept-node:not(.placeholder)', text: 'Dmitri')
+      dmitri_node = page.find '.concept-node:not(.placeholder)', text: 'Dmitri'
+      dmitri_position = position( dmitri_node )
+      dmitri_position[:x].should be_within(10).of( adelaida_position[:x] )
+      dmitri_position[:y].should > adelaida_position[:y]
+    end
+  end
+
+  step 'it should be connected both to "Fyodor" and "Adelaida' do
+    collect_edges.should include('Fyodor -> Dmitri', 'Adelaida -> Dmitri')
+  end
+
+  step 'I should see a placeholder node representing the children of "Fyodor"' do
+    within('#coreon-concept-map') do
+      page.should have_css('.placeholder', text: 'Fyodor')
+      @placeholder = page.find('.placeholder', text: 'Fyodor')
     end
   end
 end

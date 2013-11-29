@@ -69,22 +69,6 @@ describe 'Coreon.Lib.TreeGraph', ->
           'yet another top level node'
         ]
 
-      it 'marks tail', ->
-        @graph.models = [
-          new Backbone.Model id: '515fe41', parent_node_ids: []
-                                          , label: 'Repository'
-          new Backbone.Model id: '4287g7h', parent_node_ids: []
-                                          , label: 'A top level node'
-          new Backbone.Model id: '508sdf' , parent_node_ids: []
-                                          , label: 'yet another top level node'
-          new Backbone.Model id: '1237g7h', parent_node_ids: []
-                                          , label: 'my concept'
-        ]
-        @graph.generate()
-        expect( @graph.root.children[2] ).to.have.property 'tail', yes
-        expect( @graph.root.children[0] ).to.not.have.property 'tail'
-        expect( @graph.root.children[1] ).to.not.have.property 'tail'
-
       it 'creates empty children for leaf nodes', ->
         @graph.models = [
           new Backbone.Model id: '515fe41', parent_node_ids: []
@@ -107,10 +91,14 @@ describe 'Coreon.Lib.TreeGraph', ->
 
       it 'keeps longest path only for multiparented nodes', ->
         @graph.models = [
-          new Backbone.Model id: '4287g7h', parent_node_ids: []
-          new Backbone.Model id: '515fe41', parent_node_ids: []
-          new Backbone.Model id: '787acf6', parent_node_ids: ['515fe41']
-          new Backbone.Model id: '16fjk23', parent_node_ids: ['515fe41', '787acf6']
+          new Backbone.Model id: '4287g7h' , label: 'root_concept'
+                                           , parent_node_ids: []
+          new Backbone.Model id: '515fe41' , label: 'top_level_concept'
+                                           , parent_node_ids: []
+          new Backbone.Model id: '787acf6' , label: 'child_concept'
+                                           , parent_node_ids: ['515fe41']
+          new Backbone.Model id: '16fjk23' , label: 'child_of_child_concept'
+                                           , parent_node_ids: ['515fe41'  , '787acf6']
         ]
         @graph.generate()
         parent = @graph.root.children[0]
@@ -155,19 +143,7 @@ describe 'Coreon.Lib.TreeGraph', ->
         @graph.generate()
         expect( @graph.siblings ).to.be.an.instanceOf(Array).that.is.empty
 
-      it 'collects sibling nodes', ->
-        @graph.models = [
-          new Backbone.Model id: '515fe41', parent_node_ids: []
-          new Backbone.Model id: '4287g7h', parent_node_ids: []
-          new Backbone.Model id: '975fhg' , parent_node_ids: []
-                                          , sibling_node_ids: ['4287g7h']
-        ]
-        @graph.generate()
-        siblings = @graph.siblings
-        expect( siblings ).to.have.lengthOf 1
-        expect( siblings[0] ).to.have.property 'id', '975fhg'
-
-      it 'does not add siblings to children of parent', ->
+      it 'disconnects siblings from parent', ->
         @graph.models = [
           new Backbone.Model id: '515fe41', parent_node_ids: []
                                           , label: 'Repository'
@@ -176,8 +152,8 @@ describe 'Coreon.Lib.TreeGraph', ->
           new Backbone.Model id: '508sdf' , parent_node_ids: ['4287g7h']
                                           , label: 'child node'
           new Backbone.Model id: '975fhg' , parent_node_ids: ['4287g7h']
-                                          , sibling_node_ids: ['508sdf']
                                           , label: 'sibling node'
+                                          , type: 'placeholder'
         ]
         @graph.generate()
         parent = @graph.root.children[0]
@@ -193,7 +169,8 @@ describe 'Coreon.Lib.TreeGraph', ->
           new Backbone.Model id: '508sdf' , parent_node_ids: []
                                           , label: 'yet another top level node'
           new Backbone.Model id: '975fhg' , parent_node_ids: []
-                                          , sibling_node_ids: ['4287g7h', '508sdf']
+                                          , label: '2'
+                                          , type: 'placeholder'
         ]
         @graph.generate()
         sibling = @graph.siblings[0]
@@ -205,11 +182,12 @@ describe 'Coreon.Lib.TreeGraph', ->
           new Backbone.Model id: '515fe41', parent_node_ids: []
                                           , label: 'Repository'
           new Backbone.Model id: '4287g7h', parent_node_ids: []
-                                          , label: 'A top level node'
+                                          , label: 'a top level node'
           new Backbone.Model id: '508sdf' , parent_node_ids: []
                                           , label: 'yet another top level node'
           new Backbone.Model id: '975fhg' , parent_node_ids: []
-                                          , sibling_node_ids: ['4287g7h', '508sdf']
+                                          , label: '2'
+                                          , type: 'placeholder'
         ]
         @graph.generate()
         sibling = @graph.siblings[0]
@@ -219,9 +197,14 @@ describe 'Coreon.Lib.TreeGraph', ->
       it 'creates edge for sibling', ->
         @graph.models = [
           new Backbone.Model id: '515fe41', parent_node_ids: []
+                                          , label: 'Repository'
           new Backbone.Model id: '4287g7h', parent_node_ids: []
+                                          , label: 'a top level node'
+          new Backbone.Model id: '508sdf' , parent_node_ids: []
+                                          , label: 'yet another top level node'
           new Backbone.Model id: '975fhg' , parent_node_ids: []
-                                          , sibling_node_ids: ['4287g7h']
+                                          , label: '2'
+                                          , type: 'placeholder'
         ]
         @graph.generate()
         edge = edge for edge in @graph.edges when edge.target.id is '975fhg'

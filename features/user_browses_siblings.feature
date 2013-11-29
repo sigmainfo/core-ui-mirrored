@@ -40,3 +40,22 @@ Feature: User browses siblings
     Then I should see "balkline billiards", "five pin billiards", "straight rail billiards" in this order
     When I select "German" as source language
     Then I should see "Billiardkegeln", "Cadre-Disziplin", "Freie Partie" in this order
+
+  Scenario: multiple parents
+    Given a concept "Fyodor" exists
+    And "Fyodor" has narrower concepts "Dmitri", "Ivan", "Alexei", "Pavel"
+    And "Dmitri" has a broader concept "Adelaida"
+    And both "Ivan" and "Alexei" have a broader concept "Sofia"
+    And "Pavel" has a broader concept "Lizaveta"
+    When I visit the concept details page for "Pavel"
+    Then I should see "Pavel" horizontally centered below "Fyodor"
+    And it should be connected both to "Fyodor" and "Lizaveta"
+    And I should see a placeholder representing the siblings of "Pavel"
+    And it should have a count of "3"
+    When I click this placeholder
+    Then I should see "Dmitri", "Ivan", and "Alexei"
+    When I visit the concept details page for "Dmitri"
+    Then I should see "Dmitri" horizontally centered below "Adelaida"
+    And it should be connected both to "Fyodor" and "Adelaida
+    And I should see a placeholder node representing the children of "Fyodor"
+    And it should have a count of "3"
