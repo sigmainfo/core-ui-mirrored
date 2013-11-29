@@ -29,13 +29,13 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @render
 
   render: ->
-    ul = @$ 'ul'
+    tbody = @$ 'tbody'
     sourceLanguage = Coreon.application.repositorySettings('sourceLanguage')
     noSourceLanguage = _.isEmpty(sourceLanguage) or sourceLanguage is 'none'
     if noSourceLanguage
-      ul.html @info()
+      tbody.html @info()
     else
-      ul.html ''
+      tbody.html ''
     @
 
   resize: (size) ->

@@ -53,8 +53,8 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       it 'renders info', ->
         I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
         @view.render()
-        expect( @view.$el ).to.have 'ul li.empty'
-        expect( @view.$('li.empty') ).to.have.text 'No language selected'
+        expect( @view.$el ).to.have 'tbody tr.empty'
+        expect( @view.$('tr.empty td') ).to.have.text 'No language selected'
 
     context 'unknown source language', ->
 
@@ -64,8 +64,8 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       it 'renders info', ->
         I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
         @view.render()
-        expect( @view.$el ).to.have 'ul li.empty'
-        expect( @view.$('li.empty') ).to.have.text 'No language selected'
+        expect( @view.$el ).to.have 'tbody tr.empty'
+        expect( @view.$('tr.empty td') ).to.have.text 'No language selected'
 
     context 'with source language', ->
 

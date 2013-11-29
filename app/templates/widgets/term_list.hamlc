@@ -1,3 +1,4 @@
 .titlebar
   %h4= I18n.t 'widgets.term_list.title'
-%ul
+%table
+  %tbody
