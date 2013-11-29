@@ -53,6 +53,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
         x: '45'
         y: '123'
       ]
+      nodes.transition = -> nodes
+      nodes.duration   = -> nodes
+      nodes.ease       = -> nodes
       @strategy.updateNodes nodes
       nodes.attr('transform').should.equal 'translate(123, 45)'
 
@@ -127,6 +130,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
           x: 123
           y: 67 - 7
       ).returns  'M179,123C119.5,123 119.5,123 60,123'
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
       edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,123'
 
@@ -153,6 +159,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
           x: 123
           y: 67 - 7
       ).returns  'M179,123C119.5,123 119.5,123 60,113'
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
       edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,113'
 
@@ -179,6 +188,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
           x: 123
           y: 67 - 10
       ).returns  'M179,123C119.5,123 119.5,123 60,110'
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
       edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,110'
 
@@ -194,8 +206,11 @@ describe 'Coreon.Views.Widgets.ConceptMap.LeftToRight', ->
           x: 123
           y: 67
       ]
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
-      edges.attr('d').should.equal 'm 0,0'
+      expect( edges.attr 'd' ).to.be.null
 
   describe '#updateLayout()', ->
 

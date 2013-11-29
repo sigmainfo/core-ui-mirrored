@@ -16,11 +16,24 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
       )
     @diagonal.projection (datum) -> [datum.y, datum.x]
 
-  updateNodes: (nodes) ->
+  createNodes: (enter) ->
     super
-    nodes.attr("transform", (datum) ->
+      .attr("transform", (datum) ->
         "translate(#{datum.y}, #{datum.x})"
       )
+      .style( 'opacity', 0 )
+
+  updateNodes: (nodes) ->
+    super
+      .transition()
+      .duration( 300 )
+        .attr("transform", (datum) ->
+          "translate(#{datum.y}, #{datum.x})"
+        )
+          .transition()
+            .duration( 700 )
+            .ease( 'cubic-out' )
+              .style( 'opacity', 1 )
 
     nodes.select("text.label")
       .attr("text-anchor", "start")
@@ -36,33 +49,41 @@ class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.C
         if datum.hit then 20 else 17
       )
       .attr("width", (datum) ->
-        datum.labelWidth
+        datum.labelWidth ?= d3.select(@).attr('width') * 1
       )
       .attr("x", -7)
       .attr("y", (datum) ->
         if datum.hit then -11 else -8.5
       )
 
+  createEdges: (edges) ->
+    super
+      .style( 'opacity', 0 )
+
   updateEdges: (edges) ->
     diagonal = @diagonal
-    edges.attr("d", (datum) ->
-      source = datum.source
-      target = datum.target
-      if labelWidth = source.labelWidth
-        offsetTargetY = if datum.target.type is "placeholder"
+    edges
+      .transition()
+      .duration( 300 )
+        .attr("d", (datum) ->
+          source = datum.source
+          target = datum.target
+          offsetTargetY = if datum.target.type is "placeholder"
             if datum.target.busy then 10 else 7
           else
             7
-        diagonal
-          source:
-            x: source.x
-            y: source.y + labelWidth - 7
-          target:
-            x: target.x
-            y: target.y - offsetTargetY
-      else
-        "m 0,0"
-    )
+          diagonal
+            source:
+              x: source.x
+              y: source.y + source.labelWidth - 7
+            target:
+              x: target.x
+              y: target.y - offsetTargetY
+        )
+        .transition()
+        .duration( 700 )
+        .ease( 'cubic-out' )
+          .style( 'opacity', 1 )
 
   updateLayout: (nodes, edges) ->
     nodes.select("text.label")

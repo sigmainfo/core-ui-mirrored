@@ -8,9 +8,9 @@ class Coreon.Lib.TreeGraph
     @generateNodes()
     @setRoot()
     @generateEdges()
-    @enforceTree()
     @sortChildren()
-    @connectSiblings()
+    @enforceTree()
+    @collectSiblings()
     tree: @root
     edges: @edges
     siblings: @siblings
@@ -25,7 +25,6 @@ class Coreon.Lib.TreeGraph
       @meta[model.id] =
         visited: false
         parents: 0
-        tail: no
 
   setRoot: ->
     @root = if @models.length > 0
@@ -35,7 +34,6 @@ class Coreon.Lib.TreeGraph
 
   generateEdges: ->
     @edges = []
-    @siblings = []
     for model in @models
       target = @nodes[model.id]
       continue if target is @root
@@ -47,11 +45,8 @@ class Coreon.Lib.TreeGraph
         @connect @root, target
 
   connect: (source, target) ->
-    if target.sibling_node_ids?.length > 0
-      @siblings.push target
-    else
-      source.children.push target
-      @meta[target.id].parents += 1
+    source.children.push target
+    @meta[target.id].parents += 1
     @edges.push
       source: source
       target: target
@@ -61,7 +56,7 @@ class Coreon.Lib.TreeGraph
     queue = [@root]
     while queue.length > 0
       node = queue.shift()
-      node.children = for child in node.children
+      node.children = for child in node.children.reverse()
         meta = @meta[child.id]
         unless meta.visited
           queue.push child
@@ -70,21 +65,21 @@ class Coreon.Lib.TreeGraph
           meta.parents -= 1
           continue
         child
-      for child in node.children
+      for child in node.children.reverse()
         child.parent = node
 
   sortChildren: ->
     for id, node of @nodes
       node.children.sort (a, b) ->
         a.label.toLowerCase().localeCompare b.label.toLowerCase()
-      if count = node.children.length
-        node.children[count - 1].tail = yes
 
-  connectSiblings: ->
-    for node in @siblings
-      for siblingId in node.sibling_node_ids
-        sibling = @nodes[siblingId]
-        if sibling.tail
-          node.sibling = sibling
-          node.parent = sibling.parent
-          break
+  collectSiblings: ->
+    @siblings = []
+    for id, node of @nodes
+      if node.children.length > 1
+        for child in (child for child in node.children)
+          if child.type is 'placeholder'
+            node.children.splice node.children.indexOf(child), 1
+            child.sibling = node.children[node.children.length - 1]
+            child.parent = node
+            @siblings.push child

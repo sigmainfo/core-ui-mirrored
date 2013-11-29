@@ -49,11 +49,14 @@ describe 'Coreon.Views.Widgets.ConceptMap.TopDown', ->
       finally
         Coreon.Views.Widgets.ConceptMap.RenderStrategy::updateNodes.restore()
 
-    it 'updates node position', ->
+    it 'moves nodes to new position', ->
       nodes = @selection.data [
         x: '45'
         y: '123'
       ]
+      nodes.transition = -> nodes
+      nodes.duration   = -> nodes
+      nodes.ease       = -> nodes
       @strategy.updateNodes nodes
       nodes.attr('transform').should.equal 'translate(45, 123)'
 
@@ -135,6 +138,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.TopDown', ->
           x: 123
           y: 67 - 3.5
       ).returns  'M179,123C119.5,123 119.5,123 60,123'
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
       edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,123'
 
@@ -161,6 +167,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.TopDown', ->
           x: 123
           y: 67 - 7
       ).returns  'M179,123C119.5,123 119.5,123 60,110'
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
       edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,110'
 
@@ -187,6 +196,9 @@ describe 'Coreon.Views.Widgets.ConceptMap.TopDown', ->
           x: 123
           y: 67 - 10
       ).returns  'M179,123C119.5,123 119.5,123 60,113'
+      edges.transition = -> edges
+      edges.duration   = -> edges
+      edges.ease       = -> edges
       @strategy.updateEdges edges
       edges.attr('d').should.equal 'M179,123C119.5,123 119.5,123 60,113'
 
