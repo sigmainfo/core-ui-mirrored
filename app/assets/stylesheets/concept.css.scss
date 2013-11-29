@@ -227,6 +227,9 @@ div.concept {
       width: auto;
       z-index:1;
     }
+    .edit {
+      z-index:1;
+    }
 
     >.system-info {
       margin-left: 116px;
@@ -272,12 +275,7 @@ div.concept {
           };
         };
       }
-//      &.collapsed h3 {
-//        &:before {
-//          @include rotate(0deg);
-//          background-position: 2px -846px;
-//        };
-//      }
+
       &>div {
         margin-left: 112px;
         @include dottedline;
@@ -316,7 +314,7 @@ div.concept {
   }
   &.edit {
     section h3 {
-      margin-left: 5px;
+      margin-left: 38px;
     }
   }
    

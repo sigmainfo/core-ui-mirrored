@@ -42,12 +42,25 @@
 
 
 .concept form {
+  position: relative;
+  &:before {
+    content: "";
+    background-color: $editmode-color;
+    @include retina-stripes("blue");
+    width: 16px;
+    padding: 5px 8px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  };
+  fieldset {
+    border: 0;
+    border-top: 1px solid white;
+  }
 
    &.term, fieldset {
      position: relative;
-     border: 0;
      padding-top: 18px;
-     margin-bottom: 26px;
      background-color: darken(rgba($button-color, 0.12), 4);
    }
    &.term {
@@ -56,59 +69,17 @@
    }
    &.concept {
      &>.properties fieldset {
-
        margin-bottom: 0;
-       border-bottom: 1px solid white;
-       &:last-of-type {
-         margin-bottom: 26px;
-         border-bottom: none;
-       };
      }
    }
-
-
-   &.term, .term {
-
-     .submit {
-       margin-top: 1px;
-     }
-     
-     .properties {
-         padding:0;
-         position: relative;
-         background: none;
-         a.add-property {
-           top: 6px;
-         }
-         &>.edit {
-           margin: 0;
-           background: none;
-           border-top: 1px solid white;
-           height: 30px;
-         }
-
-         fieldset {
-           border-top: 1px solid white;
-           margin:0;
-           padding-left: 100px;
-           background-color: rgba(white, 0.3);
-         }
-         h3 {
-           @include toggle;
-           padding: 0px 7px 0 5px;
-           margin: 2px 0 0 0;
-           color: $browncolor;
-
-           background: rgba(white, 0.3);
-           &:before {
-             content: none;
-           };
-           position: relative;
-           left: 0;
-           top: 0;
-         }
-     }
-
+   &.concept section div.edit, &.term .properties .edit {
+     position: relative;
+     background: none;
+     margin: 0;
+     width: auto;
+     height: 16px;
+     padding: 7px 8px;
+     border-top: 1px solid white;
    }
 
    div.input {
@@ -190,12 +161,54 @@
      cursor: default;
      @include opacity(0.5);
    }
+   
+   &.term, .term {
+
+     .submit {
+       margin-top: 1px;
+     }
+     
+     .properties {
+         padding:0;
+         position: relative;
+         background: none;
+//         &>.edit {
+//           border-top: 1px solid white;
+//           position: relative;
+//           margin: 0;
+//           background: none;
+//           width: auto;
+//           height: 36px;
+//           padding-top: 7px;
+//         }
+
+         fieldset {
+           border-top: 1px solid white;
+           margin:0;
+           padding-left: 100px;
+           background-color: rgba(white, 0.3);
+         }
+//         h3 {
+//           @include toggle;
+//           padding: 0px 7px 0 5px;
+//           margin: 2px 0 0 0;
+//           color: $browncolor;
+//
+//           background: rgba(white, 0.3);
+//           &:before {
+//             content: none;
+//           };
+//           position: relative;
+//           left: 0;
+//           top: 0;
+//         }
+     }
+
+   }
 
 }
 form.create.term {
-  @include retina-BigSeparator;
-  margin-top: 28px;
-  padding-top: 36px;
+  margin-top: 20px;
 }
 
 
@@ -226,7 +239,7 @@ form.create.term {
 }
  
 .concept  {
-  .edit a {
+  .edit a, fieldset a {
    font-size: 0.9em;
    color:$greencolor;
    display: inline-block;
@@ -264,10 +277,21 @@ form.create.term {
    };
   }
   
-  a.add-term {
+  a.add-term, a.add-property {
     width: auto;
     overflow: auto;
-    text-indent: 0;
+    text-indent: 10px;
+  }
+  
+  a.remove-property {
+    position: absolute;
+    top: 5px;
+    left: 8px;
+  }
+  a.add-property {
+    position: absolute;
+    top: 5px;
+    left: 8px;
   }
 }
 
@@ -284,18 +308,14 @@ form.create.term {
   div.edit {
     background-color: $editmode-color;
     width: 16px;
-    padding: 5px 8px;
+    padding: 5px 8px;    
   }
   
   >section div.edit {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: -33px;
     @include dottedline;
   }
   
-  .term div.edit, .concept-head div.edit {
+  .concept-head div.edit, section div.edit {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -304,7 +324,10 @@ form.create.term {
 
   &>section, form>section {
     background-color: rgba($greencolor, 0.05);
-    margin-left: 33px;
+    &>h3, &>div:not(.edit):last-child {
+      margin-left: 38px;
+    }
+
   }
   .concept-head {
     margin-left: 38px;

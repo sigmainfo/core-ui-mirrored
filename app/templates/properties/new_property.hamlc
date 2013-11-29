@@ -1,6 +1,6 @@
 %fieldset.property{class: "not-persisted" if @notPersisted }
-  .edit
-    %a.remove-property{href: "javascript:void(0)"}= I18n.t "property.remove"
+
+  %a.remove-property{href: "javascript:void(0)"}= I18n.t "property.remove"
 
   -if @property and not @property.isNew()
     != @input "property", "id", @property, scope: @scope, index: @index, type: "hidden"
