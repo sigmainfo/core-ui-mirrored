@@ -13,7 +13,7 @@
 
   != @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("id")
 
-!= @render "concepts/info", data: @concept.info()
+  != @render "concepts/info", data: @concept.info()
 
 - if @editMode and @editProperties
   != @render "concepts/edit_properties", concept: @concept, editToggle: yes

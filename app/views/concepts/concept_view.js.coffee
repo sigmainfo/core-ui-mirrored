@@ -102,7 +102,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
-    @$el.children(".system-info").after broaderAndNarrower.render().$el
+    @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @subviews.push broaderAndNarrower
 
     @draggableOn(el) for el in @$('[data-drag-ident]')

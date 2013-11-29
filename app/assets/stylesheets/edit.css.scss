@@ -204,8 +204,8 @@ form.create.term {
   form {
     overflow: hidden;
     background-color: darken(rgba($button-color, 0.12), 4);
-    margin-left: -5px;
-    margin-bottom: 8px;
+//    margin-left: -5px;
+//    margin-bottom: 8px;
     .broader {
       padding-left: 5px;
     }
@@ -284,14 +284,14 @@ form.create.term {
   div.edit {
     background-color: $editmode-color;
     width: 16px;
-    padding: 5px 9px;
+    padding: 5px 8px;
   }
   
   >section div.edit {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: -34px;
+    left: -33px;
     @include dottedline;
   }
   
@@ -304,17 +304,21 @@ form.create.term {
 
   &>section, form>section {
     background-color: rgba($greencolor, 0.05);
-    margin-left: 35px;
+    margin-left: 33px;
+  }
+  .concept-head {
+    margin-left: 38px;
+    div.edit {
+      left: -38px;
+    }
   }
 
-    h2 {
-      margin-left: 40px;
-    }
 
 
   .button.edit-concept {
     background-color: $editmode-color;
     color: $greencolor;
+    margin-left: -38px;
     &:before {
       background-position: -4px -504px;
     };
