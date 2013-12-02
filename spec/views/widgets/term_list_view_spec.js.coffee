@@ -56,6 +56,17 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         expect( @view.$el ).to.have 'ul li.empty'
         expect( @view.$('li.empty') ).to.have.text 'No language selected'
 
+    context 'unknown source language', ->
+
+      beforeEach ->
+        Coreon.application.repositorySettings.withArgs('sourceLanguage').returns {}
+
+      it 'renders info', ->
+        I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
+        @view.render()
+        expect( @view.$el ).to.have 'ul li.empty'
+        expect( @view.$('li.empty') ).to.have.text 'No language selected'
+
     context 'with source language', ->
 
       beforeEach ->
