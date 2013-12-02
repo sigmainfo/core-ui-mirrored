@@ -43,16 +43,7 @@
 
 .concept form {
   position: relative;
-  &:before {
-    content: "";
-    background-color: $editmode-color;
-    @include retina-stripes("blue");
-    width: 16px;
-    padding: 5px 8px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-  };
+
   fieldset {
     border: 0;
     border-top: 1px solid white;
@@ -196,6 +187,8 @@
    }
 
 }
+
+
 form.create.term {
   clear: both;
   margin-bottom: 20px;
@@ -296,6 +289,18 @@ form.create.term {
 }
 
 .concept.edit {
+  form {
+    &:before {
+      content: "";
+      background-color: $editmode-color;
+      @include retina-stripes("blue");
+      width: 16px;
+      padding: 5px 8px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    };
+  }
   
   div.edit {
     background-color: $editmode-color;

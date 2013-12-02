@@ -29,7 +29,7 @@ div.concept.new {
 
   .properties {
     position: relative;
-    padding-bottom: 50px;
+    padding-bottom: 30px;
   }
 
   .terms {
@@ -45,11 +45,42 @@ div.concept.new {
       right: 6px;
       top: 8px;
     }
+    
+    .add {
+      @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
+    }
+    .term {
+      margin-bottom: 20px;
+    };
 
   }
 
   .submit {
-    margin-top: 60px;
+    margin-top: 40px;
+  }
+  
+  .add {
+    position: relative;
+    clear: both;
+    margin-bottom: 20px;
+    background-color: rgba($greencolor, 0.05);
+    &:before {
+      content: "";
+      background-color: $editmode-color;
+      @include retina-stripes("blue");
+      width: 16px;
+      padding: 8px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    };
+    .edit {
+      min-height: 16px;
+      padding: 8px;
+    }
+    a {
+      position: absolute;
+    }
   }
 
 
