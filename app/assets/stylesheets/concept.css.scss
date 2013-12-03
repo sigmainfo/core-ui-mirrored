@@ -422,10 +422,6 @@ div.concept {
       z-index: 1;
     }
     .terms {
-      
-//      section {
-//        padding: 0;
-//      }
 
       li.term {
         @include single-box-shadow(rgba($greencolor, 0.2), 0px, 1px, 1px, false);

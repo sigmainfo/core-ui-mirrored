@@ -166,7 +166,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   addTerm: ->
     terms = @$(".terms")
     terms.children(".add").hide()
-    @$('.terms section.language:first').before @term term: new Coreon.Models.Term
+    @$('.terms .add').after @term term: new Coreon.Models.Term
 
   saveConceptProperties: (attrs) ->
     request = @model.save attrs, wait: yes, attrs: concept: attrs

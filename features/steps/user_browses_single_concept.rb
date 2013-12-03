@@ -141,7 +141,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I should see a section for locale "EN"' do
-    page.should have_css("section.language.en h3", text: "EN")
+    page.should have_css("section.language.en h3")
     @lang = page.find("section.language.en ul")
   end
 
@@ -214,7 +214,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should see "id" of the "handgun" concept' do
-    page.find(".concept > .system-info").find(:xpath, ".//th[text()='id']/following-sibling::td[1]").should have_content(@handgun["id"])
+    page.find(".concept .concept-head .system-info").find(:xpath, ".//th[text()='id']/following-sibling::td[1]").should have_content(@handgun["id"])
   end
 
   And 'I should see "author" with value "William" for property "NOTES"' do
