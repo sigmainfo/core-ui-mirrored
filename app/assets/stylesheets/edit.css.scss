@@ -75,6 +75,7 @@
 
    div.input {
      padding-bottom: 18px;
+     padding-left: 32px;
 
      &.required  {
        label {
@@ -268,16 +269,12 @@ form.create.term {
     text-indent: 10px;
   }
   
-  a.remove-property {
+  a.remove-property, a.remove-term {
     position: absolute;
-    top: 5px;
+    top: 8px;
     left: 8px;
   }
-  a.add-property {
-    position: absolute;
-    top: 5px;
-    left: 8px;
-  }
+
 }
 
 // for edit mode
@@ -290,16 +287,7 @@ form.create.term {
 
 .concept.edit {
   form {
-    &:before {
-      content: "";
-      background-color: $editmode-color;
-      @include retina-stripes("blue");
-      width: 16px;
-      padding: 5px 8px;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-    };
+    @include editmode;
   }
   
   div.edit {
@@ -319,7 +307,7 @@ form.create.term {
     left: 0;
   }
   
-  .terms .add {
+  .terms >.add {
     clear: both;
     margin-bottom: 20px;
     @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
@@ -335,7 +323,7 @@ form.create.term {
 
   &>section, form>section {
     background-color: rgba($greencolor, 0.05);
-    &>h3, &>div:not(.edit):last-child {
+    &>h3, &>div:not(.add):last-child {
       margin-left: 38px;
     }
 
@@ -379,15 +367,6 @@ form.create.term {
       left: 8px;
       top: 6px;
     };
-    .edit {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      &:before {
-        @include before-icon;
-        background-position: 0px -552px;
-      };
-    }
   }
 }
 

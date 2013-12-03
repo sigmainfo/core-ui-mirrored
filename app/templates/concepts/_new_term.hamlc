@@ -7,5 +7,6 @@
     - if @term?.get("properties")?.length > 0
       - for property, index in @term.properties().models
         != @render "properties/new_property", index: index, property: property, scope: "concept[terms][#{@index}][properties][]", errors: @errors?.nested_errors_on_properties?[index]
-    .edit
-      %a.add-property{href: "javascript:void(0)", "data-scope": "concept[terms][#{@index}][properties][]", "data-index": @term?.get("properties")?.length}= I18n.t "properties.add"
+    .add
+      .edit
+        %a.add-property{href: "javascript:void(0)", "data-scope": "concept[terms][#{@index}][properties][]", "data-index": @term?.get("properties")?.length}= I18n.t "properties.add"

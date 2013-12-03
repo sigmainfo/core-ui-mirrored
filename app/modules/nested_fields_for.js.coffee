@@ -25,5 +25,5 @@ Coreon.Modules.NestedFieldsFor =
       context = {}
       context[key] = value for key, value of data
       field = $(options.template context).addClass "not-persisted"
-      target.parent().before field
+      target.parent().parent().before field
       data.index += 1
