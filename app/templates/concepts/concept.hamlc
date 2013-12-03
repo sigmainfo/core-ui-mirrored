@@ -9,7 +9,7 @@
 
     .edit
       - if @can "delete", Coreon.Models.Concept
-        %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"
+        %a.delete-concept{href: "javascript:void(0)", title: I18n.t "concept.delete" }= I18n.t "concept.delete"
 
   != @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("id")
 

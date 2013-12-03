@@ -414,23 +414,23 @@ div.concept {
   
   div.concept.show, div.concept.edit {
     section h3 {
-      margin: 2px 0 2px 0;
+      margin-top: 2px;
+    }
+    
+    .submit {
+      position: relative;
+      z-index: 1;
     }
     .terms {
-      padding-top: 6px;
-      margin-top: 20px;
       
-      .section {
-        padding: 0;
-      }
+//      section {
+//        padding: 0;
+//      }
 
       li.term {
         @include single-box-shadow(rgba($greencolor, 0.2), 0px, 1px, 1px, false);
       }
-      &>.language {
-        @include dottedline;
-        padding-top: 1px;
-      }
+
       .language:before {
         content: none;
       }
@@ -453,16 +453,21 @@ div.concept {
           margin-left: 16px;
           background: none;
           border-top: 1px solid white;
-          &.edit {
+          &.add {
             margin-left: 0px;
+            .edit {
+              border: none;
+            }
           }
         }
       }  
     }
   }
-
-  .concept-to-clipboard {
-//    position: absolute;
-//    right: -30px;
+  
+  div.concept.edit {
+    .terms .term h4.value{
+      padding-top: 12px;
+    }
   }
+
 }

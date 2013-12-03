@@ -233,6 +233,7 @@ form.create.term {
    overflow: hidden;
    text-indent: -2000px;
    width: 16px;
+   line-height: 19px;
 
    &:before {
      @include before-icon;
@@ -269,7 +270,7 @@ form.create.term {
     text-indent: 10px;
   }
   
-  a.remove-property, a.remove-term {
+  a.remove-property, &.new a.remove-term {
     position: absolute;
     top: 8px;
     left: 8px;
@@ -293,7 +294,11 @@ form.create.term {
   div.edit {
     background-color: $editmode-color;
     width: 16px;
-    padding: 5px 8px;    
+    padding: 5px 8px;  
+    a {
+      margin-bottom: 1px;
+      display: block;
+    }
   }
   
   >section div.edit {
@@ -350,6 +355,10 @@ form.create.term {
   .language li.term {
     background-color: rgba($greencolor, 0.05);  
     min-height: 44px;  
+    padding-left: 32px;
+    h4 {
+      padding-top: 14px;
+    }
   }
   
   .term.delete {
@@ -404,21 +413,6 @@ form.create.term {
       }
     }
   }
-  .concept.edit {
-    .language li.term {
-      .edit {
-        height: 24px;
-      }
-      .properties h3 {
-        top: 24px;
-      }
-//      .system-info-toggle {
-//        top: 30px;
-//      }
-
-    }
-    
-  }
 }
 
 @media all and (max-width: 799px) {
@@ -436,12 +430,12 @@ form.create.term {
           padding-top: 10px;
 
           fieldset {
-            padding-left: 40px;
+            padding-left: 30px;
           }
       }
       fieldset, &.term {
         div.input {
-          padding-left: 18px;
+          padding-left: 40px;
           padding-bottom: 10px;
           &:last-child {
             padding-bottom: 18px;
@@ -449,7 +443,7 @@ form.create.term {
         }
 
         input, textarea {
-          width: 80%;
+          width: 86%;
         }
       }
     }
@@ -467,23 +461,6 @@ form.create.term {
       width:auto;
     }
 
-  }
-  .concept.edit {
-    .language li.term {
-      .edit {
-        height: 24px;
-        .remove-term, .edit-term {
-          top: 5px;
-        }
-      }
-      .properties h3 {
-        top: 24px;
-      }
-
-    }
-    
-
-    
   }
   
 }
