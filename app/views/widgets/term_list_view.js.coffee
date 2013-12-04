@@ -39,13 +39,11 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     if noSourceLanguage
       tbody.html @info()
     else
-      terms = @model.map( (term) ->
-        value: term.get 'value'
-        path: new Coreon.Models.Concept(id: term.get 'concept_id').path()
-      )
-      .sort( (a, b) ->
-        a.value.localeCompare b.value
-      )
+      terms = @model.lang( sourceLanguage )
+        .map( (term) ->
+          value: term.get 'value'
+          path: new Coreon.Models.Concept(id: term.get 'concept_id').path()
+        )
       tbody.html @terms(terms: terms)
     @
 

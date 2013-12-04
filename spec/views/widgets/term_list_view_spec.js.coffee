@@ -12,6 +12,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       repository: -> repository
     @view = new Coreon.Views.Widgets.TermListView
       model: new Backbone.Collection
+    @view.model.lang = -> @models
 
   afterEach ->
     I18n.t.restore()
