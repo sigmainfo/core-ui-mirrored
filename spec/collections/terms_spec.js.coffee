@@ -15,14 +15,39 @@ describe "Coreon.Collections.Terms", ->
 
   describe '.collection()', ->
 
+    beforeEach ->
+      @hits = new Backbone.Collection
+      sinon.stub Coreon.Collections.Hits, 'collection', => @hits
+      @collection = Coreon.Collections.Terms.collection()
+
+    afterEach ->
+      Coreon.Collections.Hits.collection.restore()
+
     it 'creates instance', ->
-      collection = Coreon.Collections.Terms.collection()
-      expect( collection ).to.be.an.instanceof Coreon.Collections.Terms
-      expect( collection ).to.have.lengthOf 0
+      expect( @collection ).to.be.an.instanceof Coreon.Collections.Terms
+      expect( @collection ).to.have.lengthOf 0
 
     it 'ensures single instance', ->
-      collection = Coreon.Collections.Terms.collection()
-      expect( Coreon.Collections.Terms.collection() ).to.equal collection
+      expect( Coreon.Collections.Terms.collection() ).to.equal @collection
+
+    it 'updates itself from hits', ->
+      @collection.reset [
+        value: 'old', lang: 'en'
+      ], silent: yes
+      @hits.reset [
+        { terms:
+          [
+            { value: 'Billiard' , lang: 'de' }
+            { value: 'billiards', lang: 'en' }
+          ]
+        }
+        { terms:
+          [
+            { value: 'Queue' , lang: 'de' }
+          ]
+        }
+      ]
+      expect( @collection ).to.have.lengthOf 3
 
   describe '#comparator()', ->
 

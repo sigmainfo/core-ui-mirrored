@@ -46,6 +46,13 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( @view.render ).to.have.been.calledOnce
       expect( @view.render ).to.have.been.calledOn @view
 
+    it 'triggered on selection changes', ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'reset'
+      expect( @view.render ).to.have.been.calledOnce
+      expect( @view.render ).to.have.been.calledOn @view
+
     context 'no source language', ->
 
       beforeEach ->

@@ -30,6 +30,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     @resize Coreon.application.repositorySettings('termList')
 
     @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @render
+    @listenTo @model, 'reset', @render
 
   render: ->
     tbody = @$ 'tbody'
