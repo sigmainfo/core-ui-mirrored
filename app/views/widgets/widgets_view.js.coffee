@@ -68,6 +68,7 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @subviews.push @map
 
     termList = new Coreon.Views.Widgets.TermListView
+      model: Coreon.Collections.Terms.collection()
     @$el.append termList.render().$el
     @subviews.push termList
 

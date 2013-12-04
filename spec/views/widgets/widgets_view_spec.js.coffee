@@ -39,9 +39,9 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @map
 
     sinon.stub Coreon.Views.Widgets, "TermListView", =>
-      @terms = new Backbone.View
-      @terms.render = sinon.stub().returns @terms
-      @terms
+      @termList = new Backbone.View
+      @termList.render = sinon.stub().returns @termList
+      @termList
 
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
@@ -64,7 +64,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   it "creates container", ->
     @view.$el.should.have.id "coreon-widgets"
 
-  describe "initialize()", ->
+  describe "#initialize()", ->
 
     beforeEach ->
       sinon.stub Coreon.application, "repositorySettings"
@@ -81,7 +81,15 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       expect( Coreon.application.repositorySettings ).to.be.calledWith("widgets")
       expect( @view.$el.width() ).to.equal 347
 
-  describe "render()", ->
+  describe "#render()", ->
+
+    beforeEach ->
+      sinon.stub Coreon.Collections.Terms, 'collection'
+      @terms = new Backbone.Collection
+      Coreon.Collections.Terms.collection.returns @terms
+
+    afterEach ->
+      Coreon.Collections.Terms.collection.restore()
 
     it "is chainable", ->
       @view.render().should.equal @view
@@ -141,10 +149,13 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     it "renders term list view", ->
       @view.render()
-      expect( Coreon.Views.Widgets.TermListView ).to.have.been.calledOnce
-      expect( @terms.render ).to.have.been.calledOnce
-      expect( $.contains @view.el, @terms.el ).to.be.true
-      expect( @view.subviews ).to.contain @terms
+      constructor = Coreon.Views.Widgets.TermListView
+      expect( constructor ).to.have.been.calledOnce
+      expect( constructor ).to.have.been.calledWithNew
+      expect( constructor ).to.have.been.calledWith model: @terms
+      expect( @termList.render ).to.have.been.calledOnce
+      expect( $.contains @view.el, @termList.el ).to.be.true
+      expect( @view.subviews ).to.contain @termList
 
   describe "resizing", ->
 
