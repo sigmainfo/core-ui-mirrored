@@ -11,6 +11,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       repositorySettings: sinon.stub().returns settings
       repository: -> repository
     @view = new Coreon.Views.Widgets.TermListView
+      model: new Backbone.Collection
 
   afterEach ->
     I18n.t.restore()
@@ -70,7 +71,14 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     context 'with source language', ->
 
       beforeEach ->
-        Coreon.application.repositorySettings.withArgs('sourceLanguage').returns 'de'
+        Coreon.application.repositorySettings.withArgs('sourceLanguage').returns 'en'
+        sinon.stub Coreon.Models, 'Concept'
+        concept = new Backbone.Model
+        concept.path = -> '/repo/concepts/123'
+        Coreon.Models.Concept.returns concept
+
+      afterEach ->
+        Coreon.Models.Concept.restore()
 
       it 'does not render info', ->
         I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
@@ -78,3 +86,29 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.render()
         expect( @view.$el ).to.not.have '.empty'
         expect( @view.$el ).to.not.have.text 'No language selected'
+
+      it 'renders terms', ->
+        @view.model.reset [
+         { id: 'term-1' , lang: 'en'  , value: 'billiards'        , concept_id: '345fgh' }
+         { id: 'term-2' , lang: 'en'  , value: 'cue'              , concept_id: 'jhg321' }
+         { id: 'term-3' , lang: 'en'  , value: 'pocket billiards' , concept_id: '4567ha' }
+        ], silent: yes
+        @view.render()
+        expect( @view.$ 'tbody' ).to.have 'tr.term td.source'
+        expect( @view.$ 'tbody tr.term td.source' ).to.have.property 'length', 3
+        expect( @view.$('tbody tr.term:nth-child(1) td.source').text() ).to.contain 'billiards'
+        expect( @view.$('tbody tr.term:nth-child(2) td.source').text() ).to.contain 'cue'
+        expect( @view.$('tbody tr.term:nth-child(3) td.source').text() ).to.contain 'pocket billiards'
+
+      it 'renders link to concept', ->
+        @view.model.reset [
+         { id: 'fgh456', lang: 'en', value: 'cue', concept_id: 'concept-123' }
+        ], silent: yes
+        concept = new Backbone.Model
+        concept.path = -> '/my-repository/concepts/concept-123'
+        Coreon.Models.Concept.withArgs( id: 'concept-123' ).returns concept
+        @view.render()
+        link = @view.$ 'tbody td.source a'
+        expect( link ).to.exist
+        expect( link ).to.have.attr 'href', '/my-repository/concepts/concept-123'
+        expect( link ).to.have.text 'cue'

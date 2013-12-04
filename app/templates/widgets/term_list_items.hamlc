@@ -1,0 +1,4 @@
+- for term in @terms
+  %tr.term
+    %td.source
+      %a{href: term.path}= term.value

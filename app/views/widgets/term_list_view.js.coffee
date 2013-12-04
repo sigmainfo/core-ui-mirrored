@@ -1,7 +1,9 @@
 #= require environment
 #= require templates/widgets/term_list
 #= require templates/widgets/term_list_info
+#= require templates/widgets/term_list_items
 #= require jquery.ui.resizable
+#= require models/concept
 
 defaults =
   size: [320, 120]
@@ -14,6 +16,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   template: Coreon.Templates['widgets/term_list']
   info    : Coreon.Templates['widgets/term_list_info']
+  terms   : Coreon.Templates['widgets/term_list_items']
 
   initialize: ->
     @stopListening()
@@ -35,7 +38,14 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     if noSourceLanguage
       tbody.html @info()
     else
-      tbody.html ''
+      terms = @model.map( (term) ->
+        value: term.get 'value'
+        path: new Coreon.Models.Concept(id: term.get 'concept_id').path()
+      )
+      .sort( (a, b) ->
+        a.value.localeCompare b.value
+      )
+      tbody.html @terms(terms: terms)
     @
 
   resize: (size) ->
