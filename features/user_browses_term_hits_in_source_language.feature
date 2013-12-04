@@ -8,7 +8,6 @@ Feature: User browses term hits in source language
     And the languages "English", "German", and "French" are available
     And I am logged in
 
-  @wip
   Scenario: terms for current hits
     Given a concept with English term "billiards" exists
     And this concept has a German term "Billiard"

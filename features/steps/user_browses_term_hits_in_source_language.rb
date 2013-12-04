@@ -31,7 +31,7 @@ class Spinach::Features::UserBrowsesTermHitsInSourceLanguage < Spinach::FeatureS
   end
 
   step 'a concept with English term "8-ball" exists' do
-    @concept = create_concept terms: [ {lang: 'en', value: '8-ball'} ]
+    @concept = @eight_ball = create_concept terms: [ {lang: 'en', value: '8-ball'} ]
   end
 
   step 'this concept has a German term "8er-Ball"' do
@@ -52,26 +52,29 @@ class Spinach::Features::UserBrowsesTermHitsInSourceLanguage < Spinach::FeatureS
   end
 
   step 'these should be "8-ball" "billiard ball", and "high bridge"' do
-    pending 'step not implemented'
+    @terms.all('td.source').map(&:text).should == [ '8-ball', 'billiard ball', 'high bridge' ]
   end
 
   step 'the "Term List" widget should contain 4 items' do
-    pending 'step not implemented'
+    @terms.should have_css('tbody tr', count: 4)
   end
 
   step 'these should be "8er-Ball", "Ball", "Billiardkugel", and "Brücke über einen Ball"' do
-    pending 'step not implemented'
+    @terms.all('td.source').map(&:text).should == [
+      '8er-Ball', 'Ball', 'Billiardkugel', 'Brücke über einen Ball'
+    ]
   end
 
   step 'I click the first item' do
-    pending 'step not implemented'
+    @terms.find('td.source a', text: '8er-Ball').click
   end
 
   step 'I should be on the concept details page for "8-ball"' do
-    pending 'step not implemented'
+    current_path.should end_with("concepts/#{@eight_ball['id']}")
   end
 
   step 'the "Term List" widget should contain "8er-Ball" only' do
-    pending 'step not implemented'
+    @terms.should have_css('tbody tr', count: 1)
+    @terms.find('tr td.source a').text().should == '8er-Ball'
   end
 end
