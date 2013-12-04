@@ -41,6 +41,7 @@ Feature: User browses siblings
     When I select "German" as source language
     Then I should see "Billiardkegeln", "Cadre-Disziplin", "Freie Partie" in this order
 
+  @firefox
   Scenario: multiple parents
     Given a concept "Fyodor" exists
     And "Fyodor" has narrower concepts "Dmitri", "Ivan", "Alexei", "Pavel"
@@ -58,4 +59,3 @@ Feature: User browses siblings
     Then I should see "Dmitri" horizontally centered below "Adelaida"
     And it should be connected both to "Fyodor" and "Adelaida
     And I should see a placeholder node representing the children of "Fyodor"
-    And it should have a count of "3"
