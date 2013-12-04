@@ -9,7 +9,7 @@ Feature: user selects source language
   Scenario: select source language
     Given the languages "English", "German", and "French" are available
     And I am logged in
-  
+
     Then I should see a widget "Languages"
     And I should see selection "None" for "Source language"
     When I click the "Source Language" selector
