@@ -64,14 +64,14 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         id: '123'
         legacy_id: '543'
       @view.render()
-      expect( @view.$el ).to.have "> .actions .system-info-toggle"
-      expect( @view.$("> .actions .system-info-toggle") ).to.have.text "System Info"
-      expect( @view.$el ).to.have "> .system-info"
-      expect( @view.$("> .system-info").css("display") ).to.equal "none"
-      expect( @view.$("> .system-info th").eq(0) ).to.have.text "id"
-      expect( @view.$("> .system-info td").eq(0) ).to.have.text "123"
-      expect( @view.$("> .system-info th").eq(1) ).to.have.text "legacy_id"
-      expect( @view.$("> .system-info td").eq(1) ).to.have.text "543"
+      expect( @view.$el ).to.have "> .concept-head .actions .system-info-toggle"
+      expect( @view.$("> .concept-head .actions .system-info-toggle") ).to.have.text "System Info"
+      expect( @view.$el ).to.have "> .concept-head .system-info"
+      expect( @view.$("> .concept-head .system-info").css("display") ).to.equal "none"
+      expect( @view.$("> .concept-head .system-info th").eq(0) ).to.have.text "id"
+      expect( @view.$("> .concept-head .system-info td").eq(0) ).to.have.text "123"
+      expect( @view.$("> .concept-head .system-info th").eq(1) ).to.have.text "legacy_id"
+      expect( @view.$("> .concept-head .system-info td").eq(1) ).to.have.text "543"
 
     it 'renders tree', ->
       @broaderAndNarrower.render = sinon.stub().returns @broaderAndNarrower
