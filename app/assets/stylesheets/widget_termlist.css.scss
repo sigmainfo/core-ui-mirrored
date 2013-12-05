@@ -4,20 +4,48 @@
 #coreon-term-list {
 //  background: none;
 //  background-color: $beigecolor;
+  overflow: auto;
   h4:before {
     background-position: 0px -900px;
   }
-  ul {
+//  ul {
+//    border-top: 1px solid rgba(white, 0.2);
+//    padding: 8px 20px;
+//    min-height: 12px;
+//    list-style: none;
+//    
+//    .empty {
+//      @include empty;
+//      padding: 10px;
+//      text-align: center;
+//      color: $greytext-color;
+//    }
+//  }
+  
+  table {
+    width: 100%;
     border-top: 1px solid rgba(white, 0.2);
-    padding: 8px 20px;
+    padding: 4px 20px;
     min-height: 12px;
-    list-style: none;
+
+
     
-    .empty {
+    .empty td {
       @include empty;
       padding: 10px;
       text-align: center;
       color: $greytext-color;
+    }
+    .term {
+      font: 1em Palatino;
+
+      td {
+        border-bottom: 1px solid rgba(white, 0.4);
+        padding-top: 1px;
+      }
+      a {
+        color: $hit-color;
+      }
     }
   }
 }
