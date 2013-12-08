@@ -19,20 +19,19 @@
   != @render "concepts/properties", properties: @concept.propertiesByKeyAndLang(), editToggle: yes
 
 .terms
-  - if @concept.get("terms")?.length > 0
-    - for lang, terms of @concept.termsByLang()
-      %section.language{class: lang}
-        %h3= lang
+  - for tuple in @langs
+    - [lang, terms] = tuple
+    %section.language{ class: lang }
+      %h3= lang
+      %ul
         - if terms.length > 0
-          %ul
-            - for term in terms
-              - if @editMode and @editTerm == term.id
-                != @render "terms/new_term", term:term, reset:true
-              - else
-                != @render "concepts/term", term:term
+          - for term in terms
+            - if @editMode and @editTerm is term.id
+              != @render 'terms/new_term', term: term, reset: true
+            - else
+              != @render 'concepts/term', term: term
         - else
-          .no-terms
-            No terms for this language
+          .no-terms= I18n.t 'terms.empty'
 
   - if @can "create", Coreon.Models.Term
     .edit

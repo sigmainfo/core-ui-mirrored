@@ -74,8 +74,21 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     subview.remove() for subview in @subviews
     @subviews = []
 
+    terms = @model.termsByLang()
+    sourceLang = Coreon.application.sourceLang()
+    targetLang = Coreon.application.targetLang()
+    langs = Coreon.application.langs()
+      .map (lang) ->
+        [ lang, terms[lang] or [] ]
+      .filter (tuple) ->
+        [lang, terms] = tuple
+        terms.length > 0 or
+        lang is sourceLang or
+        lang is targetLang
+
     @$el.html @template
       concept: @model
+      langs: langs
       editMode: @editMode
       editProperties: @editProperties
       editTerm: @editTerm
