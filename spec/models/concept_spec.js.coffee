@@ -81,7 +81,7 @@ describe 'Coreon.Models.Concept', ->
             ]
             @model.initialize()
             expect( @model.get("label") ).to.equal "poésie"
-          
+
           it "handles term lang gracefully", ->
             @model.set terms: [
               {
@@ -94,20 +94,20 @@ describe 'Coreon.Models.Concept', ->
               }
             ]
             @model.initialize()
-            expect( @model.get("label") ).to.equal "poetry"  
-            
-          context "with source language set", ->  
-          
+            expect( @model.get("label") ).to.equal "poetry"
+
+          context "with source language set", ->
+
             beforeEach ->
-              Coreon.application = 
-                repositorySettings: -> 
-                  get: (arg) -> 
+              Coreon.application =
+                repositorySettings: ->
+                  get: (arg) ->
                     return 'fr' if arg == 'sourceLanguage'
                   on: ->
-                  
+
             afterEach ->
               delete Coreon.application
-          
+
             it "uses term in selected source language", ->
               @model.set terms: [
                 {
@@ -135,20 +135,20 @@ describe 'Coreon.Models.Concept', ->
               ]
               @model.initialize()
               expect( @model.get("label") ).to.equal "poetry"
-            
+
           context "with source and target language set", ->
-            
+
             beforeEach ->
-              Coreon.application = 
+              Coreon.application =
                 repositorySettings: ->
-                  get: (arg) -> 
+                  get: (arg) ->
                     return 'fr' if arg == 'sourceLanguage'
                     return 'de' if arg == 'targetLanguage'
                   on: ->
-                
+
             afterEach ->
               delete Coreon.application
-        
+
             it "uses term in selected source language", ->
               @model.set terms: [
                 {
@@ -176,7 +176,7 @@ describe 'Coreon.Models.Concept', ->
               ]
               @model.initialize()
               expect( @model.get("label") ).to.equal "Poesie"
-          
+
             it "uses English term if not available in selected source or target language", ->
               @model.set terms: [
                 {
@@ -190,7 +190,7 @@ describe 'Coreon.Models.Concept', ->
               ]
               @model.initialize()
               expect( @model.get("label") ).to.equal "poetry"
-              
+
 
         it "is overwritten by property", ->
           @model.set {
@@ -205,19 +205,19 @@ describe 'Coreon.Models.Concept', ->
           }
           @model.initialize()
           expect( @model.get("label") ).to.equal "My_label"
-          
-        context "with source language set to French", ->  
-        
+
+        context "with source language set to French", ->
+
           beforeEach ->
-            Coreon.application = 
-              repositorySettings: () -> 
+            Coreon.application =
+              repositorySettings: () ->
                 get: (arg)->
                   return 'fr' if arg == 'sourceLanguage'
                 on: ->
-                
+
           afterEach ->
             delete Coreon.application
-        
+
           it "is overwritten by property in French", ->
             @model.set {
               properties: [
@@ -238,7 +238,7 @@ describe 'Coreon.Models.Concept', ->
             }
             @model.initialize()
             expect( @model.get("label") ).to.equal "Mon_étiquette"
-        
+
           it "is overwritten by first property if no French label property", ->
             @model.set {
               properties: [
@@ -258,19 +258,19 @@ describe 'Coreon.Models.Concept', ->
             }
             @model.initialize()
             expect( @model.get("label") ).to.equal "My_label"
-        
-        context "with target language set to German", ->  
-        
+
+        context "with target language set to German", ->
+
           beforeEach ->
-            Coreon.application = 
-              repositorySettings: () -> 
+            Coreon.application =
+              repositorySettings: () ->
                 get: (arg)->
                   return 'de' if arg == 'targetLanguage'
                 on: ->
-                
+
           afterEach ->
             delete Coreon.application
-        
+
           it "is overwritten by property in German", ->
             @model.set {
               properties: [
@@ -291,7 +291,7 @@ describe 'Coreon.Models.Concept', ->
             }
             @model.initialize()
             expect( @model.get("label") ).to.equal "Mein_Label"
-            
+
           it "is overwritten by first property if no German label property", ->
             @model.set {
               properties: [
@@ -311,22 +311,22 @@ describe 'Coreon.Models.Concept', ->
             }
             @model.initialize()
             expect( @model.get("label") ).to.equal "My_label"
-        
-          
-        
-        context "with source language set to French and target language set to German", ->  
-        
+
+
+
+        context "with source language set to French and target language set to German", ->
+
           beforeEach ->
-            Coreon.application = 
-              repositorySettings: () -> 
+            Coreon.application =
+              repositorySettings: () ->
                 get: (arg)->
                   return 'fr' if arg == 'sourceLanguage'
                   return 'de' if arg == 'targetLanguage'
                 on: ->
-                
+
           afterEach ->
             delete Coreon.application
-        
+
           it "is overwritten by property in German", ->
             @model.set {
               properties: [
@@ -351,7 +351,7 @@ describe 'Coreon.Models.Concept', ->
             }
             @model.initialize()
             expect( @model.get("label") ).to.equal "Mon_étiquette"
-        
+
 
 
       context 'on changes', ->
@@ -483,102 +483,17 @@ describe 'Coreon.Models.Concept', ->
   describe '#termsByLang()', ->
 
     it 'returns empty hash when empty', ->
-      @model.terms = -> models: []
+      @model.terms = -> new Backbone.Collection
       expect( @model.termsByLang() ).to.eql {}
 
     it 'returns terms grouped by lang', ->
       term1 = new Backbone.Model lang: 'en'
       term2 = new Backbone.Model lang: 'de'
       term3 = new Backbone.Model lang: 'de'
-      @model.terms = -> models: [ term1, term2, term3 ]
+      @model.terms = -> new Backbone.Collection [ term1, term2, term3 ]
       expect( @model.termsByLang() ).to.eql
         en: [ term1 ]
         de: [ term2, term3 ]
-        
-    context 'with source language set to de', ->
-      
-      beforeEach ->
-        Coreon.application = 
-          repositorySettings: ->
-            get: (arg) ->
-              return 'de' if arg == 'sourceLanguage'
-      
-      afterEach ->
-        delete Coreon.application
-        
-      it 'gives source language´s terms first', ->
-      
-        term1 = new Backbone.Model lang: 'en'
-        term2 = new Backbone.Model lang: 'de'
-        term3 = new Backbone.Model lang: 'fr'
-        term4 = new Backbone.Model lang: 'de'
-        @model.terms = -> models: [ term1, term2, term3, term4 ]
-        
-        expect( @model.termsByLang() ).to.eql
-          de: [ term2, term4 ]
-          en: [ term1 ]
-          fr: [ term3 ]
-
-    context 'with target language set to fr', ->
-      
-      beforeEach ->
-        Coreon.application = 
-          repositorySettings: ->
-            get: (arg) ->
-              return 'fr' if arg == 'targetLanguage'
-      
-      afterEach ->
-        delete Coreon.application
-        
-      it 'gives source language´s terms first', ->
-      
-        term1 = new Backbone.Model lang: 'en'
-        term2 = new Backbone.Model lang: 'de'
-        term3 = new Backbone.Model lang: 'fr'
-        term4 = new Backbone.Model lang: 'de'
-        @model.terms = -> models: [ term1, term2, term3, term4 ]
-        
-        expect( @model.termsByLang() ).to.eql
-          fr: [ term3 ]
-          en: [ term1 ]
-          de: [ term2, term4 ]
-
-    context 'with source language set to de and target language set to fr', ->
-      
-      beforeEach ->
-        Coreon.application = 
-          repositorySettings: ->
-            get: (arg) ->
-              return 'de' if arg == 'sourceLanguage'
-              return 'fr' if arg == 'targetLanguage'
-      
-      afterEach ->
-        delete Coreon.application
-        
-      it 'gives source language´s terms first', ->
-      
-        term1 = new Backbone.Model lang: 'en'
-        term2 = new Backbone.Model lang: 'de'
-        term3 = new Backbone.Model lang: 'fr'
-        term4 = new Backbone.Model lang: 'de'
-        @model.terms = -> models: [ term1, term2, term3, term4 ]
-        
-        expect( @model.termsByLang() ).to.eql
-          de: [ term2, term4 ]
-          fr: [ term3 ]
-          en: [ term1 ]
-          
-      it 'gives empty array for languages that are requested, but not found', ->
-        term1 = new Backbone.Model lang: 'en'
-        term2 = new Backbone.Model lang: 'de'
-        term3 = new Backbone.Model lang: 'de'
-        @model.terms = -> models: [ term1, term2, term3 ]
-        
-        expect( @model.termsByLang() ).to.eql
-          de: [ term2, term3 ]
-          fr: [ ]
-          en: [ term1 ]
-        
 
   describe '#toJSON()', ->
 
@@ -683,11 +598,11 @@ describe 'Coreon.Models.Concept', ->
       expect( @model.acceptsConnection('f00baa') ).to.be.true
 
   describe '#path()', ->
-    
+
     beforeEach ->
-      Coreon.application = 
-        repositorySettings: -> 
-          
+      Coreon.application =
+        repositorySettings: ->
+
     afterEach ->
       delete Coreon.application
 

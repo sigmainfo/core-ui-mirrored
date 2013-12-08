@@ -46,3 +46,27 @@ class Coreon.Application extends Backbone.Model
         cache.save()
     else
       cache
+
+  langs: ->
+    sourceLang = @sourceLang()
+    targetLang = @targetLang()
+
+    @repository().usedLanguages().splice(0).sort (a, b) ->
+      switch
+        when a is sourceLang then -1
+        when b is sourceLang then 1
+        when a is targetLang then -1
+        when b is targetLang then 1
+        else a.localeCompare b
+
+  sourceLang: ->
+    if settings = @repositorySettings()
+      settings.get 'sourceLang'
+    else
+      null
+
+  targetLang: ->
+    if settings = @repositorySettings()
+      settings.get 'targetLang'
+    else
+      null

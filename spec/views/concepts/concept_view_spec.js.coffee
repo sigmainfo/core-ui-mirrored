@@ -10,7 +10,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
     sinon.stub I18n, "t"
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, "BroaderAndNarrowerView", => @broaderAndNarrower
-    
+
     @property = new Backbone.Model key: "label", value: "top hat"
     @property.info = -> {}
 
@@ -47,7 +47,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       @view.initialize()
       @concept.trigger "change"
       expect( @view.render ).to.have.been.calledOnce
-  
+
     it "renders label", ->
       @concept.set "label", "Handgun", silent: true
       @view.render()
@@ -179,7 +179,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         prop1 = new Backbone.Model value: "top hat", lang: "en"
         prop1.info = -> {}
         prop2 = new Backbone.Model value: "Zylinderhut", lang: "de"
-        
+
         prop2.info = -> {}
         @concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
         @view.render()
@@ -217,7 +217,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       beforeEach ->
         sinon.stub Coreon.Templates, "concepts/info"
         @concept.set "terms", [ lang: "de", value: "top head" ], silent: true
-        @term = new Backbone.Model value: "top head" 
+        @term = new Backbone.Model value: "top head"
         @term.info = -> {}
         @concept.termsByLang = => de: [ @term ]
 
@@ -273,7 +273,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
 
       it "renders term properties", ->
         @term.set "properties", [ source: "Wikipedia" ], silent: true
-        property = new Backbone.Model source: "Wikipedia" 
+        property = new Backbone.Model source: "Wikipedia"
         @term.propertiesByKeyAndLang = -> source: [ property ]
         sinon.stub Coreon.Templates, "concepts/properties"
         try
@@ -286,7 +286,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
           expect( @view.$(".term") ).to.have ".properties"
         finally
           Coreon.Templates["concepts/properties"].restore()
-        
+
       it "collapses properties by default", ->
         @term.set "properties", [ source: "Wikipedia" ], silent: true
         property = new Backbone.Model source: "Wikipedia"
@@ -358,7 +358,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         """
       @event = $.Event()
       $("#konacha").append @view.$el
-  
+
     it "is triggered by click on system info toggle", ->
       @view.toggleInfo = sinon.stub().returns false
       @view.delegateEvents()
@@ -401,13 +401,13 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         </section>
         """
       @event = $.Event()
-    
+
     it "is triggered by click on caption for section", ->
       @view.toggleSection = sinon.stub().returns false
       @view.delegateEvents()
       @view.$("section *:first-child").first().click()
       expect( @view.toggleSection ).to.have.been.calledOnce
-    
+
     it "is not triggered for section within a form", ->
       @view.toggleSection = sinon.stub().returns false
       @view.delegateEvents()
@@ -758,7 +758,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @term.set "properties", [ key: "status" ], silent: true
         @term.properties = -> models: [ new Backbone.Model key: "status" ]
         @request.reject()
-        expect( @view.$("form.term.create .add-property") ).to.have.data "index", 1        
+        expect( @view.$("form.term.create .add-property") ).to.have.data "index", 1
 
   describe "updateTerm()", ->
 
@@ -847,7 +847,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
       expect( @view.$(".edit a.add-term") ).to.be.visible
 
   describe "reset()", ->
-  
+
     beforeEach ->
       @view.$el.append '''
         <div>
@@ -1020,7 +1020,7 @@ describe "Coreon.Views.Concepts.ConceptView", ->
         @action()
         expect( Backbone.history.navigate ).to.have.been.calledOnce
         expect( Backbone.history.navigate ).to.have.been.calledWith "/8765jhgf", trigger: true
-      
+
       it "destroys model", ->
         @view.model.destroy = sinon.spy()
         @action()

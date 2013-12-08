@@ -62,7 +62,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   initialize: ->
     @listenTo @model, "change", @render
-    
+
     if settings = Coreon.application?.repositorySettings()
       @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
     @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton

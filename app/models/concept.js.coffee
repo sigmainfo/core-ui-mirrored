@@ -56,24 +56,12 @@ class Coreon.Models.Concept extends Backbone.Model
     @persistedAttributesOn()
 
   termsByLang: ->
-    terms = {}
-
-    if settings = Coreon.application?.repositorySettings()
-      sourceLang = settings.get('sourceLanguage')
-      targetLang = settings.get('targetLanguage')
-
-      terms[sourceLang] = [] if sourceLang and sourceLang != 'none'
-      terms[targetLang] = [] if targetLang and targetLang != 'none'
-
-    for term in @terms().models
+    @terms().reduce (grouped, term) ->
       lang = term.get "lang"
-      terms[lang] ?= []
-      terms[lang].push term
-
-    #delete terms[sourceLang] if sourceLang and terms[sourceLang]?.length == 0
-    #delete terms[targetLang] if targetLang and terms[targetLang]?.length == 0
-
-    terms
+      grouped[lang] ?= []
+      grouped[lang].push term
+      grouped
+    , {}
 
   toJSON: (options) ->
     serialized = {}
