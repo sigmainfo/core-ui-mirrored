@@ -45,7 +45,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     create_concept_term_property @handgun, @handgun_terms["Schusswaffe"], key: "gender", value: "f"
   end
 
-  And 'given a broader concept with label "weapon"' do    
+  And 'given a broader concept with label "weapon"' do
     weapon = create_concept properties: [{key: 'label', value: 'weapon'}], subconcept_ids: [@handgun['id']]
   end
 
@@ -237,7 +237,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   Then 'I should see "author" with value "Mr. Blake" for property "parts of speach"' do
     td = page.find(:xpath, "//*[contains(@class, 'term')]/*[contains(@class, 'value') and text() = 'shot gun']/following-sibling::*[@class = 'properties']//th[text() = 'parts of speach']/following-sibling::td")
-    td.should have_css(".system-info th", text: "author") 
-    td.should have_css(".system-info td", text: "Mr. Blake") 
+    td.should have_css(".system-info th", text: "author")
+    td.should have_css(".system-info td", text: "Mr. Blake")
   end
 end

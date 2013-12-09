@@ -28,7 +28,7 @@ Feature: user browses single concept
     And it should display "revolver" as being narrower
     And it should display "weapon" as being broader
     And I should see the section "PROPERTIES"
-    And it should have an English property "DEFINITION" with value "A portable firearm"  
+    And it should have an English property "DEFINITION" with value "A portable firearm"
     When I click on "de" for that property
     Then the value should have changed to "Tragbare Feuerwaffe"
     And it should have a property "notes" with value "Bitte überprüfen!!!"

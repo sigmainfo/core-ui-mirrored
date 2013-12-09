@@ -74,21 +74,26 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     subview.remove() for subview in @subviews
     @subviews = []
 
-    terms = @model.termsByLang()
+    termsByLang = @model.termsByLang()
     sourceLang = Coreon.application.sourceLang()
     targetLang = Coreon.application.targetLang()
     langs = Coreon.application.langs()
+
+    sortedTermsByLang = langs
       .map (lang) ->
-        [ lang, terms[lang] or [] ]
+        [ lang, termsByLang[lang] or [] ]
       .filter (tuple) ->
         [lang, terms] = tuple
         terms.length > 0 or
         lang is sourceLang or
         lang is targetLang
 
+    for lang, terms of termsByLang
+      sortedTermsByLang.push [lang, terms] unless lang in langs
+
     @$el.html @template
       concept: @model
-      langs: langs
+      langs: sortedTermsByLang
       editMode: @editMode
       editProperties: @editProperties
       editTerm: @editTerm
@@ -107,7 +112,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     else
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
-
     @
 
   toggleInfo: (evt) ->

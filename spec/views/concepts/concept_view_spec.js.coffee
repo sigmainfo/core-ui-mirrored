@@ -282,6 +282,15 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         expect( @view.$('.language.hu') ).to.have '.no-terms'
         expect( @view.$('.hu .no-terms') ).to.have.text 'No terms for this language'
 
+      it 'renders unknown langs', ->
+        @term.set 'value', 'foo', silent: true
+        Coreon.application.langs = -> ['de', 'hu', 'en']
+        @concept.termsByLang = => ko: [ @term ]
+        @view.render()
+        expect( @view.$('.language.ko') ).to.exist
+        expect( @view.$('.language.ko') ).to.have '.term'
+        expect( @view.$('.ko .term .value') ).to.have.text 'foo'
+
       it 'renders system info for of term', ->
         @term.info = -> id: '#1234'
         Coreon.Templates['concepts/info'].withArgs(data: id: '#1234')
