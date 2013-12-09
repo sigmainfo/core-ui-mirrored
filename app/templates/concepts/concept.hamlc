@@ -21,16 +21,15 @@
   != @render "concepts/properties", properties: @concept.propertiesByKeyAndLang(), editToggle: yes
 
 .terms
+  %h4.properties-toggle{ title: 'Show all properties' }= I18n.t 'terms.toggle'
+  - if @can 'create', Coreon.Models.Term
+    .add
+      .edit
+        %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
   - for tuple in @langs
     - [lang, terms] = tuple
     %section.language{ class: lang }
       %h3= lang
-      - if terms.length > 0
-        %h4.properties-toggle{ title: 'Show all properties' }= I18n.t 'terms.toggle'
-      - if @can 'create', Coreon.Models.Term
-        .add
-          .edit
-            %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
       %ul
         - if terms.length > 0
           - for term in terms
