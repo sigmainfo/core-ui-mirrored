@@ -124,6 +124,7 @@ describe 'Coreon.Application', ->
 
     beforeEach ->
       @repository = usedLanguages: -> []
+      @app.repositorySettings = => new Backbone.Model
       @app.repository = => @repository
       @app.sourceLang = -> null
       @app.targetLang = -> null
@@ -156,7 +157,7 @@ describe 'Coreon.Application', ->
       @app.repositorySettings = => @settings
 
     it 'delegates to repository settings', ->
-      @settings.set 'sourceLang', 'hu', silent: yes
+      @settings.set 'sourceLanguage', 'hu', silent: yes
       lang = @app.sourceLang()
       expect( lang ).to.equal 'hu'
 
@@ -172,7 +173,7 @@ describe 'Coreon.Application', ->
       @app.repositorySettings = => @settings
 
     it 'delegates to repository settings', ->
-      @settings.set 'targetLang', 'hu', silent: yes
+      @settings.set 'targetLanguage', 'hu', silent: yes
       lang = @app.targetLang()
       expect( lang ).to.equal 'hu'
 

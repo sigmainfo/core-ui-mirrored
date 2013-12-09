@@ -22,27 +22,28 @@ Feature: user browses in source and target language
 
     And I am on this concept's page
 
-    Then I should see the Terms in following language order: "Russian", "English", "Korean", "German"
+
+    Then I should see the languages in alphabetic order: "DE", "EN", "KO", "RU"
 
     When I click the "Source Language" selector
-    And I select "German" from the dropdown
+    And I select "Korean" from the dropdown
 
-    Then I should see the Terms in following language order: "German", "Russian", "English", "Korean"
+    Then I should see the languages in following order: "KO", "DE", "EN", "RU"
 
     When I click the "Target Language" selector
     And I select "English" from the dropdown
 
-    Then I should see the Terms in following language order: "German", "English", "Russian", "Korean"
+    Then I should see the languages in following order: "KO", "EN", "DE", "RU"
 
     When I click the "Source Language" selector
     And I select "None" from the dropdown
 
-    Then I should see the Terms in following language order: "English", "Russian", "Korean", "German"
+    Then I should see the languages in following order: "EN", "DE", "KO", "RU"
 
     When I click the "Source Language" selector
     And I select "French" from the dropdown
 
-    Then I should see the Terms in following language order: "French", "English", "Russian", "Korean", "German"
+    Then I should see the languages in following order: "FR", "EN", "DE", "KO", "RU"
     And I should see "No terms for this language" in the French section
 
 

@@ -36,29 +36,29 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
     visit "/#{@repository.id}/concepts/#{@concept['id']}"
   end
 
-  step 'I should see the Terms in following language order: "Russian", "English", "Korean", "German"' do
+  step 'I should see the languages in alphabetic order: "DE", "EN", "KO", "RU"' do
     sleep 0.2
-    page.all(".concept .terms h3").map{|n| n.text}.should == ["RU", "EN", "KO", "DE"]
+    page.all(".concept .terms h3").map{|n| n.text}.should == [ "DE", "EN", "KO", "RU" ]
   end
 
-  step 'I should see the Terms in following language order: "German", "Russian", "English", "Korean"' do
+  step 'I should see the languages in following order: "KO", "DE", "EN", "RU"' do
     sleep 0.2
-    page.all(".concept .terms h3").map{|n| n.text}.should == [ "DE", "RU", "EN", "KO"]
+    page.all(".concept .terms h3").map{|n| n.text}.should == [ "KO", "DE", "EN", "RU" ]
   end
 
-  step 'I should see the Terms in following language order: "German", "English", "Russian", "Korean"' do
+  step 'I should see the languages in following order: "KO", "EN", "DE", "RU"' do
     sleep 0.2
-    page.all(".concept .terms h3").map{|n| n.text}.should == ["DE", "EN", "RU", "KO"]
+    page.all(".concept .terms h3").map{|n| n.text}.should == [ "KO", "EN", "DE", "RU" ]
   end
 
-  step 'I should see the Terms in following language order: "English", "Russian", "Korean", "German"' do
+  step 'I should see the languages in following order: "EN", "DE", "KO", "RU"' do
     sleep 0.2
-    page.all(".concept .terms h3").map{|n| n.text}.should == ["EN", "RU", "KO", "DE"]
+    page.all(".concept .terms h3").map{|n| n.text}.should == [ "EN", "DE", "KO", "RU" ]
   end
 
-  step 'I should see the Terms in following language order: "French", "English", "Russian", "Korean", "German"' do
+  step 'I should see the languages in following order: "FR", "EN", "DE", "KO", "RU"' do
     sleep 0.2
-    page.all(".concept .terms h3").map{|n| n.text}.should == ["FR", "EN", "RU", "KO", "DE"]
+    page.all(".concept .terms h3").map{|n| n.text}.should == [ "FR", "EN", "DE", "KO", "RU" ]
   end
 
   step 'I should see "No terms for this language" in the French section' do

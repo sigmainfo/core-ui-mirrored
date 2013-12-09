@@ -50,6 +50,12 @@ module LanguageSelectSteps
     end
   end
 
+  step 'I select "Korean" from the dropdown' do
+    within dropdown_css do
+      page.find("li", text: "Korean").click
+    end
+  end
+
   step 'I select "French" from the dropdown' do
     within dropdown_css do
       page.find("li", text: "French").click
