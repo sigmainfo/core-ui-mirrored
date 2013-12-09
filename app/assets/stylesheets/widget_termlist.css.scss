@@ -4,20 +4,73 @@
 #coreon-term-list {
 //  background: none;
 //  background-color: $beigecolor;
+
   h4:before {
     background-position: 0px -900px;
   }
-  ul {
+//  ul {
+//    border-top: 1px solid rgba(white, 0.2);
+//    padding: 8px 20px;
+//    min-height: 12px;
+//    list-style: none;
+//    
+//    .empty {
+//      @include empty;
+//      padding: 10px;
+//      text-align: center;
+//      color: $greytext-color;
+//    }
+//  }
+  
+  table {
+    width: 100%;
     border-top: 1px solid rgba(white, 0.2);
-    padding: 8px 20px;
     min-height: 12px;
-    list-style: none;
+    display: block;
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
     
-    .empty {
-      @include empty;
-      padding: 10px;
-      text-align: center;
-      color: $greytext-color;
+    tbody {
+      display: inline-block;
+      width: 88%;
+      padding: 6px 0 6px 20px;
+      position: relative;
     }
+
+    tr {
+      display: inline-block;
+      width: 100%;
+
+      &.term td {
+        display: inline-block;
+        font: 1.06em Palatino;
+        border-bottom: 1px solid rgba(white, 0.4);
+        padding-top: 1px;
+        width: 100%;
+      }
+      a {
+        color: $hit-color;
+      }
+      &:last-child {
+        td {
+          border: none;
+        }
+      }
+      &.empty  {
+        td {
+          @include empty;
+          display: inline-block;
+          padding: 16px 0;
+          width: 100%;
+          text-align: center;
+          color: $greytext-color;
+        }
+      }
+    }
+    
   }
 }
