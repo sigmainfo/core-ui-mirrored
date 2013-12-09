@@ -12,7 +12,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   Given 'a concept defined as "A portable firearm"' do
-    @handgun = create_concept properties: [{key: 'definition', value: 'A portable firearm'}] 
+    @handgun = create_concept properties: [{key: 'definition', value: 'A portable firearm'}]
   end
 
   And 'this concept has the label "handgun"' do
@@ -43,7 +43,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
 
   And 'this concept is a subconcept of "handgun"' do
     create_edge({
-      source_node_type: 'Concept', 
+      source_node_type: 'Concept',
       source_node_id: @handgun['id'],
       edge_type: 'SUPERCONCEPT_OF',
       target_node_type: 'Concept',
@@ -70,12 +70,12 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     @concept.find(".definition").should have_content("A portable firearm")
   end
 
-  And 'I should see it having the following English terms: "gun", "firearm", "shot gun", "musket"' do
-    @concept.find(".terms th", text: "EN").find(:xpath, "../td").should have_content("gun, firearm, shot gun, musket")
+  And 'I should see it having the following English terms: "firearm", "gun", "musket", "shot gun"' do
+    @concept.find(".terms th", text: "EN").find(:xpath, "../td").should have_content("firearm, gun, musket, shot gun")
   end
 
-  And 'I should see it having the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    @concept.find(".terms th", text: "DE").find(:xpath, "../td").should have_content("Schusswaffe, Flinte, Pistole, Schießgewehr, Geschütz")
+  And 'I should see it having the following German terms: "Flinte", "Geschütz", "Pistole", "Schießgewehr", "Schusswaffe"' do
+    @concept.find(".terms th", text: "DE").find(:xpath, "../td").should have_content("Flinte, Geschütz, Pistole, Schießgewehr, Schusswaffe")
   end
 
   And 'I should see a concept "pistol"' do

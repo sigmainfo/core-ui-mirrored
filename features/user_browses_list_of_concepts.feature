@@ -21,8 +21,8 @@ Feature: user browses list of concepts
     Then I should be on the search result page for concepts with query "gun"
     And I should see a concept "handgun"
     And I should see it being defined as "A portable firearm"
-    And I should see it having the following English terms: "gun", "firearm", "shot gun", "musket"
-    And I should see it having the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
+    And I should see it having the following English terms: "firearm", "gun", "musket", "shot gun"
+    And I should see it having the following German terms: "Flinte", "Geschütz", "Pistole", "Schießgewehr", "Schusswaffe"
     And I should see a concept "pistol"
     And I should see it being narrower than "handgun"
 
@@ -31,7 +31,7 @@ Feature: user browses list of concepts
     And I enter "gun" in the search field
     And I click the search button
     Then I should be on the search result page for concepts with target "terms" and query "gun"
-  
+
   Scenario: concept search by definition
     When I select "Concepts by Definition" as the type of search
     And I enter "gun" in the search field
