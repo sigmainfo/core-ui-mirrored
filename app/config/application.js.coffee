@@ -51,7 +51,7 @@ class Coreon.Application extends Backbone.Model
     sourceLang = @sourceLang()
     targetLang = @targetLang()
 
-    @repository().usedLanguages().splice(0).sort (a, b) ->
+    @repository().usedLanguages().slice(0).sort (a, b) ->
       switch
         when a is sourceLang then -1
         when b is sourceLang then 1
