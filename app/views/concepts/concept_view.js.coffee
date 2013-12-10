@@ -92,9 +92,12 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     for lang, terms of termsByLang
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
+    hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
+
     @$el.html @template
       concept: @model
       langs: sortedTermsByLang
+      hasTermProperties: hasTermProperties
       editMode: @editMode
       editProperties: @editProperties
       editTerm: @editTerm
@@ -123,7 +126,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     target = $(evt.target)
     target.closest("section").toggleClass "collapsed"
     target.siblings().not(".edit").slideToggle()
-    
+
   toggleProperties: (evt) ->
     target = @$(".term .properties")
     if @$(".term .properties.collapsed").length > 0

@@ -21,7 +21,8 @@
   != @render "concepts/properties", properties: @concept.propertiesByKeyAndLang(), editToggle: yes
 
 .terms
-  %h4.properties-toggle{ title: 'Show all properties' }= I18n.t 'terms.toggle'
+  - if @hasTermProperties
+    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.toggle'
   - if @can 'create', Coreon.Models.Term
     .add
       .edit

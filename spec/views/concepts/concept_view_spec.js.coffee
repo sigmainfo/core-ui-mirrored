@@ -22,6 +22,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     @concept.revert = ->
     @concept.set 'properties', [ @property ], silent: true
     @concept.termsByLang = -> {}
+    terms = new Backbone.Collection
+    @concept.terms = -> terms
     @concept.propertiesByKeyAndLang = => label: [ @property ]
 
     @view = new Coreon.Views.Concepts.ConceptView
@@ -223,6 +225,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         @concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
         @term = new Backbone.Model value: 'top head'
         @term.info = -> {}
+        @term.properties = -> new Backbone.Collection
         @concept.termsByLang = => de: [ @term ]
         Coreon.application.langs = -> [ 'de' ]
 
@@ -298,30 +301,53 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         @view.render()
         expect( @view.$('.term') ).to.have '.system-info'
 
-      it 'renders term properties', ->
-        @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-        property = new Backbone.Model source: 'Wikipedia'
-        @term.propertiesByKeyAndLang = -> source: [ property ]
-        sinon.stub Coreon.Templates, 'concepts/properties'
-        try
-          Coreon.Templates['concepts/properties'].withArgs(
-            properties: @term.propertiesByKeyAndLang(),
-            collapsed: true,
-            noEditButton: true
-          ).returns '<ul class="properties collapsed"></ul>'
-          @view.render()
-          expect( @view.$('.term') ).to.have '.properties'
-        finally
-          Coreon.Templates['concepts/properties'].restore()
+      context 'term properties', ->
 
-      it 'collapses properties by default', ->
-        @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-        property = new Backbone.Model source: 'Wikipedia'
-        property.info = -> {}
-        @term.propertiesByKeyAndLang = -> source: [ property ]
-        @view.render()
-        expect( @view.$('.term .properties') ).to.have.class 'collapsed'
-        expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
+        it 'renders term properties', ->
+          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
+          property = new Backbone.Model source: 'Wikipedia'
+          @term.propertiesByKeyAndLang = -> source: [ property ]
+          sinon.stub Coreon.Templates, 'concepts/properties'
+          try
+            Coreon.Templates['concepts/properties'].withArgs(
+              properties: @term.propertiesByKeyAndLang(),
+              collapsed: true,
+              noEditButton: true
+            ).returns '<ul class="properties collapsed"></ul>'
+            @view.render()
+            expect( @view.$('.term') ).to.have '.properties'
+          finally
+            Coreon.Templates['concepts/properties'].restore()
+
+        it 'collapses properties by default', ->
+          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
+          property = new Backbone.Model source: 'Wikipedia'
+          property.info = -> {}
+          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @view.render()
+          expect( @view.$('.term .properties') ).to.have.class 'collapsed'
+          expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
+
+        it 'renders toggle for properties', ->
+          I18n.t.withArgs('terms.properties.toggle').returns 'Toggle properties'
+          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
+          property = new Backbone.Model source: 'Wikipedia'
+          property.info = -> {}
+          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @view.render()
+          expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
+
+        it 'renders toggle all button', ->
+          I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
+          @concept.terms = -> [ properties: -> [ new Backbone.Model ] ]
+          @view.render()
+          expect( @view.$('.terms') ).to.have '> .properties-toggle'
+          toggle = @view.$('.terms > .properties-toggle')
+          expect( toggle ).to.have.attr 'title', 'Toggle all properties'
+
+        it 'renders toggle button only when applicable', ->
+          @view.render()
+          expect( @view.$('.terms') ).to.not.have '.properties-toggle'
 
       context 'with edit privileges', ->
 
@@ -376,7 +402,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         </section>
       """
       $("#konacha").append @view.$el
-          
+
     it "is triggered by click on system info toggle", ->
       @view.toggleInfo = sinon.spy()
       @view.delegateEvents()
@@ -388,7 +414,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.$(".system-info") ).to.be.hidden
       @view.toggleInfo()
       expect( @view.$(".system-info") ).to.be.visible
-      
+
   describe "toggleProperties()", ->
 
     beforeEach ->
@@ -398,7 +424,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
             <section class="properties">
               <h3>PROPERTIES</h3>
               <div>foo</div>
-          </div>          
+          </div>
           <div class="term">
             <section class="properties">
               <h3>PROPERTIES</h3>
@@ -406,9 +432,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           </div>
         </section>
       """
-      
+
       $("#konacha").append @view.$el
-      
+
     it "is triggered by click on all term properties toggle", ->
       @view.toggleProperties = sinon.spy()
       @view.delegateEvents()
@@ -444,8 +470,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
       expect( @view.$(".term:last .properties div") ).to.be.hidden
       expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
-      
-      
+
+
 
   describe "toggleSection()", ->
 
@@ -709,6 +735,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         @term.save = sinon.spy => @request = $.Deferred()
         @term.errors = => @errors
         @term.persistedAttributes = => @persistedAttributes
+        @term.properties = -> []
         @term
       @view.$el.append '''
         <form class="term create">
@@ -972,6 +999,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         </li>
         '''
       term = new Backbone.Model id: '518d2569edc797ef6d000008'
+      term.properties = -> []
       term.destroy = sinon.spy()
       terms = new Backbone.Collection [ term ]
       @view.model.terms = -> terms
