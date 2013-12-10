@@ -63,7 +63,7 @@ en:
     new_concept: "<New concept>"
     new: "New concept"
     add_narrower: "Add narrower concept"
-    edit: "Edit concept"
+    edit: "Edit mode"
     create: "Create concept"
     delete: "Delete concept"
     confirm_delete: "This concept including all terms will be deleted permanently!"
@@ -89,6 +89,10 @@ en:
     title: "Terms"
     add: "Add term"
     empty: "No terms for this language"
+    properties:
+      toggle-all: "Toggle all properties"
+      toggle: "Toggle properties"
+
 
   properties:
     title: "Properties"

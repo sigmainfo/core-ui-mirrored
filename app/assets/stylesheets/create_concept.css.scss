@@ -29,7 +29,7 @@ div.concept.new {
 
   .properties {
     position: relative;
-    padding-bottom: 50px;
+    padding-bottom: 30px;
   }
 
   .terms {
@@ -41,15 +41,45 @@ div.concept.new {
     .term {
       background-image: none;
     }
-    .edit a.remove-term {
-      right: 6px;
-      top: 8px;
+    
+    .add {
+      @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
     }
+    .term {
+      margin-bottom: 20px;
+    };
 
+  }
+  
+  .create >.properties fieldset, .terms >fieldset {
+    @include editmode;
+  }
+  
+  .create >.properties fieldset, .create >.properties .add .edit {
+    border: none;
+  }
+  .create >.properties fieldset {
+    border: none;
+    border-bottom: 1px solid white;
   }
 
   .submit {
-    margin-top: 60px;
+    margin-top: 40px;
+  }
+  
+  .add {
+    @include editmode;
+    position: relative;
+    clear: both;
+    background-color: rgba($greencolor, 0.05);
+
+    .edit {
+      min-height: 16px;
+      padding: 8px;
+    }
+    a {
+      position: absolute;
+    }
   }
 
 

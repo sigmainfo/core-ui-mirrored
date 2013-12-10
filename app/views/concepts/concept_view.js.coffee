@@ -28,8 +28,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable
 
-  className: "concept show"
-  editMode: no
+  className: 'concept'
   editProperties: no
   editTerm: no
 
@@ -45,6 +44,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
+    "click  .properties-toggle"                  : "toggleProperties"
     "click  .properties .index li"               : "selectProperty"
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
@@ -61,10 +61,13 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
   initialize: ->
+    @stopListening()
     @listenTo @model, "change", @render
+    @listenTo Coreon.application, 'change:editMode', @render
 
     if settings = Coreon.application?.repositorySettings()
       @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
+
     @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
     @subviews = []
     @
@@ -91,17 +94,24 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     for lang, terms of termsByLang
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
+    hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
+    editMode = Coreon.application.get 'editMode'
+
+    @$el.toggleClass 'edit', editMode
+    @$el.toggleClass 'show', not editMode
+
     @$el.html @template
       concept: @model
       langs: sortedTermsByLang
-      editMode: @editMode
+      hasTermProperties: hasTermProperties
+      editMode: editMode
       editProperties: @editProperties
       editTerm: @editTerm
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
-    @$el.children(".system-info").after broaderAndNarrower.render().$el
+    @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @subviews.push broaderAndNarrower
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
@@ -115,15 +125,22 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @
 
   toggleInfo: (evt) ->
-    target = $ evt.target
-    target.next(".system-info")
-      .add( target.siblings(".properties").find ".system-info" )
+    @$(".system-info")
       .slideToggle()
 
   toggleSection: (evt) ->
     target = $(evt.target)
     target.closest("section").toggleClass "collapsed"
     target.siblings().not(".edit").slideToggle()
+
+  toggleProperties: (evt) ->
+    target = @$(".term .properties")
+    if @$(".term .properties.collapsed").length > 0
+      target.removeClass "collapsed"
+      target.children("div").not(".edit").slideDown()
+    else
+      target.addClass "collapsed"
+      target.children("div").not(".edit").slideUp()
 
   selectProperty: (evt) ->
     target = $(evt.target)
@@ -133,12 +150,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       .addClass "selected"
 
   toggleEditMode: ->
-    @editMode = !@editMode
-    if @editMode
-      @$el.removeClass("show").addClass("edit")
-    else
-      @$el.removeClass("edit").addClass("show")
-    @render()
+    Coreon.application.set 'editMode',
+      not Coreon.application.get 'editMode'
 
   toggleEditConceptProperties: (evt)->
     evt.preventDefault() if evt?
@@ -157,8 +170,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   addTerm: ->
     terms = @$(".terms")
-    terms.children(".edit").hide()
-    terms.append @term term: new Coreon.Models.Term
+    terms.children(".add").hide()
+    @$('.terms .add').after @term term: new Coreon.Models.Term
 
   saveConceptProperties: (attrs) ->
     request = @model.save attrs, wait: yes, attrs: concept: attrs

@@ -1,12 +1,6 @@
 @import '_config';
 @import 'compass/css3';
 
-div.concept {
-  .actions {
-    width: 100%;
-    height: 24px;
-  }
-}
 
 .button {
   float: left;
@@ -36,8 +30,9 @@ div.concept {
   &.edit-concept {
     @extend .big;
     padding-left: 6px;
-    float: right;
-    margin-left: 14px;
+    position: absolute;
+    left: 0;
+    top: -30px;
     &:before {
       background-position: -54px -504px;
       margin-right: 3px;
@@ -45,37 +40,18 @@ div.concept {
   }
 }
 
-.concept-to-clipboard {
-  font-size: 0.9em;
-  display: inline-block;
-  float: right;
-  margin-left: 10px;
-  height: 18px;
-  &:before {
-    @include before-icon;
-    float: left;
-    width: 18px;
-    background-position: -3px -650px;
-  };
-  &:hover {
-    color: $hover-color;
-  }
-  &.remove {
-    color: $greytext-color;
-    &:before {
-      background-position: -53px -650px;
-    };
-  }
-}
-
 
 .concept form {
+  position: relative;
+
+  fieldset {
+    border: 0;
+    border-top: 1px solid white;
+  }
 
    &.term, fieldset {
      position: relative;
-     border: 0;
      padding-top: 18px;
-     margin-bottom: 26px;
      background-color: darken(rgba($button-color, 0.12), 4);
    }
    &.term {
@@ -84,63 +60,22 @@ div.concept {
    }
    &.concept {
      &>.properties fieldset {
-
        margin-bottom: 0;
-       border-bottom: 1px solid white;
-       &:last-of-type {
-         margin-bottom: 26px;
-         border-bottom: none;
-       };
      }
    }
-
-
-   &.term, .term {
-
-     .submit {
-       margin-top: 1px;
-     }
-     
-     .properties {
-         padding:0;
-         position: relative;
-         background: none;
-         a.add-property {
-           top: 6px;
-         }
-         &>.edit {
-           margin: 0;
-           background: none;
-           border-top: 1px solid white;
-           height: 30px;
-         }
-
-         fieldset {
-           border-top: 1px solid white;
-           margin:0;
-           padding-left: 100px;
-           background-color: rgba(white, 0.3);
-         }
-         h3 {
-           @include toggle;
-           padding: 0px 7px 0 5px;
-           margin: 2px 0 0 0;
-           color: $browncolor;
-
-           background: rgba(white, 0.3);
-           &:before {
-             content: none;
-           };
-           position: relative;
-           left: 0;
-           top: 0;
-         }
-     }
-
+   &.concept section div.edit, &.term .properties .edit {
+     position: relative;
+     background: none;
+     margin: 0;
+     width: auto;
+     height: 16px;
+     padding: 7px 8px;
+     border-top: 1px solid white;
    }
 
    div.input {
      padding-bottom: 18px;
+     padding-left: 32px;
 
      &.required  {
        label {
@@ -218,22 +153,58 @@ div.concept {
      cursor: default;
      @include opacity(0.5);
    }
+   
+   &.term, .term {
+
+     .submit {
+       margin-top: 1px;
+     }
+     
+     .properties {
+         padding:0;
+         position: relative;
+         background: none;
+
+         fieldset {
+           border-top: 1px solid white;
+           margin:0;
+           padding-left: 100px;
+           background-color: rgba(white, 0.3);
+         }
+         h3 {
+           padding: 1px 7px 0 5px;
+           margin: 0;
+           margin-top: 5px;
+           background: rgba(white, 0.3);
+           &:before {
+             content: none;
+           };
+           position: relative;
+           left: 34px;
+           top: 1px;
+         }
+     }
+
+   }
 
 }
+
+
 form.create.term {
-  @include retina-BigSeparator;
-  margin-top: 28px;
-  padding-top: 36px;
+  clear: both;
+  margin-bottom: 20px;
 }
 
 
 .concept.edit .broader-and-narrower {
+  min-height: 44px;
   
   form {
     overflow: hidden;
     background-color: darken(rgba($button-color, 0.12), 4);
-    margin-left: -5px;
-    margin-bottom: 8px;
+    >div {
+      margin-left: 32px;
+    }
     .broader {
       padding-left: 5px;
     }
@@ -254,14 +225,15 @@ form.create.term {
 }
  
 .concept  {
-  .edit a {
+  .edit a, fieldset a {
    font-size: 0.9em;
    color:$greencolor;
    display: inline-block;
-   margin-right: 10px;
-   float: right;
    position: relative;
-   top: -10px;
+   overflow: hidden;
+   text-indent: -2000px;
+   width: 16px;
+   line-height: 19px;
 
    &:before {
      @include before-icon;
@@ -285,51 +257,25 @@ form.create.term {
      background-position: -52px -351px;
    };
   }
-  a.remove-term, a.remove-property {
-   position: absolute;
-   top: 8px;
-   right: 0;
-  }
 
-  a.remove-term {
-   right: 24px;
-   margin-right: 4px;
-   width: 16px;
-   overflow: hidden;
-   top: 6px;
-   text-indent: -2000px;
-  }
-  a.edit-term {
-   position: absolute;
-   top: 6px;
-   right: 0;
-  }
-  a.delete-concept {
-   float: right;
-   top: 0px;
-  }
-  a.add-narrower {
-   position: absolute;
-   top: 6px;
-   right: 24px;
-  }
-  .terms a.remove-property {
-   width: 16px;
-   overflow: hidden;
-   text-indent: -2000px;
-  }
   a.edit-properties, a.edit-term, a.edit-connections {
-   position: absolute;
-   top: 6px;
-   right: 6px;
-   width: 16px;
-   overflow: hidden;
-   text-indent: -5000px;
-   margin-right: 0;
    &:before {
      background-position: -52px -502px;
    };
   }
+  
+  a.add-term, a.add-property {
+    width: auto;
+    overflow: auto;
+    text-indent: 10px;
+  }
+  
+  a.remove-property, &.new a.remove-term {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+  }
+
 }
 
 // for edit mode
@@ -341,38 +287,78 @@ form.create.term {
 }
 
 .concept.edit {
+  form {
+    @include editmode;
+  }
+  
+  div.edit {
+    background-color: $editmode-color;
+    width: 16px;
+    padding: 5px 8px;  
+    a {
+      margin-bottom: 1px;
+      display: block;
+    }
+  }
+  
+  >section div.edit {
+    @include dottedline;
+  }
+  
+  .concept-head div.edit, section div.edit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  .terms >.add {
+    clear: both;
+    margin-bottom: 20px;
+    @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
+    background-color: rgba($greencolor, 0.05);
+    .edit {
+      min-height: 16px;
+      padding: 8px;
+    }
+    a {
+      position: absolute;
+    }
+  }
+
   &>section, form>section {
     background-color: rgba($greencolor, 0.05);
+    &>h3, &>div:not(.add):last-child {
+      margin-left: 38px;
+    }
 
   }
+  .concept-head {
+    margin-left: 38px;
+    div.edit {
+      left: -38px;
+    }
+  }
+
+
+
   .button.edit-concept {
-    background-color: $beigecolor;
+    background-color: $editmode-color;
     color: $greencolor;
+    margin-left: -38px;
     &:before {
       background-position: -4px -504px;
     };
   }
   
-  .terms >.edit {
-    height:20px;
-    .add-term {
-      top: 20px;
-    }
-  }
   
   .language li.term {
-    
-    background-color: rgba($greencolor, 0.05);
-    .edit {
-      height: 12px;
+    background-color: rgba($greencolor, 0.05);  
+    min-height: 44px;  
+    padding-left: 32px;
+    h4 {
+      padding-top: 14px;
     }
-    .properties h3 {
-      top: 22px;
-    }
-    .system-info-toggle {
-      top: 28px;
-    }
-    
   }
   
   .term.delete {
@@ -383,15 +369,13 @@ form.create.term {
   .property.delete {
     background-color:$greycolor;
     @include opacity(0.4);
-    .edit {
+    &:before {
+      @include before-icon;
+      background-position: 0px -552px;
       position: absolute;
-      right: 10px;
-      top: 10px;
-      &:before {
-        @include before-icon;
-        background-position: 0px -552px;
-      };
-    }
+      left: 8px;
+      top: 6px;
+    };
   }
 }
 
@@ -429,21 +413,6 @@ form.create.term {
       }
     }
   }
-  .concept.edit {
-    .language li.term {
-      .edit {
-        height: 24px;
-      }
-      .properties h3 {
-        top: 24px;
-      }
-      .system-info-toggle {
-        top: 30px;
-      }
-
-    }
-    
-  }
 }
 
 @media all and (max-width: 799px) {
@@ -461,12 +430,12 @@ form.create.term {
           padding-top: 10px;
 
           fieldset {
-            padding-left: 40px;
+            padding-left: 30px;
           }
       }
       fieldset, &.term {
         div.input {
-          padding-left: 18px;
+          padding-left: 40px;
           padding-bottom: 10px;
           &:last-child {
             padding-bottom: 18px;
@@ -474,7 +443,7 @@ form.create.term {
         }
 
         input, textarea {
-          width: 80%;
+          width: 86%;
         }
       }
     }
@@ -492,31 +461,6 @@ form.create.term {
       width:auto;
     }
 
-  }
-  .concept.edit {
-    .language li.term {
-      .edit {
-        height: 24px;
-        .remove-term, .edit-term {
-          top: 5px;
-        }
-      }
-      .properties h3 {
-        top: 24px;
-      }
-
-    }
-    
-
-    
-  }
-  .concept-to-clipboard {
-    text-indent: -2000px;
-    overflow: hidden;
-    width: 16px;
-    height: 20px;
-    position: absolute;
-    right: -30px;
   }
   
 }

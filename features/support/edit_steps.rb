@@ -31,7 +31,7 @@ module EditSteps
   end
 
   step 'I click "Edit concept"' do
-    click_link "Edit concept"
+    click_link "Edit mode"
   end
 
   step 'I visit the page of this concept' do

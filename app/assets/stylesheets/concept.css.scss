@@ -5,6 +5,11 @@ div.concept {
   margin-right: 270px;
   min-width: 200px;
   position: relative;
+  padding-top: 10px;
+  
+  .concept-head {
+    position: relative;
+  }
   
   h2 {
     cursor: default;
@@ -13,7 +18,7 @@ div.concept {
     line-height: 1.4em;
     padding: 0px 10px 0px 20px;
     margin-bottom: 12px;
-    margin-right: 30px;
+    max-width: 85%;
     &:before {
       border: 2px solid lighten($text-color, 20%);
       @include border-radius(5px);
@@ -22,29 +27,59 @@ div.concept {
       top: 11px;
     };
   }
+  .actions {
+    float: right;
+    padding-right: 6px;
+  }
+  .concept-to-clipboard, .system-info-toggle, .properties-toggle {
+    text-indent: -2000px;
+    overflow: hidden;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-image: image-url("layout/icons.png");
+    background-repeat: no-repeat;
+    @include retina-icons;
+
+  }
+  
+  .concept-to-clipboard {   
+    background-position: -3px -650px;
+    &.remove {
+      background-position: -53px -650px;
+    }
+  }
+  .system-info-toggle {
+    background-color: rgba($greencolor, 0.08);
+    background-position: -1px -201px;
+
+    &:hover {
+      cursor: pointer;
+      background-position: -51px -201px;
+      background-color: rgba($link-color, 0.15);  
+    };
+  }
+  
+  .properties-toggle {
+    background-color: rgba($greencolor, 0.08);
+    background-position: 2px -846px;
+    float: right;
+    margin: 6px;
+
+    &:hover {
+      cursor: pointer;
+      background-position: -48px -846px;
+      background-color: rgba($link-color, 0.15);  
+    };
+    
+  }
   
   .broader-and-narrower, &>.properties, .concept .properties {
     position: relative;
     @include dottedline;
-    overflow: hidden;
+//    overflow: hidden;
   }
   
-  .system-info-toggle {
-    display: block;
-    width: 18px;   
-    height: 17px;
-    background: rgba($greencolor, 0.08) image-url("layout/icons.png") no-repeat -1px -201px;
-    @include retina-icons;
-    text-indent: -2000px;
-    overflow: hidden;
-    position: absolute;
-    right: 6px;
-    top: 30px;
-    &:hover {
-      cursor: pointer;
-      background-position: -51px -201px;
-    };
-  }
   
   .system-info {
     line-height: 12px;
@@ -146,26 +181,14 @@ div.concept {
   }
   
   .terms {
-    margin-top: 60px;
-      &>h3 {
-        @include toggle;
-        padding: 2px 7px 1px 5px;
-        margin: 0px 0 1px 0;
-        color: $browncolor;
-
-        background: rgba($greencolor, 0.08);
-        &:before {
-          content: none;
-        };
-      }
-/*    @include background(linear-gradient(rgba($browncolor, 0.03), rgba($browncolor, 0)));*/
-    
-
+    margin-top: 50px; 
+    @include dottedline;  
       .no-terms {
         @include empty;
         padding: 3px 30px;
       }
     section.language {
+      clear: both;
       margin-top: 12px;
       min-height: 18px;            
       &>h3 {
@@ -191,37 +214,73 @@ div.concept {
 
   }
   
-  .term {
+  li.term {
     position: relative;
 
     h4.value {
       font: 1.4em Palatino;
-      padding: 12px 100px 6px 97px;
-      &:before {
-        content:"»\00a0";
-        font-size: 1.3em;
-      };
+      margin-left: 112px;
+      margin-right: 30px;
+      padding: 8px 0 6px 0;
+      position: relative;
+      display: inline-block;
+      width: auto;
+      z-index:1;
     }
-    .system-info-toggle {
-      top: 15px;
+    .edit {
+      z-index:1;
     }
+
     >.system-info {
-      padding-left: 116px;
+      margin-left: 116px;
+      position: relative;
+      z-index:1;
       table {
         margin-top: 2px;
       }
     }
     
-    .properties {
+    
+    section.properties {
 
-      h3 {
+      h3, .collapsed h3 {
+        text-indent: -2000px;
+        overflow: hidden;
         position: absolute;
-        right: 26px;
-        top: 9px;
+        background: none;
+        margin: 0;
+        padding: 0;
+        width: auto;
+        height: auto;
+        top:0;
+        bottom: 0;
+        right: 0;
+        left:0;
+        z-index: 0;
+        &:before {
+          position: absolute;
+          top: 8px;
+          right: 6px;
+          width: 18px;
+          height: 18px;
+          @include rotate(0deg);
+          background-color: rgba($greencolor, 0.08);
+          background-position: 2px -846px;
+        };
+        &:hover {
+          background-color: rgba($greencolor, 0.04);
+          &:before { 
+            background-color: rgba($link-color, 0.2);   
+            background-position: -48px -846px;
+          };
+        };
       }
+
       &>div {
         margin-left: 112px;
         @include dottedline;
+        position: relative;
+        z-index:1;
       }
     }
   }
@@ -230,7 +289,7 @@ div.concept {
   &.show, &.edit {
 
     section {
-      h3 {
+      &>h3 {
         @include toggle;
         padding: 0;
         margin: 6px 0 5px 0;
@@ -255,7 +314,7 @@ div.concept {
   }
   &.edit {
     section h3 {
-      margin-left: 5px;
+      margin-left: 38px;
     }
   }
    
@@ -267,10 +326,11 @@ div.concept {
     
     h2 {
       font-size: 1.6em;
-      line-height: 1em;
+//      line-height: 1em;
       min-height: 1em;
       padding: 2px 6px 3px 16px;
       margin-bottom: 6px;
+      max-width: 80%;
       @include concept-icon;
     }
     
@@ -284,24 +344,26 @@ div.concept {
     .terms {
       .term h4.value {
         font-size: 1.3em;
-        padding: 3px 100px 2px 67px;
+        padding: 7px 0 5px 0;
+        margin-left: 85px;
       }
       .term >.system-info {
-        padding-left: 80px;
+        margin-left: 85px;
         table {
           margin-top: 2px;
         }
       }
-      .properties {
+      li.term section.properties {
         h3 {
           top: -1px;
+          &:before {
+            top: 6px;
+            right: 6px;
+          };
         }
         &>div {
-          margin-left: 64px;
+          margin-left: 85px;
         }
-      }
-      .system-info-toggle {
-        top: 5px;
       }
     }
 
@@ -315,10 +377,10 @@ div.concept {
     
     h2 {
       font-size: 1.2em;
-      line-height: 1.3em;
+      line-height: 1.4em;
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
-      margin-right: 0px;
+      max-width: 80%;
       @include concept-icon;
     }
     
@@ -352,52 +414,56 @@ div.concept {
   
   div.concept.show, div.concept.edit {
     section h3 {
-      margin: 2px 0 2px 0;
+      margin-top: 2px;
+    }
+    
+    .submit {
+      position: relative;
+      z-index: 1;
     }
     .terms {
-      padding-top: 6px;
-      margin-top: 20px;
-      
-      .section {
-        padding: 0;
-      }
 
       li.term {
         @include single-box-shadow(rgba($greencolor, 0.2), 0px, 1px, 1px, false);
       }
-      &>.language {
-        @include dottedline;
-        padding-top: 1px;
-      }
+
       .language:before {
         content: none;
       }
       .term h4.value {
         font-size: 1.1em;
-        padding: 0px 80px 0px 16px;
+        padding: 4px 0 3px 0;
+        margin-left: 16px;
       }
 
       .language .properties {
         background: none;
         h3 {
           right: 0px;
+          &:before {
+            top: 2px;
+            right: 2px;
+          };
         }
         &>div {
-          margin-left: 12px;
+          margin-left: 16px;
           background: none;
           border-top: 1px solid white;
-          &.edit {
+          &.add {
             margin-left: 0px;
+            .edit {
+              border: none;
+            }
           }
         }
       }  
     }
   }
-  div.concept {
-    .language .properties {
-      h3 {
-        top: -1px;
-      }
+  
+  div.concept.edit {
+    .terms .term h4.value{
+      padding-top: 12px;
     }
   }
+
 }

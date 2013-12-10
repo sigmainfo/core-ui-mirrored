@@ -22,8 +22,8 @@ Coreon.Modules.Confirmation =
     position = ->
       dialog
         .position
-          my: "center bottom"
-          at: "left+2 top-12"
+          my: "left bottom"
+          at: "left-34px top-12"
           of: trigger
           collision: "none flip"
         .toggleClass "flipped",

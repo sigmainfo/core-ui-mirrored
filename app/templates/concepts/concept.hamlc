@@ -1,17 +1,19 @@
-.actions
-  - if @can "edit", Coreon.Models.Concept
-    %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
+.concept-head
+  .actions
+    - if @can "edit", Coreon.Models.Concept
+      %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
 
-  %a.concept-to-clipboard.remove( href="javascript:void(0)" )= I18n.t "concept.remove_from_clipboard"
-  %a.concept-to-clipboard.add( href="javascript:void(0)" )= I18n.t "concept.add_to_clipboard"
+    %a.concept-to-clipboard.remove{ href: "javascript: void(0)", title: I18n.t "concept.remove_from_clipboard" }= I18n.t "concept.remove_from_clipboard"
+    %a.concept-to-clipboard.add{ href: "javascript: void(0)", title: I18n.t "concept.add_to_clipboard" }= I18n.t "concept.add_to_clipboard"
+    %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
 
-  .edit
-    - if @can "delete", Coreon.Models.Concept
-      %a.delete-concept{href: "javascript:void(0)"}= I18n.t "concept.delete"
+    .edit
+      - if @can "delete", Coreon.Models.Concept
+        %a.delete-concept{href: "javascript:void(0)", title: I18n.t "concept.delete" }= I18n.t "concept.delete"
 
-!= @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("id")
-%h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
-!= @render "concepts/info", data: @concept.info()
+  != @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("id")
+
+  != @render "concepts/info", data: @concept.info()
 
 - if @editMode and @editProperties
   != @render "concepts/edit_properties", concept: @concept, editToggle: yes
@@ -19,6 +21,12 @@
   != @render "concepts/properties", properties: @concept.propertiesByKeyAndLang(), editToggle: yes
 
 .terms
+  - if @hasTermProperties
+    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.toggle'
+  - if @can 'create', Coreon.Models.Term
+    .add
+      .edit
+        %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
   - for tuple in @langs
     - [lang, terms] = tuple
     %section.language{ class: lang }
@@ -32,7 +40,3 @@
               != @render 'concepts/term', term: term
         - else
           .no-terms= I18n.t 'terms.empty'
-
-  - if @can "create", Coreon.Models.Term
-    .edit
-      %a.add-term{href: "javascript:void(0)"}= I18n.t "term.new"

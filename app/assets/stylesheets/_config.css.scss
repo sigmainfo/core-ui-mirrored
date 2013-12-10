@@ -5,6 +5,7 @@ $link-color: #43aaa4;
 $petrol: #5498b0;
 $bluecolor: $petrol;
 $button-color: #73a254;
+$editmode-color: #c3ccb9;
 $darkerbluecolor: #6cb1d3;
 $hover-color: #5fba83;
 $browncolor: #554f3c;
@@ -17,6 +18,19 @@ $error-color: #f25a5a;
 $notice-color: #6bc175;
 
 $widget-width: 320px;
+
+@mixin editmode {
+  &:before {
+    content: "";
+    background-color: $editmode-color;
+    @include retina-stripes("blue");
+    width: 16px;
+    padding: 8px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  };
+}
 
 @mixin submit-button {
   @include box-sizing(border-box);

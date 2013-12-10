@@ -58,8 +58,10 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         @view.$el.append '''
           <div class="terms">
             <h3>TERMS</h3>
-            <div class="edit">
-              <a class="add-term">Add term</a>
+            <div class="add">
+              <div class="edit">
+                <a class="add-term">Add term</a>
+              </div>
             </div>
           </div>
           '''
@@ -71,7 +73,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         Coreon.Templates["terms/new_term"].returns '<fieldset class="term"></fieldset>'
         @view.addTerm @event
         @view.$el.should.have ".terms > .term"
-        @view.$(".term").next().should.match ".edit"
+        @view.$(".term").next().should.match ".add"
 
       it "passes data attributes to template", ->
         @trigger.attr "data-scope", "concept[terms][]"

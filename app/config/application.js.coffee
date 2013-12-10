@@ -10,6 +10,7 @@ class Coreon.Application extends Backbone.Model
 
   defaults:
     el: "#coreon-app"
+    editMode: false
 
   initialize: ->
     unless Coreon.application?

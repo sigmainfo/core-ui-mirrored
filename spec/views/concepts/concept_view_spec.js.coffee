@@ -22,6 +22,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     @concept.revert = ->
     @concept.set 'properties', [ @property ], silent: true
     @concept.termsByLang = -> {}
+    terms = new Backbone.Collection
+    @concept.terms = -> terms
     @concept.propertiesByKeyAndLang = => label: [ @property ]
 
     @view = new Coreon.Views.Concepts.ConceptView
@@ -39,7 +41,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     expect( @view ).to.be.an.instanceof Backbone.View
 
   it 'creates container', ->
-    expect( @view.$el ).to.match '.concept.show'
+    expect( @view.$el ).to.match '.concept'
 
   describe '#render()', ->
 
@@ -51,6 +53,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @view.initialize()
       @concept.trigger 'change'
       expect( @view.render ).to.have.been.calledOnce
+
+    it 'is triggered by edit mode change', ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      Coreon.application.trigger 'change:editMode'
+      expect( @view.render ).to.have.been.calledOnce
+      expect( @view.render ).to.have.been.calledOn @view
 
     it 'renders label', ->
       @concept.set 'label', 'Handgun', silent: true
@@ -64,20 +73,40 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         id: '123'
         legacy_id: '543'
       @view.render()
-      expect( @view.$el ).to.have '> .system-info-toggle'
-      expect( @view.$('> .system-info-toggle') ).to.have.text 'System Info'
-      expect( @view.$el ).to.have '> .system-info'
-      expect( @view.$('> .system-info').css('display') ).to.equal 'none'
-      expect( @view.$('> .system-info th').eq(0) ).to.have.text 'id'
-      expect( @view.$('> .system-info td').eq(0) ).to.have.text '123'
-      expect( @view.$('> .system-info th').eq(1) ).to.have.text 'legacy_id'
-      expect( @view.$('> .system-info td').eq(1) ).to.have.text '543'
+      expect( @view.$el ).to.have "> .concept-head .actions .system-info-toggle"
+      expect( @view.$("> .concept-head .actions .system-info-toggle") ).to.have.text "System Info"
+      expect( @view.$el ).to.have "> .concept-head .system-info"
+      expect( @view.$("> .concept-head .system-info").css("display") ).to.equal "none"
+      expect( @view.$("> .concept-head .system-info th").eq(0) ).to.have.text "id"
+      expect( @view.$("> .concept-head .system-info td").eq(0) ).to.have.text "123"
+      expect( @view.$("> .concept-head .system-info th").eq(1) ).to.have.text "legacy_id"
+      expect( @view.$("> .concept-head .system-info td").eq(1) ).to.have.text "543"
 
     it 'renders tree', ->
       @broaderAndNarrower.render = sinon.stub().returns @broaderAndNarrower
       @view.render()
       expect( @broaderAndNarrower.render ).to.have.been.calledOnce
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
+
+    context 'edit mode off', ->
+
+      beforeEach ->
+        Coreon.application.set 'editMode', off, silent: yes
+
+      it 'classifies el', ->
+        @view.render()
+        expect( @view.$el ).to.have.class 'show'
+        expect( @view.$el ).to.not.have.class 'edit'
+
+    context 'edit mode on', ->
+
+      beforeEach ->
+        Coreon.application.set 'editMode', on, silent: yes
+
+      it 'classifies el', ->
+        @view.render()
+        expect( @view.$el ).to.have.class 'edit'
+        expect( @view.$el ).to.not.have.class 'show'
 
     context 'with edit privileges', ->
 
@@ -223,6 +252,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         @concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
         @term = new Backbone.Model value: 'top head'
         @term.info = -> {}
+        @term.properties = -> new Backbone.Collection
         @concept.termsByLang = => de: [ @term ]
         Coreon.application.langs = -> [ 'de' ]
 
@@ -298,30 +328,53 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         @view.render()
         expect( @view.$('.term') ).to.have '.system-info'
 
-      it 'renders term properties', ->
-        @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-        property = new Backbone.Model source: 'Wikipedia'
-        @term.propertiesByKeyAndLang = -> source: [ property ]
-        sinon.stub Coreon.Templates, 'concepts/properties'
-        try
-          Coreon.Templates['concepts/properties'].withArgs(
-            properties: @term.propertiesByKeyAndLang(),
-            collapsed: true,
-            noEditButton: true
-          ).returns '<ul class="properties collapsed"></ul>'
-          @view.render()
-          expect( @view.$('.term') ).to.have '.properties'
-        finally
-          Coreon.Templates['concepts/properties'].restore()
+      context 'term properties', ->
 
-      it 'collapses properties by default', ->
-        @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-        property = new Backbone.Model source: 'Wikipedia'
-        property.info = -> {}
-        @term.propertiesByKeyAndLang = -> source: [ property ]
-        @view.render()
-        expect( @view.$('.term .properties') ).to.have.class 'collapsed'
-        expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
+        it 'renders term properties', ->
+          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
+          property = new Backbone.Model source: 'Wikipedia'
+          @term.propertiesByKeyAndLang = -> source: [ property ]
+          sinon.stub Coreon.Templates, 'concepts/properties'
+          try
+            Coreon.Templates['concepts/properties'].withArgs(
+              properties: @term.propertiesByKeyAndLang(),
+              collapsed: true,
+              noEditButton: true
+            ).returns '<ul class="properties collapsed"></ul>'
+            @view.render()
+            expect( @view.$('.term') ).to.have '.properties'
+          finally
+            Coreon.Templates['concepts/properties'].restore()
+
+        it 'collapses properties by default', ->
+          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
+          property = new Backbone.Model source: 'Wikipedia'
+          property.info = -> {}
+          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @view.render()
+          expect( @view.$('.term .properties') ).to.have.class 'collapsed'
+          expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
+
+        it 'renders toggle for properties', ->
+          I18n.t.withArgs('terms.properties.toggle').returns 'Toggle properties'
+          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
+          property = new Backbone.Model source: 'Wikipedia'
+          property.info = -> {}
+          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @view.render()
+          expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
+
+        it 'renders toggle all button', ->
+          I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
+          @concept.terms = -> [ properties: -> [ new Backbone.Model ] ]
+          @view.render()
+          expect( @view.$('.terms') ).to.have '> .properties-toggle'
+          toggle = @view.$('.terms > .properties-toggle')
+          expect( toggle ).to.have.attr 'title', 'Toggle all properties'
+
+        it 'renders toggle button only when applicable', ->
+          @view.render()
+          expect( @view.$('.terms') ).to.not.have '.properties-toggle'
 
       context 'with edit privileges', ->
 
@@ -369,56 +422,83 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     beforeEach ->
       @view.$el.append """
         <section>
-          <h3 class="system-info-toggle" id="outer-trigger">INFO</h3>
-          <div class="system-info">foo</div>
-          <ul class="properties">
-            <div class="system-info">bar</div>
-          </ul>
-          <div class="terms">
-            <h3 class="system-info-toggle" id="inner-trigger">INFO</h3>
-            <div class="system-info">baz</div>
-            <ul class="properties">
-              <div class="system-info">bar</div>
-            </ul>
+          <div class="actions">
+            <h3 class="system-info-toggle">INFO</h3>
           </div>
+          <div class="system-info">foo</div>
         </section>
-        """
-      @event = $.Event()
-      $('#konacha').append @view.$el
+      """
+      $("#konacha").append @view.$el
 
-    it 'is triggered by click on system info toggle', ->
-      @view.toggleInfo = sinon.stub().returns false
+    it "is triggered by click on system info toggle", ->
+      @view.toggleInfo = sinon.spy()
       @view.delegateEvents()
-      @view.$('#outer-trigger').click()
+      @view.$(".system-info-toggle").click()
       expect( @view.toggleInfo ).to.have.been.calledOnce
 
-    it 'toggles outer system info', ->
-      @event.target = @view.$ '#outer-trigger'
-      @view.toggleInfo @event
-      expect( @view.$('section > .system-info') ).to.be.hidden
-      expect( @view.$('section .properties .system-info') ).to.be.hidden
-      expect( @view.$('section .terms .system-info') ).to.be.visible
-      expect( @view.$('section .terms .properties .system-info') ).to.be.visible
-      @view.toggleInfo @event
-      expect( @view.$('section > .system-info') ).to.be.visible
-      expect( @view.$('section .properties .system-info') ).to.be.visible
-      expect( @view.$('section .terms .system-info') ).to.be.visible
-      expect( @view.$('section .terms .properties .system-info') ).to.be.visible
+    it "toggles system info", ->
+      @view.toggleInfo()
+      expect( @view.$(".system-info") ).to.be.hidden
+      @view.toggleInfo()
+      expect( @view.$(".system-info") ).to.be.visible
 
-    it 'toggles inner system info', ->
-      @event.target = @view.$ '#inner-trigger'
-      @view.toggleInfo @event
-      expect( @view.$('section .terms .system-info') ).to.be.hidden
-      expect( @view.$('section .terms .properties .system-info') ).to.be.hidden
-      expect( @view.$('section > .system-info') ).to.be.visible
-      expect( @view.$('section .properties .system-info') ).to.be.visible
-      @view.toggleInfo @event
-      expect( @view.$('section .terms .system-info') ).to.be.visible
-      expect( @view.$('section .terms .properties .system-info') ).to.be.visible
-      expect( @view.$('section > .system-info') ).to.be.visible
-      expect( @view.$('section .properties .system-info') ).to.be.visible
+  describe "toggleProperties()", ->
 
-  describe '#toggleSection()', ->
+    beforeEach ->
+      @view.$el.append """
+        <h4 class="properties-toggle">PROPERTIES</h3>
+          <div class="term">
+            <section class="properties">
+              <h3>PROPERTIES</h3>
+              <div>foo</div>
+          </div>
+          <div class="term">
+            <section class="properties">
+              <h3>PROPERTIES</h3>
+              <div>bar</div>
+          </div>
+        </section>
+      """
+
+      $("#konacha").append @view.$el
+
+    it "is triggered by click on all term properties toggle", ->
+      @view.toggleProperties = sinon.spy()
+      @view.delegateEvents()
+      @view.$(".properties-toggle").click()
+      expect( @view.toggleProperties ).to.have.been.calledOnce
+
+    it "toggles visibility of section content", ->
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.hidden
+      expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.hidden
+      expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.visible
+      expect( @view.$(".term:first .properties") ).to.not.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.visible
+      expect( @view.$(".term:last .properties") ).to.not.have.class "collapsed"
+
+    it "expands all properties if some are open, some are closed", ->
+      @view.$('.term .properties:first').addClass 'collapsed'
+      @view.$('.term .properties:first div').hide()
+      expect( @view.$(".term:first .properties div") ).to.be.hidden
+      expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.visible
+      expect( @view.$(".term:last .properties") ).to.not.have.class "collapsed"
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.visible
+      expect( @view.$(".term:first .properties") ).to.not.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.visible
+      expect( @view.$(".term:last .properties") ).to.not.have.class "collapsed"
+      @view.toggleProperties @event
+      expect( @view.$(".term:first .properties div") ).to.be.hidden
+      expect( @view.$(".term:first .properties") ).to.have.class "collapsed"
+      expect( @view.$(".term:last .properties div") ).to.be.hidden
+      expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
+
+  describe "toggleSection()", ->
 
     beforeEach ->
       @view.$el.append """
@@ -497,7 +577,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     beforeEach ->
       @view.render()
-      @view.editMode = no
+      Coreon.application.set 'editMode', off
 
     it 'is triggered by click on edit mode toggle', ->
       @view.toggleEditMode = sinon.stub().returns false
@@ -506,31 +586,17 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.toggleEditMode ).to.have.been.calledOnce
 
     it 'toggles edit mode value', ->
-      expect( @view.editMode ).to.be.false
       @view.$('.edit-concept').click()
-      expect( @view.editMode ).to.be.true
-
-    it 'rerenders the view', ->
-      @view.render = sinon.spy()
-      @view.delegateEvents()
+      expect( Coreon.application.get 'editMode' ).to.be.true
       @view.$('.edit-concept').click()
-      expect( @view.render ).to.have.been.calledOnce
-
-    it 'renders with show class when edit mode is off', ->
-      expect( @view.$el ).to.have.class 'show'
-      expect( @view.$el ).to.not.have.class 'edit'
-
-    it 'renders with edit class when edit mode is on', ->
-      @view.toggleEditMode()
-      expect( @view.$el ).to.have.class 'edit'
-      expect( @view.$el ).to.not.have.class 'show'
+      expect( Coreon.application.get 'editMode' ).to.be.false
 
   describe '#toggleEditConceptProperties()', ->
 
     beforeEach ->
       @concept.properties = -> models: []
       @concept.persistedAttributes = -> {}
-      @view.editMode = yes
+      Coreon.application.set 'editMode', on, silent: yes
       @view.editProperties = no
       @view.render()
 
@@ -680,6 +746,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         @term.save = sinon.spy => @request = $.Deferred()
         @term.errors = => @errors
         @term.persistedAttributes = => @persistedAttributes
+        @term.properties = -> []
         @term
       @view.$el.append '''
         <form class="term create">
@@ -943,6 +1010,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         </li>
         '''
       term = new Backbone.Model id: '518d2569edc797ef6d000008'
+      term.properties = -> []
       term.destroy = sinon.spy()
       terms = new Backbone.Collection [ term ]
       @view.model.terms = -> terms
