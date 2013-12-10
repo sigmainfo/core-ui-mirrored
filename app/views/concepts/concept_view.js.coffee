@@ -28,8 +28,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable
 
-  className: "concept show"
-  editMode: no
+  className: 'concept'
   editProperties: no
   editTerm: no
 
@@ -62,10 +61,13 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
   initialize: ->
+    @stopListening()
     @listenTo @model, "change", @render
+    @listenTo Coreon.application, 'change:editMode', @render
 
     if settings = Coreon.application?.repositorySettings()
       @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
+
     @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
     @subviews = []
     @
@@ -93,12 +95,16 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
     hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
+    editMode = Coreon.application.get 'editMode'
+
+    @$el.toggleClass 'edit', editMode
+    @$el.toggleClass 'show', not editMode
 
     @$el.html @template
       concept: @model
       langs: sortedTermsByLang
       hasTermProperties: hasTermProperties
-      editMode: @editMode
+      editMode: editMode
       editProperties: @editProperties
       editTerm: @editTerm
 
@@ -144,12 +150,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       .addClass "selected"
 
   toggleEditMode: ->
-    @editMode = !@editMode
-    if @editMode
-      @$el.removeClass("show").addClass("edit")
-    else
-      @$el.removeClass("edit").addClass("show")
-    @render()
+    Coreon.application.set 'editMode',
+      not Coreon.application.get 'editMode'
 
   toggleEditConceptProperties: (evt)->
     evt.preventDefault() if evt?

@@ -41,7 +41,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     expect( @view ).to.be.an.instanceof Backbone.View
 
   it 'creates container', ->
-    expect( @view.$el ).to.match '.concept.show'
+    expect( @view.$el ).to.match '.concept'
 
   describe '#render()', ->
 
@@ -53,6 +53,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @view.initialize()
       @concept.trigger 'change'
       expect( @view.render ).to.have.been.calledOnce
+
+    it 'is triggered by edit mode change', ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      Coreon.application.trigger 'change:editMode'
+      expect( @view.render ).to.have.been.calledOnce
+      expect( @view.render ).to.have.been.calledOn @view
 
     it 'renders label', ->
       @concept.set 'label', 'Handgun', silent: true
@@ -80,6 +87,26 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @view.render()
       expect( @broaderAndNarrower.render ).to.have.been.calledOnce
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
+
+    context 'edit mode off', ->
+
+      beforeEach ->
+        Coreon.application.set 'editMode', off, silent: yes
+
+      it 'classifies el', ->
+        @view.render()
+        expect( @view.$el ).to.have.class 'show'
+        expect( @view.$el ).to.not.have.class 'edit'
+
+    context 'edit mode on', ->
+
+      beforeEach ->
+        Coreon.application.set 'editMode', on, silent: yes
+
+      it 'classifies el', ->
+        @view.render()
+        expect( @view.$el ).to.have.class 'edit'
+        expect( @view.$el ).to.not.have.class 'show'
 
     context 'with edit privileges', ->
 
@@ -471,8 +498,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.$(".term:last .properties div") ).to.be.hidden
       expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
 
-
-
   describe "toggleSection()", ->
 
     beforeEach ->
@@ -552,7 +577,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     beforeEach ->
       @view.render()
-      @view.editMode = no
+      Coreon.application.set 'editMode', off
 
     it 'is triggered by click on edit mode toggle', ->
       @view.toggleEditMode = sinon.stub().returns false
@@ -561,31 +586,17 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.toggleEditMode ).to.have.been.calledOnce
 
     it 'toggles edit mode value', ->
-      expect( @view.editMode ).to.be.false
       @view.$('.edit-concept').click()
-      expect( @view.editMode ).to.be.true
-
-    it 'rerenders the view', ->
-      @view.render = sinon.spy()
-      @view.delegateEvents()
+      expect( Coreon.application.get 'editMode' ).to.be.true
       @view.$('.edit-concept').click()
-      expect( @view.render ).to.have.been.calledOnce
-
-    it 'renders with show class when edit mode is off', ->
-      expect( @view.$el ).to.have.class 'show'
-      expect( @view.$el ).to.not.have.class 'edit'
-
-    it 'renders with edit class when edit mode is on', ->
-      @view.toggleEditMode()
-      expect( @view.$el ).to.have.class 'edit'
-      expect( @view.$el ).to.not.have.class 'show'
+      expect( Coreon.application.get 'editMode' ).to.be.false
 
   describe '#toggleEditConceptProperties()', ->
 
     beforeEach ->
       @concept.properties = -> models: []
       @concept.persistedAttributes = -> {}
-      @view.editMode = yes
+      Coreon.application.set 'editMode', on, silent: yes
       @view.editProperties = no
       @view.render()
 

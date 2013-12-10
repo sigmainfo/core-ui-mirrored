@@ -33,6 +33,9 @@ describe 'Coreon.Application', ->
     it 'chooses sensible default for container selector', ->
       @app.get('el').should.equal '#coreon-app'
 
+    it 'is not in edit mode', ->
+      expect( @app.get 'editMode' ).to.be.false
+
   describe '#initialize()', ->
 
     it 'makes instance globally accessible', ->
