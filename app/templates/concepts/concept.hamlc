@@ -5,7 +5,7 @@
 
     %a.concept-to-clipboard.remove{ href: "javascript: void(0)", title: I18n.t "concept.remove_from_clipboard" }= I18n.t "concept.remove_from_clipboard"
     %a.concept-to-clipboard.add{ href: "javascript: void(0)", title: I18n.t "concept.add_to_clipboard" }= I18n.t "concept.add_to_clipboard"
-    %h4.system-info-toggle{title: "System Info"}= I18n.t "concept.info"
+    %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
 
     .edit
       - if @can "delete", Coreon.Models.Concept
@@ -22,7 +22,7 @@
 
 .terms
   - if @hasTermProperties
-    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.toggle'
+    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.properties.toggle-all'
   - if @can 'create', Coreon.Models.Term
     .add
       .edit
