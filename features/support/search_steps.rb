@@ -20,6 +20,12 @@ module SearchSteps
     end
   end
 
+  step 'I enter "ball" in the search field' do
+    within "#coreon-search" do
+      fill_in "coreon-search-query", with: "ball"
+    end
+  end
+
   When 'I enter "poe" in the search field' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "poe"
