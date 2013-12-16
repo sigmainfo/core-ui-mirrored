@@ -1,7 +1,7 @@
 %tr.meta
   %td.label.concept
   %td.super.concept
-- if @definition 
+- if @definition
   %tr.props
     %td{colspan: 3}
       %table

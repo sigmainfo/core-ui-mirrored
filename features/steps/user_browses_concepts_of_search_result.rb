@@ -52,7 +52,11 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   end
 
   step 'it should display labels for "ball", "ballistics", "balloon"' do
-    pending 'step not implemented'
+    within '.concept-list' do
+      %w(ball ballistics balloon).each do |label|
+        page.should have_css('.concept-list-item .label', text: label)
+      end
+    end
   end
 
   step 'I should be on the search results page for query "ball"' do

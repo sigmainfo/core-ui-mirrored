@@ -60,7 +60,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @view.query query
 
     search = new Coreon.Models.ConceptSearch
-      path: "concepts/search"
       query: query
       target: target
 

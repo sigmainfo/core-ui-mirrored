@@ -62,7 +62,6 @@ describe "Coreon.Routers.ConceptsRouter", ->
       @router.search "c0ffeebabe23c0ffeebabe42", "terms", "gun"
       Coreon.Models.ConceptSearch.should.have.been.calledWithNew
       Coreon.Models.ConceptSearch.should.have.been.calledWith
-        path: "concepts/search"
         query: "gun"
         target: "terms"
       Coreon.Views.Concepts.ConceptListView.should.have.been.calledWithNew

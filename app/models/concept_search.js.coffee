@@ -4,6 +4,11 @@
 
 class Coreon.Models.ConceptSearch extends Coreon.Models.Search
 
+  defaults: ->
+    defaults = super
+    defaults.path = 'concepts/search'
+    defaults
+
   fetch: (options = {}) ->
     success = options.success
     options.success = (model, response, options) ->

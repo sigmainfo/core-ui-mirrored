@@ -5,7 +5,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
-    
+
     sinon.stub Coreon.Views.Widgets, "SearchTargetSelectView", =>
       @select = new Backbone.View
       @select.render = sinon.stub().returns @select
@@ -95,7 +95,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
       Backbone.history.fragment = "coffee23/concepts/myconcept567hjkg"
       @view.model.getSelectedType = -> "all"
       @view.submitHandler @event
-      Backbone.history.navigate.should.have.been.calledWith "coffee23/search/foo"
+      Backbone.history.navigate.should.have.been.calledWith "coffee23/concepts/search/foo"
       Backbone.history.loadUrl.should.have.been.calledOnce
 
     it "navigates to concept search with type", ->
@@ -122,7 +122,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.render()
       old.trigger "focus"
       @view.onClickedToFocus.should.not.have.been.called
-      
+
     it "puts focus on search input", ->
       spy = sinon.spy()
       @view.$ = sinon.stub()
