@@ -14,8 +14,15 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
   initialize: ->
     @stopListening()
     @listenTo @model, 'change:done', @render
+    @labels = []
+    @broader = []
 
   render: ->
+    label.remove() for label in @labels
+    @labels = []
+    for broader in @broader
+      @stopListening broader
+    @broader = []
     unless @model.get 'done'
       @$el.html ''
     else
@@ -24,8 +31,26 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
         @$el.html @emptyList query: @model.get 'query'
       else
         @$el.html @template concepts: results
-        @$('.concept-list-item').each ( index, tr ) ->
+        @$('.concept-list-item').each ( index, tr ) =>
+          concept = results[index]
           label = new Coreon.Views.Concepts.ConceptLabelView
-            model: results[index]
-          $(tr).find('tr.label td').append label.render().$el
+            model: concept
+          $tr = $ tr
+          $tr.find('tr.label td').append label.render().$el
+          @labels.push label
+
+          broader = concept.broader()
+          if broader.length > 1
+            broader
+              .sort ( a, b ) ->
+                a.get('label').localeCompare b.get('label')
+              .forEach ( parent ) =>
+                @listenTo parent, 'change:label', @render
+                @broader.push parent
+          $els = broader.map ( parent ) =>
+            label = new Coreon.Views.Concepts.ConceptLabelView
+              model: parent
+            @labels.push label
+            label.render().$el
+          $tr.find('tr.broader td').append $els...
     @

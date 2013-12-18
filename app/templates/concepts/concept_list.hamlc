@@ -7,3 +7,6 @@
             %tr.label
               %th= I18n.t 'concepts.list.headers.label'
               %td
+            %tr.broader
+              %th= I18n.t 'concepts.list.headers.broader'
+              %td

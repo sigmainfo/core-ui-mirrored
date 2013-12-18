@@ -128,3 +128,7 @@ class Coreon.Models.Concept extends Backbone.Model
       "javascript:void(0)"
     else
       "#{Coreon.application.repository().path()}/concepts/#{@id}"
+
+  broader: ->
+    @get('superconcept_ids').map (id) ->
+      Coreon.Models.Concept.find id

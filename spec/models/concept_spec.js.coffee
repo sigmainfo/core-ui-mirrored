@@ -616,3 +616,16 @@ describe 'Coreon.Models.Concept', ->
       @model.isNew = -> true
       expect( @model.path() ).to.equal 'javascript:void(0)'
 
+  describe '#broader()', ->
+
+    beforeEach ->
+      sinon.stub Coreon.Models.Concept, 'find'
+
+    afterEach ->
+      Coreon.Models.Concept.find.restore()
+
+    it 'returns a set containing the superconcepts', ->
+      parent = new Backbone.Model
+      @model.set 'superconcept_ids', [ 'p12345' ], silent: yes
+      Coreon.Models.Concept.find.withArgs('p12345').returns parent
+      expect( @model.broader() ).to.eql [ parent ]

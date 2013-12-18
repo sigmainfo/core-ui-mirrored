@@ -65,8 +65,29 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
 
   step 'each of them should have a section "BROADER"' do
     within '.concept-list' do
-      page.should have_css('.concept-list-item thead td',
-                            text: 'BROADER', count: 3)
+      page.should have_css('.concept-list-item th',
+                            text: 'Broader', count: 3)
+    end
+  end
+
+  step 'it should contain "equipment" and "billiards" for "ball"' do
+    within '.concept-list' do
+      ball = page.all('.concept-list-item .label td a').find do |a|
+        a.text == 'ball'
+      end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
+      labels = ball.all('tr.broader td a').map(&:text)
+      labels.should == ['billiards', 'equipment']
+    end
+  end
+
+  step 'it should be empty for "ballistics" and "balloon"' do
+    within '.concept-list' do
+      %w(ballistics balloon).each do |label|
+        concept = page.all('.concept-list-item .label td a').find do |a|
+          a.text == label
+        end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
+        concept.should have_no_css('tr.broader td a')
+      end
     end
   end
 

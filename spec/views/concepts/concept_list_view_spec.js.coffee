@@ -5,7 +5,9 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
   beforeEach ->
     sinon.stub Coreon.Views.Concepts, 'ConceptLabelView'
-    Coreon.Views.Concepts.ConceptLabelView.returns render: -> @
+    Coreon.Views.Concepts.ConceptLabelView.returns
+      render: -> @
+      remove: ->
     @view = new Coreon.Views.Concepts.ConceptListView
       model: new Backbone.Model
         hits: []
@@ -71,11 +73,10 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
       context 'with hits', ->
 
         beforeEach ->
-          @results = [
-            { result: new Backbone.Model label: 'ball' }
-            { result: new Backbone.Model label: 'ballistics' }
-            { result: new Backbone.Model label: '8-ball' }
-          ]
+          @results = ['ball', 'ballistics', '8-ball'].map (label) ->
+            concept = new Backbone.Model label: label
+            concept.broader = -> []
+            concept
 
         it 'renders row for each hit', ->
           @view.render()
@@ -94,3 +95,66 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           expect( @view.$el ).to.have '.concept-list-item table tr.label td'
           td = @view.$('tr.label:first td')
           expect( $.contains td.get(0), label.el ).to.be.true
+
+        it 'renders labels for broader concepts', ->
+          I18n.t.withArgs('concepts.list.headers.broader').returns 'Broader'
+          concept = @results[0]
+          parent1 = new Backbone.Model label: 'parent1'
+          parent2 = new Backbone.Model label: 'parent2'
+          concept.broader = -> [ parent1, parent2 ]
+          label1 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent1).returns label1
+          label2 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent2).returns label2
+          @view.render()
+          expect( @view.$el ).to.have '.concept-list-item table tr.broader th'
+          expect( @view.$ 'tr.broader:first th' ).to.have.text 'Broader'
+          expect( @view.$el ).to.have '.concept-list-item table tr.broader td'
+          td = @view.$('tr.broader:first td')
+          expect( $.contains td.get(0), label1.el ).to.be.true
+          expect( $.contains td.get(0), label2.el ).to.be.true
+
+        it 'sorts broader concepts alphabetically', ->
+          concept = @results[0]
+          parent1 = new Backbone.Model label: 'mouse'
+          parent2 = new Backbone.Model label: 'apple'
+          parent3 = new Backbone.Model label: 'young'
+          concept.broader = -> [ parent1, parent2, parent3 ]
+          label1 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent1).returns label1
+          label2 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent2).returns label2
+          label3 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent3).returns label3
+          @view.render()
+          td = @view.$('tr.broader:first td')
+          expect( td.find('*:nth-child(1)').get 0 ).to.equal label2.el
+          expect( td.find('*:nth-child(2)').get 0 ).to.equal label1.el
+          expect( td.find('*:nth-child(3)').get 0 ).to.equal label3.el
+
+        it 'resorts broader concepts on label change', ->
+          concept = @results[0]
+          parent1 = new Backbone.Model label: 'mouse'
+          parent2 = new Backbone.Model label: 'apple'
+          parent3 = new Backbone.Model label: 'young'
+          concept.broader = -> [ parent1, parent2, parent3 ]
+          label1 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent1).returns label1
+          label2 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent2).returns label2
+          label3 = new Backbone.View
+          Coreon.Views.Concepts.ConceptLabelView
+            .withArgs(model: parent3).returns label3
+          @view.render()
+          parent3.set 'label', 'banana'
+          td = @view.$('tr.broader:first td')
+          expect( td.find('*:nth-child(1)').get 0 ).to.equal label2.el
+          expect( td.find('*:nth-child(2)').get 0 ).to.equal label3.el
+          expect( td.find('*:nth-child(3)').get 0 ).to.equal label1.el

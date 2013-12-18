@@ -52,6 +52,7 @@ en:
       empty: 'No concepts found for "{{query}}"'
       headers:
         label: 'Label'
+        broader: 'Broader'
 
   concept:
     info: "System Info"
