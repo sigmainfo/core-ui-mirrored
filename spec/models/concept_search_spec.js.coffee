@@ -59,3 +59,20 @@ describe 'Coreon.Models.ConceptSearch', ->
         hits = Coreon.Collections.Hits.collection()
         hits.should.have.length 1
         hits.at(0).get('result').should.equal result
+
+  describe '#results()', ->
+
+    beforeEach ->
+      @concept1 = new Backbone.Model
+      @concept2 = new Backbone.Model
+      hits = new Backbone.Collection [
+        { score: 1.7, result: @concept1 }
+        { score: 1.1, result: @concept2 }
+      ]
+      sinon.stub Coreon.Collections.Hits, 'collection', -> hits
+
+    afterEach ->
+      Coreon.Collections.Hits.collection.restore()
+
+    it 'delegates to hits collection', ->
+      expect( @search.results() ).to.eql [ @concept1, @concept2 ]

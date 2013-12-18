@@ -1,5 +1,9 @@
-%table.concepts
-  %thead
-    %tr
-      %th.label= I18n.t "concepts.list.header.label"
-      %th.super= I18n.t "concepts.list.header.superconcepts"
+%tbody
+  - for concept in @concepts
+    %tr.concept-list-item
+      %td
+        %table
+          %tbody
+            %tr.label
+              %th= I18n.t 'concepts.list.headers.label'
+              %td

@@ -1,6 +1,7 @@
 #= require environment
 #= require models/search
 #= require models/concept
+#= require collections/hits
 
 class Coreon.Models.ConceptSearch extends Coreon.Models.Search
 
@@ -20,3 +21,6 @@ class Coreon.Models.ConceptSearch extends Coreon.Models.Search
           result: Coreon.Models.Concept.upsert hit.result
       Coreon.Collections.Hits.collection().reset hits
     super options
+
+  results: ->
+    Coreon.Collections.Hits.collection().pluck 'result'

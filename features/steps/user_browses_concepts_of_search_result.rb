@@ -60,7 +60,14 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   end
 
   step 'I should be on the search results page for query "ball"' do
-    pending 'step not implemented'
+    current_path.should == "/#{@repository.id}/concepts/search/ball"
+  end
+
+  step 'each of them should have a section "BROADER"' do
+    within '.concept-list' do
+      page.should have_css('.concept-list-item thead td',
+                            text: 'BROADER', count: 3)
+    end
   end
 
   step '"ball" should have an English term "billiard ball"' do

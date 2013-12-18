@@ -1,24 +1,31 @@
 #= require environment
-#= require views/composite_view
 #= require templates/concepts/concept_list
-#= require views/concepts/concept_list_item_view
-#= require models/concept
+#= require templates/concepts/empty_list
+#= require views/concepts/concept_label_view
 
-class Coreon.Views.Concepts.ConceptListView extends Coreon.Views.CompositeView
+class Coreon.Views.Concepts.ConceptListView extends Backbone.View
 
-  className: "concept-list"
+  tagName   : 'table'
+  className : 'concept-list'
 
-  template: Coreon.Templates["concepts/concept_list"]
+  template  : Coreon.Templates["concepts/concept_list"]
+  emptyList : Coreon.Templates["concepts/empty_list"]
 
   initialize: ->
-    super
-    @model.on "change", @render, @
+    @stopListening()
+    @listenTo @model, 'change:done', @render
 
-  render: () ->
-    @$el.html @template()
-    for hit in @model.get "hits"
-      model = Coreon.Models.Concept.upsert hit.result
-      item = new Coreon.Views.Concepts.ConceptListItemView
-        model: model
-      @append ".concepts", item.render()
-    super
+  render: ->
+    unless @model.get 'done'
+      @$el.html ''
+    else
+      results = @model.results()
+      if results.length is 0
+        @$el.html @emptyList query: @model.get 'query'
+      else
+        @$el.html @template concepts: results
+        @$('.concept-list-item').each ( index, tr ) ->
+          label = new Coreon.Views.Concepts.ConceptLabelView
+            model: results[index]
+          $(tr).find('tr.label td').append label.render().$el
+    @

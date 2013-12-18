@@ -12,8 +12,11 @@ describe 'Creon.Models.Search', ->
 
   context 'defaults', ->
 
-    it 'result set is empty', ->
+    it 'has empty result set', ->
       expect( @model.get 'hits' ).to.eql []
+
+    it 'is not done', ->
+      expect( @model.get 'done' ).to.be.false
 
     it 'has no target', ->
       expect( @model.get 'target' ).to.be.null
@@ -59,9 +62,13 @@ describe 'Creon.Models.Search', ->
 
   describe '#fetch()', ->
 
+    beforeEach ->
+      @deferred = $.Deferred()
+      @model.sync = => @deferred.promise()
+
     it 'sends POST with params', ->
       @model.params = -> 'search[only]': 'terms'
-      @model.sync = sinon.spy()
+      sinon.spy @model, 'sync'
       @model.fetch parse: yes
       expect( @model.sync ).to.have.been.calledOnce
       expect( @model.sync ).to.have.been.calledWith 'read', @model
@@ -69,6 +76,12 @@ describe 'Creon.Models.Search', ->
       expect( @model.sync.firstCall.args[2] ).to.have.property 'parse', yes
       expect( @model.sync.firstCall.args[2] ).to.have.property 'data'
       expect( @model.sync.firstCall.args[2].data ).to.have.property 'search[only]', 'terms'
+
+    it 'marks search as done', ->
+      @model.fetch()
+      expect( @model.get 'done' ).to.be.false
+      @deferred.resolve()
+      expect( @model.get 'done' ).to.be.true
 
   describe '#query()', ->
 

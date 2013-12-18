@@ -7,6 +7,7 @@ class Coreon.Models.Search extends Backbone.Model
   Coreon.Modules.include @, Coreon.Modules.CoreAPI
 
   defaults: ->
+    done: no
     hits: []
     target: null
 
@@ -30,4 +31,6 @@ class Coreon.Models.Search extends Backbone.Model
   fetch: (options = {}) ->
     options.method ?= 'POST'
     options.data ?= @params()
-    super options
+    super(options).done =>
+      @set 'done', true
+
