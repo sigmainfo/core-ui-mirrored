@@ -20,7 +20,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
     expect( @view ).to.be.an.instanceof Backbone.View
 
   it 'creates container', ->
-    expect( @view.$el ).to.match 'table.concept-list'
+    expect( @view.$el ).to.match 'div.concept-list'
 
   describe '#render()', ->
 
@@ -67,8 +67,14 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             .returns 'No concepts found for "ball"'
           @view.model.set 'query', 'ball', silent: yes
           @view.render()
-          expect( @view.$el ).to.have 'tbody tr td.empty-list'
+          expect( @view.$el ).to.have 'table tbody tr td.empty-list'
           expect( @view.$ 'td.empty-list' ).to.have.text 'No concepts found for "ball"'
+
+        it 'renders title', ->
+          I18n.t.withArgs('concepts.list.title').returns 'Concepts'
+          @view.render()
+          expect( @view.$el ).to.have '> h3'
+          expect( @view.$ '> h3' ).to.have.text 'Concepts'
 
       context 'with hits', ->
 
@@ -79,9 +85,15 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             concept.definition = -> null
             concept
 
+        it 'renders title', ->
+          I18n.t.withArgs('concepts.list.title').returns 'Concepts'
+          @view.render()
+          expect( @view.$el ).to.have '> h3'
+          expect( @view.$ '> h3' ).to.have.text 'Concepts'
+
         it 'renders row for each hit', ->
           @view.render()
-          expect( @view.$el ).to.have 'tbody tr.concept-list-item'
+          expect( @view.$el ).to.have 'table tbody tr.concept-list-item'
           expect( @view.$ '.concept-list-item' ).to.have.lengthOf 3
 
         it 'renders label', ->

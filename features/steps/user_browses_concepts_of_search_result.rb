@@ -66,7 +66,7 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   step 'each of them should have a section "BROADER"' do
     within '.concept-list' do
       page.should have_css('.concept-list-item th',
-                            text: 'Broader', count: 3)
+                            text: 'BROADER', count: 3)
     end
   end
 
@@ -96,7 +96,7 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
       @ballistics = page.all('.concept-list-item .label td a').find do |a|
         a.text == 'ballistics'
       end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
-      @ballistics.should have_css('tr.definition th', text: 'Definition')
+      @ballistics.should have_css('tr.definition th', text: 'DEFINITION')
     end
 
   end

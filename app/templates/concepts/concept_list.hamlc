@@ -1,16 +1,22 @@
-%tbody
-  - for concept in @concepts
-    %tr.concept-list-item
-      %td
-        %table
-          %tbody
-            %tr.label
-              %th= I18n.t 'concepts.list.headers.label'
-              %td
-            %tr.broader
-              %th= I18n.t 'concepts.list.headers.broader'
-              %td
-            - if concept.definition?
-              %tr.definition
-                %th= I18n.t 'concepts.list.headers.definition'
-                %td= concept.definition
+%h3= I18n.t 'concepts.list.title'
+%table
+  %tbody
+    - if @concepts.length is 0
+      %tr
+        %td.empty-list= I18n.t 'concepts.list.empty', query: @query
+    - else
+      - for concept in @concepts
+        %tr.concept-list-item
+          %td
+            %table
+              %tbody
+                %tr.label
+                  %th= I18n.t 'concepts.list.headers.label'
+                  %td
+                %tr.broader
+                  %th= I18n.t 'concepts.list.headers.broader'
+                  %td
+                - if concept.definition?
+                  %tr.definition
+                    %th= I18n.t 'concepts.list.headers.definition'
+                    %td= concept.definition
