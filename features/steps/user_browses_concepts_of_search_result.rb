@@ -51,6 +51,15 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     page.should have_css('.concept-list .concept-list-item')
   end
 
+  step 'I should see an empty listing of search results' do
+    page.should have_css('.concept-list')
+    page.should have_no_css('.concept-list .concept-list-item')
+  end
+
+  step 'it should contain a message: \'No concepts found for "gun"\'' do
+    page.find('.concept-list tbody').text.should == 'No concepts found for "gun"'
+  end
+
   step 'it should display labels for "ball", "ballistics", "balloon"' do
     within '.concept-list' do
       %w(ball ballistics balloon).each do |label|
