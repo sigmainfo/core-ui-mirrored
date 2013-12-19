@@ -91,6 +91,33 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     end
   end
 
+  step '"ballistics" should have a section "DEFINITION"' do
+    within '.concept-list' do
+      @ballistics = page.all('.concept-list-item .label td a').find do |a|
+        a.text == 'ballistics'
+      end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
+      @ballistics.should have_css('tr.definition th', text: 'Definition')
+    end
+
+  end
+
+  step 'it should contain "Mechanics that describe behavior of projectiles"' do
+    definition = @ballistics.find('tr.definition td').text
+    definition.should == 'Mechanics that describe behavior of projectiles'
+  end
+
+  step '"DEFINITION" should not be displayed for "ball" and "balloon"' do
+    within '.concept-list' do
+      %w(ball balloon).each do |label|
+        concept = page.all('.concept-list-item .label td a').find do |a|
+          a.text == label
+        end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
+        concept.should have_no_css('th', text: 'Definition')
+      end
+    end
+
+  end
+
   step '"ball" should have an English term "billiard ball"' do
     pending 'step not implemented'
   end

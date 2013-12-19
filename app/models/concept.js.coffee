@@ -132,3 +132,6 @@ class Coreon.Models.Concept extends Backbone.Model
   broader: ->
     @get('superconcept_ids').map (id) ->
       Coreon.Models.Concept.find id
+
+  definition: ->
+    @propertiesByKeyAndLang().definition?[0].get('value') or null

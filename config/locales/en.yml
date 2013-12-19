@@ -53,6 +53,7 @@ en:
       headers:
         label: 'Label'
         broader: 'Broader'
+        definition: 'Definition'
 
   concept:
     info: "System Info"

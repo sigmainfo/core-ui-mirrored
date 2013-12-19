@@ -30,7 +30,8 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
       if results.length is 0
         @$el.html @emptyList query: @model.get 'query'
       else
-        @$el.html @template concepts: results
+        @$el.html @template concepts: results.map ( concept ) ->
+          definition: concept.definition()
         @$('.concept-list-item').each ( index, tr ) =>
           concept = results[index]
           label = new Coreon.Views.Concepts.ConceptLabelView

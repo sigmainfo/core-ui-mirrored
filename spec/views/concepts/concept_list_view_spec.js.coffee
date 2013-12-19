@@ -76,6 +76,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           @results = ['ball', 'ballistics', '8-ball'].map (label) ->
             concept = new Backbone.Model label: label
             concept.broader = -> []
+            concept.definition = -> null
             concept
 
         it 'renders row for each hit', ->
@@ -158,3 +159,19 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           expect( td.find('*:nth-child(1)').get 0 ).to.equal label2.el
           expect( td.find('*:nth-child(2)').get 0 ).to.equal label3.el
           expect( td.find('*:nth-child(3)').get 0 ).to.equal label1.el
+
+        it 'renders definition', ->
+          I18n.t.withArgs('concepts.list.headers.definition').returns 'Definition'
+          concept = @results[0]
+          concept.definition = -> 'Eine Rose'
+          @view.render()
+          expect( @view.$el ).to.have '.concept-list-item table tr.definition th'
+          expect( @view.$ 'tr.definition:first th' ).to.have.text 'Definition'
+          expect( @view.$ 'tr.definition:first td' ).to.have.text 'Eine Rose'
+
+        it 'skips definition when not given', ->
+          I18n.t.withArgs('concepts.list.headers.definition').returns 'Definition'
+          concept = @results[0]
+          concept.definition = -> null
+          @view.render()
+          expect( @view.$el ).to.not.have '.concept-list-item table tr.definition'
