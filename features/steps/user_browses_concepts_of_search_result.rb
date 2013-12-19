@@ -25,7 +25,7 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   end
 
   step 'a concept with label "ballistics" exists' do
-    @concept = create_concept_with_label 'ballistics'
+    @ballistics = @concept = create_concept_with_label 'ballistics'
   end
 
   step 'it is defined as "Mechanics that describe behavior of projectiles"' do
@@ -93,16 +93,16 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
 
   step '"ballistics" should have a section "DEFINITION"' do
     within '.concept-list' do
-      @ballistics = page.all('.concept-list-item .label td a').find do |a|
+      @ballistics_row = page.all('.concept-list-item .label td a').find do |a|
         a.text == 'ballistics'
       end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
-      @ballistics.should have_css('tr.definition th', text: 'DEFINITION')
+      @ballistics_row.should have_css('tr.definition th', text: 'DEFINITION')
     end
 
   end
 
   step 'it should contain "Mechanics that describe behavior of projectiles"' do
-    definition = @ballistics.find('tr.definition td').text
+    definition = @ballistics_row.find('tr.definition td').text
     definition.should == 'Mechanics that describe behavior of projectiles'
   end
 
@@ -127,14 +127,16 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   end
 
   step 'I click on "ballistics"' do
-    pending 'step not implemented'
+    within '.concept-list' do
+      page.find('.concept-list-item .label td a', text: 'ballistics').click
+    end
   end
 
   step 'I should see the details for concept "ballistics"' do
-    pending 'step not implemented'
+    page.should have_css('.concept.show .concept-head .concept-label', text: 'ballistics')
   end
 
   step 'I should be on the concept details page for "ballistics"' do
-    pending 'step not implemented'
+    current_path.should == "/#{@repository.id}/concepts/#{@ballistics['id']}"
   end
 end
