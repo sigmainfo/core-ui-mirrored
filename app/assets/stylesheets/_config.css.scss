@@ -214,12 +214,9 @@ $widget-width: 320px;
       padding: 3px 16px 2px 2px;
       }
 
-      &:first-child {
-        td {
-          padding-top: 16px;
-        }
-      }
-
+    }
+    &>tbody>tr:first-child>td {
+        padding-top: 16px;
     }
 }
 
