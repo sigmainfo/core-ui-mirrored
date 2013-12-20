@@ -4,6 +4,11 @@
 describe 'Coreon.Views.Concepts.ConceptListView', ->
 
   beforeEach ->
+    settings = new Backbone.Model
+    Coreon.application =
+      sourceLang: -> null
+      targetLang: -> null
+      repositorySettings: -> settings
     sinon.stub Coreon.Views.Concepts, 'ConceptLabelView'
     Coreon.Views.Concepts.ConceptLabelView.returns
       render: -> @
@@ -15,6 +20,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
   afterEach ->
     Coreon.Views.Concepts.ConceptLabelView.restore()
+    delete Coreon.application
 
   it 'is a Backbone view', ->
     expect( @view ).to.be.an.instanceof Backbone.View
@@ -26,13 +32,9 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
     beforeEach ->
       sinon.stub I18n, 't'
-      Coreon.application =
-        sourceLang: -> null
-        targetLang: -> null
 
     afterEach ->
       I18n.t.restore()
-      delete Coreon.application
 
     it 'can be chained', ->
       expect( @view.render() ).to.equal @view
@@ -41,6 +43,20 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
       @view.render = sinon.spy()
       @view.initialize()
       @view.model.trigger 'change:done'
+      expect( @view.render ).to.have.been.calledOnce
+      expect( @view.render ).to.have.been.calledOn @view
+
+    it 'is triggered when source lang changes', ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      Coreon.application.repositorySettings().trigger 'change:sourceLanguage'
+      expect( @view.render ).to.have.been.calledOnce
+      expect( @view.render ).to.have.been.calledOn @view
+
+    it 'is triggered when target lang changes', ->
+      @view.render = sinon.spy()
+      @view.initialize()
+      Coreon.application.repositorySettings().trigger 'change:targetLanguage'
       expect( @view.render ).to.have.been.calledOnce
       expect( @view.render ).to.have.been.calledOn @view
 

@@ -11,6 +11,9 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
   initialize: ->
     @stopListening()
     @listenTo @model, 'change:done', @render
+    @listenTo Coreon.application.repositorySettings()
+      , 'change:sourceLanguage change:targetLanguage'
+      , @render
     @labels = []
     @broader = []
 
@@ -30,8 +33,12 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
           terms = concept.termsByLang()
           langs = []
           names = []
-          names.push (Coreon.application.sourceLang() or 'en')
-          names.push targetLang if targetLang = Coreon.application.targetLang()
+          sourceLang = Coreon.application.sourceLang()
+          if not sourceLang? or sourceLang is 'none'
+            sourceLang = 'en'
+          names.push sourceLang
+          if targetLang = Coreon.application.targetLang()
+            names.push targetLang unless targetLang is 'none'
           for name in names
             langs.push
               name: name

@@ -153,8 +153,49 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
 
   step 'I should not see language "EN" inside any of them' do
     within '.concept-list' do
-      pry
       page.should have_no_css('.concept-list-item th', text: 'EN')
+    end
+  end
+
+  step 'I should see language "DE" inside each of them' do
+    within '.concept-list' do
+      page.should have_css('.concept-list-item th',
+                            text: /^DE$/, count: 3)
+    end
+  end
+
+  step 'it should contain "Billiardkugel, Kugel" for "ball"' do
+    within '.concept-list' do
+      ball = page.find('.concept-list-item .label td a', text: /^ball$/).find :xpath,
+        'ancestor::*[contains(@class, "concept-list-item")]'
+      ball.find('tr.lang td').text.should == 'Billiardkugel, Kugel'
+    end
+  end
+
+  step 'it should contain "Ballistik" for "ballistics"' do
+    within '.concept-list' do
+      ballistics = page.find('.concept-list-item .label td a',
+        text: 'ballistics').find :xpath,
+        'ancestor::*[contains(@class, "concept-list-item")]'
+      ballistics.find('tr.lang td').text.should == 'Ballistik'
+    end
+  end
+
+  step 'it should be empty for "balloon"' do
+    within '.concept-list' do
+      balloon = page.find('.concept-list-item .label td a',
+        text: 'balloon').find :xpath,
+        'ancestor::*[contains(@class, "concept-list-item")]'
+      balloon.find('tr.lang td').text.should == ''
+    end
+  end
+
+  step 'I should see languages "DE", "EN" inside each of them' do
+    within '.concept-list' do
+      page.should have_css('.concept-list-item th',
+                            text: /^DE$/, count: 3)
+      page.should have_css('.concept-list-item th',
+                            text: 'EN', count: 3)
     end
   end
 
