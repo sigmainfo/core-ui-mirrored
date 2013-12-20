@@ -11,8 +11,7 @@
             %table
               %tbody
                 %tr.label
-                  %th= I18n.t 'concepts.list.headers.label'
-                  %td
+                  %td{ colspan: 2 }
                 %tr.broader
                   %th= I18n.t 'concepts.list.headers.broader'
                   %td

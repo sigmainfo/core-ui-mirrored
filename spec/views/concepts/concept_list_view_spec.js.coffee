@@ -97,14 +97,12 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           expect( @view.$ '.concept-list-item' ).to.have.lengthOf 3
 
         it 'renders label', ->
-          I18n.t.withArgs('concepts.list.headers.label').returns 'Label'
           concept = @results[0]
           label = new Backbone.View
           Coreon.Views.Concepts.ConceptLabelView
             .withArgs(model: concept).returns label
           @view.render()
-          expect( @view.$el ).to.have '.concept-list-item table tr.label th'
-          expect( @view.$ 'tr.label:first th' ).to.have.text 'Label'
+          expect( @view.$el ).to.not.have '.concept-list-item table tr.label th'
           expect( @view.$el ).to.have '.concept-list-item table tr.label td'
           td = @view.$('tr.label:first td')
           expect( $.contains td.get(0), label.el ).to.be.true
