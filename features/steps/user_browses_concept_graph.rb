@@ -35,13 +35,13 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'select "handgun" from the result list' do
-    page.find(".search-results-concepts .concept-label", text: "handgun").click
+    page.find(".concept-list .concept-label", text: "handgun").click
   end
 
   step 'I should see "handgun" displayed in the concept map' do
     page.should have_css("#coreon-concept-map .concept-node", text: "handgun")
   end
-  
+
   step 'I should see a node "weapon"' do
     # use Nokogiri directly to fix matching of SVG nodes
     Nokogiri::HTML(page.body).css(".concept-node text").map(&:text).should include("weapon")
@@ -56,7 +56,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     @edges = collect_edges
     @edges.should include("weapon -> handgun")
   end
-  
+
   step 'I should see a node "tool"' do
     # use Nokogiri directly to fix matching of SVG nodes
     Nokogiri::HTML(page.body).css(".concept-node text").map(&:text).should include("tool")

@@ -44,7 +44,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
   end
 
   step 'I should not see "beaver hat"' do
-    within ".search-results-concepts" do
+    within ".concept-list" do
       page.should have_no_content("beaver hat")
     end
   end
