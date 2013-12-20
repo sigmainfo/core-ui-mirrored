@@ -19,3 +19,7 @@
                   %tr.definition
                     %th= I18n.t 'concepts.list.headers.definition'
                     %td= concept.definition
+                - for lang in concept.langs
+                  %tr.lang
+                    %th= lang.name
+                    %td= lang.terms.join ', '

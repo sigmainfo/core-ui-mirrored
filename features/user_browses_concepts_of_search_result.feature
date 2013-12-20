@@ -8,7 +8,6 @@ Feature: User browses concepts of search result
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
-  @wip
   Scenario: concept result list
     Given a concept with label "ball" exists
     And this concept has broader concepts "equipment" and "billiards"
@@ -31,7 +30,7 @@ Feature: User browses concepts of search result
     Then I should see the details for concept "ballistics"
     And I should be on the concept details page for "ballistics"
 
-  @wip @focus
+  @wip
   Scenario: displayed languages
     Given a concept with label "ball" exists
     And this concept has an English term "billiard ball"
@@ -39,7 +38,8 @@ Feature: User browses concepts of search result
     And a concept with label "ballistics" exists
     And this concept has a German term "Ballistik"
     And a concept with label "balloon" exists
-    When I enter "ball" in the search field
+    When I visit the repository root page
+    And I enter "ball" in the search field
     And I click the search button
     Then I should see "ball", "ballistics", and "balloon" as search results
     When I select "None" as source language
@@ -56,7 +56,6 @@ Feature: User browses concepts of search result
     When I select "English" as target language
     Then I should see languages "DE", "EN" inside each of them
 
-  @wip
   Scenario: no search results
     Given a concept with label "ball" exists
     When I enter "gun" in the search field

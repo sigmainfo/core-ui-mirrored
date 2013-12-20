@@ -27,7 +27,21 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
       @$el.html @template
         query: @model.get 'query'
         concepts: results.map ( concept ) ->
+          terms = concept.termsByLang()
+          langs = []
+          names = []
+          names.push (Coreon.application.sourceLang() or 'en')
+          names.push targetLang if targetLang = Coreon.application.targetLang()
+          for name in names
+            langs.push
+              name: name
+              terms: ( terms[name] or [] )
+                .map ( term ) ->
+                  term.get 'value'
+                .sort ( a, b ) ->
+                  a.localeCompare b
           definition: concept.definition()
+          langs: langs
 
       @$('.concept-list-item').each ( index, tr ) =>
         concept = results[index]

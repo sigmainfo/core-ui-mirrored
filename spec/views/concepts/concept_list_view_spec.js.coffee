@@ -26,9 +26,13 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
     beforeEach ->
       sinon.stub I18n, 't'
+      Coreon.application =
+        sourceLang: -> null
+        targetLang: -> null
 
     afterEach ->
       I18n.t.restore()
+      delete Coreon.application
 
     it 'can be chained', ->
       expect( @view.render() ).to.equal @view
@@ -83,6 +87,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             concept = new Backbone.Model label: label
             concept.broader = -> []
             concept.definition = -> null
+            concept.termsByLang = -> {}
             concept
 
         it 'renders title', ->
@@ -185,3 +190,57 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           concept.definition = -> null
           @view.render()
           expect( @view.$el ).to.not.have '.concept-list-item table tr.definition'
+
+        context 'terms', ->
+
+          beforeEach ->
+            concept = @results[0]
+            concept.termsByLang = ->
+              en: [
+                new Backbone.Model( value: 'gun' )
+                new Backbone.Model( value: 'balloon' )
+              ]
+              de: [
+                new Backbone.Model( value: 'Schuh' )
+              ]
+
+          it 'renders English terms by default', ->
+            Coreon.application.sourceLang = -> null
+            Coreon.application.targetLang = -> null
+            @view.render()
+            row = @view.$ 'tr.concept-list-item:first'
+            expect( row ).to.have('tr.lang')
+            expect( row.find 'tr.lang' ).to.have.lengthOf 1
+            expect( row.find 'tr.lang th' ).to.have.text 'en'
+            expect( row.find 'tr.lang td' ).to.have.text 'balloon, gun'
+
+          it 'renders terms of source lang', ->
+            Coreon.application.sourceLang = -> 'de'
+            Coreon.application.targetLang = -> null
+            @view.render()
+            row = @view.$ 'tr.concept-list-item:first'
+            expect( row ).to.have('tr.lang')
+            expect( row.find 'tr.lang' ).to.have.lengthOf 1
+            expect( row.find 'tr.lang th' ).to.have.text 'de'
+            expect( row.find 'tr.lang td' ).to.have.text 'Schuh'
+
+          it 'renders terms of target lang', ->
+            Coreon.application.sourceLang = -> 'en'
+            Coreon.application.targetLang = -> 'de'
+            @view.render()
+            row = @view.$ 'tr.concept-list-item:first'
+            expect( row ).to.have('tr.lang')
+            expect( row.find 'tr.lang' ).to.have.lengthOf 2
+            expect( row.find 'tr.lang:first th' ).to.have.text 'en'
+            expect( row.find 'tr.lang:last th' ).to.have.text 'de'
+            expect( row.find 'tr.lang:last td' ).to.have.text 'Schuh'
+
+          it 'renders empty cell if no terms are given', ->
+            Coreon.application.sourceLang = -> 'hu'
+            Coreon.application.targetLang = -> null
+            @view.render()
+            row = @view.$ 'tr.concept-list-item:first'
+            expect( row ).to.have('tr.lang')
+            expect( row.find 'tr.lang' ).to.have.lengthOf 1
+            expect( row.find 'tr.lang:first th' ).to.have.text 'hu'
+            expect( row.find 'tr.lang:first td' ).to.have.text ''

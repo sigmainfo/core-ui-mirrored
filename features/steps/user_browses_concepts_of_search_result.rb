@@ -127,12 +127,35 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
 
   end
 
-  step '"ball" should have an English term "billiard ball"' do
-    pending 'step not implemented'
+  step 'I should see "ball", "ballistics", and "balloon" as search results' do
+    within '.concept-list' do
+      %w(ball ballistics balloon).each do |label|
+        page.should have_css('.concept-list-item .label', text: label)
+      end
+    end
   end
 
-  step '"ball" should have a German term "Billiardkugel"' do
-    pending 'step not implemented'
+  step 'I should see language "EN" inside each of them' do
+    within '.concept-list' do
+      page.should have_css('.concept-list-item th',
+                            text: 'EN', count: 3)
+    end
+  end
+
+  step 'it should contain "billiard ball" for "ball"' do
+    within '.concept-list' do
+      ball = page.all('.concept-list-item .label td a').find do |a|
+        a.text == 'ball'
+      end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
+      ball.find('tr.lang td').text.should == 'billiard ball'
+    end
+  end
+
+  step 'I should not see language "EN" inside any of them' do
+    within '.concept-list' do
+      pry
+      page.should have_no_css('.concept-list-item th', text: 'EN')
+    end
   end
 
   step 'I click on "ballistics"' do
