@@ -228,7 +228,8 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row ).to.have('tr.lang')
             expect( row.find 'tr.lang' ).to.have.lengthOf 1
             expect( row.find 'tr.lang th' ).to.have.text 'en'
-            expect( row.find 'tr.lang td' ).to.have.text 'balloon, gun'
+            terms = row.find('tr.lang td').text()
+            expect( terms ).to.match /^\s+balloon\s+|\s+gun\s+$/
 
           it 'renders terms of source lang', ->
             Coreon.application.sourceLang = -> 'de'
@@ -238,7 +239,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row ).to.have('tr.lang')
             expect( row.find 'tr.lang' ).to.have.lengthOf 1
             expect( row.find 'tr.lang th' ).to.have.text 'de'
-            expect( row.find 'tr.lang td' ).to.have.text 'Schuh'
+            expect( row.find('tr.lang td').text() ).to.match /^\s+Schuh\s+$/
 
           it 'renders terms of target lang', ->
             Coreon.application.sourceLang = -> 'en'
@@ -249,7 +250,8 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row.find 'tr.lang' ).to.have.lengthOf 2
             expect( row.find 'tr.lang:first th' ).to.have.text 'en'
             expect( row.find 'tr.lang:last th' ).to.have.text 'de'
-            expect( row.find 'tr.lang:last td' ).to.have.text 'Schuh'
+            terms =  row.find('tr.lang:last td').text()
+            expect( terms ).to.match /^\s+Schuh\s+$/
 
           it 'renders empty cell if no terms are given', ->
             Coreon.application.sourceLang = -> 'hu'
@@ -259,4 +261,4 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row ).to.have('tr.lang')
             expect( row.find 'tr.lang' ).to.have.lengthOf 1
             expect( row.find 'tr.lang:first th' ).to.have.text 'hu'
-            expect( row.find 'tr.lang:first td' ).to.have.text ''
+            expect( row.find('tr.lang:first td').text() ).to.match /^\s+$/

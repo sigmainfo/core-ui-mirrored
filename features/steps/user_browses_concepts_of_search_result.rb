@@ -168,7 +168,7 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     within '.concept-list' do
       ball = page.find('.concept-list-item .label td a', text: /^ball$/).find :xpath,
         'ancestor::*[contains(@class, "concept-list-item")]'
-      ball.find('tr.lang td').text.should == 'Billiardkugel, Kugel'
+      ball.find('tr.lang td').text.should == 'Billiardkugel | Kugel'
     end
   end
 
