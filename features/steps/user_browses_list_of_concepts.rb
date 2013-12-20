@@ -6,6 +6,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
+  include LanguageSelectSteps
 
   def find_concept(label)
     @concept = page.find(".concept-list-item .label", text: label).find :xpath, "ancestor::*[contains(@class, 'concept-list-item')]"
@@ -51,12 +52,6 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
     })
   end
 
-  And 'I click "Concepts only" within the concept search results' do
-    within ".search-results-concepts" do
-      click_link "Concepts only"
-    end
-  end
-
   step 'I should be on the search result page for concepts with query "gun"' do
     page.should have_css("#coreon-main .concept-list")
     current_path.should == "/#{@repository.id}/concepts/search/gun"
@@ -71,11 +66,11 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   And 'I should see it having the following English terms: "firearm", "gun", "musket", "shot gun"' do
-    @concept.find(".terms th", text: "EN").find(:xpath, "../td").should have_content("firearm, gun, musket, shot gun")
+    @concept.find(".lang th", text: "EN").find(:xpath, "../td").should have_content("firearm | gun | musket | shot gun")
   end
 
   And 'I should see it having the following German terms: "Flinte", "Geschütz", "Pistole", "Schießgewehr", "Schusswaffe"' do
-    @concept.find(".terms th", text: "DE").find(:xpath, "../td").should have_content("Flinte, Geschütz, Pistole, Schießgewehr, Schusswaffe")
+    @concept.find(".lang th", text: "DE").find(:xpath, "../td").should have_content("Flinte | Geschütz | Pistole | Schießgewehr | Schusswaffe")
   end
 
   And 'I should see a concept "pistol"' do
@@ -83,7 +78,7 @@ class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   end
 
   And 'I should see it being narrower than "handgun"' do
-    @concept.find(".super").should have_content("handgun")
+    @concept.find(".broader").should have_content("handgun")
   end
 
   When 'I select "Concepts by Terms" as the type of search' do

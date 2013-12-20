@@ -8,10 +8,10 @@ Feature: maintainer deletes concept
     And I am a maintainer of the repository
     And I am logged in
     And a concept with an English term "beaver hat" exists
-  
+
   Scenario: delete concept
     Given I am on the show concept page of "beaver hat"
-    When I click "Edit concept" 
+    When I click "Edit concept"
     And I click "Delete concept"
     Then I should see a confirmation dialog "This concept including all terms will be deleted permanently."
     When I click outside the dialog

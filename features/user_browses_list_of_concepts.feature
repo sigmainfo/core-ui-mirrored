@@ -15,9 +15,11 @@ Feature: user browses list of concepts
     And given another concept defined as "a handgun whose chamber is integral with the barrel;"
     And this concept has the following English terms: "pistol", "gun", "automatic pistol"
     And this concept is a subconcept of "handgun"
-    When I enter "gun" in the search field
+    When I visit the repository root page
+    And I enter "gun" in the search field
     And I click the search button
-    And I click "Concepts only" within the concept search results
+    And I select "German" as source language
+    And I select "English" as target language
     Then I should be on the search result page for concepts with query "gun"
     And I should see a concept "handgun"
     And I should see it being defined as "A portable firearm"
