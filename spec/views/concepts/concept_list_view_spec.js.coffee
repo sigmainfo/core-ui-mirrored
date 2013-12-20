@@ -32,9 +32,13 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
     beforeEach ->
       sinon.stub I18n, 't'
+      sinon.stub Coreon.Helpers, 'can'
+      sinon.stub Coreon.Helpers, 'repositoryPath'
 
     afterEach ->
       I18n.t.restore()
+      Coreon.Helpers.can.restore()
+      Coreon.Helpers.repositoryPath.restore()
 
     it 'can be chained', ->
       expect( @view.render() ).to.equal @view
@@ -229,7 +233,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row.find 'tr.lang' ).to.have.lengthOf 1
             expect( row.find 'tr.lang th' ).to.have.text 'en'
             terms = row.find('tr.lang td').text()
-            expect( terms ).to.match /^\s+balloon\s+|\s+gun\s+$/
+            expect( terms ).to.match /^balloon\s+|\s+gun$/
 
           it 'renders terms of source lang', ->
             Coreon.application.sourceLang = -> 'de'
@@ -239,7 +243,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row ).to.have('tr.lang')
             expect( row.find 'tr.lang' ).to.have.lengthOf 1
             expect( row.find 'tr.lang th' ).to.have.text 'de'
-            expect( row.find('tr.lang td').text() ).to.match /^\s+Schuh\s+$/
+            expect( row.find('tr.lang td').text() ).to.equal 'Schuh'
 
           it 'renders terms of target lang', ->
             Coreon.application.sourceLang = -> 'en'
@@ -251,7 +255,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row.find 'tr.lang:first th' ).to.have.text 'en'
             expect( row.find 'tr.lang:last th' ).to.have.text 'de'
             terms =  row.find('tr.lang:last td').text()
-            expect( terms ).to.match /^\s+Schuh\s+$/
+            expect( terms ).to.equal 'Schuh'
 
           it 'renders empty cell if no terms are given', ->
             Coreon.application.sourceLang = -> 'hu'
@@ -261,4 +265,31 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
             expect( row ).to.have('tr.lang')
             expect( row.find 'tr.lang' ).to.have.lengthOf 1
             expect( row.find 'tr.lang:first th' ).to.have.text 'hu'
-            expect( row.find('tr.lang:first td').text() ).to.match /^\s+$/
+            expect( row.find 'tr.lang:first td' ).to.have.text ''
+
+      context 'with edit privileges', ->
+
+        beforeEach ->
+          Coreon.Helpers.can.returns true
+
+        it 'renders link to new concept from search', ->
+          Coreon.application.sourceLang = -> 'de'
+          I18n.t.withArgs('concept.new').returns 'New Concept'
+          @view.model.set 'query', 'billiard ball', silent: yes
+          Coreon.Helpers.repositoryPath.withArgs('concepts/new/terms', 'de', 'billiard%20ball')
+            .returns '/my-repo123/concepts/new/terms/de/billiard%20ball'
+          @view.render()
+          expect( @view.$el ).to.have '.edit a.create-concept'
+          a = @view.$ '.edit a.create-concept'
+          expect( a ).to.have.text 'New Concept'
+          expect( a ).to.have.attr 'href', '/my-repo123/concepts/new/terms/de/billiard%20ball'
+
+      context 'without edit privileges', ->
+
+        beforeEach ->
+          Coreon.Helpers.can.returns false
+
+        it 'renders no create concept button', ->
+          @view.render()
+          expect( @view.$el ).to.not.have 'a.create-concept'
+

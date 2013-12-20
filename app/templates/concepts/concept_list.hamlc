@@ -1,3 +1,6 @@
+.edit
+  - if @can 'create', Coreon.Models.Concept
+    %a.button.create-concept{href: @repositoryPath( "concepts/new/terms/#{escape( @sourceLang )}/#{escape( @query )}" )}= I18n.t 'concept.new'
 %h3= I18n.t 'concepts.list.title'
 %table
   %tbody

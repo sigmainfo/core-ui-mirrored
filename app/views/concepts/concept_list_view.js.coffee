@@ -1,6 +1,8 @@
 #= require environment
 #= require templates/concepts/concept_list
 #= require views/concepts/concept_label_view
+#= require helpers/can
+#= require helpers/repository_path
 
 class Coreon.Views.Concepts.ConceptListView extends Backbone.View
 
@@ -27,7 +29,11 @@ class Coreon.Views.Concepts.ConceptListView extends Backbone.View
       @$el.html ''
     else
       results = @model.results()
+      sourceLang = Coreon.application.sourceLang()
+      if not sourceLang? or sourceLang is 'none'
+        sourceLang = 'en'
       @$el.html @template
+        sourceLang: sourceLang
         query: @model.get 'query'
         concepts: results.map ( concept ) ->
           terms = concept.termsByLang()
