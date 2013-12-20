@@ -10,20 +10,25 @@
     font-size: 0.9em;
     position: relative;
     display: block;
-    height: 20px;
+    height: 18px;
   }
   
   &>table {
     border-top: 1px solid $greencolor;
     @include table-list; 
     
+    .concept-label {
+      margin-right: 4px;
+    }
+    
     .concept-list-item>td{
       @include dottedline;
       background-position: bottom;
       border: none;
-      padding: 0;
+      padding: 6px 0;
       
       table {
+        border-spacing: 0;
         width: 100%;
         position: relative;
         
@@ -32,12 +37,16 @@
           text-align: right;
           color: $greencolor;
         }
+        td:empty:before {
+          content:"-";
+        }
         
         th, td {
           border-top: 1px solid $greycolor;
           border-bottom: none;
           padding-top: 5px;
         }
+        
         
         tr:first-child {
           td, th {
@@ -49,14 +58,23 @@
           td {
             font-size: 1.1em;
             padding-top: 6px;
+            padding-bottom: 4px;
           }
         }
         
         tr.broader {
-          td {
-            font-size: 0.9em;
+          .concept-label {
+            font-size: 0.86em;
+            &:before {
+              top: 4px;
+            };
           }
-
+        }
+        
+        tr.term {
+          td {
+            font: 1.1em Palatino;
+          }
         }
       }
 
@@ -65,74 +83,10 @@
   
 }
 
-.search-results-terms, .search-results-concepts, .search-results-tnodes, .concept-list {
-  margin-right: 270px;
-  .concept-label {
-    margin-right: 4px;
-  }
 
-  &>table {  
-    @include table-list;
-
-    tr {
-      td {
-        &.lang {
-          text-transform: uppercase;
-          font-size: 0.9em;
-          color: $greencolor;
-        }
-
-        &.term {
-          font: 1.1em Palatino;
-        }
-      }
-
-      td, th {      
-        &.lang {
-          width: 14%;
-        }
-      }
-    }
-    
-    &.terms {
-      .concept {
-        width: 36%;
-        padding-right: 4px;
-      }    
-    }
-
-    &.concepts {
-      .super {
-        width: 36%;
-        padding-right: 4px;
-      }
-      td.label {
-        font-size: 1.1em;
-      }
-    }
-
-    &.tnodes {
-      color: $greencolor;
-      td {
-        border:none;
-      }
-    }
-
-  }
-  
-}
 
 .search-results-terms, .search-results-concepts, .search-results-tnodes {
-  
-  h3 {
-    text-transform: uppercase;
-    color: $greencolor;
-    font-size: 0.9em;
-    position: relative;
-    display: block;
-    height: 20px;
-    top: 20px;
-  }
+
   
   .actions {
     @include dottedline;
@@ -150,153 +104,84 @@
     position: absolute;
     padding-top: 6px;
   }
-
-  table {  
-
-    tr {
-      th {
-        &:first-child{
-          text-indent: -8000px;
-        }
-      }
-
-      td, th {      
-        &:first-child {
-          padding-left: 10%;
-        }
-      }
-    } 
-  }
-  
-}
-
-.concept-listi {
-  table {
-    tr:last-child {
-      td {
-        @include dottedline;
-        background-position: bottom;
-        border: none;
-      }
-    };
-    .terms td{
-      padding-bottom: 8px;
-    }
-  }
-
-  .concepts table{
-
-    th {
-      width: 100px;
-      text-align: right;
-      color: $greencolor;
-    }
-    tr {
-      td, th {
-        border: none;
-        padding-top: 2px;
-        padding-bottom: 0;
-        background: none;
-      }
-    }
-    
-  }
   
 }
 
 
 
-@media all and (max-width: 799px) and (min-width: 600px) {
+
+
+@media all and (max-width: 999px) {
   
-  .search-results-tnodes {
-    display: none;
-  }
+  .concept-list {
   
-  .search-results-concepts, .search-results-terms {
-    
-    h3 {
-      top: 14px;
-      font-size: 0.86em;
-    }
-    
-    &>table { 
+    &>table {  
+       
+      .concept-list-item>td{
       
-      margin-bottom: 4px;
-      thead {
-        display: none;
-      }
-      
-      tr td {
-        padding: 0px 16px 0px 10px;
-        &:first-child {
-          padding-left: 16px;
+        table {
+        
+          th {
+            width: 100px;
+          }
+        
+          tr.term {
+            td {
+              font: 1em Palatino;
+            }
+          }
+          tr.definition {
+            td {
+              font-size: 0.9em;
+            }
+          }
         }
-      }
-      
-      &.concepts {
-        .super {
-           display: none;
-        }
-        td.label {
-          font-size: 0.86em;
-        }
-      }
-      &.terms {
-        font-size: 0.8em;
-        line-height: 1.8em;
-        .concept {
-          width: auto;
-          padding-right: 0;
-        }
+
       }
     }
-    
-    .actions .show-all{
-      display: none;
-    }
-    
+  
   }
   
 }
 
-@media all and (max-width: 599px) {
+@media all and (max-width: 799px) {
   
-  .search-results-terms, .search-results-tnodes {
-    display: none;
-  }
+  .concept-list {
   
-  .search-results-concepts {
-    
-    h3 {
-      display: none;
-    }
-    
-    &>table { 
-      thead {
-        display: none;
-      }
+    &>table {  
+       
+      .concept-list-item>td{
       
-      tr td {
-        padding: 1px 16px 1px 10px;
-        &:first-child {
-          padding-left: 16px;
+        table {
+        
+          th, td {
+            display: block;
+            padding: 4px 0 0 24px;
+          }
+          th {
+            width: auto;
+            text-align:left;
+            font-size: 0.7em;
+          }
+          td {
+            border: none;
+            padding-top: 0;
+          }   
+          tr.label {
+            td {
+              padding: 6px 0 2px 0;
+            }
+          }     
+          tr.term {
+          }
+          tr.definition {
+            display: none;
+          }
         }
-      }
-      
-      &.concepts {
-        .super {
-           display: none;
-        }
-        td.label {
-          font-size: 0.86em;
-        }
+
       }
     }
-    
-    .actions .show-all{
-      display: none;
-    }
-    
+  
   }
   
 }
