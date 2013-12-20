@@ -114,7 +114,7 @@ $widget-width: 320px;
 @mixin empty {
   font: 1em Palatino;
   font-style: italic;
-  color: lighten($greytext-color, 20%);
+  color: lighten($greytext-color, 10%);
   &:before{
     content:"{";
       font-size: 1.2em;

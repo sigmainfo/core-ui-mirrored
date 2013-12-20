@@ -22,9 +22,9 @@
                 - for lang in concept.langs
                   %tr.lang
                     %th= lang.name
-                    %td
+                    %td><
                       - for term, index in lang.terms
                         - unless index is 0
                           %span
-                            &ensp;|&ensp;
+                            |
                         = term

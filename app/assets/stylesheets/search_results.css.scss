@@ -21,6 +21,15 @@
       margin-right: 4px;
     }
     
+    .empty-list {
+      @include empty;
+      font-size: 1.06em;
+      border: none;
+      @include dottedline;
+      background-position: bottom;
+      padding-bottom: 10px;
+    }
+    
     .concept-list-item>td{
       @include dottedline;
       background-position: bottom;
@@ -42,13 +51,12 @@
         }
         
         th, td {
-          border-top: 1px solid $greycolor;
-          border-bottom: none;
+          border-bottom: 1px solid $greycolor;
           padding-top: 5px;
         }
         
         
-        tr:first-child {
+        tr:last-child {
           td, th {
             border: none;
           }
@@ -56,9 +64,8 @@
         
         tr.label {
           td {
-            font-size: 1.1em;
-            padding-top: 6px;
-            padding-bottom: 4px;
+            font-size: 1.16em;
+            padding: 6px 0 4px 0;
           }
         }
         
@@ -71,9 +78,20 @@
           }
         }
         
-        tr.term {
+        .lang {
           td {
             font: 1.1em Palatino;
+            line-height: 1.4em;
+
+          }
+          td, th {
+            border: none;
+            padding-bottom: 0;
+          }
+          
+          span {
+            color: $greencolor;
+            margin: 0 2px;
           }
         }
       }
@@ -122,12 +140,13 @@
         table {
         
           th {
-            width: 100px;
+            width: 90px;
           }
         
-          tr.term {
+          tr.lang {
             td {
               font: 1em Palatino;
+              line-height: 1.3em;
             }
           }
           tr.definition {
@@ -156,27 +175,30 @@
         
           th, td {
             display: block;
-            padding: 4px 0 0 24px;
+            padding: 4px 0 0 30px;
           }
           th {
+            border: none;
             width: auto;
             text-align:left;
             font-size: 0.7em;
           }
-          td {
-            border: none;
+          td {            
             padding-top: 0;
-          }   
+            &:empty {
+              line-height: 10px;
+            }
+          }  
+          
           tr.label {
             td {
               padding: 6px 0 2px 0;
             }
           }     
-          tr.term {
-          }
           tr.definition {
             display: none;
           }
+          
         }
 
       }
