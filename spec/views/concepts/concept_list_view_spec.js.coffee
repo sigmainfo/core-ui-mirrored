@@ -276,7 +276,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           Coreon.application.sourceLang = -> 'de'
           I18n.t.withArgs('concept.new').returns 'New Concept'
           @view.model.set 'query', 'billiard ball', silent: yes
-          Coreon.Helpers.repositoryPath.withArgs('concepts/new/terms', 'de', 'billiard%20ball')
+          Coreon.Helpers.repositoryPath.withArgs('concepts/new/terms/de/billiard%20ball')
             .returns '/my-repo123/concepts/new/terms/de/billiard%20ball'
           @view.render()
           expect( @view.$el ).to.have '.edit a.create-concept'
