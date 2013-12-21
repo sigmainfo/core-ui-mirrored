@@ -31,7 +31,7 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
   end
 
   step 'I should see the concept hit "gun"' do
-    page.should have_css "table.terms .concept", text: 'gun'
+    page.should have_css ".concept-list .label .concept-label", text: 'gun'
   end
 
   step 'I should see a concept node "gun" inside the concept map' do
@@ -41,12 +41,12 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
   end
 
   step 'I should not see the concept hit "Schusswaffe"' do
-    page.should_not have_css "table.terms .concept", text: 'Schusswaffe'
+    page.should_not have_css ".concept-list .label .concept-label", text: 'Schusswaffe'
   end
 
 
   step 'I should see the concept hit "Schusswaffe"' do
-    page.should have_css "table.terms .concept", text: 'Schusswaffe'
+    page.should have_css ".concept-list .label .concept-label", text: 'Schusswaffe'
   end
 
   step 'I should see a concept node "Schusswaffe" inside the concept map' do

@@ -7,25 +7,25 @@ Coreon.Modules.PropertiesByKey =
     for prop in @properties().models
       key = prop.get "key"
       props[key] ?= []
-      props[key].push prop    
+      props[key].push prop
     props
 
   propertiesByKeyAndLang: ->
-    props = {} 
-    
+    props = {}
+
     if settings = Coreon.application?.repositorySettings()
       sourceLang = settings.get('sourceLanguage')
       targetLang = settings.get('targetLanguage')
-    
-      sourceLang = undefined if sourceLang and sourceLang == 'none'
-      targetLang = undefined if targetLang and targetLang == 'none'
-    
+
+      sourceLang = null if sourceLang == 'none'
+      targetLang = null if targetLang == 'none'
+
     for key, list of @propertiesByKey()
       do (key, list) ->
         sourceLangProps = []
         targetLangProps = []
         otherLangProps = []
-        
+
         for item in list
           do (item) ->
             if itemLang = item.get('lang')
@@ -34,12 +34,12 @@ Coreon.Modules.PropertiesByKey =
               else
                 if targetLang and itemLang == targetLang
                   targetLangProps.push item
-                else    
+                else
                   otherLangProps.push item
             else
               otherLangProps.push item
-              
+
           props[key] = sourceLangProps.concat targetLangProps, otherLangProps
     props
-    
-      
+
+

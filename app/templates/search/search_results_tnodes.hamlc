@@ -1,9 +1,0 @@
-%h3= I18n.t "search.results.tnodes.headline"
-%table.tnodes
-  %thead
-    %tr
-      %th.name= I18n.t "search.results.tnodes.header.name"
-  %tbody
-    - for tnode in @tnodes
-      %tr
-        %td.value.name= tnode.label()

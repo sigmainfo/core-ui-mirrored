@@ -17,12 +17,12 @@ module AuthSteps
   end
 
   step 'I am no maintainer of the repository' do
-    # set user_name to mark user as dirty 
+    # set user_name to mark user as dirty
     @repo_user.update_attributes roles: ["user"], user_name: "123"
   end
 
   step 'I am a maintainer of the repository' do
-    # set user_name to mark user as dirty 
+    # set user_name to mark user as dirty
     @repo_user.update_attributes roles: ["user", "maintainer"], user_name: "xxx"
   end
 
@@ -44,5 +44,9 @@ module AuthSteps
   step 'I debug' do
     binding.pry
   end
-  
+
+  step 'I visit the repository root page' do
+    visit "/#{@repository.id}"
+  end
+
 end

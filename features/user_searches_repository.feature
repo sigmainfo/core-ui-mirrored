@@ -29,4 +29,3 @@ Feature: user searches repository
     Then I should see the password prompt
     When I enter "se7en!" for password
     And click on "Proceed"
-    Then I should see a listing of the search results

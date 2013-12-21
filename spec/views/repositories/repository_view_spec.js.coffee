@@ -46,7 +46,7 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
       I18n.t.withArgs("languages.en").returns "English"
       I18n.t.withArgs("languages.de").returns "German"
       I18n.t.withArgs("languages.fr").returns "French"
-      
+
       @view.model.set
         created_at: "2013-06-17T09:46:52.297Z"
         copyright: "(c) 512 BC SunTzu"
@@ -91,10 +91,10 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
       @view.$("section.contact table.managers tr:eq(2) td:eq(1) a").should.have.text "wl@oracle.com"
 
     context "with maintainer privileges", ->
-    
+
       beforeEach ->
         Coreon.Helpers.can = -> true
-  
+
       it "renders link to new concept form", ->
         I18n.t.withArgs("concept.new").returns "New concept"
         @view.render()
@@ -102,10 +102,10 @@ describe "Coreon.Views.Repositories.RepositoryView", ->
         @view.$('a[href="/coffee23/concepts/new"]').should.have.text "New concept"
 
     context "without maintainer privileges", ->
-    
+
       beforeEach ->
         Coreon.Helpers.can = -> false
-  
+
       it "renders link to new concept form", ->
         @view.render()
         @view.$el.should.not.have 'a[href="/concepts/new"]'

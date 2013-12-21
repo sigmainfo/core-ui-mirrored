@@ -1,75 +1,120 @@
 @import 'compass/css3';
 @import '_config';
 
-.search-results-terms, .search-results-concepts, .search-results-tnodes, .concept-list {
+.concept-list {
   margin-right: 270px;
-  .concept-label {
-    margin-right: 4px;
-  }
 
-  &>table {  
-    @include table-list;
-
-    tr {
-      td {
-        &.lang {
-          text-transform: uppercase;
-          font-size: 0.9em;
-          color: $greencolor;
-        }
-
-        &.term {
-          font: 1.1em Palatino;
-        }
-      }
-
-      td, th {      
-        &.lang {
-          width: 14%;
-        }
-      }
-    }
-    
-    &.terms {
-      .concept {
-        width: 36%;
-        padding-right: 4px;
-      }    
-    }
-
-    &.concepts {
-      .super {
-        width: 36%;
-        padding-right: 4px;
-      }
-      td.label {
-        font-size: 1.1em;
-      }
-    }
-
-    &.tnodes {
-      color: $greencolor;
-      td {
-        border:none;
-      }
-    }
-
-  }
-  
-}
-
-.search-results-terms, .search-results-concepts, .search-results-tnodes {
-  
   h3 {
     text-transform: uppercase;
     color: $greencolor;
     font-size: 0.9em;
     position: relative;
     display: block;
-    height: 20px;
-    top: 20px;
+    height: 18px;
   }
-  
+
+  .edit {
+    height: 30px;
+
+    .create-concept {
+      float: right;
+    }
+  }
+
+
+  &>table {
+    border-top: 1px solid $greencolor;
+    @include table-list;
+
+    .concept-label {
+      margin-right: 4px;
+    }
+
+    .empty-list {
+      @include empty;
+      font-size: 1.06em;
+      border: none;
+      @include dottedline;
+      background-position: bottom;
+      padding-bottom: 10px;
+    }
+
+    .concept-list-item>td{
+      @include dottedline;
+      background-position: bottom;
+      border: none;
+      padding: 6px 0;
+
+      table {
+        border-spacing: 0;
+        width: 100%;
+        position: relative;
+
+        th {
+          width: 140px;
+          text-align: right;
+          color: $greencolor;
+        }
+        td:empty:before {
+          content:"-";
+        }
+
+        th, td {
+          border-bottom: 1px solid $greycolor;
+          padding-top: 5px;
+        }
+
+
+        tr:last-child {
+          td, th {
+            border: none;
+          }
+        }
+
+        tr.label {
+          td {
+            font-size: 1.16em;
+            padding: 6px 0 4px 0;
+          }
+        }
+
+        tr.broader {
+          .concept-label {
+            font-size: 0.86em;
+            &:before {
+              top: 4px;
+            };
+          }
+        }
+
+        .lang {
+          td {
+            font: 1.1em Palatino;
+            line-height: 1.4em;
+
+          }
+          td, th {
+            border: none;
+            padding-bottom: 0;
+          }
+
+          span {
+            color: $greencolor;
+            margin: 0 2px;
+          }
+        }
+      }
+
+    }
+  }
+
+}
+
+
+
+.search-results-terms, .search-results-concepts, .search-results-tnodes {
+
+
   .actions {
     @include dottedline;
     margin-bottom: 10px;
@@ -79,162 +124,97 @@
     .show-all {
       @include toggle;
     }
-    
+
   }
-  
+
   .edit {
     position: absolute;
     padding-top: 6px;
   }
 
-  table {  
-
-    tr {
-      th {
-        &:first-child{
-          text-indent: -8000px;
-        }
-      }
-
-      td, th {      
-        &:first-child {
-          padding-left: 10%;
-        }
-      }
-    } 
-  }
-  
-}
-
-.concept-list {
-  &>table {
-    tr:last-child {
-      td {
-        @include dottedline;
-        background-position: bottom;
-        border: none;
-      }
-    };
-    .terms td{
-      padding-bottom: 8px;
-    }
-  }
-
-  .concepts table{
-
-    th {
-      width: 100px;
-      text-align: right;
-      color: $greencolor;
-    }
-    tr {
-      td, th {
-        border: none;
-        padding-top: 2px;
-        padding-bottom: 0;
-        background: none;
-      }
-    }
-    
-  }
-  
 }
 
 
 
-@media all and (max-width: 799px) and (min-width: 600px) {
-  
-  .search-results-tnodes {
-    display: none;
+
+
+@media all and (max-width: 999px) {
+
+  .concept-list {
+
+    &>table {
+
+      .concept-list-item>td{
+
+        table {
+
+          th {
+            width: 90px;
+          }
+
+          tr.lang {
+            td {
+              font: 1em Palatino;
+              line-height: 1.3em;
+            }
+          }
+          tr.definition {
+            td {
+              font-size: 0.9em;
+            }
+          }
+        }
+
+      }
+    }
+
   }
-  
-  .search-results-concepts, .search-results-terms {
-    
-    h3 {
-      top: 14px;
-      font-size: 0.86em;
-    }
-    
-    &>table { 
-      
-      margin-bottom: 4px;
-      thead {
-        display: none;
-      }
-      
-      tr td {
-        padding: 0px 16px 0px 10px;
-        &:first-child {
-          padding-left: 16px;
-        }
-      }
-      
-      &.concepts {
-        .super {
-           display: none;
-        }
-        td.label {
-          font-size: 0.86em;
-        }
-      }
-      &.terms {
-        font-size: 0.8em;
-        line-height: 1.8em;
-        .concept {
-          width: auto;
-          padding-right: 0;
-        }
-      }
-    }
-    
-    .actions .show-all{
-      display: none;
-    }
-    
-  }
-  
+
 }
 
-@media all and (max-width: 599px) {
-  
-  .search-results-terms, .search-results-tnodes {
-    display: none;
+@media all and (max-width: 799px) {
+
+  .concept-list {
+
+    &>table {
+
+      .concept-list-item>td{
+
+        table {
+
+          th, td {
+            display: block;
+            padding: 4px 0 0 30px;
+          }
+          th {
+            border: none;
+            width: auto;
+            text-align:left;
+            font-size: 0.7em;
+          }
+          td {
+            padding-top: 0;
+            &:empty {
+              line-height: 10px;
+            }
+          }
+
+          tr.label {
+            td {
+              padding: 6px 0 2px 0;
+            }
+          }
+          tr.definition {
+            display: none;
+          }
+
+        }
+
+      }
+    }
+
   }
-  
-  .search-results-concepts {
-    
-    h3 {
-      display: none;
-    }
-    
-    &>table { 
-      thead {
-        display: none;
-      }
-      
-      tr td {
-        padding: 1px 16px 1px 10px;
-        &:first-child {
-          padding-left: 16px;
-        }
-      }
-      
-      &.concepts {
-        .super {
-           display: none;
-        }
-        td.label {
-          font-size: 0.86em;
-        }
-      }
-    }
-    
-    .actions .show-all{
-      display: none;
-    }
-    
-  }
-  
+
 }
 
 

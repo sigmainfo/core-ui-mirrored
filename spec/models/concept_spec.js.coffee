@@ -616,3 +616,31 @@ describe 'Coreon.Models.Concept', ->
       @model.isNew = -> true
       expect( @model.path() ).to.equal 'javascript:void(0)'
 
+  describe '#broader()', ->
+
+    beforeEach ->
+      sinon.stub Coreon.Models.Concept, 'find'
+
+    afterEach ->
+      Coreon.Models.Concept.find.restore()
+
+    it 'returns a set containing the superconcepts', ->
+      parent = new Backbone.Model
+      @model.set 'superconcept_ids', [ 'p12345' ], silent: yes
+      Coreon.Models.Concept.find.withArgs('p12345').returns parent
+      expect( @model.broader() ).to.eql [ parent ]
+
+  describe '#definition()', ->
+
+    it 'returns null when no definition is given', ->
+      @model.propertiesByKeyAndLang = -> {}
+      expect( @model.definition() ).to.be.null
+
+    it 'returns first definition in preferred lang', ->
+      @model.propertiesByKeyAndLang = ->
+       definition: [
+        new Backbone.Model value: 'Eine Rose'
+        new Backbone.Model value: "C'est ne pas un pipe"
+       ]
+      expect( @model.definition() ).to.equal 'Eine Rose'
+

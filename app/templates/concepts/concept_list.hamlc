@@ -1,5 +1,33 @@
-%table.concepts
-  %thead
-    %tr
-      %th.label= I18n.t "concepts.list.header.label"
-      %th.super= I18n.t "concepts.list.header.superconcepts"
+.edit
+  - if @can 'create', Coreon.Models.Concept
+    %a.button.create-concept{href: @repositoryPath( "concepts/new/terms/#{escape( @sourceLang )}/#{escape( @query )}" )}= I18n.t 'concept.new'
+%h3= I18n.t 'concepts.list.title'
+%table
+  %tbody
+    - if @concepts.length is 0
+      %tr
+        %td.empty-list= I18n.t 'concepts.list.empty', query: @query
+    - else
+      - for concept in @concepts
+        %tr.concept-list-item
+          %td
+            %table
+              %tbody
+                %tr.label
+                  %td{ colspan: 2 }
+                %tr.broader
+                  %th= I18n.t 'concepts.list.headers.broader'
+                  %td
+                - if concept.definition?
+                  %tr.definition
+                    %th= I18n.t 'concepts.list.headers.definition'
+                    %td= concept.definition
+                - for lang in concept.langs
+                  %tr.lang
+                    %th= lang.name
+                    %td><
+                      - for term, index in lang.terms
+                        - unless index is 0
+                          %span
+                            |
+                        = term

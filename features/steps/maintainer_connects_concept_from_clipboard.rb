@@ -19,11 +19,11 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'I drag the search result to the clipboard' do
-    find(".search-results a.concept-label.ui-draggable").drag_to find("#coreon-clipboard ul")
+    find(".concept-list a.concept-label.ui-draggable").drag_to find("#coreon-clipboard ul")
   end
 
   step 'I click on the search result' do
-    find(".search-results a.concept-label").click
+    find(".concept-list a.concept-label").click
   end
 
   step 'I search for "panopticum"' do

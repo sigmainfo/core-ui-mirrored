@@ -51,4 +51,3 @@ Feature: maintainer connects concept from clipboard
     And I click Cancel
     Then I should not see any unsaved concepts
     And I should not see drop zones
-   

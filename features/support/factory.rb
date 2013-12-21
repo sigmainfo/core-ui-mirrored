@@ -1,23 +1,23 @@
 module Api
   module Graph
     module Factory
-            
+
       def maintainer_session
         return @maintainer_session if @maintainer_session
-  
-        user = CoreClient::Auth::User.create! name: "Given Maintainer", emails: ["maintainer@user.given"], password: "secret123", password_confirmation: "secret123" 
+
+        user = CoreClient::Auth::User.create! name: "Given Maintainer", emails: ["maintainer@user.given"], password: "secret123", password_confirmation: "secret123"
         CoreClient::Auth::RepositoryUser.create! repository: @repository, user: user, email: "maintainer@user.given", roles: [:maintainer], state: :confirmed
-  
+
         session = CoreClient::Auth.get_session 'maintainer@user.given', 'secret123'
-  
+
         @maintainer_session = session[:auth_token]
-      end      
-            
+      end
+
       def create_concept attributes
         response = CoreAPI.post(
-          "concepts", 
-          {concept: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+          "concepts",
+          {concept: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -30,10 +30,10 @@ module Api
       end
 
       def create_concept_property concept, attributes
-        response = CoreAPI.post( 
-          "concepts/#{concept['id']}/properties", 
-          {property: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.post(
+          "concepts/#{concept['id']}/properties",
+          {property: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -42,10 +42,10 @@ module Api
       end
 
       def update_concept_property concept, property, attributes
-        response = CoreAPI.put( 
-          "concepts/#{concept['id']}/properties/#{property['id']}", 
-          {property: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.put(
+          "concepts/#{concept['id']}/properties/#{property['id']}",
+          {property: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -53,10 +53,10 @@ module Api
       end
 
       def create_concept_term concept, attributes
-        response = CoreAPI.post( 
-          "concepts/#{concept['id']}/terms", 
-          {term: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.post(
+          "concepts/#{concept['id']}/terms",
+          {term: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -65,10 +65,10 @@ module Api
       end
 
       def update_concept_term concept, term, attributes
-        response = CoreAPI.put( 
-          "concepts/#{concept['id']}/terms/#{term['id']}", 
-          {term: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.put(
+          "concepts/#{concept['id']}/terms/#{term['id']}",
+          {term: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -76,10 +76,10 @@ module Api
       end
 
       def create_concept_term_property concept, term, attributes
-        response = CoreAPI.post( 
-          "concepts/#{concept['id']}/terms/#{term['id']}/properties", 
-          {property: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.post(
+          "concepts/#{concept['id']}/terms/#{term['id']}/properties",
+          {property: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -88,10 +88,10 @@ module Api
       end
 
       def update_concept_term_property concept, term, prop, attributes
-        response = CoreAPI.put( 
-          "concepts/#{concept['id']}/terms/#{term['id']}/properties/#{prop['id']}", 
-          {property: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.put(
+          "concepts/#{concept['id']}/terms/#{term['id']}/properties/#{prop['id']}",
+          {property: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -99,10 +99,10 @@ module Api
       end
 
       def create_edge attributes
-        response = CoreAPI.post( 
-          "edges", 
-          {edge: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.post(
+          "edges",
+          {edge: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -121,10 +121,10 @@ module Api
       end
 
       def create_taxonomy attributes
-        response = CoreAPI.post( 
-          "taxonomies", 
-          {taxonomy: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+        response = CoreAPI.post(
+          "taxonomies",
+          {taxonomy: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body
@@ -133,10 +133,10 @@ module Api
       end
 
       def create_taxonomy_taxonomy_node taxonomy, attributes
-        response = CoreAPI.post( 
+        response = CoreAPI.post(
           "taxonomies/#{taxonomy['id']}/taxonomy_nodes",
-          {taxonomy_node: attributes}, 
-          {"X-Core-Session" => maintainer_session} 
+          {taxonomy_node: attributes},
+          {"X-Core-Session" => maintainer_session}
         )
         unless response.success?
           raise response.body

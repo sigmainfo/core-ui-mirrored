@@ -38,7 +38,7 @@ class Coreon.Views.Widgets.SearchView extends Backbone.View
     type = @model.getSelectedType()
     query = @$('input#coreon-search-query').val()
     path = if type is "all"
-      Coreon.Helpers.repositoryPath("search/#{query}")
+      Coreon.Helpers.repositoryPath("concepts/search/#{query}")
     else
       Coreon.Helpers.repositoryPath("concepts/search/#{type}/#{query}")
 

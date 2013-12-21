@@ -55,7 +55,7 @@ Feature: user browses single concept
     Then the section "BROADER & NARROWER" should be hidden
     When I click on the toggle "PROPERTIES"
     Then the concept properties should be hidden
-    
+
   Scenario: toggle all term properties
     Given a concept with label "handgun"
     And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
@@ -69,7 +69,7 @@ Feature: user browses single concept
     When I click on toggle "TOGGLE ALL PROPERTIES"
     Then I should see property "GENDER" with value "f"
     Then I should see property "status" with value "pending"
-    
+
   Scenario: browse system info
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"

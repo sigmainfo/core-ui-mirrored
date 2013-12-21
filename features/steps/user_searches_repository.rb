@@ -14,13 +14,13 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should be on the search results page for query "poet"' do
-    current_path.should == "/#{@repository.id}/search/poet"
+    current_path.should == "/#{@repository.id}/concepts/search/poet"
   end
 
   And 'I should see a listing of the search results' do
-    page.should have_css(".search-results")
+    page.should have_css('.concept-list')
   end
-  
+
   Then 'I should see a progress indicator' do
     find("#coreon-progress-indicator")["class"].should == "busy"
   end

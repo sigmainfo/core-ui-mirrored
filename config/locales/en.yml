@@ -49,12 +49,11 @@ en:
 
   concepts:
     list:
-      header:
-        label: "Concept"
-        superconcepts: "Broader"
-        id: "ID"
-      props:
-        definition: "Definition"
+      title: 'Concepts'
+      empty: 'No concepts found for "{{query}}"'
+      headers:
+        broader: 'Broader'
+        definition: 'Definition'
 
   concept:
     info: "System Info"
