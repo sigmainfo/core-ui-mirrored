@@ -44,7 +44,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   And 'the term "Schusswaffe" should have property "gender" with value "f"' do
     create_concept_term_property @handgun, @handgun_terms["Schusswaffe"], key: "gender", value: "f"
   end
-  
+
   And 'the term "Flinte" should have property "status" with value "pending"' do
     create_concept_term_property @handgun, @handgun_terms["Flinte"], key: "status", value: "pending"
   end
@@ -90,7 +90,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   And 'I click on the label "handgun"' do
-    page.find(".concepts a.concept-label", text: "handgun").click
+    page.find(".concept-list a.concept-label", text: "handgun").click
   end
 
   Then 'I should be on the show concept page for "handgun"' do
@@ -170,11 +170,11 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     sleep 1
     page.find(:xpath, "//th[text() = 'gender']/following-sibling::td").text.should == "f"
   end
-  
+
   When 'I click on toggle "TOGGLE ALL PROPERTIES"' do
     page.find(".properties-toggle").click
   end
-  
+
   Then 'I should see property "status" with value "pending"' do
     sleep 1
     page.find(:xpath, "//th[text() = 'status']/following-sibling::td").text.should == "pending"
