@@ -3,6 +3,7 @@
 
 .concept-list {
   margin-right: 270px;
+  min-width: 200px;
 
   h3 {
     text-transform: uppercase;
@@ -14,7 +15,7 @@
   }
 
   .edit {
-    height: 30px;
+    height: 26px;
 
     .create-concept {
       float: right;
@@ -60,7 +61,7 @@
         }
 
         th, td {
-          border-bottom: 1px solid $greycolor;
+          border-bottom: 1px solid rgba($greycolor, 0.6);
           padding-top: 5px;
         }
 
