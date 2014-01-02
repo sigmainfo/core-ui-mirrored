@@ -643,4 +643,3 @@ describe 'Coreon.Models.Concept', ->
         new Backbone.Model value: "C'est ne pas un pipe"
        ]
       expect( @model.definition() ).to.equal 'Eine Rose'
-

@@ -13,15 +13,15 @@ describe "Coreon.Collections.Terms", ->
     @collection.add id: "term"
     @collection.get("term").should.be.an.instanceof Coreon.Models.Term
 
-  describe '.collection()', ->
+  describe '.hits()', ->
 
     beforeEach ->
       @hits = new Backbone.Collection
       sinon.stub Coreon.Collections.Hits, 'collection', => @hits
-      @collection = Coreon.Collections.Terms.collection()
+      @collection = Coreon.Collections.Terms.hits()
 
     afterEach ->
-      Coreon.Collections.Terms._collection = null
+      Coreon.Collections.Terms._hits = null
       Coreon.Collections.Hits.collection.restore()
 
     it 'creates instance', ->
@@ -29,7 +29,7 @@ describe "Coreon.Collections.Terms", ->
       expect( @collection ).to.have.lengthOf 0
 
     it 'ensures single instance', ->
-      expect( Coreon.Collections.Terms.collection() ).to.equal @collection
+      expect( Coreon.Collections.Terms.hits() ).to.equal @collection
 
     it 'updates itself from hits', ->
       @collection.reset [

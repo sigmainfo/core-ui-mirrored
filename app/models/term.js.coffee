@@ -7,11 +7,12 @@
 #= require modules/remote_validation
 #= require modules/persisted_attributes
 #= require modules/core_api
+#= require modules/path
 
 class Coreon.Models.Term extends Backbone.Model
 
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
-  
+
   @embedsMany "properties", model: Coreon.Models.Property
 
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
@@ -48,3 +49,11 @@ class Coreon.Models.Term extends Backbone.Model
 
   onCreate: ->
     @trigger "create", @, @.id
+
+  # use fake concept to avoid recursion in dependency tree
+  class FakeConcept extends Backbone.Model
+    Coreon.Modules.include @, Coreon.Modules.Path
+    pathName: 'concepts'
+
+  conceptPath: ->
+    new FakeConcept( id: @get 'concept_id' ).path()

@@ -4,29 +4,29 @@
 
 class Coreon.Collections.Terms extends Backbone.Collection
 
-  @collection: ->
+  @hits: ->
 
-    unless @_collection?
-      @_collection = new @
+    unless @_hits?
+      @_hits = new @
       hits = Coreon.Collections.Hits.collection()
 
       update = =>
-        @_collection.stopListening()
+        @_hits.stopListening()
 
         concepts = hits.pluck('result')
         for concept in concepts
-          @_collection.listenTo concept, 'change:terms', update
-        @_collection.listenTo hits, 'update', update
+          @_hits.listenTo concept, 'change:terms', update
+        @_hits.listenTo hits, 'update', update
 
         terms = concepts.reduce (terms, concept) ->
           terms = terms.concat concept.terms().models
           terms
         , []
-        @_collection.reset terms
+        @_hits.reset terms
 
-      @_collection.listenTo hits, 'update', update
+      @_hits.listenTo hits, 'update', update
 
-    @_collection
+    @_hits
 
   model: Coreon.Models.Term
 

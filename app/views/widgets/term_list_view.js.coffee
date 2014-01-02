@@ -29,22 +29,16 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       resize: (event, ui) => @resize ui.size
     @resize Coreon.application.repositorySettings('termList')
 
-    @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage', @render
-    @listenTo @model, 'reset', @render
+    @listenTo @model, 'change', @render
 
   render: ->
-    tbody = @$ 'tbody'
-    sourceLanguage = Coreon.application.repositorySettings('sourceLanguage')
-    noSourceLanguage = _.isEmpty(sourceLanguage) or sourceLanguage is 'none'
-    if noSourceLanguage
-      tbody.html @info()
-    else
-      terms = @model.lang( sourceLanguage )
-        .map( (term) ->
+    @$('tbody').html if @model.has('source')
+      @terms
+        terms: @model.terms().map ( term ) ->
           value: term.get 'value'
-          path: new Coreon.Models.Concept(id: term.get 'concept_id').path()
-        )
-      tbody.html @terms(terms: terms)
+          path:  term.conceptPath()
+    else
+      @info()
     @
 
   resize: (size) ->

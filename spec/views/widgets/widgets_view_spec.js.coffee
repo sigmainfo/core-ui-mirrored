@@ -83,14 +83,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
   describe "#render()", ->
 
-    beforeEach ->
-      sinon.stub Coreon.Collections.Terms, 'collection'
-      @terms = new Backbone.Collection
-      Coreon.Collections.Terms.collection.returns @terms
-
-    afterEach ->
-      Coreon.Collections.Terms.collection.restore()
-
     it "is chainable", ->
       @view.render().should.equal @view
 
@@ -148,14 +140,19 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.subviews.should.contain @map
 
     it "renders term list view", ->
-      @view.render()
-      constructor = Coreon.Views.Widgets.TermListView
-      expect( constructor ).to.have.been.calledOnce
-      expect( constructor ).to.have.been.calledWithNew
-      expect( constructor ).to.have.been.calledWith model: @terms
-      expect( @termList.render ).to.have.been.calledOnce
-      expect( $.contains @view.el, @termList.el ).to.be.true
-      expect( @view.subviews ).to.contain @termList
+      model = new Backbone.Model
+      sinon.stub Coreon.Models, 'TermList', -> model
+      try
+        @view.render()
+        constructor = Coreon.Views.Widgets.TermListView
+        expect( constructor ).to.have.been.calledOnce
+        expect( constructor ).to.have.been.calledWithNew
+        expect( constructor ).to.have.been.calledWith model: model
+        expect( @termList.render ).to.have.been.calledOnce
+        expect( $.contains @view.el, @termList.el ).to.be.true
+        expect( @view.subviews ).to.contain @termList
+      finally
+        Coreon.Models.TermList.restore()
 
   describe "resizing", ->
 

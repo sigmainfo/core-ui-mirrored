@@ -8,6 +8,7 @@
 #= require modules/properties_by_key
 #= require modules/remote_validation
 #= require modules/persisted_attributes
+#= require modules/path
 #= require modules/core_api
 #= require collections/hits
 #= require collections/concepts
@@ -33,8 +34,10 @@ class Coreon.Models.Concept extends Backbone.Model
   Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
   Coreon.Modules.include @, Coreon.Modules.RemoteValidation
   Coreon.Modules.include @, Coreon.Modules.PersistedAttributes
+  Coreon.Modules.include @, Coreon.Modules.Path
 
-  urlRoot: "/concepts"
+  urlRoot  : '/concepts'
+  pathName : 'concepts'
 
   defaults: ->
     properties: []
@@ -122,12 +125,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   onCreate: ->
     @trigger "create", @, @id
-
-  path: ->
-    if @isNew()
-      "javascript:void(0)"
-    else
-      "#{Coreon.application.repository().path()}/concepts/#{@id}"
 
   broader: ->
     @get('superconcept_ids').map (id) ->
