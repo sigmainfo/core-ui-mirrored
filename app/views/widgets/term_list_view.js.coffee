@@ -29,7 +29,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       resize: (event, ui) => @resize ui.size
     @resize Coreon.application.repositorySettings('termList')
 
-    @listenTo @model, 'change', @render
+    @listenTo @model, 'update', @render
 
   render: ->
     @$('tbody').html if @model.has('source')

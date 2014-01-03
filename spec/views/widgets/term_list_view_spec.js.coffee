@@ -39,10 +39,10 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     it 'can be chained', ->
       expect( @view.render() ).to.equal @view
 
-    it 'is triggered on model changes', ->
+    it 'is triggered on model updates', ->
       @view.render = sinon.spy()
       @view.initialize()
-      @view.model.trigger 'change'
+      @view.model.trigger 'update'
       expect( @view.render ).to.have.been.calledOnce
       expect( @view.render ).to.have.been.calledOn @view
 
