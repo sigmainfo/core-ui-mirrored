@@ -1,6 +1,7 @@
 #= require environment
 #= require models/term
 #= require collections/hits
+#= require modules/core_api
 
 class Coreon.Collections.Terms extends Backbone.Collection
 
@@ -30,6 +31,8 @@ class Coreon.Collections.Terms extends Backbone.Collection
 
   model: Coreon.Models.Term
 
+  urlRoot: 'terms'
+
   comparator: (a, b) ->
     a.get('value').localeCompare b.get('value')
 
@@ -38,3 +41,11 @@ class Coreon.Collections.Terms extends Backbone.Collection
 
   toJSON: ->
     term.term for term in super
+
+  fetch: ( lang, options = {} ) ->
+    throw new Error 'No language given' unless lang?
+    options.url ?= "#{@urlRoot}/#{lang}"
+    super options
+
+  sync: ( method, model, options )->
+    Coreon.Modules.CoreAPI.sync method, model, options

@@ -104,3 +104,44 @@ describe "Coreon.Collections.Terms", ->
     it "strips wrapping objects from terms", ->
       @collection.reset [ value: "high hat", lang: "de", properties: [] ]
       @collection.toJSON().should.eql [ value: "high hat", lang: "de", properties: [] ]
+
+  describe '#fetch()', ->
+
+    beforeEach ->
+      sinon.stub Backbone.Collection::, 'fetch'
+
+    afterEach ->
+      Backbone.Collection::fetch.restore()
+
+    it 'raises exception when no lang is given', ->
+      expect( => @collection.fetch() ).to.throw 'No language given'
+
+    it 'overrides url for syncing', ->
+      @collection.fetch 'de'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledOnce
+      expect( backboneFetch ).to.have.been.calledWith url: 'terms/de'
+
+    it 'returns deferred', ->
+      backboneFetch = Backbone.Collection::fetch
+      deferred = $.Deferred()
+      backboneFetch.returns deferred
+      expect( @collection.fetch 'de' ).to.equal deferred
+
+  describe '#sync()', ->
+
+    beforeEach ->
+      sinon.stub Coreon.Modules.CoreAPI, 'sync'
+
+    afterEach ->
+      Coreon.Modules.CoreAPI.sync.restore()
+
+    it 'delegates to API sync', ->
+      @collection.sync 'read', @collection, url: 'terms/de'
+      apiSync = Coreon.Modules.CoreAPI.sync
+      expect( apiSync ).to.have.been.calledOnce
+      expect( apiSync ).to.have.been.calledWith 'read'
+                                              , @collection
+                                              , url: 'terms/de'
+
+

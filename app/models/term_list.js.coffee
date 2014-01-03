@@ -23,5 +23,7 @@ class Coreon.Models.TermList extends Backbone.Model
         []
     @terms.reset terms
     if scope is 'all' and source?
-      @terms.fetch source
+      @terms
+        .fetch( source )
+        .done( => @trigger 'update', @terms, @attributes )
     @trigger 'update', @terms, @attributes

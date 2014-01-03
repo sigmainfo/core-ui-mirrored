@@ -93,7 +93,8 @@ describe 'Coreon.Models.TermList', ->
 
         beforeEach ->
           collection = @model.terms
-          collection.fetch = sinon.spy()
+          collection.fetch = sinon.stub()
+          collection.fetch.returns done: ->
           @model.set 'scope', 'all', silent: yes
 
         it 'clears collection', ->
@@ -103,7 +104,18 @@ describe 'Coreon.Models.TermList', ->
           expect( collection.models ).to.be.empty
 
         it 'fetches terms in source lang', ->
-          collection = @model.terms
           @model.update()
+          collection = @model.terms
           expect( collection.fetch ).to.have.been.calledOnce
           expect( collection.fetch ).to.have.been.calledWith 'de'
+
+        it 'triggers update on response', ->
+          collection = @model.terms
+          deferred = $.Deferred()
+          collection.fetch = -> deferred.promise()
+          spy = sinon.spy()
+          @model.on 'update', spy
+          @model.update()
+          spy.reset()
+          deferred.resolve()
+          expect( spy ).to.have.been.calledOnce
