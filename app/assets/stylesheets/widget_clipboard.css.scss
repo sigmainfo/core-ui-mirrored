@@ -34,7 +34,7 @@
       list-style: none;
       padding: 1px;
       position: relative;
-      @include opacity(0.8);
+//      @include opacity(0.8);
       &:after {
         @include before-icon;
         background-position: 0 -803px;
