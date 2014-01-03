@@ -4,7 +4,13 @@
 describe 'Coreon.Models.TermList', ->
 
   beforeEach ->
+    @repositorySettings = new Backbone.Model
+    Coreon.application =
+      repositorySettings: => @repositorySettings
     @model = new Coreon.Models.TermList
+
+  afterEach ->
+    delete Coreon.application
 
   it 'is a Backbone model', ->
     expect( @model ).to.be.an.instanceof Backbone.Model
@@ -73,8 +79,11 @@ describe 'Coreon.Models.TermList', ->
         beforeEach ->
           @hits = new Backbone.Collection
           @hits.lang = sinon.stub()
-          Coreon.Collections.Terms.hits = => @hits
+          sinon.stub Coreon.Collections.Terms, 'hits', => @hits
           @model.set 'scope', 'hits', silent: yes
+
+        afterEach ->
+          Coreon.Collections.Terms.hits.restore()
 
         it 'fills collection with terms from source lang', ->
           @hits.lang.withArgs('de').returns [ lang: 'de', value: 'Schuh' ]
@@ -119,3 +128,20 @@ describe 'Coreon.Models.TermList', ->
           spy.reset()
           deferred.resolve()
           expect( spy ).to.have.been.calledOnce
+
+  describe '#onChangeSource()', ->
+
+    beforeEach ->
+      @model.update = sinon.spy()
+
+    it 'is triggered on source lang change', ->
+      @model.onChangeSource = sinon.spy()
+      @model.initialize()
+      @repositorySettings.trigger 'change:sourceLanguage'
+      expect( @model.onChangeSource ).to.have.been.calledOnce
+      expect( @model.onChangeSource ).to.have.been.calledOn @model
+
+    it 'updates source lang', ->
+      @model.set 'source', 'de', silent: yes
+      @model.onChangeSource @repositorySettings, 'hu'
+      expect( @model.get 'source' ).to.equal 'hu'

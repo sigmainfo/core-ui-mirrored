@@ -11,7 +11,12 @@ class Coreon.Models.TermList extends Backbone.Model
   initialize: ->
     @terms = new Coreon.Collections.Terms
     @stopListening()
-    @listenTo @, 'change:source change:scope', @update
+    @listenTo @
+            , 'change:source change:scope'
+            , @update
+    @listenTo Coreon.application.repositorySettings()
+            , 'change:sourceLanguage'
+            , @onChangeSource
 
   update: ->
     source = @get 'source'
@@ -27,3 +32,6 @@ class Coreon.Models.TermList extends Backbone.Model
         .fetch( source )
         .done( => @trigger 'update', @terms, @attributes )
     @trigger 'update', @terms, @attributes
+
+  onChangeSource: ( model, value, options ) ->
+    @set 'source', value
