@@ -6,7 +6,8 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   beforeEach ->
     Coreon.application = new Backbone.Model
     Coreon.application.cacheId =-> "face42"
-    Coreon.application.repositorySettings =-> {}
+    Coreon.application.repositorySettings = -> new Backbone.Model
+    Coreon.application.sourceLang = -> null
 
     sinon.stub Coreon.Collections, "ConceptMapNodes", =>
       @nodes = new Backbone.Collection
@@ -158,6 +159,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     beforeEach ->
       sinon.stub Coreon.application, "repositorySettings"
+      Coreon.application.repositorySettings.returns new Backbone.Model
       Coreon.application.repositorySettings.withArgs('widgets').returns width: 347
 
       @clock = sinon.useFakeTimers()

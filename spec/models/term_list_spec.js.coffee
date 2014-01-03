@@ -7,10 +7,12 @@ describe 'Coreon.Models.TermList', ->
     @repositorySettings = new Backbone.Model
     Coreon.application =
       repositorySettings: => @repositorySettings
+      sourceLang: -> null
     @model = new Coreon.Models.TermList
 
   afterEach ->
     delete Coreon.application
+    @model.stopListening()
 
   it 'is a Backbone model', ->
     expect( @model ).to.be.an.instanceof Backbone.Model
@@ -33,6 +35,11 @@ describe 'Coreon.Models.TermList', ->
       expect( collection ).to.exist
       expect( collection ).to.be.an.instanceOf Coreon.Collections.Terms
       expect( collection.models ).to.be.empty
+
+    it 'sets source lang', ->
+      Coreon.application.sourceLang = -> 'fr'
+      @model.initialize()
+      expect( @model.get 'source' ).to.equal 'fr'
 
   describe '#update()', ->
 
@@ -129,19 +136,47 @@ describe 'Coreon.Models.TermList', ->
           deferred.resolve()
           expect( spy ).to.have.been.calledOnce
 
-  describe '#onChangeSource()', ->
+  describe '#updateSource()', ->
 
     beforeEach ->
       @model.update = sinon.spy()
 
     it 'is triggered on source lang change', ->
-      @model.onChangeSource = sinon.spy()
+      @model.updateSource = sinon.spy()
       @model.initialize()
+      @model.updateSource.reset()
       @repositorySettings.trigger 'change:sourceLanguage'
-      expect( @model.onChangeSource ).to.have.been.calledOnce
-      expect( @model.onChangeSource ).to.have.been.calledOn @model
+      expect( @model.updateSource ).to.have.been.calledOnce
+      expect( @model.updateSource ).to.have.been.calledOn @model
 
     it 'updates source lang', ->
       @model.set 'source', 'de', silent: yes
-      @model.onChangeSource @repositorySettings, 'hu'
-      expect( @model.get 'source' ).to.equal 'hu'
+      Coreon.application.sourceLang = -> 'fr'
+      @model.updateSource()
+      expect( @model.get 'source' ).to.equal 'fr'
+
+  describe '#onRoute()', ->
+
+    it 'is triggered when history routes', ->
+      @model.onRoute = sinon.spy()
+      @model.initialize()
+      Backbone.history.trigger new Backbone.Router
+                             , 'show'
+                             , [ '1234567' ]
+      expect( @model.onRoute ).to.have.been.calledOnce
+      expect( @model.onRoute ).to.have.been.calledOn @model
+
+
+    it 'widens scope when routed to repository root', ->
+      @model.set 'scope', 'hits', silent: yes
+      @model.onRoute new Coreon.Routers.RepositoriesRouter
+                   , 'show'
+                   , [ '1234567' ]
+      expect( @model.get 'scope' ).to.equal 'all'
+
+    it 'narrows scope down to hits after a search', ->
+      @model.set 'scope', 'all', silent: yes
+      @model.onRoute new Coreon.Routers.ConceptsRouter
+                   , 'search'
+                   , [ 'ball' ]
+      expect( @model.get 'scope' ).to.equal 'hits'

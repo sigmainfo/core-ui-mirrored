@@ -34,7 +34,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   render: ->
     @$('tbody').html if @model.has('source')
       @terms
-        terms: @model.terms().map ( term ) ->
+        terms: @model.terms.map ( term ) ->
           value: term.get 'value'
           path:  term.conceptPath()
     else

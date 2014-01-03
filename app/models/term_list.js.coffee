@@ -1,5 +1,7 @@
 #= require environment
 #= require collections/terms
+#= require routers/repositories_router
+#= require routers/concepts_router
 
 class Coreon.Models.TermList extends Backbone.Model
 
@@ -10,13 +12,20 @@ class Coreon.Models.TermList extends Backbone.Model
 
   initialize: ->
     @terms = new Coreon.Collections.Terms
+    @updateSource()
     @stopListening()
+
     @listenTo @
             , 'change:source change:scope'
             , @update
+
     @listenTo Coreon.application.repositorySettings()
             , 'change:sourceLanguage'
-            , @onChangeSource
+            , @updateSource
+
+    @listenTo Backbone.history
+            , 'route'
+            , @onRoute
 
   update: ->
     source = @get 'source'
@@ -33,5 +42,12 @@ class Coreon.Models.TermList extends Backbone.Model
         .done( => @trigger 'update', @terms, @attributes )
     @trigger 'update', @terms, @attributes
 
-  onChangeSource: ( model, value, options ) ->
-    @set 'source', value
+  updateSource: ->
+    @set 'source', Coreon.application.sourceLang()
+
+  onRoute: ( router, route, params ) ->
+    switch
+      when router instanceof Coreon.Routers.RepositoriesRouter
+        @set 'scope', 'all' if route is 'show'
+      when router instanceof Coreon.Routers.ConceptsRouter
+        @set 'scope', 'hits' if route is 'search'

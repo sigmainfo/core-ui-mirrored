@@ -62,7 +62,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       beforeEach ->
         @view.model.set 'source', 'en', silent: yes
         @terms = new Backbone.Collection
-        @view.model.terms = => @terms
+        @view.model.terms = @terms
 
       it 'does not render info', ->
         I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
