@@ -4,7 +4,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   include SearchSteps
   include Api::Graph::Factory
 
-  step 'concept with English term "ball" exists' do
+  step 'a concept with English term "ball" exists' do
     @concept = create_concept terms: [ {lang: 'en', value: 'ball'} ]
   end
 
@@ -50,7 +50,11 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   end
 
   step 'and these should be followed by "mushroom", "vegetarian meal"' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+     ['mushroom', 'vegetarian meal'].each_with_index do |term, i|
+        page.should have_css("tbody tr:nth-child(#{ i + 5 }) td.source", text: term)
+      end
+    end
   end
 
   step 'I should see "Asiatisches Essen", "Ball" inside the Term List' do

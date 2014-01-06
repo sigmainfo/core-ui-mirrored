@@ -20,8 +20,7 @@ class Coreon.Collections.Terms extends Backbone.Collection
         @_hits.listenTo hits, 'update', update
 
         terms = concepts.reduce (terms, concept) ->
-          terms = terms.concat concept.terms().models
-          terms
+          terms.concat concept.terms().models
         , []
         @_hits.reset terms
 
@@ -31,7 +30,8 @@ class Coreon.Collections.Terms extends Backbone.Collection
 
   model: Coreon.Models.Term
 
-  urlRoot: 'terms'
+  url: ->
+    "#{Coreon.application.graphUri()}/terms"
 
   comparator: (a, b) ->
     a.get('value').localeCompare b.get('value')
@@ -44,7 +44,7 @@ class Coreon.Collections.Terms extends Backbone.Collection
 
   fetch: ( lang, options = {} ) ->
     throw new Error 'No language given' unless lang?
-    options.url ?= "#{@urlRoot}/#{lang}"
+    options.url ?= "#{@url()}/list/#{encodeURIComponent lang}"
     super options
 
   sync: ( method, model, options )->

@@ -10,7 +10,7 @@ Feature: User browses all terms of source language
 
   @wip
   Scenario: browse source language
-    Given concept with English term "ball" exists
+    Given a concept with English term "ball" exists
     And this concept has German terms "Ball", "Kugel"
     And the following English terms exist: "chalk", "cue", "billiards"
     And the following English terms exist: "vegetarian meal", "mushroom"

@@ -105,6 +105,13 @@ describe "Coreon.Collections.Terms", ->
       @collection.reset [ value: "high hat", lang: "de", properties: [] ]
       @collection.toJSON().should.eql [ value: "high hat", lang: "de", properties: [] ]
 
+  describe '#url()', ->
+
+    it 'combines graph uri and path', ->
+      Coreon.application = graphUri: -> 'core.api'
+      expect( @collection.url() ).to.equal 'core.api/terms'
+
+
   describe '#fetch()', ->
 
     beforeEach ->
@@ -117,10 +124,18 @@ describe "Coreon.Collections.Terms", ->
       expect( => @collection.fetch() ).to.throw 'No language given'
 
     it 'overrides url for syncing', ->
+      @collection.url = -> 'core.api/terms'
       @collection.fetch 'de'
       backboneFetch = Backbone.Collection::fetch
       expect( backboneFetch ).to.have.been.calledOnce
-      expect( backboneFetch ).to.have.been.calledWith url: 'terms/de'
+      expect( backboneFetch ).to.have.been.calledWith url: 'core.api/terms/list/de'
+
+    it 'escapes lang', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'dänisch/DK'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/d%C3%A4nisch%2FDK'
 
     it 'returns deferred', ->
       backboneFetch = Backbone.Collection::fetch
