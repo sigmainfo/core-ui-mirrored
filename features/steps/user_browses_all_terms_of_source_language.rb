@@ -58,23 +58,39 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   end
 
   step 'I should see "Asiatisches Essen", "Ball" inside the Term List' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+     ['Asiatisches Essen', 'Ball'].each_with_index do |term, i|
+        page.should have_css("tbody tr:nth-child(#{ i + 1 }) td.source", text: term)
+      end
+    end
   end
 
   step 'and these should be followed by "Billiard", "Kreide", "Kugel", "Pilz"' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+      %w(Billiard Kreide Kugel Pilz).each_with_index do |term, i|
+        page.should have_css("tbody tr:nth-child(#{ i + 3 }) td.source", text: term)
+      end
+    end
   end
 
   step 'and these should be followed by "Queue"' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+      page.should have_css( "tbody tr:nth-child(7) td.source", text: 'Queue' )
+    end
   end
 
   step 'I click on "Ball"' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+      page.find( "tbody tr.term td.source a", text: 'Ball' ).click
+    end
   end
 
   step 'I should see "Ball", "Kugel" inside the Term List' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+      %w(Ball Kugel).each_with_index do |term, i|
+        page.should have_css( "tbody tr:nth-child( #{ i + 1 } ) td.source", text: term )
+      end
+    end
   end
 
   step 'I click on "Toggle scope"' do

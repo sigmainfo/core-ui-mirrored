@@ -31,7 +31,7 @@ class Coreon.Models.TermList extends Backbone.Model
 
     @listenTo @hits
             , 'reset'
-            , @update
+            , @onHitsReset
 
   update: ->
     source = @get 'source'
@@ -52,8 +52,11 @@ class Coreon.Models.TermList extends Backbone.Model
     @set 'source', Coreon.application.sourceLang()
 
   onRoute: ( router, route, params ) ->
-    switch
-      when router instanceof Coreon.Routers.RepositoriesRouter
-        @set 'scope', 'all' if route is 'show'
-      when router instanceof Coreon.Routers.ConceptsRouter
-        @set 'scope', 'hits' if route is 'search'
+    if router instanceof Coreon.Routers.RepositoriesRouter
+      if route is 'show'
+        @set 'scope', 'all', silent: yes
+        @update()
+
+  onHitsReset: ->
+    @set 'scope', 'hits', silent: yes
+    @update()

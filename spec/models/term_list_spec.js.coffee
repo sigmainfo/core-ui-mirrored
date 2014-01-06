@@ -66,13 +66,6 @@ describe 'Coreon.Models.TermList', ->
       expect( @model.update ).to.have.been.calledOnce
       expect( @model.update ).to.have.been.calledOn @model
 
-    it 'is triggered on hits reset', ->
-      @model.update = sinon.spy()
-      @model.initialize()
-      Coreon.Collections.Terms.hits().trigger 'reset'
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
-
     it 'triggers update event', ->
       spy = sinon.spy()
       @model.terms.reset = sinon.spy()
@@ -185,9 +178,52 @@ describe 'Coreon.Models.TermList', ->
                    , [ '1234567' ]
       expect( @model.get 'scope' ).to.equal 'all'
 
-    it 'narrows scope down to hits after a search', ->
+    it 'forces update', ->
       @model.set 'scope', 'all', silent: yes
-      @model.onRoute new Coreon.Routers.ConceptsRouter
-                   , 'search'
-                   , [ 'ball' ]
+      @model.update = sinon.spy()
+      @model.initialize()
+      @model.onRoute new Coreon.Routers.RepositoriesRouter
+                   , 'show'
+                   , [ '1234567' ]
+      expect( @model.update ).to.have.been.calledOnce
+      expect( @model.update ).to.have.been.calledOn @model
+
+    it 'does not trigger double update', ->
+      @model.set 'scope', 'hits', silent: yes
+      @model.update = sinon.spy()
+      @model.initialize()
+      @model.onRoute new Coreon.Routers.RepositoriesRouter
+                   , 'show'
+                   , [ '1234567' ]
+      expect( @model.update ).to.have.been.calledOnce
+      expect( @model.update ).to.have.been.calledOn @model
+
+  describe '#onHitsReset()', ->
+
+    it 'is triggered when hits are reset', ->
+      @model.onHitsReset = sinon.spy()
+      @model.initialize()
+      @model.hits.trigger 'reset'
+      expect( @model.onHitsReset ).to.have.been.calledOnce
+      expect( @model.onHitsReset ).to.have.been.calledOn @model
+
+    it 'focuses on hits', ->
+      @model.set 'scope', 'all', silent: yes
+      @model.onHitsReset()
       expect( @model.get 'scope' ).to.equal 'hits'
+
+    it 'forces update', ->
+      @model.set 'scope', 'hits', silent: yes
+      @model.update = sinon.spy()
+      @model.initialize()
+      @model.onHitsReset()
+      expect( @model.update ).to.have.been.calledOnce
+      expect( @model.update ).to.have.been.calledOn @model
+
+    it 'does not trigger double update', ->
+      @model.set 'scope', 'all', silent: yes
+      @model.update = sinon.spy()
+      @model.initialize()
+      @model.onHitsReset()
+      expect( @model.update ).to.have.been.calledOnce
+      expect( @model.update ).to.have.been.calledOn @model
