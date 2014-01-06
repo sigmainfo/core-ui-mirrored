@@ -52,9 +52,21 @@
         padding-top: 1px;
         width: 100%;
       }
+      
       a {
-        color: $hit-color;
+        color: darken($greytext-color, 20);
+        &:hover {
+          color: $hover-color;
+        };
       }
+      
+      &.hit a {
+        color: $hit-color;
+        &:hover {
+          color: $hover-color;
+        };
+      }
+
       &:last-child {
         td {
           border: none;
