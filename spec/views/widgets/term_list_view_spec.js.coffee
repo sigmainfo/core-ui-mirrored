@@ -10,8 +10,10 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     Coreon.application =
       repositorySettings: sinon.stub().returns settings
       repository: -> repository
+    model = new Backbone.Model
+    model.hits = new Backbone.Collection
     @view = new Coreon.Views.Widgets.TermListView
-      model: new Backbone.Model
+      model: model
 
   afterEach ->
     I18n.t.restore()
@@ -93,3 +95,17 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         expect( link ).to.exist
         expect( link ).to.have.attr 'href', '/my-repository/concepts/concept-123'
         expect( link ).to.have.text 'billiards'
+
+      it 'clasifies hits', ->
+        @terms.reset ['billiards', 'cue', 'pocket billiards'].map ( value, index ) =>
+          term = new Backbone.Model value: value
+          term.conceptPath = -> ''
+          term
+        , silent: yes
+        @view.model.hits.reset [ @terms.at(1) ], silent: yes
+        @view.render()
+        expect( @view.$ 'tbody' ).to.have 'tr.term.hit'
+        expect( @view.$ 'tbody tr.term.hit' ).to.have.property 'length', 1
+        expect( @view.$('tbody tr.term:nth-child(1)') ).to.not.have.class 'hit'
+        expect( @view.$('tbody tr.term:nth-child(2)') ).to.have.class 'hit'
+        expect( @view.$('tbody tr.term:nth-child(3)') ).to.not.have.class 'hit'

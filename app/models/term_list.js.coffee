@@ -12,6 +12,8 @@ class Coreon.Models.TermList extends Backbone.Model
 
   initialize: ->
     @terms = new Coreon.Collections.Terms
+    @hits = Coreon.Collections.Terms.hits()
+
     @updateSource()
     @stopListening()
 
@@ -27,12 +29,16 @@ class Coreon.Models.TermList extends Backbone.Model
             , 'route'
             , @onRoute
 
+    @listenTo @hits
+            , 'reset'
+            , @update
+
   update: ->
     source = @get 'source'
     scope  = @get 'scope'
     terms  =
       if scope is 'hits' and source?
-        Coreon.Collections.Terms.hits().lang source
+        @hits.lang source
       else
         []
     @terms.reset terms

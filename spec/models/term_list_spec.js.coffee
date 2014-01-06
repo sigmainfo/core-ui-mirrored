@@ -41,6 +41,15 @@ describe 'Coreon.Models.TermList', ->
       @model.initialize()
       expect( @model.get 'source' ).to.equal 'fr'
 
+    it 'assigns reference to term hits', ->
+      hits = new Backbone.Collection
+      sinon.stub Coreon.Collections.Terms, 'hits', -> hits
+      try
+        @model.initialize()
+        expect( @model.hits ).to.equal hits
+      finally
+        Coreon.Collections.Terms.hits.restore()
+
   describe '#update()', ->
 
     it 'is triggered on source change', ->
@@ -54,6 +63,13 @@ describe 'Coreon.Models.TermList', ->
       @model.update = sinon.spy()
       @model.initialize()
       @model.set 'scope', 'all'
+      expect( @model.update ).to.have.been.calledOnce
+      expect( @model.update ).to.have.been.calledOn @model
+
+    it 'is triggered on hits reset', ->
+      @model.update = sinon.spy()
+      @model.initialize()
+      Coreon.Collections.Terms.hits().trigger 'reset'
       expect( @model.update ).to.have.been.calledOnce
       expect( @model.update ).to.have.been.calledOn @model
 
@@ -84,16 +100,11 @@ describe 'Coreon.Models.TermList', ->
       context 'with scope narrowed down to hits', ->
 
         beforeEach ->
-          @hits = new Backbone.Collection
-          @hits.lang = sinon.stub()
-          sinon.stub Coreon.Collections.Terms, 'hits', => @hits
+          @model.hits.lang = sinon.stub()
           @model.set 'scope', 'hits', silent: yes
 
-        afterEach ->
-          Coreon.Collections.Terms.hits.restore()
-
         it 'fills collection with terms from source lang', ->
-          @hits.lang.withArgs('de').returns [ lang: 'de', value: 'Schuh' ]
+          @model.hits.lang.withArgs('de').returns [ lang: 'de', value: 'Schuh' ]
           @model.update()
           collection = @model.terms
           expect( collection ).to.have.lengthOf 1
