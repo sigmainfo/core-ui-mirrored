@@ -8,6 +8,7 @@ describe 'Coreon.Models.TermList', ->
     Coreon.application =
       repositorySettings: => @repositorySettings
       sourceLang: -> null
+      graphUri: -> 'coreon.api'
     @model = new Coreon.Models.TermList
 
   afterEach ->
@@ -27,6 +28,9 @@ describe 'Coreon.Models.TermList', ->
 
     it 'has limited scope', ->
       expect( @model.get 'scope' ).to.equal 'hits'
+
+    it 'is not loading next', ->
+      expect( @model.get 'loadingNext' ).to.be.false
 
   describe '#initialize()', ->
 
@@ -62,16 +66,17 @@ describe 'Coreon.Models.TermList', ->
     it 'is triggered on scope change', ->
       @model.update = sinon.spy()
       @model.initialize()
-      @model.set 'scope', 'all'
+      @model.trigger 'change:scope'
       expect( @model.update ).to.have.been.calledOnce
       expect( @model.update ).to.have.been.calledOn @model
 
     it 'triggers update event', ->
       spy = sinon.spy()
-      @model.terms.reset = sinon.spy()
       @model.on 'update', spy
+      @model.terms.reset = sinon.spy()
       @model.update()
       expect( spy ).to.have.been.calledOnce
+      expect( @model.terms.reset ).to.have.been.calledOnce
       expect( spy ).to.have.been.calledAfter @model.terms.reset
 
     context 'no source lang selected', ->
@@ -137,7 +142,7 @@ describe 'Coreon.Models.TermList', ->
           @model.on 'update', spy
           @model.update()
           spy.reset()
-          deferred.resolve()
+          deferred.resolve []
           expect( spy ).to.have.been.calledOnce
 
   describe '#updateSource()', ->
@@ -227,3 +232,95 @@ describe 'Coreon.Models.TermList', ->
       @model.onHitsReset()
       expect( @model.update ).to.have.been.calledOnce
       expect( @model.update ).to.have.been.calledOn @model
+
+  describe '#next()', ->
+
+    beforeEach ->
+      @model.terms.fetch = sinon.spy =>
+        @request = $.Deferred()
+        @request.promise()
+
+    context 'does not have next', ->
+
+      beforeEach ->
+        @model.hasNext = -> no
+
+      it 'returns resolved promise', ->
+        promise = @model.next()
+        expect( promise.state() ).to.equal 'resolved'
+
+      it 'resolves callbacks with empty set', ->
+        done = sinon.spy()
+        @model.next().then done
+        expect( done ).to.have.been.calledOnce
+        expect( done ).to.have.been.calledWith []
+
+    context 'has next', ->
+
+      beforeEach ->
+        @model.hasNext = -> yes
+
+      it 'fetches terms after last one', ->
+        @model.set 'source', 'de', silent: yes
+        @model.terms.reset [
+          { id: 'a-term'            }
+          { id: 'another-term'      }
+          { id: 'last-term-in-list' }
+        ], silent: yes
+        @model.next()
+        fetch = @model.terms.fetch
+        expect( fetch ).to.have.been.calledOnce
+        expect( fetch ).to.have.been.calledWith 'de', from: 'last-term-in-list'
+
+      it 'fetches first batch when empty', ->
+        @model.set 'source', 'de', silent: yes
+        @model.terms.reset [], silent: yes
+        @model.next()
+        fetch = @model.terms.fetch
+        expect( fetch ).to.have.been.calledOnce
+        expect( fetch ).to.have.been.calledWith 'de', {}
+
+      it 'returns promise from fetch', ->
+        promise = @model.next()
+        expect( promise ).to.equal @request.promise()
+
+  describe '#hasNext()', ->
+
+    context 'scope narrowed down to hits', ->
+
+      beforeEach ->
+        @model.set 'scope', 'hits', silent: yes
+
+      it 'is false', ->
+        expect( @model.hasNext() ).to.be.false
+
+    context 'wide scope', ->
+
+      beforeEach ->
+        @model.set 'scope', 'all', silent: yes
+
+      context 'no source selected', ->
+
+        beforeEach ->
+          @model.set 'source', null, silent: yes
+          @model.update()
+
+        it 'is false', ->
+          expect( @model.hasNext() ).to.be.false
+
+      context 'with selected source', ->
+
+        beforeEach ->
+          @model.set 'source', 'de', silent: yes
+          @model.terms.fetch = =>
+            @request = $.Deferred()
+            @request.promise()
+          @model.update()
+
+        it 'is true by default', ->
+          expect( @model.hasNext() ).to.be.true
+
+        it 'is false after last fetch', ->
+          @request.resolve [ id: 'last-term' ]
+          expect( @model.hasNext() ).to.be.false
+

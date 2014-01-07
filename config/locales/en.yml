@@ -184,6 +184,7 @@ en:
     term_list:
       title: 'Term List'
       empty: 'No language selected'
+      placeholder: 'loading additional terms...'
 
   user:
     name: "Name"

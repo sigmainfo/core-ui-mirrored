@@ -34,18 +34,16 @@ class Coreon.Models.TermList extends Backbone.Model
             , @onHitsReset
 
   update: ->
-    source = @get 'source'
-    scope  = @get 'scope'
-    terms  =
-      if scope is 'hits' and source?
-        @hits.lang source
-      else
-        []
-    @terms.reset terms
-    if scope is 'all' and source?
-      @terms
-        .fetch( source )
-        .done( => @trigger 'update', @terms, @attributes )
+    if source = @get 'source'
+      switch @get 'scope'
+        when 'hits'
+          @terms.reset @hits.lang source
+        when 'all'
+          @terms.reset()
+          @_tailLoaded = false
+          @fetch source
+    else
+      @terms.reset()
     @trigger 'update', @terms, @attributes
 
   updateSource: ->
@@ -60,3 +58,27 @@ class Coreon.Models.TermList extends Backbone.Model
   onHitsReset: ->
     @set 'scope', 'hits', silent: yes
     @update()
+
+  fetch: ( lang, from ) ->
+    @terms
+      .fetch( lang, from )
+      .done ( added ) =>
+        @_tailLoaded = added.length < 50
+        @trigger 'update', @terms, @attributes
+
+  hasNext: ->
+    if @has( 'source' ) and @get( 'scope' ) is 'all'
+      not @_tailLoaded
+    else
+      no
+
+  next: ->
+    if @hasNext()
+      source = @get 'source'
+      options = {}
+      if last = @terms.last()
+        options.from = last.get 'id'
+      @fetch source, options
+    else
+      $.Deferred().resolve( [] ).promise()
+

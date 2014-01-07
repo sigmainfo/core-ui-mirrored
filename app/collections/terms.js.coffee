@@ -6,7 +6,6 @@
 class Coreon.Collections.Terms extends Backbone.Collection
 
   @hits: ->
-
     unless @_hits?
       @_hits = new @
       hits = Coreon.Collections.Hits.collection()
@@ -25,7 +24,6 @@ class Coreon.Collections.Terms extends Backbone.Collection
         @_hits.reset terms
 
       @_hits.listenTo hits, 'update', update
-
     @_hits
 
   model: Coreon.Models.Term
@@ -44,7 +42,11 @@ class Coreon.Collections.Terms extends Backbone.Collection
 
   fetch: ( lang, options = {} ) ->
     throw new Error 'No language given' unless lang?
-    options.url ?= "#{@url()}/list/#{encodeURIComponent lang}"
+    unless options.url?
+      options.url = "#{@url()}/list/#{encodeURIComponent lang}"
+      if options.from
+        options.url += "/asc/#{ options.from }"
+        delete options.from
     super options
 
   sync: ( method, model, options )->

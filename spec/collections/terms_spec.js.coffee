@@ -128,7 +128,8 @@ describe "Coreon.Collections.Terms", ->
       @collection.fetch 'de'
       backboneFetch = Backbone.Collection::fetch
       expect( backboneFetch ).to.have.been.calledOnce
-      expect( backboneFetch ).to.have.been.calledWith url: 'core.api/terms/list/de'
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/de'
 
     it 'escapes lang', ->
       @collection.url = -> 'core.api/terms'
@@ -142,6 +143,14 @@ describe "Coreon.Collections.Terms", ->
       deferred = $.Deferred()
       backboneFetch.returns deferred
       expect( @collection.fetch 'de' ).to.equal deferred
+
+    it 'can request a range', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'de', from: '1234abcdef'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledOnce
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/de/asc/1234abcdef'
 
   describe '#sync()', ->
 

@@ -12,6 +12,8 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       repository: -> repository
     model = new Backbone.Model
     model.hits = new Backbone.Collection
+    model.terms = new Backbone.Collection
+    model.hasNext = -> no
     @view = new Coreon.Views.Widgets.TermListView
       model: model
 
@@ -63,8 +65,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
       beforeEach ->
         @view.model.set 'source', 'en', silent: yes
-        @terms = new Backbone.Collection
-        @view.model.terms = @terms
 
       it 'does not render info', ->
         I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
@@ -74,7 +74,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         expect( @view.$el ).to.not.have.text 'No language selected'
 
       it 'renders terms', ->
-        @terms.reset ['billiards', 'cue', 'pocket billiards'].map ( value ) ->
+        @view.model.terms.reset ['billiards', 'cue', 'pocket billiards'].map ( value ) ->
           term = new Backbone.Model value: value
           term.conceptPath = -> ''
           term
@@ -89,7 +89,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       it 'renders link to concept', ->
         term = new Backbone.Model value: 'billiards'
         term.conceptPath = -> '/my-repository/concepts/concept-123'
-        @terms.reset [ term ], silent: yes
+        @view.model.terms.reset [ term ], silent: yes
         @view.render()
         link = @view.$ 'tbody td.source a'
         expect( link ).to.exist
@@ -97,15 +97,112 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         expect( link ).to.have.text 'billiards'
 
       it 'clasifies hits', ->
-        @terms.reset ['billiards', 'cue', 'pocket billiards'].map ( value, index ) =>
+        @view.model.terms.reset ['billiards', 'cue', 'pocket billiards'].map ( value, index ) =>
           term = new Backbone.Model value: value
           term.conceptPath = -> ''
           term
         , silent: yes
-        @view.model.hits.reset [ @terms.at(1) ], silent: yes
+        @view.model.hits.reset [ @view.model.terms.at(1) ], silent: yes
         @view.render()
         expect( @view.$ 'tbody' ).to.have 'tr.term.hit'
         expect( @view.$ 'tbody tr.term.hit' ).to.have.property 'length', 1
         expect( @view.$('tbody tr.term:nth-child(1)') ).to.not.have.class 'hit'
         expect( @view.$('tbody tr.term:nth-child(2)') ).to.have.class 'hit'
         expect( @view.$('tbody tr.term:nth-child(3)') ).to.not.have.class 'hit'
+
+  describe '#topUp()', ->
+
+    it 'is triggered on scroll', ->
+      @view.topUp = sinon.spy()
+      @view.delegateEvents()
+      @view.$( 'tbody' ).scroll()
+      expect( @view.topUp ).to.have.been.calledOnce
+      expect( @view.topUp ).to.have.been.calledOn @view
+
+    context 'close to tail', ->
+
+      beforeEach ->
+        @view.$('table').height 100
+        @view.$('tbody').height 120
+        @view.model.next = sinon.spy =>
+          @deferred = $.Deferred()
+          @deferred.promise()
+
+      context 'not yet completely loaded', ->
+
+        beforeEach ->
+          @view.model.hasNext = -> yes
+
+        it 'calls next on model', ->
+          @view.topUp()
+          expect( @view.model.next ).to.have.been.calledOnce
+
+        it 'appends placeholder node', ->
+          I18n.t.withArgs( 'widgets.term_list.placeholder' )
+            .returns 'loading...'
+          @view.topUp()
+          placeholder = @view.$ 'tr.placeholder td'
+          expect( placeholder ).to.exist
+          expect( placeholder ).to.have.text 'loading...'
+
+        context 'loading', ->
+
+          beforeEach ->
+            @view.model.set 'loadingNext', on, silent: yes
+
+          it 'does not call next on model', ->
+            @view.topUp()
+            expect( @view.model.next ).to.not.have.been.called
+
+        context 'loaded', ->
+
+          beforeEach ->
+            @terms = []
+            @view.topUp()
+            @view.topUp = sinon.spy()
+
+          it 'removes placeholder', ->
+            @deferred.resolve @terms
+            placeholder = @view.$ 'tr.placeholder td'
+            expect( placeholder ).to.not.exist
+
+          it 'appends items', ->
+            @view.$( 'tbody' ).append '''
+              <tr class="term">
+                <td class="source">
+                  <a href="#">Ball</a>
+                </td>
+              </tr>
+            '''
+            term = new Backbone.Model value: 'billiards'
+            term.conceptPath = -> '/my-repository/concepts/concept-123'
+            @terms.push term
+            @deferred.resolve @terms
+            expect( @view.$ 'tbody tr.term' ).to.have.property 'length', 2
+            added = @view.$('tbody tr.term td.source a').eq(1)
+            expect( added ).to.have.text 'billiards'
+            expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
+
+          it 'calls itself again', ->
+            @deferred.resolve @terms
+            expect( @view.topUp ).to.have.been.calledOnce
+
+      context 'completely loaded', ->
+
+        beforeEach ->
+          @view.model.hasNext = -> no
+
+        it 'does not call next on model', ->
+          @view.topUp()
+          expect( @view.model.next ).to.not.have.been.called
+
+    context 'far away from tail', ->
+
+      beforeEach ->
+        @view.$('table').height 100
+        @view.$('tbody').height 300
+
+      it 'does not call next on model', ->
+        @view.model.next = sinon.spy()
+        @view.topUp()
+        expect( @view.model.next ).to.not.have.been.called
