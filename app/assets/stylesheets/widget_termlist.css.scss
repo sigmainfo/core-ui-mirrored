@@ -72,7 +72,7 @@
           border: none;
         }
       }
-      &.empty  {
+      &.empty, &.placeholder  {
         td {
           @include empty;
           display: inline-block;
