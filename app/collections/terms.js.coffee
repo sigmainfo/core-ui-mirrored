@@ -31,8 +31,8 @@ class Coreon.Collections.Terms extends Backbone.Collection
   url: ->
     "#{Coreon.application.graphUri()}/terms"
 
-  comparator: (a, b) ->
-    a.get('value').localeCompare b.get('value')
+  comparator: ( term ) ->
+    term.get 'sort_key'
 
   lang: (lang) ->
     @where lang: lang

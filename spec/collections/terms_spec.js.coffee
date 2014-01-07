@@ -75,14 +75,14 @@ describe "Coreon.Collections.Terms", ->
 
   describe '#comparator()', ->
 
-    it 'sorts by value', ->
+    it 'sorts by sort key', ->
       @collection.reset [
-        { lang: 'en', value: 'Billiards' }
-        { lang: 'de', value: 'Queue'     }
-        { lang: 'en', value: 'Cue'       }
+        { lang: 'de', value: 'Billiard', sort_key: '29373d3d3727492d010c018f' }
+        { lang: 'de', value: 'Queue'   , sort_key: '474f2f4f2f0109018f08'     }
+        { lang: 'en', value: 'Cue'     , sort_key: '2b4f2f0107018f06'         }
       ]
       values = @collection.pluck 'value'
-      expect( values[0] ).to.eql 'Billiards'
+      expect( values[0] ).to.eql 'Billiard'
       expect( values[1] ).to.eql 'Cue'
       expect( values[2] ).to.eql 'Queue'
 
