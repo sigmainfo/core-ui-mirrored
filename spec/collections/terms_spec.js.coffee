@@ -167,5 +167,3 @@ describe "Coreon.Collections.Terms", ->
       expect( apiSync ).to.have.been.calledWith 'read'
                                               , @collection
                                               , url: 'terms/de'
-
-

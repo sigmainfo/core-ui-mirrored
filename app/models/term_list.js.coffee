@@ -42,7 +42,7 @@ class Coreon.Models.TermList extends Backbone.Model
         when 'all'
           @terms.reset()
           @_tailLoaded = false
-          @fetch source
+          @next()
     else
       @terms.reset()
     @trigger 'update', @terms, @attributes
@@ -60,9 +60,10 @@ class Coreon.Models.TermList extends Backbone.Model
     @set 'scope', 'hits', silent: yes
     @update()
 
-  fetch: ( lang, from ) ->
+  fetch: ( lang, options = {} ) ->
+    options.remove = no
     @terms
-      .fetch( lang, from )
+      .fetch( lang, options )
       .done ( added ) =>
         @_tailLoaded = added.length < 50
         @trigger 'update', @terms, @attributes

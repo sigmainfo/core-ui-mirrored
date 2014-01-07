@@ -117,10 +117,10 @@ describe 'Coreon.Models.TermList', ->
       context 'with universal scope', ->
 
         beforeEach ->
-          collection = @model.terms
-          collection.fetch = sinon.stub()
-          collection.fetch.returns done: ->
           @model.set 'scope', 'all', silent: yes
+          @model.terms.fetch = =>
+            @deferred = $.Deferred()
+            @deferred.promise()
 
         it 'clears collection', ->
           @model.terms.reset [ lang: 'de', val: 'Schuh' ], silent: yes
@@ -128,21 +128,17 @@ describe 'Coreon.Models.TermList', ->
           collection = @model.terms
           expect( collection.models ).to.be.empty
 
-        it 'fetches terms in source lang', ->
+        it 'fetches first batch', ->
+          @model.next = sinon.spy()
           @model.update()
-          collection = @model.terms
-          expect( collection.fetch ).to.have.been.calledOnce
-          expect( collection.fetch ).to.have.been.calledWith 'de'
+          expect( @model.next ).to.have.been.calledOnce
 
         it 'triggers update on response', ->
-          collection = @model.terms
-          deferred = $.Deferred()
-          collection.fetch = -> deferred.promise()
           spy = sinon.spy()
           @model.on 'update', spy
           @model.update()
           spy.reset()
-          deferred.resolve []
+          @deferred.resolve []
           expect( spy ).to.have.been.calledOnce
 
   describe '#updateSource()', ->
@@ -270,7 +266,10 @@ describe 'Coreon.Models.TermList', ->
         @model.next()
         fetch = @model.terms.fetch
         expect( fetch ).to.have.been.calledOnce
-        expect( fetch ).to.have.been.calledWith 'de', from: 'last-term-in-list'
+        expect( fetch ).to.have.been.calledWith 'de'
+                                              , from: 'last-term-in-list'
+                                              , remove: no
+
 
       it 'fetches first batch when empty', ->
         @model.set 'source', 'de', silent: yes
@@ -278,7 +277,8 @@ describe 'Coreon.Models.TermList', ->
         @model.next()
         fetch = @model.terms.fetch
         expect( fetch ).to.have.been.calledOnce
-        expect( fetch ).to.have.been.calledWith 'de', {}
+        expect( fetch ).to.have.been.calledWith 'de'
+                                              , remove: no
 
       it 'returns promise from fetch', ->
         promise = @model.next()
