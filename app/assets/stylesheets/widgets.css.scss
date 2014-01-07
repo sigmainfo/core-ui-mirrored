@@ -3,12 +3,12 @@
 
 
 .widget {
-  @include background(linear-gradient(lighten($greycolor, 4), darken($greycolor, 1)));
+  @include background(linear-gradient(lighten($greycolor, 5), $greycolor));
   position: relative;
   @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
   
   .titlebar {
-    background: rgba(30,80,80, 0.06) image-url("layout/stripes-white.png");
+    background: rgba(30,80,80, 0.06);
     @include retina-stripes("white");
     border-bottom: 1px solid rgba(black, 0.05);
     height: 19px;
@@ -69,7 +69,7 @@
   }
   
   &.blue-widget {
-    @include background(linear-gradient(lighten($darkerbluecolor, 8), darken($darkerbluecolor, 3)));
+    @include background(linear-gradient(lighten($darkerbluecolor, 10), $darkerbluecolor));
     @include box-shadow(rgba(white, 0.3) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
   }
   

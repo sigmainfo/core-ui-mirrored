@@ -36,7 +36,7 @@
   }
   
   &.blue {
-    background-color: lighten($darkerbluecolor, 5);
+    background-color: lighten($darkerbluecolor, 8);
     @include retina-stripes("white");
     @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.3) -1px -1px 0px inset);
   }
