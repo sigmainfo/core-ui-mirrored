@@ -137,13 +137,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
           @view.topUp()
           expect( @view.model.next ).to.have.been.calledOnce
 
-        it 'appends placeholder node', ->
-          I18n.t.withArgs( 'widgets.term_list.placeholder' )
-            .returns 'loading...'
-          @view.topUp()
-          placeholder = @view.$ 'tr.placeholder td'
-          expect( placeholder ).to.exist
-          expect( placeholder ).to.have.text 'loading...'
 
         context 'loading', ->
 
@@ -206,3 +199,45 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.model.next = sinon.spy()
         @view.topUp()
         expect( @view.model.next ).to.not.have.been.called
+
+  describe '#updateLoadingState()', ->
+
+    it 'is triggered when model loading state changes', ->
+      @view.updateLoadingState = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:loadingNext'
+      expect( @view.updateLoadingState ).to.have.been.calledOnce
+
+    context 'loading next', ->
+
+      beforeEach ->
+        @view.model.set 'loadingNext', true, silent: yes
+
+      it 'appends placeholder node', ->
+        I18n.t.withArgs( 'widgets.term_list.placeholder' )
+          .returns 'loading...'
+        @view.updateLoadingState()
+        placeholder = @view.$ 'tr.placeholder.next td'
+        expect( placeholder ).to.exist
+        expect( placeholder ).to.have.text 'loading...'
+
+      it 'appends placeholder only once', ->
+        @view.updateLoadingState()
+        @view.updateLoadingState()
+        placeholder = @view.$ 'tr.placeholder.next'
+        expect( placeholder ).to.have.lengthOf 1
+
+    context 'idle', ->
+
+      beforeEach ->
+        @view.model.set 'loadingNext', false, silent: yes
+
+      it 'removes placeholder', ->
+        @view.$( 'tbody' ).append '''
+          <tr class="placeholder next">
+            <td>loading ...</td>
+          </tr>
+        '''
+        @view.updateLoadingState()
+        placeholder = @view.$ '.placeholder.next'
+        expect( placeholder ).to.not.exist

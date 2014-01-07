@@ -284,6 +284,20 @@ describe 'Coreon.Models.TermList', ->
         promise = @model.next()
         expect( promise ).to.equal @request.promise()
 
+      it 'updates loading state', ->
+        @model.next()
+        expect( @model.get 'loadingNext' ).to.be.true
+
+      it 'resolves loading state on success', ->
+        @model.next()
+        @request.resolve []
+        expect( @model.get 'loadingNext' ).to.be.false
+
+      it 'resolves loading state on error', ->
+        @model.next()
+        @request.reject()
+        expect( @model.get 'loadingNext' ).to.be.false
+
   describe '#hasNext()', ->
 
     context 'scope narrowed down to hits', ->

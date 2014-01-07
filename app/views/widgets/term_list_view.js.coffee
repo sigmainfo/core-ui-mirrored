@@ -21,7 +21,6 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   placeholder : Coreon.Templates['widgets/term_list_placeholder']
 
   initialize: ->
-    @stopListening()
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
 
     @$el.html @template()
@@ -32,8 +31,15 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       resize: (event, ui) => @resize ui.size
     @resize Coreon.application.repositorySettings('termList')
 
+    @stopListening()
 
-    @listenTo @model, 'update', @render
+    @listenTo @model
+            , 'update'
+            , @render
+
+    @listenTo @model
+            , 'change:loadingNext'
+            , @updateLoadingState
 
   delegateEvents: ->
     @$('table').scroll _.bind @topUp, @
@@ -48,7 +54,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   appendItems: ( terms ) ->
     list = @$( 'tbody' )
-    list.find( '.placeholder' ).remove()
+    # list.find( '.placeholder' ).remove()
     list.append @terms terms: @data terms
     @topUp()
 
@@ -71,8 +77,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   topUp: ->
     if @model.hasNext() and not @model.get 'loadingNext'
       if @closeToTail()
-        @$( 'tbody' ).append @placeholder()
-        @model.next().then _.bind @appendItems, @
+        @model.next().done _.bind @appendItems, @
 
   closeToTail: ->
     outer = @$ 'table'
@@ -81,3 +86,11 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     delta = max - outer.scrollTop()
     threshold = outer.innerHeight() * 0.8
     delta < threshold
+
+  updateLoadingState: ->
+    list = @$ 'tbody'
+    if @model.get 'loadingNext'
+      if list.find( '.placeholder.next' ).length is 0
+        list.append @placeholder className: 'next'
+    else
+      list.find( '.placeholder.next' ).remove()

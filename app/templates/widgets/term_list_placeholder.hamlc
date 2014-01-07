@@ -1,0 +1,2 @@
+%tr.placeholder{ class: @className }
+  %td= I18n.t 'widgets.term_list.placeholder'

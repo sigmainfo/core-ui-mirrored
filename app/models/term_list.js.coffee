@@ -9,6 +9,7 @@ class Coreon.Models.TermList extends Backbone.Model
     source: null
     target: null
     scope: 'hits'
+    loadingNext: false
 
   initialize: ->
     @terms = new Coreon.Collections.Terms
@@ -78,7 +79,9 @@ class Coreon.Models.TermList extends Backbone.Model
       options = {}
       if last = @terms.last()
         options.from = last.get 'id'
-      @fetch source, options
+      @set 'loadingNext', true
+      @fetch( source, options ).always =>
+        @set 'loadingNext', false
     else
       $.Deferred().resolve( [] ).promise()
 
