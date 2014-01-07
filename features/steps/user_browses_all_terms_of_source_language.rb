@@ -94,10 +94,17 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   end
 
   step 'I click on "Toggle scope"' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+      click_on 'Toggle scope'
+    end
   end
 
   step '"Ball", "Kugel" should be marked as being currently selected' do
-    pending 'step not implemented'
+    within '#coreon-term-list' do
+      %w(Ball Kugel).each do |term|
+        tr = page.find( "tbody tr.term", text: term )
+        tr[:class].split( ' ' ).should include( 'hit' )
+      end
+    end
   end
 end

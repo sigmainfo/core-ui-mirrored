@@ -185,6 +185,7 @@ en:
       title: 'Term List'
       empty: 'No language selected'
       placeholder: 'loading additional terms...'
+      toggle_scope: 'Toggle scope'
 
   user:
     name: "Name"

@@ -38,6 +38,15 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     it 'renders resize handler', ->
       expect( @view.$el ).to.have  '.ui-resizable-s'
 
+    it 'renders toggle button', ->
+      I18n.t.withArgs('widgets.term_list.toggle_scope').returns 'Toggle scope'
+      @view.initialize()
+      toggle = @view.$('.toggle-scope')
+      expect( toggle ).to.exist
+      expect( toggle ).to.have.attr 'href', 'javascript:void(0)'
+      expect( toggle ).to.have.text 'Toggle scope'
+      expect( toggle ).to.have.attr 'title', 'Toggle scope'
+
   describe '#render()', ->
 
     it 'can be chained', ->
@@ -241,3 +250,19 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.updateLoadingState()
         placeholder = @view.$ '.placeholder.next'
         expect( placeholder ).to.not.exist
+
+  describe '#toggleScope()', ->
+
+    it 'is triggered by click on toggle', ->
+      @view.toggleScope = sinon.spy()
+      @view.delegateEvents()
+      @view.$( '.toggle-scope' ).click()
+      expect(  @view.toggleScope ).to.have.been.calledOnce
+      expect(  @view.toggleScope ).to.have.been.calledOn @view
+
+    it 'toggles scope on model', ->
+      @view.model.set 'scope', 'all', silent: yes
+      @view.toggleScope()
+      expect( @view.model.get 'scope' ).to.equal 'hits'
+      @view.toggleScope()
+      expect( @view.model.get 'scope' ).to.equal 'all'

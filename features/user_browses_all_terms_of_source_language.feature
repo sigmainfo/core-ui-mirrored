@@ -8,7 +8,6 @@ Feature: User browses all terms of source language
     And the languages "English", "German", and "French" are available
     And I am logged in
 
-  @wip
   Scenario: browse source language
     Given a concept with English term "ball" exists
     And this concept has German terms "Ball", "Kugel"

@@ -20,6 +20,13 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   terms       : Coreon.Templates['widgets/term_list_items']
   placeholder : Coreon.Templates['widgets/term_list_placeholder']
 
+  events:
+    'click .toggle-scope' : 'toggleScope'
+
+  delegateEvents: ->
+    super
+    @$('table').scroll _.bind @topUp, @
+
   initialize: ->
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
 
@@ -41,9 +48,6 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
             , 'change:loadingNext'
             , @updateLoadingState
 
-  delegateEvents: ->
-    @$('table').scroll _.bind @topUp, @
-
   render: ->
     @$('tbody').html if @model.has('source')
       @terms
@@ -54,7 +58,6 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   appendItems: ( terms ) ->
     list = @$( 'tbody' )
-    # list.find( '.placeholder' ).remove()
     list.append @terms terms: @data terms
     @topUp()
 
@@ -94,3 +97,8 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
         list.append @placeholder className: 'next'
     else
       list.find( '.placeholder.next' ).remove()
+
+  toggleScope: ->
+    oldScope = @model.get 'scope'
+    newScope = if oldScope is 'all' then 'hits' else 'all'
+    @model.set 'scope', newScope
