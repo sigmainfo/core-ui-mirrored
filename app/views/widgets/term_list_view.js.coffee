@@ -41,8 +41,12 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     @stopListening()
 
     @listenTo @model
-            , 'update'
+            , 'reset'
             , @render
+
+    @listenTo @model
+            , 'append'
+            , @appendItems
 
     @listenTo @model
             , 'change:loadingNext'
@@ -56,8 +60,9 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       @info()
     @
 
-  appendItems: ( terms ) ->
+  appendItems: ( response ) ->
     list = @$( 'tbody' )
+    terms = new Coreon.Collections.Terms response
     list.append @terms terms: @data terms
     @topUp()
 
@@ -80,7 +85,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   topUp: ->
     if @model.hasNext() and not @model.get 'loadingNext'
       if @closeToTail()
-        @model.next().done _.bind @appendItems, @
+        @model.next()
 
   closeToTail: ->
     outer = @$ 'table'

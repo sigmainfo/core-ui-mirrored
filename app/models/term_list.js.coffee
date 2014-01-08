@@ -20,7 +20,7 @@ class Coreon.Models.TermList extends Backbone.Model
 
     @listenTo @
             , 'change:source change:scope'
-            , @update
+            , @reset
 
     @listenTo Coreon.application.repositorySettings()
             , 'change:sourceLanguage'
@@ -34,7 +34,7 @@ class Coreon.Models.TermList extends Backbone.Model
             , 'reset'
             , @onHitsReset
 
-  update: ->
+  reset: ->
     if source = @get 'source'
       switch @get 'scope'
         when 'hits'
@@ -45,7 +45,7 @@ class Coreon.Models.TermList extends Backbone.Model
           @next()
     else
       @terms.reset()
-    @trigger 'update', @terms, @attributes
+    @trigger 'reset', @terms, @attributes
 
   updateSource: ->
     @set 'source', Coreon.application.sourceLang()
@@ -54,11 +54,11 @@ class Coreon.Models.TermList extends Backbone.Model
     if router instanceof Coreon.Routers.RepositoriesRouter
       if route is 'show'
         @set 'scope', 'all', silent: yes
-        @update()
+        @reset()
 
   onHitsReset: ->
     @set 'scope', 'hits', silent: yes
-    @update()
+    @reset()
 
   fetch: ( lang, options = {} ) ->
     options.remove = no
@@ -66,7 +66,6 @@ class Coreon.Models.TermList extends Backbone.Model
       .fetch( lang, options )
       .done ( added ) =>
         @_tailLoaded = added.length < 50
-        @trigger 'update', @terms, @attributes
 
   hasNext: ->
     if @has( 'source' ) and @get( 'scope' ) is 'all'
@@ -81,8 +80,11 @@ class Coreon.Models.TermList extends Backbone.Model
       if last = @terms.last()
         options.from = last.get 'id'
       @set 'loadingNext', true
-      @fetch( source, options ).always =>
-        @set 'loadingNext', false
+      @fetch( source, options )
+        .done ( terms ) =>
+          @trigger 'append', terms
+        .always =>
+          @set 'loadingNext', false
     else
       $.Deferred().resolve( [] ).promise()
 
