@@ -32,6 +32,33 @@ $widget-width: 320px;
   };
 }
 
+
+@mixin loading {
+
+  &:before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    background: image-url("layout/loadingWhite@2x.png") no-repeat 2px 2px;
+    @include background-size(16px 16px);
+    @include border-radius(10px);
+    background-color: rgba($greytext-color, 0.4);
+    width: 20px;
+    height: 20px;
+    animation: spin 0.8s linear infinite;
+    -webkit-animation: spin 0.8s linear infinite;
+  }; 
+}
+@keyframes spin {
+  0% {transform:rotate(0deg);}
+  100% {transform:rotate(360deg);}
+} 
+@-webkit-keyframes spin {
+  0% {-webkit-transform:rotate(0deg);}
+  100% {-webkit-transform:rotate(360deg);}
+}
+
+
 @mixin submit-button {
   @include box-sizing(border-box);
   height:29px;
