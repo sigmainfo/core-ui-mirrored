@@ -54,27 +54,27 @@ describe 'Coreon.Models.TermList', ->
       finally
         Coreon.Collections.Terms.hits.restore()
 
-  describe '#update()', ->
+  describe '#reset()', ->
 
     it 'is triggered on source change', ->
-      @model.update = sinon.spy()
+      @model.reset = sinon.spy()
       @model.initialize()
       @model.set 'source', 'hu'
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
+      expect( @model.reset ).to.have.been.calledOnce
+      expect( @model.reset ).to.have.been.calledOn @model
 
     it 'is triggered on scope change', ->
-      @model.update = sinon.spy()
+      @model.reset = sinon.spy()
       @model.initialize()
       @model.trigger 'change:scope'
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
+      expect( @model.reset ).to.have.been.calledOnce
+      expect( @model.reset ).to.have.been.calledOn @model
 
-    it 'triggers update event', ->
+    it 'triggers reset event', ->
       spy = sinon.spy()
-      @model.on 'update', spy
+      @model.on 'reset', spy
       @model.terms.reset = sinon.spy()
-      @model.update()
+      @model.reset()
       expect( spy ).to.have.been.calledOnce
       expect( @model.terms.reset ).to.have.been.calledOnce
       expect( spy ).to.have.been.calledAfter @model.terms.reset
@@ -86,7 +86,7 @@ describe 'Coreon.Models.TermList', ->
 
       it 'clears collection', ->
         @model.terms.reset [ lang: 'de', val: 'Schuh' ], silent: yes
-        @model.update()
+        @model.reset()
         collection = @model.terms
         expect( collection.models ).to.be.empty
 
@@ -103,7 +103,7 @@ describe 'Coreon.Models.TermList', ->
 
         it 'fills collection with terms from source lang', ->
           @model.hits.lang.withArgs('de').returns [ lang: 'de', value: 'Schuh' ]
-          @model.update()
+          @model.reset()
           collection = @model.terms
           expect( collection ).to.have.lengthOf 1
           expect( collection.at(0).get 'value' ).to.equal 'Schuh'
@@ -111,7 +111,7 @@ describe 'Coreon.Models.TermList', ->
         it 'does not fetch terms', ->
           collection = @model.terms
           collection.fetch = sinon.spy()
-          @model.update()
+          @model.reset()
           expect( collection.fetch ).to.not.have.been.called
 
       context 'with universal scope', ->
@@ -124,22 +124,24 @@ describe 'Coreon.Models.TermList', ->
 
         it 'clears collection', ->
           @model.terms.reset [ lang: 'de', val: 'Schuh' ], silent: yes
-          @model.update()
+          @model.reset()
           collection = @model.terms
           expect( collection.models ).to.be.empty
 
         it 'fetches first batch', ->
           @model.next = sinon.spy()
-          @model.update()
+          @model.reset()
           expect( @model.next ).to.have.been.calledOnce
 
-        it 'triggers update on response', ->
+        it 'triggers event on response', ->
           spy = sinon.spy()
-          @model.on 'update', spy
-          @model.update()
+          @model.on 'append', spy
+          @model.reset()
           spy.reset()
-          @deferred.resolve []
+          terms = []
+          @deferred.resolve terms
           expect( spy ).to.have.been.calledOnce
+          expect( spy ).to.have.been.calledWith terms
 
   describe '#updateSource()', ->
 
@@ -181,23 +183,23 @@ describe 'Coreon.Models.TermList', ->
 
     it 'forces update', ->
       @model.set 'scope', 'all', silent: yes
-      @model.update = sinon.spy()
+      @model.reset = sinon.spy()
       @model.initialize()
       @model.onRoute new Coreon.Routers.RepositoriesRouter
                    , 'show'
                    , [ '1234567' ]
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
+      expect( @model.reset ).to.have.been.calledOnce
+      expect( @model.reset ).to.have.been.calledOn @model
 
     it 'does not trigger double update', ->
       @model.set 'scope', 'hits', silent: yes
-      @model.update = sinon.spy()
+      @model.reset = sinon.spy()
       @model.initialize()
       @model.onRoute new Coreon.Routers.RepositoriesRouter
                    , 'show'
                    , [ '1234567' ]
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
+      expect( @model.reset ).to.have.been.calledOnce
+      expect( @model.reset ).to.have.been.calledOn @model
 
   describe '#onHitsReset()', ->
 
@@ -215,19 +217,19 @@ describe 'Coreon.Models.TermList', ->
 
     it 'forces update', ->
       @model.set 'scope', 'hits', silent: yes
-      @model.update = sinon.spy()
+      @model.reset = sinon.spy()
       @model.initialize()
       @model.onHitsReset()
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
+      expect( @model.reset ).to.have.been.calledOnce
+      expect( @model.reset ).to.have.been.calledOn @model
 
     it 'does not trigger double update', ->
       @model.set 'scope', 'all', silent: yes
-      @model.update = sinon.spy()
+      @model.reset = sinon.spy()
       @model.initialize()
       @model.onHitsReset()
-      expect( @model.update ).to.have.been.calledOnce
-      expect( @model.update ).to.have.been.calledOn @model
+      expect( @model.reset ).to.have.been.calledOnce
+      expect( @model.reset ).to.have.been.calledOn @model
 
   describe '#next()', ->
 
@@ -270,7 +272,6 @@ describe 'Coreon.Models.TermList', ->
                                               , from: 'last-term-in-list'
                                               , remove: no
 
-
       it 'fetches first batch when empty', ->
         @model.set 'source', 'de', silent: yes
         @model.terms.reset [], silent: yes
@@ -298,6 +299,16 @@ describe 'Coreon.Models.TermList', ->
         @request.reject()
         expect( @model.get 'loadingNext' ).to.be.false
 
+      it 'triggers event on response', ->
+        spy = sinon.spy()
+        @model.on 'append', spy
+        @model.next()
+        spy.reset()
+        terms = []
+        @request.resolve terms
+        expect( spy ).to.have.been.calledOnce
+        expect( spy ).to.have.been.calledWith terms
+
   describe '#hasNext()', ->
 
     context 'scope narrowed down to hits', ->
@@ -317,7 +328,7 @@ describe 'Coreon.Models.TermList', ->
 
         beforeEach ->
           @model.set 'source', null, silent: yes
-          @model.update()
+          @model.reset()
 
         it 'is false', ->
           expect( @model.hasNext() ).to.be.false
@@ -329,7 +340,7 @@ describe 'Coreon.Models.TermList', ->
           @model.terms.fetch = =>
             @request = $.Deferred()
             @request.promise()
-          @model.update()
+          @model.reset()
 
         it 'is true by default', ->
           expect( @model.hasNext() ).to.be.true

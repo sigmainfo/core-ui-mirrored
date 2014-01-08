@@ -55,7 +55,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     it 'is triggered on model updates', ->
       @view.render = sinon.spy()
       @view.initialize()
-      @view.model.trigger 'update'
+      @view.model.trigger 'reset'
       expect( @view.render ).to.have.been.calledOnce
       expect( @view.render ).to.have.been.calledOn @view
 
@@ -146,7 +146,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
           @view.topUp()
           expect( @view.model.next ).to.have.been.calledOnce
 
-
         context 'loading', ->
 
           beforeEach ->
@@ -156,38 +155,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
             @view.topUp()
             expect( @view.model.next ).to.not.have.been.called
 
-        context 'loaded', ->
 
-          beforeEach ->
-            @terms = []
-            @view.topUp()
-            @view.topUp = sinon.spy()
-
-          it 'removes placeholder', ->
-            @deferred.resolve @terms
-            placeholder = @view.$ 'tr.placeholder td'
-            expect( placeholder ).to.not.exist
-
-          it 'appends items', ->
-            @view.$( 'tbody' ).append '''
-              <tr class="term">
-                <td class="source">
-                  <a href="#">Ball</a>
-                </td>
-              </tr>
-            '''
-            term = new Backbone.Model value: 'billiards'
-            term.conceptPath = -> '/my-repository/concepts/concept-123'
-            @terms.push term
-            @deferred.resolve @terms
-            expect( @view.$ 'tbody tr.term' ).to.have.property 'length', 2
-            added = @view.$('tbody tr.term td.source a').eq(1)
-            expect( added ).to.have.text 'billiards'
-            expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
-
-          it 'calls itself again', ->
-            @deferred.resolve @terms
-            expect( @view.topUp ).to.have.been.calledOnce
 
       context 'completely loaded', ->
 
@@ -266,3 +234,41 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( @view.model.get 'scope' ).to.equal 'hits'
       @view.toggleScope()
       expect( @view.model.get 'scope' ).to.equal 'all'
+
+  describe '#appendItems()', ->
+
+    beforeEach ->
+      sinon.stub Coreon.Models.Term::, 'conceptPath', ->
+        "/my-repository/concepts/#{@id}"
+
+    afterEach ->
+      Coreon.Models.Term::conceptPath.restore()
+
+    it 'is triggered by model', ->
+      @view.appendItems = sinon.spy()
+      @view.initialize()
+      data = []
+      @view.model.trigger 'append', data
+      expect( @view.appendItems ).to.have.been.calledOnce
+
+    it 'appends items', ->
+      @view.$( 'tbody' ).append '''
+        <tr class="term">
+          <td class="source">
+            <a href="#">Ball</a>
+          </td>
+        </tr>
+      '''
+      @view.appendItems [
+        id: 'concept-123'
+        value: 'billiards'
+      ]
+      expect( @view.$ 'tbody tr.term' ).to.have.property 'length', 2
+      added = @view.$('tbody tr.term td.source a').eq(1)
+      expect( added ).to.have.text 'billiards'
+      expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
+
+    it 'calls top up method', ->
+      @view.topUp = sinon.spy()
+      @view.appendItems []
+      expect( @view.topUp ).to.have.been.calledOnce
