@@ -89,7 +89,7 @@
         display: inline-block;
         height: 32px;
         width: 100%;
-        background-color: rgba($petrol, 0.06);
+        background-color: rgba(darken($greycolor, 20), 0.2);
         text-align: center;
         text-indent: -2000px;
         @include loading;
