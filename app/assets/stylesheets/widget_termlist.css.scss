@@ -2,25 +2,25 @@
 @import 'compass/css3';
 
 #coreon-term-list {
-//  background: none;
-//  background-color: $beigecolor;
 
   h4:before {
     background-position: 0px -900px;
   }
-//  ul {
-//    border-top: 1px solid rgba(white, 0.2);
-//    padding: 8px 20px;
-//    min-height: 12px;
-//    list-style: none;
-//    
-//    .empty {
-//      @include empty;
-//      padding: 10px;
-//      text-align: center;
-//      color: $greytext-color;
-//    }
-//  }
+
+  .toggle-scope {
+    &:before {
+      @include before-icon;
+      background-position: 0 -950px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -50px -950px;
+      }
+    }
+  
+  }
   
   table {
     width: 100%;
@@ -82,6 +82,9 @@
           color: $greytext-color;
         }
       }
+//      &.placeholder {
+//        @include loading;
+//      }
     }
     
   }
