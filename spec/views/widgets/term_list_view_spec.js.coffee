@@ -59,6 +59,16 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( @view.render ).to.have.been.calledOnce
       expect( @view.render ).to.have.been.calledOn @view
 
+    it 'resets scroll position', ->
+      $( '#konacha' ).append @view.$el
+      inner = @view.$ 'tbody'
+      inner.height 200
+      outer = @view.$ 'table'
+      outer.height 100
+      outer.scrollTop 25
+      @view.render()
+      expect( outer.scrollTop() ).to.equal 0
+
     context 'no source language', ->
 
       beforeEach ->

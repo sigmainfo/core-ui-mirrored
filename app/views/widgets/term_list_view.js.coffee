@@ -53,7 +53,8 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
             , @updateLoadingState
 
   render: ->
-    @$('tbody').html if @model.has('source')
+    @$( 'table' ).scrollTop 0
+    @$( 'tbody' ).html if @model.has('source')
       @terms
         terms: @data @model.terms
     else
