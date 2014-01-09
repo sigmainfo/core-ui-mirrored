@@ -2,19 +2,22 @@
 @import 'compass/css3';
 
 #coreon-term-list {
+  
+
 
   h4:before {
     background-position: 0px -900px;
   }
 
+
   .toggle-scope {
+    
     &:before {
       @include before-icon;
       background-position: 0 -950px;
     }
 
     &:hover {
-
       &:before {
         background-position: -50px -950px;
       }
@@ -72,7 +75,7 @@
           border: none;
         }
       }
-      &.empty, &.placeholder  {
+      &.empty  {
         td {
           @include empty;
           display: inline-block;
@@ -82,9 +85,19 @@
           color: $greytext-color;
         }
       }
-//      &.placeholder {
-//        @include loading;
-//      }
+      &.placeholder {
+        display: inline-block;
+        height: 32px;
+        width: 100%;
+        background-color: rgba(darken($greycolor, 20), 0.2);
+        text-align: center;
+        text-indent: -2000px;
+        @include loading;
+        &:before {
+          margin-left: -10px;
+          margin-top: 6px;
+        };
+      }
     }
     
   }
