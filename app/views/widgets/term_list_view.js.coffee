@@ -72,6 +72,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       value: term.get 'value'
       path:  term.conceptPath()
       hit:   @model.hits.get( term )?
+      id:    term.id
 
   resize: (size) ->
     size.height ?= defaults.size[1]

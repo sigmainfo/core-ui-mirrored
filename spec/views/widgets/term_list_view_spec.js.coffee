@@ -129,6 +129,14 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         expect( @view.$('tbody tr.term:nth-child(2)') ).to.have.class 'hit'
         expect( @view.$('tbody tr.term:nth-child(3)') ).to.not.have.class 'hit'
 
+      it 'identifies term list items', ->
+        term = new Backbone.Model id: '52fe4156ec4d'
+        term.conceptPath = -> ''
+        @view.model.terms.reset [ term ], silent: yes
+        @view.render()
+        expect( @view.$ 'tbody tr.term' ).to.have.attr 'data-id'
+                                                     , '52fe4156ec4d'
+
   describe '#topUp()', ->
 
     it 'is triggered on scroll', ->
