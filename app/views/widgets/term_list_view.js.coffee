@@ -106,6 +106,39 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       list.find( '.placeholder.next' ).remove()
 
   toggleScope: ->
-    oldScope = @model.get 'scope'
-    newScope = if oldScope is 'all' then 'hits' else 'all'
-    @model.set 'scope', newScope
+    switch @model.get 'scope'
+      when 'all'  then @limitScope()
+      when 'hits' then @expandScope()
+
+  limitScope: ->
+    @model.set 'scope', 'hits'
+
+  expandScope: ->
+    anchorId = @anchor()?.data( 'id' ) or null
+    @model.set 'scope', 'all', silent: yes
+    @model.clearTerms()
+    @model.next anchorId
+
+  anchor: ->
+    anchor = null
+    offset = @$( 'table' ).scrollTop()
+    @$( 'tr.term' ).each ->
+      tr = $( @ )
+      if tr.position().top >= offset
+        anchor = tr
+        return false
+    anchor
+
+  anchorHit: ->
+    if anchor = @anchor()
+      hits  = @model.hits
+      terms = @model.terms
+      term  = terms.get anchor.data( 'id' )
+      if hit = hits.get term
+        anchorHit = hit
+      else
+        sortKey = term.get 'sort_key'
+        anchorHit = hits.find ( hit ) ->
+          hit.get( 'sort_key' ) >= sortKey
+        anchorHit ||= hits.last()
+    anchorHit or null

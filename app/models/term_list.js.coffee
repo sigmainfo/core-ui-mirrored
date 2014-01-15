@@ -40,8 +40,7 @@ class Coreon.Models.TermList extends Backbone.Model
         when 'hits'
           @terms.reset @hits.lang source
         when 'all'
-          @terms.reset()
-          @_tailLoaded = false
+          @clearTerms silent: yes
           @next()
     else
       @terms.reset()
@@ -73,12 +72,14 @@ class Coreon.Models.TermList extends Backbone.Model
     else
       no
 
-  next: ->
+  next: ( from ) ->
     if @hasNext()
       source = @get 'source'
       options = {}
-      if last = @terms.last()
-        options.from = last.get 'id'
+      if from?
+        options.from = from
+      else if last = @terms.last()
+        options.from = last.id
       @set 'loadingNext', true
       @fetch( source, options )
         .done ( terms ) =>
@@ -88,3 +89,7 @@ class Coreon.Models.TermList extends Backbone.Model
     else
       $.Deferred().resolve( [] ).promise()
 
+  clearTerms: ( options = {} ) ->
+    @terms.reset()
+    @_tailLoaded = false
+    @trigger 'reset', @terms, @attributes unless options.silent

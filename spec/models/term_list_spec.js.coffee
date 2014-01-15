@@ -258,7 +258,7 @@ describe 'Coreon.Models.TermList', ->
       beforeEach ->
         @model.hasNext = -> yes
 
-      it 'fetches terms after last one', ->
+      it 'fetches terms after last one by default', ->
         @model.set 'source', 'de', silent: yes
         @model.terms.reset [
           { id: 'a-term'            }
@@ -270,6 +270,15 @@ describe 'Coreon.Models.TermList', ->
         expect( fetch ).to.have.been.calledOnce
         expect( fetch ).to.have.been.calledWith 'de'
                                               , from: 'last-term-in-list'
+                                              , remove: no
+
+      it 'fetches terms after given id', ->
+        @model.set 'source', 'de', silent: yes
+        @model.next 'my-term-123'
+        fetch = @model.terms.fetch
+        expect( fetch ).to.have.been.calledOnce
+        expect( fetch ).to.have.been.calledWith 'de'
+                                              , from: 'my-term-123'
                                               , remove: no
 
       it 'fetches first batch when empty', ->
@@ -349,3 +358,38 @@ describe 'Coreon.Models.TermList', ->
           @request.resolve [ id: 'last-term' ]
           expect( @model.hasNext() ).to.be.false
 
+  describe '#clearTerms()', ->
+
+    it 'resets terms', ->
+      @model.terms.reset [ lang: 'de', value: 'Koffer' ], silent: yes
+      @model.clearTerms()
+      expect( @model.terms ).to.have.lengthOf 0
+
+    it 'clears loading state for tail', ->
+      @model.terms.fetch = =>
+        @request = $.Deferred()
+        @request.promise()
+      @model.set
+        source: 'de'
+        scope: 'all'
+      , silent: yes
+      @model.fetch 'de'
+      @request.resolve []
+      @model.clearTerms()
+      expect( @model.hasNext() ).to.be.true
+
+    it 'triggers reset event', ->
+      spy = sinon.spy()
+      @model.on 'reset', spy
+      @model.terms.reset = sinon.spy()
+      @model.clearTerms()
+      expect( spy ).to.have.been.calledOnce
+      expect( @model.terms.reset ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledAfter @model.terms.reset
+      expect( spy ).to.have.been.calledWith @model.terms, @model.attributes
+
+    it 'can be silenced', ->
+      spy = sinon.spy()
+      @model.on 'reset', spy
+      @model.clearTerms silent: yes
+      expect( spy ).to.not.have.been.called

@@ -100,10 +100,14 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         , silent: yes
         @view.render()
         expect( @view.$ 'tbody' ).to.have 'tr.term td.source'
-        expect( @view.$ 'tbody tr.term td.source' ).to.have.property 'length', 3
-        expect( @view.$('tbody tr.term:nth-child(1) td.source').text() ).to.contain 'billiards'
-        expect( @view.$('tbody tr.term:nth-child(2) td.source').text() ).to.contain 'cue'
-        expect( @view.$('tbody tr.term:nth-child(3) td.source').text() ).to.contain 'pocket billiards'
+        expect( @view.$ 'tbody tr.term td.source' ).to.have.property 'length'
+                                                                   , 3
+        expect( @view.$('tbody tr.term:nth-child(1) td.source').text() )
+          .to.contain 'billiards'
+        expect( @view.$('tbody tr.term:nth-child(2) td.source').text() )
+          .to.contain 'cue'
+        expect( @view.$('tbody tr.term:nth-child(3) td.source').text() )
+          .to.contain 'pocket billiards'
 
       it 'renders link to concept', ->
         term = new Backbone.Model value: 'billiards'
@@ -172,8 +176,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
           it 'does not call next on model', ->
             @view.topUp()
             expect( @view.model.next ).to.not.have.been.called
-
-
 
       context 'completely loaded', ->
 
@@ -246,12 +248,86 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect(  @view.toggleScope ).to.have.been.calledOnce
       expect(  @view.toggleScope ).to.have.been.calledOn @view
 
-    it 'toggles scope on model', ->
+    it 'limits scope when expanded', ->
       @view.model.set 'scope', 'all', silent: yes
+      @view.limitScope = sinon.spy()
       @view.toggleScope()
+      expect( @view.limitScope ).to.have.been.calledOnce
+      expect( @view.limitScope ).to.have.been.calledOn @view
+
+    it 'expands scope when limited', ->
+      @view.model.set 'scope', 'hits', silent: yes
+      @view.expandScope = sinon.spy()
+      @view.toggleScope()
+      expect( @view.expandScope ).to.have.been.calledOnce
+      expect( @view.expandScope ).to.have.been.calledOn @view
+
+  describe '#limitScope()', ->
+
+    beforeEach ->
+      @view.model.set 'scope', 'all', silent: yes
+
+    it 'changes scope on model', ->
+      @view.limitScope()
       expect( @view.model.get 'scope' ).to.equal 'hits'
-      @view.toggleScope()
+
+    it 'triggers change event', ->
+      spy = sinon.spy()
+      @view.model.on 'change:scope', spy
+      @view.limitScope()
+      expect( spy ).to.have.been.calledOnce
+
+  describe '#expandScope()', ->
+
+    beforeEach ->
+      @view.anchor = -> $( '<tr class="term hit" data-id="543ffaa23">' )
+      @view.model.set 'scope', 'hits', silent: yes
+      @view.model.clearTerms = sinon.spy()
+      @view.model.next = sinon.spy()
+
+    it 'changes scope on model', ->
+      @view.expandScope()
       expect( @view.model.get 'scope' ).to.equal 'all'
+
+    it 'does not trigger change event', ->
+      spy = sinon.spy()
+      @view.model.on 'change:scope', spy
+      @view.expandScope()
+      expect( spy ).to.not.have.been.called
+
+    it 'clears model', ->
+      @view.expandScope()
+      expect( @view.model.clearTerms ).to.have.been.calledOnce
+
+    it 'fetches next terms', ->
+      @view.anchor = -> $( '<tr class="term hit" data-id="543ffaa23">' )
+      @view.expandScope()
+      expect( @view.model.next ).to.have.been.calledOnce
+      expect( @view.model.next ).to.have.been.calledWith '543ffaa23'
+
+  describe '#anchor()', ->
+
+    beforeEach ->
+      $('#konacha').append @view.$el
+      @outer = @view.$ 'table'
+      @outer.height 100
+      @inner = @view.$ 'tbody'
+
+    it 'returns null for empty list', ->
+      @inner.html ''
+      anchor = @view.anchor()
+      expect( anchor ).to.be.null
+
+    it 'selects first visible item', ->
+      @inner.html '''
+        <tr class="term"><td>term 1</td></tr>
+        <tr class="term"><td>term 2</td></tr>
+        <tr class="term"><td>term 3</td></tr>
+      '''
+      @inner.find( 'tr' ).height 50
+      @outer.scrollTop 30
+      anchor = @view.anchor()
+      expect( anchor ).to.match 'tr.term:nth-child(2)'
 
   describe '#appendItems()', ->
 
@@ -290,3 +366,54 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.topUp = sinon.spy()
       @view.appendItems []
       expect( @view.topUp ).to.have.been.calledOnce
+
+  describe '#anchorHit()', ->
+
+    beforeEach ->
+      @view.anchor = sinon.stub()
+      @view.model.hits = new Backbone.Collection
+
+    it 'returns null when no anchor exists', ->
+      @view.anchor.returns null
+      anchorHit = @view.anchorHit()
+      expect( anchorHit ).to.be.null
+
+    it 'returns term of anchor when it is a hit', ->
+      anchor = $ '<tr class="term hit" data-id="543eff34">'
+      @view.anchor.returns anchor
+      hit = new Backbone.Model id: '543eff34'
+      @view.model.hits.reset [ hit ], silent: true
+      @view.model.terms.reset [
+        new Backbone.Model( id: '4567ff' )
+        hit
+        new Backbone.Model( id: '1567f3' )
+      ], silent: true
+      anchorHit = @view.anchorHit()
+      expect( anchorHit ).to.equal hit
+
+    it 'returns first term hit following anchor', ->
+      anchor = $ '<tr class="term" data-id="543eff34">'
+      @view.anchor.returns anchor
+      term = new Backbone.Model id: '543eff34', sort_key: '183ffe52'
+      @view.model.terms.reset [ term ], silent: yes
+      @view.model.hits.reset [
+        { id: '543eff31', 'sort_key': '1115f' }
+        { id: '543eff32', 'sort_key': '183ffe589' }
+        { id: '543eff33', 'sort_key': '183ffe589345' }
+      ], silent: yes
+      anchorHit = @view.anchorHit()
+      expect( anchorHit.id ).to.equal '543eff32'
+
+    it 'returns last hit if it is before anchor', ->
+      anchor = $ '<tr class="term" data-id="543eff34">'
+      @view.anchor.returns anchor
+      term = new Backbone.Model id: '543eff34', sort_key: 'f976fe525'
+      @view.model.terms.reset [ term ], silent: yes
+      @view.model.hits.reset [
+        { id: '543eff31', 'sort_key': '1115f' }
+        { id: '543eff32', 'sort_key': '183ffe589' }
+        { id: '543eff33', 'sort_key': '183ffe589345' }
+      ], silent: yes
+      anchorHit = @view.anchorHit()
+      expect( anchorHit.id ).to.equal '543eff33'
+
