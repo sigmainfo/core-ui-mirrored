@@ -266,6 +266,8 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
     beforeEach ->
       @view.model.set 'scope', 'all', silent: yes
+      anchorHit = new Backbone.Model
+      @view.anchorHit = -> anchorHit
 
     it 'changes scope on model', ->
       @view.limitScope()
@@ -276,6 +278,39 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.model.on 'change:scope', spy
       @view.limitScope()
       expect( spy ).to.have.been.calledOnce
+
+    context 'scroll position', ->
+
+      beforeEach ->
+        $( '#konacha' ).append @view.$el
+        @inner = @view.$( 'tbody' )
+        @inner.height 200
+        @inner.css 'position', 'relative'
+        @outer = @view.$( 'table' )
+        @outer.height 100
+
+      it 'resets scroll position if there is no anchor hit', ->
+        @view.anchorHit = -> null
+        @outer.scrollTop 30
+        @view.limitScope()
+        expect( @outer.scrollTop() ).to.equal 0
+
+      it 'pins scoll position', ->
+        anchorHit = new Backbone.Model id: 'anchor-123'
+        @view.anchorHit = -> anchorHit
+        @inner.html '''
+          <tr class="term hit" data-id="anchor-123"><td>anchor</td></tr>
+        '''
+        tr = @inner.find 'tr'
+        tr.css
+          position: 'absolute'
+          top: 73
+        @outer.scrollTop 30
+        @view.model.on 'change:scope', ->
+          tr.css top: 57
+        @view.limitScope()
+        expect( @outer.scrollTop() ).to.equal 30 - 73 + 57
+
 
   describe '#expandScope()', ->
 

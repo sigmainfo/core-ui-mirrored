@@ -111,7 +111,19 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       when 'hits' then @expandScope()
 
   limitScope: ->
+    anchorHit = @anchorHit()
+    nodeOffset = 0
+    if anchorHit?
+      node = @$( "tr.term[data-id=#{anchorHit.id}]" ).first()
+      if node.length is 1
+        nodeOffset = node.position().top - @$( 'table' ).scrollTop()
     @model.set 'scope', 'hits'
+    scrollTop = 0
+    if anchorHit?
+      node = @$( "tr.term[data-id=#{anchorHit.id}]" ).first()
+      if node.length is 1
+        scrollTop = node.position().top - nodeOffset
+    @$( 'table' ).scrollTop scrollTop
 
   expandScope: ->
     anchorId = @anchor()?.data( 'id' ) or null
