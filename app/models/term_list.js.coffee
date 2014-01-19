@@ -10,6 +10,7 @@ class Coreon.Models.TermList extends Backbone.Model
     target: null
     scope: 'hits'
     loadingNext: false
+    loadingPrev: false
 
   initialize: ->
     @terms = new Coreon.Collections.Terms
@@ -59,40 +60,78 @@ class Coreon.Models.TermList extends Backbone.Model
     @set 'scope', 'hits', silent: yes
     @reset()
 
-  fetch: ( lang, options = {} ) ->
+  fetch: ( options = {} ) ->
+    lang = @get 'source'
     options.remove = no
-    @terms
-      .fetch( lang, options )
-      .done ( added ) =>
-        @_tailLoaded = added.length < 50
+    @terms.fetch lang, options
+
+  hasWideScope: ->
+    @has( 'source' ) and @get( 'scope' ) is 'all'
 
   hasNext: ->
-    if @has( 'source' ) and @get( 'scope' ) is 'all'
+    if @hasWideScope()
       not @_tailLoaded
     else
       no
 
+  hasPrev: ->
+    if @hasWideScope()
+      not @_headLoaded
+    else
+      no
+
+  nullPromise = ->
+    $.Deferred().resolve( [] ).promise()
+
   next: ( from ) ->
     if @hasNext()
-      source = @get 'source'
-      options = {}
+      excludeFrom = @terms.get( from )?
+      options = order: 'asc'
       if from?
         options.from = from
-      else if last = @terms.last()
-        options.from = last.id
+      else
+        if last = @terms.last()
+          from = options.from = last.id
       @set 'loadingNext', true
-      @fetch( source, options )
+      @fetch( options )
         .done =>
           last   = @terms.get from
-          offset = @terms.indexOf( last ) + 1
+          offset = @terms.indexOf last
+          offset += 1 if excludeFrom
           tail   = @terms.tail offset
+          @_tailLoaded = yes if tail.length < 40
           @trigger 'append', tail
         .always =>
           @set 'loadingNext', false
     else
-      $.Deferred().resolve( [] ).promise()
+      nullPromise()
+
+  prev: ( from ) ->
+    if @hasPrev()
+      excludeFrom = @terms.get( from )?
+      options = order: 'desc'
+      if from?
+        options.from = from
+      else
+        if first = @terms.first()
+          from = options.from = first.id
+      @set 'loadingPrev', true
+      @fetch( options )
+        .done =>
+          first  = @terms.get from
+          offset = @terms.indexOf first
+          offset += 1 unless excludeFrom
+          offset = 0 if offset < 0
+          head   = @terms.head offset
+          @_headLoaded = yes if head.length < 40
+          @trigger 'prepend', head
+        .always =>
+          @set 'loadingPrev', false
+    else
+      nullPromise()
 
   clearTerms: ( options = {} ) ->
     @terms.reset()
-    @_tailLoaded = false
+    @_tailLoaded = no
+    @_headLoaded = no
     @trigger 'reset', @terms, @attributes unless options.silent

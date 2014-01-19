@@ -32,6 +32,9 @@ describe 'Coreon.Models.TermList', ->
     it 'is not loading next', ->
       expect( @model.get 'loadingNext' ).to.be.false
 
+    it 'is not loading prev', ->
+      expect( @model.get 'loadingPrev' ).to.be.false
+
   describe '#initialize()', ->
 
     it 'creates empty terms collection', ->
@@ -269,8 +272,9 @@ describe 'Coreon.Models.TermList', ->
         fetch = @model.terms.fetch
         expect( fetch ).to.have.been.calledOnce
         expect( fetch ).to.have.been.calledWith 'de'
-                                              , from: 'last-term-in-list'
-                                              , remove: no
+                                              , from   : 'last-term-in-list'
+                                              , order  : 'asc'
+                                              , remove : no
 
       it 'fetches terms after given id', ->
         @model.set 'source', 'de', silent: yes
@@ -278,8 +282,9 @@ describe 'Coreon.Models.TermList', ->
         fetch = @model.terms.fetch
         expect( fetch ).to.have.been.calledOnce
         expect( fetch ).to.have.been.calledWith 'de'
-                                              , from: 'my-term-123'
-                                              , remove: no
+                                              , from   : 'my-term-123'
+                                              , order  : 'asc'
+                                              , remove : no
 
       it 'fetches first batch when empty', ->
         @model.set 'source', 'de', silent: yes
@@ -288,7 +293,8 @@ describe 'Coreon.Models.TermList', ->
         fetch = @model.terms.fetch
         expect( fetch ).to.have.been.calledOnce
         expect( fetch ).to.have.been.calledWith 'de'
-                                              , remove: no
+                                              , order  : 'asc'
+                                              , remove : no
 
       it 'returns promise from fetch', ->
         promise = @model.next()
@@ -317,6 +323,28 @@ describe 'Coreon.Models.TermList', ->
         expect( spy ).to.have.been.calledOnce
 
       it 'passes appended terms along when triggering event', ->
+        @model.terms.reset [], silent: yes
+        spy = sinon.spy()
+        @model.on 'append', spy
+        @model.next 'term-456'
+        spy.reset()
+        response = [
+          { id: 'term-456' }
+          { id: 'term-789' }
+          { id: 'term-0ab' }
+        ]
+        @model.terms.add response
+        @request.resolve response
+        expect( spy ).to.have.been.calledOnce
+        terms = spy.firstCall.args[0]
+        term_ids = terms.map ( t ) -> id: t.id
+        expect( term_ids ).to.eql [
+          { id: 'term-456' }
+          { id: 'term-789' }
+          { id: 'term-0ab' }
+        ]
+
+      it 'excludes from-term when it was present before', ->
         @model.terms.reset [
           { id: 'term-123' }
           { id: 'term-456' }
@@ -332,7 +360,6 @@ describe 'Coreon.Models.TermList', ->
         ]
         @model.terms.add response
         @request.resolve response
-        expect( spy ).to.have.been.calledOnce
         terms = spy.firstCall.args[0]
         term_ids = terms.map ( t ) -> id: t.id
         expect( term_ids ).to.eql [
@@ -377,8 +404,185 @@ describe 'Coreon.Models.TermList', ->
           expect( @model.hasNext() ).to.be.true
 
         it 'is false after last fetch', ->
+          @model.next()
           @request.resolve [ id: 'last-term' ]
           expect( @model.hasNext() ).to.be.false
+
+  describe '#prev()', ->
+
+    beforeEach ->
+      @model.terms.fetch = sinon.spy =>
+        @request = $.Deferred()
+        @request.promise()
+
+    context 'does not have prev', ->
+
+      beforeEach ->
+        @model.hasPrev = -> no
+
+      it 'returns resolved promise', ->
+        promise = @model.prev()
+        expect( promise.state() ).to.equal 'resolved'
+
+      it 'resolves callbacks with empty set', ->
+        done = sinon.spy()
+        @model.prev().then done
+        expect( done ).to.have.been.calledOnce
+        expect( done ).to.have.been.calledWith []
+
+    context 'has prev', ->
+
+      beforeEach ->
+        @model.hasPrev = -> yes
+
+      it 'fetches terms before first one by default', ->
+        @model.set 'source', 'de', silent: yes
+        @model.terms.reset [
+          { id: 'aaa-first-term-in-list' }
+          { id: 'a-term'                 }
+          { id: 'another-term'           }
+        ], silent: yes
+        @model.prev()
+        fetch = @model.terms.fetch
+        expect( fetch ).to.have.been.calledOnce
+        expect( fetch ).to.have.been.calledWith 'de'
+                                              , from   : 'aaa-first-term-in-list'
+                                              , order  : 'desc'
+                                              , remove : no
+
+      it 'fetches terms before given id', ->
+        @model.set 'source', 'de', silent: yes
+        @model.prev 'my-term-123'
+        fetch = @model.terms.fetch
+        expect( fetch ).to.have.been.calledOnce
+        expect( fetch ).to.have.been.calledWith 'de'
+                                              , from   : 'my-term-123'
+                                              , order  : 'desc'
+                                              , remove : no
+
+      it 'fetches last batch when empty', ->
+        @model.set 'source', 'de', silent: yes
+        @model.terms.reset [], silent: yes
+        @model.prev()
+        fetch = @model.terms.fetch
+        expect( fetch ).to.have.been.calledOnce
+        expect( fetch ).to.have.been.calledWith 'de'
+                                              , order  : 'desc'
+                                              , remove : no
+
+      it 'returns promise from fetch', ->
+        promise = @model.prev()
+        expect( promise ).to.equal @request.promise()
+
+      it 'updates loading state', ->
+        @model.prev()
+        expect( @model.get 'loadingPrev' ).to.be.true
+
+      it 'resolves loading state on success', ->
+        @model.prev()
+        @request.resolve []
+        expect( @model.get 'loadingPrev' ).to.be.false
+
+      it 'resolves loading state on error', ->
+        @model.prev()
+        @request.reject()
+        expect( @model.get 'loadingPrev' ).to.be.false
+
+      it 'triggers event on response', ->
+        spy = sinon.spy()
+        @model.on 'prepend', spy
+        @model.prev()
+        spy.reset()
+        @request.resolve []
+        expect( spy ).to.have.been.calledOnce
+
+      it 'passes prepended terms along when triggering event', ->
+        @model.terms.comparator = ( t ) -> t.id
+        @model.terms.reset [], silent: yes
+        spy = sinon.spy()
+        @model.on 'prepend', spy
+        @model.prev 'term-456'
+        spy.reset()
+        response = [
+          { id: 'term-456' }
+          { id: 'term-123' }
+          { id: 'term-000' }
+        ]
+        @model.terms.add response
+        @request.resolve response
+        expect( spy ).to.have.been.calledOnce
+        terms = spy.firstCall.args[0]
+        term_ids = terms.map ( t ) -> id: t.id
+        expect( term_ids ).to.eql [
+          { id: 'term-000' }
+          { id: 'term-123' }
+          { id: 'term-456' }
+        ]
+
+      it 'excludes from-term when it was present before', ->
+        @model.terms.comparator = ( t ) -> t.id
+        @model.terms.reset [
+          { id: 'term-456' }
+          { id: 'term-9ab' }
+        ], silent: yes
+        spy = sinon.spy()
+        @model.on 'prepend', spy
+        @model.prev 'term-456'
+        spy.reset()
+        response = [
+          { id: 'term-456' }
+          { id: 'term-123' }
+          { id: 'term-000' }
+        ]
+        @model.terms.add response
+        @request.resolve response
+        terms = spy.firstCall.args[0]
+        term_ids = terms.map ( t ) -> id: t.id
+        expect( term_ids ).to.eql [
+          { id: 'term-000' }
+          { id: 'term-123' }
+        ]
+
+  describe '#hasPrev()', ->
+
+    context 'scope narrowed down to hits', ->
+
+      beforeEach ->
+        @model.set 'scope', 'hits', silent: yes
+
+      it 'is false', ->
+        expect( @model.hasPrev() ).to.be.false
+
+    context 'wide scope', ->
+
+      beforeEach ->
+        @model.set 'scope', 'all', silent: yes
+
+      context 'no source selected', ->
+
+        beforeEach ->
+          @model.set 'source', null, silent: yes
+          @model.reset()
+
+        it 'is false', ->
+          expect( @model.hasPrev() ).to.be.false
+
+      context 'with selected source', ->
+
+        beforeEach ->
+          @model.set 'source', 'de', silent: yes
+          @model.terms.fetch = =>
+            @request = $.Deferred()
+            @request.promise()
+          @model.reset()
+
+        it 'is true by default', ->
+          expect( @model.hasPrev() ).to.be.true
+
+        it 'is false after last fetch', ->
+          @model.prev()
+          @request.resolve [ id: 'first-term' ]
+          expect( @model.hasPrev() ).to.be.false
 
   describe '#clearTerms()', ->
 

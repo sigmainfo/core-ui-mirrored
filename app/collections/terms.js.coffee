@@ -29,7 +29,7 @@ class Coreon.Collections.Terms extends Backbone.Collection
   model: Coreon.Models.Term
 
   url: ->
-    "#{Coreon.application.graphUri()}/terms"
+    "#{Coreon.application.graphUri()}terms"
 
   comparator: ( term ) ->
     term.get 'sort_key'
@@ -44,8 +44,11 @@ class Coreon.Collections.Terms extends Backbone.Collection
     throw new Error 'No language given' unless lang?
     unless options.url?
       options.url = "#{@url()}/list/#{encodeURIComponent lang}"
+      options.order or= 'asc'
+      options.url += "/#{options.order}"
+      delete options.order
       if options.from
-        options.url += "/asc/#{ options.from }"
+        options.url += "/#{ options.from }"
         delete options.from
     super options
 

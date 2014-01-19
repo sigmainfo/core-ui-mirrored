@@ -2,7 +2,7 @@
 @import 'compass/css3';
 
 #coreon-term-list {
-  
+
 
 
   h4:before {
@@ -11,7 +11,7 @@
 
 
   .toggle-scope {
-    
+
     &:before {
       @include before-icon;
       background-position: 0 -950px;
@@ -24,9 +24,9 @@
         background-position: -50px -950px;
       }
     }
-  
+
   }
-  
+
   table {
     width: 100%;
     border-top: 1px solid rgba(white, 0.2);
@@ -38,7 +38,7 @@
     left: 0;
     right: 0;
     overflow: auto;
-    
+
     tbody {
       display: inline-block;
       width: 88%;
@@ -57,14 +57,14 @@
         padding-top: 1px;
         width: 100%;
       }
-      
+
       a {
         color: darken($greytext-color, 20);
         &:hover {
           color: $hover-color;
         };
       }
-      
+
       &.hit a {
         color: $hit-color;
         &:hover {
@@ -101,6 +101,6 @@
         };
       }
     }
-    
+
   }
 }

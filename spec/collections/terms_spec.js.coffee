@@ -108,7 +108,7 @@ describe "Coreon.Collections.Terms", ->
   describe '#url()', ->
 
     it 'combines graph uri and path', ->
-      Coreon.application = graphUri: -> 'core.api'
+      Coreon.application = graphUri: -> 'core.api/'
       expect( @collection.url() ).to.equal 'core.api/terms'
 
 
@@ -129,14 +129,22 @@ describe "Coreon.Collections.Terms", ->
       backboneFetch = Backbone.Collection::fetch
       expect( backboneFetch ).to.have.been.calledOnce
       expect( backboneFetch ).to.have.been.calledWith
-        url: 'core.api/terms/list/de'
+        url: 'core.api/terms/list/de/asc'
+
+    it 'includes order in generated url', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'de', order: 'desc'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledOnce
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/de/desc'
 
     it 'escapes lang', ->
       @collection.url = -> 'core.api/terms'
       @collection.fetch 'dänisch/DK'
       backboneFetch = Backbone.Collection::fetch
       expect( backboneFetch ).to.have.been.calledWith
-        url: 'core.api/terms/list/d%C3%A4nisch%2FDK'
+        url: 'core.api/terms/list/d%C3%A4nisch%2FDK/asc'
 
     it 'returns deferred', ->
       backboneFetch = Backbone.Collection::fetch
@@ -146,11 +154,11 @@ describe "Coreon.Collections.Terms", ->
 
     it 'can request a range', ->
       @collection.url = -> 'core.api/terms'
-      @collection.fetch 'de', from: '1234abcdef'
+      @collection.fetch 'de', from: '1234abcdef', order: 'desc'
       backboneFetch = Backbone.Collection::fetch
       expect( backboneFetch ).to.have.been.calledOnce
       expect( backboneFetch ).to.have.been.calledWith
-        url: 'core.api/terms/list/de/asc/1234abcdef'
+        url: 'core.api/terms/list/de/desc/1234abcdef'
 
   describe '#sync()', ->
 

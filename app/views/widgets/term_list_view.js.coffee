@@ -49,12 +49,16 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
             , @appendItems
 
     @listenTo @model
+            , 'prepend'
+            , @prependItems
+
+    @listenTo @model
             , 'change:loadingNext'
             , @updateLoadingState
 
   render: ->
     @$( 'table' ).scrollTop 0
-    @$( 'tbody' ).html if @model.has('source')
+    @$( 'tbody' ).html if @model.has( 'source' )
       @terms
         terms: @data @model.terms
     else
@@ -64,6 +68,11 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   appendItems: ( terms ) ->
     list = @$( 'tbody' )
     list.append @terms terms: @data terms
+    @topUp()
+
+  prependItems: ( terms ) ->
+    list = @$( 'tbody' )
+    list.prepend @terms terms: @data terms
     @topUp()
 
   data: ( terms ) ->
@@ -85,16 +94,28 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   topUp: ->
     if @model.hasNext() and not @model.get 'loadingNext'
-      if @closeToTail()
-        @model.next()
+      @model.next() if @closeToTail()
+
+    if @model.terms.length > 0
+      if @model.hasPrev() and not @model.get 'loadingPrev'
+        @model.prev() if @closeToHead()
+
+  threshold: ->
+    outer = @$ 'table'
+    outer.innerHeight() * 0.8
 
   closeToTail: ->
     outer = @$ 'table'
     inner = @$ 'tbody'
     max = inner.outerHeight() - outer.innerHeight()
-    delta = max - outer.scrollTop()
-    threshold = outer.innerHeight() * 0.8
-    delta < threshold
+    offset = max - outer.scrollTop()
+    offset < @threshold()
+
+  closeToHead: ->
+    outer = @$ 'table'
+    inner = @$ 'tbody'
+    offset = outer.scrollTop()
+    offset < @threshold()
 
   updateLoadingState: ->
     list = @$ 'tbody'

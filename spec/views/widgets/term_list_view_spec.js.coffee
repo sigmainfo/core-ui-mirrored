@@ -14,6 +14,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     model.hits = new Backbone.Collection
     model.terms = new Backbone.Collection
     model.hasNext = -> no
+    model.hasPrev = -> no
     @view = new Coreon.Views.Widgets.TermListView
       model: model
 
@@ -143,6 +144,9 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
   describe '#topUp()', ->
 
+    beforeEach ->
+      $( '#konacha' ).append @view.$el
+
     it 'is triggered on scroll', ->
       @view.topUp = sinon.spy()
       @view.delegateEvents()
@@ -150,7 +154,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( @view.topUp ).to.have.been.calledOnce
       expect( @view.topUp ).to.have.been.calledOn @view
 
-    context 'close to tail', ->
+    context 'tail', ->
 
       beforeEach ->
         @view.$('table').height 100
@@ -177,6 +181,17 @@ describe 'Coreon.Views.Widgets.TermListView', ->
             @view.topUp()
             expect( @view.model.next ).to.not.have.been.called
 
+        context 'far away from tail', ->
+
+          beforeEach ->
+            @view.$('table').height 100
+            @view.$('tbody').height 300
+
+          it 'does not call next on model', ->
+            @view.model.next = sinon.spy()
+            @view.topUp()
+            expect( @view.model.next ).to.not.have.been.called
+
       context 'completely loaded', ->
 
         beforeEach ->
@@ -186,16 +201,58 @@ describe 'Coreon.Views.Widgets.TermListView', ->
           @view.topUp()
           expect( @view.model.next ).to.not.have.been.called
 
-    context 'far away from tail', ->
+
+    context 'head', ->
 
       beforeEach ->
-        @view.$('table').height 100
-        @view.$('tbody').height 300
+        @view.$('table')
+          .height( 100 )
+          .scrollTop 10
+        @view.$('tbody').height 120
+        @view.model.prev = sinon.spy =>
+          @deferred = $.Deferred()
+          @deferred.promise()
 
-      it 'does not call next on model', ->
-        @view.model.next = sinon.spy()
-        @view.topUp()
-        expect( @view.model.next ).to.not.have.been.called
+      context 'not yet completely loaded', ->
+
+        beforeEach ->
+          @view.model.hasPrev = -> yes
+
+        it 'calls prev on model', ->
+          @view.topUp()
+          expect( @view.model.prev ).to.have.been.calledOnce
+
+        context 'loading', ->
+
+          beforeEach ->
+            @view.model.set 'loadingPrev', on, silent: yes
+
+          it 'does not call prev on model', ->
+            @view.topUp()
+            expect( @view.model.prev ).to.not.have.been.called
+
+        context 'far away from head', ->
+
+          beforeEach ->
+            @view.$('tbody')
+              .height 300
+            @view.$('table')
+              .height( 100 )
+              .scrollTop 200
+
+          it 'does not call prev on model', ->
+            @view.model.prev = sinon.spy()
+            @view.topUp()
+            expect( @view.model.prev ).to.not.have.been.called
+
+      context 'completely loaded', ->
+
+        beforeEach ->
+          @view.model.hasPrev = -> no
+
+        it 'does not call prev on model', ->
+          @view.topUp()
+          expect( @view.model.prev ).to.not.have.been.called
 
   describe '#updateLoadingState()', ->
 
@@ -394,6 +451,38 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     it 'calls top up method', ->
       @view.topUp = sinon.spy()
       @view.appendItems []
+      expect( @view.topUp ).to.have.been.calledOnce
+
+  describe '#prependItems()', ->
+
+    it 'is triggered by model', ->
+      @view.prependItems = sinon.spy()
+      @view.initialize()
+      data = []
+      @view.model.trigger 'prepend', data
+      expect( @view.prependItems ).to.have.been.calledOnce
+
+    it 'prepends items', ->
+      @view.$( 'tbody' ).append '''
+        <tr class="term">
+          <td class="source">
+            <a href="#">Ball</a>
+          </td>
+        </tr>
+      '''
+      @view.prependItems [
+        id: 'concept-123'
+        get: (attr) -> 'billiards' if attr is 'value'
+        conceptPath: -> '/my-repository/concepts/concept-123'
+      ]
+      expect( @view.$ 'tbody tr.term' ).to.have.property 'length', 2
+      added = @view.$( 'tbody tr.term td.source a' ).eq( 0 )
+      expect( added ).to.have.text 'billiards'
+      expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
+
+    it 'calls top up method', ->
+      @view.topUp = sinon.spy()
+      @view.prependItems []
       expect( @view.topUp ).to.have.been.calledOnce
 
   describe '#anchorHit()', ->
