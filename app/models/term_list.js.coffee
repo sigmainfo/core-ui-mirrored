@@ -82,8 +82,11 @@ class Coreon.Models.TermList extends Backbone.Model
         options.from = last.id
       @set 'loadingNext', true
       @fetch( source, options )
-        .done ( terms ) =>
-          @trigger 'append', terms
+        .done =>
+          last   = @terms.get from
+          offset = @terms.indexOf( last ) + 1
+          tail   = @terms.tail offset
+          @trigger 'append', tail
         .always =>
           @set 'loadingNext', false
     else

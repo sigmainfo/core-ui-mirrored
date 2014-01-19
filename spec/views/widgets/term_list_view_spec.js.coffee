@@ -366,13 +366,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
   describe '#appendItems()', ->
 
-    beforeEach ->
-      sinon.stub Coreon.Models.Term::, 'conceptPath', ->
-        "/my-repository/concepts/#{@id}"
-
-    afterEach ->
-      Coreon.Models.Term::conceptPath.restore()
-
     it 'is triggered by model', ->
       @view.appendItems = sinon.spy()
       @view.initialize()
@@ -390,10 +383,11 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       '''
       @view.appendItems [
         id: 'concept-123'
-        value: 'billiards'
+        get: (attr) -> 'billiards' if attr is 'value'
+        conceptPath: -> '/my-repository/concepts/concept-123'
       ]
       expect( @view.$ 'tbody tr.term' ).to.have.property 'length', 2
-      added = @view.$('tbody tr.term td.source a').eq(1)
+      added = @view.$( 'tbody tr.term td.source a' ).eq( 1 )
       expect( added ).to.have.text 'billiards'
       expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
 

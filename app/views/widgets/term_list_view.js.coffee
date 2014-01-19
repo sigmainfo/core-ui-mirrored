@@ -61,9 +61,8 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       @info()
     @
 
-  appendItems: ( response ) ->
+  appendItems: ( terms ) ->
     list = @$( 'tbody' )
-    terms = new Coreon.Collections.Terms response
     list.append @terms terms: @data terms
     @topUp()
 

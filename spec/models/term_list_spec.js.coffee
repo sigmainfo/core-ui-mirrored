@@ -313,10 +313,32 @@ describe 'Coreon.Models.TermList', ->
         @model.on 'append', spy
         @model.next()
         spy.reset()
-        terms = []
-        @request.resolve terms
+        @request.resolve []
         expect( spy ).to.have.been.calledOnce
-        expect( spy ).to.have.been.calledWith terms
+
+      it 'passes appended terms along when triggering event', ->
+        @model.terms.reset [
+          { id: 'term-123' }
+          { id: 'term-456' }
+        ], silent: yes
+        spy = sinon.spy()
+        @model.on 'append', spy
+        @model.next 'term-456'
+        spy.reset()
+        response = [
+          { id: 'term-456' }
+          { id: 'term-789' }
+          { id: 'term-0ab' }
+        ]
+        @model.terms.add response
+        @request.resolve response
+        expect( spy ).to.have.been.calledOnce
+        terms = spy.firstCall.args[0]
+        term_ids = terms.map ( t ) -> id: t.id
+        expect( term_ids ).to.eql [
+          { id: 'term-789' }
+          { id: 'term-0ab' }
+        ]
 
   describe '#hasNext()', ->
 
