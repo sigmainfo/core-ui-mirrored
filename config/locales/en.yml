@@ -92,7 +92,6 @@ en:
       toggle-all: "Toggle all properties"
       toggle: "Toggle properties"
 
-
   properties:
     title: "Properties"
     add: "Add property"

@@ -408,7 +408,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.limitScope()
         expect( @outer.scrollTop() ).to.equal 30 - 73 + 57
 
-
   describe '#expandScope()', ->
 
     beforeEach ->
@@ -543,7 +542,6 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       ]
       after = @view.$( '.term:last' ).position().top
       expect( outer.scrollTop() ).to.equal 5 + after - before
-
 
   describe '#anchorHit()', ->
 

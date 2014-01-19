@@ -85,20 +85,21 @@ class Coreon.Models.TermList extends Backbone.Model
 
   next: ( from ) ->
     if @hasNext()
-      excludeFrom = @terms.get( from )?
       options = order: 'asc'
       if from?
         options.from = from
       else
         if last = @terms.last()
           from = options.from = last.id
+      excludeFrom = @terms.get( from )?
       @set 'loadingNext', true
       @fetch( options )
         .done =>
-          last   = @terms.get from
-          offset = @terms.indexOf last
+          offset = 0
+          if last = @terms.get( from )
+            offset = @terms.indexOf( last )
           offset += 1 if excludeFrom
-          tail   = @terms.tail offset
+          tail = @terms.models[offset..]
           @_tailLoaded = yes if tail.length < 40
           @trigger 'append', tail
         .always =>
@@ -108,21 +109,21 @@ class Coreon.Models.TermList extends Backbone.Model
 
   prev: ( from ) ->
     if @hasPrev()
-      excludeFrom = @terms.get( from )?
       options = order: 'desc'
       if from?
         options.from = from
       else
         if first = @terms.first()
           from = options.from = first.id
+      excludeFrom = @terms.get( from )?
       @set 'loadingPrev', true
       @fetch( options )
         .done =>
-          first  = @terms.get from
-          offset = @terms.indexOf first
-          offset += 1 unless excludeFrom
-          offset = 0 if offset < 0
-          head   = @terms.head offset
+          offset = @terms.models.length
+          if first = @terms.get( from )
+            offset = @terms.indexOf( first )
+            offset -= 1 if excludeFrom
+          head = if offset < 0 then [] else @terms.models[..offset]
           @_headLoaded = yes if head.length < 40
           @trigger 'prepend', head
         .always =>

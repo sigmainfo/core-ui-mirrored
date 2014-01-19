@@ -5,7 +5,6 @@ Feature: User browses all terms of source language
 
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
-    And the languages "English", "German", and "French" are available
     And I am logged in
 
   Scenario: browse source language
