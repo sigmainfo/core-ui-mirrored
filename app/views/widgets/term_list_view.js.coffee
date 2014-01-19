@@ -72,7 +72,14 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   prependItems: ( terms ) ->
     list = @$( 'tbody' )
+    outer = $ 'table'
+    if anchor = @anchor()
+      before = anchor.position().top
     list.prepend @terms terms: @data terms
+    if before
+      after = anchor.position().top
+      outer.scrollTop( outer.scrollTop() + after - before )
+
     @topUp()
 
   data: ( terms ) ->

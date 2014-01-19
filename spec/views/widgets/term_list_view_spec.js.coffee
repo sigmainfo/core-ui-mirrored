@@ -219,8 +219,14 @@ describe 'Coreon.Views.Widgets.TermListView', ->
           @view.model.hasPrev = -> yes
 
         it 'calls prev on model', ->
+          @view.model.terms.length = 4
           @view.topUp()
           expect( @view.model.prev ).to.have.been.calledOnce
+
+        it 'does not call prev on model when empty', ->
+          @view.model.terms.length = 0
+          @view.topUp()
+          expect( @view.model.prev ).to.not.have.been.called
 
         context 'loading', ->
 
@@ -484,6 +490,26 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.topUp = sinon.spy()
       @view.prependItems []
       expect( @view.topUp ).to.have.been.calledOnce
+
+    it 'pins scroll position', ->
+      $( '#konacha' ).append @view.$el
+      inner = @view.$ 'tbody'
+      inner
+        .height( 200 )
+        .append( '<tr class="term">' )
+      outer = @view.$ 'table'
+      outer
+        .height( 100 )
+        .scrollTop( 5 )
+      before = @view.$( '.term:last' ).position().top
+      @view.prependItems [
+        id: 'concept-123'
+        get: (attr) -> 'billiards' if attr is 'value'
+        conceptPath: -> '/my-repository/concepts/concept-123'
+      ]
+      after = @view.$( '.term:last' ).position().top
+      expect( outer.scrollTop() ).to.equal 5 + after - before
+
 
   describe '#anchorHit()', ->
 
