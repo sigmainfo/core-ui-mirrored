@@ -262,10 +262,16 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
   describe '#updateLoadingState()', ->
 
-    it 'is triggered when model loading state changes', ->
+    it 'is triggered when model loads next', ->
       @view.updateLoadingState = sinon.spy()
       @view.initialize()
       @view.model.trigger 'change:loadingNext'
+      expect( @view.updateLoadingState ).to.have.been.calledOnce
+
+    it 'is triggered when model loads prev', ->
+      @view.updateLoadingState = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:loadingPrev'
       expect( @view.updateLoadingState ).to.have.been.calledOnce
 
     context 'loading next', ->
@@ -287,12 +293,29 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         placeholder = @view.$ 'tr.placeholder.next'
         expect( placeholder ).to.have.lengthOf 1
 
-    context 'idle', ->
+    context 'loading prev', ->
 
       beforeEach ->
-        @view.model.set 'loadingNext', false, silent: yes
+        @view.model.set 'loadingPrev', true, silent: yes
 
-      it 'removes placeholder', ->
+      it 'appends placeholder node', ->
+        I18n.t.withArgs( 'widgets.term_list.placeholder' )
+          .returns 'loading...'
+        @view.updateLoadingState()
+        placeholder = @view.$ 'tr.placeholder.prev td'
+        expect( placeholder ).to.exist
+        expect( placeholder ).to.have.text 'loading...'
+
+      it 'appends placeholder only once', ->
+        @view.updateLoadingState()
+        @view.updateLoadingState()
+        placeholder = @view.$ 'tr.placeholder.prev'
+        expect( placeholder ).to.have.lengthOf 1
+
+    context 'idle', ->
+
+      it 'removes next placeholder', ->
+        @view.model.set 'loadingNext', false, silent: yes
         @view.$( 'tbody' ).append '''
           <tr class="placeholder next">
             <td>loading ...</td>
@@ -300,6 +323,17 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         '''
         @view.updateLoadingState()
         placeholder = @view.$ '.placeholder.next'
+        expect( placeholder ).to.not.exist
+
+      it 'removes prev placeholder', ->
+        @view.model.set 'loadingPrev', false, silent: yes
+        @view.$( 'tbody' ).append '''
+          <tr class="placeholder prev">
+            <td>loading ...</td>
+          </tr>
+        '''
+        @view.updateLoadingState()
+        placeholder = @view.$ '.placeholder.prev'
         expect( placeholder ).to.not.exist
 
   describe '#toggleScope()', ->

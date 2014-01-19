@@ -53,7 +53,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
             , @prependItems
 
     @listenTo @model
-            , 'change:loadingNext'
+            , 'change:loadingNext change:loadingPrev'
             , @updateLoadingState
 
   render: ->
@@ -126,11 +126,18 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   updateLoadingState: ->
     list = @$ 'tbody'
+
     if @model.get 'loadingNext'
       if list.find( '.placeholder.next' ).length is 0
         list.append @placeholder className: 'next'
     else
       list.find( '.placeholder.next' ).remove()
+
+    if @model.get 'loadingPrev'
+      if list.find( '.placeholder.prev' ).length is 0
+        list.prepend @placeholder className: 'prev'
+    else
+      list.find( '.placeholder.prev' ).remove()
 
   toggleScope: ->
     switch @model.get 'scope'
