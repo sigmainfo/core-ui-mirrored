@@ -62,13 +62,11 @@ class Coreon.Application extends Backbone.Model
           else a.localeCompare b
 
   sourceLang: ->
-    if settings = @repositorySettings()
-      settings.get 'sourceLanguage'
-    else
-      null
+    lang = @repositorySettings()?.get('sourceLanguage') or null
+    lang = null if lang is 'none'
+    lang
 
   targetLang: ->
-    if settings = @repositorySettings()
-      settings.get 'targetLanguage'
-    else
-      null
+    lang = @repositorySettings()?.get('targetLanguage') or null
+    lang = null if lang is 'none'
+    lang

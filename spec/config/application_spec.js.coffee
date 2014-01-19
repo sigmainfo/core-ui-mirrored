@@ -169,6 +169,11 @@ describe 'Coreon.Application', ->
       lang = @app.sourceLang()
       expect( lang ).to.be.null
 
+    it 'returns null for "none"', ->
+      @settings.set 'sourceLanguage', 'none', silent: yes
+      lang = @app.sourceLang()
+      expect( lang ).to.be.null
+
   describe '#targetLang()', ->
 
     beforeEach ->
@@ -182,6 +187,11 @@ describe 'Coreon.Application', ->
 
     it 'defaults to null', ->
       @settings = null
+      lang = @app.targetLang()
+      expect( lang ).to.be.null
+
+    it 'returns null for "none"', ->
+      @settings.set 'targetLanguage', 'none', silent: yes
       lang = @app.targetLang()
       expect( lang ).to.be.null
 

@@ -13,15 +13,15 @@ describe "Coreon.Collections.Terms", ->
     @collection.add id: "term"
     @collection.get("term").should.be.an.instanceof Coreon.Models.Term
 
-  describe '.collection()', ->
+  describe '.hits()', ->
 
     beforeEach ->
       @hits = new Backbone.Collection
       sinon.stub Coreon.Collections.Hits, 'collection', => @hits
-      @collection = Coreon.Collections.Terms.collection()
+      @collection = Coreon.Collections.Terms.hits()
 
     afterEach ->
-      Coreon.Collections.Terms._collection = null
+      Coreon.Collections.Terms._hits = null
       Coreon.Collections.Hits.collection.restore()
 
     it 'creates instance', ->
@@ -29,7 +29,7 @@ describe "Coreon.Collections.Terms", ->
       expect( @collection ).to.have.lengthOf 0
 
     it 'ensures single instance', ->
-      expect( Coreon.Collections.Terms.collection() ).to.equal @collection
+      expect( Coreon.Collections.Terms.hits() ).to.equal @collection
 
     it 'updates itself from hits', ->
       @collection.reset [
@@ -75,14 +75,14 @@ describe "Coreon.Collections.Terms", ->
 
   describe '#comparator()', ->
 
-    it 'sorts by value', ->
+    it 'sorts by sort key', ->
       @collection.reset [
-        { lang: 'en', value: 'Billiards' }
-        { lang: 'de', value: 'Queue'     }
-        { lang: 'en', value: 'Cue'       }
+        { lang: 'de', value: 'Billiard', sort_key: '29373d3d3727492d010c018f' }
+        { lang: 'de', value: 'Queue'   , sort_key: '474f2f4f2f0109018f08'     }
+        { lang: 'en', value: 'Cue'     , sort_key: '2b4f2f0107018f06'         }
       ]
       values = @collection.pluck 'value'
-      expect( values[0] ).to.eql 'Billiards'
+      expect( values[0] ).to.eql 'Billiard'
       expect( values[1] ).to.eql 'Cue'
       expect( values[2] ).to.eql 'Queue'
 
@@ -104,3 +104,74 @@ describe "Coreon.Collections.Terms", ->
     it "strips wrapping objects from terms", ->
       @collection.reset [ value: "high hat", lang: "de", properties: [] ]
       @collection.toJSON().should.eql [ value: "high hat", lang: "de", properties: [] ]
+
+  describe '#url()', ->
+
+    it 'combines graph uri and path', ->
+      Coreon.application = graphUri: -> 'core.api/'
+      expect( @collection.url() ).to.equal 'core.api/terms'
+
+
+  describe '#fetch()', ->
+
+    beforeEach ->
+      sinon.stub Backbone.Collection::, 'fetch'
+
+    afterEach ->
+      Backbone.Collection::fetch.restore()
+
+    it 'raises exception when no lang is given', ->
+      expect( => @collection.fetch() ).to.throw 'No language given'
+
+    it 'overrides url for syncing', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'de'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledOnce
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/de/asc'
+
+    it 'includes order in generated url', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'de', order: 'desc'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledOnce
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/de/desc'
+
+    it 'escapes lang', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'dänisch/DK'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/d%C3%A4nisch%2FDK/asc'
+
+    it 'returns deferred', ->
+      backboneFetch = Backbone.Collection::fetch
+      deferred = $.Deferred()
+      backboneFetch.returns deferred
+      expect( @collection.fetch 'de' ).to.equal deferred
+
+    it 'can request a range', ->
+      @collection.url = -> 'core.api/terms'
+      @collection.fetch 'de', from: '1234abcdef', order: 'desc'
+      backboneFetch = Backbone.Collection::fetch
+      expect( backboneFetch ).to.have.been.calledOnce
+      expect( backboneFetch ).to.have.been.calledWith
+        url: 'core.api/terms/list/de/desc/1234abcdef'
+
+  describe '#sync()', ->
+
+    beforeEach ->
+      sinon.stub Coreon.Modules.CoreAPI, 'sync'
+
+    afterEach ->
+      Coreon.Modules.CoreAPI.sync.restore()
+
+    it 'delegates to API sync', ->
+      @collection.sync 'read', @collection, url: 'terms/de'
+      apiSync = Coreon.Modules.CoreAPI.sync
+      expect( apiSync ).to.have.been.calledOnce
+      expect( apiSync ).to.have.been.calledWith 'read'
+                                              , @collection
+                                              , url: 'terms/de'

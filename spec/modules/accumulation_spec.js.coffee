@@ -46,7 +46,7 @@ describe "Coreon.Modules.Accumulation", ->
 
       afterEach ->
         Coreon.Models.MyModel.collection().off "add"
-      
+
       it "returns new model instance", ->
         model = Coreon.Models.MyModel.find "123"
         model.should.be.an.instanceof Coreon.Models.MyModel
@@ -90,7 +90,7 @@ describe "Coreon.Modules.Accumulation", ->
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123").should.equal model
         model.fetch.should.not.have.been.called
-        
+
       it "fetches model when option is set", ->
         model = new Coreon.Models.MyModel id: "123"
         model.fetch = sinon.spy()
@@ -105,7 +105,7 @@ describe "Coreon.Modules.Accumulation", ->
         id: "123"
         profession: "poet"
       Coreon.Models.MyModel.collection().add @original
-  
+
     context "passing single attributes hash", ->
 
       it "updates existing model", ->
@@ -126,13 +126,13 @@ describe "Coreon.Modules.Accumulation", ->
         model.get("profession").should.equal "cowboy"
 
     context "passing multiple attributes hashes", ->
-      
+
       it "upserts and returns all affected models", ->
         models = Coreon.Models.MyModel.upsert [
           { id: "123", profession: "killer" }
           { id: "777", profession: "cowboy" }
         ]
         models.should.eql [
-          Coreon.Models.MyModel.find "123" 
-          Coreon.Models.MyModel.find "777" 
+          Coreon.Models.MyModel.find "123"
+          Coreon.Models.MyModel.find "777"
         ]

@@ -92,7 +92,6 @@ en:
       toggle-all: "Toggle all properties"
       toggle: "Toggle properties"
 
-
   properties:
     title: "Properties"
     add: "Add property"
@@ -184,6 +183,8 @@ en:
     term_list:
       title: 'Term List'
       empty: 'No language selected'
+      placeholder: 'loading additional terms...'
+      toggle_scope: 'Toggle scope'
 
   user:
     name: "Name"

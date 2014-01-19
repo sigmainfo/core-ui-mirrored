@@ -10,10 +10,10 @@ describe "Coreon.Models.Hit", ->
     @hit.should.be.an.instanceof Backbone.Model
 
   describe "defaults", ->
-  
+
     it "has score of 0", ->
       @hit.get("score").should.equal 0
 
     it "has no result", ->
       should.equal @hit.get("result"), null
-      
+

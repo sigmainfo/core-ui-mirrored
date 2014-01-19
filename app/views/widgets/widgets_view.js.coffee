@@ -8,6 +8,7 @@
 #= require collections/concept_map_nodes
 #= require modules/helpers
 #= require modules/droppable
+#= require models/term_list
 
 class Coreon.Views.Widgets.WidgetsView extends Backbone.View
 
@@ -68,7 +69,7 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @subviews.push @map
 
     termList = new Coreon.Views.Widgets.TermListView
-      model: Coreon.Collections.Terms.collection()
+      model: new Coreon.Models.TermList
     @$el.append termList.render().$el
     @subviews.push termList
 

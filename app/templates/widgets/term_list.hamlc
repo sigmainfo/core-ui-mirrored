@@ -1,4 +1,6 @@
 .titlebar
   %h4= I18n.t 'widgets.term_list.title'
+  .actions
+    %a.toggle-scope{ href: 'javascript:void(0)', title: I18n.t 'widgets.term_list.toggle_scope' }= I18n.t 'widgets.term_list.toggle_scope'
 %table
   %tbody
