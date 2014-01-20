@@ -129,14 +129,24 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     if @model.get 'loadingNext'
       if list.find( '.placeholder.next' ).length is 0
         list.append @placeholder className: 'next'
+        placeholder = list.find( '.placeholder.next' )
+        placeholder.hide().fadeIn()
     else
       list.find( '.placeholder.next' ).remove()
+
+    outer = list.parent()
 
     if @model.get 'loadingPrev'
       if list.find( '.placeholder.prev' ).length is 0
         list.prepend @placeholder className: 'prev'
+        placeholder = list.find( '.placeholder.prev' )
+        placeholder.hide().fadeIn()
+        outer.scrollTop outer.scrollTop() + placeholder.outerHeight( yes )
     else
-      list.find( '.placeholder.prev' ).remove()
+      placeholder = list.find( '.placeholder.prev' )
+      if placeholder.length > 0
+        outer.scrollTop outer.scrollTop() - placeholder.outerHeight( yes )
+        placeholder.remove()
 
   toggleScope: ->
     switch @model.get 'scope'
