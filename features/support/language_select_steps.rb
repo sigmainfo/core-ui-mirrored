@@ -96,4 +96,11 @@ module LanguageSelectSteps
       page.find("li", text: "English").click
     end
   end
+
+  step 'I select "German" as target language' do
+    page.find(target_language_css).click
+    within dropdown_css do
+      page.find("li", text: "German").click
+    end
+  end
 end
