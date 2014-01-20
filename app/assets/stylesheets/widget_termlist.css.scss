@@ -49,10 +49,11 @@
     tr {
       display: inline-block;
       width: 100%;
+      line-height: 1.2em;
 
       &.term td {
         display: inline-block;
-        font: 1.06em Palatino;
+        font: 1em Palatino;
         border-bottom: 1px solid rgba(white, 0.4);
         padding-top: 1px;
         width: 100%;
