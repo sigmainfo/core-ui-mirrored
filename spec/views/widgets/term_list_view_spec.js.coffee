@@ -363,8 +363,11 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
     beforeEach ->
       @view.model.set 'scope', 'all', silent: yes
-      anchorHit = new Backbone.Model
+      anchorHit = new Backbone.Model id: 'anchor-123'
       @view.anchorHit = -> anchorHit
+      $( '#konacha' ).append @view.$el
+      @anchor = $ '<tr class="term hit" data-id="anchor-123">'
+      @view.$( 'tbody' ).append @anchor
 
     it 'changes scope on model', ->
       @view.limitScope()
@@ -376,37 +379,12 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.limitScope()
       expect( spy ).to.have.been.calledOnce
 
-    context 'scroll position', ->
-
-      beforeEach ->
-        $( '#konacha' ).append @view.$el
-        @inner = @view.$( 'tbody' )
-        @inner.height 200
-        @inner.css 'position', 'relative'
-        @outer = @view.$( 'table' )
-        @outer.height 100
-
-      it 'resets scroll position if there is no anchor hit', ->
-        @view.anchorHit = -> null
-        @outer.scrollTop 30
-        @view.limitScope()
-        expect( @outer.scrollTop() ).to.equal 0
-
-      it 'pins scoll position', ->
-        anchorHit = new Backbone.Model id: 'anchor-123'
-        @view.anchorHit = -> anchorHit
-        @inner.html '''
-          <tr class="term hit" data-id="anchor-123"><td>anchor</td></tr>
-        '''
-        tr = @inner.find 'tr'
-        tr.css
-          position: 'absolute'
-          top: 73
-        @outer.scrollTop 30
-        @view.model.on 'change:scope', ->
-          tr.css top: 57
-        @view.limitScope()
-        expect( @outer.scrollTop() ).to.equal 30 - 73 + 57
+    it 'pins anchor hit on top', ->
+      inner = @view.$( 'tbody' ).height( 200 )
+      outer = @view.$( 'table' ).height( 100 )
+      @view.limitScope()
+      offset = @anchor.position().top - 7
+      expect( outer.scrollTop() ).to.equal offset
 
   describe '#expandScope()', ->
 
@@ -548,6 +526,9 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     beforeEach ->
       @view.anchor = sinon.stub()
       @view.model.hits = new Backbone.Collection
+      @view.model.hits.lang = sinon.stub()
+      @view.model.hits.lang.returns []
+      @view.model.set 'source', 'hu', silent: yes
 
     it 'returns null when no anchor exists', ->
       @view.anchor.returns null
@@ -572,11 +553,11 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.anchor.returns anchor
       term = new Backbone.Model id: '543eff34', sort_key: '183ffe52'
       @view.model.terms.reset [ term ], silent: yes
-      @view.model.hits.reset [
-        { id: '543eff31', 'sort_key': '1115f' }
-        { id: '543eff32', 'sort_key': '183ffe589' }
-        { id: '543eff33', 'sort_key': '183ffe589345' }
-      ], silent: yes
+      @view.model.hits.lang.withArgs( 'hu' ).returns [
+        new Backbone.Model( id: '543eff31', 'sort_key': '1115f' )
+        new Backbone.Model( id: '543eff32', 'sort_key': '183ffe589' )
+        new Backbone.Model( id: '543eff33', 'sort_key': '183ffe589345' )
+      ]
       anchorHit = @view.anchorHit()
       expect( anchorHit.id ).to.equal '543eff32'
 
@@ -585,11 +566,11 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.anchor.returns anchor
       term = new Backbone.Model id: '543eff34', sort_key: 'f976fe525'
       @view.model.terms.reset [ term ], silent: yes
-      @view.model.hits.reset [
-        { id: '543eff31', 'sort_key': '1115f' }
-        { id: '543eff32', 'sort_key': '183ffe589' }
-        { id: '543eff33', 'sort_key': '183ffe589345' }
-      ], silent: yes
+      @view.model.hits.lang.withArgs( 'hu' ).returns [
+        new Backbone.Model( id: '543eff31', 'sort_key': '1115f' )
+        new Backbone.Model( id: '543eff32', 'sort_key': '183ffe589' )
+        new Backbone.Model( id: '543eff33', 'sort_key': '183ffe589345' )
+      ]
       anchorHit = @view.anchorHit()
       expect( anchorHit.id ).to.equal '543eff33'
 

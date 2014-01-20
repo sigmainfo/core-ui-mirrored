@@ -145,18 +145,11 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   limitScope: ->
     anchorHit = @anchorHit()
-    nodeOffset = 0
-    if anchorHit?
-      node = @$( "tr.term[data-id=#{anchorHit.id}]" ).first()
-      if node.length is 1
-        nodeOffset = node.position().top - @$( 'table' ).scrollTop()
     @model.set 'scope', 'hits'
-    scrollTop = 0
     if anchorHit?
-      node = @$( "tr.term[data-id=#{anchorHit.id}]" ).first()
-      if node.length is 1
-        scrollTop = node.position().top - nodeOffset
-    @$( 'table' ).scrollTop scrollTop
+      anchor = @$ "tr.term.hit[data-id='#{anchorHit.id}']"
+      offset = anchor.position().top
+      @$( 'table' ).scrollTop( offset - 7 )
 
   expandScope: ->
     anchorId = @anchor()?.data( 'id' ) or null
@@ -181,9 +174,10 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       term  = terms.get anchor.data( 'id' )
       if hit = hits.get term
         anchorHit = hit
-      else
+      else if source = @model.get( 'source' )
         sortKey = term.get 'sort_key'
-        anchorHit = hits.find ( hit ) ->
+        hitsByLang = hits.lang( source )
+        anchorHit = _.find hitsByLang, ( hit ) ->
           hit.get( 'sort_key' ) >= sortKey
-        anchorHit ||= hits.last()
+        anchorHit or= _.last( hitsByLang )
     anchorHit or null
