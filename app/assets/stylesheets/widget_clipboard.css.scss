@@ -7,12 +7,9 @@
   }
   
   .clear {
-    width: 30px;
     &:before {
-      width: 30px;
       @include before-icon;
-      width: 30px;
-      background-position: 5px -600px;
+      background-position: 0px -600px;
     }
 
     &:hover {

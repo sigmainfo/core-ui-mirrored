@@ -43,6 +43,9 @@
         &:first-child {
           border-left: 1px solid rgba(black, 0.1);
         }
+        &:last-child {
+          padding-right: 10px;
+        };
       }
     }
   }
