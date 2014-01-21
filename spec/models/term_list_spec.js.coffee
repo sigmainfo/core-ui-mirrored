@@ -8,6 +8,7 @@ describe 'Coreon.Models.TermList', ->
     Coreon.application =
       repositorySettings: => @repositorySettings
       sourceLang: -> null
+      targetLang: -> null
       graphUri: -> 'coreon.api'
     @model = new Coreon.Models.TermList
 
@@ -47,6 +48,11 @@ describe 'Coreon.Models.TermList', ->
       Coreon.application.sourceLang = -> 'fr'
       @model.initialize()
       expect( @model.get 'source' ).to.equal 'fr'
+
+    it 'sets target lang', ->
+      Coreon.application.targetLang = -> 'fr'
+      @model.initialize()
+      expect( @model.get 'target' ).to.equal 'fr'
 
     it 'assigns reference to term hits', ->
       hits = new Backbone.Collection
@@ -149,7 +155,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#updateSource()', ->
 
     beforeEach ->
-      @model.update = sinon.spy()
+      @model.reset = ->
 
     it 'is triggered on source lang change', ->
       @model.updateSource = sinon.spy()
@@ -164,6 +170,22 @@ describe 'Coreon.Models.TermList', ->
       Coreon.application.sourceLang = -> 'fr'
       @model.updateSource()
       expect( @model.get 'source' ).to.equal 'fr'
+
+  describe '#updateTarget()', ->
+
+    it 'is triggered on target lang change', ->
+      @model.updateTarget = sinon.spy()
+      @model.initialize()
+      @model.updateTarget.reset()
+      @repositorySettings.trigger 'change:targetLanguage'
+      expect( @model.updateTarget ).to.have.been.calledOnce
+      expect( @model.updateTarget ).to.have.been.calledOn @model
+
+    it 'updates target lang', ->
+      @model.set 'target', 'de', silent: yes
+      Coreon.application.targetLang = -> 'fr'
+      @model.updateTarget()
+      expect( @model.get 'target' ).to.equal 'fr'
 
   describe '#onRoute()', ->
 

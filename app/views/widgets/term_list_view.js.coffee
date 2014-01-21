@@ -56,6 +56,10 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
             , 'change:loadingNext change:loadingPrev'
             , @updateLoadingState
 
+    @listenTo @model
+            , 'change:target'
+            , @updateTargetLang
+
   render: ->
     @$( 'table' ).scrollTop 0
     @$( 'tbody' ).html if @model.has( 'source' )
@@ -87,6 +91,16 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       path:  term.conceptPath()
       hit:   @model.hits.get( term )?
       id:    term.id
+      translations: @translations( term )
+
+  translations: ( term ) ->
+    if @model.has( 'target' )
+      concept = Coreon.Models.Concept.find term.get( 'concept_id' )
+      values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
+        term.get 'value'
+      values.join '<span> | </span>'
+    else
+      null
 
   resize: (size) ->
     size.height ?= defaults.size[1]
@@ -191,3 +205,19 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
           hit.get( 'sort_key' ) >= sortKey
         anchorHit or= _.last( hitsByLang )
     anchorHit or null
+
+  updateTargetLang: ->
+    rows = @$( 'tr.term' )
+    if @model.has 'target'
+
+      if rows.first().find( 'td.target' ).length is 0
+        rows.append( '<td class="target">' )
+
+      rows.each ( index, el ) =>
+        row = $( el )
+        term = @model.terms.get( row.data 'id' )
+        row.find( 'td.target' ).html @translations( term )
+
+    else
+      rows.find( 'td.target' ).remove()
+

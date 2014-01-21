@@ -17,6 +17,8 @@ class Coreon.Models.TermList extends Backbone.Model
     @hits = Coreon.Collections.Terms.hits()
 
     @updateSource()
+    @updateTarget()
+
     @stopListening()
 
     @listenTo @
@@ -26,6 +28,10 @@ class Coreon.Models.TermList extends Backbone.Model
     @listenTo Coreon.application.repositorySettings()
             , 'change:sourceLanguage'
             , @updateSource
+
+    @listenTo Coreon.application.repositorySettings()
+            , 'change:targetLanguage'
+            , @updateTarget
 
     @listenTo Backbone.history
             , 'route'
@@ -49,6 +55,9 @@ class Coreon.Models.TermList extends Backbone.Model
 
   updateSource: ->
     @set 'source', Coreon.application.sourceLang()
+
+  updateTarget: ->
+    @set 'target', Coreon.application.targetLang()
 
   onRoute: ( router, route, params ) ->
     if router instanceof Coreon.Routers.RepositoriesRouter

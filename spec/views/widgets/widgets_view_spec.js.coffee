@@ -40,9 +40,12 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @map
 
     sinon.stub Coreon.Views.Widgets, "TermListView", =>
-      @termList = new Backbone.View
-      @termList.render = sinon.stub().returns @termList
-      @termList
+      @termListView = new Backbone.View
+      @termListView.render = sinon.stub().returns @termListView
+      @termListView
+
+    sinon.stub Coreon.Models, 'TermList', =>
+      @termList = new Backbone.Model
 
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
@@ -57,6 +60,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.Views.Widgets.ClipboardView.restore()
     Coreon.Views.Widgets.ConceptMapView.restore()
     Coreon.Views.Widgets.TermListView.restore()
+    Coreon.Models.TermList.restore()
     Coreon.application = null
 
   it "is a Backbone view", ->
@@ -141,19 +145,14 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.subviews.should.contain @map
 
     it "renders term list view", ->
-      model = new Backbone.Model
-      sinon.stub Coreon.Models, 'TermList', -> model
-      try
-        @view.render()
-        constructor = Coreon.Views.Widgets.TermListView
-        expect( constructor ).to.have.been.calledOnce
-        expect( constructor ).to.have.been.calledWithNew
-        expect( constructor ).to.have.been.calledWith model: model
-        expect( @termList.render ).to.have.been.calledOnce
-        expect( $.contains @view.el, @termList.el ).to.be.true
-        expect( @view.subviews ).to.contain @termList
-      finally
-        Coreon.Models.TermList.restore()
+      @view.render()
+      constructor = Coreon.Views.Widgets.TermListView
+      expect( constructor ).to.have.been.calledOnce
+      expect( constructor ).to.have.been.calledWithNew
+      expect( constructor ).to.have.been.calledWith model: @termList
+      expect( @termListView.render ).to.have.been.calledOnce
+      expect( $.contains @view.el, @termListView.el ).to.be.true
+      expect( @view.subviews ).to.contain @termListView
 
   describe "resizing", ->
 
