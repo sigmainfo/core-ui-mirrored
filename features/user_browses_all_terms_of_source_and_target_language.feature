@@ -7,7 +7,6 @@ Feature: user browses all terms of source and target language
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am logged in
 
-  @wip
   Scenario: browse target language
     Given a concept with English term "ball" exists
     And this concept has German terms "Ball", "Kugel"

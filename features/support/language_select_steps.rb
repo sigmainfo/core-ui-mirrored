@@ -103,4 +103,11 @@ module LanguageSelectSteps
       page.find("li", text: "German").click
     end
   end
+
+  step 'I select "None" as target language' do
+    page.find(target_language_css).click
+    within dropdown_css do
+      page.find("li", text: "None").click
+    end
+  end
 end

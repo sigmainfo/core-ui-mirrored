@@ -62,50 +62,62 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
   end
 
   step 'I should see "Kreide" as translation for "chalk"' do
-    pending 'step not implemented'
+    translations_for( 'chalk' ).should == [ 'Kreide' ]
   end
 
   step 'I should see terms "vegetarian", "meal"' do
-    pending 'step not implemented'
+    @terms = %w(vegetarian meal)
+    within term_list do
+      @terms.each do |term|
+        page.should have_css( 'tr.term td.source', text: term )
+      end
+    end
   end
 
   step 'they should not have a translation' do
-    pending 'step not implemented'
+    @terms.each do |term|
+      translations_for( term ).should be_empty
+    end
   end
 
   step 'I should not see "Asiatisches Essen", "Pilz"' do
-    pending 'step not implemented'
-  end
-
-  step 'I select "None" as target language' do
-    pending 'step not implemented'
+    within term_list do
+      [ 'Asiatisches Essen', 'Pilz' ].each do |term|
+        page.should have_no_css( 'tr.term td.source', text: term )
+      end
+    end
   end
 
   step 'I should not see a target language column anymore' do
-    pending 'step not implemented'
-  end
-
-  step 'I select "German" as source language' do
-    pending 'step not implemented'
-  end
-
-  step 'I select "English" as target language' do
-    pending 'step not implemented'
+    within term_list do
+      page.should have_no_css( 'td.target' )
+    end
   end
 
   step 'I should see "Ball", "Kugel" with translation "ball"' do
-    pending 'step not implemented'
+    %w(Ball Kugel).each do |term|
+      translations_for( term ).should == [ 'ball' ]
+    end
   end
 
   step 'I should see "Kreide" with translation "chalk"' do
-    pending 'step not implemented'
+    translations_for( 'Kreide' ).should == [ 'chalk' ]
   end
 
   step 'I should see terms "Asiatisches Essen", "Pilz"' do
-    pending 'step not implemented'
+    @terms = [ 'Asiatisches Essen', 'Pilz' ]
+    within term_list do
+      @terms.each do |term|
+        page.should have_css( 'tr.term td.source', text: term )
+      end
+    end
   end
 
   step 'I should not see "vegetarian", "meal"' do
-    pending 'step not implemented'
+    within term_list do
+      %w(vegetarian meal).each do |term|
+        page.should have_no_css( 'tr.term td.source', text: term )
+      end
+    end
   end
 end
