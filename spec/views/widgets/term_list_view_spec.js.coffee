@@ -428,10 +428,11 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( spy ).to.have.been.calledOnce
 
     it 'pins anchor hit on top', ->
+      $( '#konacha' ).append @view.el
       inner = @view.$( 'tbody' ).height( 200 )
       outer = @view.$( 'table' ).height( 100 )
       @view.limitScope()
-      offset = @anchor.position().top - 7
+      offset = @anchor.position().top - 6
       expect( outer.scrollTop() ).to.equal offset
 
   describe '#expandScope()', ->
