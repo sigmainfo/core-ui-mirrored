@@ -710,3 +710,36 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.updateTargetLang()
       target = @view.$( 'td.target' )
       expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+
+  describe '#updateTranslations()', ->
+
+    it 'is triggered by model event', ->
+      @view.updateTranslations = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'updateTargetTerms', [ new Backbone.Model ]
+      expect( @view.updateTranslations ).to.have.been.calledOnce
+
+    it 'renders translations for updated term', ->
+      list = @view.$( 'table tbody' )
+      list.append '''
+        <tr class="term" data-id="54ff4320001">
+          <td class="source">ball</td>
+          <td class="target">labda</td>
+        </tr>
+      '''
+      terms = [
+        new Backbone.Model( concept_id: '52fe4156ec4d', value: 'Ball' )
+        new Backbone.Model( concept_id: '52fe4156ec4d', value: 'Kugel' )
+      ]
+      lang = sinon.stub()
+      lang.withArgs( 'en' ).returns [
+        new Backbone.Model concept_id: '52fe4156ec4d', id: '54ff4320001'
+      ]
+      lang.withArgs( 'de' ).returns terms
+      concept = terms: -> lang: lang
+      Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', 'de', silent: yes
+      @view.updateTranslations terms
+      target = @view.$( 'td.target' )
+      expect( target ).to.have.html 'Ball<span> | </span>Kugel'

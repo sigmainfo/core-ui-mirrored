@@ -60,6 +60,10 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
             , 'change:target'
             , @updateTargetLang
 
+    @listenTo @model
+            , 'updateTargetTerms'
+            , @updateTranslations
+
   render: ->
     @$( 'table' ).scrollTop 0
     @$( 'tbody' ).html if @model.has( 'source' )
@@ -97,7 +101,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     if @model.has( 'target' )
       concept = Coreon.Models.Concept.find term.get( 'concept_id' )
       values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
-        term.get 'value'
+        term.escape 'value'
       values.join '<span> | </span>'
     else
       null
@@ -221,3 +225,12 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     else
       rows.find( 'td.target' ).remove()
 
+  updateTranslations: ( targetTerms ) ->
+    first = targetTerms[0]
+    conceptId = first.get 'concept_id'
+    concept = Coreon.Models.Concept.find conceptId
+    translations = @translations( first )
+    sourceTerms = concept.terms().lang( @model.get 'source' )
+    sourceTerms.forEach ( term ) =>
+      row = @$( "tr.term[data-id='#{term.id}']" )
+      row.find( 'td.target' ).html translations
