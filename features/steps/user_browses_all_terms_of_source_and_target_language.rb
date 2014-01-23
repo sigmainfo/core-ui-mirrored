@@ -128,4 +128,12 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
   step 'I should see "Term List (EN, DE)" inside the widget title' do
     term_list_title.should have_text( 'Term List (EN, DE)' )
   end
+
+  step 'I should see "Term List (EN)" inside the widget title' do
+    term_list_title.should have_text( 'Term List (EN)' )
+  end
+
+  step 'I should see "Term List" only inside the widget title' do
+    term_list_title.should have_text( /^Term List$/ )
+  end
 end

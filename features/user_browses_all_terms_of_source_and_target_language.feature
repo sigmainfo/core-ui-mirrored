@@ -34,7 +34,6 @@ Feature: user browses all terms of source and target language
     And they should not have a translation
     And I should not see "vegetarian", "meal"
 
-  @wip
   Scenario: render source and target lang in caption
     Given a concept with English term "ball" exists
     And this concept has German terms "Ball", "Kugel"
