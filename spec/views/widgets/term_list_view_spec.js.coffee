@@ -38,7 +38,19 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       I18n.t.withArgs('widgets.term_list.title').returns 'Term List'
       @view.initialize()
       expect( @view.$el ).to.have '.titlebar h4'
-      expect( @view.$ '.titlebar h4' ).to.have.text 'Term List'
+      expect( @view.$('.titlebar h4').text() ).to.contain 'Term List'
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ''
+
+    it 'renders source in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.initialize()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN)'
+
+    it 'renders target in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', 'hu', silent: yes
+      @view.initialize()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN, HU)'
 
     it 'renders resize handler', ->
       expect( @view.$el ).to.have  '.ui-resizable-s'
@@ -744,3 +756,37 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.updateTranslations terms
       target = @view.$( 'td.target' )
       expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+
+  describe '#updateLangs()', ->
+
+    it 'is triggered by change of source lang', ->
+      @view.updateLangs = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:source'
+      expect( @view.updateLangs ).to.have.been.calledOnce
+
+    it 'is triggered by change of target lang', ->
+      @view.updateLangs = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:target'
+      expect( @view.updateLangs ).to.have.been.calledOnce
+
+    it 'renders source in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', null, silent: yes
+      @view.updateLangs()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN)'
+
+    it 'renders target in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', 'hu', silent: yes
+      @view.updateLangs()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN, HU)'
+
+    it 'removes langs from title', ->
+      @view.model.set 'source', null, silent: yes
+      @view.model.set 'target', null, silent: yes
+      @view.$( '.titlebar h4 .langs' ).html ' (DE, EN)'
+      @view.updateLangs()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.be.empty
+

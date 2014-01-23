@@ -30,7 +30,8 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   initialize: ->
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
 
-    @$el.html @template()
+    @$el.html @template
+      langs: @langs()
 
     @$el.resizable
       handles: 's'
@@ -59,6 +60,10 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     @listenTo @model
             , 'change:target'
             , @updateTargetLang
+
+    @listenTo @model
+            , 'change:source change:target'
+            , @updateLangs
 
     @listenTo @model
             , 'updateTargetTerms'
@@ -105,6 +110,14 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       values.join '<span> | </span>'
     else
       null
+
+  langs: ->
+    if source = @model.get( 'source' )
+      langs = " (#{ source.toUpperCase() }"
+      langs += ", #{ target.toUpperCase() }"if target = @model.get( 'target' )
+      langs += ')'
+    else
+      ''
 
   resize: (size) ->
     size.height ?= defaults.size[1]
@@ -234,3 +247,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     sourceTerms.forEach ( term ) =>
       row = @$( "tr.term[data-id='#{term.id}']" )
       row.find( 'td.target' ).html translations
+
+  updateLangs: ->
+    @$( '.titlebar h4 .langs' ).html @langs()
+
