@@ -33,3 +33,16 @@ Feature: user browses all terms of source and target language
     And I should see terms "Asiatisches Essen", "Pilz"
     And they should not have a translation
     And I should not see "vegetarian", "meal"
+
+  @wip
+  Scenario: render source and target lang in caption
+    Given a concept with English term "ball" exists
+    And this concept has German terms "Ball", "Kugel"
+    When I visit the repository root page
+    And I select "English" as source language
+    When I select "German" as target language
+    Then I should see "Term List (EN, DE)" inside the widget title
+    When I select "None" as target language
+    Then I should see "Term List (EN)" inside the widget title
+    When I select "None" as source language
+    Then I should see "Term List" only inside the widget title

@@ -4,9 +4,13 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
   include SearchSteps
   include Api::Graph::Factory
 
+  def term_list_title
+    find( '.widget h4', text: 'Term List' )
+  end
+
   def term_list
-    find :xpath,
-         '//h4[text()="Term List"]/ancestor::div[contains(@class, "widget")]'
+    term_list_title.find :xpath,
+                         'ancestor::div[contains(@class, "widget")]'
   end
 
   def translations_for( term )
@@ -119,5 +123,9 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
         page.should have_no_css( 'tr.term td.source', text: term )
       end
     end
+  end
+
+  step 'I should see "Term List (EN, DE)" inside the widget title' do
+    term_list_title.should have_text( 'Term List (EN, DE)' )
   end
 end
