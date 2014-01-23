@@ -5,6 +5,9 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+    sinon.stub Coreon.Models.Concept, 'find'
+    concept = new Backbone.Model
+    Coreon.Models.Concept.find.returns concept
     repository = new Backbone.Model
     settings = new Backbone.Model
     Coreon.application =
@@ -20,6 +23,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
   afterEach ->
     I18n.t.restore()
+    Coreon.Models.Concept.find.restore()
 
   it 'is a Backbone view', ->
     expect( @view ).to.be.an.instanceof Backbone.View
@@ -34,7 +38,19 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       I18n.t.withArgs('widgets.term_list.title').returns 'Term List'
       @view.initialize()
       expect( @view.$el ).to.have '.titlebar h4'
-      expect( @view.$ '.titlebar h4' ).to.have.text 'Term List'
+      expect( @view.$('.titlebar h4').text() ).to.contain 'Term List'
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ''
+
+    it 'renders source in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.initialize()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN)'
+
+    it 'renders target in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', 'hu', silent: yes
+      @view.initialize()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN, HU)'
 
     it 'renders resize handler', ->
       expect( @view.$el ).to.have  '.ui-resizable-s'
@@ -141,6 +157,50 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.render()
         expect( @view.$ 'tbody tr.term' ).to.have.attr 'data-id'
                                                      , '52fe4156ec4d'
+
+      it 'renders translations', ->
+        term = new Backbone.Model concept_id: '52fe4156ec4d'
+        term.conceptPath = -> ''
+        terms = lang: sinon.stub()
+        terms.lang.withArgs( 'de' ).returns [
+          new Backbone.Model( value: 'Ball' )
+          new Backbone.Model( value: 'Kugel' )
+        ]
+        concept = terms: -> terms
+        Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+        @view.model.terms.reset [ term ], silent: yes
+        @view.model.set 'target', 'de', silent: yes
+        @view.render()
+        translation = @view.$( 'tbody tr.term td.target' )
+        expect( translation ).to.exist
+        expect( translation ).to.have.html 'Ball<span> | </span>Kugel'
+
+      it 'renders empty target column when translations are empty', ->
+        term = new Backbone.Model concept_id: '52fe4156ec4d'
+        term.conceptPath = -> ''
+        terms = lang: sinon.stub()
+        terms.lang.withArgs( 'de' ).returns []
+        concept = terms: -> terms
+        Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+        @view.model.terms.reset [ term ], silent: yes
+        @view.model.set 'target', 'de', silent: yes
+        @view.render()
+        translation = @view.$( 'tbody tr.term td.target' )
+        expect( translation ).to.exist
+        expect( translation ).to.be.empty
+
+      it 'does not render target column when no target lang is set', ->
+        term = new Backbone.Model concept_id: '52fe4156ec4d'
+        term.conceptPath = -> ''
+        terms = lang: sinon.stub()
+        terms.lang.withArgs( 'de' ).returns []
+        concept = terms: -> terms
+        Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+        @view.model.terms.reset [ term ], silent: yes
+        @view.model.set 'target', null, silent: yes
+        @view.render()
+        translation = @view.$( 'tbody tr.term td.target' )
+        expect( translation ).to.not.exist
 
   describe '#topUp()', ->
 
@@ -380,10 +440,11 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( spy ).to.have.been.calledOnce
 
     it 'pins anchor hit on top', ->
+      $( '#konacha' ).append @view.el
       inner = @view.$( 'tbody' ).height( 200 )
       outer = @view.$( 'table' ).height( 100 )
       @view.limitScope()
-      offset = @anchor.position().top - 7
+      offset = @anchor.position().top - 6
       expect( outer.scrollTop() ).to.equal offset
 
   describe '#expandScope()', ->
@@ -573,4 +634,159 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       ]
       anchorHit = @view.anchorHit()
       expect( anchorHit.id ).to.equal '543eff33'
+
+  describe '#updateTargetLang()', ->
+
+    it 'is triggered by change on model', ->
+      @view.updateTargetLang = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:target'
+      expect( @view.updateTargetLang ).to.have.been.calledOnce
+
+    it 'removes target column when empty', ->
+      list = @view.$( 'table tbody' )
+      list.append '''
+        <tr class="term">
+          <td class="source">ball</td>
+          <td class="target">Ball, Kugel</td>
+        </tr>
+        <tr class="term">
+          <td class="source">billiards</td>
+          <td class="target"></td>
+        </tr>
+      '''
+      @view.model.set 'target', null, silent: yes
+      @view.updateTargetLang()
+      targets = @view.$( 'td.target' )
+      expect( targets ).to.have.lengthOf 0
+
+    it 'creates target column when lang was set', ->
+      list = @view.$( 'table tbody' )
+      list.append '''
+        <tr class="term">
+          <td class="source">ball</td>
+        </tr>
+        <tr class="term">
+          <td class="source">billiards</td>
+        </tr>
+        <tr class="term">
+          <td class="source">cue</td>
+        </tr>
+      '''
+      @view.model.set 'target', 'de', silent: yes
+      @view.translations = -> ''
+      @view.updateTargetLang()
+      targets = @view.$( 'td.target' )
+      expect( targets ).to.have.lengthOf 3
+
+    it 'creates target column only once', ->
+      list = @view.$( 'table tbody' )
+      list.append '''
+        <tr class="term">
+          <td class="source">ball</td>
+        </tr>
+        <tr class="term">
+          <td class="source">billiards</td>
+        </tr>
+        <tr class="term">
+          <td class="source">cue</td>
+        </tr>
+      '''
+      @view.model.set 'target', 'de', silent: yes
+      @view.translations = -> ''
+      @view.updateTargetLang()
+      @view.model.set 'target', 'hu', silent: yes
+      @view.updateTargetLang()
+      targets = @view.$( 'td.target' )
+      expect( targets ).to.have.lengthOf 3
+
+    it 'updates translations', ->
+      list = @view.$( 'table tbody' )
+      list.append '''
+        <tr class="term" data-id="54ff4320001">
+          <td class="source">ball</td>
+          <td class="target">labda</td>
+        </tr>
+      '''
+      @view.model.set 'target', 'de', silent: yes
+      term = new Backbone.Model
+        id: '54ff4320001'
+        concept_id: '52fe4156ec4d'
+      terms = lang: sinon.stub()
+      terms.lang.withArgs( 'de' ).returns [
+        new Backbone.Model( value: 'Ball' )
+        new Backbone.Model( value: 'Kugel' )
+      ]
+      concept = terms: -> terms
+      Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+      @view.model.terms.reset [ term ], silent: yes
+      @view.updateTargetLang()
+      target = @view.$( 'td.target' )
+      expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+
+  describe '#updateTranslations()', ->
+
+    it 'is triggered by model event', ->
+      @view.updateTranslations = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'updateTargetTerms', [ new Backbone.Model ]
+      expect( @view.updateTranslations ).to.have.been.calledOnce
+
+    it 'renders translations for updated term', ->
+      list = @view.$( 'table tbody' )
+      list.append '''
+        <tr class="term" data-id="54ff4320001">
+          <td class="source">ball</td>
+          <td class="target">labda</td>
+        </tr>
+      '''
+      terms = [
+        new Backbone.Model( concept_id: '52fe4156ec4d', value: 'Ball' )
+        new Backbone.Model( concept_id: '52fe4156ec4d', value: 'Kugel' )
+      ]
+      lang = sinon.stub()
+      lang.withArgs( 'en' ).returns [
+        new Backbone.Model concept_id: '52fe4156ec4d', id: '54ff4320001'
+      ]
+      lang.withArgs( 'de' ).returns terms
+      concept = terms: -> lang: lang
+      Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', 'de', silent: yes
+      @view.updateTranslations terms
+      target = @view.$( 'td.target' )
+      expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+
+  describe '#updateLangs()', ->
+
+    it 'is triggered by change of source lang', ->
+      @view.updateLangs = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:source'
+      expect( @view.updateLangs ).to.have.been.calledOnce
+
+    it 'is triggered by change of target lang', ->
+      @view.updateLangs = sinon.spy()
+      @view.initialize()
+      @view.model.trigger 'change:target'
+      expect( @view.updateLangs ).to.have.been.calledOnce
+
+    it 'renders source in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', null, silent: yes
+      @view.updateLangs()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN)'
+
+    it 'renders target in title', ->
+      @view.model.set 'source', 'en', silent: yes
+      @view.model.set 'target', 'hu', silent: yes
+      @view.updateLangs()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN, HU)'
+
+    it 'removes langs from title', ->
+      @view.model.set 'source', null, silent: yes
+      @view.model.set 'target', null, silent: yes
+      @view.$( '.titlebar h4 .langs' ).html ' (DE, EN)'
+      @view.updateLangs()
+      expect( @view.$ '.titlebar h4 span.langs' ).to.be.empty
 

@@ -2,3 +2,5 @@
   %tr.term{ class: 'hit' if term.hit, 'data-id': term.id }
     %td.source
       %a{ href: term.path }= term.value
+    - if term.translations?
+      %td.target!= term.translations

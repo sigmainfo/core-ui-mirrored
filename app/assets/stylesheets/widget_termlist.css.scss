@@ -42,7 +42,7 @@
     tbody {
       display: inline-block;
       width: 88%;
-      padding: 6px 0 6px 20px;
+      padding: 6px 0 6px 16px;
       position: relative;
     }
 
@@ -50,13 +50,20 @@
       display: inline-block;
       width: 100%;
       line-height: 1.2em;
+      border-bottom: 1px solid rgba(white, 0.4);
+      vertical-align: top;
+      padding-left: 6px;
 
       &.term td {
         display: inline-block;
         font: 1em Palatino;
-        border-bottom: 1px solid rgba(white, 0.4);
         padding-top: 1px;
-        width: 100%;
+        width: 49%;
+        word-wrap: break-word;
+        &:only-child {
+          width: 100%;
+        };
+
       }
 
       a {
@@ -74,9 +81,7 @@
       }
 
       &:last-child {
-        td {
           border: none;
-        }
       }
       &.empty  {
         td {

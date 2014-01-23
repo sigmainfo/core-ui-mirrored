@@ -8,10 +8,15 @@ describe 'Coreon.Models.TermList', ->
     Coreon.application =
       repositorySettings: => @repositorySettings
       sourceLang: -> null
+      targetLang: -> null
       graphUri: -> 'coreon.api'
+    sinon.stub Coreon.Models.Concept, 'find'
+    concept = new Backbone.Model
+    Coreon.Models.Concept.find.returns concept
     @model = new Coreon.Models.TermList
 
   afterEach ->
+    Coreon.Models.Concept.find.restore()
     delete Coreon.application
     @model.stopListening()
 
@@ -48,6 +53,11 @@ describe 'Coreon.Models.TermList', ->
       @model.initialize()
       expect( @model.get 'source' ).to.equal 'fr'
 
+    it 'sets target lang', ->
+      Coreon.application.targetLang = -> 'fr'
+      @model.initialize()
+      expect( @model.get 'target' ).to.equal 'fr'
+
     it 'assigns reference to term hits', ->
       hits = new Backbone.Collection
       sinon.stub Coreon.Collections.Terms, 'hits', -> hits
@@ -56,6 +66,12 @@ describe 'Coreon.Models.TermList', ->
         expect( @model.hits ).to.equal hits
       finally
         Coreon.Collections.Terms.hits.restore()
+
+    it 'creates empty concepts collection', ->
+      collection = @model.concepts
+      expect( collection ).to.exist
+      expect( collection ).to.be.an.instanceOf Backbone.Collection
+      expect( collection.models ).to.be.empty
 
   describe '#reset()', ->
 
@@ -149,7 +165,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#updateSource()', ->
 
     beforeEach ->
-      @model.update = sinon.spy()
+      @model.reset = ->
 
     it 'is triggered on source lang change', ->
       @model.updateSource = sinon.spy()
@@ -164,6 +180,22 @@ describe 'Coreon.Models.TermList', ->
       Coreon.application.sourceLang = -> 'fr'
       @model.updateSource()
       expect( @model.get 'source' ).to.equal 'fr'
+
+  describe '#updateTarget()', ->
+
+    it 'is triggered on target lang change', ->
+      @model.updateTarget = sinon.spy()
+      @model.initialize()
+      @model.updateTarget.reset()
+      @repositorySettings.trigger 'change:targetLanguage'
+      expect( @model.updateTarget ).to.have.been.calledOnce
+      expect( @model.updateTarget ).to.have.been.calledOn @model
+
+    it 'updates target lang', ->
+      @model.set 'target', 'de', silent: yes
+      Coreon.application.targetLang = -> 'fr'
+      @model.updateTarget()
+      expect( @model.get 'target' ).to.equal 'fr'
 
   describe '#onRoute()', ->
 
@@ -619,3 +651,83 @@ describe 'Coreon.Models.TermList', ->
       @model.on 'reset', spy
       @model.clearTerms silent: yes
       expect( spy ).to.not.have.been.called
+
+  describe '#onTermsReset()', ->
+
+    it 'is triggered by reset of terms collection', ->
+      @model.onTermsReset = sinon.spy()
+      @model.initialize()
+      @model.terms.trigger 'reset'
+      expect( @model.onTermsReset ).to.have.been.calledOnce
+      expect( @model.onTermsReset ).to.have.been.calledOn @model
+
+    it 'updates concepts collection', ->
+      @model.concepts.reset [
+        new Backbone.Model( id: 'old-concept-1' )
+        new Backbone.Model( id: 'old-concept-2' )
+      ], silent: yes
+      @model.terms.reset [
+        new Backbone.Model concept_id: '52fe4156ec4d'
+      ], silent: yes
+      concept = new Backbone.Model id: '52fe4156ec4d'
+      Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+      @model.onTermsReset()
+      expect( @model.concepts ).to.have.lengthOf 1
+      expect( @model.concepts.first() ).to.equal concept
+
+  describe '#onTermsAdd()', ->
+
+    it 'is triggered when a term was added', ->
+      @model.onTermsAdd = sinon.spy()
+      @model.initialize()
+      @model.terms.trigger 'add'
+      expect( @model.onTermsAdd ).to.have.been.calledOnce
+
+    it 'updates concepts collection', ->
+      @model.concepts.reset [
+        new Backbone.Model( id: 'old-concept-1' )
+        new Backbone.Model( id: 'old-concept-2' )
+      ], silent: yes
+      term = new Backbone.Model concept_id: '52fe4156ec4d'
+      concept = new Backbone.Model id: '52fe4156ec4d'
+      Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
+      @model.onTermsAdd term
+      expect( @model.concepts ).to.have.lengthOf 3
+      expect( @model.concepts.get '52fe4156ec4d' ).to.exist
+
+  describe '#onConceptsChange()', ->
+
+    beforeEach ->
+      @model.set 'target', 'de', silent: yes
+      @concept = new Backbone.Model
+      terms = new Backbone.Collection
+      terms.lang = sinon.stub()
+      terms.lang.returns []
+      @concept.terms = -> terms
+
+    it 'is triggered on changes on concept terms', ->
+      @model.onConceptsChange = sinon.spy()
+      @model.initialize()
+      @model.concepts.trigger 'change:terms'
+      expect( @model.onConceptsChange ).to.have.been.calledOnce
+
+    it 'triggers update event', ->
+      spy = sinon.spy()
+      @model.on 'updateTargetTerms', spy
+      @model.set 'target', 'de', silent: yes
+      terms = [
+        new Backbone.Model lang: 'de', value: 'Pistole'
+      ]
+      @concept.terms().lang.withArgs('de').returns terms
+      @model.onConceptsChange @concept
+      expect( spy ).to.have.been.calledOnce
+      expect( spy ).to.have.been.calledWith terms
+
+    it 'does not trigger update event when no target terms exist', ->
+      spy = sinon.spy()
+      @model.on 'updateTargetTerms', spy
+      @model.set 'target', 'de', silent: yes
+      @concept.terms().lang.withArgs('de').returns []
+      @model.onConceptsChange @concept
+      expect( spy ).to.not.have.been.called
+

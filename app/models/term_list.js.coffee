@@ -2,6 +2,7 @@
 #= require collections/terms
 #= require routers/repositories_router
 #= require routers/concepts_router
+#= require models/concept
 
 class Coreon.Models.TermList extends Backbone.Model
 
@@ -15,8 +16,11 @@ class Coreon.Models.TermList extends Backbone.Model
   initialize: ->
     @terms = new Coreon.Collections.Terms
     @hits = Coreon.Collections.Terms.hits()
+    @concepts = new Backbone.Collection
 
     @updateSource()
+    @updateTarget()
+
     @stopListening()
 
     @listenTo @
@@ -27,6 +31,10 @@ class Coreon.Models.TermList extends Backbone.Model
             , 'change:sourceLanguage'
             , @updateSource
 
+    @listenTo Coreon.application.repositorySettings()
+            , 'change:targetLanguage'
+            , @updateTarget
+
     @listenTo Backbone.history
             , 'route'
             , @onRoute
@@ -34,6 +42,18 @@ class Coreon.Models.TermList extends Backbone.Model
     @listenTo @hits
             , 'reset'
             , @onHitsReset
+
+    @listenTo @terms
+            , 'reset'
+            , @onTermsReset
+
+    @listenTo @terms
+            , 'add'
+            , @onTermsAdd
+
+    @listenTo @concepts
+            , 'change:terms'
+            , @onConceptsChange
 
   reset: ->
     if source = @get 'source'
@@ -50,6 +70,9 @@ class Coreon.Models.TermList extends Backbone.Model
   updateSource: ->
     @set 'source', Coreon.application.sourceLang()
 
+  updateTarget: ->
+    @set 'target', Coreon.application.targetLang()
+
   onRoute: ( router, route, params ) ->
     if router instanceof Coreon.Routers.RepositoriesRouter
       if route is 'show'
@@ -59,6 +82,19 @@ class Coreon.Models.TermList extends Backbone.Model
   onHitsReset: ->
     @set 'scope', 'hits', silent: yes
     @reset()
+
+  onTermsReset: ->
+    concepts = @terms.map ( term ) ->
+      Coreon.Models.Concept.find term.get( 'concept_id' )
+    @concepts.reset concepts
+
+  onTermsAdd: ( term ) ->
+    concept = Coreon.Models.Concept.find term.get( 'concept_id' )
+    @concepts.add concept
+
+  onConceptsChange: ( concept ) ->
+    terms = concept.terms().lang( @get 'target' )
+    @trigger 'updateTargetTerms', terms if terms.length > 0
 
   fetch: ( options = {} ) ->
     lang = @get 'source'

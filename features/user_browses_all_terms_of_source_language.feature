@@ -1,4 +1,4 @@
-Feature: User browses all terms of source language
+Feature: user browses all terms of source language
   In order to explore the lexical scope of the selected source language
   As a user browsing the term sphere
   I want to scroll through an alphabetic list of all existing terms

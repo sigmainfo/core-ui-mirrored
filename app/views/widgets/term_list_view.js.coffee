@@ -30,7 +30,8 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   initialize: ->
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
 
-    @$el.html @template()
+    @$el.html @template
+      langs: @langs()
 
     @$el.resizable
       handles: 's'
@@ -55,6 +56,18 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     @listenTo @model
             , 'change:loadingNext change:loadingPrev'
             , @updateLoadingState
+
+    @listenTo @model
+            , 'change:target'
+            , @updateTargetLang
+
+    @listenTo @model
+            , 'change:source change:target'
+            , @updateLangs
+
+    @listenTo @model
+            , 'updateTargetTerms'
+            , @updateTranslations
 
   render: ->
     @$( 'table' ).scrollTop 0
@@ -87,6 +100,24 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       path:  term.conceptPath()
       hit:   @model.hits.get( term )?
       id:    term.id
+      translations: @translations( term )
+
+  translations: ( term ) ->
+    if @model.has( 'target' )
+      concept = Coreon.Models.Concept.find term.get( 'concept_id' )
+      values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
+        term.escape 'value'
+      values.join '<span> | </span>'
+    else
+      null
+
+  langs: ->
+    if source = @model.get( 'source' )
+      langs = " (#{ source.toUpperCase() }"
+      langs += ", #{ target.toUpperCase() }"if target = @model.get( 'target' )
+      langs += ')'
+    else
+      ''
 
   resize: (size) ->
     size.height ?= defaults.size[1]
@@ -191,3 +222,32 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
           hit.get( 'sort_key' ) >= sortKey
         anchorHit or= _.last( hitsByLang )
     anchorHit or null
+
+  updateTargetLang: ->
+    rows = @$( 'tr.term' )
+    if @model.has 'target'
+
+      if rows.first().find( 'td.target' ).length is 0
+        rows.append( '<td class="target">' )
+
+      rows.each ( index, el ) =>
+        row = $( el )
+        term = @model.terms.get( row.data 'id' )
+        row.find( 'td.target' ).html @translations( term )
+
+    else
+      rows.find( 'td.target' ).remove()
+
+  updateTranslations: ( targetTerms ) ->
+    first = targetTerms[0]
+    conceptId = first.get 'concept_id'
+    concept = Coreon.Models.Concept.find conceptId
+    translations = @translations( first )
+    sourceTerms = concept.terms().lang( @model.get 'source' )
+    sourceTerms.forEach ( term ) =>
+      row = @$( "tr.term[data-id='#{term.id}']" )
+      row.find( 'td.target' ).html translations
+
+  updateLangs: ->
+    @$( '.titlebar h4 .langs' ).html @langs()
+
