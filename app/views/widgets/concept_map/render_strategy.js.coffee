@@ -162,7 +162,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     placeholders.select('title')
       .text( (datum) ->
         if datum.label
-          I18n.t 'concept_map.placeholder.title',
+          I18n.t 'widgets.concept_map.placeholder.title',
             count: datum.label * 1
             label: datum.parent.label
       )

@@ -1,6 +1,5 @@
 .titlebar
   %h4= I18n.t "widgets.clipboard.title"
   .actions
-    %a.clear( href="javascript:void(0)" title="#{I18n.t 'widgets.clipboard.clear'}" )= I18n.t "widgets.clipboard.clear"
-
+    != @action_for 'widgets.clipboard.clear'
 %ul

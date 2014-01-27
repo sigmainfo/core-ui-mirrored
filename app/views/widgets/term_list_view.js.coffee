@@ -1,4 +1,5 @@
 #= require environment
+#= require helpers/action_for
 #= require templates/widgets/term_list
 #= require templates/widgets/term_list_info
 #= require templates/widgets/term_list_items
@@ -40,7 +41,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       handles: 's'
       minHeight: 80
       resize: (event, ui) => @resize ui.size
-    @resize Coreon.application.repositorySettings('termList')
+    @resize Coreon.application.repositorySettings( 'termList' )
 
     @stopListening()
 

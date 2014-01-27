@@ -1,9 +1,10 @@
 .titlebar
-  %h4= I18n.t "concept-map.title"
+  %h4= I18n.t 'widgets.concept_map.title'
   .actions
-    %a.toggle-orientation{ href: "javascript: void(0)", title: I18n.t "concept-map.toggle-orientation" }= I18n.t "concept-map.toggle-orientation"
-    %a.zoom-in{  href: "javascript: void(0)", title: I18n.t "concept-map.zoom-in"  }= I18n.t "concept-map.zoom-in"
-    %a.zoom-out{ href: "javascript: void(0)", title: I18n.t "concept-map.zoom-out" }= I18n.t "concept-map.zoom-out"
+    != @action_for 'widgets.concept_map.toggle_orientation'
+    != @action_for 'widgets.concept_map.zoom_in'
+    != @action_for 'widgets.concept_map.zoom_out'
+    != @action_for 'widget.maximize'
 .map
   %svg{ xmlns: "http://www.w3.org/2000/svg", version: "1.1" }
     %defs

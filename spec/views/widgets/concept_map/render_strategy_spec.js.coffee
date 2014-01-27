@@ -447,7 +447,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     context 'placeholders', ->
 
       it 'updates title', ->
-        I18n.t.withArgs('concept_map.placeholder.title',
+        I18n.t.withArgs('widgets.concept_map.placeholder.title',
           count: 123
           label: 'Billiards'
         ).returns '123 more concepts for Billiards'

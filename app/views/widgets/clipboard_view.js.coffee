@@ -1,6 +1,7 @@
 #= require environment
 #= require collections/clips
 #= require views/concepts/concept_label_view
+#= require helpers/action_for
 #= require templates/widgets/clipboard
 #= require modules/droppable
 

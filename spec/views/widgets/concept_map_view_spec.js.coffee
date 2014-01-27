@@ -79,7 +79,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     context 'rendering markup skeleton', ->
 
       it 'renders titlebar', ->
-        I18n.t.withArgs('concept-map.title').returns 'Concept Map'
+        I18n.t.withArgs('widgets.concept_map.title').returns 'Concept Map'
         @view.initialize hits: @view.hits
         @view.$el.should.have '.titlebar h4'
         @view.$('.titlebar h4').should.have.text 'Concept Map'
@@ -90,8 +90,8 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         @view.$('.titlebar').size().should.equal 1
 
       it 'renders zoom buttons', ->
-        I18n.t.withArgs('concept-map.zoom-in').returns 'Zoom in'
-        I18n.t.withArgs('concept-map.zoom-out').returns 'Zoom out'
+        I18n.t.withArgs('widgets.concept_map.zoom_in').returns 'Zoom in'
+        I18n.t.withArgs('widgets.concept_map.zoom_out').returns 'Zoom out'
         @view.initialize hits: @view.hits
         @view.$el.should.have '.zoom-in'
         @view.$('.zoom-in').should.have.text 'Zoom in'
@@ -100,11 +100,21 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         @view.$('.zoom-out').should.have.attr 'title', 'Zoom out'
 
       it 'renders toggle button', ->
-        I18n.t.withArgs('concept-map.toggle-orientation').returns 'Toggle orientation'
+        I18n.t.withArgs('widgets.concept_map.toggle_orientation').returns 'Toggle orientation'
         @view.initialize hits: @view.hits
         @view.$el.should.have '.toggle-orientation'
         @view.$('.toggle-orientation').should.have.text 'Toggle orientation'
         @view.$('.toggle-orientation').should.have.attr 'title', 'Toggle orientation'
+        @view.$('.toggle-orientation').should.have.attr 'href', 'javascript:void(0)'
+
+      it 'renders maximize button', ->
+        I18n.t.withArgs('widget.maximize').returns 'Maximize'
+        @view.initialize hits: @view.hits
+        button = @view.$( '.titlebar .maximize' )
+        expect( button ).to.exist
+        expect( button ).to.have.text 'Maximize'
+        expect( button ).to.have.attr 'title', 'Maximize'
+        expect( button ).to.have.attr 'href', 'javascript:void(0)'
 
       it 'creates resize handle', ->
         @view.initialize hits: @view.hits

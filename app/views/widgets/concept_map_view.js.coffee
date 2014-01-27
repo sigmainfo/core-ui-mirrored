@@ -1,6 +1,7 @@
 #= require environment
 #= require jquery.ui.resizable
 #= require templates/widgets/concept_map
+#= require helpers/action_for
 #= require d3
 #= require views/widgets/concept_map/left_to_right
 #= require views/widgets/concept_map/top_down
@@ -27,7 +28,7 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
     'click .zoom-out'               : 'zoomOut'
     'click .toggle-orientation'     : 'toggleOrientation'
 
-  initialize: (options = {}) ->
+  initialize: ( options = {} ) ->
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
       .on('zoom', @_panAndZoom)

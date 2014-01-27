@@ -163,14 +163,11 @@ en:
     service:
       unavailable: "Service is currently unavailable."
 
-  concept-map:
-    title: "Concept Map"
-    zoom-in: "Zoom in"
-    zoom-out: "Zoom out"
-    toggle-orientation: "Toggle orientation"
-
   confirm:
     ok: "OK"
+
+  widget:
+    maximize: "Maximize"
 
   widgets:
     languages:
@@ -179,6 +176,16 @@ en:
     clipboard:
       title: "Clipboard"
       clear: "Clear"
+
+    concept_map:
+      title: "Concept Map"
+      zoom_in: "Zoom in"
+      zoom_out: "Zoom out"
+      toggle_orientation: "Toggle orientation"
+      placeholder:
+        title:
+          one: '1 more concept for {{label}}'
+          other: '{{count}} more concepts for {{label}}'
 
     term_list:
       title: 'Term List'
@@ -189,12 +196,6 @@ en:
   user:
     name: "Name"
     email: "Email"
-
-  concept_map:
-    placeholder:
-      title:
-        one: '1 more concept for {{label}}'
-        other: '{{count}} more concepts for {{label}}'
 
   languages:
     none: "None"
