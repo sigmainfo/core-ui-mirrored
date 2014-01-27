@@ -1,62 +1,68 @@
 module SearchSteps
   include Spinach::DSL
 
-  When 'I search for "panopticum"' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "panopticum"
+  def search_widget
+    find '#coreon-search'
+  end
+
+  def search_for( query )
+    within search_widget do
+      fill_in 'coreon-search-query', with: query
       find('input[type="submit"]').click
     end
   end
 
-  When 'I enter "poet" in the search field' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "poet"
+  step 'I enter "poet" in the search field' do
+    within search_widget do
+      fill_in 'coreon-search-query', with: 'poet'
     end
   end
 
-  When 'I enter "gun" in the search field' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "gun"
+  step 'I enter "gun" in the search field' do
+    within search_widget do
+      fill_in 'coreon-search-query', with: 'gun'
     end
   end
 
   step 'I enter "ball" in the search field' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "ball"
+    within search_widget do
+      fill_in 'coreon-search-query', with: 'ball'
     end
   end
 
-  When 'I enter "poe" in the search field' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "poe"
+  step 'I enter "poe" in the search field' do
+    within search_widget do
+      fill_in 'coreon-search-query', with: 'poe'
     end
   end
 
-  And 'I click the search button' do
-    within "#coreon-search" do
+  step 'I click the search button' do
+    within search_widget do
       find('input[type="submit"]').click
     end
   end
 
-  When 'I search for "handgun"' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "handgun"
-      find('input[type="submit"]').click
-    end
+  step 'I search for "panopticum"' do
+    search_for 'panopticum'
   end
 
-  When 'I do a search for "ball"' do
-    within "#coreon-search" do
-      fill_in "coreon-search-query", with: "ball"
-      find('input[type="submit"]').click
-    end
+  step 'I search for "handgun"' do
+    search_for 'handgun'
   end
 
-  Then 'I should be on the search result page' do
+  step 'I do a search for "ball"' do
+    search_for 'ball'
+  end
+
+  step 'I search for "screen"' do
+    search_for 'screen'
+  end
+
+  step 'I should be on the search result page' do
     current_path.should =~ %r|^/#{@repository.id}/concepts/search|
   end
 
-  And 'I should see the query "poet" within the navigation' do
+  step 'I should see the query "poet" within the navigation' do
     current_path.should =~ %r|/poet$|
   end
 end
