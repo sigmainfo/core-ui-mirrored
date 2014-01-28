@@ -53,7 +53,7 @@ class Spinach::Features::UserTogglesMainView < Spinach::FeatureSteps
   end
 
   step 'I should not see a widget "Concept Map"' do
-    pending 'step not implemented'
+    page.should have_no_selector( :widget, 'Concept Map' )
   end
 
   step 'I should see a concept map inside the main view' do
