@@ -1,8 +1,3 @@
-.titlebar
-  %h4
-    = I18n.t 'widgets.term_list.title'
-    %span.langs= @langs
-  .actions
-    != @action_for 'widgets.term_list.toggle_scope'
+!= @titlebar @title, @actions
 %table
   %tbody

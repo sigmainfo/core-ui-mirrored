@@ -1,7 +1,7 @@
 #= require environment
 #= require jquery.ui.resizable
 #= require templates/widgets/concept_map
-#= require helpers/action_for
+#= require helpers/titlebar
 #= require d3
 #= require views/widgets/concept_map/left_to_right
 #= require views/widgets/concept_map/top_down
@@ -156,7 +156,12 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
 
   _renderMarkupSkeleton: ->
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
-    @$el.html @template
+    @$el.html @template actions: [
+      'widgets.concept_map.toggle_orientation'
+      'widgets.concept_map.zoom_in'
+      'widgets.concept_map.zoom_out'
+      'widget.maximize'
+    ]
     @$el.resizable
       handles: 's'
       minHeight: 80

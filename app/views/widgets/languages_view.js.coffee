@@ -2,6 +2,7 @@
 #= require modules/prompt
 #= require lib/select
 #= require templates/widgets/languages
+#= require helpers/titlebar
 #= require helpers/repository_path
 
 class Coreon.Views.Widgets.LanguagesView extends Backbone.View

@@ -1,6 +1,4 @@
-.titlebar
-  %h4= I18n.t "widgets.languages.title"
-    %span.selected
+!= @titlebar I18n.t( 'widgets.languages.title' )
 
 - langs = Coreon.application?.repository()?.usedLanguages()
 - if langs[0]

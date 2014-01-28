@@ -4,7 +4,7 @@ end
 
 Capybara.add_selector( :widget ) do
   xpath do |title|
-    ".//*[ #{ has_class :widget } and .//h4/text() = '#{ title }' ]"
+    ".//*[ #{ has_class :widget } and .//h3/text() = '#{ title }' ]"
   end
 end
 

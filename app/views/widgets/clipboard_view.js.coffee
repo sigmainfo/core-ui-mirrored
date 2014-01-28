@@ -2,6 +2,7 @@
 #= require collections/clips
 #= require views/concepts/concept_label_view
 #= require helpers/action_for
+#= require helpers/titlebar
 #= require templates/widgets/clipboard
 #= require modules/droppable
 
@@ -19,7 +20,10 @@ class Coreon.Views.Widgets.ClipboardView extends Backbone.View
   initialize: ->
     @labels = []
 
-    @$el.html @template()
+    @$el.html @template
+      actions: [
+        'widgets.clipboard.clear'
+      ]
     @droppableOn @$("ul"), "ui-droppable-clipboard",
       greedy: false
       accept: (el) => @dropItemAcceptance(el)

@@ -1,5 +1,2 @@
-.titlebar
-  %h4= I18n.t "widgets.clipboard.title"
-  .actions
-    != @action_for 'widgets.clipboard.clear'
+!= @titlebar I18n.t( 'widgets.clipboard.title' ), @actions
 %ul

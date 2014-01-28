@@ -1,6 +1,7 @@
 #= require environment
-#= require helpers/action_for
+#= require helpers/titlebar
 #= require templates/widgets/term_list
+#= require templates/widgets/term_list_title
 #= require templates/widgets/term_list_info
 #= require templates/widgets/term_list_items
 #= require templates/widgets/term_list_translations
@@ -18,6 +19,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   className: 'widget'
 
   template    : Coreon.Templates['widgets/term_list']
+  title       : Coreon.Templates['widgets/term_list_title']
   info        : Coreon.Templates['widgets/term_list_info']
   terms       : Coreon.Templates['widgets/term_list_items']
   targetTerms : Coreon.Templates['widgets/term_list_translations']
@@ -34,8 +36,13 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   initialize: ->
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
 
+    title = @title
+      source: @model.get( 'source' )?.toUpperCase()
+      target: @model.get( 'target' )?.toUpperCase()
+
     @$el.html @template
-      langs: @langs()
+      title: title
+      actions: [ 'widgets.term_list.toggle_scope' ]
 
     @$el.resizable
       handles: 's'
@@ -115,13 +122,13 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     else
       null
 
-  langs: ->
-    if source = @model.get( 'source' )
-      langs = " (#{ source.toUpperCase() }"
-      langs += ", #{ target.toUpperCase() }"if target = @model.get( 'target' )
-      langs += ')'
-    else
-      ''
+  # langs: ->
+  #   if source = @model.get( 'source' )
+  #     langs = " (#{ source.toUpperCase() }"
+  #     langs += ", #{ target.toUpperCase() }"if target = @model.get( 'target' )
+  #     langs += ')'
+  #   else
+  #     ''
 
   resize: (size) ->
     size.height ?= defaults.size[1]
@@ -253,7 +260,9 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       row.find( 'td.target' ).html translations
 
   updateLangs: ->
-    @$( '.titlebar h4 .langs' ).html @langs()
+    @$( '.titlebar h3' ).html @title
+      source: @model.get( 'source' )?.toUpperCase()
+      target: @model.get( 'target' )?.toUpperCase()
 
   openConcept: ( event ) ->
     row = $( event.target ).closest 'tr.term'

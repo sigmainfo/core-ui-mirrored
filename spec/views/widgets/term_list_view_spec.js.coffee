@@ -34,23 +34,24 @@ describe 'Coreon.Views.Widgets.TermListView', ->
 
   describe '#initialize()', ->
 
-    it 'renders markup', ->
+    it 'renders title', ->
       I18n.t.withArgs('widgets.term_list.title').returns 'Term List'
       @view.initialize()
-      expect( @view.$el ).to.have '.titlebar h4'
-      expect( @view.$('.titlebar h4').text() ).to.contain 'Term List'
-      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ''
+      title = @view.$( '.titlebar h3' )
+      expect( title ).to.exist
+      expect( title ).to.contain 'Term List'
+      expect( title.find '.langs' ).to.not.exist
 
     it 'renders source in title', ->
       @view.model.set 'source', 'en', silent: yes
       @view.initialize()
-      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN)'
+      expect( @view.$ '.titlebar h3 .langs' ).to.have.text '(EN)'
 
     it 'renders target in title', ->
       @view.model.set 'source', 'en', silent: yes
       @view.model.set 'target', 'hu', silent: yes
       @view.initialize()
-      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN, HU)'
+      expect( @view.$ '.titlebar h3 span.langs' ).to.have.text '(EN, HU)'
 
     it 'renders resize handler', ->
       expect( @view.$el ).to.have  '.ui-resizable-s'
@@ -782,20 +783,20 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.model.set 'source', 'en', silent: yes
       @view.model.set 'target', null, silent: yes
       @view.updateLangs()
-      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN)'
+      expect( @view.$ '.titlebar h3 span.langs' ).to.have.text '(EN)'
 
     it 'renders target in title', ->
       @view.model.set 'source', 'en', silent: yes
       @view.model.set 'target', 'hu', silent: yes
       @view.updateLangs()
-      expect( @view.$ '.titlebar h4 span.langs' ).to.have.text ' (EN, HU)'
+      expect( @view.$ '.titlebar h3 span.langs' ).to.have.text '(EN, HU)'
 
     it 'removes langs from title', ->
       @view.model.set 'source', null, silent: yes
       @view.model.set 'target', null, silent: yes
-      @view.$( '.titlebar h4 .langs' ).html ' (DE, EN)'
+      @view.$( '.titlebar h4 .langs' ).html '(DE, EN)'
       @view.updateLangs()
-      expect( @view.$ '.titlebar h4 span.langs' ).to.be.empty
+      expect( @view.$ '.titlebar h3 span.langs' ).to.not.exist
 
   describe '#openConcept()', ->
 

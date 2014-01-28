@@ -1,0 +1,8 @@
+= I18n.t 'widgets.term_list.title'
+- if @source
+  %span.langs<
+    != surround '(', ')', ->
+      - if @target
+        = [ @source, @target ].join ', '
+      - else
+        = @source

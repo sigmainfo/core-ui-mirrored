@@ -1,0 +1,5 @@
+.titlebar
+  %h3!= @title
+  .actions
+    - for action in @actions
+      != @action_for action

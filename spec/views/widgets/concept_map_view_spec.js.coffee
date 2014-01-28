@@ -81,8 +81,9 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       it 'renders titlebar', ->
         I18n.t.withArgs('widgets.concept_map.title').returns 'Concept Map'
         @view.initialize hits: @view.hits
-        @view.$el.should.have '.titlebar h4'
-        @view.$('.titlebar h4').should.have.text 'Concept Map'
+        title = @view.$( '.titlebar h3' )
+        expect( title ).to.exist
+        expect( title ).to.have.text 'Concept Map'
 
       it 'renders titlebar only once', ->
         @view.initialize hits: @view.hits

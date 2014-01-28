@@ -42,8 +42,9 @@ describe "Coreon.Views.Widgets.ClipboardView", ->
     it "renders template skeleton", ->
       I18n.t.withArgs("widgets.clipboard.title").returns "Clipboard"
       @view.initialize()
-      @view.$el.should.have ".titlebar h4"
-      @view.$(".titlebar h4").should.have.text "Clipboard"
+      title = @view.$( '.titlebar h3' )
+      expect( title ).to.exist
+      expect( title ).to.have.text 'Clipboard'
 
     it "creates droppable from ul", ->
       @view.initialize()
