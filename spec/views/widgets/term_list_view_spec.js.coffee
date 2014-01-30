@@ -171,9 +171,12 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.model.terms.reset [ term ], silent: yes
         @view.model.set 'target', 'de', silent: yes
         @view.render()
-        translation = @view.$( 'tbody tr.term td.target' )
+        translation = @view.$( 'tbody tr.term td.target ul' )
         expect( translation ).to.exist
-        expect( translation ).to.have.html 'Ball<span> | </span>Kugel'
+        terms = translation.find 'li'
+        expect( terms ).to.have.lengthOf 2
+        expect( terms.eq 0 ).to.have.text 'Ball'
+        expect( terms.eq 1 ).to.have.text 'Kugel'
 
       it 'renders empty target column when translations are empty', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
@@ -185,9 +188,9 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.model.terms.reset [ term ], silent: yes
         @view.model.set 'target', 'de', silent: yes
         @view.render()
-        translation = @view.$( 'tbody tr.term td.target' )
+        translation = @view.$( 'tbody tr.term td.target ul' )
         expect( translation ).to.exist
-        expect( translation ).to.be.empty
+        expect( translation.find 'li' ).to.have.lengthOf 0
 
       it 'does not render target column when no target lang is set', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
@@ -721,8 +724,10 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
       @view.model.terms.reset [ term ], silent: yes
       @view.updateTargetLang()
-      target = @view.$( 'td.target' )
-      expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+      target = @view.$( 'td.target li' )
+      expect( target ).to.have.lengthOf 2
+      expect( target.eq 0 ).to.have.text 'Ball'
+      expect( target.eq 1 ).to.have.text 'Kugel'
 
   describe '#updateTranslations()', ->
 
@@ -754,8 +759,10 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.model.set 'source', 'en', silent: yes
       @view.model.set 'target', 'de', silent: yes
       @view.updateTranslations terms
-      target = @view.$( 'td.target' )
-      expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+      target = @view.$( 'td.target li' )
+      expect( target ).to.have.lengthOf 2
+      expect( target.eq 0 ).to.have.text 'Ball'
+      expect( target.eq 1 ).to.have.text 'Kugel'
 
   describe '#updateLangs()', ->
 
@@ -790,3 +797,46 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.updateLangs()
       expect( @view.$ '.titlebar h4 span.langs' ).to.be.empty
 
+  describe '#openConcept()', ->
+
+    beforeEach ->
+      sinon.stub Backbone.history, 'navigate'
+      @view.$el.html '''
+        <table>
+          <tr class="term">
+            <td class="source"><a href="/concepts/52334519fe">ball</a></td>
+          </tr>
+          <tr class="term">
+            <td class="source"><a href="/concepts/12334519a0">cue</a></td>
+          </tr>
+        </table>
+      '''
+      @td = @view.$( 'tr.term td' ).last()
+      @event = $.Event 'click'
+      @event.target = @td.get( 0 )
+
+    afterEach ->
+      Backbone.history.navigate.restore()
+
+    it 'is triggered by click on term row', ->
+      @view.openConcept = sinon.spy()
+      @view.delegateEvents()
+      @td.trigger @event
+      expect( @view.openConcept ).to.have.been.calledOnce
+      expect( @view.openConcept ).to.have.been.calledOn @view
+      expect( @view.openConcept ).to.have.been.calledWith @event
+
+    it 'eats event', ->
+      @event.stopPropagation = sinon.spy()
+      @event.preventDefault = sinon.spy()
+      @view.openConcept @event
+      expect( @event.stopPropagation ).to.have.been.calledOnce
+      expect( @event.preventDefault ).to.have.been.calledOnce
+
+    it 'navigates to related concept', ->
+      @td.find( 'a' ).attr 'href', '/concepts/52fe4156ec4d'
+      @view.openConcept @event
+      navigate = Backbone.history.navigate
+      expect( navigate ).to.have.been.calledOnce
+      expect( navigate ).to.have.been.calledWith 'concepts/52fe4156ec4d'
+                                               , trigger: yes

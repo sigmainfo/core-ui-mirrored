@@ -2,6 +2,7 @@
 #= require templates/widgets/term_list
 #= require templates/widgets/term_list_info
 #= require templates/widgets/term_list_items
+#= require templates/widgets/term_list_translations
 #= require templates/widgets/term_list_placeholder
 #= require jquery.ui.resizable
 #= require models/concept
@@ -18,10 +19,12 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   template    : Coreon.Templates['widgets/term_list']
   info        : Coreon.Templates['widgets/term_list_info']
   terms       : Coreon.Templates['widgets/term_list_items']
+  targetTerms : Coreon.Templates['widgets/term_list_translations']
   placeholder : Coreon.Templates['widgets/term_list_placeholder']
 
   events:
     'click .toggle-scope' : 'toggleScope'
+    'click tr.term'       : 'openConcept'
 
   delegateEvents: ->
     super
@@ -106,8 +109,8 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     if @model.has( 'target' )
       concept = Coreon.Models.Concept.find term.get( 'concept_id' )
       values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
-        term.escape 'value'
-      values.join '<span> | </span>'
+        term.get 'value'
+      @targetTerms terms: values
     else
       null
 
@@ -251,3 +254,9 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   updateLangs: ->
     @$( '.titlebar h4 .langs' ).html @langs()
 
+  openConcept: ( event ) ->
+    row = $( event.target ).closest 'tr.term'
+    if path = row.find( 'a[href]' ).attr( 'href' )[1..]
+      Backbone.history.navigate path, trigger: true
+    event.preventDefault()
+    event.stopPropagation()
