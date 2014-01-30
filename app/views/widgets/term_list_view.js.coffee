@@ -2,6 +2,7 @@
 #= require templates/widgets/term_list
 #= require templates/widgets/term_list_info
 #= require templates/widgets/term_list_items
+#= require templates/widgets/term_list_translations
 #= require templates/widgets/term_list_placeholder
 #= require jquery.ui.resizable
 #= require models/concept
@@ -18,6 +19,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   template    : Coreon.Templates['widgets/term_list']
   info        : Coreon.Templates['widgets/term_list_info']
   terms       : Coreon.Templates['widgets/term_list_items']
+  targetTerms : Coreon.Templates['widgets/term_list_translations']
   placeholder : Coreon.Templates['widgets/term_list_placeholder']
 
   events:
@@ -108,7 +110,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
       concept = Coreon.Models.Concept.find term.get( 'concept_id' )
       values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
         term.escape 'value'
-      values.join '<span> | </span>'
+      @targetTerms terms: values
     else
       null
 

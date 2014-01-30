@@ -1,0 +1,3 @@
+%ul
+  - for translation in @terms
+    %li= translation

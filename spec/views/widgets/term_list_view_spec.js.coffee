@@ -171,9 +171,12 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.model.terms.reset [ term ], silent: yes
         @view.model.set 'target', 'de', silent: yes
         @view.render()
-        translation = @view.$( 'tbody tr.term td.target' )
+        translation = @view.$( 'tbody tr.term td.target ul' )
         expect( translation ).to.exist
-        expect( translation ).to.have.html 'Ball<span> | </span>Kugel'
+        terms = translation.find 'li'
+        expect( terms ).to.have.lengthOf 2
+        expect( terms.eq 0 ).to.have.text 'Ball'
+        expect( terms.eq 1 ).to.have.text 'Kugel'
 
       it 'renders empty target column when translations are empty', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
@@ -185,9 +188,9 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         @view.model.terms.reset [ term ], silent: yes
         @view.model.set 'target', 'de', silent: yes
         @view.render()
-        translation = @view.$( 'tbody tr.term td.target' )
+        translation = @view.$( 'tbody tr.term td.target ul' )
         expect( translation ).to.exist
-        expect( translation ).to.be.empty
+        expect( translation.find 'li' ).to.have.lengthOf 0
 
       it 'does not render target column when no target lang is set', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
@@ -721,8 +724,10 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
       @view.model.terms.reset [ term ], silent: yes
       @view.updateTargetLang()
-      target = @view.$( 'td.target' )
-      expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+      target = @view.$( 'td.target li' )
+      expect( target ).to.have.lengthOf 2
+      expect( target.eq 0 ).to.have.text 'Ball'
+      expect( target.eq 1 ).to.have.text 'Kugel'
 
   describe '#updateTranslations()', ->
 
@@ -754,8 +759,10 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.model.set 'source', 'en', silent: yes
       @view.model.set 'target', 'de', silent: yes
       @view.updateTranslations terms
-      target = @view.$( 'td.target' )
-      expect( target ).to.have.html 'Ball<span> | </span>Kugel'
+      target = @view.$( 'td.target li' )
+      expect( target ).to.have.lengthOf 2
+      expect( target.eq 0 ).to.have.text 'Ball'
+      expect( target.eq 1 ).to.have.text 'Kugel'
 
   describe '#updateLangs()', ->
 
