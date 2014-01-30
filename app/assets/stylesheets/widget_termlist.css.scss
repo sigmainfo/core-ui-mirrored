@@ -41,8 +41,8 @@
 
     tbody {
       display: inline-block;
-      width: 88%;
-      padding: 6px 0 6px 16px;
+      width: 92%;
+      padding: 6px 0 6px 10px;
       position: relative;
     }
 
@@ -50,16 +50,24 @@
       display: inline-block;
       width: 100%;
       line-height: 1.2em;
-      border-bottom: 1px solid rgba(white, 0.4);
+      border-bottom: 1px solid rgba(black, 0.05);
+      border-top: 1px solid rgba(white, 0.4);
       vertical-align: top;
       padding-left: 6px;
+      &.term:hover {
+        cursor: pointer;
+        td, td a {
+          color: $link-color;
+        };
+      };
 
       &.term td {
         display: inline-block;
         font: 1em Palatino;
-        padding-top: 1px;
+        padding: 4px 0px 1px 0;
         width: 49%;
         word-wrap: break-word;
+        color: darken($greytext-color, 20);
         &:only-child {
           width: 100%;
         };
@@ -67,21 +75,15 @@
       }
 
       a {
-        color: darken($greytext-color, 20);
-        &:hover {
-          color: $hover-color;
-        };
+        color: $text-color;
       }
 
       &.hit a {
         color: $hit-color;
-        &:hover {
-          color: $hover-color;
-        };
       }
 
       &:last-child {
-          border: none;
+          border-bottom: none;
       }
       &.empty  {
         td {
