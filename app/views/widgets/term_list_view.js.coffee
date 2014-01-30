@@ -109,7 +109,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     if @model.has( 'target' )
       concept = Coreon.Models.Concept.find term.get( 'concept_id' )
       values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
-        term.escape 'value'
+        term.get 'value'
       @targetTerms terms: values
     else
       null
