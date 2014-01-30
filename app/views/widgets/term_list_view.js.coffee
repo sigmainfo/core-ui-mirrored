@@ -22,6 +22,7 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
 
   events:
     'click .toggle-scope' : 'toggleScope'
+    'click tr.term'       : 'openConcept'
 
   delegateEvents: ->
     super
@@ -251,3 +252,9 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
   updateLangs: ->
     @$( '.titlebar h4 .langs' ).html @langs()
 
+  openConcept: ( event ) ->
+    row = $( event.target ).closest 'tr.term'
+    if path = row.find( 'a[href]' ).attr( 'href' )[1..]
+      Backbone.history.navigate path, trigger: true
+    event.preventDefault()
+    event.stopPropagation()

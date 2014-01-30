@@ -790,3 +790,46 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       @view.updateLangs()
       expect( @view.$ '.titlebar h4 span.langs' ).to.be.empty
 
+  describe '#openConcept()', ->
+
+    beforeEach ->
+      sinon.stub Backbone.history, 'navigate'
+      @view.$el.html '''
+        <table>
+          <tr class="term">
+            <td class="source"><a href="/concepts/52334519fe">ball</a></td>
+          </tr>
+          <tr class="term">
+            <td class="source"><a href="/concepts/12334519a0">cue</a></td>
+          </tr>
+        </table>
+      '''
+      @td = @view.$( 'tr.term td' ).last()
+      @event = $.Event 'click'
+      @event.target = @td.get( 0 )
+
+    afterEach ->
+      Backbone.history.navigate.restore()
+
+    it 'is triggered by click on term row', ->
+      @view.openConcept = sinon.spy()
+      @view.delegateEvents()
+      @td.trigger @event
+      expect( @view.openConcept ).to.have.been.calledOnce
+      expect( @view.openConcept ).to.have.been.calledOn @view
+      expect( @view.openConcept ).to.have.been.calledWith @event
+
+    it 'eats event', ->
+      @event.stopPropagation = sinon.spy()
+      @event.preventDefault = sinon.spy()
+      @view.openConcept @event
+      expect( @event.stopPropagation ).to.have.been.calledOnce
+      expect( @event.preventDefault ).to.have.been.calledOnce
+
+    it 'navigates to related concept', ->
+      @td.find( 'a' ).attr 'href', '/concepts/52fe4156ec4d'
+      @view.openConcept @event
+      navigate = Backbone.history.navigate
+      expect( navigate ).to.have.been.calledOnce
+      expect( navigate ).to.have.been.calledWith 'concepts/52fe4156ec4d'
+                                               , trigger: yes
