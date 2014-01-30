@@ -41,19 +41,33 @@
 
     tbody {
       display: inline-block;
-      width: 92%;
-      padding: 6px 0 6px 10px;
+      width: 94%;
+      padding: 6px 0 6px 6px;
       position: relative;
+    }
+    
+    li {
+      list-style: none;
+      padding-bottom: 1px;
+      padding-top: 3px;
+      border-bottom: 1px dotted rgba(black, 0.1);
+      &:only-child, &:last-child {
+        padding-bottom: 0;
+        border: none;
+      }
+      &:first-child {
+        padding-top: 0;
+      };
     }
 
     tr {
       display: inline-block;
       width: 100%;
       line-height: 1.2em;
-      border-bottom: 1px solid rgba(black, 0.05);
-      border-top: 1px solid rgba(white, 0.4);
+      border-bottom: 1px solid rgba(black, 0.06);
+      border-top: 1px solid rgba(white, 0.5);
       vertical-align: top;
-      padding-left: 6px;
+      padding-left: 4px;
       &.term:hover {
         cursor: pointer;
         td, td a {
@@ -64,13 +78,17 @@
       &.term td {
         display: inline-block;
         font: 1em Palatino;
-        padding: 4px 0px 1px 0;
-        width: 49%;
+        padding: 3px 0px 1px 0;
+        width: 50%;
         word-wrap: break-word;
         color: darken($greytext-color, 20);
         &:only-child {
           width: 100%;
         };
+        &.source {
+          padding-right: 5px;
+          width: 45%;
+        }
 
       }
 
@@ -84,6 +102,9 @@
 
       &:last-child {
           border-bottom: none;
+      }
+      &:first-child {
+          border-top: none;
       }
       &.empty  {
         td {
