@@ -13,6 +13,10 @@ describe "Coreon.Views.ApplicationView", ->
       @widgets = new Backbone.View
       @widgets.render = sinon.stub().returns @widgets
       @widgets
+    sinon.stub Coreon.Views.Panels, 'ConceptsPanel', =>
+      @conceptsPanel = new Backbone.View
+      @conceptsPanel.render = sinon.stub().returns @conceptsPanel
+      @conceptsPanel
     @session = new Backbone.Model
       current_repository_id: "coffeebabe23"
       user: name: "Nobody"
@@ -29,6 +33,7 @@ describe "Coreon.Views.ApplicationView", ->
     Coreon.Views.Repositories.RepositorySelectView.restore()
     Coreon.Views.Widgets.WidgetsView.restore()
     Coreon.Views.Sessions.NewSessionView.restore()
+    Coreon.Views.Panels.ConceptsPanel.restore()
 
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
@@ -102,6 +107,15 @@ describe "Coreon.Views.ApplicationView", ->
         @widgets.render.should.have.been.calledOnce
         $.contains(@view.$("#coreon-top")[0], @widgets.el).should.be.true
         @view.subviews.should.contain @widgets
+
+      it 'renders concepts panel', ->
+        @view.render()
+        constructor = Coreon.Views.Panels.ConceptsPanel
+        expect( constructor ).to.have.been.calledOnce
+        expect( constructor ).to.have.been.calledWith model: @view.model
+        expect( @conceptsPanel.render ).to.have.been.calledOnce
+        parentNode = @view.$( '#coreon-main' ).get( 0 )
+        expect( $.contains parentNode, @conceptsPanel.el ).to.be.true
 
       it "enables history and triggers route", ->
         @view.render()

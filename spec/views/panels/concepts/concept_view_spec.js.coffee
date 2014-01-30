@@ -1,8 +1,7 @@
 #= require spec_helper
-#= require views/concepts/concept_view
-#= require views/concepts/concept_view
+#= require views/panels/concepts/concept_view
 
-describe 'Coreon.Views.Concepts.ConceptView', ->
+describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
   beforeEach ->
     Coreon.application = new Backbone.Model
@@ -26,7 +25,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     @concept.terms = -> terms
     @concept.propertiesByKeyAndLang = => label: [ @property ]
 
-    @view = new Coreon.Views.Concepts.ConceptView
+    @view = new Coreon.Views.Panels.Concepts.ConceptView
       model: @concept
     sinon.stub Coreon.Helpers, 'can'
     Coreon.Helpers.can.returns true

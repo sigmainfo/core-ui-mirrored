@@ -193,6 +193,10 @@ en:
       placeholder: 'loading additional terms...'
       toggle_scope: 'Toggle scope'
 
+  panels:
+    concepts:
+      title: 'Concepts'
+
   user:
     name: "Name"
     email: "Email"

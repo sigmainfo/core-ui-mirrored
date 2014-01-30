@@ -31,10 +31,10 @@ class Spinach::Features::UserTogglesMainView < Spinach::FeatureSteps
     end
   end
 
-  step 'I should see listing "Concepts" inside the main view' do
+  step 'I should see the panel "Concepts" inside the main view' do
     within main_view do
-      page.should have_selector( :listing, 'Concepts' )
-      @current = find( :listing, 'Concepts' )
+      page.should have_selector( :panel, 'Concepts' )
+      @current = find( :panel, 'Concepts' )
     end
   end
 

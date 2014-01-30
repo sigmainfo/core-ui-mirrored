@@ -8,6 +8,12 @@ Capybara.add_selector( :widget ) do
   end
 end
 
+Capybara.add_selector( :panel ) do
+  xpath do |title|
+    ".//*[ #{ has_class :panel } and .//h3/text() = '#{ title }' ]"
+  end
+end
+
 Capybara.add_selector( :concept_node ) do
   xpath do |label|
     """
@@ -21,11 +27,5 @@ Capybara.add_selector( :concept_node ) do
         ]
       ]
     """
-  end
-end
-
-Capybara.add_selector( :listing ) do
-  xpath do |caption|
-    ".//table[ preceding-sibling::h3 [text() = '#{ caption }' ] ]"
   end
 end

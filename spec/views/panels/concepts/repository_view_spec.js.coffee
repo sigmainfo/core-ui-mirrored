@@ -1,11 +1,11 @@
 #= require spec_helper
-#= require views/repositories/repository_view
+#= require views/panels/concepts/repository_view
 
-describe "Coreon.Views.Repositories.RepositoryView", ->
+describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
 
   beforeEach ->
     Coreon.Helpers.repositoryPath = -> "/coffee23/concepts/new"
-    @view = new Coreon.Views.Repositories.RepositoryView
+    @view = new Coreon.Views.Panels.Concepts.RepositoryView
       model: new Backbone.Model managers: []
     sinon.stub I18n, "t"
 

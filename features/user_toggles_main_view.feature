@@ -14,7 +14,7 @@ Feature: user toggles main view
     When I search for "screen"
     Then I should see a widget "Concept Map"
     And it should contain nodes "Monitor", "LCD Screen", and "TFT Screen"
-    And I should see listing "Concepts" inside the main view
+    And I should see the panel "Concepts" inside the main view
     And it should contain items "LCD Screen" and "TFT Screen"
     When I click on "Maximize" inside the widget "Concept Map"
     Then I should not see a widget "Concept Map"
@@ -24,7 +24,7 @@ Feature: user toggles main view
     And it should contain items "LCD Screen" and "TFT Screen"
     When I click on "Maximize" inside the widget "Concepts"
     Then I should not see a widget "Concepts"
-    And I should see listing "Concepts" inside the main view
+    And I should see "Concepts" inside the main view
     And it should contain items "LCD Screen" and "TFT Screen"
     And I should see a widget "Concept Map"
     And it should contain nodes "Monitor", "LCD Screen", and "TFT Screen"

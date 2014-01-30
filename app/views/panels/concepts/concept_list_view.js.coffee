@@ -1,14 +1,14 @@
 #= require environment
-#= require templates/concepts/concept_list
+#= require templates/panels/concepts/concept_list
 #= require views/concepts/concept_label_view
 #= require helpers/can
 #= require helpers/repository_path
 
-class Coreon.Views.Concepts.ConceptListView extends Backbone.View
+class Coreon.Views.Panels.Concepts.ConceptListView extends Backbone.View
 
   className : 'concept-list'
 
-  template  : Coreon.Templates["concepts/concept_list"]
+  template  : Coreon.Templates["panels/concepts/concept_list"]
 
   initialize: ->
     @stopListening()

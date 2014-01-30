@@ -32,6 +32,8 @@ describe "config/environment", ->
     it "prepares view namespaces", ->
       should.exist Coreon.Views
       should.exist Coreon.Views.Layout
+      should.exist Coreon.Views.Panels
+      should.exist Coreon.Views.Panels.Concepts
       should.exist Coreon.Views.Widgets
       should.exist Coreon.Views.Account
       should.exist Coreon.Views.Sessions

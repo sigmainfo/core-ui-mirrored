@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/concepts/concept_list_view
+#= require views/panels/concepts/concept_list_view
 
-describe 'Coreon.Views.Concepts.ConceptListView', ->
+describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
 
   beforeEach ->
     settings = new Backbone.Model
@@ -13,7 +13,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
     Coreon.Views.Concepts.ConceptLabelView.returns
       render: -> @
       remove: ->
-    @view = new Coreon.Views.Concepts.ConceptListView
+    @view = new Coreon.Views.Panels.Concepts.ConceptListView
       model: new Backbone.Model
         hits: []
         done: no
