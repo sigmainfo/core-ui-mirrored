@@ -5,16 +5,17 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+    sinon.stub Coreon.Views.Sessions.NewSessionView::, 'startLoop'
+    sinon.stub Coreon.Views.Sessions.NewSessionView::, 'stopLoop'
     @view = new Coreon.Views.Sessions.NewSessionView
       model: new Backbone.Model
-    sinon.spy @view, 'startLoop'
-    sinon.spy @view, 'stopLoop'
+    Coreon.Views.Sessions.NewSessionView::startLoop.reset()
+    Coreon.Views.Sessions.NewSessionView::stopLoop.reset()
 
   afterEach ->
     I18n.t.restore()
-    @view.startLoop.restore()
-    @view.stopLoop.restore()
-    @view.stopLoop()
+    Coreon.Views.Sessions.NewSessionView::startLoop.restore()
+    Coreon.Views.Sessions.NewSessionView::stopLoop.restore()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View

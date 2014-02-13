@@ -2,10 +2,12 @@
 #= require views/application_view
 
 describe "Coreon.Views.ApplicationView", ->
-  
+
   beforeEach ->
     Coreon.application = new Backbone.Model
     sinon.stub Coreon.Views.Layout, "ProgressIndicatorView", -> new Backbone.View
+    @screen = new Backbone.View
+    sinon.stub Coreon.Views.Sessions, "NewSessionView", => @screen
     sinon.stub Coreon.Views.Repositories, "RepositorySelectView", -> new Backbone.View
     sinon.stub Coreon.Views.Widgets, "WidgetsView", =>
       @widgets = new Backbone.View
@@ -26,6 +28,7 @@ describe "Coreon.Views.ApplicationView", ->
     Coreon.Views.Layout.ProgressIndicatorView.restore()
     Coreon.Views.Repositories.RepositorySelectView.restore()
     Coreon.Views.Widgets.WidgetsView.restore()
+    Coreon.Views.Sessions.NewSessionView.restore()
 
   it "is a Backbone View", ->
     @view.should.be.an.instanceof Backbone.View
@@ -35,7 +38,7 @@ describe "Coreon.Views.ApplicationView", ->
     @view.xhrFormsOn.should.equal Coreon.Modules.XhrForms.xhrFormsOn
 
   describe "initialize()", ->
-    
+
     it "enables xml form handling", ->
       @view.xhrFormsOn = sinon.spy()
       @view.initialize()
@@ -116,7 +119,7 @@ describe "Coreon.Views.ApplicationView", ->
         @view.$("#coreon-footer").should.have ".toggle"
         @view.$("#coreon-footer .toggle").should.have "h3"
         @view.$("#coreon-footer .toggle").should.have "#coreon-progress-indicator"
-      
+
       it "renders account info", ->
         I18n.t.withArgs("account.status", name: "Nobody").returns "Logged in as Nobody"
         @view.model.get("session").set "user", {name: "Nobody"}, silent: yes
@@ -143,16 +146,13 @@ describe "Coreon.Views.ApplicationView", ->
         @view.$("a.logout").should.have.text "Log out"
 
     context "without session", ->
-      
+
       beforeEach ->
         sinon.stub Backbone.history, "stop"
-        @screen = new Backbone.View
-        sinon.stub Coreon.Views.Sessions, "NewSessionView", => @screen
         @view.$el.append '<div id="coreon-main"></div>'
 
       afterEach ->
         Backbone.history.stop.restore()
-        Coreon.Views.Sessions.NewSessionView.restore()
 
       it "disables history", ->
         @view.render()
@@ -169,7 +169,7 @@ describe "Coreon.Views.ApplicationView", ->
       it "does not render footer", ->
         @view.render()
         @view.$el.should.not.have "#coreon-footer"
-        
+
   describe "switch()", ->
 
     beforeEach ->
@@ -237,7 +237,7 @@ describe "Coreon.Views.ApplicationView", ->
       @info.show.should.have.been.calledOnce
 
   describe "syncOffset()", ->
-    
+
     beforeEach ->
       sinon.stub Coreon.Views.Notifications, "NotificationView", =>
         @info = new Backbone.View
@@ -443,7 +443,7 @@ describe "Coreon.Views.ApplicationView", ->
       '''
       @event = $.Event "click"
       @event.target = @view.$(".toggle h3")[0]
-  
+
     it "is triggered by click on toggle", ->
       @view.toggle = sinon.spy()
       @view.delegateEvents()
