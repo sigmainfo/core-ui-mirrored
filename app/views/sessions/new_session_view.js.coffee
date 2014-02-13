@@ -2,8 +2,12 @@
 #= require templates/sessions/new_session
 #= require models/session
 #= require models/notification
+#= require modules/helpers
+#= require modules/loop
 
 class Coreon.Views.Sessions.NewSessionView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Loop
 
   id: "coreon-login"
 
@@ -11,10 +15,9 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
   events:
     "submit form"  : "create"
-    "change input" : "updateState"
-    "keyup input"  : "updateState"
-    "paste input"  : "updateState"
-    "cut input"    : "updateState"
+
+  initialize: ->
+    @startLoop @updateState
 
   render: ->
     @$el.html @template()
@@ -26,6 +29,7 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
   create: (event) ->
     event.preventDefault()
+    @stopLoop()
     @$("input,button").prop "disabled", yes
     Coreon.Models.Session.authenticate(@$("#coreon-login-email").val(), @$("#coreon-login-password").val())
       .done( (session) =>
@@ -35,4 +39,9 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
         else
           @$("#coreon-login-password").val ""
           @$("input,button").prop "disabled", no
+          @startLoop @updateState
       )
+
+  remove: ->
+    @stopLoop()
+    super

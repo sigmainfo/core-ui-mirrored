@@ -2,14 +2,19 @@
 #= require views/sessions/new_session_view
 
 describe "Coreon.Views.Sessions.NewSessionView", ->
-  
+
   beforeEach ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Sessions.NewSessionView
       model: new Backbone.Model
+    sinon.spy @view, 'startLoop'
+    sinon.spy @view, 'stopLoop'
 
   afterEach ->
     I18n.t.restore()
+    @view.startLoop.restore()
+    @view.stopLoop.restore()
+    @view.stopLoop()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -17,11 +22,19 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
   it "creates container", ->
     @view.$el.should.have.id "coreon-login"
 
+  describe '#initialize()', ->
+
+    it 'starts update loop', ->
+      @view.initialize()
+      startLoop = @view.startLoop
+      expect(startLoop).to.have.been.calledOnce
+      expect(startLoop).to.have.been.calledWith @view.updateState
+
   describe "render()", ->
 
     it "allows chaining", ->
       @view.render().should.equal @view
-    
+
     it "renders form", ->
       I18n.t.withArgs("account.login.submit").returns "Log in"
       @view.render()
@@ -51,7 +64,7 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
       @view.$("input[id='coreon-login-password']").should.have.attr "name", "login[password]"
       @view.$("input[id='coreon-login-password']").should.have.attr "required"
 
-  describe "updateState()", ->
+  describe "#updateState()", ->
 
     beforeEach ->
       @view.render()
@@ -60,32 +73,25 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
       @view.$("input[type='submit']").prop "disabled", true
       @view.$("#coreon-login-email").val "foo@bar.com"
       @view.$("#coreon-login-password").val "bar"
-      @view.$("#coreon-login-password").keyup()
+      @view.updateState()
       @view.$("input[type='submit']").should.not.be.disabled
-      
+
     it "disables submit button when login is empty", ->
       @view.$("input[type='submit']").prop "disabled", false
       @view.$("#coreon-login-email").val ""
       @view.$("#coreon-login-password").val "bar"
-      @view.$("#coreon-login-password").keyup()
+      @view.updateState()
       @view.$("input[type='submit']").should.be.disabled
 
     it "disables submit button when password is empty", ->
       @view.$("input[type='submit']").prop "disabled", false
       @view.$("#coreon-login-email").val "foo@bar.com"
       @view.$("#coreon-login-password").val ""
-      @view.$("#coreon-login-password").keyup()
+      @view.updateState()
       @view.$("input[type='submit']").should.be.disabled
 
-    it "updates state on paste", ->
-      @view.$("input[type='submit']").prop "disabled", true
-      @view.$("#coreon-login-email").val "foo@bar.com"
-      @view.$("#coreon-login-password").val "bar"
-      @view.$("#coreon-login-password").trigger "paste"
-      @view.$("input[type='submit']").should.not.be.disabled
-
   describe "create()", ->
-    
+
     beforeEach ->
       sinon.stub Coreon.Models.Session, "authenticate", => @request = $.Deferred()
       @event = $.Event "submit"
@@ -93,14 +99,14 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
 
     afterEach ->
       Coreon.Models.Session.authenticate.restore()
-      
+
     it "is triggered on submit", ->
       @view.create = sinon.spy()
       @view.delegateEvents()
       @view.$("form").trigger @event
       @view.create.should.have.been.calledOnce
       @view.create.should.have.been.calledWith @event
-      
+
     it "prevents default", ->
       @event.preventDefault = sinon.spy()
       @view.create @event
@@ -111,8 +117,13 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
       @view.create @event
       @view.$('[type="submit"]').should.be.disabled
 
+    it 'stops update loop', ->
+      @view.create @event
+      stopLoop = @view.stopLoop
+      expect(stopLoop).to.have.been.calledOnce
+
     context "session request", ->
-      
+
       beforeEach ->
         @view.$("#coreon-login-email").val "nobody@login.me"
         @view.$("#coreon-login-password").val "xxx"
@@ -124,7 +135,7 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
         Coreon.Models.Session.authenticate.should.have.been.calledWith "nobody@login.me", "xxx"
 
       context "no session", ->
-        
+
         it "clears password field on failure", ->
           @view.create @event
           @request.resolve null
@@ -134,6 +145,13 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
           @view.create @event
           @request.resolve null
           @view.$(":disabled").should.have.lengthOf 0
+
+        it 'restarts update loop', ->
+          @view.create @event
+          @request.resolve null
+          startLoop = @view.startLoop
+          expect(startLoop).to.have.been.calledOnce
+          expect(startLoop).to.have.been.calledWith @view.updateState
 
       context "with session", ->
 
@@ -150,14 +168,27 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
           @view.model.get("session").should.equal @session
 
         it "creates notification message", ->
-          I18n.t.withArgs("notifications.account.login", name: "William Blake").returns "Successfully logged in as William Blake." 
+          I18n.t.withArgs("notifications.account.login", name: "William Blake").returns "Successfully logged in as William Blake."
           @session.set "user", name: "William Blake", silent: yes
           @view.create @event
           @request.resolve @session
           Coreon.Models.Notification.info.should.have.been.calledOnce
           Coreon.Models.Notification.info.should.have.been.calledWith "Successfully logged in as William Blake."
 
-          
-        
-        
-           
+  describe '#remove()', ->
+
+    beforeEach ->
+      sinon.spy Backbone.View::, 'remove'
+
+    afterEach ->
+      Backbone.View::remove.restore()
+
+    it 'calls super', ->
+      @view.remove()
+      superImplementation = Backbone.View::remove
+      expect(superImplementation).to.have.been.calledOnce
+
+    it 'stops update loop', ->
+      stopLoop = @view.stopLoop
+      @view.remove()
+      expect(stopLoop).to.have.been.calledOnce
