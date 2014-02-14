@@ -67,8 +67,8 @@ $widget-width: 320px;
   border: none;
   outline:0;
   $bg-color: rgba(0,0,0, 0.1);
-  background: $bg-color image-url("layout/icons.png") no-repeat 0 -50px;
-  @include retina-icons;
+  background: $bg-color image-url("layout/icons.svg") no-repeat 0 -50px;
+//  @include retina-icons;
   text-indent: -2000px;
   overflow: hidden;
   @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
@@ -111,8 +111,8 @@ $widget-width: 320px;
     display: block;
     width: 16px;
     height: 16px;
-    background: image-url("layout/icons.png") no-repeat 0px 0px;
-    @include retina-icons;
+    background: image-url("layout/icons.svg") no-repeat 0px 0px;
+//    @include retina-icons;
 }
 
 @mixin concept-icon {
@@ -256,11 +256,11 @@ $widget-width: 320px;
 }
 
 @mixin retina-icons {
-  background-image: image-url('layout/icons.png');
-  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/icons@2x.png');
-      @include background-size(100px 1000px);
-  } 
+  background-image: image-url('layout/icons.svg');
+//  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+//      background-image: image-url('layout/icons@2x.png');
+//      @include background-size(100px 1000px);
+//  } 
 }
 
 @mixin retina-separator {

@@ -30,10 +30,11 @@
       float: left;
       width: 28px;
       height: 28px;
-      background: image-url("layout/icons.png") no-repeat 6px -96px;
+      @include retina-icons;
+      background-position: 3px 0px;
       @include retina-icons;
       &:hover {
-        background-position: -44px -96px;
+        background-position: -47px 0px;
       };
     }
 

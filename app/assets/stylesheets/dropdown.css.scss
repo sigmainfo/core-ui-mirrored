@@ -9,11 +9,11 @@
     height: 14px;
     width: 18px;
     left: 0;
-    background-position: 3px -104px;
+    background-position: 1px -7px;
   }
   &:hover {
     &:before {
-      background-position: -47px -104px;
+      background-position: -49px -7px;
     };
     cursor: pointer;
   }
@@ -51,15 +51,8 @@
     
     &:before {
       height: 18px;
-      width: 22px;
-      background-position: 5px -103px;
+      margin-left: 3px;
     };
-    &:hover {
-      &:before {
-        background-position: -45px -103px;
-      };
-    
-    }
   }
   
 }
