@@ -39,7 +39,7 @@ $widget-width: 320px;
     content: "";
     display: inline-block;
     position: absolute;
-    background: image-url("layout/loadingWhite@2x.png") no-repeat 2px 2px;
+    background: image-url("layout/loadingWhite.svg") no-repeat 2px 2px;
     @include background-size(16px 16px);
     @include border-radius(10px);
     background-color: rgba($greytext-color, 0.4);
@@ -247,21 +247,10 @@ $widget-width: 320px;
     }
 }
 
-@mixin retina-logos {
-  background-image: image-url('layout/coreon.png');
-  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/coreon@2x.png');
-      @include background-size(415px 800px);
-  }
-}
 
 @mixin retina-icons {
   background-image: image-url('layout/icons.svg');
   background-repeat: no-repeat;
-//  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-//      background-image: image-url('layout/icons@2x.png');
-//      @include background-size(100px 1000px);
-//  } 
 }
 
 @mixin retina-separator {
@@ -282,18 +271,10 @@ $widget-width: 320px;
 }
 
 @mixin dottedline {
-  background-image: image-url('layout/dottedline.png');
+  background-image: image-url('layout/dottedline.svg');
   background-repeat: repeat-x;
-  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/dottedline@2x.png');
-      @include background-size(12px 1px);
-  } 
 }
 
 @mixin retina-stripes($color) {
-  background-image: image-url('layout/stripes-#{$color}.png');
-  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-      background-image: image-url('layout/stripes-#{$color}@2x.png');
-      @include background-size(4px 8px);
-  } 
+  background-image: image-url('layout/stripes-#{$color}.svg');
 }
