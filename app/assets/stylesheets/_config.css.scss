@@ -257,6 +257,7 @@ $widget-width: 320px;
 
 @mixin retina-icons {
   background-image: image-url('layout/icons.svg');
+  background-repeat: no-repeat;
 //  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 //      background-image: image-url('layout/icons@2x.png');
 //      @include background-size(100px 1000px);
