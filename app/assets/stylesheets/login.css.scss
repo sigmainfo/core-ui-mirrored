@@ -37,9 +37,6 @@
     width: 520px;
     padding-bottom: 50px;
     margin-left: 380px;
-    // position: absolute;
-    // top: 99px;
-    // left: 380px;
     background:image-url("layout/separator.png") repeat-x bottom;
     @include retina-separator;
 
@@ -50,8 +47,9 @@
       height:30px;
       padding-left:30px;
       border: none;
-      background:image-url("layout/icons.png") no-repeat 0 3px;
+      background:image-url("layout/icons.svg") no-repeat 0 3px;
       @include retina-icons;
+      background-position: -3px -1250px;
       outline:0;
       font: 1.5em Palatino;
       color: $text-color;
