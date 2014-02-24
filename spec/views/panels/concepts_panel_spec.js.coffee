@@ -102,30 +102,47 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
       beforeEach ->
         view.model.set 'selection', null, silent: yes
 
-      it 'creates repository view', ->
-        constructor = Coreon.Views.Panels.Concepts.RepositoryView
-        constructor.reset()
-        repository = new Backbone.Model
-        view.model.set 'repository', repository, silent: yes
-        view.switchView()
-        expect(constructor).to.have.been.calledOnce
-        expect(constructor).to.have.been.calledWithNew
-        expect(constructor).to.have.been.calledWith model: repository
-        currentView = view.currentView
-        expect(currentView).to.equal repositoryView
+      context 'without repository', ->
 
-      it 'appends repository view', ->
-        view.switchView()
-        content = view.$('.content').get(0)
-        el = repositoryView.el
-        expect($.contains content, el).to.be.true
+        beforeEach ->
+          view.model.set 'repository', null, silent: yes
 
-      it 'renders repository view', ->
-        render = sinon.stub()
-        render.returns repositoryView
-        repositoryView.render = render
-        view.switchView()
-        expect(render).to.have.been.calledOnce
+        it 'does not create repository view', ->
+          constructor = Coreon.Views.Panels.Concepts.RepositoryView
+          constructor.reset()
+          view.switchView()
+          expect(constructor).to.not.have.been.called
+
+      context 'with repository set', ->
+
+        repository = null
+
+        beforeEach ->
+          repository = new Backbone.Model
+          view.model.set 'repository', repository, silent: yes
+
+        it 'creates repository view', ->
+          constructor = Coreon.Views.Panels.Concepts.RepositoryView
+          constructor.reset()
+          view.switchView()
+          expect(constructor).to.have.been.calledOnce
+          expect(constructor).to.have.been.calledWithNew
+          expect(constructor).to.have.been.calledWith model: repository
+          currentView = view.currentView
+          expect(currentView).to.equal repositoryView
+
+        it 'appends repository view', ->
+          view.switchView()
+          content = view.$('.content').get(0)
+          el = repositoryView.el
+          expect($.contains content, el).to.be.true
+
+        it 'renders repository view', ->
+          render = sinon.stub()
+          render.returns repositoryView
+          repositoryView.render = render
+          view.switchView()
+          expect(render).to.have.been.calledOnce
 
     context 'with selection', ->
 
@@ -137,7 +154,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
       context 'concept listing scope', ->
 
         beforeEach ->
-          view.model.set 'scope', 'all', silent: yes
+          view.model.set 'scope', 'index', silent: yes
 
         it 'creates concept list view', ->
           constructor = Coreon.Views.Panels.Concepts.ConceptListView
@@ -162,10 +179,10 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
           view.switchView()
           expect(render).to.have.been.calledOnce
 
-      context 'single concept scope', ->
+      context 'pager scope', ->
 
         beforeEach ->
-          view.model.set 'scope', 'single', silent: yes
+          view.model.set 'scope', 'pager', silent: yes
 
         it 'creates concept view', ->
           constructor = Coreon.Views.Panels.Concepts.ConceptView

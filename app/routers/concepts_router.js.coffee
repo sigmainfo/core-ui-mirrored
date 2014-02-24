@@ -1,9 +1,6 @@
 #= require environment
 #= require models/concept
 #= require models/concept_search
-#= require views/concepts/concept_view
-#= require views/concepts/new_concept_view
-#= require views/concepts/concept_list_view
 
 class Coreon.Routers.ConceptsRouter extends Backbone.Router
 
@@ -18,14 +15,11 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @route new_with_parent, "newWithParent"
     @route search_concept,  "search"
 
-
   initialize: (@view) ->
 
   show: (repository, id) ->
     @view.repository repository
     concept = Coreon.Models.Concept.find id, fetch: yes
-    @view.switch new Coreon.Views.Concepts.ConceptView
-      model: concept
     Coreon.Collections.Hits.collection().reset [ result: concept ]
 
   newWithParent: (repository, parent_id) ->
@@ -35,8 +29,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       attrs =
         superconcept_ids: [parent_id]
       concept = new Coreon.Models.Concept attrs
-      @view.switch new Coreon.Views.Concepts.NewConceptView
-        model: concept
       Coreon.Collections.Hits.collection().reset [ result: concept ]
     else
       Backbone.history.navigate "/", trigger: true
@@ -48,8 +40,6 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       attrs = {}
       attrs.terms = [ lang: lang, value: value ] if value?
       concept = new Coreon.Models.Concept attrs
-      @view.switch new Coreon.Views.Concepts.NewConceptView
-        model: concept
       Coreon.Collections.Hits.collection().reset [ result: concept ]
     else
       Backbone.history.navigate "/", trigger: true
@@ -62,8 +52,5 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     search = new Coreon.Models.ConceptSearch
       query: query
       target: target
-
-    @view.switch new Coreon.Views.Concepts.ConceptListView
-      model: search
 
     search.fetch()

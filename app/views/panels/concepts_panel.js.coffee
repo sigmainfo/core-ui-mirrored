@@ -27,18 +27,21 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
     @currentView =
       if selection = @model.get 'selection'
-        if @model.get('scope') is 'single'
-          new Coreon.Views.Panels.Concepts.ConceptView
-            model: selection.first()
-        else
+        if @model.get('scope') is 'index'
           new Coreon.Views.Panels.Concepts.ConceptListView
             model: selection
+        else
+          new Coreon.Views.Panels.Concepts.ConceptView
+            model: selection.first()
       else
-        new Coreon.Views.Panels.Concepts.RepositoryView
-          model: @model.get('repository')
+        if repository = @model.get('repository')
+          new Coreon.Views.Panels.Concepts.RepositoryView
+            model: repository
+        else
+          null
 
-    @$('.content').append @currentView.render().$el
+    @$('.content').append @currentView?.render().$el
 
   render: ->
-    @currentView.render()
+    @currentView?.render()
     @

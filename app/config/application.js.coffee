@@ -9,24 +9,53 @@
 class Coreon.Application extends Backbone.Model
 
   defaults:
-    el: "#coreon-app"
-    editMode: false
+    el: '#coreon-app'
+    auth_root: ''
+    session: null
+    selection: null
+    repository: null
+    scope: 'index'
+    editing: false
 
   initialize: ->
     unless Coreon.application?
       Coreon.application = @
     else
-      throw new Error "Coreon application already initialized"
-    Coreon.Models.Session.auth_root = @get "auth_root"
-    view = new Coreon.Views.ApplicationView model: @, el: @get "el"
-    new router view for name, router of Coreon.Routers
+      throw new Error 'Coreon application already initialized'
+
+    new Coreon.Views.ApplicationView model: @, el: @get('el')
+
+    new router(@) for name, router of Coreon.Routers
 
   start: ->
-    unless @has "auth_root"
-      throw new Error "Authorization service root URL not given"
+    if authRoot = @get('auth_root')
+      Coreon.Models.Session.authRoot = authRoot
+    else
+      throw new Error 'Authorization service root URL not given'
+
+    @stopListening()
+
+    @listenTo @, 'change:session', @watchSession
+    @set 'session', null
     Coreon.Models.Session.load().always (session) =>
-      @set "session", session
+      @set 'session', session, silent: yes
+      @trigger 'change:session', @, session
+
     @
+
+  watchSession: ->
+    if previous = @previous('session')
+      @stopListening previous
+    if current = @get('session')
+      @listenTo current, 'change:repository', @updateRepository
+    @updateRepository()
+
+  updateRepository: ->
+    current = if session = @get('session')
+      session.get('repository')
+    else
+      null
+    @set 'repository', current
 
   graphUri: ->
     if repository = @repository() then repository.get("graph_uri") else null
@@ -70,3 +99,4 @@ class Coreon.Application extends Backbone.Model
     lang = @repositorySettings()?.get('targetLanguage') or null
     lang = null if lang is 'none'
     lang
+

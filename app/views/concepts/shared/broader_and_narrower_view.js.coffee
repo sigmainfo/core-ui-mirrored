@@ -44,9 +44,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       _.defer => @renderNarrower()
 
   render: ->
-    @$el.html @template model: @model, editable: !@model.isNew(), editMode: @editMode
+    @$el.html @template model: @model, editable: !@model.isNew(), editing: @editing
 
-    if @editMode
+    if @editing
       @activateDropzones()
       $(window).on "keydown.coreonSubmit", (evt) =>
         if evt.keyCode is 13 and $(":focus").length == 0 or $(":focus").parents(".broader-and-narrower").length == 1
@@ -89,7 +89,7 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     superconcept_ids = @model.get "superconcept_ids"
     if superconcept_ids.length > 0
       @broader = @renderConcepts @$(".broader ul"), superconcept_ids
-    else unless @model.blank or @editMode
+    else unless @model.blank or @editing
       @$(".broader ul").html "<li>#{@repositoryLabel repository: Coreon.application.get("session").currentRepository()}</li>"
 
   renderNarrower: ->
@@ -207,8 +207,8 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
 
   toggleEditMode: ->
-    @editMode = !@editMode
-    if @editMode
+    @editing = !@editing
+    if @editing
       @model = new Coreon.Models.BroaderAndNarrowerForm {}, concept: @model
     else
       @model = @model.concept
@@ -218,6 +218,6 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
     @draggableOn @$(".self")
 
   preventLabelClicks: (evt)->
-    if @editMode
+    if @editing
       evt.preventDefault()
       evt.stopPropagation()

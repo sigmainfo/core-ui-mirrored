@@ -1,7 +1,7 @@
 %h3= I18n.t "concept.broader_and_narrower"
 
 
--if @editMode
+-if @editing
   != @form_for "concept", @model, ->
     .list
       .left

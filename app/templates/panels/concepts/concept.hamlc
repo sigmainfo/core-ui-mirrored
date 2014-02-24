@@ -15,9 +15,9 @@
 
   != @render "concepts/info", data: @concept.info()
 
-- if @editMode and @editProperties
+- if @editing and @editProperties
   != @render "concepts/edit_properties", concept: @concept, editToggle: yes
-- else if @editMode or @concept.get("properties")?.length > 0
+- else if @editing or @concept.get("properties")?.length > 0
   != @render "concepts/properties", properties: @concept.propertiesByKeyAndLang(), editToggle: yes
 
 .terms
@@ -34,7 +34,7 @@
       %ul
         - if terms.length > 0
           - for term in terms
-            - if @editMode and @editTerm is term.id
+            - if @editing and @editTerm is term.id
               != @render 'terms/new_term', term: term, reset: true
             - else
               != @render 'concepts/term', term: term

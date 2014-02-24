@@ -56,7 +56,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     it 'is triggered by edit mode change', ->
       @view.render = sinon.spy()
       @view.initialize()
-      Coreon.application.trigger 'change:editMode'
+      Coreon.application.trigger 'change:editing'
       expect( @view.render ).to.have.been.calledOnce
       expect( @view.render ).to.have.been.calledOn @view
 
@@ -90,7 +90,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     context 'edit mode off', ->
 
       beforeEach ->
-        Coreon.application.set 'editMode', off, silent: yes
+        Coreon.application.set 'editing', off, silent: yes
 
       it 'classifies el', ->
         @view.render()
@@ -100,7 +100,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     context 'edit mode on', ->
 
       beforeEach ->
-        Coreon.application.set 'editMode', on, silent: yes
+        Coreon.application.set 'editing', on, silent: yes
 
       it 'classifies el', ->
         @view.render()
@@ -576,7 +576,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
     beforeEach ->
       @view.render()
-      Coreon.application.set 'editMode', off
+      Coreon.application.set 'editing', off
 
     it 'is triggered by click on edit mode toggle', ->
       @view.toggleEditMode = sinon.stub().returns false
@@ -586,16 +586,16 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
     it 'toggles edit mode value', ->
       @view.$('.edit-concept').click()
-      expect( Coreon.application.get 'editMode' ).to.be.true
+      expect( Coreon.application.get 'editing' ).to.be.true
       @view.$('.edit-concept').click()
-      expect( Coreon.application.get 'editMode' ).to.be.false
+      expect( Coreon.application.get 'editing' ).to.be.false
 
   describe '#toggleEditConceptProperties()', ->
 
     beforeEach ->
       @concept.properties = -> models: []
       @concept.persistedAttributes = -> {}
-      Coreon.application.set 'editMode', on, silent: yes
+      Coreon.application.set 'editing', on, silent: yes
       @view.editProperties = no
       @view.render()
 
@@ -617,14 +617,14 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       expect( @view.render ).to.have.been.calledOnce
 
     it 'renders properties template in edit mode', ->
-      @view.editMode = yes
+      @view.editing = yes
       @view.editProperties = no
       @view.render()
       expect( @view.$el ).to.have('section.properties')
       expect( @view.$el ).to.not.have('section.edit')
 
     it 'renders properties edit template in edit properties mode', ->
-      @view.editMode = yes
+      @view.editing = yes
       @view.editProperties = yes
       @view.render()
       expect( @view.$el ).to.have('section.properties.edit')

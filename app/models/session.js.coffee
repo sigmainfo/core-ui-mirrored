@@ -3,14 +3,15 @@
 #= require models/concept
 #= require models/ability
 #= require collections/clips
+#= require collections/hits
 
 repository = null
 
 class Coreon.Models.Session extends Backbone.Model
 
-  @auth_root = null
+  @authRoot = null
 
-  @load = () ->
+  @load = ->
     request = $.Deferred()
     if token = localStorage.getItem "coreon-session"
       session = new @ auth_token: token
@@ -35,12 +36,12 @@ class Coreon.Models.Session extends Backbone.Model
 
   idAttribute: "auth_token"
 
-  urlRoot: -> "#{Coreon.Models.Session.auth_root.replace /\/$/, ''}/login"
+  urlRoot: -> "#{Coreon.Models.Session.authRoot.replace /\/$/, ''}/login"
 
   initialize: ->
     @off()
     @on "change:auth_token", @onChangeToken, @
-    @on "change:current_repository_id", @onChangeRepository, @
+    @on "change:current_repository_id", @updateRepository, @
 
   reauthenticate: (password) ->
     @unset "auth_token"
@@ -102,9 +103,11 @@ class Coreon.Models.Session extends Backbone.Model
     else
       localStorage.removeItem "coreon-session"
 
-  onChangeRepository: ->
+  updateRepository: ->
     Coreon.Models.Concept.collection().reset []
     Coreon.Collections.Clips.collection().reset []
+    Coreon.Collections.Hits.collection().reset []
+    @set 'repository', @currentRepository()
 
   destroy: (options) ->
     localStorage.removeItem "coreon-session"

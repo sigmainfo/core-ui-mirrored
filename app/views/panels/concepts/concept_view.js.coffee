@@ -63,7 +63,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   initialize: ->
     @stopListening()
     @listenTo @model, "change", @render
-    @listenTo Coreon.application, 'change:editMode', @render
+    @listenTo Coreon.application, 'change:editing', @render
 
     if settings = Coreon.application?.repositorySettings()
       @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
@@ -95,16 +95,16 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
     hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
-    editMode = Coreon.application.get 'editMode'
+    editing = Coreon.application.get 'editing'
 
-    @$el.toggleClass 'edit', editMode
-    @$el.toggleClass 'show', not editMode
+    @$el.toggleClass 'edit', editing
+    @$el.toggleClass 'show', not editing
 
     @$el.html @template
       concept: @model
       langs: sortedTermsByLang
       hasTermProperties: hasTermProperties
-      editMode: editMode
+      editing: editing
       editProperties: @editProperties
       editTerm: @editTerm
 
@@ -150,8 +150,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       .addClass "selected"
 
   toggleEditMode: ->
-    Coreon.application.set 'editMode',
-      not Coreon.application.get 'editMode'
+    Coreon.application.set 'editing',
+      not Coreon.application.get 'editing'
 
   toggleEditConceptProperties: (evt)->
     evt.preventDefault() if evt?

@@ -5,9 +5,9 @@
 
 class Coreon.Views.Panels.Concepts.RepositoryView extends Backbone.View
 
-  template: Coreon.Templates["panels/concepts/repository"]
+  template: Coreon.Templates['panels/concepts/repository']
 
-  className: "repository show"
+  className: 'repository show'
 
   render: ->
     @$el.html @template

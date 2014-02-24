@@ -2,7 +2,7 @@
 #= require views/account/password_prompt_view
 
 describe "Coreon.Views.Account.PasswordPromptView", ->
-  
+
   beforeEach ->
     @view = new Coreon.Views.Account.PasswordPromptView model: new Backbone.Model
 
@@ -16,17 +16,17 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
 
     beforeEach ->
       sinon.stub I18n, "t"
-    
+
     afterEach ->
       I18n.t.restore()
 
     it "can be chained", ->
       @view.render().should.equal @view
-    
+
     it "renders prompt", ->
      @view.render()
      @view.$el.should.have ".prompt"
-    
+
     it "renders message", ->
       I18n.t.withArgs("account.password_prompt.message").returns "Please enter password:"
       @view.render()
@@ -52,13 +52,13 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
 
     it "renders logout link", ->
       I18n.t.withArgs("account.logout").returns "Log out"
-      @view.render() 
+      @view.render()
       @view.$el.should.have "a.logout"
       @view.$("a.logout").should.have.attr "href", "/logout"
       @view.$("a.logout").should.have.text I18n.t "account.logout"
 
   describe "on submit", ->
-    
+
     beforeEach ->
       @event = $.Event "submit"
       @view.model = new Backbone.Model
