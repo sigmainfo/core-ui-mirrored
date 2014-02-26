@@ -77,9 +77,8 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
       repository = new Backbone.Model
 
     it 'switches to given repository', ->
-      set = sinon.spy()
-      session.set = set
+      select = sinon.spy()
+      app.selectRepository = select
       router.show '50990fb960303934ea000041'
-      expect(set).to.have.been.calledOnce
-      expect(set).to.have.been.calledWith 'current_repository_id'
-                                        , '50990fb960303934ea000041'
+      expect(select).to.have.been.calledOnce
+      expect(select).to.have.been.calledWith '50990fb960303934ea000041'

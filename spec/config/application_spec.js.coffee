@@ -139,6 +139,19 @@ describe 'Coreon.Application', ->
       expect(change).to.have.been.calledOnce
       expect(change).to.have.been.calledWith app, null
 
+  describe '#selectRepository()', ->
+
+    session = null
+
+    beforeEach ->
+      session = new Backbone.Model
+      app.set 'session', session, silent: yes
+
+    it 'selects repository on session', ->
+      app.selectRepository 'my-repo-789'
+      id = app.get('session').get('current_repository_id')
+      expect(id).to.equal 'my-repo-789'
+
   describe '#updateRepository()', ->
 
     repository = null

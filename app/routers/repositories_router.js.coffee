@@ -21,4 +21,4 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
       @navigate 'logout'
 
   show: (id) ->
-    @session().set('current_repository_id', id)
+    @app.selectRepository id

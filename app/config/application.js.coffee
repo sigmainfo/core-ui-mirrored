@@ -57,6 +57,9 @@ class Coreon.Application extends Backbone.Model
       null
     @set 'repository', current
 
+  selectRepository: (id) ->
+    @get('session').set 'current_repository_id', id
+
   graphUri: ->
     if repository = @repository() then repository.get("graph_uri") else null
 
