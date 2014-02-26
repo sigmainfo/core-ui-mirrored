@@ -23,10 +23,9 @@
     display: block;
     width: 60px;
     height: 36px;
-    background: image-url("layout/coreon.png") no-repeat -34px -196px;
+    background: image-url("layout/coreon.svg") no-repeat -34px -196px;
     text-indent: -2000px;
     overflow: hidden;
-    @include retina-logos;
   }
   
   #coreon-account {

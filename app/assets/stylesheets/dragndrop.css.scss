@@ -19,22 +19,25 @@
   &:after {
     @include before-icon;
     position: absolute;
-    left: -9px;
-    top: -5px;
-    width: 24px;
-    height: 24px;
-    background-position: 0px -700px;
+    left: -10px;
+    top: -6px;
+    width: 20px;
+    height: 20px;
+    @include border-radius(10px);
+    @include single-box-shadow($text-color, 1px, 1px, 2px);
+    background-color: $browncolor;
+    background-position: -149px -1000px;
   };
 }
 .ui-droppable-connect {
   &:after {
-    background-position: 0px -750px;
+    background-position: -147px -1050px;
   };
 }
 
 .ui-droppable-disconnect {
   &:after {
-    background-position: -50px -750px;
+    background-position: -148px -1098px;
   };
 }
 .ui-droppable-hovered {

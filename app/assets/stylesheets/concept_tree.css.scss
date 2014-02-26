@@ -41,7 +41,7 @@
           height: 4px;
           position: absolute;
           top: -4px;
-          background: image-url("layout/bracket.png") no-repeat 0px 0px;
+          background: image-url("layout/bracket.svg") no-repeat 0px 0px;
         };
         &:after {
           content:"";
@@ -50,13 +50,13 @@
           height: 4px;
           position: absolute;
           bottom: -4px;
-          background: image-url("layout/bracket.png") no-repeat 0px bottom;
+          background: image-url("layout/bracket.svg") no-repeat 0px bottom;
         };
     }
     
     .broader {
       padding-right: 20px;
-      background: image-url("layout/bracket.png") no-repeat right center;
+      background: image-url("layout/bracket.svg") no-repeat right center;
       &:before {
         right: 0;
       };
@@ -66,7 +66,7 @@
     }
     .narrower {
       padding-left: 16px;
-      background: image-url("layout/bracket.png") no-repeat left center;
+      background: image-url("layout/bracket.svg") no-repeat left center;
       &:before {
         left: 0;
       };

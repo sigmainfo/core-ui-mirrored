@@ -6,7 +6,7 @@
 
 
   h4:before {
-    background-position: 0px -900px;
+    background-position: -1px -952px;
   }
 
 
@@ -14,14 +14,14 @@
 
     &:before {
       @include before-icon;
-      background-position: 0 -950px;
+      background-position: 0 -851px;
       width: 18px;
       height: 18px;
     }
 
     &:hover {
       &:before {
-        background-position: -50px -950px;
+        background-position: -50px -851px;
       }
     }
 

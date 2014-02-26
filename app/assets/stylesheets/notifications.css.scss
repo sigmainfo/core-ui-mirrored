@@ -43,12 +43,12 @@
       float: right;
       position: relative;
       top: 3px;
-      background: image-url("layout/icons.png") no-repeat -50px 1px;
       @include retina-icons;
-      @include opacity(0.5);
+      background-position: -150px -452px;
+      @include opacity(0.4);
 
       &:hover {
-        @include opacity(1);
+        @include opacity(0.8);
       };
     }
     

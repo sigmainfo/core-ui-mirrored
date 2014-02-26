@@ -23,6 +23,7 @@
         @include before-icon;
         float: left;
         padding-right: 1px;
+        @include opacity(0.7);
       }
     }
 

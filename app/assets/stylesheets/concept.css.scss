@@ -37,38 +37,37 @@ div.concept {
     display: inline-block;
     width: 18px;
     height: 18px;
-    background-image: image-url("layout/icons.png");
-    background-repeat: no-repeat;
     @include retina-icons;
 
   }
   
   .concept-to-clipboard {   
-    background-position: -3px -650px;
+    background-position: -52px -1002px;
+    @include scale(1.1);
     &.remove {
-      background-position: -53px -650px;
+      background-position: -102px -1002px;
     }
   }
   .system-info-toggle {
     background-color: rgba($greencolor, 0.08);
-    background-position: -1px -201px;
+    background-position: -48px -650px;
 
     &:hover {
       cursor: pointer;
-      background-position: -51px -201px;
+      background-position: -98px -650px;
       background-color: rgba($link-color, 0.15);  
     };
   }
   
   .properties-toggle {
     background-color: rgba($greencolor, 0.08);
-    background-position: 2px -846px;
+    background-position: -49px -599px;
     float: right;
     margin: 6px;
 
     &:hover {
       cursor: pointer;
-      background-position: -48px -846px;
+      background-position: -99px -599px;
       background-color: rgba($link-color, 0.15);  
     };
     
@@ -166,14 +165,14 @@ div.concept {
         &:before {
           @include before-icon;
           position: absolute;
-          bottom: -10px;
+          bottom: -8px;
           left: 10px;
-          background-position: -04px -100px;
+          background-position: -6px 0px;
         }
 
         &:first-child {
           &:before {
-            left: 0;
+            left: 0px;
           };
         }
       }
@@ -265,13 +264,13 @@ div.concept {
           height: 18px;
           @include rotate(0deg);
           background-color: rgba($greencolor, 0.08);
-          background-position: 2px -846px;
+          background-position: -49px -599px;
         };
         &:hover {
           background-color: rgba($greencolor, 0.04);
           &:before { 
             background-color: rgba($link-color, 0.2);   
-            background-position: -48px -846px;
+            background-position: -99px -599px;
           };
         };
       }
@@ -298,7 +297,7 @@ div.concept {
         background: rgba($greencolor, 0.08);
         &:before {
           @include rotate(0deg);
-          background-position: -50px -103px;
+          background-position: -51px -6px;
         };
         &:hover {
           cursor: pointer;
@@ -307,7 +306,7 @@ div.concept {
       &.collapsed h3 {
         &:before {
           @include rotate(-90deg);
-          background-position: -53px -103px;
+          background-position: -53px -7px;
         };
       }
     }
@@ -326,7 +325,6 @@ div.concept {
     
     h2 {
       font-size: 1.6em;
-//      line-height: 1em;
       min-height: 1em;
       padding: 2px 6px 3px 16px;
       margin-bottom: 6px;

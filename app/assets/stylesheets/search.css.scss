@@ -30,10 +30,10 @@
       float: left;
       width: 28px;
       height: 28px;
-      background: image-url("layout/icons.png") no-repeat 6px -96px;
       @include retina-icons;
+      background-position: 3px 0px;
       &:hover {
-        background-position: -44px -96px;
+        background-position: -47px 0px;
       };
     }
 
@@ -47,7 +47,7 @@
   
   input[type="submit"] {
     @include submit-button;
-    background-position: 0 -50px;   
+    background-position: -100px -1200px;   
   }
   
 }

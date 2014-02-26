@@ -3,20 +3,20 @@
 
 #coreon-concept-map {
   h4:before {
-    background-position: -50px -900px;
+    background-position: -2px -902px;
   }
   
   .zoom-in {
 
     &:before {
       @include before-icon;
-      background-position: 0 -300px;
+      background-position: 1px -350px;
     }
 
     &:hover {
 
       &:before {
-        background-position: -50px -300px;
+        background-position: -49px -350px;
       }
     }
   }
@@ -25,13 +25,13 @@
 
     &:before {
       @include before-icon;
-      background-position: 0 -250px;
+      background-position: 1px -400px;
     }
 
     &:hover {
 
       &:before {
-        background-position: -50px -250px;
+        background-position: -49px -400px;
       }
     }
   }
@@ -40,13 +40,13 @@
 
     &:before {
       @include before-icon;
-      background-position: 0 -450px;
+      background-position: 0 -800px;
     }
 
     &:hover {
 
       &:before {
-        background-position: -50px -450px;
+        background-position: -50px -800px;
       }
     }
   }

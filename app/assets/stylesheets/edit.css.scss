@@ -20,7 +20,7 @@
       @include before-icon;
       float: left;
       height: 13px;
-      background-position: -3px -354px;
+      background-position: -151px -304px;
     };
   }
   &.create-concept {
@@ -34,12 +34,11 @@
     left: 0;
     top: -30px;
     &:before {
-      background-position: -54px -504px;
+      background-position: -152px -703px;
       margin-right: 3px;
     };
   }
 }
-
 
 .concept form {
   position: relative;
@@ -132,7 +131,7 @@
        float: right;
        height: 12px;
        margin-left: 4px;
-       background-position: 0px -404px;
+       background-position: -148px -56px;
      };
 
       &:hover {
@@ -239,7 +238,7 @@ form.create.term {
      @include before-icon;
      float: left;
      margin-right: 5px;
-     background-position: -2px -351px;
+     background-position: -151px -302px;
      @include edit-button;
    };
    &:not(.disabled){
@@ -254,13 +253,13 @@ form.create.term {
   }
   a.remove-term, a.remove-property, a.delete-concept {
    &:before {
-     background-position: -52px -351px;
+     background-position: -149px -751px;
    };
   }
 
   a.edit-properties, a.edit-term, a.edit-connections {
    &:before {
-     background-position: -52px -502px;
+     background-position: -150px -701px;
    };
   }
   
@@ -347,7 +346,8 @@ form.create.term {
     color: $greencolor;
     margin-left: -38px;
     &:before {
-      background-position: -4px -504px;
+      background-position: -2px -703px;
+      @include opacity(0.7);
     };
   }
   
