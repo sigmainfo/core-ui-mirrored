@@ -410,36 +410,44 @@ describe "Coreon.Views.ApplicationView", ->
       @view.repository "myrepositoryzuio"
       @view.model.get("session").get("current_repository_id").should.equal "myrepositoryzuio"
 
-  describe "query()", ->
+  describe '#updateQuery()', ->
+
+    input = null
+    hint = null
 
     beforeEach ->
+      $('#konacha').append @view.$el
       @view.$el.append '''
         <input id="coreon-search-query" type="text" name="q" value=""/>
         <div id="coreon-search-target-select">
           <p class="hint">I am a hint</p>
         </div>
       '''
-      @input = @view.$("#coreon-search-query")
-      @hint = @view.$("#coreon-search-target-select .hint")
+      input = @view.$('#coreon-search-query')
+      hint = @view.$('#coreon-search-target-select .hint')
 
-    it "returns value from search input", ->
-      @input.val "whappan?"
-      @view.query().should.equal "whappan?"
+    it 'is triggerd when query changes', ->
+      update = sinon.spy()
+      @view.updateQuery = update
+      @view.initialize()
+      @view.model.trigger 'change:query'
+      expect(update).to.have.been.calledOnce
+      expect(update).to.have.been.calledOn @view
 
-    it "sets value on search input", ->
-      @view.query "poet"
-      @input.should.have.value "poet"
+    it 'sets value on search input', ->
+      @view.model.set 'query', 'poet', silent: yes
+      @view.updateQuery()
+      expect(input).to.have.value 'poet'
 
-    it "hides hint when query is not empty", ->
-      $("#konacha").append @view.$el
-      @view.query "poet"
-      @hint.should.be.hidden
+    it 'hides hint when query is not empty', ->
+      @view.model.set 'query', 'poet', silent: yes
+      @view.updateQuery()
+      expect(hint).to.be.hidden
 
-    it "shows hint when query is empty", ->
-      $("#konacha").append @view.$el
-      @hint.hide()
-      @view.query ""
-      @hint.should.be.visible
+    it 'shows hint when query is empty', ->
+      @view.model.set 'query', '', silent: yes
+      @view.updateQuery()
+      expect(hint).to.be.visible
 
   describe "toggle()", ->
 

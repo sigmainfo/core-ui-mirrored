@@ -8,7 +8,7 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   step 'a concept with label "panopticum" exists' do
     @concept = create_concept_with_label "panopticum"
   end
- 
+
   step 'I should see a button "Add narrower concept"' do
     page.should have_link("Add narrower concept")
   end
@@ -18,7 +18,7 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the new concept page' do
-    page.current_path.should == "/#{@repository.id}/concepts/new/parent/#{@concept['id']}"
+    page.current_path.should == "/#{@repository.id}/concepts/new/broader/#{@concept['id']}"
   end
 
   step 'I should see "panopticum" within the list of broader concepts' do

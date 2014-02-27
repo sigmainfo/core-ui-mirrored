@@ -19,7 +19,7 @@
     .edit
       %a.edit-connections( href="javascript:void(0)" title="#{I18n.t('concept.edit_concept_connections')}" )= I18n.t('concept.edit_concept_connections')
       - if @can "create", Coreon.Models.Concept
-        %a.add-narrower{ href: @repositoryPath("concepts/new/parent/#{@model.id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
+        %a.add-narrower{ href: @repositoryPath("concepts/new/broader/#{@model.id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
   .list
     .left
       .broader

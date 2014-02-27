@@ -27,9 +27,13 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @session = null
     @main = null
     @modal = null
+
+    @stopListening()
     @listenTo @model, "change:session", @render
+    @listenTo @model, "change:query", @updateQuery
     @listenTo Coreon.Models.Notification.collection(), "add", @notify
     @listenTo Coreon.Models.Notification.collection(), "reset", @clearNotifications
+
     @xhrFormsOn()
 
   render: ->
@@ -105,12 +109,15 @@ class Coreon.Views.ApplicationView extends Backbone.View
     else
       null
 
-  query: (query) ->
+  updateQuery: ->
     input = @$ "#coreon-search-query"
     hint = @$ "#coreon-search-target-select .hint"
-    input.val query if query?
-    if query then hint.hide() else hint.show()
-    input.val()
+    if query = @model.get('query')
+      input.val query
+      hint.hide()
+    else
+      input.val ''
+      hint.show()
 
   updateSession: ->
     previous = @session

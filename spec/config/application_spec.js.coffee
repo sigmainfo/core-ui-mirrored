@@ -58,6 +58,10 @@ describe 'Coreon.Application', ->
       editing = app.get('editing')
       expect(editing).to.be.false
 
+    it 'has no query string', ->
+      query = app.get('query')
+      expect(query).to.equal ''
+
   describe '#initialize()', ->
 
     it 'makes instance globally accessible', ->

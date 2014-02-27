@@ -16,6 +16,7 @@ class Coreon.Application extends Backbone.Model
     repository: null
     scope: 'index'
     editing: false
+    query: ''
 
   initialize: ->
     unless Coreon.application?
