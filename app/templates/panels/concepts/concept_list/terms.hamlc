@@ -1,0 +1,8 @@
+- for lang in @langs
+  %tr.lang{class: lang.name}
+    %th= lang.name
+    %td<
+      - for term, index in lang.terms
+        - unless index is 0
+          %span>= ' | '
+        = term

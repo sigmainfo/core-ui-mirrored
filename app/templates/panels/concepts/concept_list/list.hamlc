@@ -1,0 +1,14 @@
+- for concept in @concepts
+  %tr.concept-list-item
+    %td
+      %table
+        %tbody
+          %tr.label
+            %td{ colspan: 2 }
+          %tr.broader
+            %th= I18n.t('concepts.list.headers.broader')
+            %td
+          - if definition = concept.definition
+            %tr.definition
+              %th= I18n.t('concepts.list.headers.definition')
+              %td= definition

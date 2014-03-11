@@ -10,6 +10,7 @@
 #= require modules/persisted_attributes
 #= require modules/path
 #= require modules/core_api
+#= require modules/collation
 #= require collections/hits
 #= require collections/concepts
 
@@ -49,11 +50,17 @@ class Coreon.Models.Concept extends Backbone.Model
 
   initialize: (attrs, options) ->
     @set "label", @_label(), silent: true
-    @on "change:#{@idAttribute} change:terms change:properties", @_updateLabel, @
+    @on "change:#{@idAttribute} change:terms change:properties"
+      , @_updateLabel
+      , @
     if Coreon.application?.repositorySettings()
-      @listenTo Coreon.application.repositorySettings(), 'change:sourceLanguage change:targetLanguage', @_updateLabel, @
+      @listenTo Coreon.application.repositorySettings()
+              , 'change:sourceLanguage change:targetLanguage'
+              , @_updateLabel
     @_updateHit()
-    @listenTo Coreon.Collections.Hits.collection(), "reset add remove", @_updateHit
+    @listenTo Coreon.Collections.Hits.collection()
+            , "reset add remove"
+            , @_updateHit
     @remoteValidationOn()
     @once "sync", @syncMessage, @ if @isNew()
     @persistedAttributesOn()
@@ -127,7 +134,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @trigger "create", @, @id
 
   broader: ->
-    @get('superconcept_ids').map (id) ->
+    concepts = @get('superconcept_ids').map (id) ->
       Coreon.Models.Concept.find id
 
   definition: ->

@@ -618,11 +618,16 @@ describe 'Coreon.Models.Concept', ->
 
   describe '#broader()', ->
 
+    sorted = null
+
     beforeEach ->
       sinon.stub Coreon.Models.Concept, 'find'
+      sinon.stub Coreon.Modules.Collation, 'sortBy', ->
+        sorted = @.slice()
 
     afterEach ->
       Coreon.Models.Concept.find.restore()
+      Coreon.Modules.Collation.sortBy.restore()
 
     it 'returns a set containing the superconcepts', ->
       parent = new Backbone.Model

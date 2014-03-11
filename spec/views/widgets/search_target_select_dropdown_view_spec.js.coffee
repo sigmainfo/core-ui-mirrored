@@ -3,12 +3,12 @@
 #= require models/search_type
 
 describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
-  
+
   beforeEach ->
     sinon.stub I18n, "t"
     @view = new Coreon.Views.Widgets.SearchTargetSelectDropdownView
       model: new Coreon.Models.SearchType
-     
+
   afterEach ->
     I18n.t.restore()
 
@@ -19,7 +19,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
     @view.$el.should.have.id "coreon-search-target-select-dropdown"
 
   describe "render()", ->
-    
+
     it "is chainable", ->
       @view.render().should.equal @view
 
@@ -40,7 +40,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.$("ul li.option").eq(0).should.have.class "selected"
 
   describe "alignTo()", ->
-  
+
     beforeEach ->
       @parent = $("<input>").appendTo $("#konacha")
       $("#konacha").append @view.render().$el
@@ -79,7 +79,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.alignTo.should.have.been.calledWith @parent
 
   describe "#onClick", ->
-    
+
     beforeEach ->
       @event = jQuery.Event "click"
 
@@ -95,7 +95,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.remove.should.have.been.calledOnce
 
   describe "#onSelect", ->
-    
+
     beforeEach ->
       @event = jQuery.Event "click"
 
@@ -118,8 +118,8 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.onFocus = sinon.spy()
       @view.delegateEvents()
       @view.$("li.option").eq(1).trigger @event
-      @view.onFocus.should.have.been.calledWith @event 
-      
+      @view.onFocus.should.have.been.calledWith @event
+
     it "adds class to focused element only", ->
       @view.$("li.option").eq(1).addClass "focus"
       @view.$("li.option").eq(0).trigger @event
@@ -127,11 +127,11 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.$("li.option").eq(1).should.not.have.class "focus"
 
   describe "#onBlur", ->
-    
+
     beforeEach ->
       @event = jQuery.Event "mouseout"
       @view.render()
-    
+
     it "is triggered when hovering out of an option", ->
       @view.onBlur = sinon.spy()
       @view.delegateEvents()
@@ -146,7 +146,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.$("li.option").eq(1).should.not.have.class "focus"
 
   describe "#onKeydown", ->
-    
+
     beforeEach ->
       @event = $.Event "keydown"
       $("#konacha").append @view.render().$el
@@ -182,7 +182,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @event.keyCode = 13
       @view.onKeydown @event
       @view.model.get("selectedTypeIndex").should.equal 0
-      @view.remove.should.have.been.calledOnce    
+      @view.remove.should.have.been.calledOnce
 
     it "moves focus down on <down>", ->
       @event.keyCode = 40

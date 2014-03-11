@@ -8,7 +8,7 @@
 
 class Coreon.Application extends Backbone.Model
 
-  defaults:
+  defaults: ->
     el: '#coreon-app'
     auth_root: ''
     session: null
@@ -17,6 +17,7 @@ class Coreon.Application extends Backbone.Model
     scope: 'index'
     editing: false
     query: ''
+    langs: []
 
   initialize: ->
     unless Coreon.application?
@@ -35,6 +36,10 @@ class Coreon.Application extends Backbone.Model
       throw new Error 'Authorization service root URL not given'
 
     @stopListening()
+
+    # @listenTo Backbone.history
+    #         , 'route'
+    #         , @clearQuery
 
     @listenTo @, 'change:session', @watchSession
     @set 'session', null
@@ -104,3 +109,5 @@ class Coreon.Application extends Backbone.Model
     lang = null if lang is 'none'
     lang
 
+  lang: ->
+    @sourceLang() or 'en'

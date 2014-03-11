@@ -1,0 +1,2 @@
+%tr
+  %td.empty-list= I18n.t 'concepts.list.empty', query: @query

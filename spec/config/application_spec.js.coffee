@@ -62,6 +62,10 @@ describe 'Coreon.Application', ->
       query = app.get('query')
       expect(query).to.equal ''
 
+    it 'has no langs selected', ->
+      langs = app.get('langs')
+      expect(langs).to.eql []
+
   describe '#initialize()', ->
 
     it 'makes instance globally accessible', ->
@@ -312,3 +316,14 @@ describe 'Coreon.Application', ->
       app.set 'session', null, silent: yes
       should.equal app.graphUri(), null
 
+  describe '#lang()', ->
+
+    it 'returns source lang when given', ->
+      app.sourceLang = -> 'hu'
+      lang = app.lang()
+      expect(lang).to.equal 'hu'
+
+    it 'falls back to en', ->
+      app.sourceLang = -> null
+      lang = app.lang()
+      expect(lang).to.equal 'en'

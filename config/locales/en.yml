@@ -49,7 +49,6 @@ en:
 
   concepts:
     list:
-      title: 'Concepts'
       empty: 'No concepts found for "{{query}}"'
       headers:
         broader: 'Broader'

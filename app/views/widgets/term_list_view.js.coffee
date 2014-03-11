@@ -122,14 +122,6 @@ class Coreon.Views.Widgets.TermListView extends Backbone.View
     else
       null
 
-  # langs: ->
-  #   if source = @model.get( 'source' )
-  #     langs = " (#{ source.toUpperCase() }"
-  #     langs += ", #{ target.toUpperCase() }"if target = @model.get( 'target' )
-  #     langs += ')'
-  #   else
-  #     ''
-
   resize: (size) ->
     size.height ?= defaults.size[1]
     @$el.height size.height

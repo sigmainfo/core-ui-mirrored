@@ -23,11 +23,15 @@ describe 'Creon.Models.Search', ->
 
   describe '#params()', ->
 
-    beforeEach ->
-      @repositoryCache = new Coreon.Models.RepositoryCache()
+    app = null
 
-      Coreon.application =
-        repositorySettings: => @repositoryCache
+    beforeEach ->
+      app = new Backbone.Model
+      @repositoryCache = new Coreon.Models.RepositoryCache {}
+                                                         , app: app
+
+      app.repositorySettings = => @repositoryCache
+      Coreon.application = app
 
       @model.set query: 'gun'
 
