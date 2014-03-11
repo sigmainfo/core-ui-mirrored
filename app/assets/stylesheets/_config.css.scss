@@ -11,13 +11,15 @@ $hover-color: #5fba83;
 $browncolor: #554f3c;
 $darkbrowncolor: #58513d;
 $greencolor: #717a53;
-$greycolor: #e3e9e3;
+$greycolor: #e1ebe9;
 $greytext-color: #989791;
-$beigecolor: #f1f4f0;
+$beigecolor: #f0f3f4;
 $error-color: #f25a5a;
 $notice-color: #6bc175;
 
 $widget-width: 320px;
+
+$serif: Georgia;
 
 @mixin editmode {
   &:before {
@@ -112,7 +114,6 @@ $widget-width: 320px;
     width: 16px;
     height: 16px;
     background: image-url("layout/icons.svg") no-repeat 0px 0px;
-//    @include retina-icons;
 }
 
 @mixin concept-icon {

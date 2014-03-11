@@ -90,7 +90,7 @@
 
         .lang {
           td {
-            font: 1.1em Palatino;
+            font: 1.1em $serif;
             line-height: 1.4em;
 
           }
@@ -155,7 +155,7 @@
 
           tr.lang {
             td {
-              font: 1em Palatino;
+              font: 1em $serif;
               line-height: 1.3em;
             }
           }

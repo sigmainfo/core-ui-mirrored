@@ -77,7 +77,8 @@
 
       &.term td {
         display: inline-block;
-        font: 1em Palatino;
+        font: 0.94em $serif;
+//        text-shadow: 0px 0px 1px $greytext-color;
         padding: 3px 0px 1px 0;
         width: 50%;
         word-wrap: break-word;
