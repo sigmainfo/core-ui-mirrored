@@ -19,7 +19,7 @@ $notice-color: #6bc175;
 
 $widget-width: 320px;
 
-$serif: Georgia;
+$serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
 
 @mixin editmode {
   &:before {

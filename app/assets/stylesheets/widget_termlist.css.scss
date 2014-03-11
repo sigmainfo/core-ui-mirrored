@@ -77,9 +77,9 @@
 
       &.term td {
         display: inline-block;
-        font: 0.94em $serif;
-//        text-shadow: 0px 0px 1px $greytext-color;
-        padding: 3px 0px 1px 0;
+        font: 1em $serif;
+//        text-shadow: 0px 0px 0.2px $greytext-color;
+        padding: 4px 0px 2px 0;
         width: 50%;
         word-wrap: break-word;
         color: darken($greytext-color, 20);
@@ -98,7 +98,7 @@
       }
 
       &.hit a {
-        color: $hit-color;
+        color: darken($hit-color, 5);
       }
 
       &:last-child {
