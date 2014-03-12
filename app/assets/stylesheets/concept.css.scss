@@ -217,7 +217,8 @@ div.concept {
     position: relative;
 
     h4.value {
-      font: 1.4em Palatino;
+      font: 1.3em $serif;
+//      text-shadow: 0px 0px 1px rgba($text-color, 0.2);
       margin-left: 112px;
       margin-right: 30px;
       padding: 8px 0 6px 0;
