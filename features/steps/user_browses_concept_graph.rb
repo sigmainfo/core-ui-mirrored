@@ -26,7 +26,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'I should see the widget "Concept Map"' do
-    page.should have_css(".widget h4", text: "Concept Map")
+    page.should have_css(".widget h3", text: "Concept Map")
   end
 
   step 'it should show the repository root node only' do

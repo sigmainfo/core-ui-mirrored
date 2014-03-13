@@ -5,7 +5,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
   include Api::Graph::Factory
 
   def term_list_title
-    find( '.widget h4', text: 'Term List' )
+    find( '.widget h3', text: 'Term List' )
   end
 
   def term_list

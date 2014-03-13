@@ -47,7 +47,7 @@ class Spinach::Features::UserBrowsesTermHitsInSourceLanguage < Spinach::FeatureS
   end
 
   step 'the "Term List" widget should contain 3 items' do
-    @terms = page.find('.widget .titlebar h4', text: 'Term List').find(:xpath, '../..')
+    @terms = page.find('.widget .titlebar h3', text: 'Term List').find(:xpath, '../..')
     @terms.should have_css('tbody tr', count: 3)
   end
 

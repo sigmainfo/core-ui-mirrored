@@ -8,7 +8,7 @@ class Spinach::Features::UserSelectsSourceLanguage < Spinach::FeatureSteps
   end
 
   step 'I should see a widget "Languages"' do
-    page.should have_css ".widget h4", text: "Languages"
+    page.should have_css ".widget h3", text: "Languages"
   end
 
   step 'I should see a dropdown with "None", "English", "German", and "French"' do
