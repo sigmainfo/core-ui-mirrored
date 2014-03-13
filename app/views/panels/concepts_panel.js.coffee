@@ -5,6 +5,7 @@
 #= require views/panels/concepts/repository_view
 #= require views/panels/concepts/concept_list_view
 #= require views/panels/concepts/concept_view
+#= require views/panels/concepts/new_concept_view
 
 class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
@@ -31,8 +32,13 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
           new Coreon.Views.Panels.Concepts.ConceptListView
             model: selection
         else
-          new Coreon.Views.Panels.Concepts.ConceptView
-            model: selection.first()
+          model = selection.first()
+          if model.isNew()
+            new Coreon.Views.Panels.Concepts.NewConceptView
+              model: model
+          else
+            new Coreon.Views.Panels.Concepts.ConceptView
+              model: model
       else
         if repository = @model.get('repository')
           new Coreon.Views.Panels.Concepts.RepositoryView

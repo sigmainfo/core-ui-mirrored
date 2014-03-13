@@ -6,11 +6,14 @@ describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
   view = null
   selection = null
   app = null
+  repository = null
 
   beforeEach ->
     settings = new Backbone.Model
+    repository = new Backbone.Model
+    repository.path = -> '/my-repo'
     app = new Backbone.Model
-      repository: new Backbone.Model
+      repository: repository
     app.sourceLanguage = ->
     app.targetLanguage = ->
     app.lang = -> 'en'
@@ -110,17 +113,15 @@ describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
           can.withArgs('create', Coreon.Models.Concept).returns yes
 
         it 'renders button for creating a new concept', ->
-          app.set
-            query: 'März'
-            repository: new Backbone.Model id: 'repo-1'
-          , silent: yes
+          repository.path = -> '/repo-1'
+          app.set 'query', 'März', silent: yes
           app.lang = -> 'de'
           I18n.t.withArgs('concept.new').returns 'New concept'
           view.render()
           button = view.$('.edit a.create-concept')
           expect(button).to.exist
           expect(button).to.have.attr 'href'
-                                    , 'repo-1/concepts/new/terms/de/M%C3%A4rz'
+                                    , '/repo-1/concepts/new/terms/de/M%C3%A4rz'
           expect(button).to.have.text 'New concept'
 
       context 'without maintainer privileges', ->
@@ -238,91 +239,3 @@ describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
         el = terms.el
         expect($.contains table, el).to.be.true
 
-  # beforeEach ->
-  #   settings = new Backbone.Model
-  #   Coreon.application =
-  #     sourceLang: -> null
-  #     targetLang: -> null
-  #     repositorySettings: -> settings
-  #   sinon.stub Coreon.Views.Concepts, 'ConceptLabelView'
-  #   Coreon.Views.Concepts.ConceptLabelView.returns
-  #     render: -> @
-  #     remove: ->
-  #   @view = new Coreon.Views.Panels.Concepts.ConceptListView
-  #     model: new Backbone.Model
-  #       hits: []
-  #       done: no
-  #
-  # afterEach ->
-  #   Coreon.Views.Concepts.ConceptLabelView.restore()
-  #   delete Coreon.application
-  #
-  #
-  # describe '#render()', ->
-  #
-  #     context 'with hits', ->
-  #
-  #       beforeEach ->
-  #         @results = ['ball', 'ballistics', '8-ball'].map (label) ->
-  #           concept = new Backbone.Model label: label
-  #           concept.broader = -> []
-  #           concept.definition = -> null
-  #           concept.termsByLang = -> {}
-  #           concept
-  #
-  #
-  #       context 'terms', ->
-  #
-  #         beforeEach ->
-  #           concept = @results[0]
-  #           concept.termsByLang = ->
-  #             en: [
-  #               new Backbone.Model( value: 'gun' )
-  #               new Backbone.Model( value: 'balloon' )
-  #             ]
-  #             de: [
-  #               new Backbone.Model( value: 'Schuh' )
-  #             ]
-  #
-  #         it 'renders English terms by default', ->
-  #           Coreon.application.sourceLang = -> null
-  #           Coreon.application.targetLang = -> null
-  #           @view.render()
-  #           row = @view.$ 'tr.concept-list-item:first'
-  #           expect( row ).to.have('tr.lang')
-  #           expect( row.find 'tr.lang' ).to.have.lengthOf 1
-  #           expect( row.find 'tr.lang th' ).to.have.text 'en'
-  #           terms = row.find('tr.lang td').text()
-  #           expect( terms ).to.match /^balloon\s+|\s+gun$/
-  #
-  #         it 'renders terms of source lang', ->
-  #           Coreon.application.sourceLang = -> 'de'
-  #           Coreon.application.targetLang = -> null
-  #           @view.render()
-  #           row = @view.$ 'tr.concept-list-item:first'
-  #           expect( row ).to.have('tr.lang')
-  #           expect( row.find 'tr.lang' ).to.have.lengthOf 1
-  #           expect( row.find 'tr.lang th' ).to.have.text 'de'
-  #           expect( row.find('tr.lang td').text() ).to.equal 'Schuh'
-  #
-  #         it 'renders terms of target lang', ->
-  #           Coreon.application.sourceLang = -> 'en'
-  #           Coreon.application.targetLang = -> 'de'
-  #           @view.render()
-  #           row = @view.$ 'tr.concept-list-item:first'
-  #           expect( row ).to.have('tr.lang')
-  #           expect( row.find 'tr.lang' ).to.have.lengthOf 2
-  #           expect( row.find 'tr.lang:first th' ).to.have.text 'en'
-  #           expect( row.find 'tr.lang:last th' ).to.have.text 'de'
-  #           terms =  row.find('tr.lang:last td').text()
-  #           expect( terms ).to.equal 'Schuh'
-  #
-  #         it 'renders empty cell if no terms are given', ->
-  #           Coreon.application.sourceLang = -> 'hu'
-  #           Coreon.application.targetLang = -> null
-  #           @view.render()
-  #           row = @view.$ 'tr.concept-list-item:first'
-  #           expect( row ).to.have('tr.lang')
-  #           expect( row.find 'tr.lang' ).to.have.lengthOf 1
-  #           expect( row.find 'tr.lang:first th' ).to.have.text 'hu'
-  #           expect( row.find 'tr.lang:first td' ).to.have.text ''

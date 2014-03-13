@@ -37,8 +37,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".broader-and-narrower .self", text: "<New concept>")
   end
 
-  step 'I should see "Repository" within the list of broader concepts' do
-    page.should have_css(".broader-and-narrower .broader li", text: "Repository")
+  step 'I should see "Nobody\'s Repository" within the list of broader concepts' do
+    page.should have_css(".broader-and-narrower .broader li", text: "Nobody's Repository")
   end
 
   step 'I should see a new concept node "<New concept>" within the concept map' do

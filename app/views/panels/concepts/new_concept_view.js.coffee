@@ -13,7 +13,7 @@
 #= require modules/helpers
 #= require modules/nested_fields_for
 
-class Coreon.Views.Concepts.NewConceptView extends Backbone.View
+class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
 
@@ -32,7 +32,8 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     "submit form"              : "create"
     "click .cancel"            : "cancel"
 
-  initialize: ->
+  initialize: (attrs, options = {})->
+    @app = options.app or Coreon.application
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
@@ -60,13 +61,14 @@ class Coreon.Views.Concepts.NewConceptView extends Backbone.View
     request.done =>
       Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
       Coreon.Models.Concept.collection().add @model
-      Backbone.history.navigate "#{Coreon.application.get("session").currentRepository().id}/concepts/#{@model.id}", trigger: true
+      Backbone.history.navigate @model.path(), trigger: true
 
     request.fail => @render()
 
   cancel: ->
-    path = "/#{Coreon.application.repository().id}"
-    path += "/#{parentId}" if parentId = @model.get("superconcept_ids")?[0]
+    path = @app.get('repository').path()
+    if parentId = @model.get('superconcept_ids')[0]
+      path += "/concepts/#{parentId}"
     Backbone.history.navigate path, trigger: true
 
   remove: ->

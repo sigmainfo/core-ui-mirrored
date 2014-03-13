@@ -139,6 +139,16 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       selected = selection.first()
       expect(selected).to.equal concept
 
+    it 'always triggers update on selection', ->
+      concept = new Backbone.Model
+      find = Coreon.Models.Concept.find
+      find.withArgs('my-concept-234', fetch: yes).returns concept
+      router.show 'my-concept-234'
+      callback = sinon.spy()
+      app.on 'change:selection', callback
+      router.show 'my-concept-234'
+      expect(callback).to.have.been.calledOnce
+
     it 'updates hits', ->
       concept = new Backbone.Model
       find = Coreon.Models.Concept.find

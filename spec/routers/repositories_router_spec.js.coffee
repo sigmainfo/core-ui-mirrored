@@ -72,13 +72,20 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
   describe '#show()', ->
 
     repository = null
+    select = null
 
     beforeEach ->
+      select = sinon.spy()
+      app.selectRepository = select
       repository = new Backbone.Model
 
     it 'switches to given repository', ->
-      select = sinon.spy()
-      app.selectRepository = select
       router.show '50990fb960303934ea000041'
       expect(select).to.have.been.calledOnce
       expect(select).to.have.been.calledWith '50990fb960303934ea000041'
+
+    it 'clears selection', ->
+      app.set 'selection', new Backbone.Collection, silent: yes
+      router.show '50990fb960303934ea000041'
+      selection = app.get('selection')
+      expect(selection).to.be.null

@@ -7,6 +7,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
   repositoryView = null
   conceptListView = null
   conceptView = null
+  newConceptView = null
 
   beforeEach ->
     sinon.stub I18n, 't'
@@ -23,6 +24,10 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
     sinon.stub Coreon.Views.Panels.Concepts, 'ConceptView', ->
       conceptView
 
+    newConceptView = new Backbone.View
+    sinon.stub Coreon.Views.Panels.Concepts, 'NewConceptView', ->
+      newConceptView
+
     view = new Coreon.Views.Panels.ConceptsPanel
       model: new Backbone.Model
 
@@ -30,6 +35,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
     Coreon.Views.Panels.Concepts.RepositoryView.restore()
     Coreon.Views.Panels.Concepts.ConceptListView.restore()
     Coreon.Views.Panels.Concepts.ConceptView.restore()
+    Coreon.Views.Panels.Concepts.NewConceptView.restore()
     I18n.t.restore()
 
   it 'is a panel view', ->
@@ -146,9 +152,10 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
     context 'with selection', ->
 
-      selection = new Backbone.Collection
+      selection = null
 
       beforeEach ->
+        selection = new Backbone.Collection
         view.model.set 'selection', selection, silent: yes
 
       context 'concept listing scope', ->
@@ -181,33 +188,68 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
       context 'pager scope', ->
 
+        concept = null
+
         beforeEach ->
           view.model.set 'scope', 'pager', silent: yes
-
-        it 'creates concept view', ->
-          constructor = Coreon.Views.Panels.Concepts.ConceptView
-          constructor.reset()
           concept = new Backbone.Model
           selection.add concept
-          view.switchView()
-          expect(constructor).to.have.been.calledOnce
-          expect(constructor).to.have.been.calledWithNew
-          expect(constructor).to.have.been.calledWith model: concept
-          currentView = view.currentView
-          expect(currentView).to.equal conceptView
 
-        it 'appends concept view', ->
-          view.switchView()
-          content = view.$('.content').get(0)
-          el = conceptView.el
-          expect($.contains content, el).to.be.true
+        context 'persisted concept', ->
 
-        it 'renders concept view', ->
-          render = sinon.stub()
-          render.returns conceptView
-          conceptView.render = render
-          view.switchView()
-          expect(render).to.have.been.calledOnce
+          beforeEach ->
+            concept.isNew = -> no
+
+          it 'creates concept view', ->
+            constructor = Coreon.Views.Panels.Concepts.ConceptView
+            constructor.reset()
+            view.switchView()
+            expect(constructor).to.have.been.calledOnce
+            expect(constructor).to.have.been.calledWithNew
+            expect(constructor).to.have.been.calledWith model: concept
+            currentView = view.currentView
+            expect(currentView).to.equal conceptView
+
+          it 'appends concept view', ->
+            view.switchView()
+            content = view.$('.content').get(0)
+            el = conceptView.el
+            expect($.contains content, el).to.be.true
+
+          it 'renders concept view', ->
+            render = sinon.stub()
+            render.returns conceptView
+            conceptView.render = render
+            view.switchView()
+            expect(render).to.have.been.calledOnce
+
+        context 'new concept', ->
+
+          beforeEach ->
+            concept.isNew = -> yes
+
+          it 'creates new concept view', ->
+            constructor = Coreon.Views.Panels.Concepts.NewConceptView
+            constructor.reset()
+            view.switchView()
+            expect(constructor).to.have.been.calledOnce
+            expect(constructor).to.have.been.calledWithNew
+            expect(constructor).to.have.been.calledWith model: concept
+            currentView = view.currentView
+            expect(currentView).to.equal newConceptView
+
+          it 'appends new concept view', ->
+            view.switchView()
+            content = view.$('.content').get(0)
+            el = newConceptView.el
+            expect($.contains content, el).to.be.true
+
+          it 'renders new concept view', ->
+            render = sinon.stub()
+            render.returns newConceptView
+            newConceptView.render = render
+            view.switchView()
+            expect(render).to.have.been.calledOnce
 
   describe '#render()', ->
 

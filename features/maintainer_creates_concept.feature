@@ -15,7 +15,7 @@ Feature: maintainer creates concept
     And I should see "<New concept>" within the title
     And I should see a section "BROADER & NARROWER"
     And I should see "<New concept>" being the current selection
-    And I should see "Repository" within the list of broader concepts
+    And I should see "Nobody's Repository" within the list of broader concepts
     And I should see a new concept node "<New concept>" within the concept map
     When I click "Create concept"
     Then I should be on the show concept page
@@ -101,6 +101,7 @@ Feature: maintainer creates concept
     And I should not see "<New concept>"
     But I should see link "New concept"
 
+  @focus
   Scenario: term from recent search
     When I do a search for "corpse"
     And I click on "New concept"

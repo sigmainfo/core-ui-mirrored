@@ -31,6 +31,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
   can: Coreon.Helpers.can
 
   updateSelection: (concepts) ->
+    @app.set 'selection', null, silent: yes
     scope = if concepts.length > 1 then 'index' else 'pager'
     selection = new Backbone.Collection concepts
     @hits.reset selection.map( (concept) -> result: concept )
