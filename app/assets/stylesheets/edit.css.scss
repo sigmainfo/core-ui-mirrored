@@ -10,19 +10,22 @@
   color: white;
   display: inline-block;
   @include edit-button;
+  
   &.big {
     padding-left: 2px;
     text-transform: uppercase;
     font-size: 0.8em;
     line-height: 1.5em;
     height: 12px;
+    
     &:before {
       @include before-icon;
       float: left;
       height: 13px;
       background-position: -151px -304px;
-    };
+    }
   }
+  
   &.create-concept {
     @extend .big;
   }
@@ -33,10 +36,11 @@
     position: absolute;
     left: 0;
     top: -30px;
+    
     &:before {
       background-position: -152px -703px;
       margin-right: 3px;
-    };
+    }
   }
 }
 
@@ -53,15 +57,18 @@
      padding-top: 18px;
      background-color: darken(rgba($button-color, 0.12), 4);
    }
+   
    &.term {
      margin-bottom: 4px;
      @include single-box-shadow(rgba($greencolor, 0.8), 0px, 1px, 1px, false);
    }
+   
    &.concept {
      &>.properties fieldset {
        margin-bottom: 0;
      }
    }
+   
    &.concept section div.edit, &.term .properties .edit {
      position: relative;
      background: none;
@@ -111,41 +118,41 @@
      background-color: darken(rgba($button-color, 0.18), 15);
      padding: 3px 10px;
 
-   .cancel, .reset, button {
-     @extend .button;
-     margin: 6px;
-     padding: 5px 8px 3px 8px;
-     float: none;
-     font-size: 1em;
-   }
+     .cancel, .reset, button {
+       @extend .button;
+       margin: 6px;
+       padding: 5px 8px 3px 8px;
+       float: none;
+       font-size: 1em;
+     }
 
-   button {
-     @include box-sizing(content-box);
-     border: 0;
-     padding-bottom: 4px;
-     background-color: $button-color;
-     @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-     @include retina-stripes(white);
-     &:after {
-       @include before-icon;
-       float: right;
-       height: 12px;
-       margin-left: 4px;
-       background-position: -148px -56px;
-     };
+     button {
+       @include box-sizing(content-box);
+       border: 0;
+       padding-bottom: 4px;
+       background-color: $button-color;
+       @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+       @include retina-stripes(white);
+       &:after {
+         @include before-icon;
+         float: right;
+         height: 12px;
+         margin-left: 4px;
+         background-position: -148px -56px;
+       }
 
-      &:hover {
-        background-color: saturate($button-color, 10);
-      };
+        &:hover {
+          background-color: saturate($button-color, 10);
+        }
 
-      &:disabled {
-       &:hover {
-          cursor: default;
+        &:disabled {
+         &:hover {
+            cursor: default;
+            background-color: desaturate($button-color, 20);
+          }
           background-color: desaturate($button-color, 20);
-       };
-       background-color: desaturate($button-color, 20);
+        }
       }
-    }
 
    }
    .disabled, button:disabled {
