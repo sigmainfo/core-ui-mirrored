@@ -1,4 +1,5 @@
 #coreon-search {
+  
   @include box-sizing(border-box);
   padding: 11px 14px;
   background-color: $search-bg-color;
@@ -26,11 +27,11 @@
       float: left;
       width: 28px;
       height: 28px;
-      @include retina-icons;
+      @include svg-icons;
       background-position: 3px 0px;
       &:hover {
         background-position: -47px 0px;
-      };
+      }
     }
 
     .hint {
@@ -38,14 +39,11 @@
       color: lighten($text-color, 60%);
       padding-top: 6px;
     }
-
   }
   
   input[type="submit"] {
-    @include submit-button;
     background-position: -100px -1200px;   
   }
-  
 }
 
 

@@ -1,7 +1,7 @@
 .ui-draggable {
   &:hover {
     @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px);
-  };
+  }
 }
 
 .ui-draggable-dragging {
@@ -9,9 +9,11 @@
   @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 2px, 2px, 4px);
   max-width: 400px;
 }
+
 .ui-draggable-dragged {
   @include opacity(0.5);
 }
+
 .ui-droppable-clipboard, .ui-droppable-connect, .ui-droppable-disconnect {
   &:after {
     @include before-icon;
@@ -24,29 +26,29 @@
     @include single-box-shadow($text-color, 1px, 1px, 2px);
     background-color: $label-color;
     background-position: -149px -1000px;
-  };
+  }
 }
+
 .ui-droppable-connect {
   &:after {
     background-position: -147px -1050px;
-  };
+  }
 }
 
 .ui-droppable-disconnect {
   &:after {
     background-position: -148px -1098px;
-  };
+  }
 }
 .ui-droppable-hovered {
   &:after {
     display: none;
-  };
+  }
 }
 
 h2.concept-label {
   font-size: 1em;
 }
-
 
 .broader-and-narrower {
 
@@ -54,16 +56,19 @@ h2.concept-label {
       @include droparea;
       padding: 4px 6px 24px 6px;
       @include retina-stripes("white");
+      
       li {
         margin: 2px 0;
         .concept-label {
           @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
         }
       }
+      
       &.ui-state-highlight {
           background-color: rgba($button-hover-color, 0.4);
 
       }
+      
       &.ui-state-hovered {
           background-color: rgba($button-hover-color, 0.6);
       }

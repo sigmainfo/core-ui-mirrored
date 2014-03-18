@@ -2,15 +2,6 @@
   margin-right: 270px;
   min-width: 200px;
 
-  h3 {
-    text-transform: uppercase;
-    color: $button-color;
-    font-size: 0.9em;
-    position: relative;
-    display: block;
-    height: 18px;
-  }
-
   .edit {
     height: 26px;
 
@@ -22,14 +13,12 @@
 
   &>table {
     border-top: 1px solid $button-color;
-    @include table-list;
 
     .concept-label {
       margin-right: 4px;
     }
 
     .empty-list {
-      @include empty;
       font-size: 1.06em;
       border: none;
       @include dottedline;
@@ -53,6 +42,7 @@
           text-align: right;
           color: $button-color;
         }
+        
         td:empty:before {
           content:"-";
         }
@@ -61,7 +51,6 @@
           border-bottom: 1px solid rgba($darker-bg-color, 0.6);
           padding-top: 5px;
         }
-
 
         tr:last-child {
           td, th {
@@ -81,7 +70,7 @@
             font-size: 0.86em;
             &:before {
               top: 4px;
-            };
+            }
           }
         }
 
@@ -89,8 +78,8 @@
           td {
             font: 1.1em $serif;
             line-height: 1.4em;
-
           }
+          
           td, th {
             border: none;
             padding-bottom: 0;
@@ -102,35 +91,10 @@
           }
         }
       }
-
     }
   }
-
 }
 
-
-
-.search-results-terms, .search-results-concepts, .search-results-tnodes {
-
-
-  .actions {
-    @include dottedline;
-    margin-bottom: 10px;
-    display: block;
-    text-align: right;
-    min-width: 400px;
-    .show-all {
-      @include toggle;
-    }
-
-  }
-
-  .edit {
-    position: absolute;
-    padding-top: 6px;
-  }
-
-}
 
 
 
@@ -156,18 +120,16 @@
               line-height: 1.3em;
             }
           }
+          
           tr.definition {
             td {
               font-size: 0.9em;
             }
           }
         }
-
       }
     }
-
   }
-
 }
 
 @media all and (max-width: 799px) {
@@ -184,12 +146,14 @@
             display: block;
             padding: 4px 0 0 30px;
           }
+          
           th {
             border: none;
             width: auto;
             text-align:left;
             font-size: 0.7em;
           }
+          
           td {
             padding-top: 0;
             &:empty {
@@ -202,17 +166,14 @@
               padding: 6px 0 2px 0;
             }
           }
+          
           tr.definition {
             display: none;
           }
-
         }
-
       }
     }
-
   }
-
 }
 
 

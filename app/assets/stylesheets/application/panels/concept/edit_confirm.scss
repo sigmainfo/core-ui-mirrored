@@ -1,4 +1,5 @@
 #coreon-modal {
+  
   .modal-shim {
     width: 50%;
     height: 3000px;
@@ -15,12 +16,12 @@
     width: 30%;
     max-width: 400px;
     color: white;
+    
     p {
       padding: 15px;
       display: table-cell;
       vertical-align: middle;
     }
-    
     
     .ok {
       font-size: 1.4em;
@@ -50,14 +51,14 @@
         top: -6px;
         background-color: lighten($button-color, 6);
         @include box-shadow(rgba(white, 0.2) -1px 1px 1px inset);
-      };
+      }
     }
     
     &:hover {
       @include background(linear-gradient(lighten($button-hover-color, 6), $button-hover-color));
       &:before {
         background-color: $button-hover-color;
-      };
+      }
     }
   }
   

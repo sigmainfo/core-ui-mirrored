@@ -89,7 +89,6 @@ $edge-color: #bfc5c0;
             stroke-width: 1px;
             stroke-dasharray: 2,2;
           }
-
         }
 
         a.hover {
@@ -127,7 +126,7 @@ $edge-color: #bfc5c0;
             .background {
               fill:$link-color;
             }
-          };
+          }
 
           .icon {
             stroke: white;

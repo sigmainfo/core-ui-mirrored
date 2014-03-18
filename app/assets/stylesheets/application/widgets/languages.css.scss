@@ -1,4 +1,5 @@
 #coreon-languages {
+  
   h4 {
     color: $text-color;
     &:before {
@@ -15,7 +16,7 @@
     display: inline-block;
     width: 30px;
     height: 11px;
-    @include retina-icons;
+    @include svg-icons;
     background-position: 6px -152px;
   }
 }

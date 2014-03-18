@@ -42,7 +42,7 @@
         }
         &:last-child {
           padding-right: 10px;
-        };
+        }
       }
     }
   }
@@ -60,13 +60,13 @@
       top: 5px;
       height: 1px;
       width: 100%;
-    };
+    }
     &:hover {
       &:before {
         @include box-shadow(rgba(black, 0.2) 0px 0px 3px);
         border-top: 1px solid rgba(black, 0.1);
-      };
-    };
+      }
+    }
   }
   
   &.blue-widget {

@@ -21,11 +21,6 @@
       float: left;
     }
     
-    input[type="submit"] {
-      @include submit-button;
-      background-position: -44px -50px;   
-    }
-    
     label {
       display: none;
     }
@@ -67,7 +62,7 @@
       
       &:last-child {
         @include border-bottom-radius(6px);
-      };
+      }
       
       &.focus {
         background-color: rgba($text-color, 0.08);
@@ -83,11 +78,10 @@
           left: 2px;
           top: 0px;
           background-position: -49px -498px;
-        };
+        }
       }
     }
   }
-
 }
 
 #coreon-search-target-select-dropdown {
@@ -95,6 +89,7 @@
   ul.options {
     @include dottedline;
     @include border-bottom-radius(6px);
+    
     .option {
         padding: 2px 10px 1px 26px;
       &:first-child {
@@ -118,7 +113,7 @@
       
       &:first-child {
         @include border-top-radius(4px);
-      };
+      }
 
       &.selected a, &.selected span {
         color: $secondary-color;
@@ -139,14 +134,17 @@
       background-color: lighten($secondary-color, 40);
     }
   }
+  
   &.filters-select {
     ul.options {
       @include border-radius(8px);
+      
       .option {   
         &:first-child {
           @include border-top-radius(8px);
-        };
+        }
       }
+      
       a, span {
         padding: 1px 14px 0px 26px;
       }

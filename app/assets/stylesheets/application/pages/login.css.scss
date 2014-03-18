@@ -12,7 +12,6 @@
     height: 100px;
     position: relative;
     top: 160px;
-
   }
   
   h3 {
@@ -44,7 +43,7 @@
       padding-left:30px;
       border: none;
       background:image-url("layout/icons.svg") no-repeat 0 3px;
-      @include retina-icons;
+      @include svg-icons;
       background-position: -3px -1250px;
       outline:0;
       font: 1.5em $serif;
@@ -53,7 +52,7 @@
       &:not(:disabled) {
         &:hover {
           color: $secondary-color;
-        };
+        }
       }
       
        &:disabled {

@@ -40,15 +40,13 @@
       float: right;
       position: relative;
       top: 3px;
-      @include retina-icons;
+      @include svg-icons;
       background-position: -150px -452px;
       @include opacity(0.4);
 
       &:hover {
         @include opacity(0.8);
-      };
-    }
-    
-  }
-  
+      }
+    }    
+  }  
 }

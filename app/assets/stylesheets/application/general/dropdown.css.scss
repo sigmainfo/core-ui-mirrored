@@ -8,10 +8,11 @@
     left: 0;
     background-position: 1px -7px;
   }
+  
   &:hover {
     &:before {
       background-position: -49px -7px;
-    };
+    }
     cursor: pointer;
   }
   
@@ -23,13 +24,13 @@
   @include border-radius(4px);
   @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
   padding: 2px 12px 1px 22px;
+  
   &.single {
-    &:before {
-      display: none;
-    }
-    
     padding-left: 12px;
     @include box-shadow(none);
+    &:before {
+      display: none;
+    }    
   }
   
   &.blue {
@@ -42,6 +43,7 @@
     @include border-radius(8px);
     padding: 3px 12px 2px 26px;
     font-size: 0.94em;
+    
     &.single {
       padding-left: 12px;
     }
@@ -49,7 +51,7 @@
     &:before {
       height: 18px;
       margin-left: 3px;
-    };
+    }
   }
   
 }

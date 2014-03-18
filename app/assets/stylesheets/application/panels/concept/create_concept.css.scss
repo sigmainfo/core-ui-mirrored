@@ -5,15 +5,8 @@ div.concept.new {
   }
 
   h3 {
-    @include toggle;
-    padding: 0px 7px 0 5px;
-    margin: 2px 0 5px 0;
-    color: $label-color;
-
-    background: rgba($button-color, 0.08);
-    &:before {
-      content: none;
-    };
+    padding-left: 5px;
+    margin-top: 2px;
   }
 
   .broader-and-narrower {
@@ -42,7 +35,7 @@ div.concept.new {
     }
     .term {
       margin-bottom: 20px;
-    };
+    }
 
   }
   
@@ -53,6 +46,7 @@ div.concept.new {
   .create >.properties fieldset, .create >.properties .add .edit {
     border: none;
   }
+  
   .create >.properties fieldset {
     border: none;
     border-bottom: 1px solid white;
@@ -72,6 +66,7 @@ div.concept.new {
       min-height: 16px;
       padding: 8px;
     }
+    
     a {
       position: absolute;
     }

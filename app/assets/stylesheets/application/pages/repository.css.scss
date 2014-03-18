@@ -25,9 +25,7 @@ div.repository {
   
   table.meta {
     @include dottedline();
-    @include table-properties;
     width: 100%;
-    border-spacing: 0;
     padding-top: 20px;
   }
   
@@ -36,17 +34,12 @@ div.repository {
     margin-right: 0;
     
     h3 {
-      text-transform: uppercase;
-      color: $button-color;
-      font-size: 0.9em;
       position: relative;
-      display: block;
       height: 20px;
       top: 20px;
     }
 
     table.managers {
-      @include table-list;
       width: 100%;
 
       td, th {      

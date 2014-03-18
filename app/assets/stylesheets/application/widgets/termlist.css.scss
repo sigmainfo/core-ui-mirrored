@@ -1,11 +1,8 @@
 #coreon-term-list {
 
-
-
   h4:before {
     background-position: -1px -952px;
   }
-
 
   .toggle-scope {
 
@@ -53,7 +50,7 @@
       }
       &:first-child {
         padding-top: 0;
-      };
+      }
     }
 
     tr {
@@ -64,29 +61,31 @@
       border-top: 1px solid rgba(white, 0.5);
       vertical-align: top;
       padding-left: 4px;
+      
       &.term:hover {
         cursor: pointer;
+        
         td, td a {
           color: $link-color;
-        };
-      };
+        }
+      }
 
       &.term td {
         display: inline-block;
         font: 1em $serif;
-//        text-shadow: 0px 0px 0.2px $text-color-light;
         padding: 4px 0px 2px 0;
         width: 50%;
         word-wrap: break-word;
         color: darken($text-color-light, 20);
+        
         &:only-child {
           width: 100%;
-        };
+        }
+        
         &.source {
           padding-right: 5px;
           width: 45%;
         }
-
       }
 
       a {
@@ -100,12 +99,13 @@
       &:last-child {
           border-bottom: none;
       }
+      
       &:first-child {
           border-top: none;
       }
+      
       &.empty  {
         td {
-          @include empty;
           display: inline-block;
           padding: 16px 0;
           width: 100%;
@@ -113,6 +113,7 @@
           color: $text-color-light;
         }
       }
+      
       &.placeholder {
         display: inline-block;
         height: 32px;
@@ -120,13 +121,11 @@
         background-color: rgba(darken($darker-bg-color, 20), 0.2);
         text-align: center;
         text-indent: -2000px;
-        @include loading;
         &:before {
           margin-left: -10px;
           margin-top: 6px;
-        };
+        }
       }
     }
-
   }
 }
