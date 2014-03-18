@@ -4,7 +4,7 @@
 
   h3 {
     text-transform: uppercase;
-    color: $greencolor;
+    color: $button-color;
     font-size: 0.9em;
     position: relative;
     display: block;
@@ -21,7 +21,7 @@
 
 
   &>table {
-    border-top: 1px solid $greencolor;
+    border-top: 1px solid $button-color;
     @include table-list;
 
     .concept-label {
@@ -51,14 +51,14 @@
         th {
           width: 140px;
           text-align: right;
-          color: $greencolor;
+          color: $button-color;
         }
         td:empty:before {
           content:"-";
         }
 
         th, td {
-          border-bottom: 1px solid rgba($greycolor, 0.6);
+          border-bottom: 1px solid rgba($darker-bg-color, 0.6);
           padding-top: 5px;
         }
 
@@ -97,7 +97,7 @@
           }
 
           span {
-            color: $greencolor;
+            color: $button-color;
             margin: 0 2px;
           }
         }

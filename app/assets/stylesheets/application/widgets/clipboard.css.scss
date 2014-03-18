@@ -22,7 +22,7 @@
     border-top: 1px solid rgba(white, 0.2);
     padding: 8px 20px;
     min-height: 12px;
-    background-color: rgba($darkerbluecolor, 0.14);
+    background-color: rgba($search-bg-color, 0.14);
     @include retina-stripes("white");
     
     li {
@@ -58,7 +58,7 @@
     }
 
     &.ui-state-hovered {
-      background-color: rgba($button-color, 0.4);
+      background-color: rgba($button-hover-color, 0.4);
     }
   }
 }

@@ -52,12 +52,12 @@
    padding: 1px 3px 0px 14px;
    line-height: 1.3em;
     background-color: white;
-    color: $greytext-color;
+    color: $text-color-light;
 
    &.hit {
      color: $hit-color;
      &:hover {
-       color: $bluecolor;
+       color: $secondary-color;
      };
    }
  }
@@ -82,7 +82,7 @@
   position: absolute;
   width: 100%;
   padding: 10px;
-  background-color: $beigecolor;
+  background-color: $bg-color;
   @include retina-stripes("blue");
 }
 
@@ -112,7 +112,7 @@
   position: absolute;
   right: 0;
   width: $widget-width;
-  background-color: $greycolor;
+  background-color: $darker-bg-color;
   @include box-shadow(rgba(black, 0.3) -2px 0px 4px);
 
   &:after {

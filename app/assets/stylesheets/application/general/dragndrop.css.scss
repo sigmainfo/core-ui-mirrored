@@ -22,7 +22,7 @@
     height: 20px;
     @include border-radius(10px);
     @include single-box-shadow($text-color, 1px, 1px, 2px);
-    background-color: $browncolor;
+    background-color: $label-color;
     background-position: -149px -1000px;
   };
 }
@@ -61,17 +61,17 @@ h2.concept-label {
         }
       }
       &.ui-state-highlight {
-          background-color: rgba($button-color, 0.4);
+          background-color: rgba($button-hover-color, 0.4);
 
       }
       &.ui-state-hovered {
-          background-color: rgba($button-color, 0.6);
+          background-color: rgba($button-hover-color, 0.6);
       }
     }
 
 
   .list.ui-state-hovered {
-    background-color: rgba($button-color, 0.1);
+    background-color: rgba($button-hover-color, 0.1);
   }
 }
 

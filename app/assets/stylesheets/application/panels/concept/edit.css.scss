@@ -51,12 +51,12 @@
    &.term, fieldset {
      position: relative;
      padding-top: 18px;
-     background-color: darken(rgba($button-color, 0.12), 4);
+     background-color: darken(rgba($button-hover-color, 0.12), 4);
    }
    
    &.term {
      margin-bottom: 4px;
-     @include single-box-shadow(rgba($greencolor, 0.8), 0px, 1px, 1px, false);
+     @include single-box-shadow(rgba($button-color, 0.8), 0px, 1px, 1px, false);
    }
    
    &.concept {
@@ -81,7 +81,7 @@
 
      &.required  {
        label {
-         color: $browncolor;
+         color: $label-color;
        }
      }
    }
@@ -96,7 +96,7 @@
    }
 
    label {
-     color: $greytext-color;
+     color: $text-color-light;
      display: inline-block;
      text-transform: uppercase;
      text-align: right;
@@ -111,7 +111,7 @@
      text-align: right;
      clear: both;
      overflow: hidden;
-     background-color: darken(rgba($button-color, 0.18), 15);
+     background-color: darken(rgba($button-hover-color, 0.18), 15);
      padding: 3px 10px;
 
      .cancel, .reset, button {
@@ -126,7 +126,7 @@
        @include box-sizing(content-box);
        border: 0;
        padding-bottom: 4px;
-       background-color: $button-color;
+       background-color: $button-hover-color;
        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
        @include retina-stripes(white);
        &:after {
@@ -138,15 +138,15 @@
        }
 
         &:hover {
-          background-color: saturate($button-color, 10);
+          background-color: saturate($button-hover-color, 10);
         }
 
         &:disabled {
          &:hover {
             cursor: default;
-            background-color: desaturate($button-color, 20);
+            background-color: desaturate($button-hover-color, 20);
           }
-          background-color: desaturate($button-color, 20);
+          background-color: desaturate($button-hover-color, 20);
         }
       }
 
@@ -203,7 +203,7 @@ form.create.term {
   
   form {
     overflow: hidden;
-    background-color: darken(rgba($button-color, 0.12), 4);
+    background-color: darken(rgba($button-hover-color, 0.12), 4);
     >div {
       margin-left: 32px;
     }
@@ -220,7 +220,7 @@ form.create.term {
       @include opacity(0.4);
     }
     ul .concept-label:hover {
-      color: $greytext-color;
+      color: $text-color-light;
       @include single-box-shadow(rgba($text-color, 0.4), 2px, 2px, 2px);
     }
   }
@@ -229,7 +229,7 @@ form.create.term {
 .concept  {
   .edit a, fieldset a {
    font-size: 0.9em;
-   color:$greencolor;
+   color:$button-color;
    display: inline-block;
    position: relative;
    overflow: hidden;
@@ -246,9 +246,9 @@ form.create.term {
    };
    &:not(.disabled){
      &:hover {
-       color: $button-color;
+       color: $button-hover-color;
        &:before {
-         background-color: $button-color;
+         background-color: $button-hover-color;
          @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
        };
      }
@@ -317,8 +317,8 @@ form.create.term {
   .terms >.add {
     clear: both;
     margin-bottom: 20px;
-    @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
-    background-color: rgba($greencolor, 0.05);
+    @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
+    background-color: rgba($button-color, 0.05);
     .edit {
       min-height: 16px;
       padding: 8px;
@@ -329,7 +329,7 @@ form.create.term {
   }
 
   &>section, form>section {
-    background-color: rgba($greencolor, 0.05);
+    background-color: rgba($button-color, 0.05);
     &>h3, &>div:not(.add):last-child {
       margin-left: 38px;
     }
@@ -346,7 +346,7 @@ form.create.term {
 
   .button.edit-concept {
     background-color: $editmode-color;
-    color: $greencolor;
+    color: $button-color;
     margin-left: -38px;
     &:before {
       background-position: -2px -703px;
@@ -356,7 +356,7 @@ form.create.term {
   
   
   .language li.term {
-    background-color: rgba($greencolor, 0.05);  
+    background-color: rgba($button-color, 0.05);  
     min-height: 44px;  
     padding-left: 32px;
     h4 {
@@ -370,7 +370,7 @@ form.create.term {
     }
   }
   .property.delete {
-    background-color:$greycolor;
+    background-color:$darker-bg-color;
     @include opacity(0.4);
     &:before {
       @include before-icon;

@@ -21,7 +21,7 @@
   
   label {
     display: block;
-    color: $browncolor;
+    color: $label-color;
     padding-bottom: 5px;
     padding-top: 35px;
     abbr {
@@ -52,7 +52,7 @@
       
       &:not(:disabled) {
         &:hover {
-          color: $bluecolor;
+          color: $secondary-color;
         };
       }
       

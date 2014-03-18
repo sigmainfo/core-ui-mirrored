@@ -1,7 +1,7 @@
 #coreon-search {
   @include box-sizing(border-box);
   padding: 11px 14px;
-  background-color: $darkerbluecolor;
+  background-color: $search-bg-color;
   @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
   
   label {

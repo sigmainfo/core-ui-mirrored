@@ -46,7 +46,7 @@ div.concept {
     }
   }
   .system-info-toggle {
-    background-color: rgba($greencolor, 0.08);
+    background-color: rgba($button-color, 0.08);
     background-position: -48px -650px;
 
     &:hover {
@@ -57,7 +57,7 @@ div.concept {
   }
   
   .properties-toggle {
-    background-color: rgba($greencolor, 0.08);
+    background-color: rgba($button-color, 0.08);
     background-position: -49px -599px;
     float: right;
     margin: 6px;
@@ -85,7 +85,7 @@ div.concept {
       
       td, th {
         font: 11px monospace;;
-        color: $greytext-color;
+        color: $text-color-light;
         vertical-align: baseline;
       }     
 
@@ -93,7 +93,7 @@ div.concept {
         text-transform: none;
         width: auto;
         padding: 0 1px 0 0;
-        color: lighten($greytext-color, 20%);
+        color: lighten($text-color-light, 20%);
         &:after {
           content:":";
         }
@@ -142,7 +142,7 @@ div.concept {
       font-size: 0.8em;
       line-height: 1.2em;
       padding: 0 10px;
-      border-left: 1px solid $browncolor;
+      border-left: 1px solid $label-color;
       cursor: pointer;
       color: $link-color;
       height: 11px;
@@ -203,8 +203,8 @@ div.concept {
       
       li.term {
         margin-bottom: 4px;
-        @include single-box-shadow(rgba($greencolor, 0.4), 0px, 1px, 1px, false);
-        background-color: rgba($bluecolor, 0.05);
+        @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
+        background-color: rgba($secondary-color, 0.05);
       }
     }
 
@@ -261,11 +261,11 @@ div.concept {
           width: 18px;
           height: 18px;
           @include rotate(0deg);
-          background-color: rgba($greencolor, 0.08);
+          background-color: rgba($button-color, 0.08);
           background-position: -49px -599px;
         };
         &:hover {
-          background-color: rgba($greencolor, 0.04);
+          background-color: rgba($button-color, 0.04);
           &:before { 
             background-color: rgba($link-color, 0.2);   
             background-position: -99px -599px;
@@ -291,8 +291,8 @@ div.concept {
         padding: 0;
         margin: 6px 0 5px 0;
         padding-right: 7px;
-        color: $browncolor;
-        background: rgba($greencolor, 0.08);
+        color: $label-color;
+        background: rgba($button-color, 0.08);
         &:before {
           @include rotate(0deg);
           background-position: -51px -6px;
@@ -420,7 +420,7 @@ div.concept {
     .terms {
 
       li.term {
-        @include single-box-shadow(rgba($greencolor, 0.2), 0px, 1px, 1px, false);
+        @include single-box-shadow(rgba($button-color, 0.2), 0px, 1px, 1px, false);
       }
 
       .language:before {

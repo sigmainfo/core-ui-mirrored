@@ -25,7 +25,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
     background: image-url("layout/loadingWhite.svg") no-repeat 2px 2px;
     @include background-size(16px 16px);
     @include border-radius(10px);
-    background-color: rgba($greytext-color, 0.4);
+    background-color: rgba($text-color-light, 0.4);
     width: 20px;
     height: 20px;
     animation: spin 0.8s linear infinite;
@@ -49,9 +49,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
   padding-left:30px;
   border: none;
   outline:0;
-  $bg-color: rgba(0,0,0, 0.1);
-  background: $bg-color image-url("layout/icons.svg") no-repeat 0 -50px;
-//  @include retina-icons;
+  background: rgba(0,0,0, 0.1) image-url("layout/icons.svg") no-repeat 0 -50px;
   text-indent: -2000px;
   overflow: hidden;
   @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
@@ -61,14 +59,14 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
 }
 
 @mixin edit-button {
-  background-color: $greencolor;
+  background-color: $button-color;
   @include border-radius(4px);
   @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 2px, false, inset);
   &:not(.disabled){
     &:hover {
       cursor: pointer;
       color: white;
-      background-color: $button-color;
+      background-color: $button-hover-color;
       @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
     };
   }
@@ -115,7 +113,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
 }
 
 @mixin droparea {
-  background-color: rgba($button-color, 0.3);
+  background-color: rgba($button-hover-color, 0.3);
   @include single-box-shadow(rgba($text-color, 0.5), 1px, 1px, 3px, false, inset);
   padding: 9px 16px 8px 17px;
 }
@@ -123,7 +121,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
 @mixin empty {
   font: 1em Palatino;
   font-style: italic;
-  color: lighten($greytext-color, 10%);
+  color: lighten($text-color-light, 10%);
   
   &:before {
     content: "{";
@@ -153,7 +151,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
       text-transform: uppercase;
       font-size: 0.8em;
       padding-top: 11px;
-      color: $browncolor;
+      color: $label-color;
       width: 98px;
       padding-right: 16px;
     }
@@ -197,7 +195,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
     position: relative;
 
     thead th {
-      border-bottom: 1px solid $greencolor;   
+      border-bottom: 1px solid $button-color;   
       position: relative;
       &:before {
         @include before-icon;
@@ -220,7 +218,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
       }
 
       td {
-        border-bottom: 1px solid $greycolor;
+        border-bottom: 1px solid $darker-bg-color;
       }
 
       td, th {      

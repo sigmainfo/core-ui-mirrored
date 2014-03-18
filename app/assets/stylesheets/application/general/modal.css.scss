@@ -8,7 +8,7 @@
   
   .prompt {
     @include box-sizing(border-box);
-    background-color: $greycolor;
+    background-color: $darker-bg-color;
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset, rgba(black, 0.4) 2px 2px 5px);
     min-width: 300px;
     width: 50%;
@@ -36,11 +36,11 @@
     
     form {
       padding-bottom: 20px;
-      border-bottom: 1px solid darken($greycolor, 4%);
+      border-bottom: 1px solid darken($darker-bg-color, 4%);
     }
     
     .links {
-      border-top: 1px solid lighten($greycolor, 4%);
+      border-top: 1px solid lighten($darker-bg-color, 4%);
       @include retina-stripes("white");
     }
     
@@ -56,13 +56,13 @@
   
   ul.options {
     list-style: none;
-    background-color: $beigecolor;
+    background-color: $bg-color;
     @include single-box-shadow(rgba($text-color, 0.5), 1px, 2px, 2px, false);
     padding: 1px 0 0 0;
     
     .option {
       font-size: 0.86em;
-      color: $browncolor;
+      color: $label-color;
       position: relative;
       
       &:last-child {
@@ -75,7 +75,7 @@
       }
       
       &.selected {
-        color: $bluecolor;
+        color: $secondary-color;
         
         &:before {
           @include before-icon;
@@ -98,7 +98,7 @@
     .option {
         padding: 2px 10px 1px 26px;
       &:first-child {
-        border-bottom: 1px solid darken($greycolor, 2%);
+        border-bottom: 1px solid darken($darker-bg-color, 2%);
       }
     }
   }  
@@ -121,12 +121,12 @@
       };
 
       &.selected a, &.selected span {
-        color: $bluecolor;
+        color: $secondary-color;
       }
       
       a, span {
         @include box-sizing(border-box);
-        color: $browncolor;
+        color: $label-color;
         display: block;
         padding: 1px 14px 0px 22px;
         width: 100%;
@@ -136,7 +136,7 @@
   
   &.blue {
     ul.options {
-      background-color: lighten($petrol, 40);
+      background-color: lighten($secondary-color, 40);
     }
   }
   &.filters-select {

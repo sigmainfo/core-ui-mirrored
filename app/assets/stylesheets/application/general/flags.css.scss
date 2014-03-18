@@ -10,7 +10,7 @@
         width: 19px;
         height: 16px;
         position: absolute;
-        background: $greycolor;
+        background: $darker-bg-color;
         background-image: image-url('layout/flags.png');
         @include background-size(250px 200px);
         background-position: -1px 0px;

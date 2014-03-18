@@ -18,7 +18,7 @@ $edge-color: #bfc5c0;
 
       text {
         font: 11px 'DroidSans', Trebuchet MS, Lucida;
-        fill: $greytext-color;
+        fill: $text-color-light;
       }
 
       .concept-node, .sibling-node {
@@ -27,7 +27,7 @@ $edge-color: #bfc5c0;
         circle {
           fill: none;
           stroke-width: 1.5px;
-          stroke: $greytext-color;
+          stroke: $text-color-light;
         }
 
         &.repository-root {
@@ -78,7 +78,7 @@ $edge-color: #bfc5c0;
         &.new {
 
           text {
-            fill: $button-color;
+            fill: $button-hover-color;
             font-size: 13px;
           }
 

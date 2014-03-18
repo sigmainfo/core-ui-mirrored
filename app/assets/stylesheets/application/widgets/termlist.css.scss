@@ -74,11 +74,11 @@
       &.term td {
         display: inline-block;
         font: 1em $serif;
-//        text-shadow: 0px 0px 0.2px $greytext-color;
+//        text-shadow: 0px 0px 0.2px $text-color-light;
         padding: 4px 0px 2px 0;
         width: 50%;
         word-wrap: break-word;
-        color: darken($greytext-color, 20);
+        color: darken($text-color-light, 20);
         &:only-child {
           width: 100%;
         };
@@ -110,14 +110,14 @@
           padding: 16px 0;
           width: 100%;
           text-align: center;
-          color: $greytext-color;
+          color: $text-color-light;
         }
       }
       &.placeholder {
         display: inline-block;
         height: 32px;
         width: 100%;
-        background-color: rgba(darken($greycolor, 20), 0.2);
+        background-color: rgba(darken($darker-bg-color, 20), 0.2);
         text-align: center;
         text-indent: -2000px;
         @include loading;

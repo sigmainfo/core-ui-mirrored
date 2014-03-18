@@ -1,5 +1,5 @@
 .widget {
-  @include background(linear-gradient(lighten($greycolor, 5), $greycolor));
+  @include background(linear-gradient(lighten($darker-bg-color, 5), $darker-bg-color));
   position: relative;
   @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
   
@@ -10,7 +10,7 @@
     height: 19px;
 
     h4 {
-      color: $browncolor;
+      color: $label-color;
       font-size: 0.86em;
       line-height: 18px;
       padding: 2px 0 0 6px;
@@ -34,7 +34,7 @@
         height: 19px;
         text-indent: -2000px;
         overflow: hidden;
-        @include background(linear-gradient(lighten($greycolor, 8), darken($greycolor, 1)));
+        @include background(linear-gradient(lighten($darker-bg-color, 8), darken($darker-bg-color, 1)));
         @include box-shadow(rgba(white, 0.6) 0px 1px 1px inset, rgba(black, 0.1) -1px 0px 1px inset);
         
         &:first-child {
@@ -70,7 +70,7 @@
   }
   
   &.blue-widget {
-    @include background(linear-gradient(lighten($darkerbluecolor, 10), $darkerbluecolor));
+    @include background(linear-gradient(lighten($search-bg-color, 10), $search-bg-color));
     @include box-shadow(rgba(white, 0.3) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
   }
   
