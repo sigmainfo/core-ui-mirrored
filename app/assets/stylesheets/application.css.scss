@@ -1,7 +1,6 @@
 @import 'compass/css3';
 @import 'application/config/*';
 
-@import 'application/general/font-face';
 @import 'application/general/layout';
 @import 'application/general/footer';
 @import 'application/general/dropdown';
@@ -13,14 +12,14 @@
 @import 'application/general/modal';
 
 @import 'application/pages/login';
-@import 'application/pages/repository';
 
-@import 'application/panels/search_results';
-@import 'application/panels/concept/concept';
-@import 'application/panels/concept/concept_tree';
-@import 'application/panels/concept/create_concept';
-@import 'application/panels/concept/edit';
-@import 'application/panels/concept/edit_confirm';
+@import 'application/panels/concepts/concept';
+@import 'application/panels/concepts/concept_tree';
+@import 'application/panels/concepts/create_concept';
+@import 'application/panels/concepts/edit';
+@import 'application/panels/concepts/edit_confirm';
+@import 'application/panels/concepts/concept-list';
+@import 'application/panels/concepts/repository';
 @import 'application/panels/concept_map';
 
 @import 'application/widgets/shared';

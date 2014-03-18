@@ -1,0 +1,22 @@
+#coreon-languages {
+  
+  h4 {
+    color: $text-color;
+    &:before {
+      content: none;
+    }
+  }
+
+  form {
+    border-top: 1px solid rgba(white, 0.1);
+    padding: 8px 20px;
+  }
+  
+  .arrow {
+    display: inline-block;
+    width: 30px;
+    height: 11px;
+    @include svg-icons;
+    background-position: 6px -152px;
+  }
+}

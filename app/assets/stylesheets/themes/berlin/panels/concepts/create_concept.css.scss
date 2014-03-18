@@ -1,0 +1,87 @@
+div.concept.new {
+
+  h2 {
+    color: $button-hover-color;
+  }
+
+  h3 {
+    padding-left: 5px;
+    margin-top: 2px;
+  }
+
+  .broader-and-narrower {
+    .self {
+      color: $button-hover-color;
+    }
+  }
+
+  .properties {
+    position: relative;
+    padding-bottom: 30px;
+  }
+
+  .terms {
+    position: relative;
+    @include retina-separator;
+    padding-top: 10px;
+    margin-top: 0;
+
+    .term {
+      background-image: none;
+    }
+    
+    .add {
+      @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
+    }
+    .term {
+      margin-bottom: 20px;
+    }
+
+  }
+  
+  .create >.properties fieldset, .terms >fieldset {
+    @include editmode;
+  }
+  
+  .create >.properties fieldset, .create >.properties .add .edit {
+    border: none;
+  }
+  
+  .create >.properties fieldset {
+    border: none;
+    border-bottom: 1px solid white;
+  }
+
+  .submit {
+    margin-top: 40px;
+  }
+  
+  .add {
+    @include editmode;
+    position: relative;
+    clear: both;
+    background-color: rgba($button-color, 0.05);
+
+    .edit {
+      min-height: 16px;
+      padding: 8px;
+    }
+    
+    a {
+      position: absolute;
+    }
+  }
+
+
+}
+
+
+@media all and (max-width: 799px) {
+  
+  div.concept.new  {
+
+    .broader-and-narrower {
+      display: none;
+    }
+  }
+}
