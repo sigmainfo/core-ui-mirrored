@@ -30,7 +30,6 @@ Feature: User browses concepts of search result
     Then I should see the details for concept "ballistics"
     And I should be on the concept details page for "ballistics"
 
-  @focus
   Scenario: displayed languages
     Given a concept with label "ball" exists
     And this concept has an English term "billiard ball"

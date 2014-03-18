@@ -57,11 +57,22 @@ class Coreon.Application extends Backbone.Model
     @updateRepository()
 
   updateRepository: ->
-    current = if session = @get('session')
-      session.get('repository')
+    if session = @get('session')
+      current = session.get('repository')
+      @set 'repository', current
+      if previous = @previous('repository')
+        @stopListening previous
+      if current
+        @listenTo current
+                , 'remoteSettingsChange'
+                , @broadcastRepositoryChange
     else
-      null
-    @set 'repository', current
+      @set 'repository', null
+
+  broadcastRepositoryChange: ->
+    @trigger 'change:repositorySettings'
+           , @
+           , @repositorySettings()
 
   selectRepository: (id) ->
     @get('session').set 'current_repository_id', id
@@ -86,18 +97,29 @@ class Coreon.Application extends Backbone.Model
     else
       cache
 
-  langs: ->
-    sourceLang = @sourceLang()
-    targetLang = @targetLang()
+  basicSort = (a, b) ->
+    a.toLowerCase().localeCompare b.toLowerCase()
 
-    @repository().usedLanguages().slice(0)
-      .sort (a, b) ->
-        switch
-          when a is sourceLang then -1
-          when b is sourceLang then 1
-          when a is targetLang then -1
-          when b is targetLang then 1
-          else a.localeCompare b
+  langs: (options = {}) ->
+    comparator =
+      unless options.ignoreSelection
+        sourceLang = @sourceLang()
+        targetLang = @targetLang()
+        (a, b) ->
+          switch
+            when a is sourceLang then -1
+            when b is sourceLang then 1
+            when a is targetLang then -1
+            when b is targetLang then 1
+            else basicSort a, b
+      else basicSort
+
+    if repository = @get('repository')
+      repository.usedLanguages()
+        .slice(0)
+        .sort comparator
+    else
+      []
 
   sourceLang: ->
     lang = @repositorySettings()?.get('sourceLanguage') or null

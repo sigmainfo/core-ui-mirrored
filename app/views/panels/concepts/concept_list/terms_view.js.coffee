@@ -22,8 +22,10 @@ class Coreon.Views.Panels.Concepts.ConceptList.TermsView extends Backbone.View
 
   render: ->
     terms = @model.termsByLang()
-    langs = @app.get('langs').map (lang) ->
+    langs = @app.get('langs')
+    langs.push @app.lang() if langs.length is 0
+    @$el.html @template langs: langs.map (lang) ->
       name: lang
-      terms: terms[lang] or []
-    @$el.html @template langs: langs
+      terms: (terms[lang] or []).map (term) ->
+        term.get('value')
     @

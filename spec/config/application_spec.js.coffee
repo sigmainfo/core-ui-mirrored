@@ -215,6 +215,22 @@ describe 'Coreon.Application', ->
       current = app.get('repository')
       expect(current).to.equal repository
 
+    it 'triggers custom event on repository settings load', ->
+      repository.id = "FOO"
+      session.set 'repository', repository, silent: yes
+      app.set
+        repository: repository
+        session: session
+      , silent: yes
+      settings = new Backbone.Model
+      app.repositorySettings = -> settings
+      app.updateRepository()
+      trigger = sinon.spy()
+      app.on 'change:repositorySettings', trigger
+      repository.trigger 'remoteSettingsChange'
+      expect(trigger).to.have.been.calledOnce
+      expect(trigger).to.have.been.calledWith app, settings
+
   describe '#repository()', ->
 
     it 'returns current repository from session', ->
@@ -232,7 +248,7 @@ describe 'Coreon.Application', ->
     beforeEach ->
       @repository = usedLanguages: -> []
       app.repositorySettings = => new Backbone.Model
-      app.repository = => @repository
+      app.set 'repository', @repository, silent: yes
       app.sourceLang = -> null
       app.targetLang = -> null
 
@@ -256,6 +272,13 @@ describe 'Coreon.Application', ->
       app.targetLang = -> 'en'
       langs = app.langs()
       expect( langs ).to.eql [ 'fr', 'en', 'de', 'hu' ]
+
+    it 'ignores source and target language when sorting is off', ->
+      @repository.usedLanguages = -> [ 'en', 'hu', 'fr', 'de' ]
+      app.sourceLang = -> 'fr'
+      app.targetLang = -> 'en'
+      langs = app.langs ignoreSelection: on
+      expect(langs).to.eql [ 'de', 'en', 'fr', 'hu' ]
 
   describe '#sourceLang()', ->
 

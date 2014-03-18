@@ -3,8 +3,8 @@
 class Coreon.Models.RepositoryCache extends Backbone.Model
 
   defaults: ->
-    sourceLang: null
-    targetLang: null
+    sourceLanguage: null
+    targetLanguage: null
 
   url: ->
     false
@@ -12,15 +12,16 @@ class Coreon.Models.RepositoryCache extends Backbone.Model
   initialize: (attrs, options = {}) ->
     @app = options.app or Coreon.application
 
-    @on 'change:sourceLang change:targetLang'
+    @off null, null, @
+    @on 'change:sourceLanguage change:targetLanguage'
        , @updateLangs
        , @
     @updateLangs()
 
   updateLangs: ->
     langs = []
-    langs.push sourceLang if sourceLang = @get('sourceLang')
-    langs.push targetLang if targetLang = @get('targetLang')
+    langs.push sourceLang if sourceLang = @get('sourceLanguage')
+    langs.push targetLang if targetLang = @get('targetLanguage')
     @app.set 'langs', langs
 
   sync: (method, model, options) ->

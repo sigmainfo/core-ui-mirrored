@@ -171,6 +171,7 @@ en:
   widgets:
     languages:
       title: "Languages"
+      no-selection: '-- None'
 
     clipboard:
       title: "Clipboard"

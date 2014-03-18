@@ -38,12 +38,12 @@ describe 'Coreon.Models.RepositoryCache', ->
         expect(updateLangs).to.have.been.calledOn cache
 
       it 'is triggered by change of source lang', ->
-        cache.trigger 'change:sourceLang'
+        cache.trigger 'change:sourceLanguage'
         expect(updateLangs).to.have.been.calledOnce
         expect(updateLangs).to.have.been.calledOn cache
 
       it 'is triggered by change of target lang', ->
-        cache.trigger 'change:targetLang'
+        cache.trigger 'change:targetLanguage'
         expect(updateLangs).to.have.been.calledOnce
         expect(updateLangs).to.have.been.calledOn cache
 
@@ -51,8 +51,8 @@ describe 'Coreon.Models.RepositoryCache', ->
 
       it 'defaults to empty list', ->
         cache.set
-          sourceLang: null
-          targetLang: null
+          sourceLanguage: null
+          targetLanguage: null
         , silent: yes
         cache.updateLangs()
         langs = app.get('langs')
@@ -60,8 +60,8 @@ describe 'Coreon.Models.RepositoryCache', ->
 
       it 'sets source and target lang on app', ->
         cache.set
-          sourceLang: 'en'
-          targetLang: 'de'
+          sourceLanguage: 'en'
+          targetLanguage: 'de'
         , silent: yes
         cache.updateLangs()
         langs = app.get('langs')
@@ -69,8 +69,8 @@ describe 'Coreon.Models.RepositoryCache', ->
 
       it 'skips empty value for target', ->
         cache.set
-          sourceLang: 'en'
-          targetLang: null
+          sourceLanguage: 'en'
+          targetLanguage: null
         , silent: yes
         cache.updateLangs()
         langs = app.get('langs')
@@ -78,8 +78,8 @@ describe 'Coreon.Models.RepositoryCache', ->
 
       it 'skips empty value for source', ->
         cache.set
-          sourceLang: null
-          targetLang: 'de'
+          sourceLanguage: null
+          targetLanguage: 'de'
         , silent: yes
         cache.updateLangs()
         langs = app.get('langs')

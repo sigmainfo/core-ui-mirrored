@@ -9,6 +9,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptList.TermsView', ->
 
   beforeEach ->
     app = new Backbone.Model langs: []
+    app.lang = -> 'en'
     concept = new Backbone.Model
     concept.termsByLang = -> {}
     view = new Coreon.Views.Panels.Concepts.ConceptList.TermsView
@@ -78,7 +79,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptList.TermsView', ->
 
       it 'renders term for lang', ->
         concept.termsByLang = ->
-          hu: ['mordály']
+          hu: [new Backbone.Model value: 'mordály']
         app.set 'langs', ['hu'], silent: yes
         view.render()
         label = view.$('tr.lang td')
@@ -95,9 +96,21 @@ describe 'Coreon.Views.Panels.Concepts.ConceptList.TermsView', ->
 
       it 'renders delimiers between terms', ->
         concept.termsByLang = ->
-          hu: ['mordály', 'fegyver']
+          hu: ['mordály', 'fegyver'].map (value) ->
+            new Backbone.Model value: value
         app.set 'langs', ['hu'], silent: yes
         view.render()
         delimiter = view.$('tr.lang td span')
         expect(delimiter).to.have.lengthOf 1
         expect(delimiter).to.have.text ' | '
+
+      it 'falls back to display lang when no lang is currently selected', ->
+        app.set 'langs', [], silent: yes
+        app.lang = -> 'en'
+        concept.termsByLang = ->
+          en: [new Backbone.Model value: 'gun']
+        view.render()
+        label = view.$('tr.lang th')
+        expect(label).to.have.text 'en'
+        label = view.$('tr.lang td')
+        expect(label).to.have.text 'gun'
