@@ -12,7 +12,6 @@
 
 
   &>table {
-    border-top: 1px solid $button-color;
 
     .concept-label {
       margin-right: 4px;
@@ -21,14 +20,11 @@
     .empty-list {
       font-size: 1.06em;
       border: none;
-      @include dottedline;
       background-position: bottom;
       padding-bottom: 10px;
     }
 
     .concept-list-item>td{
-      @include dottedline;
-      background-position: bottom;
       border: none;
       padding: 6px 0;
 
@@ -48,7 +44,6 @@
         }
 
         th, td {
-          border-bottom: 1px solid rgba($darker-bg-color, 0.6);
           padding-top: 5px;
         }
 
@@ -86,7 +81,6 @@
           }
 
           span {
-            color: $button-color;
             margin: 0 2px;
           }
         }

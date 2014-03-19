@@ -32,8 +32,6 @@
     width: 520px;
     padding-bottom: 50px;
     margin-left: 380px;
-    background:image-url("layout/separator.png") repeat-x bottom;
-    @include retina-separator;
 
     input[type="submit"] {
       position: relative;

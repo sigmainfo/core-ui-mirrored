@@ -7,7 +7,6 @@
    font: 81% 'DroidSans', Trebuchet MS, Lucida;
    line-height: 1.5em;
    color: $text-color;
-   background: image-url("layout/bg.jpg");
    margin: 0;
  }
 
@@ -20,10 +19,10 @@
    text-decoration: none;
    &:hover {
      color: $hover-color;
-   };
+   }
    &:active, &:visited, &:focus { 
      outline: none;
-     }
+   }
  }
  
  button::-moz-focus-inner { 
@@ -47,7 +46,6 @@
  }
  
  h3 {
-   color: $button-color;
    display: inline-block;
    text-transform: uppercase;
    font-size: 0.9em;
@@ -57,8 +55,6 @@
  .concept h3 {
    font-size: 0.8em;
    line-height: 16px;   
-   color: $label-color;
-   background: rgba($button-color, 0.08);
    padding: 0 7px 0 0;
    margin: 6px 0 5px 0;
  }
@@ -94,8 +90,6 @@
 .repository-label {
   display: inline-block;
   padding: 1px 8px 0 8px;
-  background-color: rgba($hit-color, 0.1);
-  @include border-radius(8px);
 }
 
 .empty td, .empty-list, .no-terms {
@@ -158,7 +152,6 @@
       text-transform: uppercase;
       font-size: 0.8em;
       padding-top: 11px;
-      color: $label-color;
       width: 98px;
       padding-right: 16px;
     }
@@ -201,14 +194,7 @@ table.managers, .concept-list>table {
   position: relative;
 
   thead th {
-    border-bottom: 1px solid $button-color;   
     position: relative;
-    &:before {
-      @include before-icon;
-      position: absolute;
-      top: 1.3em;
-      background-position: -52px -150px;
-    }
   }
 
   tr {
@@ -221,10 +207,6 @@ table.managers, .concept-list>table {
       text-transform: uppercase;
       line-height: 15px;
       font-size: 0.8em;
-    }
-
-    td {
-      border-bottom: 1px solid $darker-bg-color;
     }
 
     td, th {      
@@ -264,8 +246,7 @@ table.managers, .concept-list>table {
   position: absolute;
   width: 100%;
   padding: 10px;
-  background-color: $bg-color;
-  @include retina-stripes("blue");
+  background-color: white;
 }
 
 #coreon-header {
@@ -294,7 +275,6 @@ table.managers, .concept-list>table {
   position: absolute;
   right: 0;
   width: $widget-width;
-  background-color: $darker-bg-color;
   @include box-shadow(rgba(black, 0.3) -2px 0px 4px);
 
   &:after {
@@ -302,7 +282,6 @@ table.managers, .concept-list>table {
     display: block;
     width: auto;
     height: 12px;
-    @include background(linear-gradient(rgba(white, 0.3), rgba(white, 0)));
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.1) -1px -1px 1px inset);
   }
 

@@ -1,34 +1,34 @@
-$text-color: #3f3b2c;
+$text-color: black;
 $hit-color: #3da2e6;
 $link-color: #43aaa4;
 $hover-color: #5fba83;
 
 //text-color light
-$text-color-light: #989791;
+$text-color-light: #333333;
 
 //label-color
-$label-color: #554f3c;
+$label-color: #444444;
 
 //header background
 $bg-color: #f0f3f4;
 
 //widget bg color
-$darker-bg-color: #e1ebe9;
+$darker-bg-color: #eeeeee;
 
 //term background
-$secondary-color: #5498b0;
+$secondary-color: desaturate($hit-color, 60%);
 
 //search + language widget backgrond
-$search-bg-color: #6cb1d3;
+$search-bg-color: #cccccc;
 
 //edit-background color
-$editmode-color: #c3ccb9;
+$editmode-color: #dddddd;
 
 //button hover color, drag&drop
-$button-hover-color: #73a254;
+$button-hover-color: desaturate($hover-color, 50%);
 
 //button-color
-$button-color: #717a53;
+$button-color: desaturate($link-color, 50%);
 
 
 $error-color: #f25a5a;

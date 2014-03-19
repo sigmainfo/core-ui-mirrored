@@ -55,7 +55,6 @@ h2.concept-label {
     ul.ui-droppable {
       @include droparea;
       padding: 4px 6px 24px 6px;
-      @include retina-stripes("white");
       
       li {
         margin: 2px 0;

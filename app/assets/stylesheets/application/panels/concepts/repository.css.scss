@@ -10,8 +10,6 @@ div.repository {
     padding: 4px 16px 2px 16px;
     margin-bottom: 12px;
     margin-right: 30px;
-    background-color: rgba($hit-color, 0.1);
-    @include border-radius(8px);
   }
   
   .create-concept {
@@ -19,12 +17,10 @@ div.repository {
   }
   
   .description {
-    @include retina-separator();
     padding: 30px 0 20px 0;
   }
   
   table.meta {
-    @include dottedline();
     width: 100%;
     padding-top: 20px;
   }

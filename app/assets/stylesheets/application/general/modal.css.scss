@@ -36,7 +36,6 @@
     
     .links {
       border-top: 1px solid lighten($darker-bg-color, 4%);
-      @include retina-stripes("white");
     }
     
   }
@@ -57,20 +56,13 @@
     
     .option {
       font-size: 0.86em;
-      color: $label-color;
       position: relative;
       
-      &:last-child {
-        @include border-bottom-radius(6px);
-      }
-      
       &.focus {
-        background-color: rgba($text-color, 0.08);
         cursor: pointer;
       }
       
       &.selected {
-        color: $secondary-color;
         
         &:before {
           @include before-icon;
@@ -87,14 +79,9 @@
 #coreon-search-target-select-dropdown {
   
   ul.options {
-    @include dottedline;
-    @include border-bottom-radius(6px);
     
     .option {
         padding: 2px 10px 1px 26px;
-      &:first-child {
-        border-bottom: 1px solid darken($darker-bg-color, 2%);
-      }
     }
   }  
 }
@@ -104,24 +91,14 @@
   ul.options {
     position: relative;
     float: left;
-    @include border-radius(4px);
 
     .option {
       float: left;
       clear: left;
       width: 100%;
       
-      &:first-child {
-        @include border-top-radius(4px);
-      }
-
-      &.selected a, &.selected span {
-        color: $secondary-color;
-      }
-      
       a, span {
         @include box-sizing(border-box);
-        color: $label-color;
         display: block;
         padding: 1px 14px 0px 22px;
         width: 100%;
@@ -129,21 +106,8 @@
     }
   }  
   
-  &.blue {
-    ul.options {
-      background-color: lighten($secondary-color, 40);
-    }
-  }
-  
   &.filters-select {
     ul.options {
-      @include border-radius(8px);
-      
-      .option {   
-        &:first-child {
-          @include border-top-radius(8px);
-        }
-      }
       
       a, span {
         padding: 1px 14px 0px 26px;

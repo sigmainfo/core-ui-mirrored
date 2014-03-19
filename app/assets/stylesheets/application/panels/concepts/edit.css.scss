@@ -56,7 +56,6 @@
    
    &.term {
      margin-bottom: 4px;
-     @include single-box-shadow(rgba($button-color, 0.8), 0px, 1px, 1px, false);
    }
    
    &.concept {
@@ -97,7 +96,6 @@
    }
 
    label {
-     color: $text-color-light;
      display: inline-block;
      text-transform: uppercase;
      text-align: right;
@@ -128,8 +126,6 @@
        border: 0;
        padding-bottom: 4px;
        background-color: $button-hover-color;
-       @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-       @include retina-stripes(white);
        &:after {
          @include before-icon;
          float: right;
@@ -258,7 +254,6 @@ form.create.term {
        color: $button-hover-color;
        &:before {
          background-color: $button-hover-color;
-         @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
        }
      }
     }
@@ -312,9 +307,6 @@ form.create.term {
     }
   }
   
-  >section div.edit {
-    @include dottedline;
-  }
   
   .concept-head div.edit, section div.edit {
     position: absolute;
@@ -326,7 +318,6 @@ form.create.term {
   .terms >.add {
     clear: both;
     margin-bottom: 20px;
-    @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
     background-color: rgba($button-color, 0.05);
     
     .edit {

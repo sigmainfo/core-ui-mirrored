@@ -1,14 +1,12 @@
 #coreon-languages {
   
   h4 {
-    color: $text-color;
     &:before {
       content: none;
     }
   }
 
   form {
-    border-top: 1px solid rgba(white, 0.1);
     padding: 8px 20px;
   }
   

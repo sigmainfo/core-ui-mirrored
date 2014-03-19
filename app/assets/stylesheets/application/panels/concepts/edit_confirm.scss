@@ -9,9 +9,7 @@
     @include box-sizing(border-box);
     display: table;
     background-color: $button-color;
-    @include border-radius(6px);
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset, rgba(black, 0.4) 2px 2px 5px);
-    @include background(linear-gradient(lighten($button-color, 6), $button-color));
     min-width: 220px;
     width: 30%;
     max-width: 400px;
@@ -28,8 +26,6 @@
       text-align: center;
       background-color: $button-hover-color;
       border-left: 1px solid rgba(black, 0.2);
-      @include border-right-radius(6px);
-      @include retina-stripes(white);
       @include box-shadow(rgba(white, 0.2) 1px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset);      
     }
     

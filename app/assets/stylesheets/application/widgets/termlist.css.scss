@@ -22,7 +22,6 @@
 
   table {
     width: 100%;
-    border-top: 1px solid rgba(white, 0.2);
     min-height: 12px;
     display: block;
     position: absolute;
@@ -43,7 +42,6 @@
       list-style: none;
       padding-bottom: 1px;
       padding-top: 3px;
-      border-bottom: 1px dotted rgba(black, 0.1);
       &:only-child, &:last-child {
         padding-bottom: 0;
         border: none;
@@ -57,8 +55,6 @@
       display: inline-block;
       width: 100%;
       line-height: 1.2em;
-      border-bottom: 1px solid rgba(black, 0.06);
-      border-top: 1px solid rgba(white, 0.5);
       vertical-align: top;
       padding-left: 4px;
       
@@ -76,7 +72,6 @@
         padding: 4px 0px 2px 0;
         width: 50%;
         word-wrap: break-word;
-        color: darken($text-color-light, 20);
         
         &:only-child {
           width: 100%;
@@ -110,7 +105,6 @@
           padding: 16px 0;
           width: 100%;
           text-align: center;
-          color: $text-color-light;
         }
       }
       
@@ -118,7 +112,6 @@
         display: inline-block;
         height: 32px;
         width: 100%;
-        background-color: rgba(darken($darker-bg-color, 20), 0.2);
         text-align: center;
         text-indent: -2000px;
         &:before {
