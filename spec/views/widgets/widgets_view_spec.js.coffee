@@ -37,11 +37,15 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @map = new Backbone.View
       @map.render = sinon.stub().returns @map
       @map.resize = sinon.spy()
+      @map.widgetize = sinon.spy()
+      @map.maximize = sinon.spy()
       @map
 
     sinon.stub Coreon.Views.Widgets, "TermListView", =>
       @termListView = new Backbone.View
       @termListView.render = sinon.stub().returns @termListView
+      @termListView.widgetize = sinon.spy()
+      @termListView.maximize = sinon.spy()
       @termListView
 
     sinon.stub Coreon.Models, 'TermList', =>
@@ -144,6 +148,11 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       $.contains(@view.el, @map.el).should.be.true
       @view.subviews.should.contain @map
 
+    it 'widgetizes concept map view', ->
+      @view.render()
+      widgetize = @map.widgetize
+      expect(widgetize).to.have.been.calledOnce
+
     it "renders term list view", ->
       @view.render()
       constructor = Coreon.Views.Widgets.TermListView
@@ -153,6 +162,11 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       expect( @termListView.render ).to.have.been.calledOnce
       expect( $.contains @view.el, @termListView.el ).to.be.true
       expect( @view.subviews ).to.contain @termListView
+
+    it 'widgetizes term list view', ->
+      @view.render()
+      widgetize = @termListView.widgetize
+      expect(widgetize).to.have.been.calledOnce
 
   describe "resizing", ->
 

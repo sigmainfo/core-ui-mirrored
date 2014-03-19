@@ -65,12 +65,14 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     @map = new Coreon.Views.Widgets.ConceptMapView
       model: new Coreon.Collections.ConceptMapNodes
       hits: Coreon.Collections.Hits.collection()
-    @$el.append @map.render().$el
+    @map.render().widgetize()
+    @$el.append @map.$el
     @subviews.push @map
 
     termList = new Coreon.Views.Widgets.TermListView
       model: new Coreon.Models.TermList
-    @$el.append termList.render().$el
+    termList.render().widgetize()
+    @$el.append termList.$el
     @subviews.push termList
 
     @

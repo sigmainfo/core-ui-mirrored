@@ -165,7 +165,7 @@ en:
   confirm:
     ok: "OK"
 
-  widget:
+  panel:
     maximize: "Maximize"
 
   widgets:

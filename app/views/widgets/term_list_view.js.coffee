@@ -1,4 +1,5 @@
 #= require environment
+#= require views/panels/panel_view
 #= require helpers/titlebar
 #= require templates/widgets/term_list
 #= require templates/widgets/term_list_title
@@ -12,11 +13,9 @@
 defaults =
   size: [320, 120]
 
-class Coreon.Views.Widgets.TermListView extends Backbone.View
+class Coreon.Views.Widgets.TermListView extends Coreon.Views.Panels.PanelView
 
   id: 'coreon-term-list'
-
-  className: 'widget'
 
   template    : Coreon.Templates['widgets/term_list']
   title       : Coreon.Templates['widgets/term_list_title']

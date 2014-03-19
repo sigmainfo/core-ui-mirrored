@@ -1,4 +1,5 @@
 #= require environment
+#= require views/panels/panel_view
 #= require jquery.ui.resizable
 #= require templates/widgets/concept_map
 #= require helpers/titlebar
@@ -8,11 +9,9 @@
 #= require modules/helpers
 #= require modules/loop
 
-class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
+class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.Panels.PanelView
 
   id: 'coreon-concept-map'
-
-  className: 'widget'
 
   template: Coreon.Templates['widgets/concept_map']
 
@@ -160,7 +159,6 @@ class Coreon.Views.Widgets.ConceptMapView extends Backbone.View
       'widgets.concept_map.toggle_orientation'
       'widgets.concept_map.zoom_in'
       'widgets.concept_map.zoom_out'
-      'widget.maximize'
     ]
     @$el.resizable
       handles: 's'
