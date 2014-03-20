@@ -1,0 +1,11 @@
+#coreon-progress-indicator {
+  float: left;
+  width: 30px;
+  height: 30px;
+  margin: 3px 3px 3px 10px;
+  background: image-url("layout/progress_indicator.png") no-repeat 0 0;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/progress_indicator@2x.png');
+      @include background-size(1080px 30px);
+  }
+}

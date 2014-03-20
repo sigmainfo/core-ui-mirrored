@@ -1,56 +1,23 @@
 #coreon-modal {
   
-  .modal-shim {
-    width: 50%;
-    height: 3000px;
-  }
-  
   .confirm {
-    @include box-sizing(border-box);
-    display: table;
     background-color: $button-color;
     @include border-radius(6px);
-    @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset, rgba(black, 0.4) 2px 2px 5px);
     @include background(linear-gradient(lighten($button-color, 6), $button-color));
-    min-width: 220px;
-    width: 30%;
-    max-width: 400px;
-    color: white;
-    
-    p {
-      padding: 15px;
-      display: table-cell;
-      vertical-align: middle;
-    }
     
     .ok {
-      font-size: 1.4em;
-      text-align: center;
       background-color: $button-hover-color;
-      border-left: 1px solid rgba(black, 0.2);
       @include border-right-radius(6px);
       @include retina-stripes(white);
-      @include box-shadow(rgba(white, 0.2) 1px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset);      
     }
     
     &:before {
-      content: "";
-      display: block;
-      position: absolute;
-      bottom: -6px;
-      left: 36px;
-      width:12px; 
-    	height:12px;
     	background-color: $button-color;
-      @include box-shadow(rgba(black, 0.4) 1px -1px 1px inset, rgba(black, 0.3) -2px 2px 2px);      
-    	@include rotate(-45deg);
     }
     
     &.flipped {
       &:before {
-        top: -6px;
         background-color: lighten($button-color, 6);
-        @include box-shadow(rgba(white, 0.2) -1px 1px 1px inset);
       }
     }
     

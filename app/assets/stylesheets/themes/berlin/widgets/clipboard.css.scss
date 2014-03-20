@@ -1,27 +1,7 @@
 #coreon-clipboard {
-  
-  h4:before {
-    background-position: -2px -1002px;
-    @include scale(0.9);
-  }
-  
-  .clear {
-    &:before {
-      @include before-icon;
-      background-position: 2px -750px;
-    }
-
-    &:hover {
-      &:before {
-        background-position: -48px -750px;
-      }
-    }
-  }
 
   ul {
     border-top: 1px solid rgba(white, 0.2);
-    padding: 8px 20px;
-    min-height: 12px;
     background-color: rgba($search-bg-color, 0.14);
     @include retina-stripes("white");
     
@@ -29,31 +9,14 @@
       list-style: none;
       padding: 1px;
       position: relative;
-      &:after {
-        @include before-icon;
-        background-position: 0px -199px;
-        @include opacity(0.7);
-        position: absolute;
-        bottom: 0;
-        left: -5px;
-      }
 
       .concept-label {
-        font-size: 0.9em;
-        line-height: 1.3em;
-        padding-top: 2px;
-        padding-left: 16px;
         @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
-        &:before {
-          left: 6px;
-        }
       }
     }
 
     &.ui-state-highlight {
       @include droparea;
-      margin: 0 4px 0 3px;
-      border-top: none;
     }
 
     &.ui-state-hovered {

@@ -1,12 +1,12 @@
 .ui-draggable {
   &:hover {
-    @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px);
+    @include single-box-shadow(rgba(black, 0.3), 1px, 1px, 2px);
   }
 }
 
 .ui-draggable-dragging {
   cursor: pointer;
-  @include single-box-shadow(desaturate(lighten($text-color, 40%), 20%), 2px, 2px, 4px);
+  @include single-box-shadow(desaturate(lighten(black, 40%), 20%), 2px, 2px, 4px);
   max-width: 400px;
 }
 
@@ -23,8 +23,7 @@
     width: 20px;
     height: 20px;
     @include border-radius(10px);
-    @include single-box-shadow($text-color, 1px, 1px, 2px);
-    background-color: $label-color;
+    @include single-box-shadow(#555555, 1px, 1px, 2px);
     background-position: -149px -1000px;
   }
 }
@@ -59,7 +58,7 @@ h2.concept-label {
       li {
         margin: 2px 0;
         .concept-label {
-          @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
+          @include single-box-shadow(desaturate(lighten(black, 50%), 20%), 1px, 1px, 2px);
         }
       }
       

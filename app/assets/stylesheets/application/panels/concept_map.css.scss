@@ -5,9 +5,6 @@ $edge-color: #bfc5c0;
   .map {
     line-height: 0;
     width: 100%;
-    border-top: 1px solid rgba(white, 0.3);
-    border-bottom: 1px solid rgba(black, 0.1);
-    @include retina-stripes("white");
 
     &:hover {
       cursor: move;

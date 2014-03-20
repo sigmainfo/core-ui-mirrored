@@ -20,12 +20,10 @@
     .empty-list {
       font-size: 1.06em;
       border: none;
-      background-position: bottom;
       padding-bottom: 10px;
     }
 
     .concept-list-item>td{
-      border: none;
       padding: 6px 0;
 
       table {
@@ -45,12 +43,6 @@
 
         th, td {
           padding-top: 5px;
-        }
-
-        tr:last-child {
-          td, th {
-            border: none;
-          }
         }
 
         tr.label {

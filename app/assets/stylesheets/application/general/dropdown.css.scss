@@ -24,7 +24,6 @@
   
   &.single {
     padding-left: 12px;
-    @include box-shadow(none);
     &:before {
       display: none;
     }    
