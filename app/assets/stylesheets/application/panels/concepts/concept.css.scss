@@ -151,10 +151,6 @@ div.concept {
     ul {
       list-style: none;
       padding-bottom: 3px;
-      
-      li.term {
-        margin-bottom: 4px;
-      }
     }
   }
   
@@ -349,12 +345,6 @@ div.concept {
       }
       ul.index {
         padding-bottom: 0px;
-        li {
-          
-          padding-top: 0;
-          &.selected:before {
-          content: none};
-        }
       }
     }
   }

@@ -1,0 +1,36 @@
+div.concept.new {
+
+  h2 {
+    color: $button-hover-color;
+  }
+
+  .broader-and-narrower {
+    .self {
+      color: $button-hover-color;
+    }
+  }
+
+  .terms {
+    @include retina-separator;
+
+    .term {
+      background-image: none;
+    }
+    
+    .add {
+      @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
+    }
+
+  }
+  
+  .create >.properties fieldset, .terms >fieldset {
+    @include editmode;
+  }
+  
+  .add {
+    @include editmode;
+    background-color: rgba($button-color, 0.05);
+  }
+}
+
+

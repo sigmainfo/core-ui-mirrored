@@ -1,0 +1,26 @@
+.coreon-select {
+  color: white;
+  background-color: $button-color;
+  @include border-radius(4px);
+  @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
+  
+  &:before {
+    background-position: -148px -7px;
+  }
+  
+  &:hover {
+    background-color: $link-color;
+
+    &:before { 
+      background-position: -148px -7px;
+    }
+  }
+  
+  &.single {
+    @include box-shadow(none); 
+  }
+  
+  &.filters-select {
+    padding: 2px 12px 1px 26px;
+  }
+}

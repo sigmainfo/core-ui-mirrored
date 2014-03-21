@@ -1,0 +1,95 @@
+ body {
+   color: $text-color;
+ }
+
+ a {
+   color: $link-color;
+   &:hover {
+     color: $link-color;
+   }
+ }
+
+ input[type="email"], input[type="password"], input[type="text"], textarea {
+    color: $text-color;
+ }
+ 
+ h3 {
+   color: $button-color;
+ }
+ 
+ .concept h3 {
+   color: white;
+   background: $button-color;
+ }
+ 
+.concept-label {
+  &:before {
+    border: 1px solid lighten($text-color, 20%);
+  }
+   color: $text-color-light;
+
+   &.hit {
+     color: $hit-color;
+     &:hover {
+       color: $link-color;
+     }
+   }
+ }
+ 
+.repository-label {
+  background-color: rgba($hit-color, 0.1);
+  @include border-radius(8px);
+}
+
+.empty td, .empty-list, .no-terms {
+  color: $text-color-light;
+}
+
+.placeholder {
+  &:before {
+    background-color: rgba($text-color-light, 0.4);
+  }
+}
+
+.concept table, table.meta {
+  
+  tr {    
+    th {
+      color: $label-color;
+    }
+  }
+}
+
+table.managers, .concept-list>table {
+
+  thead th {
+    border-bottom: 1px solid $button-color;   
+    &:before {
+      @include before-icon;
+      position: absolute;
+      top: 1.3em;
+      background-position: -52px -150px;
+    }
+  }
+
+  tr {
+    td {
+      border-bottom: 1px solid $darker-bg-color;
+    }
+  }
+}
+
+#coreon-filters {
+  background-color: $bg-color;
+  padding: 8px 10px;
+  @include single-box-shadow(rgba(#222222, 0.5), 1px, 1px, 2px, false);
+}
+
+#coreon-widgets {
+  background-color: $darker-bg-color;
+
+  &:after {
+    background: rgba(30,80,80, 0.06);
+  }
+}
+

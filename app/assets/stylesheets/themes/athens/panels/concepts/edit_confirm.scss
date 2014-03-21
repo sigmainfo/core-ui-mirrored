@@ -1,0 +1,32 @@
+#coreon-modal {
+  
+  .confirm {
+    background-color: $button-color;
+    @include border-radius(6px);
+    @include background(linear-gradient(lighten($button-color, 6), $button-color));
+    
+    .ok {
+      background-color: $button-hover-color;
+      @include border-right-radius(6px);
+      @include retina-stripes(white);
+    }
+    
+    &:before {
+    	background-color: $button-color;
+    }
+    
+    &.flipped {
+      &:before {
+        background-color: lighten($button-color, 6);
+      }
+    }
+    
+    &:hover {
+      @include background(linear-gradient(lighten($button-hover-color, 6), $button-hover-color));
+      &:before {
+        background-color: $button-hover-color;
+      }
+    }
+  }
+  
+}

@@ -1,3 +1,30 @@
 @import 'compass/css3';
 @import 'athens/config/*';
-@import 'athens/fonts';
+
+@import 'athens/general/layout';
+@import 'athens/general/footer';
+@import 'athens/general/dropdown';
+@import 'athens/general/dragndrop';
+@import 'athens/general/notifications';
+@import 'athens/general/errors';
+@import 'athens/general/progress_indicator';
+@import 'athens/general/flags';
+@import 'athens/general/modal';
+
+@import 'athens/pages/login';
+
+@import 'athens/panels/concepts/concept';
+@import 'athens/panels/concepts/concept_tree';
+@import 'athens/panels/concepts/create_concept';
+@import 'athens/panels/concepts/edit';
+@import 'athens/panels/concepts/edit_confirm';
+@import 'athens/panels/concepts/concept-list';
+@import 'athens/panels/concepts/repository';
+@import 'athens/panels/concept_map';
+
+@import 'athens/widgets/shared';
+@import 'athens/widgets/search';
+@import 'athens/widgets/clipboard';
+@import 'athens/widgets/concept_map';
+@import 'athens/widgets/languages';
+@import 'athens/widgets/termlist';

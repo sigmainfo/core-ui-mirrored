@@ -79,18 +79,13 @@ div.concept {
         @include retina-BigSeparator;
       }    
     }
-    
-    ul {
-      
-      li.term {
-        @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
-        background-color: rgba($secondary-color, 0.05);
-      }
-    }
   }
   
   li.term {
-        
+    @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
+    background-color: rgba($secondary-color, 0.05);
+    margin-bottom: 4px;
+    
     section.properties {
 
       h3, .collapsed h3 {
@@ -126,6 +121,19 @@ div.concept {
         width: 4px;
         height: 4px;
         top: 6px;
+      }
+    }
+    
+    
+    table {
+
+      ul.index {
+        
+        li {          
+          &.selected:before {
+          content: none;
+          }
+        }
       }
     }
   }

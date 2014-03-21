@@ -1,0 +1,15 @@
+div.repository {
+
+  h2 {
+    background-color: rgba($hit-color, 0.1);
+    @include border-radius(8px);
+  }
+  
+  .description {
+    @include retina-separator();
+  }
+  
+  table.meta {
+    @include dottedline();
+  }
+}
