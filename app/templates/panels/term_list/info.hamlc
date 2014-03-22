@@ -1,0 +1,2 @@
+%tr.empty
+  %td= I18n.t 'panels.term_list.empty'

@@ -1,4 +1,4 @@
-!= @titlebar I18n.t( 'widgets.concept_map.title' ), @actions
+!= @titlebar I18n.t( 'panels.concept_map.title' ), @actions
 .map
   %svg{ xmlns: "http://www.w3.org/2000/svg", version: "1.1" }
     %defs

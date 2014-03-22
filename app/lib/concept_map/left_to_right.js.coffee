@@ -1,8 +1,8 @@
 #= require environment
-#= require views/widgets/concept_map/render_strategy
+#= require lib/concept_map/render_strategy
 #= require helpers/text
 
-class Coreon.Views.Widgets.ConceptMap.LeftToRight extends Coreon.Views.Widgets.ConceptMap.RenderStrategy
+class Coreon.Lib.ConceptMap.LeftToRight extends Coreon.Lib.ConceptMap.RenderStrategy
 
   constructor: (parent) ->
     super

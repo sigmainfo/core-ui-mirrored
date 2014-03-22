@@ -60,7 +60,6 @@ describe 'Coreon.Views.Panels.PanelView', ->
         </div>
       '''
       view.widgetize()
-      console.log view.$el.html()
       action = view.$('.actions a.maximize')
       expect(action).to.have.lengthOf 1
 

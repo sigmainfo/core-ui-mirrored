@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/widgets/concept_map/render_strategy
+#= require lib/concept_map/render_strategy
 
-describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
+describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
 
   beforeEach ->
     sinon.stub I18n, 't'
@@ -14,7 +14,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     sinon.stub d3.layout, 'tree', => @layout =
       nodes: sinon.stub().returns []
     sinon.stub d3.svg, 'diagonal', => @diagonal = {}
-    @strategy = new Coreon.Views.Widgets.ConceptMap.RenderStrategy @parent, d3.layout.tree()
+    @strategy = new Coreon.Lib.ConceptMap.RenderStrategy @parent, d3.layout.tree()
     sinon.stub _, 'defer', (@deferred) =>
 
   afterEach ->
@@ -447,7 +447,7 @@ describe "Coreon.Views.Widgets.ConceptMap.RenderStrategy", ->
     context 'placeholders', ->
 
       it 'updates title', ->
-        I18n.t.withArgs('widgets.concept_map.placeholder.title',
+        I18n.t.withArgs('panels.concept_map.placeholder.title',
           count: 123
           label: 'Billiards'
         ).returns '123 more concepts for Billiards'

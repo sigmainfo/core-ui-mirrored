@@ -2,9 +2,9 @@
 #= require jquery.ui.resizable
 #= require views/widgets/search_view
 #= require views/widgets/languages_view
-#= require views/widgets/concept_map_view
 #= require views/widgets/clipboard_view
-#= require views/widgets/term_list_view
+#= require views/panels/term_list_panel
+#= require views/panels/concept_map_panel
 #= require collections/concept_map_nodes
 #= require modules/helpers
 #= require modules/droppable
@@ -38,7 +38,6 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
       start: (event, ui) =>
         ui.originalPosition.left = @$el.position().left
       resize: (event, ui) =>
-        @map.resize ui.size.width, null
         @saveLayout width: ui.size.width
       stop: (event, ui) =>
         @$el.css
@@ -61,19 +60,6 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     clipboard = new Coreon.Views.Widgets.ClipboardView
     @$el.append clipboard.render().$el
     @subviews.push clipboard
-
-    @map = new Coreon.Views.Widgets.ConceptMapView
-      model: new Coreon.Collections.ConceptMapNodes
-      hits: Coreon.Collections.Hits.collection()
-    @map.render().widgetize()
-    @$el.append @map.$el
-    @subviews.push @map
-
-    termList = new Coreon.Views.Widgets.TermListView
-      model: new Coreon.Models.TermList
-    termList.render().widgetize()
-    @$el.append termList.$el
-    @subviews.push termList
 
     @
 

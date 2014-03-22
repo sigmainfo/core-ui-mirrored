@@ -1,4 +1,4 @@
-= I18n.t 'widgets.term_list.title'
+= I18n.t 'panels.term_list.title'
 - if @source
   %span.langs<
     != surround '(', ')', ->

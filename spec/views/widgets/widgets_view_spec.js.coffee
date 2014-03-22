@@ -9,12 +9,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.application.repositorySettings = -> new Backbone.Model
     Coreon.application.sourceLang = -> null
 
-    sinon.stub Coreon.Collections, "ConceptMapNodes", =>
-      @nodes = new Backbone.Collection
-
-    sinon.stub Coreon.Collections.Hits, "collection", =>
-      @hits ?= new Backbone.Collection
-
     sinon.stub Coreon.Models, "SearchType", =>
       @searchType = new Backbone.Model
 
@@ -33,38 +27,15 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @clips.render = sinon.stub().returns @clips
       @clips
 
-    sinon.stub Coreon.Views.Widgets, "ConceptMapView", =>
-      @map = new Backbone.View
-      @map.render = sinon.stub().returns @map
-      @map.resize = sinon.spy()
-      @map.widgetize = sinon.spy()
-      @map.maximize = sinon.spy()
-      @map
-
-    sinon.stub Coreon.Views.Widgets, "TermListView", =>
-      @termListView = new Backbone.View
-      @termListView.render = sinon.stub().returns @termListView
-      @termListView.widgetize = sinon.spy()
-      @termListView.maximize = sinon.spy()
-      @termListView
-
-    sinon.stub Coreon.Models, 'TermList', =>
-      @termList = new Backbone.Model
-
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
         hits: new Backbone.Collection
 
   afterEach ->
-    Coreon.Collections.ConceptMapNodes.restore()
-    Coreon.Collections.Hits.collection.restore()
     Coreon.Models.SearchType.restore()
     Coreon.Views.Widgets.SearchView.restore()
     Coreon.Views.Widgets.LanguagesView.restore()
     Coreon.Views.Widgets.ClipboardView.restore()
-    Coreon.Views.Widgets.ConceptMapView.restore()
-    Coreon.Views.Widgets.TermListView.restore()
-    Coreon.Models.TermList.restore()
     Coreon.application = null
 
   it "is a Backbone view", ->
@@ -131,43 +102,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       $.contains(@view.el, @clips.el).should.be.true
       @view.subviews.should.contain @clips
 
-    it "creates concept map view", ->
-      @view.render()
-      Coreon.Collections.ConceptMapNodes.should.have.been.calledOnce
-      Coreon.Collections.ConceptMapNodes.should.have.been.calledWithNew
-      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledOnce
-      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWithNew
-      Coreon.Views.Widgets.ConceptMapView.should.have.been.calledWith
-        model: @nodes
-        hits: @hits
-      @view.map.should.equal @map
-
-    it "renders concept map view", ->
-      @view.render()
-      @map.render.should.have.been.calledOnce
-      $.contains(@view.el, @map.el).should.be.true
-      @view.subviews.should.contain @map
-
-    it 'widgetizes concept map view', ->
-      @view.render()
-      widgetize = @map.widgetize
-      expect(widgetize).to.have.been.calledOnce
-
-    it "renders term list view", ->
-      @view.render()
-      constructor = Coreon.Views.Widgets.TermListView
-      expect( constructor ).to.have.been.calledOnce
-      expect( constructor ).to.have.been.calledWithNew
-      expect( constructor ).to.have.been.calledWith model: @termList
-      expect( @termListView.render ).to.have.been.calledOnce
-      expect( $.contains @view.el, @termListView.el ).to.be.true
-      expect( @view.subviews ).to.contain @termListView
-
-    it 'widgetizes term list view', ->
-      @view.render()
-      widgetize = @termListView.widgetize
-      expect(widgetize).to.have.been.calledOnce
-
   describe "resizing", ->
 
     beforeEach ->
@@ -190,12 +124,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.$el.width 320
       @handle.drag -47
       @view.$el.width().should.equal 367
-
-    it "syncs svg width", ->
-      @view.$el.width 320
-      @handle.drag -47
-      @map.resize.should.have.been.calledOnce
-      @map.resize.should.have.been.calledWith 367, null
 
     it "does not allow to reduce width below min width", ->
       @view.$el.width 320

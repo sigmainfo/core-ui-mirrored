@@ -45,6 +45,10 @@ describe "config/environment", ->
       should.exist Coreon.Views.Properties
       should.exist Coreon.Views.Terms
 
+    it 'prepares lib namespaces', ->
+      expect(Coreon.Lib.ConceptMap).to.exist
+      expect(Coreon.Lib.Panels).to.exist
+
   describe "Backbone.View::destroy()", ->
 
     it "calls remove", ->

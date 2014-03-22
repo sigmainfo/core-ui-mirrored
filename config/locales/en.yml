@@ -172,11 +172,13 @@ en:
     languages:
       title: "Languages"
       no-selection: '-- None'
-
     clipboard:
       title: "Clipboard"
       clear: "Clear"
 
+  panels:
+    concepts:
+      title: 'Concepts'
     concept_map:
       title: "Concept Map"
       zoom_in: "Zoom in"
@@ -186,16 +188,11 @@ en:
         title:
           one: '1 more concept for {{label}}'
           other: '{{count}} more concepts for {{label}}'
-
     term_list:
       title: 'Term List'
       empty: 'No language selected'
       placeholder: 'loading additional terms...'
       toggle_scope: 'Toggle scope'
-
-  panels:
-    concepts:
-      title: 'Concepts'
 
   user:
     name: "Name"

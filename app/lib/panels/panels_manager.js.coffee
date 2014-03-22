@@ -1,0 +1,35 @@
+#= require environment
+#= require collections/panels
+#= require lib/panels/panel_factory
+
+class Coreon.Lib.Panels.PanelsManager
+
+  @create: (view) =>
+    new @
+      view: view
+      model: Coreon.Collections.Panels.instance()
+      factory: Coreon.Lib.Panels.PanelFactory.instance()
+
+  constructor: (options = {}) ->
+    @[key] = value for key, value of options
+
+  removeAll: ->
+    @model.forEach (model) ->
+      if view = model.view
+        view.remove()
+        model.view = null
+
+  createAll: ->
+    @model.forEach (model) =>
+      panel = @factory.create model.get('type'), model
+      model.view = panel.render()
+
+  update: ->
+    @model.forEach (model) =>
+      panel = model.view
+      if model.get('widget')
+        panel.widgetize()
+        @view.$('#coreon-widgets').append panel.$el
+      else
+        panel.maximize()
+        @view.$('#coreon-main').append panel.$el

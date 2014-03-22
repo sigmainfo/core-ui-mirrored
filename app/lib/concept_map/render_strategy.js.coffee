@@ -2,7 +2,7 @@
 #= require d3
 #= require helpers/repository_path
 
-class Coreon.Views.Widgets.ConceptMap.RenderStrategy
+class Coreon.Lib.ConceptMap.RenderStrategy
 
   constructor: (@parent) ->
     @layout = d3.layout.tree()
@@ -162,7 +162,7 @@ class Coreon.Views.Widgets.ConceptMap.RenderStrategy
     placeholders.select('title')
       .text( (datum) ->
         if datum.label
-          I18n.t 'widgets.concept_map.placeholder.title',
+          I18n.t 'panels.concept_map.placeholder.title',
             count: datum.label * 1
             label: datum.parent.label
       )

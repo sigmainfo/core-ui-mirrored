@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/widgets/concept_map_view
+#= require views/panels/concept_map_panel
 
-describe 'Coreon.Views.Widgets.ConceptMapView', ->
+describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
   no_rAF = no
 
@@ -42,25 +42,25 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
 
     hits = new Backbone.Collection
 
-    sinon.stub Coreon.Views.Widgets.ConceptMap, 'LeftToRight', =>
+    sinon.stub Coreon.Lib.ConceptMap, 'LeftToRight', =>
        @leftToRight =
          resize: sinon.spy()
          render: => @leftToRight
 
-    sinon.stub Coreon.Views.Widgets.ConceptMap, 'TopDown', =>
+    sinon.stub Coreon.Lib.ConceptMap, 'TopDown', =>
       @topDown =
         resize: sinon.spy()
         render: => @topDown
 
-    view = new Coreon.Views.Widgets.ConceptMapView
+    view = new Coreon.Views.Panels.ConceptMapPanel
       model: nodes
       hits: hits
 
   afterEach ->
     Coreon.application = null
     I18n.t.restore()
-    Coreon.Views.Widgets.ConceptMap.LeftToRight.restore()
-    Coreon.Views.Widgets.ConceptMap.TopDown.restore()
+    Coreon.Lib.ConceptMap.LeftToRight.restore()
+    Coreon.Lib.ConceptMap.TopDown.restore()
 
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
@@ -82,7 +82,7 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
     context 'rendering markup skeleton', ->
 
       it 'renders titlebar', ->
-        I18n.t.withArgs('widgets.concept_map.title').returns 'Concept Map'
+        I18n.t.withArgs('panels.concept_map.title').returns 'Concept Map'
         view.initialize hits: view.hits
         title = view.$( '.titlebar h3' )
         expect( title ).to.exist
@@ -94,8 +94,8 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         view.$('.titlebar').size().should.equal 1
 
       it 'renders zoom buttons', ->
-        I18n.t.withArgs('widgets.concept_map.zoom_in').returns 'Zoom in'
-        I18n.t.withArgs('widgets.concept_map.zoom_out').returns 'Zoom out'
+        I18n.t.withArgs('panels.concept_map.zoom_in').returns 'Zoom in'
+        I18n.t.withArgs('panels.concept_map.zoom_out').returns 'Zoom out'
         view.initialize hits: view.hits
         view.$el.should.have '.zoom-in'
         view.$('.zoom-in').should.have.text 'Zoom in'
@@ -104,21 +104,12 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
         view.$('.zoom-out').should.have.attr 'title', 'Zoom out'
 
       it 'renders toggle button', ->
-        I18n.t.withArgs('widgets.concept_map.toggle_orientation').returns 'Toggle orientation'
+        I18n.t.withArgs('panels.concept_map.toggle_orientation').returns 'Toggle orientation'
         view.initialize hits: view.hits
         view.$el.should.have '.toggle-orientation'
         view.$('.toggle-orientation').should.have.text 'Toggle orientation'
         view.$('.toggle-orientation').should.have.attr 'title', 'Toggle orientation'
         view.$('.toggle-orientation').should.have.attr 'href', 'javascript:void(0)'
-
-      it 'renders maximize button', ->
-        I18n.t.withArgs('widget.maximize').returns 'Maximize'
-        view.initialize hits: view.hits
-        button = view.$( '.titlebar .maximize' )
-        expect( button ).to.exist
-        expect( button ).to.have.text 'Maximize'
-        expect( button ).to.have.attr 'title', 'Maximize'
-        expect( button ).to.have.attr 'href', 'javascript:void(0)'
 
       it 'creates resize handle', ->
         view.initialize hits: view.hits
@@ -661,24 +652,24 @@ describe 'Coreon.Views.Widgets.ConceptMapView', ->
       view.toggleOrientation.should.have.been.calledOnce
 
     it 'switches render strategy', ->
-      Coreon.Views.Widgets.ConceptMap.LeftToRight.reset()
-      Coreon.Views.Widgets.ConceptMap.TopDown.reset()
+      Coreon.Lib.ConceptMap.LeftToRight.reset()
+      Coreon.Lib.ConceptMap.TopDown.reset()
       view.toggleOrientation()
-      Coreon.Views.Widgets.ConceptMap.TopDown.should.not.have.been.called
-      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledOnce
-      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledWithNew
-      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.have.been.calledWith view.map
+      Coreon.Lib.ConceptMap.TopDown.should.not.have.been.called
+      Coreon.Lib.ConceptMap.LeftToRight.should.have.been.calledOnce
+      Coreon.Lib.ConceptMap.LeftToRight.should.have.been.calledWithNew
+      Coreon.Lib.ConceptMap.LeftToRight.should.have.been.calledWith view.map
       view.renderStrategy.should.equal @leftToRight
 
     it 'toggles between render strategies', ->
       view.toggleOrientation()
-      Coreon.Views.Widgets.ConceptMap.LeftToRight.reset()
-      Coreon.Views.Widgets.ConceptMap.TopDown.reset()
+      Coreon.Lib.ConceptMap.LeftToRight.reset()
+      Coreon.Lib.ConceptMap.TopDown.reset()
       view.toggleOrientation()
-      Coreon.Views.Widgets.ConceptMap.LeftToRight.should.not.have.been.called
-      Coreon.Views.Widgets.ConceptMap.TopDown.should.have.been.calledOnce
-      Coreon.Views.Widgets.ConceptMap.TopDown.should.have.been.calledWithNew
-      Coreon.Views.Widgets.ConceptMap.TopDown.should.have.been.calledWith view.map
+      Coreon.Lib.ConceptMap.LeftToRight.should.not.have.been.called
+      Coreon.Lib.ConceptMap.TopDown.should.have.been.calledOnce
+      Coreon.Lib.ConceptMap.TopDown.should.have.been.calledWithNew
+      Coreon.Lib.ConceptMap.TopDown.should.have.been.calledWith view.map
       view.renderStrategy.should.equal @topDown
 
     it 'renders view', ->

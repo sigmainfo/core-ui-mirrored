@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/widgets/term_list_view
+#= require views/panels/term_list_panel
 
-describe 'Coreon.Views.Widgets.TermListView', ->
+describe 'Coreon.Views.Panels.TermListPanel', ->
 
   view = null
 
@@ -20,7 +20,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
     model.terms = new Backbone.Collection
     model.hasNext = -> no
     model.hasPrev = -> no
-    view = new Coreon.Views.Widgets.TermListView
+    view = new Coreon.Views.Panels.TermListPanel
       model: model
 
   afterEach ->
@@ -36,7 +36,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
   describe '#initialize()', ->
 
     it 'renders title', ->
-      I18n.t.withArgs('widgets.term_list.title').returns 'Term List'
+      I18n.t.withArgs('panels.term_list.title').returns 'Term List'
       view.initialize()
       title = view.$( '.titlebar h3' )
       expect( title ).to.exist
@@ -58,7 +58,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
       expect( view.$el ).to.have  '.ui-resizable-s'
 
     it 'renders toggle button', ->
-      I18n.t.withArgs('widgets.term_list.toggle_scope').returns 'Toggle scope'
+      I18n.t.withArgs('panels.term_list.toggle_scope').returns 'Toggle scope'
       view.initialize()
       toggle = view.$('.toggle-scope')
       expect( toggle ).to.exist
@@ -94,7 +94,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         view.model.set 'source', null, silent: yes
 
       it 'renders info', ->
-        I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
+        I18n.t.withArgs('panels.term_list.empty').returns 'No language selected'
         view.render()
         expect( view.$el ).to.have 'tbody tr.empty'
         expect( view.$('tr.empty td') ).to.have.text 'No language selected'
@@ -105,7 +105,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         view.model.set 'source', 'en', silent: yes
 
       it 'does not render info', ->
-        I18n.t.withArgs('widgets.term_list.empty').returns 'No language selected'
+        I18n.t.withArgs('panels.term_list.empty').returns 'No language selected'
         view.$('ul').append '<li class="empty">No language selected</li>'
         view.render()
         expect( view.$el ).to.not.have '.empty'
@@ -345,7 +345,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         view.model.set 'loadingNext', true, silent: yes
 
       it 'appends placeholder node', ->
-        I18n.t.withArgs( 'widgets.term_list.placeholder' )
+        I18n.t.withArgs( 'panels.term_list.placeholder' )
           .returns 'loading...'
         view.updateLoadingState()
         placeholder = view.$ 'tr.placeholder.next td'
@@ -364,7 +364,7 @@ describe 'Coreon.Views.Widgets.TermListView', ->
         view.model.set 'loadingPrev', true, silent: yes
 
       it 'appends placeholder node', ->
-        I18n.t.withArgs( 'widgets.term_list.placeholder' )
+        I18n.t.withArgs( 'panels.term_list.placeholder' )
           .returns 'loading...'
         view.updateLoadingState()
         placeholder = view.$ 'tr.placeholder.prev td'

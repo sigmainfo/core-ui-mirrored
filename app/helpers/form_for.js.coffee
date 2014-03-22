@@ -35,7 +35,7 @@ class Form extends Coreon.Lib.FormContext
     @action = if @model.isNew() then "create" else "update"
     @errors = @model?.errors?()
     @errorCounts = errorCounts @errors if @errors?
-  
+
   input: (attr, options = {}) ->
     Coreon.Helpers.input @name, attr, @model, options
 

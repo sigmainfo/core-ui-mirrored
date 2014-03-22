@@ -1,19 +1,19 @@
 #= require environment
 #= require views/panels/panel_view
 #= require jquery.ui.resizable
-#= require templates/widgets/concept_map
+#= require templates/panels/concept_map
 #= require helpers/titlebar
 #= require d3
-#= require views/widgets/concept_map/left_to_right
-#= require views/widgets/concept_map/top_down
+#= require lib/concept_map/left_to_right
+#= require lib/concept_map/top_down
 #= require modules/helpers
 #= require modules/loop
 
-class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.Panels.PanelView
+class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   id: 'coreon-concept-map'
 
-  template: Coreon.Templates['widgets/concept_map']
+  template: Coreon.Templates['panels/concept_map']
 
   options:
     size: [320, 240]
@@ -34,8 +34,8 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.Panels.PanelView
     @_renderMarkupSkeleton()
 
     @renderStrategies = [
-      Coreon.Views.Widgets.ConceptMap.TopDown
-      Coreon.Views.Widgets.ConceptMap.LeftToRight
+      Coreon.Lib.ConceptMap.TopDown
+      Coreon.Lib.ConceptMap.LeftToRight
     ]
 
     @map = d3.select @$('svg g.concept-map')[0]
@@ -156,9 +156,9 @@ class Coreon.Views.Widgets.ConceptMapView extends Coreon.Views.Panels.PanelView
   _renderMarkupSkeleton: ->
     @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
     @$el.html @template actions: [
-      'widgets.concept_map.toggle_orientation'
-      'widgets.concept_map.zoom_in'
-      'widgets.concept_map.zoom_out'
+      'panels.concept_map.toggle_orientation'
+      'panels.concept_map.zoom_in'
+      'panels.concept_map.zoom_out'
     ]
     @$el.resizable
       handles: 's'

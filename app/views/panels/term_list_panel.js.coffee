@@ -1,28 +1,28 @@
 #= require environment
 #= require views/panels/panel_view
 #= require helpers/titlebar
-#= require templates/widgets/term_list
-#= require templates/widgets/term_list_title
-#= require templates/widgets/term_list_info
-#= require templates/widgets/term_list_items
-#= require templates/widgets/term_list_translations
-#= require templates/widgets/term_list_placeholder
+#= require templates/panels/term_list
+#= require templates/panels/term_list/title
+#= require templates/panels/term_list/info
+#= require templates/panels/term_list/items
+#= require templates/panels/term_list/translations
+#= require templates/panels/term_list/placeholder
 #= require jquery.ui.resizable
 #= require models/concept
 
 defaults =
   size: [320, 120]
 
-class Coreon.Views.Widgets.TermListView extends Coreon.Views.Panels.PanelView
+class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
 
   id: 'coreon-term-list'
 
-  template    : Coreon.Templates['widgets/term_list']
-  title       : Coreon.Templates['widgets/term_list_title']
-  info        : Coreon.Templates['widgets/term_list_info']
-  terms       : Coreon.Templates['widgets/term_list_items']
-  targetTerms : Coreon.Templates['widgets/term_list_translations']
-  placeholder : Coreon.Templates['widgets/term_list_placeholder']
+  template    : Coreon.Templates['panels/term_list']
+  title       : Coreon.Templates['panels/term_list/title']
+  info        : Coreon.Templates['panels/term_list/info']
+  terms       : Coreon.Templates['panels/term_list/items']
+  targetTerms : Coreon.Templates['panels/term_list/translations']
+  placeholder : Coreon.Templates['panels/term_list/placeholder']
 
   events:
     'click .toggle-scope' : 'toggleScope'
@@ -41,7 +41,7 @@ class Coreon.Views.Widgets.TermListView extends Coreon.Views.Panels.PanelView
 
     @$el.html @template
       title: title
-      actions: [ 'widgets.term_list.toggle_scope' ]
+      actions: [ 'panels.term_list.toggle_scope' ]
 
     @$el.resizable
       handles: 's'

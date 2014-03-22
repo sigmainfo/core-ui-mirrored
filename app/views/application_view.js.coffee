@@ -6,11 +6,10 @@
 #= require views/account/password_prompt_view
 #= require views/repositories/repository_select_view
 #= require views/layout/progress_indicator_view
-#= require views/panels/concepts_panel
+#= require lib/panels/panels_manager
 #= require modules/helpers
 #= require modules/prompt
 #= require modules/xhr_forms
-
 
 class Coreon.Views.ApplicationView extends Backbone.View
 
@@ -35,8 +34,10 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @listenTo Coreon.Models.Notification.collection(), "reset", @clearNotifications
 
     @xhrFormsOn()
+    @panels = Coreon.Lib.Panels.PanelsManager.create @
 
   render: ->
+    @panels.removeAll()
     subview.remove() for subview in @subviews if @subviews
     @subviews = []
     session = @updateSession()
@@ -58,23 +59,17 @@ class Coreon.Views.ApplicationView extends Backbone.View
         el: @$("#coreon-progress-indicator")
       @subviews.push progress
 
-      conceptsPanel = new Coreon.Views.Panels.ConceptsPanel
-        model: @model
-      @switch conceptsPanel
-      @subviews.push conceptsPanel
+      @panels.createAll()
+      @panels.update()
 
       Backbone.history.start pushState: on unless Backbone.History.started
 
       @$('#coreon-account').delay(2000).slideUp()
     else
       Backbone.history.stop()
-      @switch new Coreon.Views.Sessions.NewSessionView model: @model
-
-  switch: (screen) ->
-    @main?.remove()
-    if @main = screen
-      screen.render()
-      @$("#coreon-main").append screen.$el
+      login = new Coreon.Views.Sessions.NewSessionView model: @model
+      @$('#coreon-main').append login.render().$el
+      @subviews.push login
 
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
