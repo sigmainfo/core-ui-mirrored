@@ -25,7 +25,7 @@ class Coreon.Models.Repository extends Backbone.Model
 
       @_remoteSettingsXHR.success (data, textStatus, jqXHR) =>
         @_remoteSettings = data
-
+        @set 'langs', data.used_languages
         @trigger 'remoteSettingChange', @
 
         delete @_remoteSettingsXHR

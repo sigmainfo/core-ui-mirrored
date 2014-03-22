@@ -6,8 +6,9 @@ Feature: user browses in source and target language
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
 
+  @wip
   Scenario: change label of concept by selected languages
-    Given the languages "English", "German", and "French" are available
+    Given the languages "English", "German", "Russian", "Korean", and "French" are available
     And a concept
     And this concept hat the following Russian terms: "пистолет", "огнестрельное оружие"
     And this concept has the following English terms: "gun", "firearm"

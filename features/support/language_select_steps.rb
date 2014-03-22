@@ -24,6 +24,18 @@ module LanguageSelectSteps
     ]
   end
 
+  step 'the languages "English", "German", "Russian", "Korean", and "French" are available' do
+    @repository.update_attributes languages: %w|en de ro ko fr|
+
+    create_concept terms: [
+      {lang: 'en', value: 'x'},
+      {lang: 'de', value: 'x'},
+      {lang: 'ru', value: 'x'},
+      {lang: 'ko', value: 'x'},
+      {lang: 'fr', value: 'x'}
+    ]
+  end
+
   step 'I click the "Source Language" selector' do
     page.find(source_language_css).click
   end

@@ -227,7 +227,7 @@ describe 'Coreon.Application', ->
       app.updateRepository()
       trigger = sinon.spy()
       app.on 'change:repositorySettings', trigger
-      repository.trigger 'remoteSettingsChange'
+      repository.trigger 'remoteSettingChange'
       expect(trigger).to.have.been.calledOnce
       expect(trigger).to.have.been.calledWith app, settings
 

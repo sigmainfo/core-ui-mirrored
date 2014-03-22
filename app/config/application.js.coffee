@@ -64,7 +64,7 @@ class Coreon.Application extends Backbone.Model
         @stopListening previous
       if current
         @listenTo current
-                , 'remoteSettingsChange'
+                , 'remoteSettingChange'
                 , @broadcastRepositoryChange
     else
       @set 'repository', null
