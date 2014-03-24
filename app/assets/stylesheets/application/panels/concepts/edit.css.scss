@@ -286,7 +286,7 @@ form.create.term {
 }
 
 .concept.edit {
-  form {
+  form, .broader-and-narrower {
     @include editmode;
   }
   
