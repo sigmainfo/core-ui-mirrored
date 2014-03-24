@@ -11,6 +11,9 @@ describe 'Coreon.Views.Panels.PanelView', ->
     view = new Coreon.Views.Panels.PanelView
       panel: model
 
+  afterEach ->
+    view.remove()
+
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
 

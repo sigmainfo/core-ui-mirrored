@@ -30,8 +30,9 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
             , 'change:widget'
             , @updateMode
 
-    $(window).off 'resize.coreonPanel', @onResize
-    $(window).on 'resize.coreonPanel', @onResize
+    @_namespace = "coreonPanel#{@panel.cid}"
+    $(window).off ".#{@_namespace}"
+    $(window).on "resize.#{@_namespace}", _(@resize).bind @
 
   widgetize: ->
     @$el
@@ -92,9 +93,6 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
       else
         @$el.removeClass name
 
-  onResize: =>
-    @resize()
-
   switchToMax: (event) ->
     event.preventDefault()
     @panel.set 'widget', no
@@ -113,4 +111,5 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
   resizeStop: (ui) ->
 
   remove: ->
-    $(window).off 'resize.coreonPanel', @onResize
+    $(window).off ".#{@_namespace}"
+    super

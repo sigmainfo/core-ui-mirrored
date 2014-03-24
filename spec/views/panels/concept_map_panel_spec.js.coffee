@@ -328,7 +328,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     beforeEach ->
       deferred = $.Deferred()
-      view.renderStrategy = render: ->
+      view.renderStrategy.render = ->
         deferred.promise()
       @rendered = ->
         deferred.resolve()
@@ -358,7 +358,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     it 'defers promise', ->
       done = sinon.spy()
-      view.renderStrategy = render: ->
+      view.renderStrategy.render = ->
         done: (done) ->
       view.update().done done
       expect( done ).to.not.have.been.called
@@ -367,7 +367,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       done = sinon.spy()
       nodes = []
       edges = []
-      view.renderStrategy = render: ->
+      view.renderStrategy.render = ->
         done: (callback) -> callback nodes, edges
       view.update(nodes, edges).done done
       expect( done ).to.have.been.calledOnce
@@ -526,7 +526,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
   describe '#zoomIn()', ->
 
     beforeEach ->
-      view.renderStrategy = render: ->
+      view.renderStrategy.render = ->
         done: ->
 
     it 'is triggered by click on button', ->
@@ -558,7 +558,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
   describe '#zoomOut()', ->
 
     beforeEach ->
-      view.renderStrategy = render: ->
+      view.renderStrategy.render = ->
         done: ->
 
     it 'is triggered by click on button', ->

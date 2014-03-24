@@ -145,12 +145,14 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     width = @panel.get('width')
     height = @canvasHeight()
 
-    svg = @$('svg')
-    svg.attr
-      width: "#{width}px"
-      height: "#{height}px"
+    if width and height
 
-    @renderStrategy.resize width, height
+      svg = @$('svg')
+      svg.attr
+        width: "#{width}px"
+        height: "#{height}px"
+
+      @renderStrategy.resize width, height
 
 
   _renderMarkupSkeleton: ->
