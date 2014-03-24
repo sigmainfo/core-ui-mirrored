@@ -57,46 +57,67 @@ class Spinach::Features::UserTogglesMainView < Spinach::FeatureSteps
   end
 
   step 'I should see a concept map inside the main view' do
-    pending 'step not implemented'
+    within main_view do
+      page.should have_selector(:panel, 'Concept Map')
+      @current = find( :panel, 'Concept Map' )
+    end
   end
 
   step 'I should see a widget "Concepts"' do
-    pending 'step not implemented'
+    page.should have_selector( :widget, 'Concepts' )
+    @current = find( :widget, 'Concepts' )
   end
 
   step 'I click on "Maximize" inside the widget "Concepts"' do
-    pending 'step not implemented'
+    within :widget, 'Concepts' do
+      click_on 'Maximize'
+    end
   end
 
   step 'I should not see a widget "Concepts"' do
-    pending 'step not implemented'
+    page.should have_no_selector( :widget, 'Concepts' )
+  end
+
+  step 'I should see "Concepts" inside the main view' do
+    within main_view do
+      page.should have_selector(:panel, 'Concepts')
+      @current = find( :panel, 'Concepts' )
+    end
   end
 
   step 'I click on "Maximize" inside the widget "Clipboard"' do
-    pending 'step not implemented'
+    within :widget, 'Clipboard' do
+      click_on 'Maximize'
+    end
   end
 
   step 'I should not see a widget "Clipboard"' do
-    pending 'step not implemented'
+    page.should have_no_selector( :widget, 'Clipboard' )
   end
 
   step 'I should see a caption "CLIPBOARD" inside the main view' do
-    pending 'step not implemented'
+    within main_view do
+      page.should have_css('.titlebar h3', text: 'CLIPBOARD')
+    end
   end
 
   step 'I click on "Maximize" inside the widget "Term List"' do
-    pending 'step not implemented'
+    within :widget, 'Term List' do
+      click_on 'Maximize'
+    end
   end
 
   step 'I should not see a widget "Term List"' do
-    pending 'step not implemented'
+    page.should have_no_selector( :widget, 'Term List' )
   end
 
   step 'I should see a widget "Clipboard"' do
-    pending 'step not implemented'
+    page.should have_selector( :widget, 'Clipboard' )
   end
 
   step 'I should see a caption "TERM LIST" inside the main view' do
-    pending 'step not implemented'
+    within main_view do
+      page.should have_css('.titlebar h3', text: 'TERM LIST')
+    end
   end
 end
