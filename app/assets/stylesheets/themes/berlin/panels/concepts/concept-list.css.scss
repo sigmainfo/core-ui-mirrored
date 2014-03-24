@@ -1,0 +1,65 @@
+.concept-list {
+
+  &>table {
+    border-top: 1px solid $button-color;
+
+    .empty-list {
+      @include dottedline;
+      background-position: bottom;
+    }
+
+    .concept-list-item>td{
+      @include dottedline;
+      background-position: bottom;
+      border: none;
+
+      table {
+
+        th {
+          color: $button-color;
+        }
+
+        th, td {
+          border-bottom: 1px solid rgba($darker-bg-color, 0.6);
+        }
+
+        tr:last-child {
+          td, th {
+            border: none;
+          }
+        }
+
+        .lang {
+
+          span {
+            color: $button-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media all and (max-width: 799px) {
+
+  .concept-list {
+
+    &>table {
+
+      .concept-list-item>td{
+
+        table {
+          
+          th {
+            border: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+

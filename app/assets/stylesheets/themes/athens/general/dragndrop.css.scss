@@ -1,0 +1,25 @@
+.ui-droppable-clipboard, .ui-droppable-connect, .ui-droppable-disconnect {
+  &:after {
+    background-color: $label-color;
+  }
+}
+
+.broader-and-narrower {
+
+  ul.ui-droppable {
+    @include droparea;
+   
+    &.ui-state-highlight {
+        background-color: rgba($button-hover-color, 0.6);
+    }
+    
+    &.ui-state-hovered {
+        background-color: rgba($button-hover-color, 0.8);
+    }
+  }
+
+  .list.ui-state-hovered {
+    background-color: rgba($button-hover-color, 0.1);
+  }
+}
+

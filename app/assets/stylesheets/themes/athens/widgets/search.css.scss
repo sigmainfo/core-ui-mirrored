@@ -1,0 +1,18 @@
+#coreon-search {
+  
+  background-color: $search-bg-color;
+
+  #coreon-search-target-select {
+
+    .hint {
+      color: lighten($text-color, 60%);
+    }
+  }
+  
+  input[type="submit"] {
+    background-position: -100px -1300px;  
+    background-color: $button-color; 
+  }
+}
+
+

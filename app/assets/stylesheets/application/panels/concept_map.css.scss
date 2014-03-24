@@ -1,0 +1,168 @@
+$edge-color: #bfc5c0;
+
+#coreon-concept-map {
+
+  .map {
+    line-height: 0;
+    width: 100%;
+
+    &:hover {
+      cursor: move;
+    }
+
+    svg {
+      overflow: hidden;
+
+      text {
+        font: 11px 'DroidSans', Trebuchet MS, Lucida;
+        fill: $text-color-light;
+      }
+
+      .concept-node, .sibling-node {
+        cursor: pointer;
+
+        circle {
+          fill: none;
+          stroke-width: 1.5px;
+          stroke: $text-color-light;
+        }
+
+        &.repository-root {
+
+          circle {
+            display: none;
+          }
+
+          text {
+            fill: $text-color;
+          }
+
+          .background {
+            fill: rgba($hit-color, 0.1);
+          }
+        }
+
+        &.hit {
+
+          circle {
+            stroke: $text-color;
+            stroke-width: 1.6px;
+          }
+
+          text {
+            fill: $hit-color !important;
+            font-size: 13px;
+          }
+
+          .background {
+            fill: white;
+            fill-opacity: 1;
+          }
+        }
+
+        &.parent-of-hit {
+
+          circle {
+            stroke: $text-color;
+            stroke-width: 1.6px;
+          }
+
+          text {
+            fill: $text-color;
+          }
+        }
+
+        &.new {
+
+          text {
+            fill: $button-hover-color;
+            font-size: 13px;
+          }
+
+          .background {
+            fill: white;
+            fill-opacity: 1;
+            stroke: $text-color;
+            stroke-width: 1px;
+            stroke-dasharray: 2,2;
+          }
+        }
+
+        a.hover {
+
+          text {
+            fill: $link-color;
+          }
+
+          .background {
+            fill-opacity: 1;
+          }
+        }
+
+        .background {
+
+          fill: white;
+          fill-opacity: 0.6;
+
+        }
+
+
+        &.placeholder {
+          cursor: pointer;
+
+          .background {
+            fill: $edge-color;
+            stroke: none;
+          }
+
+          .count-background {
+            fill: white;
+          }
+
+          &:hover {
+            .background {
+              fill:$link-color;
+            }
+          }
+
+          .icon {
+            stroke: white;
+            stroke-width: 1.5px;
+          }
+
+          .progress-indicator {
+
+            .track {
+              fill: none;
+              stroke: white;
+              stroke-width: 3px;
+              stroke-opacity: 0.5;
+            }
+
+            .cursor {
+              fill: none;
+              stroke: white;
+              stroke-width: 3px;
+            }
+          }
+        }
+      }
+
+      .concept-edge, .edge {
+        fill: none;
+        stroke: $edge-color;
+        stroke-width: 1.5px;
+        stroke-opacity: 0.7;
+
+        &.hit {
+          stroke: $text-color;
+          stroke-opacity: 0.5;
+        }
+      }
+
+    }
+  }
+
+}
+
+

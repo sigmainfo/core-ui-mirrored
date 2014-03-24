@@ -1,0 +1,20 @@
+.coreon-select {
+
+  background-color: rgba($hit-color, 0.2);
+  @include border-radius(4px);
+  @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.2) -1px -1px 0px inset);
+  
+  &.blue {
+    background-color: lighten($search-bg-color, 8);
+    @include retina-stripes("white");
+    @include box-shadow(rgba(white, 0.2) 1px 1px 0px inset, rgba(black, 0.3) -1px -1px 0px inset);
+  }
+  
+  &.single {
+    @include box-shadow(none); 
+  }
+  
+  &.filters-select {
+    @include border-radius(8px);
+  }
+}

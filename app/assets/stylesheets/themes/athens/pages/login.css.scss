@@ -1,0 +1,22 @@
+#coreon-login {
+
+  
+  label {
+    color: $label-color;
+  }
+  
+  .login {
+
+    input[type="submit"] {
+      color: $text-color;
+      
+      &:not(:disabled) {
+        &:hover {
+          color: $secondary-color;
+        }
+      }
+    }
+  }
+}
+
+

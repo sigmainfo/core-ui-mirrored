@@ -1,0 +1,20 @@
+#coreon-languages {
+  
+  h4 {
+    &:before {
+      content: none;
+    }
+  }
+
+  form {
+    padding: 8px 20px;
+  }
+  
+  .arrow {
+    display: inline-block;
+    width: 30px;
+    height: 11px;
+    @include svg-icons;
+    background-position: 6px -152px;
+  }
+}

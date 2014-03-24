@@ -1,0 +1,80 @@
+.ui-draggable {
+  &:hover {
+    @include single-box-shadow(rgba(black, 0.3), 1px, 1px, 2px);
+  }
+}
+
+.ui-draggable-dragging {
+  cursor: pointer;
+  @include single-box-shadow(desaturate(lighten(black, 40%), 20%), 2px, 2px, 4px);
+  max-width: 400px;
+}
+
+.ui-draggable-dragged {
+  @include opacity(0.5);
+}
+
+.ui-droppable-clipboard, .ui-droppable-connect, .ui-droppable-disconnect {
+  &:after {
+    @include before-icon;
+    position: absolute;
+    left: -10px;
+    top: -6px;
+    width: 20px;
+    height: 20px;
+    @include border-radius(10px);
+    @include single-box-shadow(#555555, 1px, 1px, 2px);
+    background-position: -149px -1000px;
+  }
+}
+
+.ui-droppable-connect {
+  &:after {
+    background-position: -147px -1050px;
+  }
+}
+
+.ui-droppable-disconnect {
+  &:after {
+    background-position: -148px -1098px;
+  }
+}
+.ui-droppable-hovered {
+  &:after {
+    display: none;
+  }
+}
+
+h2.concept-label {
+  font-size: 1em;
+}
+
+.broader-and-narrower {
+
+    ul.ui-droppable {
+      @include droparea;
+      padding: 4px 6px 24px 6px;
+      
+      li {
+        margin: 2px 0;
+        .concept-label {
+          @include single-box-shadow(desaturate(lighten(black, 50%), 20%), 1px, 1px, 2px);
+        }
+      }
+      
+      &.ui-state-highlight {
+          background-color: rgba($button-hover-color, 0.4);
+
+      }
+      
+      &.ui-state-hovered {
+          background-color: rgba($button-hover-color, 0.6);
+      }
+    }
+
+
+  .list.ui-state-hovered {
+    background-color: rgba($button-hover-color, 0.1);
+  }
+}
+

@@ -82,6 +82,9 @@ module CoreUi
     # Add project directory to assets paths
     config.assets.paths << "app/config"
     config.assets.paths << "app"
+    
+    # Create multiple CSS files for theming
+    config.assets.precompile += ['themes/berlin.css', 'themes/athens.css']
 
     # HAML assets
     if defined? ::HamlCoffeeAssets

@@ -1,0 +1,36 @@
+.widget {
+  @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
+  @include background(linear-gradient(lighten($darker-bg-color, 5), $darker-bg-color));
+  
+  .titlebar {
+    background: rgba(30,80,80, 0.06);
+    @include retina-stripes("white");
+    border-bottom: 1px solid rgba(black, 0.05);
+
+    h4 {
+      color: $label-color;
+      &:before {
+        @include opacity(0.7);
+      }
+    }
+
+    .actions {
+
+      a {
+        @include background(linear-gradient(lighten($darker-bg-color, 8), darken($darker-bg-color, 1)));
+        @include box-shadow(rgba(white, 0.6) 0px 1px 1px inset, rgba(black, 0.1) -1px 0px 1px inset);
+        
+        &:first-child {
+          border-left: 1px solid rgba(black, 0.1);
+        }
+      }
+    }
+  }
+  
+  
+  &.blue-widget {
+    @include background(linear-gradient(lighten($search-bg-color, 10), $search-bg-color));
+    @include box-shadow(rgba(white, 0.3) 0px 1px 1px inset, rgba(black, 0.15) -1px -1px 1px inset);
+  }
+  
+}

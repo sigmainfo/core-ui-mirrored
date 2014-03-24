@@ -1,0 +1,46 @@
+#coreon-search {
+  
+  @include box-sizing(border-box);
+  padding: 11px 14px;
+  
+  label {
+    display: none;
+  }
+  
+  #coreon-search-query {
+    width: 80%;
+    max-width: 400px;
+    height: 28px;
+    padding-left: 28px;
+    @include single-box-shadow(#333333, 1px, 1px, 2px, false, inset);
+    float: left;
+  }
+
+  #coreon-search-target-select {
+
+    position: absolute;
+    
+    .toggle {
+      display: block;
+      float: left;
+      width: 28px;
+      height: 28px;
+      @include svg-icons;
+      background-position: 3px 0px;
+      &:hover {
+        background-position: -47px 0px;
+      }
+    }
+
+    .hint {
+      float: left;
+      padding-top: 6px;
+    }
+  }
+  
+  input[type="submit"] {
+    background-position: -100px -1200px;   
+  }
+}
+
+

@@ -1,0 +1,129 @@
+.button {
+  @include edit-button;
+}
+
+.concept form {
+
+   &.term, fieldset {
+     background-color: darken(rgba($button-hover-color, 0.12), 4);
+   }
+   
+   &.term {
+     @include single-box-shadow(rgba($button-color, 0.8), 0px, 1px, 1px, false);
+   }
+
+   div.input {
+     &.required  {
+       label {
+         color: $label-color;
+       }
+     }
+   }
+
+   label {
+     color: $text-color-light;
+   }
+
+   .submit {
+     background-color: darken(rgba($button-hover-color, 0.18), 15);
+
+     .cancel, .reset, button {
+       @extend .button;
+     }
+
+     button {
+       background-color: $button-hover-color;
+       @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+       @include retina-stripes(white);
+
+        &:hover {
+          background-color: saturate($button-hover-color, 10);
+        }
+
+        &:disabled {
+          background-color: desaturate($button-hover-color, 20);
+          &:hover {
+            background-color: desaturate($button-hover-color, 20);
+          }
+        }
+      }
+   }
+}
+
+.concept.edit .broader-and-narrower {
+  
+  form {
+    background-color: darken(rgba($button-hover-color, 0.12), 4);
+    
+    ul .concept-label:hover {
+      color: $text-color-light;
+      @include single-box-shadow(rgba($text-color, 0.4), 2px, 2px, 2px);
+    }
+  }
+}
+ 
+.concept  {
+  
+  .edit a, fieldset a {
+   color:$button-color;
+
+   &:before {
+     @include edit-button;
+   }
+   
+   &:not(.disabled){
+     &:hover {
+       color: $button-hover-color;
+       &:before {
+         background-color: $button-hover-color;
+         @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+       }
+     }
+    }
+  }
+}
+
+.concept.edit {
+  form, .broader-and-narrower {
+    @include editmode;
+  }
+  
+  div.edit {
+    background-color: $editmode-color;
+  }
+  
+  >section div.edit {
+    @include dottedline;
+  }
+  
+  .terms >.add {
+    @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
+    background-color: rgba($button-color, 0.05);
+  }
+
+  &>section, form>section {
+    background-color: rgba($button-color, 0.05);
+  }
+
+  .button.edit-concept {
+    background-color: $editmode-color;
+    color: $button-color;
+    &:before {
+       @include opacity(0.7);
+    }
+  }
+    
+  .language li.term {
+    background-color: rgba($button-color, 0.05);  
+  }
+  
+  .term.delete {
+    .value, .properties {
+      @include opacity(0.4);
+    }
+  }
+  
+  .property.delete {
+    background-color:$darker-bg-color;
+  }
+}

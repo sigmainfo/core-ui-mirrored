@@ -1,0 +1,116 @@
+#coreon-term-list {
+
+  h4:before {
+    background-position: -1px -952px;
+  }
+
+  .toggle-scope {
+
+    &:before {
+      @include before-icon;
+      background-position: 0 -851px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      &:before {
+        background-position: -50px -851px;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    min-height: 12px;
+    display: block;
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+
+    tbody {
+      display: inline-block;
+      width: 94%;
+      padding: 6px 0 6px 6px;
+      position: relative;
+    }
+    
+    li {
+      list-style: none;
+      padding-bottom: 1px;
+      padding-top: 3px;
+      &:only-child, &:last-child {
+        padding-bottom: 0;
+        border: none;
+      }
+      &:first-child {
+        padding-top: 0;
+      }
+    }
+
+    tr {
+      display: inline-block;
+      width: 100%;
+      line-height: 1.2em;
+      vertical-align: top;
+      padding-left: 4px;
+      
+      &.term:hover {
+        cursor: pointer;
+        
+        td, td a {
+          color: $link-color;
+        }
+      }
+
+      &.term td {
+        display: inline-block;
+        font: 1em $serif;
+        padding: 4px 0px 2px 0;
+        width: 50%;
+        word-wrap: break-word;
+        
+        &:only-child {
+          width: 100%;
+        }
+        
+        &.source {
+          padding-right: 5px;
+          width: 45%;
+        }
+      }
+
+      a {
+        color: $text-color;
+      }
+
+      &.hit a {
+        color: darken($hit-color, 5);
+      }
+      
+      &.empty  {
+        td {
+          display: inline-block;
+          padding: 16px 0;
+          width: 100%;
+          text-align: center;
+        }
+      }
+      
+      &.placeholder {
+        display: inline-block;
+        height: 32px;
+        width: 100%;
+        text-align: center;
+        text-indent: -2000px;
+        &:before {
+          margin-left: -10px;
+          margin-top: 6px;
+        }
+      }
+    }
+  }
+}

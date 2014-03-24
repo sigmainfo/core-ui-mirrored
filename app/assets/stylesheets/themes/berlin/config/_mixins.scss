@@ -1,0 +1,63 @@
+$widget-width: 320px;
+
+$serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
+
+@mixin editmode {
+  &:before {
+    background-color: $editmode-color;
+    @include retina-stripes("blue");
+  }
+}
+
+
+@mixin edit-button {
+  background-color: $button-color;
+  @include border-radius(4px);
+  @include single-box-shadow(rgba(#222222, 0.5), 1px, 1px, 2px, false, inset);
+  &:not(.disabled){
+    &:hover {
+      background-color: $button-hover-color;
+      @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
+    }
+  }
+}
+
+@mixin before-icon {
+  content:"";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: image-url("layout/icons.svg") no-repeat 0px 0px;
+}
+
+@mixin droparea {
+  background-color: rgba($button-hover-color, 0.3);
+}
+
+
+@mixin retina-separator {
+  background-image: image-url('layout/separator.png');
+  background-repeat: repeat-x;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/separator@2x.png');
+      @include background-size(4px 8px);
+  } 
+}
+
+@mixin retina-BigSeparator {
+  background-image: image-url('layout/separatorBig.png');
+  background-repeat: repeat-x;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: image-url('layout/separatorBig@2x.png');
+      @include background-size(8px 17px);
+  } 
+}
+
+@mixin dottedline {
+  background-image: image-url('layout/dottedline.svg');
+  background-repeat: repeat-x;
+}
+
+@mixin retina-stripes($color) {
+  background-image: image-url('layout/stripes-#{$color}.svg');
+}

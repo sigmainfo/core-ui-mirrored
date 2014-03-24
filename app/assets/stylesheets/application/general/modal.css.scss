@@ -1,0 +1,118 @@
+#coreon-password-prompt {
+  position: absolute;
+  top: 0;
+  //because #coreon-modal has 200% width
+  width: 50%;
+  height: 3000px;
+  background-color: rgba($text-color, 0.5);
+  
+  .prompt {
+    @include box-sizing(border-box);
+    background-color: $darker-bg-color;
+    @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset, rgba(black, 0.4) 2px 2px 5px);
+    min-width: 300px;
+    width: 50%;
+    max-width: 450px;
+    margin: 200px auto;
+    
+    input[type="password"] {
+      width: 82%;
+      height: 29px;
+      float: left;
+    }
+    
+    label {
+      display: none;
+    }
+    
+    p, form {
+      padding: 15px 22px;
+    }
+    
+    form {
+      padding-bottom: 20px;
+      border-bottom: 1px solid darken($darker-bg-color, 4%);
+    }
+    
+    .links {
+      border-top: 1px solid lighten($darker-bg-color, 4%);
+    }
+    
+  }
+}
+
+.coreon-select-dropdown, 
+#coreon-search-target-select-dropdown {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 3000px; 
+  
+  ul.options {
+    list-style: none;
+    background-color: $bg-color;
+    @include single-box-shadow(rgba(#333333, 0.5), 1px, 2px, 2px, false);
+    padding: 1px 0 0 0;
+    
+    .option {
+      font-size: 0.86em;
+      position: relative;
+      
+      &.focus {
+        cursor: pointer;
+      }
+      
+      &.selected {
+        
+        &:before {
+          @include before-icon;
+          position: absolute;
+          left: 2px;
+          top: 0px;
+          background-position: -49px -498px;
+        }
+      }
+    }
+  }
+}
+
+#coreon-search-target-select-dropdown {
+  
+  ul.options {
+    
+    .option {
+        padding: 2px 10px 1px 26px;
+    }
+  }  
+}
+
+.coreon-select-dropdown {
+  
+  ul.options {
+    position: relative;
+    float: left;
+
+    .option {
+      float: left;
+      clear: left;
+      width: 100%;
+      
+      a, span {
+        @include box-sizing(border-box);
+        display: block;
+        padding: 1px 14px 0px 22px;
+        width: 100%;
+      }
+    }
+  }  
+  
+  &.filters-select {
+    ul.options {
+      
+      a, span {
+        padding: 1px 14px 0px 26px;
+      }
+    }
+    
+  }
+}

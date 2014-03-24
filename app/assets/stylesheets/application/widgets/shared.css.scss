@@ -1,0 +1,59 @@
+.widget {
+  position: relative;
+
+  .titlebar {
+    height: 19px;
+    
+    h4 {
+      font-size: 0.86em;
+      line-height: 18px;
+      padding: 2px 0 0 6px;
+      float: left;
+      &:before {
+        @include before-icon;
+        float: left;
+        padding-right: 1px;
+      }
+    }
+
+    .actions {
+      float: right;
+
+      a {
+        display: block;
+        float: left;
+        width: 20px;
+        padding: 0 2px;
+        height: 19px;
+        text-indent: -2000px;
+        overflow: hidden;
+
+        &:last-child {
+          padding-right: 10px;
+        }
+      }
+    }
+  }
+
+  .ui-resizable-s {
+    position: absolute;
+    bottom: -6px;
+    height: 12px;
+    width: 100%;
+    cursor: s-resize;
+    &:before {
+      content:"";
+      display: block;
+      position: relative;
+      top: 5px;
+      height: 1px;
+      width: 100%;
+    }
+    &:hover {
+      &:before {
+        @include box-shadow(rgba(black, 0.2) 0px 0px 3px);
+        border-top: 1px solid rgba(black, 0.1);
+      }
+    }
+  }  
+}

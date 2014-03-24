@@ -1,0 +1,24 @@
+#coreon-login {
+
+  
+  label {
+    color: $label-color;
+  }
+  
+  .login {
+    background:image-url("layout/separator.png") repeat-x bottom;
+    @include retina-separator;
+
+    input[type="submit"] {
+      color: $text-color;
+      
+      &:not(:disabled) {
+        &:hover {
+          color: $secondary-color;
+        }
+      }
+    }
+  }
+}
+
+
