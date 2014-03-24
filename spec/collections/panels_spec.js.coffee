@@ -87,3 +87,33 @@ describe 'Coreon.Collections.Panels', ->
         panels.trigger 'change:width', panel, 123
         width = widget.get('width')
         expect(width).to.equal 200
+
+    describe '#cyclePanels()', ->
+
+      panel = null
+
+      beforeEach ->
+        panel = new Backbone.Model widget: off
+
+      it 'is triggered by changes on widget mode', ->
+        cycle = sinon.spy()
+        panels.cyclePanels = cycle
+        panels.initialize()
+        panels.trigger 'change:widget', panel, off
+        expect(cycle).to.have.been.calledOnce
+        expect(cycle).to.have.been.calledOn panels
+        expect(cycle).to.have.been.calledWith panel, off
+
+      it 'makes all other panels to widgets', ->
+        other = new Backbone.Model widget: off
+        panels.reset [other, panel], silent: yes
+        panels.cyclePanels panel, off
+        widgetized = other.get('widget')
+        expect(widgetized).to.be.true
+
+      it 'keeps changed panel maximized', ->
+        other = new Backbone.Model widget: off
+        panels.reset [other, panel], silent: yes
+        panels.cyclePanels panel, off
+        widgetized = panel.get('widget')
+        expect(widgetized).to.be.false

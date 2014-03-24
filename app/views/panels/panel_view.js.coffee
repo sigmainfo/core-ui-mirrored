@@ -6,6 +6,13 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
 
   className: 'panel'
 
+  delegateEvents: ->
+    super
+    @$el.on 'click.delegateEvents'
+          , '.actions .maximize'
+          , _(@switchToMax).bind @
+
+
   initialize: (options = {}) ->
     @panel = options.panel
 
@@ -17,7 +24,7 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
 
     @listenTo @panel
             , 'change:widget'
-            , @updateWidgetMode
+            , @updateMode
 
   widgetize: ->
     @$el
@@ -63,7 +70,11 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
         width: 'auto'
         height: 'auto'
 
-  updateWidgetMode: (model, value) ->
+  switchToMax: (event) ->
+    event.preventDefault()
+    @panel.set 'widget', no
+
+  updateMode: (model, value) ->
     if value
       @widgetize()
     else

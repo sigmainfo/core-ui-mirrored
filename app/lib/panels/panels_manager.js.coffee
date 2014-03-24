@@ -12,6 +12,11 @@ class Coreon.Lib.Panels.PanelsManager
 
   constructor: (options = {}) ->
     @[key] = value for key, value of options
+    @initialize()
+
+  initialize: ->
+    @model.off null, null, @
+    @model.on 'change:widget', @update, @
 
   removeAll: ->
     @model.forEach (model) ->

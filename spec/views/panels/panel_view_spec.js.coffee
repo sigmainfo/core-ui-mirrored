@@ -233,7 +233,6 @@ describe 'Coreon.Views.Panels.PanelView', ->
         expect(style).to.include 'width: auto'
         expect(style).to.include 'height: auto'
 
-
   describe '#resizeStart()', ->
 
     beforeEach ->
@@ -297,3 +296,39 @@ describe 'Coreon.Views.Panels.PanelView', ->
       expect(stop).to.have.been.calledOnce
       expect(stop).to.have.been.calledOn view
       expect(stop).to.have.been.calledWith ui
+
+  describe '#switchToMax()', ->
+
+    event = null
+    action = null
+
+    beforeEach ->
+      view.$el.html '''
+        <div class="actions">
+          <a class="maximize" href="javascript:void(0)">Maximize</a>
+        </div>
+      '''
+      action = view.$('.actions .maximize')
+      event = $.Event 'click'
+      event.target = action[0]
+
+    it 'is triggered by click on action', ->
+      switchToMax = sinon.spy()
+      view.switchToMax = switchToMax
+      view.delegateEvents()
+      action.trigger event
+      expect(switchToMax).to.have.been.calledOnce
+      expect(switchToMax).to.have.been.calledOn view
+      expect(switchToMax).to.have.been.calledWith event
+
+    it 'switches widget mode on model', ->
+      model.set 'widget', on, silent: yes
+      view.switchToMax event
+      widgetized = model.get('widget')
+      expect(widgetized).to.be.false
+
+    it 'prevents default action', ->
+      preventDefault = sinon.spy()
+      event.preventDefault = preventDefault
+      view.switchToMax event
+      expect(preventDefault).to.have.been.calledOnce

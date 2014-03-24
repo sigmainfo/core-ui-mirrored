@@ -15,8 +15,13 @@ class Coreon.Collections.Panels extends Backbone.Collection
 
   initialize: ->
     @off()
+
     @on 'change:width'
       , @syncWidgetWidths
+      , @
+
+    @on 'change:widget'
+      , @cyclePanels
       , @
 
   syncWidgetWidths: (model, value, options) ->
@@ -24,3 +29,8 @@ class Coreon.Collections.Panels extends Backbone.Collection
       @where(widget: on)
         .forEach (widget) ->
           widget.set 'width', value
+
+  cyclePanels: (model, value, options) ->
+    if value is off
+      @forEach (panel) ->
+        panel.set 'widget', on unless panel is model

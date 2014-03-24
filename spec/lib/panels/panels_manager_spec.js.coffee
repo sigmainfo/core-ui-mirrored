@@ -113,11 +113,18 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
 
       beforeEach ->
         panel = new Backbone.View
+        panel.maximize = ->
+        panel.widgetize = ->
         model = new Backbone.Model type: 'concepts'
         model.view = panel
         collection.reset [ model ], silent: yes
 
-      it 'is triggered on widget mode change'
+      it 'is triggered on widget mode change', ->
+        update = sinon.spy()
+        manager.update = update
+        manager.initialize()
+        collection.trigger 'change:widget'
+        expect(update).to.have.been.calledOnce
 
       context 'plain', ->
 
