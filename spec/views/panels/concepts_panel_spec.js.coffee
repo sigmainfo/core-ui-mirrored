@@ -42,6 +42,10 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
+    
+  it 'creates container', ->
+    el = view.$el
+    expect(el).to.have.attr 'id', 'coreon-concepts'
 
   describe '#initialize panel: panel', ->
 

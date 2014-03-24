@@ -1,0 +1,97 @@
+#coreon-concepts.widget {
+  
+  .titlebar h3:before {
+    background:none;
+    width: 5px;
+    height: 5px;
+    padding: 0;
+    @include border-radius(5px);
+    margin-top: 2px;
+    margin-right: 4px;
+    border: 2px solid $label-color;
+  }
+  
+  .content {
+    overflow: auto;
+    position: absolute;
+    top: 20px;
+    bottom: 1px;
+    left: 0;
+    right: 0;
+    padding: 0 12px;
+    background-color: rgba(white, 0.5);
+  }
+  
+  div.repository {
+    h2 {
+      font-size: 1em;
+      margin: 7px 0;
+      padding: 3px 8px 2px 8px;
+    }
+    font-size: 0.9em;
+    .edit {
+      display: none;
+    }
+    .contact table.managers {
+
+      td, th {      
+        &:first-child {
+          padding-left: 82px;
+        }
+      }
+    }  
+    table.meta {
+      td {
+        clear: both;
+        padding-bottom: 6px;
+      }
+    }
+  }
+  
+  .concept-list {
+    font-size: 0.9em;
+    .edit {
+      display: none;
+    }
+    &>table {
+      td {
+        padding: 0;
+      }
+
+      .concept-list-item>td{
+
+        table {
+
+          th, td {
+            padding: 2px 0;
+          }
+          
+          th {
+            border: none;
+            width: 50px;
+            text-align:left;
+            font-size: 0.7em;
+          }
+          
+          td {
+            padding-top: 0;
+            &:empty {
+              line-height: 10px;
+            }
+          }
+
+          tr.label {
+            td {
+              padding: 6px 0 2px 0;
+            }
+          }
+          
+          tr.definition, tr.lang {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+}
