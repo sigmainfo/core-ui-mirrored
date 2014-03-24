@@ -40,8 +40,8 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
         stop: (event, ui) =>
           @resizeStop ui
 
-    if @$('.actions a.maximize').length is 0
-      @$('.actions').append Coreon.Helpers.action_for('panel.maximize')
+    if @$('.titlebar .actions a.maximize').length is 0
+      @$('.titlebar .actions').append Coreon.Helpers.action_for('panel.maximize')
 
     @resize()
 
