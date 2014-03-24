@@ -3,16 +3,16 @@ class Spinach::Features::UserAdjustsLayout < Spinach::FeatureSteps
   include AuthSteps
 
   step 'the widgets column has a width of 300px' do
-    page.execute_script '$("#coreon-widgets").width(300);'
+    page.execute_script '$("#coreon-widgets .ui-resizable").width(300);'
   end
 
   step 'the concept map widget has a height of 240px' do
     page.execute_script '$("#coreon-concept-map").height(240);'
   end
 
-  step 'I drag the resize handle of the widgets column to the left by 150px' do
-    page.should have_css("#coreon-widgets .ui-resizable-w")
-    page.execute_script '$("#coreon-widgets .ui-resizable-w").simulate("mouseover").simulate("drag", {dx: -150});'
+  step 'I drag the resize handle of the concept map to the left by 150px' do
+    page.should have_css('#coreon-concept-map .ui-resizable-w')
+    page.execute_script '$("#coreon-concept-map .ui-resizable-w").simulate("mouseover").simulate("drag", {dx: -150});'
   end
 
   step 'I should see the widgets column being 450px wide' do

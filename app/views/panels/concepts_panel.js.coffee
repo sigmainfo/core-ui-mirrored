@@ -14,11 +14,11 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
   current: null
 
   initialize: ->
+    super
     @$el.html @layout()
 
     @switchView()
 
-    @stopListening()
     @listenTo @model
             , 'change:selection change:scope change:repository'
             , @switchView

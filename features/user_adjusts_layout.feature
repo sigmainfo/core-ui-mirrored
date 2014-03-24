@@ -10,7 +10,7 @@ Feature: user adjusts layout
   Scenario: drag to resize
     Given the widgets column has a width of 300px
     And the concept map widget has a height of 240px
-    When I drag the resize handle of the widgets column to the left by 150px
+    When I drag the resize handle of the concept map to the left by 150px
     Then I should see the widgets column being 450px wide
     And I should see the concept map widget keeping its height of 240px
     When I drag the bottom resize handler of the concept map widget down by 50px

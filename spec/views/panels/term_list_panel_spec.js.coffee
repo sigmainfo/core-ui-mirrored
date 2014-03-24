@@ -4,6 +4,7 @@
 describe 'Coreon.Views.Panels.TermListPanel', ->
 
   view = null
+  panel = null
 
   beforeEach ->
     sinon.stub I18n, "t"
@@ -20,8 +21,10 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
     model.terms = new Backbone.Collection
     model.hasNext = -> no
     model.hasPrev = -> no
+    panel = new Backbone.Model
     view = new Coreon.Views.Panels.TermListPanel
       model: model
+      panel: panel
 
   afterEach ->
     I18n.t.restore()
@@ -33,11 +36,22 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   it 'creates container', ->
     expect( view.$el ).to.have.id 'coreon-term-list'
 
-  describe '#initialize()', ->
+  describe '#initialize panel: panel', ->
+
+    it 'calls super implementation', ->
+      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
+      try
+        panel = new Backbone.Model
+        view.initialize panel: panel
+        original = Coreon.Views.Panels.PanelView::initialize
+        expect(original).to.have.been.calledOnce
+        expect(original).to.have.been.calledWith panel: panel
+      finally
+        Coreon.Views.Panels.PanelView::initialize.restore()
 
     it 'renders title', ->
       I18n.t.withArgs('panels.term_list.title').returns 'Term List'
-      view.initialize()
+      view.initialize panel: panel
       title = view.$( '.titlebar h3' )
       expect( title ).to.exist
       expect( title ).to.contain 'Term List'
@@ -45,21 +59,18 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'renders source in title', ->
       view.model.set 'source', 'en', silent: yes
-      view.initialize()
+      view.initialize panel: panel
       expect( view.$ '.titlebar h3 .langs' ).to.have.text '(EN)'
 
     it 'renders target in title', ->
       view.model.set 'source', 'en', silent: yes
       view.model.set 'target', 'hu', silent: yes
-      view.initialize()
+      view.initialize panel: panel
       expect( view.$ '.titlebar h3 span.langs' ).to.have.text '(EN, HU)'
-
-    it 'renders resize handler', ->
-      expect( view.$el ).to.have  '.ui-resizable-s'
 
     it 'renders toggle button', ->
       I18n.t.withArgs('panels.term_list.toggle_scope').returns 'Toggle scope'
-      view.initialize()
+      view.initialize panel: panel
       toggle = view.$('.toggle-scope')
       expect( toggle ).to.exist
       expect( toggle ).to.have.attr 'href', 'javascript:void(0)'
@@ -73,7 +84,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered on model updates', ->
       view.render = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'reset'
       expect( view.render ).to.have.been.calledOnce
       expect( view.render ).to.have.been.calledOn view
@@ -329,13 +340,13 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered when model loads next', ->
       view.updateLoadingState = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'change:loadingNext'
       expect( view.updateLoadingState ).to.have.been.calledOnce
 
     it 'is triggered when model loads prev', ->
       view.updateLoadingState = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'change:loadingPrev'
       expect( view.updateLoadingState ).to.have.been.calledOnce
 
@@ -508,7 +519,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered by model', ->
       view.appendItems = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       data = []
       view.model.trigger 'append', data
       expect( view.appendItems ).to.have.been.calledOnce
@@ -540,7 +551,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered by model', ->
       view.prependItems = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       data = []
       view.model.trigger 'prepend', data
       expect( view.prependItems ).to.have.been.calledOnce
@@ -644,7 +655,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered by change on model', ->
       view.updateTargetLang = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'change:target'
       expect( view.updateTargetLang ).to.have.been.calledOnce
 
@@ -735,7 +746,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered by model event', ->
       view.updateTranslations = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'updateTargetTerms', [ new Backbone.Model ]
       expect( view.updateTranslations ).to.have.been.calledOnce
 
@@ -770,13 +781,13 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'is triggered by change of source lang', ->
       view.updateLangs = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'change:source'
       expect( view.updateLangs ).to.have.been.calledOnce
 
     it 'is triggered by change of target lang', ->
       view.updateLangs = sinon.spy()
-      view.initialize()
+      view.initialize panel: panel
       view.model.trigger 'change:target'
       expect( view.updateLangs ).to.have.been.calledOnce
 

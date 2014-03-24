@@ -4,6 +4,10 @@
 describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
   no_rAF = no
+  nodes = null
+  hits = null
+  view = null
+  panel = null
 
   before ->
     unless window.requestAnimationFrame?
@@ -15,8 +19,6 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
     if no_rAF
       delete window.requestAnimationFrame
       delete window.cancelAnimationFrame
-
-  view = null
 
   beforeEach ->
     sinon.stub I18n, 't'
@@ -52,9 +54,14 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         resize: sinon.spy()
         render: => @topDown
 
+    panel = new Backbone.Model
+      width: 320
+      height: 230
+
     view = new Coreon.Views.Panels.ConceptMapPanel
       model: nodes
       hits: hits
+      panel: panel
 
   afterEach ->
     Coreon.application = null
@@ -74,29 +81,55 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
   describe '#initialize()', ->
 
+    it 'calls super implementation', ->
+      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
+      try
+        panel = new Backbone.Model
+        view.initialize
+          model: nodes
+          hits: hits
+          panel: panel
+        original = Coreon.Views.Panels.PanelView::initialize
+        # FOLLOWING RAISES ERROR IN NODE.JS:
+        #
+        # expect(original).to.have.been.calledOnce
+        # expect(original).to.have.been.calledWith
+        #   model: nodes
+        #   hits: hits
+        #   panel: panel
+        #
+        # SO IT IS REPLACED BY:
+        expect(original.callCount).to.equal 1
+        expect(original.firstCall.args[0]).to.eql
+          model: nodes
+          hits: hits
+          panel: panel
+      finally
+        Coreon.Views.Panels.PanelView::initialize.restore()
+
     it 'assigns hits', ->
       hits = new Backbone.Collection
-      view.initialize hits: hits
+      view.initialize hits: hits, panel: panel
       expect( view ).to.have.property 'hits', hits
 
     context 'rendering markup skeleton', ->
 
       it 'renders titlebar', ->
         I18n.t.withArgs('panels.concept_map.title').returns 'Concept Map'
-        view.initialize hits: view.hits
+        view.initialize hits: view.hits, panel: panel
         title = view.$( '.titlebar h3' )
         expect( title ).to.exist
         expect( title ).to.have.text 'Concept Map'
 
       it 'renders titlebar only once', ->
-        view.initialize hits: view.hits
-        view.initialize hits: view.hits
+        view.initialize hits: view.hits, panel: panel
+        view.initialize hits: view.hits, panel: panel
         view.$('.titlebar').size().should.equal 1
 
       it 'renders zoom buttons', ->
         I18n.t.withArgs('panels.concept_map.zoom_in').returns 'Zoom in'
         I18n.t.withArgs('panels.concept_map.zoom_out').returns 'Zoom out'
-        view.initialize hits: view.hits
+        view.initialize hits: view.hits, panel: panel
         view.$el.should.have '.zoom-in'
         view.$('.zoom-in').should.have.text 'Zoom in'
         view.$('.zoom-in').should.have.attr 'title', 'Zoom in'
@@ -105,32 +138,11 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
       it 'renders toggle button', ->
         I18n.t.withArgs('panels.concept_map.toggle_orientation').returns 'Toggle orientation'
-        view.initialize hits: view.hits
+        view.initialize hits: view.hits, panel: panel
         view.$el.should.have '.toggle-orientation'
         view.$('.toggle-orientation').should.have.text 'Toggle orientation'
         view.$('.toggle-orientation').should.have.attr 'title', 'Toggle orientation'
         view.$('.toggle-orientation').should.have.attr 'href', 'javascript:void(0)'
-
-      it 'creates resize handle', ->
-        view.initialize hits: view.hits
-        view.$el.should.have '.ui-resizable-s'
-
-    # context 'restoring from session', ->
-
-    #   beforeEach ->
-    #     sinon.stub(localStorage, 'getItem').returns JSON.stringify
-    #       conceptMap:
-    #         width: 347
-    #         height: 456
-
-    #   afterEach ->
-    #     localStorage.getItem.restore()
-
-    #   it 'restores dimensions', ->
-    #     view.resize = sinon.spy()
-    #     view.initialize hits: view.hits
-    #     view.resize.should.have.been.calledOnce
-    #     view.resize.should.have.been.calledWith 347, 456
 
   describe '#render()', ->
 
@@ -149,7 +161,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     it 'is triggered on hits update', ->
       view.render = sinon.spy()
-      view.initialize hits: view.hits
+      view.initialize hits: view.hits, panel: panel
       view.hits.trigger 'update'
       view.render.should.have.been.calledOnce
 
@@ -231,89 +243,86 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         expect( view.centerSelection ).to.not.have.been.called
 
       it 'centers selection when updated', ->
-        nodes = []
+        concepts = []
         view.render()
         @deferred.resolve()
         view.update.reset()
         @updated()
         view.centerSelection.reset()
         @deferred.resolve()
-        @updated nodes
-        expect( view.centerSelection ).to.have.been.calledOnce
-        expect( view.centerSelection ).to.have.been.calledWith nodes, animate: yes
+        @updated concepts
+        expect(view.centerSelection).to.have.been.calledOnce
+        expect(view.centerSelection).to.have.been.calledWith concepts, animate: yes
 
   describe '#centerSelection()', ->
 
+    center = null
+    translate = null
+    pan = null
+
+    nodes = null
+
     beforeEach ->
-      center = sinon.stub().returns x: 90, y: 30
+      center = sinon.stub()
+      center.returns x: 90, y: 30
       view.renderStrategy.center = center
-      view.navigator.translate = sinon.spy()
-      view._panAndZoom = sinon.spy()
-      @nodes = []
+
+      translate = sinon.spy()
+      view.navigator.translate = translate
+
+      pan = sinon.spy()
+      view._panAndZoom = pan
+
+      nodes = []
 
     it 'delegates center calculation to render strategy', ->
-      view.width     = 300
-      view.svgHeight = 200
-      view.padding = -> 20
-      view.centerSelection @nodes
-      center = view.renderStrategy.center
-      expect( center ).to.have.been.calledOnce
-      expect( center ).to.have.been.calledWith { width: 300 - 2 * 20, height: 200 - 2 * 20 }
-
-    it 'passes hits to render strategy', ->
-      data = [
-        { id: "123", hit: no , score: 0 }
-        { id: "456", hit: yes, score: 1.234 }
-        { id: "789", hit: yes, score: 4.567 }
-      ]
-      nodes = filter: (filter) ->
-        filtered = data.filter filter
-        sort: (sorter) ->
-          filtered.sort sorter
       view.centerSelection nodes
-      center = view.renderStrategy.center
-      expect( center.firstCall.args[1] ).to.have.lengthOf 2
-      expect( center.firstCall.args[1][0] ).to.have.property 'id', '789'
-      expect( center.firstCall.args[1][1] ).to.have.property 'id', '456'
+      expect(center).to.have.been.calledOnce
 
-    it 'applies offset with padding to map', ->
-      view.renderStrategy.center.returns
-        x: 110
-        y: 45
+    it 'applies padding and scaling to viewport before passing it to strategy', ->
+      view.options.svgOffset = 18
+      view.navigator.scale = -> 0.5
+      panel.set
+        width: 300
+        height: 200
+      , silent: yes
       view.padding = -> 20
-      view.centerSelection @nodes, animate: yes
-      translate = view.navigator.translate
-      expect( translate ).to.have.been.calledOnce
-      expect( translate ).to.have.been.calledWith [110 + 20, 45 + 20]
-      pan = view._panAndZoom
-      expect( pan ).to.have.been.calledOnce
-      expect( pan ).to.have.been.calledAfter translate
-      expect( pan ).to.have.been.calledWith animate: yes
+      view.centerSelection nodes
+      expect(center).to.have.been.calledWith
+        width: 560
+        height: 324
 
-    context 'when scaled', ->
+    it 'passes descending list of hits to strategy', ->
+      data = [
+        {id: "123", hit: no , score: 0}
+        {id: "456", hit: yes, score: 1.234}
+        {id: "789", hit: yes, score: 4.567}
+      ]
+      nodes =
+        filter: (filter) ->
+          filtered = data.filter filter
+          sort: (sorter) ->
+            filtered.sort sorter
+      view.centerSelection nodes
+      list = center.firstCall.args[1]
+      ids = _(list).pluck 'id'
+      expect(ids).to.eql ['789', '456']
 
-      beforeEach ->
-        view.navigator.scale 2
+    it 'updates navigator with padding and scaling applied', ->
+      center.returns
+        x: 100
+        y: 200
+      view.padding = -> 25
+      view.navigator.scale = -> 2
+      view.centerSelection nodes
+      expect(translate).to.have.been.calledOnce
+      expect(translate).to.have.been.calledWith [225, 425]
 
-      it 'adjusts viewport when calling center on render strategy', ->
-        view.width     = 300
-        view.svgHeight = 200
-        view.padding = -> 20
-        view.centerSelection @nodes
-        center = view.renderStrategy.center
-        expect( center ).to.have.been.calledOnce
-        expect( center ).to.have.been.calledWith
-          width:  300 / 2 - 40
-          height: 200 / 2 - 40
-
-      it 'interpolates applied offset', ->
-        view.renderStrategy.center.returns
-          x: 110
-          y: 45
-        view.padding = -> 20
-        view.centerSelection @nodes
-        translate = view.navigator.translate
-        expect( translate ).to.have.been.calledWith [110 * 2 + 20, 45 * 2 + 20]
+    it 'applies transformation to map', ->
+      view.centerSelection nodes, animate: on
+      expect(pan).to.have.been.calledOnce
+      expect(pan).to.have.been.calledAfter translate
+      expect(pan).to.have.been.calledWith animate: on
 
   describe '#update()', ->
 
@@ -326,7 +335,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     it 'is triggered on placeholder updates', ->
       view.update = sinon.spy()
-      view.initialize hits: view.hits
+      view.initialize hits: view.hits, panel: panel
       view.model.trigger 'placeholder:update'
       expect( view.update ).to.have.been.calledOnce
 
@@ -382,7 +391,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     it 'is triggered on concept node changes', ->
       view.scheduleForUpdate = sinon.spy()
-      view.initialize hits: view.hits
+      view.initialize hits: view.hits, panel: panel
       view.model.trigger "change", @model
       expect( view.scheduleForUpdate ).to.have.been.calledOnce
       expect( view.scheduleForUpdate ).to.have.been.calledWith @model
@@ -578,67 +587,45 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       view.zoomIn()
       view.$('.concept-map').attr('transform').should.contain 'scale(1.5)'
 
-  # describe '#resize()', ->
+  describe '#resize()', ->
 
-  #   beforeEach ->
-  #     sinon.stub(localStorage, 'getItem').returns null
-  #     sinon.stub localStorage, 'setItem'
-  #     @clock = sinon.useFakeTimers()
-  #     view.$el.width 160
-  #     view.$el.height 120
-  #     view.renderStrategy =
-  #       render: -> @
-  #       resize: sinon.spy()
+    it 'calls super implementation', ->
+      sinon.spy Coreon.Views.Panels.PanelView::, 'resize'
+      try
+        view.resize()
+        original = Coreon.Views.Panels.PanelView::resize
+        # FOLLOWING RAISES ERROR IN NODE.JS:
+        #
+        # expect(original).to.have.been.calledOnce
+        # expect(original).to.have.been.calledOn view
+        #
+        # SO IT IS REPLACED BY:
+        expect(original.callCount).to.equal 1
+        expect(original.firstCall.thisValue).to.equal view
+      finally
+        Coreon.Views.Panels.PanelView::resize.restore()
 
-  #   afterEach ->
-  #     localStorage.getItem.restore()
-  #     localStorage.setItem.restore()
-  #     @clock.restore()
+    it 'adjusts svg dimensions', ->
+      view.options.svgOffset = 18
+      panel.set
+        width: 200
+        height: 300
+      view.resize()
+      svg = view.$('svg')
+      expect(svg).to.have.attr 'width', '200px'
+      expect(svg).to.have.attr 'height', '282px'
 
-  #   it 'is triggered when resize handle is dragged', ->
-  #     $('#konacha').append view.render().$el
-  #     handle = view.$('.ui-resizable-s')
-  #     view.resize = sinon.spy()
-  #     handle.simulate 'mouseover'
-  #     handle.simulate 'drag', dy: -24, moves: 1
-  #     view.resize.should.have.been.calledOnce
-  #     view.resize.should.have.been.calledWith null, 96
-
-  #   it 'adjusts el dimensions', ->
-  #     view.resize 67, 116
-  #     view.$el.height().should.equal 116
-  #     view.$el.width().should.equal 67
-
-  #   it 'keeps height when null', ->
-  #     view.resize 67, null
-  #     view.$el.height().should.equal 120
-  #     view.$el.width().should.equal 67
-
-  #   it 'keeps width when null', ->
-  #     view.resize null, 77
-  #     view.$el.height().should.equal 77
-  #     view.$el.width().should.equal 160
-
-  #   it 'adjusts svg dimensions', ->
-  #     view.options.svgOffset = 18
-  #     view.resize 200, 300
-  #     svg = view.$('svg')
-  #     svg.should.have.attr 'width', '200px'
-  #     svg.should.have.attr 'height', '282px'
-
-  #   it 'resizes render strategy', ->
-  #     view.renderStrategy.resize.reset()
-  #     view.resize 200, 300
-  #     view.renderStrategy.resize.should.have.been.calledOnce
-
-  #   it 'stores dimensions when finished', ->
-  #     view.resize 123, 334
-  #     @clock.tick 1000
-  #     localStorage.setItem.should.have.been.calledOnce
-  #     localStorage.setItem.should.have.been.calledWith 'face42', JSON.stringify
-  #       'conceptMap':
-  #         width: 123
-  #         height: 334
+    it 'resizes render strategy', ->
+      resize = view.renderStrategy.resize
+      view.options.svgOffset = 18
+      panel.set
+        width: 200
+        height: 300
+      , silent: yes
+      resize.reset()
+      view.resize()
+      expect(resize).to.have.been.calledOnce
+      expect(resize).to.have.been.calledWith 200, 282
 
   describe '#toggleOrientation()', ->
 

@@ -4,6 +4,7 @@
 describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
   view = null
+  panel = null
   repositoryView = null
   conceptListView = null
   conceptView = null
@@ -30,6 +31,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
     view = new Coreon.Views.Panels.ConceptsPanel
       model: new Backbone.Model
+      panel: new Backbone.Model
 
   afterEach ->
     Coreon.Views.Panels.Concepts.RepositoryView.restore()
@@ -41,24 +43,35 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
 
-  describe '#initialize()', ->
+  describe '#initialize panel: panel', ->
+
+    it 'calls super implementation', ->
+      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
+      try
+        panel = new Backbone.Model
+        view.initialize panel: panel
+        original = Coreon.Views.Panels.PanelView::initialize
+        expect(original).to.have.been.calledOnce
+        expect(original).to.have.been.calledWith panel: panel
+      finally
+        Coreon.Views.Panels.PanelView::initialize.restore()
 
     it 'renders title', ->
       I18n.t.withArgs('panels.concepts.title').returns 'Concepts'
-      view.initialize()
+      view.initialize panel: panel
       title = view.$ '.titlebar h3'
       expect(title).to.exist
       expect(title).to.have.text 'Concepts'
 
     it 'renders container for content', ->
-      view.initialize()
+      view.initialize panel: panel
       container = view.$ 'div.content'
       expect(container).to.exist
 
     it 'switches to appropriate view', ->
       switchView = sinon.spy()
       view.switchView = switchView
-      view.initialize()
+      view.initialize panel: panel
       expect(switchView).to.have.been.calledOnce
 
   describe '#switchView()', ->
@@ -70,7 +83,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
       beforeEach ->
         spy = sinon.spy()
         view.switchView = spy
-        view.initialize()
+        view.initialize panel: panel
         spy.reset()
 
       it 'is called when selection changes', ->

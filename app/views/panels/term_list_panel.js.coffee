@@ -7,7 +7,6 @@
 #= require templates/panels/term_list/items
 #= require templates/panels/term_list/translations
 #= require templates/panels/term_list/placeholder
-#= require jquery.ui.resizable
 #= require models/concept
 
 defaults =
@@ -33,7 +32,7 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
     @$('table').scroll _.bind @topUp, @
 
   initialize: ->
-    @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
+    super
 
     title = @title
       source: @model.get( 'source' )?.toUpperCase()
@@ -42,14 +41,6 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
     @$el.html @template
       title: title
       actions: [ 'panels.term_list.toggle_scope' ]
-
-    @$el.resizable
-      handles: 's'
-      minHeight: 80
-      resize: (event, ui) => @resize ui.size
-    @resize Coreon.application.repositorySettings( 'termList' )
-
-    @stopListening()
 
     @listenTo @model
             , 'reset'
@@ -120,16 +111,6 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
       @targetTerms terms: values
     else
       null
-
-  resize: (size) ->
-    size.height ?= defaults.size[1]
-    @$el.height size.height
-    @saveLayout height: size.height
-
-  saveLayout = (layout) ->
-    Coreon.application.repositorySettings('termList', layout)
-
-  saveLayout: _.debounce saveLayout, 500
 
   topUp: ->
     if @model.hasNext() and not @model.get 'loadingNext'

@@ -53,14 +53,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     afterEach ->
       Coreon.application.repositorySettings.restore()
 
-    it "creates resize handle", ->
-      expect( @view.$el).to.have ".ui-resizable-w"
-
-    it "restores width from session", ->
-      @view.initialize()
-      expect( Coreon.application.repositorySettings ).to.be.calledWith("widgets")
-      expect( @view.$el.width() ).to.equal 347
-
   describe "#render()", ->
 
     it "is chainable", ->
@@ -101,42 +93,3 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @clips.render.should.have.been.calledOnce
       $.contains(@view.el, @clips.el).should.be.true
       @view.subviews.should.contain @clips
-
-  describe "resizing", ->
-
-    beforeEach ->
-      sinon.stub Coreon.application, "repositorySettings"
-      Coreon.application.repositorySettings.returns new Backbone.Model
-      Coreon.application.repositorySettings.withArgs('widgets').returns width: 347
-
-      @clock = sinon.useFakeTimers()
-      $("#konacha").append @view.render().$el
-      @handle = @view.$(".ui-resizable-w")
-      @handle.drag = (deltaX) =>
-        @handle.simulate "mouseover"
-        @handle.simulate "drag", dx: deltaX, moves: 1
-
-    afterEach ->
-      Coreon.application.repositorySettings.restore()
-      @clock.restore()
-
-    it "adjusts width when dragging resize handler", ->
-      @view.$el.width 320
-      @handle.drag -47
-      @view.$el.width().should.equal 367
-
-    it "does not allow to reduce width below min width", ->
-      @view.$el.width 320
-      @handle.drag 300
-      @view.$el.width().should.equal 240
-
-    it "restores positioning after drag", ->
-      @handle.drag 25
-      @view.$el.css("top").should.equal "auto"
-      @view.$el.css("left").should.equal "auto"
-
-    it "stores width when finished", ->
-      @view.$el.width 300
-      @handle.drag -20
-      @clock.tick 1000
-      Coreon.application.repositorySettings.should.have.been.calledWith "widgets", width: 320

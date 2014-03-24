@@ -1,6 +1,5 @@
 #= require environment
 #= require views/panels/panel_view
-#= require jquery.ui.resizable
 #= require templates/panels/concept_map
 #= require helpers/titlebar
 #= require d3
@@ -27,7 +26,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     'click .zoom-out'               : 'zoomOut'
     'click .toggle-orientation'     : 'toggleOrientation'
 
-  initialize: ( options = {} ) ->
+  initialize: (options = {}) ->
+    super
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
       .on('zoom', @_panAndZoom)
@@ -42,15 +42,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
 
-    settings = Coreon.application?.repositorySettings('conceptMap')
-
-    if settings.width?
-      @resize settings.width, settings.height
-    else
-      @resize @options.size...
     d3.select(@$('svg')[0]).call @navigator
 
-    @stopListening()
     @hits = options.hits
     @listenTo @hits, 'update', @render
     @listenTo @model, 'placeholder:update', @update
@@ -87,26 +80,35 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @rendering = off
 
   padding: ->
-    Math.min(@width, @svgHeight) * 0.1
+    width = @panel.get('width')
+    height = @canvasHeight()
+    Math.min(width, height) * 0.1
 
   centerSelection: (nodes, options) ->
+    width = @panel.get('width')
+    height = @canvasHeight()
     padding = @padding()
+    scale = @navigator.scale()
+
     viewport =
-      width:  @width     / @navigator.scale() - 2 * padding
-      height: @svgHeight / @navigator.scale() - 2 * padding
+      width:  width  / scale - 2 * padding
+      height: height / scale - 2 * padding
+
     hits = nodes
-      .filter( (datum) -> datum.hit )
-      .sort( (a, b) ->
+      .filter (datum) ->
+        datum.hit
+      .sort (a, b) ->
         diff = b.score - a.score
         if diff is 0
           a.label.localeCompare b.label
         else
           diff
-      )
 
-    offset = @renderStrategy.center viewport, hits
-    offset.x = offset.x * @navigator.scale() + padding
-    offset.y = offset.y * @navigator.scale() + padding
+    center = @renderStrategy.center viewport, hits
+
+    offset =
+      x: center.x * scale + padding
+      y: center.y * scale + padding
 
     @navigator.translate [offset.x, offset.y]
     @_panAndZoom options
@@ -134,37 +136,29 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @navigator.scale zoom
     @_panAndZoom()
 
-  resize: (width, height) ->
+  canvasHeight: ->
+    @panel.get('height') - @options.svgOffset
+
+  resize: ->
+    super
+
+    width = @panel.get('width')
+    height = @canvasHeight()
+
     svg = @$('svg')
-    if height?
-      @height = height
-      @svgHeight = height - @options.svgOffset
-      @$el.height height
-      svg.attr 'height', "#{@svgHeight}px"
-    if width?
-      @width = width
-      @$el.width width
-      svg.attr 'width', "#{ width }px"
-    @renderStrategy.resize @width, @height - @options.svgOffset
-    @saveLayout width: @width, height: @height
+    svg.attr
+      width: "#{width}px"
+      height: "#{height}px"
 
-  saveLayout = (layout) ->
-    Coreon.application?.repositorySettings('conceptMap', layout)
+    @renderStrategy.resize width, height
 
-  saveLayout: _.debounce saveLayout, 500
 
   _renderMarkupSkeleton: ->
-    @$el.resizable 'destroy' if @$el.hasClass 'ui-resizable'
     @$el.html @template actions: [
       'panels.concept_map.toggle_orientation'
       'panels.concept_map.zoom_in'
       'panels.concept_map.zoom_out'
     ]
-    @$el.resizable
-      handles: 's'
-      minHeight: 80
-      resize: (event, ui) =>
-        @resize null, ui.size.height
 
   _panAndZoom: (options = {}) =>
     map = @map
