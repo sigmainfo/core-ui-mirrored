@@ -1,0 +1,9 @@
+#coreon-concepts:not(.widget){
+  .titlebar {
+    display: none;
+  }
+  .content {
+      margin-right: 270px;
+  }
+  
+}
