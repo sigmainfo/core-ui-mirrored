@@ -66,19 +66,12 @@ describe 'Coreon.Collections.Panels', ->
         expect(sync).to.have.been.calledOn panels
         expect(sync).to.have.been.calledWith widget, 123
 
-      it 'updates width of other widgets', ->
+      it 'updates width of other panels', ->
         other = new Backbone.Model widget: on
         panels.reset [widget, other], silent: yes
         panels.trigger 'change:width', widget, 123
         width = other.get('width')
         expect(width).to.equal 123
-
-      it 'does not update width of maximized panels', ->
-        other = new Backbone.Model widget: off, width: 200
-        panels.reset [widget, other], silent: yes
-        panels.trigger 'change:width', widget, 123
-        width = other.get('width')
-        expect(width).to.equal 200
 
       it 'does not update widths from maximized panel', ->
         widget.set 'width', 200, silent: yes

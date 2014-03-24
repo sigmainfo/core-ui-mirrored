@@ -26,9 +26,8 @@ class Coreon.Collections.Panels extends Backbone.Collection
 
   syncWidgetWidths: (model, value, options) ->
     if model.get('widget')
-      @where(widget: on)
-        .forEach (widget) ->
-          widget.set 'width', value
+      @forEach (panel) ->
+        panel.set 'width', value
 
   cyclePanels: (model, value, options) ->
     if value is off
