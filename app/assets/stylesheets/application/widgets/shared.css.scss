@@ -5,7 +5,7 @@
     height: 19px;
     
     h3 {
-      text-transform: initial;
+      text-transform: none;
       font-size: 0.86em;
       line-height: 18px;
       padding: 2px 0 0 6px;
@@ -50,6 +50,44 @@
     }
   
   }
+  
+
+  .ui-resizable-w {
+    position: absolute;
+    top: 0;
+    left: -7px;
+    bottom: 7px;
+    width: 12px;
+    cursor: w-resize;
+    
+    &:before {
+      content:"";
+      display: block;
+      position: relative;
+      left: 7px;
+      height: 100%;
+      width: 5px;
+    }
+    
+    &:hover {
+      &:before {
+      @include box-shadow(rgba(black, 0.1) -3px 0px 3px);
+      }
+    }
+  }
+  
+  .ui-resizable-sw {
+    position: absolute;
+    bottom: -8px;
+    left: -8px;
+    width: 16px;
+    height: 16px;
+    cursor: sw-resize;
+  }
+  
+//  &.ui-resizable-resizing {
+//    @include box-shadow(rgba(black, 0.42) -3px 3px 3px);
+//  }
 
   .ui-resizable-s {
     position: absolute;
