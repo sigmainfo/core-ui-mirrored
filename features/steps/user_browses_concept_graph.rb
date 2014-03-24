@@ -98,14 +98,14 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'I click on "Zoom in"' do
-    sleep 0.5
+    sleep 1
     @orig = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
     page.find("#coreon-concept-map a", text: "Zoom in").click
   end
 
   step '"handgun" should be bigger' do
    box = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
-   box["height"].should > @orig["height"]
+   box["width"].should > @orig["width"]
   end
 
   step 'I click on "Zoom out"' do
@@ -114,6 +114,6 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
 
   step '"handgun" should have the original size again' do
     box = evaluate_script "$('.concept-map .concept-node').get(0).getBoundingClientRect()"
-    box["height"].should == @orig["height"]
+    box["height"].should be_within(0.5).of(@orig["height"])
   end
 end
