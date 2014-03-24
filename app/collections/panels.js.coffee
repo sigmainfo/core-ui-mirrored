@@ -6,6 +6,7 @@ class Coreon.Collections.Panels extends Backbone.Collection
   @instance = ->
     @_instance ?= new @ [
       {type: 'concepts', widget: off}
+      {type: 'clipboard', height: 80}
       {type: 'conceptMap'}
       {type: 'termList'}
     ]

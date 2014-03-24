@@ -22,11 +22,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @languages.render = sinon.stub().returns @languages
       @languages
 
-    sinon.stub Coreon.Views.Widgets, "ClipboardView", =>
-      @clips = new Backbone.View
-      @clips.render = sinon.stub().returns @clips
-      @clips
-
     @view = new Coreon.Views.Widgets.WidgetsView
       model: new Backbone.Collection
         hits: new Backbone.Collection
@@ -35,7 +30,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.Models.SearchType.restore()
     Coreon.Views.Widgets.SearchView.restore()
     Coreon.Views.Widgets.LanguagesView.restore()
-    Coreon.Views.Widgets.ClipboardView.restore()
     Coreon.application = null
 
   it "is a Backbone view", ->
@@ -48,7 +42,8 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     beforeEach ->
       sinon.stub Coreon.application, "repositorySettings"
-      Coreon.application.repositorySettings.withArgs('widgets').returns width: 347
+      Coreon.application.repositorySettings
+        .withArgs('widgets').returns width: 347
 
     afterEach ->
       Coreon.application.repositorySettings.restore()
@@ -72,7 +67,8 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       Coreon.Models.SearchType.should.have.been.calledWithNew
       Coreon.Views.Widgets.SearchView.should.have.been.calledOnce
       Coreon.Views.Widgets.SearchView.should.have.been.calledWithNew
-      Coreon.Views.Widgets.SearchView.should.have.been.calledWith model: @searchType
+      Coreon.Views.Widgets.SearchView.should.have.been.calledWith
+        model: @searchType
       @search.render.should.have.been.calledOnce
       $.contains(@view.el, @search.el).should.be.true
       @view.subviews.should.contain @search
@@ -81,15 +77,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
       @view.render()
       Coreon.Views.Widgets.LanguagesView.should.have.been.calledOnce
       Coreon.Views.Widgets.LanguagesView.should.have.been.calledWithNew
-      #Coreon.Views.Widgets.LanguagesView.should.have.been.calledWith model: @searchType
       @languages.render.should.have.been.calledOnce
       $.contains(@view.el, @languages.el).should.be.true
       @view.subviews.should.contain @languages
-
-    it "renders clipboard view", ->
-      @view.render()
-      Coreon.Views.Widgets.ClipboardView.should.have.been.calledOnce
-      Coreon.Views.Widgets.ClipboardView.should.have.been.calledWithNew
-      @clips.render.should.have.been.calledOnce
-      $.contains(@view.el, @clips.el).should.be.true
-      @view.subviews.should.contain @clips

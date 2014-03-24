@@ -36,7 +36,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   it 'creates container', ->
     expect( view.$el ).to.have.id 'coreon-term-list'
 
-  describe '#initialize panel: panel', ->
+  describe '#initialize()', ->
 
     it 'calls super implementation', ->
       sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'

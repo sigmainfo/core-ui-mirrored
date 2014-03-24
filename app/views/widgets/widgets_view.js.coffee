@@ -2,7 +2,6 @@
 #= require jquery.ui.resizable
 #= require views/widgets/search_view
 #= require views/widgets/languages_view
-#= require views/widgets/clipboard_view
 #= require views/panels/term_list_panel
 #= require views/panels/concept_map_panel
 #= require collections/concept_map_nodes
@@ -37,10 +36,6 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
     languages= new Coreon.Views.Widgets.LanguagesView
     @$el.append languages.render().$el
     @subviews.push languages
-
-    clipboard = new Coreon.Views.Widgets.ClipboardView
-    @$el.append clipboard.render().$el
-    @subviews.push clipboard
 
     @
 

@@ -1,5 +1,6 @@
 #= require environment
 #= require views/panels/concepts_panel
+#= require views/panels/clipboard_panel
 #= require views/panels/concept_map_panel
 #= require views/panels/term_list_panel
 #= require collections/concept_map_nodes
@@ -18,6 +19,9 @@ class Coreon.Lib.Panels.PanelFactory
       when 'concepts'
         new Coreon.Views.Panels.ConceptsPanel
           model: @app
+          panel: model
+      when 'clipboard'
+        new Coreon.Views.Panels.ClipboardPanel
           panel: model
       when 'conceptMap'
         new Coreon.Views.Panels.ConceptMapPanel

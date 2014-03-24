@@ -74,6 +74,19 @@ describe 'Coreon.Lib.Panels.PanelFactory', ->
             model: app
             panel: model
 
+      context 'clipbaord', ->
+
+        beforeEach ->
+          sinon.stub Coreon.Views.Panels, 'ClipboardPanel', ->
+            panel = new Backbone.View
+#
+        it 'creates panel', ->
+          instance = factory.create 'clipboard', model
+          expect(instance).to.equal panel
+          constructor = Coreon.Views.Panels.ClipboardPanel
+          expect(constructor).to.have.been.calledWith
+            panel: model
+
       context 'conceptMap', ->
 
         nodes = null

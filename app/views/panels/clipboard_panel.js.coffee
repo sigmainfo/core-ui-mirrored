@@ -1,23 +1,26 @@
 #= require environment
+#= require views/panels/panel_view
 #= require collections/clips
 #= require views/concepts/concept_label_view
 #= require helpers/action_for
 #= require helpers/titlebar
-#= require templates/widgets/clipboard
+#= require templates/panels/clipboard
 #= require modules/droppable
 
-class Coreon.Views.Widgets.ClipboardView extends Backbone.View
+class Coreon.Views.Panels.ClipboardPanel extends Coreon.Views.Panels.PanelView
 
   Coreon.Modules.include @, Coreon.Modules.Droppable
 
   id: "coreon-clipboard"
   className: "widget"
-  template: Coreon.Templates["widgets/clipboard"]
+  template: Coreon.Templates["panels/clipboard"]
 
   events:
     "click .clear": "clear"
 
   initialize: ->
+    super
+
     @labels = []
 
     @$el.html @template
