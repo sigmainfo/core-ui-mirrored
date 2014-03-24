@@ -19,6 +19,18 @@
           background: $link-color;
         }
       }
+      
+      .maximize {
+        &:before {
+          background-position: -149px -1150px;
+        }
+
+        &:hover {
+          &:before {
+            background-position: -149px -1150px;
+          }
+        }
+      }
     }
   }
   

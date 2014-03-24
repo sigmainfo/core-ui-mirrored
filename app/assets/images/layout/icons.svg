@@ -603,4 +603,22 @@
 		c-0.078,0-0.172-0.009-0.283-0.024c-0.11-0.018-0.258-0.109-0.441-0.275C-46.909,714.534-47,714.3-47,714v-6h2v5h1v-5h2v5h1V708z"
 		/>
 </g>
+<g>
+	<path fill="#514B38" d="M13,1156v7H3v-7H13 M13,1154H3c-1.104,0-2,0.896-2,2v7c0,1.104,0.896,2,2,2h10c1.104,0,2-0.896,2-2v-7
+		C15,1154.896,14.104,1154,13,1154L13,1154z"/>
+</g>
+<rect x="7.5" y="1159.5" opacity="0.4" fill="#514B38" stroke="#514B38" stroke-miterlimit="10" width="6" height="5"/>
+<rect x="7.5" y="1159.5" fill="none" stroke="#514B38" stroke-miterlimit="10" width="6" height="5"/>
+<g>
+	<path fill="#43AAA4" d="M63,1156v7H53v-7H63 M63,1154H53c-1.104,0-2,0.896-2,2v7c0,1.104,0.896,2,2,2h10c1.104,0,2-0.896,2-2v-7
+		C65,1154.896,64.104,1154,63,1154L63,1154z"/>
+</g>
+<rect x="57.5" y="1159.5" opacity="0.4" fill="#43AAA4" stroke="#43AAA4" stroke-miterlimit="10" width="6" height="5"/>
+<rect x="57.5" y="1159.5" fill="none" stroke="#43AAA4" stroke-miterlimit="10" width="6" height="5"/>
+<g>
+	<path fill="#FFFFFF" d="M163,1156v7h-10v-7H163 M163,1154h-10c-1.104,0-2,0.896-2,2v7c0,1.104,0.896,2,2,2h10c1.104,0,2-0.896,2-2
+		v-7C165,1154.896,164.104,1154,163,1154L163,1154z"/>
+</g>
+<rect x="157.5" y="1159.5" opacity="0.4" fill="#FFFFFF" stroke="#FFFFFF" stroke-miterlimit="10" width="6" height="5"/>
+<rect x="157.5" y="1159.5" fill="none" stroke="#FFFFFF" stroke-miterlimit="10" width="6" height="5"/>
 </svg>
