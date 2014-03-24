@@ -20,8 +20,12 @@
 
   ul {
     padding: 8px 20px;
-    min-height: 12px;
-    
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
     li {
       list-style: none;
       padding: 1px;
