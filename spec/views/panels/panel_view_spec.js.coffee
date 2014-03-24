@@ -197,6 +197,11 @@ describe 'Coreon.Views.Panels.PanelView', ->
         expect(resize).to.have.been.calledOnce
         expect(resize).to.have.been.calledOn view
 
+      it 'is triggerd on window resize', ->
+        $(window).trigger 'resize'
+        expect(resize).to.have.been.calledOnce
+        expect(resize).to.have.been.calledOn view
+
     context 'widget', ->
 
       beforeEach ->
@@ -232,6 +237,53 @@ describe 'Coreon.Views.Panels.PanelView', ->
         style = view.$el.attr 'style'
         expect(style).to.include 'width: auto'
         expect(style).to.include 'height: auto'
+
+  describe '#updateSizes()', ->
+
+    it 'is called by #resize()', ->
+      $('#konacha').append view.$el
+      update = sinon.spy()
+      view.updateSizes = update
+      model.set
+        widget: on
+        width: 345
+      , silent: yes
+      view.resize()
+      expect(update).to.have.been.calledOnce
+      expect(update).to.have.been.calledWith 345
+
+    it 'adds classes that are within range', ->
+      view.sizes =
+        mini: [0, 150]
+        medi: [100, 550]
+        maxi: [500, 950]
+      view.updateSizes 220
+      el = view.$el
+      expect(el).to.not.have.class 'mini'
+      expect(el).to.have.class 'medi'
+      expect(el).to.not.have.class 'maxi'
+
+    it 'removes classes that are outside range', ->
+      view.sizes =
+        mini: [0, 150]
+        medi: [100, 550]
+        maxi: [500, 950]
+      el = view.$el
+      el.addClass 'mini'
+      el.addClass 'maxi'
+      view.updateSizes 220
+      expect(el).to.not.have.class 'mini'
+      expect(el).to.have.class 'medi'
+      expect(el).to.not.have.class 'maxi'
+
+    it 'allows ranges with lower boundary only', ->
+      view.sizes =
+        medi: [100]
+        maxi: [500]
+      view.updateSizes 220
+      el = view.$el
+      expect(el).to.have.class 'medi'
+      expect(el).to.not.have.class 'maxi'
 
   describe '#resizeStart()', ->
 

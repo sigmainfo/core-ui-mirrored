@@ -12,6 +12,10 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
           , '.actions .maximize'
           , _(@switchToMax).bind @
 
+  sizes:
+    mini: [0, 250]
+    medi: [100, 550]
+    maxi: [900]
 
   initialize: (options = {}) ->
     @panel = options.panel
@@ -25,6 +29,9 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
     @listenTo @panel
             , 'change:widget'
             , @updateMode
+
+    $(window).off 'resize.coreonPanel', @onResize
+    $(window).on 'resize.coreonPanel', @onResize
 
   widgetize: ->
     @$el
@@ -41,7 +48,8 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
           @resizeStop ui
 
     if @$('.titlebar .actions a.maximize').length is 0
-      @$('.titlebar .actions').append Coreon.Helpers.action_for('panel.maximize')
+      maximize = Coreon.Helpers.action_for('panel.maximize')
+      @$('.titlebar .actions').append maximize
 
     @resize()
 
@@ -60,15 +68,32 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
 
   resize: ->
     if @panel.get('widget')
-      @$el
-        .css
-          left: 0
-          width: @panel.get('width')
-          height: @panel.get('height')
+      @$el.css
+        left: 0
+        width: @panel.get('width')
+        height: @panel.get('height')
     else
       @$el.css
         width: 'auto'
         height: 'auto'
+
+    @updateSizes @$el.width()
+
+  updateSizes: (width) ->
+    for name, limits of @sizes
+      [min, max] = limits
+
+      within = width > min
+      if within and max
+        within = width < max
+
+      if within
+        @$el.addClass name
+      else
+        @$el.removeClass name
+
+  onResize: =>
+    @resize()
 
   switchToMax: (event) ->
     event.preventDefault()
@@ -86,3 +111,6 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
     @panel.set ui.size
 
   resizeStop: (ui) ->
+
+  remove: ->
+    $(window).off 'resize.coreonPanel', @onResize
