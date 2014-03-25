@@ -4,14 +4,14 @@
 
     &:before {
       @include before-icon;
-      background-position: 0 -851px;
+      background-position: 1px -851px;
       width: 18px;
       height: 18px;
     }
 
     &:hover {
       &:before {
-        background-position: -50px -851px;
+        background-position: -49px -851px;
       }
     }
   }

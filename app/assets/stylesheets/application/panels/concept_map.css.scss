@@ -208,4 +208,23 @@ $edge-color: #bfc5c0;
 
 }
 
+#coreon-concept-map:not(.widget) {
+  
+  .titlebar {
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .map {    
+    position: absolute;
+    
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }  
+}
+
+
+
 

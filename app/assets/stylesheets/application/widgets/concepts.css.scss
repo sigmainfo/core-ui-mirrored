@@ -47,6 +47,20 @@
     }
   }
   
+  .concept {
+    .edit-concept {
+      float: right;
+      position: relative;
+      text-indent: -2000px;
+      overflow: hidden;
+      top: 0;
+      width: 14px;
+      padding: 3px;
+      margin-left: 3px;
+    }
+    
+  }
+  
   .concept-list {
     
     .edit {

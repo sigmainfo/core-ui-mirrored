@@ -35,7 +35,7 @@ div.concept {
     background-position: -52px -1002px;
     @include scale(1.1);
     &.remove {
-      background-position: -102px -1002px;
+      background-position: -101px -1002px;
     }
   }
   
@@ -322,11 +322,6 @@ div.concept {
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
       max-width: 80%;
-      &:before {
-        top: 6px;
-        width: 4px;
-        height: 4px;
-      }
     }
     
     .system-info-toggle {
