@@ -1,0 +1,33 @@
+#coreon-clipboard {
+
+  ul {
+    border-top: 1px solid rgba(white, 0.2);
+    background-color: rgba($search-bg-color, 0.14);
+    @include retina-stripes("white");
+    
+    li {
+      list-style: none;
+      padding: 1px;
+      position: relative;
+
+      .concept-label {
+        @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);
+      }
+    }
+
+    &.ui-state-highlight {
+      @include droparea;
+    }
+
+    &.ui-state-hovered {
+      background-color: rgba($button-hover-color, 0.4);
+    }
+  }
+}
+
+#coreon-clipboard:not(.widget) {
+
+  ul {
+    @include single-box-shadow(rgba(#555555, 0.3), 1px, 1px, 3px, false, inset);
+  }
+}

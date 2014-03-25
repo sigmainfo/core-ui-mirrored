@@ -1,21 +1,8 @@
-#coreon-clipboard {
+#coreon-clipboard.widget {
   
   h3:before {
     background-position: -2px -1002px;
     @include scale(0.9);
-  }
-  
-  .clear {
-    &:before {
-      @include before-icon;
-      background-position: 2px -750px;
-    }
-
-    &:hover {
-      &:before {
-        background-position: -48px -750px;
-      }
-    }
   }
 
   ul {
@@ -26,38 +13,5 @@
     left: 0;
     right: 0;
     overflow: auto;
-    li {
-      list-style: none;
-      padding: 1px;
-      position: relative;
-      &:after {
-        @include before-icon;
-        background-position: 0px -199px;
-        @include opacity(0.7);
-        position: absolute;
-        bottom: 0;
-        left: -5px;
-      }
-
-      .concept-label {
-        font-size: 0.9em;
-        line-height: 1.3em;
-        padding-top: 2px;
-        padding-left: 16px;
-        &:before {
-          left: 6px;
-        }
-      }
-    }
-
-    &.ui-state-highlight {
-      @include droparea;
-      margin: 0 4px 0 3px;
-      border-top: none;
-    }
-
-    &.ui-state-hovered {
-      background-color: rgba($button-hover-color, 0.4);
-    }
   }
 }

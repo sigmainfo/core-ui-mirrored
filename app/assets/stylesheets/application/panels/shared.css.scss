@@ -1,0 +1,45 @@
+.panel:not(.widget) {
+  
+  .titlebar {
+    height: 19px;
+  
+    h3 {
+      font-size: 0.86em;
+      line-height: 18px;
+      padding: 2px 0 0 6px;
+      float: left;
+    }
+
+    .actions {
+
+      a {
+        display: block;
+        float: left;
+        width: 20px;
+        padding: 0 2px;
+        height: 19px;
+        text-indent: -2000px;
+        overflow: hidden;
+
+        &:last-child {
+          padding-right: 10px;
+        }
+      }
+    
+      .maximize {
+        padding: 0 3px;
+        &:before {
+          @include before-icon;
+          background-position: 1px -1150px;
+        }
+
+        &:hover {
+          &:before {
+            background-position: -49px -1150px;
+          }
+        }
+      }
+    }
+
+  }
+}

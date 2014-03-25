@@ -1,0 +1,7 @@
+#coreon-term-list:not(.widget) {
+    
+    table {
+      padding-top: 10px;      
+      @include retina-separator;
+    }
+}
