@@ -263,7 +263,6 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
           beforeEach ->
             view.$('table').height 100
             view.$('tbody').height 300
-            console.log view.el
 
           it 'does not call next on model', ->
             view.model.next = sinon.spy()
