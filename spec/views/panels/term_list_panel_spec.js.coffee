@@ -21,10 +21,11 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
     model.terms = new Backbone.Collection
     model.hasNext = -> no
     model.hasPrev = -> no
-    panel = new Backbone.Model
+    panel = new Backbone.Model widget: on
     view = new Coreon.Views.Panels.TermListPanel
       model: model
       panel: panel
+    view.widgetize()
 
   afterEach ->
     I18n.t.restore()
@@ -221,7 +222,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#topUp()', ->
 
     beforeEach ->
-      $( '#konacha' ).append view.$el
+      $('#konacha').append view.$el
 
     it 'is triggered on scroll', ->
       view.topUp = sinon.spy()
