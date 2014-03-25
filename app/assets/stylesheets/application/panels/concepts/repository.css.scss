@@ -55,7 +55,7 @@ div.repository {
 
 }
 
-@media all and (max-width: 999px) {
+.medi {
   div.repository {
       font-size: 0.9em;
     
@@ -71,11 +71,15 @@ div.repository {
 
 }
 
-@media all and (max-width: 799px) {
+.mini {
+  div.repository {
+    font-size: 0.9em;
     table.meta {
+      padding-top: 5px;
       td {
         clear: both;
         padding-bottom: 6px;
       }
     }
   }
+}

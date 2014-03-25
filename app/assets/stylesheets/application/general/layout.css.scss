@@ -156,34 +156,37 @@
       padding-right: 16px;
     }
   }
+}
+
+.medi {
+  .concept table, table.meta {    
+    margin-left: 0px;
+    tr td, tr th {
+      padding-top: 2px;
+      padding-bottom: 4px;
+    }
   
-  @media all and (max-width: 999px) and (min-width: 800px) {
-    
-      margin-left: 0px;
-      tr td, tr th {
+    tr th {
+      width: 69px;
+    }
+  }  
+}
+.mini {
+  .concept table, table.meta {    
+    tr {
+      th, td {
+        display: block;
         padding-top: 2px;
-        padding-bottom: 4px;
+        padding-bottom: 0;
       }
-      
-      tr th {
-        width: 69px;
-      }
-  }
-  
-  @media all and (max-width: 799px) {
-      tr {
-        th, td {
-          display: block;
-          padding-top: 4px;
-          padding-bottom: 0;
-        }
-        th {
-          width: auto;
-          text-align:left;
-          float: left;
-        }
+      th {
+        width: auto;
+        padding-top: 3px;
+        text-align:left;
+        float: left;
       }
     }  
+  }  
 }
 
 table.managers, .concept-list>table {
