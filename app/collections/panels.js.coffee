@@ -3,13 +3,16 @@
 
 class Coreon.Collections.Panels extends Backbone.Collection
 
-  @instance = ->
-    @_instance ?= new @ [
+  @defaults:
+    [
       {type: 'concepts', widget: off}
       {type: 'clipboard', height: 80}
       {type: 'conceptMap'}
       {type: 'termList'}
     ]
+
+  @instance: =>
+    @_instance ?= new @ @defaults
 
   model: Coreon.Models.Panel
 
@@ -24,6 +27,14 @@ class Coreon.Collections.Panels extends Backbone.Collection
       , @cyclePanels
       , @
 
+    @on 'change'
+      , @saveSettings
+      , @
+
+  load: ->
+    stored = Coreon.application?.repositorySettings 'panels'
+    @reset(stored or Coreon.Collections.Panels.defaults)
+
   syncWidgetWidths: (model, value, options) ->
     if model.get('widget')
       @forEach (panel) ->
@@ -33,3 +44,8 @@ class Coreon.Collections.Panels extends Backbone.Collection
     if value is off
       @forEach (panel) ->
         panel.set 'widget', on unless panel is model
+
+  saveSettings = ->
+    Coreon.application?.repositorySettings 'panels', @toJSON()
+
+  saveSettings: _(saveSettings).debounce 300

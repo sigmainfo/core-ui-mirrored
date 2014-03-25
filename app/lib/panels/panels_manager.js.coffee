@@ -23,8 +23,10 @@ class Coreon.Lib.Panels.PanelsManager
       if view = model.view
         view.remove()
         model.view = null
+    @model.reset []
 
   createAll: ->
+    @model.load()
     @model.forEach (model) =>
       panel = @factory.create model.get('type'), model
       model.view = panel.render()
