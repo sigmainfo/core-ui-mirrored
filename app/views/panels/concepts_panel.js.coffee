@@ -10,7 +10,7 @@
 class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
   id: 'coreon-concepts'
-  
+
   layout: Coreon.Templates['panels/concepts']
 
   current: null

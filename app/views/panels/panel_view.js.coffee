@@ -74,9 +74,7 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
         width: @panel.get('width')
         height: @panel.get('height')
     else
-      @$el.css
-        width: 'auto'
-        height: 'auto'
+      @$el.attr 'style', null
 
     @updateSizes @$el.width()
 

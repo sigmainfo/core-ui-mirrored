@@ -167,9 +167,8 @@ describe 'Coreon.Views.Panels.PanelView', ->
       view.$el.width 300
       view.$el.height 120
       view.maximize()
-      style = view.$el.attr 'style'
-      expect(style).to.include 'width: auto'
-      expect(style).to.include 'height: auto'
+      el = view.$el
+      expect(el).to.not.have.attr 'style'
 
     it 'removes resizable functionality', ->
       view.$el.addClass 'ui-resizable'
@@ -237,9 +236,8 @@ describe 'Coreon.Views.Panels.PanelView', ->
          height: 345
         , silent: yes
         view.resize()
-        style = view.$el.attr 'style'
-        expect(style).to.include 'width: auto'
-        expect(style).to.include 'height: auto'
+        el = view.$el
+        expect(el).to.not.have.attr 'style'
 
   describe '#updateSizes()', ->
 
