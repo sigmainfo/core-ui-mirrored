@@ -1,5 +1,3 @@
-$widget-width: 320px;
-
 $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
 
 @mixin editmode {
@@ -46,29 +44,3 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
   background-repeat: no-repeat;
 }
 
-//@mixin retina-separator {
-//  background-image: image-url('layout/separator.png');
-//  background-repeat: repeat-x;
-//  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-//      background-image: image-url('layout/separator@2x.png');
-//      @include background-size(4px 8px);
-//  } 
-//}
-//
-//@mixin retina-BigSeparator {
-//  background-image: image-url('layout/separatorBig.png');
-//  background-repeat: repeat-x;
-//  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-//      background-image: image-url('layout/separatorBig@2x.png');
-//      @include background-size(8px 17px);
-//  } 
-//}
-//
-//@mixin dottedline {
-//  background-image: image-url('layout/dottedline.svg');
-//  background-repeat: repeat-x;
-//}
-//
-//@mixin retina-stripes($color) {
-//  background-image: image-url('layout/stripes-#{$color}.svg');
-//}

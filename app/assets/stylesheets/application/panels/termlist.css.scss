@@ -1,5 +1,5 @@
 #coreon-term-list {
-
+  
   .toggle-scope {
 
     &:before {
@@ -17,8 +17,22 @@
   }
 
   table {
-    width: 100%;
     min-height: 12px;
+    
+    display: block;
+    position: absolute;
+    top: 120px;
+    bottom: 120px;
+    left: 60px;
+    right: 270px;
+    overflow: auto;
+
+    tbody {
+      display: inline-block;
+      width: 94%;
+      padding: 6px 0 6px 6px;
+      position: relative;
+    }
   
     li {
       list-style: none;
@@ -98,7 +112,6 @@
 }
 
 #coreon-term-list:not(.widget) {
-    margin-right: 270px;
     
     table {
       margin-top: 20px;

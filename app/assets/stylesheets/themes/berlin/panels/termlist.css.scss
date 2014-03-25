@@ -56,6 +56,7 @@
     
     table {
       padding-top: 10px;      
-      @include retina-separator;
+      @include dottedline;
+      background-position: bottom;
     }
 }
