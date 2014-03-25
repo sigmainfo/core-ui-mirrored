@@ -32,8 +32,9 @@ class Coreon.Collections.Panels extends Backbone.Collection
       , @
 
   load: ->
-    stored = Coreon.application?.repositorySettings 'panels'
-    @reset(Coreon.Collections.Panels.defaults)
+    panels = Coreon.application?.repositorySettings()?.get('panels')
+    panels ?=  Coreon.Collections.Panels.defaults
+    @reset panels
 
   syncWidgetWidths: (model, value, options) ->
     if model.get('widget')

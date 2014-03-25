@@ -6,7 +6,6 @@ Feature: user toggles main view
   Background:
     Given I am logged in as user of the repository
 
-  @wip
   Scenario: toggle concept map
     Given a concept "Monitor" exists
     And this concept has narrower concepts "LCD Screen" and "TFT Screen"
@@ -29,7 +28,6 @@ Feature: user toggles main view
     And I should see a widget "Concept Map"
     And it should contain nodes "Monitor", "LCD Screen", and "TFT Screen"
 
-  @wip
   Scenario: step thru widgets
     Given I visit the repository root page
     When I click on "Maximize" inside the widget "Clipboard"
