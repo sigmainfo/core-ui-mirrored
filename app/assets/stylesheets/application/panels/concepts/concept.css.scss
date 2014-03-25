@@ -258,7 +258,7 @@ div.concept {
    
 }
 
-@media all and (max-width: 999px) and (min-width: 800px) {
+.medi {
   div.concept {
     font-size: 0.9em;
     
@@ -280,6 +280,7 @@ div.concept {
     }
     
     .terms {
+      margin-top: 16px;
       .term h4.value {
         font-size: 1.3em;
         padding: 7px 0 5px 0;
@@ -311,7 +312,7 @@ div.concept {
   }
 }
 
-.widget {
+.mini {
   div.concept {
     font-size: 0.9em;
     
@@ -321,6 +322,11 @@ div.concept {
       padding: 1px 6px 1px 16px;
       margin-bottom: 6px;
       max-width: 80%;
+      &:before {
+        top: 6px;
+        width: 4px;
+        height: 4px;
+      }
     }
     
     .system-info-toggle {
@@ -345,9 +351,17 @@ div.concept {
         padding-bottom: 0px;
       }
     }
+    .properties-toggle {
+      margin: 4px 2px 2px 0;  
+    }
   }
   
+
+  
   div.concept.show, div.concept.edit {
+    section.language {
+      margin-top: 0px;
+    }
     section h3 {
       margin-top: 2px;
     }
@@ -357,7 +371,7 @@ div.concept {
       z-index: 1;
     }
     .terms {
-
+      margin-top: 6px;
       .language:before {
         content: none;
       }
@@ -400,102 +414,6 @@ div.concept {
     .terms .term h4.value{
       padding-top: 12px;
     }
-  }
-  
+  }  
 }
 
-
-@media all and (max-width: 799px) {
-
-
-//  div.concept {
-//    font-size: 0.9em;
-//    
-//    h2 {
-//      font-size: 1.2em;
-//      line-height: 1.4em;
-//      padding: 1px 6px 1px 16px;
-//      margin-bottom: 6px;
-//      max-width: 80%;
-//    }
-//    
-//    .system-info-toggle {
-//      display: none;
-//    }
-//    
-//    .broader-and-narrower {
-//      display: none;
-//    }
-//    
-//    table {
-//      margin-left: 16px;
-//      width: 90%;
-//      tr {
-//        
-//        .values, .value {
-//          clear: both;
-//          padding-bottom: 6px;
-//        }
-//      }
-//      ul.index {
-//        padding-bottom: 0px;
-//      }
-//    }
-//  }
-//  
-//  div.concept.show, div.concept.edit {
-//    section h3 {
-//      margin-top: 2px;
-//    }
-//    
-//    .submit {
-//      position: relative;
-//      z-index: 1;
-//    }
-//    .terms {
-//
-//      .language:before {
-//        content: none;
-//      }
-//      
-//      .term h4.value {
-//        font-size: 1.1em;
-//        padding: 4px 0 3px 0;
-//        margin-left: 16px;
-//      }
-//
-//      .language .properties {
-//        background: none;
-//        
-//        h3 {
-//          right: 0px;
-//          &:before {
-//            top: 2px;
-//            right: 2px;
-//          }
-//        }
-//        
-//        &>div {
-//          margin-left: 16px;
-//          background: none;
-//          border-top: 1px solid white;
-//          
-//          &.add {
-//            margin-left: 0px;
-//            
-//            .edit {
-//              border: none;
-//            }
-//          }
-//        }
-//      }  
-//    }
-//  }
-//  
-//  div.concept.edit {
-//    .terms .term h4.value{
-//      padding-top: 12px;
-//    }
-//  }
-
-}

@@ -5,4 +5,12 @@
       border: none;
     }
   }
+  
+  div.concept {
+    li.term {
+      @include single-box-shadow(none);
+      margin-bottom: 1px;
+    }  
+  }
+  
 }
