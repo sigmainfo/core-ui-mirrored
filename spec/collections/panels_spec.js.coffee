@@ -41,7 +41,11 @@ describe 'Coreon.Collections.Panels', ->
     panels = null
 
     beforeEach ->
+      Coreon.application = repositorySettings: ->
       panels = new Coreon.Collections.Panels
+
+    afterEach ->
+      delete Coreon.application
 
     it 'is a Backbone collection', ->
       expect(panels).to.be.an.instanceOf Backbone.Collection
@@ -49,6 +53,38 @@ describe 'Coreon.Collections.Panels', ->
     it 'uses panel models', ->
       model = panels.model
       expect(model).to.equal Coreon.Models.Panel
+
+    describe '#load()', ->
+
+      settings = null
+      originalDefaults = null
+
+      beforeEach ->
+        originalDefaults = Coreon.Collections.Panels.defaults
+        settings = sinon.stub()
+        Coreon.application =
+          repositorySettings: settings
+
+      afterEach ->
+        delete Coreon.application
+        Coreon.Collections.Panels.defaults = originalDefaults
+
+      it 'populates collection from local storage', ->
+        settings.withArgs('panels').returns [ type: 'concepts' ]
+        panels.load()
+        expect(panels).to.have.lengthOf 1
+        type = panels.first().get('type')
+        expect(type).to.equal 'concepts'
+
+      it 'falls back to defaults', ->
+        Coreon.Collections.Panels.defaults = [
+          type: 'clipboard'
+        ]
+        settings.withArgs('panels').returns null
+        panels.load()
+        expect(panels).to.have.lengthOf 1
+        type = panels.first().get('type')
+        expect(type).to.equal 'clipboard'
 
     describe '#syncWidgetWidths()', ->
 
@@ -110,3 +146,40 @@ describe 'Coreon.Collections.Panels', ->
         panels.cyclePanels panel, off
         widgetized = panel.get('widget')
         expect(widgetized).to.be.false
+
+    describe '#saveSettings()', ->
+
+      repositorySettings = null
+
+      beforeEach ->
+        @clock = sinon.useFakeTimers()
+        repositorySettings = sinon.spy()
+        Coreon.application =
+          repositorySettings: repositorySettings
+
+      afterEach ->
+        delete Coreon.application
+        @clock.restore()
+
+      it 'is triggered on every change', ->
+        save = sinon.spy()
+        panels.saveSettings = save
+        panels.initialize()
+        panels.trigger 'change'
+        expect(save).to.have.been.calledOnce
+        expect(save).to.have.been.calledOn panels
+
+      it 'saves settings locally', ->
+        panels.toJSON = ->
+          [
+            { type: 'concepts', width: 321 }
+            { type: 'clipboard', width: 321 }
+          ]
+        panels.saveSettings()
+        @clock.tick 1000
+        expect(repositorySettings).to.have.been.calledOnce
+        expect(repositorySettings).to.have.been.calledWith 'panels',
+          [
+            { type: 'concepts', width: 321 }
+            { type: 'clipboard', width: 321 }
+          ]

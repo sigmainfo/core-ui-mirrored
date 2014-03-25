@@ -79,6 +79,13 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
         view = model.view
         expect(view).to.be.null
 
+      it 'resets collection', ->
+        model = new Backbone.Model
+        model.view = remove: ->
+        collection.reset [ model ], silent: yes
+        manager.removeAll()
+        expect(collection).to.have.lengthOf 0
+
     describe '#createAll()', ->
 
       model = null
@@ -86,8 +93,15 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
 
       beforeEach ->
         model = new Backbone.Model type: 'concepts'
-        collection.reset [ model ], silent: yes
+        collection.load = ->
+          collection.reset [ model ], silent: yes
         panel = new Backbone.View
+
+      it 'populates collection', ->
+        load = sinon.spy()
+        collection.load = load
+        manager.createAll()
+        expect(load).to.have.been.calledOnce
 
       it 'creates panels', ->
         create = sinon.stub()
