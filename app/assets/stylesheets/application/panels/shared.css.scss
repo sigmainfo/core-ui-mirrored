@@ -1,0 +1,27 @@
+.panel:not(.widget) {
+  
+  .titlebar {
+  
+    h3 {
+      font-size: 0.86em;
+      line-height: 18px;
+      padding: 5px 0 0 6px;
+      float: left;
+    }
+
+    .actions {
+      display: inline-block;
+      overflow: hidden;
+      margin-left: 14px;
+      a {
+        float: left;
+        line-height: 40px;
+        width: 20px;
+        padding: 1px;
+        height: 19px;
+        text-indent: -2000px;
+        overflow: hidden;
+      }
+    }
+  }
+}

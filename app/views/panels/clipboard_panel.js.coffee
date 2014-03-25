@@ -12,7 +12,6 @@ class Coreon.Views.Panels.ClipboardPanel extends Coreon.Views.Panels.PanelView
   Coreon.Modules.include @, Coreon.Modules.Droppable
 
   id: "coreon-clipboard"
-  className: "widget"
   template: Coreon.Templates["panels/clipboard"]
 
   events:

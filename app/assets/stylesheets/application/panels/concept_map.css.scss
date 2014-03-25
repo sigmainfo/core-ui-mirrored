@@ -1,6 +1,49 @@
 $edge-color: #bfc5c0;
 
 #coreon-concept-map {
+  
+  .zoom-in {
+
+    &:before {
+      @include before-icon;
+      background-position: 1px -350px;
+    }
+
+    &:hover {
+      &:before {
+        background-position: -49px -350px;
+      }
+    }
+  }
+  
+  .zoom-out {
+
+    &:before {
+      @include before-icon;
+      background-position: 1px -400px;
+    }
+
+    &:hover {
+      &:before {
+        background-position: -49px -400px;
+      }
+    }
+  }
+  
+  .toggle-orientation {
+
+    &:before {
+      @include before-icon;
+      background-position: 0 -800px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -50px -800px;
+      }
+    }
+  }
 
   .map {
     line-height: 0;

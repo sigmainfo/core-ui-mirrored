@@ -34,7 +34,6 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
 
   it "creates container", ->
     view.$el.should.have.id "coreon-clipboard"
-    view.$el.should.have.class "widget"
 
   describe "#initialize()", ->
 
