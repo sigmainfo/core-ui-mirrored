@@ -61,16 +61,16 @@ describe 'Coreon.Collections.Panels', ->
 
       beforeEach ->
         originalDefaults = Coreon.Collections.Panels.defaults
-        settings = sinon.stub()
+        settings = new Backbone.Model
         Coreon.application =
-          repositorySettings: settings
+          repositorySettings: -> settings
 
       afterEach ->
         delete Coreon.application
         Coreon.Collections.Panels.defaults = originalDefaults
 
       it 'populates collection from local storage', ->
-        settings.withArgs('panels').returns [ type: 'concepts' ]
+        settings.set 'panels', [ type: 'concepts' ], silent: yes
         panels.load()
         expect(panels).to.have.lengthOf 1
         type = panels.first().get('type')
@@ -80,7 +80,7 @@ describe 'Coreon.Collections.Panels', ->
         Coreon.Collections.Panels.defaults = [
           type: 'clipboard'
         ]
-        settings.withArgs('panels').returns null
+        Coreon.application.repositorySettings = -> null
         panels.load()
         expect(panels).to.have.lengthOf 1
         type = panels.first().get('type')

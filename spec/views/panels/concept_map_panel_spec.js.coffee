@@ -280,17 +280,15 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       expect(center).to.have.been.calledOnce
 
     it 'applies padding and scaling to viewport before passing it to strategy', ->
-      view.options.svgOffset = 18
+      panel.set 'widget', off, silent: yes
       view.navigator.scale = -> 0.5
-      panel.set
-        width: 300
-        height: 200
-      , silent: yes
       view.padding = -> 20
+      view.$el.width 600
+      view.$el.height 420
       view.centerSelection nodes
       expect(center).to.have.been.calledWith
-        width: 560
-        height: 324
+        width: 1160
+        height: 800
 
     it 'passes descending list of hits to strategy', ->
       data = [
@@ -606,26 +604,23 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         Coreon.Views.Panels.PanelView::resize.restore()
 
     it 'adjusts svg dimensions', ->
-      view.options.svgOffset = 18
-      panel.set
-        width: 200
-        height: 300
+      view.dimensions = ->
+        width: 300
+        height: 200
       view.resize()
       svg = view.$('svg')
-      expect(svg).to.have.attr 'width', '200px'
-      expect(svg).to.have.attr 'height', '282px'
+      expect(svg).to.have.attr 'width', '300px'
+      expect(svg).to.have.attr 'height', '200px'
 
     it 'resizes render strategy', ->
+      view.dimensions = ->
+        width: 300
+        height: 200
       resize = view.renderStrategy.resize
-      view.options.svgOffset = 18
-      panel.set
-        width: 200
-        height: 300
-      , silent: yes
       resize.reset()
       view.resize()
       expect(resize).to.have.been.calledOnce
-      expect(resize).to.have.been.calledWith 200, 282
+      expect(resize).to.have.been.calledWith 300, 200
 
   describe '#toggleOrientation()', ->
 

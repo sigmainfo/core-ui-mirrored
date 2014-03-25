@@ -80,13 +80,11 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @rendering = off
 
   padding: ->
-    width = @panel.get('width')
-    height = @canvasHeight()
+    {width, height} = @dimensions()
     Math.min(width, height) * 0.1
 
   centerSelection: (nodes, options) ->
-    width = @panel.get('width')
-    height = @canvasHeight()
+    {width, height} = @dimensions()
     padding = @padding()
     scale = @navigator.scale()
 
@@ -136,14 +134,17 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @navigator.scale zoom
     @_panAndZoom()
 
-  canvasHeight: ->
-    @panel.get('height') - @options.svgOffset
+  dimensions: ->
+    height = @$el.height()
+    height -= @$('.titlebar').height() if @panel.get('widget')
+
+    width: @$el.width()
+    height: height
 
   resize: ->
     super
 
-    width = @panel.get('width')
-    height = @canvasHeight()
+    {width, height} = @dimensions()
 
     if width and height
 
@@ -153,7 +154,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         height: "#{height}px"
 
       @renderStrategy.resize width, height
-
 
   _renderMarkupSkeleton: ->
     @$el.html @template actions: [
