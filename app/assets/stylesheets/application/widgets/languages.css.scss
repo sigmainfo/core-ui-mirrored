@@ -7,12 +7,12 @@
   }
 
   form {
-    padding: 8px 20px;
+    padding: 8px 0 8px 5%;
   }
   
   .arrow {
     display: inline-block;
-    width: 30px;
+    width: 10%;
     height: 11px;
     @include svg-icons;
     background-position: 6px -152px;
