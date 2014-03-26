@@ -35,7 +35,7 @@ class UserAddsConceptToClipboard < Spinach::FeatureSteps
   end
 
   step 'the clip should be highlighted as hit' do
-    page.should have_css("#coreon-clipboard li > a.hit", text: "panopticum")
+    page.should have_css('#coreon-clipboard li > a.hit', text: 'panopticum')
   end
 
   step 'I should see a button "Clear" as clipboard action' do

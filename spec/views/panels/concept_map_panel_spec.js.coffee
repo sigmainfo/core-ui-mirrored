@@ -603,15 +603,6 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       finally
         Coreon.Views.Panels.PanelView::resize.restore()
 
-    it 'adjusts svg dimensions', ->
-      view.dimensions = ->
-        width: 300
-        height: 200
-      view.resize()
-      svg = view.$('svg')
-      expect(svg).to.have.attr 'width', '300px'
-      expect(svg).to.have.attr 'height', '200px'
-
     it 'resizes render strategy', ->
       view.dimensions = ->
         width: 300
@@ -621,6 +612,34 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       view.resize()
       expect(resize).to.have.been.calledOnce
       expect(resize).to.have.been.calledWith 300, 200
+
+    context 'in widget mode', ->
+
+      beforeEach ->
+        panel.set 'widget', on, silent: yes
+
+      it 'adjusts svg dimensions', ->
+        view.dimensions = ->
+          width: 300
+          height: 200
+        view.resize()
+        svg = view.$('svg')
+        expect(svg).to.have.attr 'width', '300px'
+        expect(svg).to.have.attr 'height', '200px'
+
+    context 'in fullsize mode', ->
+
+      beforeEach ->
+        panel.set 'widget', off, silent: yes
+
+      it 'adjusts svg dimensions', ->
+        view.dimensions = ->
+          width: 300
+          height: 200
+        view.resize()
+        svg = view.$('svg')
+        expect(svg).to.have.attr 'width', '100%'
+        expect(svg).to.have.attr 'height', '100%'
 
   describe '#toggleOrientation()', ->
 

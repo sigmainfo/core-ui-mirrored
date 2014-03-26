@@ -149,7 +149,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     if width and height or true
 
       svg = @$('svg')
-      
+
       if @panel.get('widget')
         svg.attr
           width: "#{width}px"
