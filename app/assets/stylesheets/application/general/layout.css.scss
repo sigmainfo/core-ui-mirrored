@@ -15,11 +15,7 @@
  }
 
  a {
-   color: $link-color;
    text-decoration: none;
-   &:hover {
-     color: $hover-color;
-   }
    &:active, &:visited, &:focus { 
      outline: none;
    }
@@ -220,6 +216,15 @@ table.managers, .concept-list>table {
   &>tbody>tr:first-child>td {
       padding-top: 16px;
   }
+}
+
+#coreon-app {
+//  position: absolute;
+//  top: 0;
+//  bottom: 0;
+//  left: 0;
+//  right: 0;
+  
 }
 
 #coreon-top {

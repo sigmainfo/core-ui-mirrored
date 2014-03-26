@@ -23,6 +23,7 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
   end
 
   step 'I click "Edit properties"' do
+    page.should have_css('.edit-properties')
     page.find(".edit-properties").click
   end
 

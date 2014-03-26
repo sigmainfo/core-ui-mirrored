@@ -33,18 +33,6 @@
     .edit {
       display: none;
     }
-    
-    section.contact {
-      margin-top: 0px;
-    }
-    
-    table.managers {
-      td, th {      
-        &:first-child {
-          padding-left: 70px;
-        }
-      }
-    }
   }
   
   .concept {
@@ -88,6 +76,4 @@
       padding-left: 24px;
     }
   }
-  
-
 }

@@ -1,3 +1,4 @@
 != @titlebar @title, @actions
-%table
-  %tbody
+.content
+  %table
+    %tbody

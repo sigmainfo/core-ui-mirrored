@@ -66,7 +66,7 @@ div.repository {
             padding-left: 82px;
           }
         }
-      }  
+    }  
   }
 
 }
@@ -74,6 +74,14 @@ div.repository {
 .mini {
   div.repository {
     font-size: 0.9em;
+    
+    .contact {    
+    
+      h3 {
+        top: 0px;
+      }
+    }
+      
     table.meta {
       padding-top: 5px;
       td {
@@ -81,5 +89,14 @@ div.repository {
         padding-bottom: 6px;
       }
     }
+    
+    .contact table.managers {
+
+      td, th {      
+        &:first-child {
+          padding-left: 0px;
+        }
+      }
+    }  
   }
 }

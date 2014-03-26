@@ -3,21 +3,4 @@
   h3:before {
     background-position: -1px -952px;
   }
-
-  table {
-    display: block;
-    position: absolute;
-    top: 20px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: auto;
-
-    tbody {
-      display: inline-block;
-      width: 94%;
-      padding: 6px 0 6px 6px;
-      position: relative;
-    }
-  }
 }

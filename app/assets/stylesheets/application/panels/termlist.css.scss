@@ -21,11 +21,12 @@
     
     display: block;
     position: absolute;
-    top: 120px;
-    bottom: 120px;
-    left: 60px;
-    right: 270px;
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: auto;
+
 
     tbody {
       display: inline-block;
@@ -56,10 +57,6 @@
       
       &.term:hover {
         cursor: pointer;
-        
-        td, td a {
-          color: $link-color;
-        }
       }
 
       &.term td {
@@ -77,14 +74,6 @@
           padding-right: 5px;
           width: 45%;
         }
-      }
-
-      a {
-        color: $text-color;
-      }
-
-      &.hit a {
-        color: darken($hit-color, 5);
       }
       
       &.empty  {
@@ -112,8 +101,24 @@
 }
 
 #coreon-term-list:not(.widget) {
+  
+  .content {
+    display: block;
+    position: absolute;
+    top: 130px;
+    bottom: 60px;
+    left: 56px;
+    right: 270px;
+  }
     
     table {
-      margin-top: 20px;
+      tbody {
+        width: 99%;
+        padding: 6px 0;
+      }
+      tr.hit td{
+        font-size: 1.16em;
+        line-height: 1.3em;
+      }
     }
 }
