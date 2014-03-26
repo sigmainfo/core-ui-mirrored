@@ -1,5 +1,5 @@
 #coreon-term-list {
-  
+  position: relative;
   .toggle-scope {
 
     &:before {
@@ -103,12 +103,9 @@
 #coreon-term-list:not(.widget) {
   
   .content {
-    display: block;
-    position: absolute;
-    top: 130px;
-    bottom: 60px;
-    left: 56px;
-    right: 270px;
+    position: relative;
+    top: 10px;
+    height: 70vh;
   }
     
     table {

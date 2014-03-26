@@ -218,15 +218,6 @@ table.managers, .concept-list>table {
   }
 }
 
-#coreon-app {
-//  position: absolute;
-//  top: 0;
-//  bottom: 0;
-//  left: 0;
-//  right: 0;
-  
-}
-
 #coreon-top {
   position: fixed;
   top: 0;
@@ -294,7 +285,14 @@ table.managers, .concept-list>table {
 }
 
 #coreon-main {
-  padding: 12px 100px 60px 5%;
-  margin-top: 76px;
+  height: 100vh;
+  width: 100vw;
+
+  .panel {
+    height: 100vh;
+    width: 100vw;
+    @include box-sizing(border-box);
+    padding: 80px 320px 0 70px;
+  }
 }
 
