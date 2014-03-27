@@ -13,6 +13,12 @@ en:
       message: "Please enter your password to proceed:"
       submit: "Proceed"
 
+  themes:
+    caption: "Theme"
+    names:
+      berlin: "Default"
+      athens: "High Contrast"
+
   search:
     target:
       all:

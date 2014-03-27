@@ -30,7 +30,31 @@
     margin-left: 140px;
 
     p {
-      padding-top: 20px;
+      padding: 20px;
+      float: left;
+      
+      &.themes {
+        span:after {
+          content: " |";
+        }
+        a {
+          padding-right: 2px;
+          &.selected:hover {
+            cursor: default;
+            color: $link-color;
+          }
+
+          &:not(.selected) {
+            text-decoration: line-through;
+            color: rgba($link-color, 0.6);
+            &:hover {
+              text-decoration: none;
+              color: $hover-color;
+            }
+          }
+          
+        }
+      }
     }
   }
 }

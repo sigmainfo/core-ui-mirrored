@@ -1,5 +1,53 @@
 #coreon-concept-map {
+  
+  .zoom-in {
+
+    &:before {
+      background-position: -149px -350px;
+    }
+
+    &:hover {
+      &:before {
+        background-position: -149px -350px;
+      }
+    }
+  }
+  
+  .zoom-out {
+
+    &:before {
+      background-position: -149px -400px;
+    }
+
+    &:hover {
+      &:before {
+        background-position: -149px -400px;
+      }
+    }
+  }
+  
+  .toggle-orientation {
+
+    &:before {
+      background-position: -150px -800px;
+    }
+
+    &:hover {
+
+      &:before {
+        background-position: -150px -800px;
+      }
+    }
+  }
+  &:not(.widget) {
+    .titlebar {
+      background-color: $darker-bg-color;
+      padding: 4px;
+      line-height: 10px;
+    }
+  }
 
 }
+
 
 

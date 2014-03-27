@@ -1,39 +1,10 @@
 .widget {
   background: $darker-bg-color;
-  
   .titlebar {
     background: rgba($button-color, 0.13);
     border-bottom: 1px solid white;
     border-top: 1px solid white;
-    h3 {
-      color: $label-color;
-    }
-
-    .actions {
-
-      a {
-        background: $button-color;
-        border-left: 1px solid rgba(white, 0.9);
-        @include box-shadow(rgba(black, 0.2) -1px -1px 1px inset);
-        &:hover {
-          background: $link-color;
-        }
-      }
-      
-      .maximize {
-        &:before {
-          background-position: -149px -1150px;
-        }
-
-        &:hover {
-          &:before {
-            background-position: -149px -1150px;
-          }
-        }
-      }
-    }
-  }
-  
+  } 
   
   &.blue-widget {
     background: $secondary-color;

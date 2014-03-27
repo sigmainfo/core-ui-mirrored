@@ -3,7 +3,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
 @mixin editmode {
   &:before {
     content: "";
-    background-color: $editmode-color;
+//    background-color: $editmode-color;
     width: 16px;
     padding: 8px;
     position: absolute;
@@ -19,7 +19,7 @@ $serif: Palatino, Palatino Linotype, Book Antiqua, Georgia;
     &:hover {
       cursor: pointer;
       color: white;
-      background-color: $button-hover-color;
+//      background-color: $button-hover-color;
     }
   }
 }

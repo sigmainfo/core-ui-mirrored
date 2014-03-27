@@ -13,6 +13,7 @@
 
 @import 'athens/pages/login';
 
+@import 'athens/panels/shared';
 @import 'athens/panels/concepts/concept';
 @import 'athens/panels/concepts/concept_tree';
 @import 'athens/panels/concepts/create_concept';
@@ -21,8 +22,11 @@
 @import 'athens/panels/concepts/concept-list';
 @import 'athens/panels/concepts/repository';
 @import 'athens/panels/concept_map';
+@import 'athens/panels/clipboard';
+@import 'athens/panels/termlist';
 
 @import 'athens/widgets/shared';
+@import 'athens/widgets/concepts';
 @import 'athens/widgets/search';
 @import 'athens/widgets/clipboard';
 @import 'athens/widgets/concept_map';

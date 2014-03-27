@@ -4,8 +4,8 @@
   <title>Coreon - Knowledge meets language.</title>
   
   <%= stylesheet_link_tag "application", :media => "all" %>
-  <%= stylesheet_link_tag "themes/berlin", :media => "all" %>
-  <!-- <%= stylesheet_link_tag "themes/athens", :media => "all" %> -->
+  <%= stylesheet_link_tag "themes/berlin", :media => "all", :id => 'coreon-theme' %>
+  <!-- <%= stylesheet_link_tag "themes/athens", :media => "all", :disabled => true %> -->
   
   <%= javascript_include_tag "application", charset: "utf-8" %>
   <%- if Rails.env.test? %>
