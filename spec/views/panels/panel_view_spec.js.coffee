@@ -230,14 +230,18 @@ describe 'Coreon.Views.Panels.PanelView', ->
       beforeEach ->
         model.set 'widget', off, silent: yes
 
-      it 'enables auto layout for el', ->
+      it 'fills main area that is not covered by widgets', ->
+        parent = $('<div>').appendTo '#konacha'
+        parent.width 924
+        parent.append view.$el
         model.set
-         width: 500
+         width: 300
          height: 345
         , silent: yes
         view.resize()
-        el = view.$el
-        expect(el).to.not.have.attr 'style'
+        style = view.$el.attr 'style'
+        expect(style).to.not.include 'height'
+        expect(style).to.include 'width: 624px'
 
   describe '#updateSizes()', ->
 
