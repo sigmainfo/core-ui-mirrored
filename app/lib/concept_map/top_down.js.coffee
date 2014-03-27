@@ -114,12 +114,12 @@ class Coreon.Lib.ConceptMap.TopDown extends Coreon.Lib.ConceptMap.RenderStrategy
   center: (viewport, nodes) ->
     data = nodes.data()
     if data.length is 0
-      x: viewport.width / 2
-      y: 0
+      x: 0
+      y: -100
     else
       box = @box data, viewport.width, viewport.height
-      x: (viewport.width  - box.width ) / 2 - box.x
-      y: (viewport.height - box.height) / 2 - box.y
+      x: -box.x - box.width / 2
+      y: -box.y - box.height / 2
 
   layoutSiblings: (data) ->
     for datum in data

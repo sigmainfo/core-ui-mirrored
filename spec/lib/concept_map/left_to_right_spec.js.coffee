@@ -260,26 +260,26 @@ describe 'Coreon.Lib.ConceptMap.LeftToRight', ->
       beforeEach ->
         @data = []
 
-      it 'centers root horizontally', ->
+      it 'centers root vertically', ->
         viewport =
           width:  300
           height: 200
         offset = @strategy.center viewport, @nodes
-        expect( offset.y ).to.equal 100
+        expect( offset.y ).to.equal 0
 
-      it 'aligns root with left', ->
+      it 'centers placeholder horizontally', ->
         viewport =
           width:  300
           height: 200
         offset = @strategy.center viewport, @nodes
-        expect( offset.x ).to.equal 0
+        expect( offset.x ).to.equal -260
 
     context 'with selection', ->
 
       beforeEach ->
         @data = [ x: 45, y: 789 ]
 
-      it 'centers box inside viewport', ->
+      it 'centers box', ->
         viewport =
           width:  300
           height: 200
@@ -290,8 +290,8 @@ describe 'Coreon.Lib.ConceptMap.LeftToRight', ->
           width : 190
           height: 46
         offset = @strategy.center viewport, @nodes
-        expect( offset ).to.have.property 'x', (300 - 46 ) / 2 - 34
-        expect( offset ).to.have.property 'y', (200 - 190) / 2 - 12
+        expect( offset ).to.have.property 'x', -57
+        expect( offset ).to.have.property 'y', -107
 
   describe '#layoutSiblings()', ->
 

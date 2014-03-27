@@ -246,19 +246,19 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
       beforeEach ->
         @data = []
 
-      it 'centers root vertically', ->
+      it 'centers repository node horizontally', ->
         viewport =
           width:  300
           height: 200
         offset = @strategy.center viewport, @nodes
-        expect( offset.x ).to.equal 150
+        expect( offset.x ).to.equal 0
 
-      it 'aligns root with top', ->
+      it 'centers placeholder node vertically', ->
         viewport =
           width:  300
           height: 200
         offset = @strategy.center viewport, @nodes
-        expect( offset.y ).to.equal 0
+        expect( offset.y ).to.equal -100
 
     context 'with selection', ->
 
@@ -276,8 +276,8 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
           width : 190
           height: 46
         offset = @strategy.center viewport, @nodes
-        expect( offset ).to.have.property 'x', (300 - 190) / 2 - 12
-        expect( offset ).to.have.property 'y', (200 - 46 ) / 2 - 34
+        expect( offset ).to.have.property 'x', -107
+        expect( offset ).to.have.property 'y', -57
 
   describe '#layoutSiblings()', ->
 

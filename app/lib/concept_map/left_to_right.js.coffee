@@ -102,12 +102,12 @@ class Coreon.Lib.ConceptMap.LeftToRight extends Coreon.Lib.ConceptMap.RenderStra
   center: (viewport, nodes = []) ->
     data = nodes.data()
     if data.length is 0
-      x: 0
-      y: viewport.height / 2
+      x: -260
+      y: 0
     else
       box = @box data, viewport.height, viewport.width
-      x: (viewport.width  - box.height ) / 2 - box.y
-      y: (viewport.height - box.width  ) / 2 - box.x
+      x: -box.y - box.height / 2
+      y: -box.x - box.width / 2
 
   layoutSiblings: (data) ->
     for datum in data

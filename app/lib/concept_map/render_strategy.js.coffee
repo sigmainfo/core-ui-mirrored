@@ -262,6 +262,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     if pos = positions[0]
       box.x = pos.x
       box.y = pos.y
+
       for pos in positions[1..]
         l = Math.min pos.x, box.x
         r = Math.max pos.x, box.x + box.width

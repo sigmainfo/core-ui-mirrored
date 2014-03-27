@@ -2,7 +2,7 @@ $edge-color: #bfc5c0;
 
 #coreon-concept-map {
 
-  
+
   .zoom-in {
 
     &:before {
@@ -16,7 +16,7 @@ $edge-color: #bfc5c0;
       }
     }
   }
-  
+
   .zoom-out {
 
     &:before {
@@ -30,7 +30,7 @@ $edge-color: #bfc5c0;
       }
     }
   }
-  
+
   .toggle-orientation {
 
     &:before {
@@ -49,6 +49,10 @@ $edge-color: #bfc5c0;
   .map {
     line-height: 0;
     width: 100%;
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 0;
 
     &:hover {
       cursor: move;
@@ -210,19 +214,15 @@ $edge-color: #bfc5c0;
 }
 
 #coreon-concept-map:not(.widget) {
-  
+
   .titlebar {
     position: absolute;
     z-index: 1;
   }
-  
-  .map {    
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+
+  .map {
     top: 0;
-  }  
+  }
 }
 
 

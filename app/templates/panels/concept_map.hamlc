@@ -1,6 +1,6 @@
 != @titlebar I18n.t( 'panels.concept_map.title' ), @actions
 .map
-  %svg{ xmlns: "http://www.w3.org/2000/svg", version: "1.1" }
+  %svg{ xmlns: 'http://www.w3.org/2000/svg', version: '1.1', width: '100%', height: '100%' }
     %defs
       %filter#coreon-drop-shadow-filter{ x: -0.25, y: -0.25, width: 1.5, height: 2 }
         %feGaussianBlur{ in: "SourceAlpha", stdDeviation: 1 }
@@ -10,4 +10,5 @@
         %feMerge
           %feMergeNode{ in: "drop-shadow" }
           %feMergeNode{ in: "SourceGraphic" }
-    %g.concept-map
+    %g.origin
+      %g.concept-map
