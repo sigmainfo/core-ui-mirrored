@@ -5,5 +5,11 @@
       height: 14px;
     }   
   }
+  .concept-list {
+
+    &>table {
+      border:none;
+    }
+  }
 }
 
