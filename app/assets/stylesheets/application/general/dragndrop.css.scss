@@ -61,20 +61,7 @@ h2.concept-label {
           @include single-box-shadow(desaturate(lighten(black, 50%), 20%), 1px, 1px, 2px);
         }
       }
-      
-      &.ui-state-highlight {
-          background-color: rgba($button-hover-color, 0.4);
-
-      }
-      
-      &.ui-state-hovered {
-          background-color: rgba($button-hover-color, 0.6);
-      }
     }
 
-
-  .list.ui-state-hovered {
-    background-color: rgba($button-hover-color, 0.1);
-  }
 }
 
