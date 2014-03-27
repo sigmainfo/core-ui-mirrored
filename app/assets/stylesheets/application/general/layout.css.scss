@@ -289,10 +289,15 @@ table.managers, .concept-list>table {
   width: 100vw;
 
   .panel {
-    height: 100vh;
-    width: 100vw;
+    position: absolute;
+    top: 54px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+//    height: 100vh;
+//    width: 100vw;
     @include box-sizing(border-box);
-    padding: 80px 350px 0 60px;
+    padding: 30px 350px 0 60px;
   }
 }
 
