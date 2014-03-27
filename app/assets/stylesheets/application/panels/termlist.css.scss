@@ -108,14 +108,18 @@
     height: 70vh;
   }
     
+  table {
+    tbody {
+      width: 99%;
+      padding: 6px 0;
+    }
+  }
+  &.maxi, &.medi {
     table {
-      tbody {
-        width: 99%;
-        padding: 6px 0;
-      }
       tr.hit td{
         font-size: 1.16em;
         line-height: 1.3em;
       }
     }
+  }
 }
