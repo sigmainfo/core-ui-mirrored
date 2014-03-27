@@ -51,7 +51,7 @@
    &.term, fieldset {
      position: relative;
      padding-top: 18px;
-     background-color: darken(rgba($button-hover-color, 0.12), 4);
+//     background-color: darken(rgba($button-hover-color, 0.12), 4);
    }
    
    &.term {
@@ -104,7 +104,7 @@
      text-align: right;
      clear: both;
      overflow: hidden;
-     background-color: darken(rgba($button-hover-color, 0.18), 15);
+//     background-color: darken(rgba($button-hover-color, 0.18), 15);
      padding: 3px 10px;
 
      .cancel, .reset, button {
@@ -119,7 +119,7 @@
        @include box-sizing(content-box);
        border: 0;
        padding-bottom: 4px;
-       background-color: $button-hover-color;
+//       background-color: $button-hover-color;
        &:after {
          @include before-icon;
          float: right;
@@ -129,14 +129,14 @@
        }
 
         &:hover {
-          background-color: saturate($button-hover-color, 10);
+//          background-color: saturate($button-hover-color, 10);
         }
 
         &:disabled {
-          background-color: desaturate($button-hover-color, 20);
+//          background-color: desaturate($button-hover-color, 20);
           &:hover {
             cursor: default;
-            background-color: desaturate($button-hover-color, 20);
+//            background-color: desaturate($button-hover-color, 20);
           }
         }
       }
@@ -194,7 +194,7 @@ form.create.term {
   
   form {
     overflow: hidden;
-    background-color: darken(rgba($button-hover-color, 0.12), 4);
+//    background-color: darken(rgba($button-hover-color, 0.12), 4);
     
     >div {
       margin-left: 32px;
@@ -217,7 +217,7 @@ form.create.term {
     }
     
     ul .concept-label:hover {
-      color: $text-color-light;
+//      color: $text-color-light;
       @include single-box-shadow(rgba($text-color, 0.4), 2px, 2px, 2px);
     }
   }
@@ -227,7 +227,7 @@ form.create.term {
   
   .edit a, fieldset a {
    font-size: 0.9em;
-   color:$button-color;
+//   color:$button-color;
    display: inline-block;
    position: relative;
    overflow: hidden;
@@ -245,9 +245,9 @@ form.create.term {
    
    &:not(.disabled){
      &:hover {
-       color: $button-hover-color;
+//       color: $button-hover-color;
        &:before {
-         background-color: $button-hover-color;
+//         background-color: $button-hover-color;
        }
      }
     }
@@ -291,7 +291,7 @@ form.create.term {
   }
   
   div.edit {
-    background-color: $editmode-color;
+//    background-color: $editmode-color;
     width: 16px;
     padding: 5px 8px;  
     
@@ -312,7 +312,7 @@ form.create.term {
   .terms >.add {
     clear: both;
     margin-bottom: 20px;
-    background-color: rgba($button-color, 0.05);
+//    background-color: rgba($button-color, 0.05);
     
     .edit {
       min-height: 16px;
@@ -325,7 +325,7 @@ form.create.term {
   }
 
   &>section, form>section {
-    background-color: rgba($button-color, 0.05);
+//    background-color: rgba($button-color, 0.05);
     &>h3, &>div:not(.add):last-child {
       margin-left: 38px;
     }
@@ -341,7 +341,7 @@ form.create.term {
 
 
   .button.edit-concept {
-    background-color: $editmode-color;
+//    background-color: $editmode-color;
     color: $button-color;
     margin-left: -38px;
     &:before {
@@ -350,7 +350,7 @@ form.create.term {
   }
     
   .language li.term {
-    background-color: rgba($button-color, 0.05);  
+//    background-color: rgba($button-color, 0.05);  
     min-height: 44px;  
     padding-left: 32px;
     h4 {
@@ -365,7 +365,7 @@ form.create.term {
   }
   
   .property.delete {
-    background-color:$darker-bg-color;
+//    background-color:$darker-bg-color;
     @include opacity(0.4);
     &:before {
       @include before-icon;

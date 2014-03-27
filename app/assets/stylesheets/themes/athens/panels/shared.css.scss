@@ -1,0 +1,35 @@
+.panel {
+  .titlebar {
+    .actions {
+
+      a {
+        background: $button-color;
+        border-left: 1px solid rgba(white, 0.9);
+        @include box-shadow(rgba(black, 0.2) -1px -1px 1px inset);
+        &:hover {
+          background: $link-color;
+        }
+      }
+      
+      .maximize {
+        &:before {
+          background-position: -149px -1150px;
+        }
+
+        &:hover {
+          &:before {
+            background-position: -149px -1150px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.titlebar {
+  h3 {
+    color: $label-color;
+  }
+}
+
+
