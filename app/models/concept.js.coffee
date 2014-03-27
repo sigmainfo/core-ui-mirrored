@@ -67,7 +67,7 @@ class Coreon.Models.Concept extends Backbone.Model
 
   termsByLang: ->
     @terms().reduce (grouped, term) ->
-      lang = term.get "lang"
+      lang = term.get('lang').toLowerCase()
       grouped[lang] ?= []
       grouped[lang].push term
       grouped

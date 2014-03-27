@@ -36,7 +36,11 @@ class Coreon.Models.Repository extends Backbone.Model
     unless @_usedLanguages
       @_usedLanguages = @remoteSettings()['used_languages']
 
-    @_usedLanguages || @get 'languages'
+    used = (@_usedLanguages || @get 'languages')
+      .map (lang) ->
+        lang.toLowerCase()
+    _(used).uniq()
+      
 
   path: ->
     "/#{@id}"

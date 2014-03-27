@@ -35,7 +35,9 @@ class Coreon.Collections.Terms extends Backbone.Collection
     term.get 'sort_key'
 
   lang: (lang) ->
-    @where lang: lang
+    lang = lang?.toLowerCase()
+    @filter (term) ->
+      term.get('lang').toLowerCase() is lang
 
   toJSON: ->
     term.term for term in super

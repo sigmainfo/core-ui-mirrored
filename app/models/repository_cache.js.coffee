@@ -20,8 +20,9 @@ class Coreon.Models.RepositoryCache extends Backbone.Model
 
   updateLangs: ->
     langs = []
-    langs.push sourceLang if sourceLang = @get('sourceLanguage')
-    langs.push targetLang if targetLang = @get('targetLanguage')
+    langs.push sourceLang.toLowerCase() if sourceLang = @get('sourceLanguage')
+    langs.push targetLang.toLowerCase() if targetLang = @get('targetLanguage')
+    _(langs).uniq()
     @app.set 'langs', langs
 
   sync: (method, model, options) ->
