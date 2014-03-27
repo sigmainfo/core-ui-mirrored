@@ -79,13 +79,13 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @update()
         @rendering = off
 
-  padding: ->
-    {width, height} = @dimensions()
-    Math.min(width, height) * 0.1
+  padding: (width, height) ->
+    relative = Math.min(width, height) * 0.1
+    Math.min relative, 30
 
   centerSelection: (nodes, options) ->
     {width, height} = @dimensions()
-    padding = @padding()
+    padding = @padding width, height
     scale = @navigator.scale()
 
     viewport =
@@ -135,10 +135,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @_panAndZoom()
 
   dimensions: ->
-    height = @$el.height()
-    height -= @$('.titlebar').height() if @panel.get('widget')
+    height = @$el.innerHeight()
+    height -= @$('.titlebar').outerHeight() if @panel.get('widget')
 
-    width: @$el.width()
+    width: @$el.innerWidth()
     height: height
 
   resize: ->
@@ -175,7 +175,15 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         .delay(250)
         .duration(1000)
 
-    map.attr('transform', "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})")
+    [x, y] = @navigator.translate()
+
+    unless @panel.get('widget')
+      y += 100
+      x -= 120
+      @navigator.translate [x, y]
+
+    map.attr 'transform'
+           , "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})"
 
   toggleOrientation: ->
     @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1

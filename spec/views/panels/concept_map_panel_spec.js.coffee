@@ -681,6 +681,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
   describe '#_panAndZoom()', ->
 
     beforeEach ->
+      panel.set 'widget', on, silent: yes
       view.navigator.translate [12, 345]
       view.navigator.scale 1.5
 
