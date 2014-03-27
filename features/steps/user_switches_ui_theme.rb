@@ -19,6 +19,7 @@ class Spinach::Features::UserSwitchesUiTheme < Spinach::FeatureSteps
   end
 
   step 'the body should have a pure white background' do
+    sleep 1
     bg = page.evaluate_script '$("body").css("backgroundImage")'
     bg.should == 'none'
   end
@@ -30,6 +31,7 @@ class Spinach::Features::UserSwitchesUiTheme < Spinach::FeatureSteps
   end
 
   step 'the body should have a background image applied to it' do
+    sleep 1
     bg = page.evaluate_script '$("body").css("backgroundImage")'
     bg.should include('url')
   end
