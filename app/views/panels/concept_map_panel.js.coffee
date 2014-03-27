@@ -143,10 +143,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   resize: ->
     super
 
+    {width, height} = @dimensions()
+
     unless @panel.get('widget')
       @$el.attr 'style', null
-
-    {width, height} = @dimensions()
 
     @origin.attr 'transform'
                , "translate(#{width / 2}, #{height / 2})"
