@@ -3,6 +3,7 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   include Api::Graph::Factory
 
   def transform(selector, options = {})
+    page.should have_css(selector)
     page.find(selector, options)['transform']
   end
 
@@ -73,15 +74,13 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
 
   step 'I should see the repository node being vertically centered' do
     page.should have_css('#coreon-concept-map .concept-node.repository-root')
-    @center = center
     @offset = offset('#coreon-concept-map .concept-node.repository-root')
-    @offset[:x].should be_within(10).of @center[:x]
+    @offset[:x].should == 0
   end
 
-  step 'it should be somewhat below the top of the viewport' do
+  step 'it should be somewhat above the center of the viewport' do
     @viewport = viewport
-    @offset[:y].should > 0
-    @offset[:y].should < @viewport[:height] * 0.2
+    @offset[:y].should < -80
   end
 
   step 'I click "Toggle orientation"' do
@@ -90,12 +89,11 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
 
   step 'I should see the repository node being horizontally centered' do
     @offset = offset('#coreon-concept-map .concept-node.repository-root')
-    @offset[:y].should be_within(10).of @center[:y]
+    @offset[:y].should == 0
   end
 
-  step 'it should be somewhat next to the left side of the viewport' do
-    @offset[:x].should > 0
-    @offset[:x].should < @viewport[:width] * 0.2
+  step 'it should be somewhat left of the center of the viewport' do
+    @offset[:x].should < 200
   end
 
   step 'I click the placeholder node' do
@@ -111,7 +109,7 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
 
   step 'pocket billiards should be horizontally and vertically centered' do
     offset = offset('#coreon-concept-map .concept-node.hit')
-    offset[:x].should be_within(10).of @center[:x]
-    offset[:y].should be_within(10).of @center[:y]
+    offset[:x].should == 0
+    offset[:y].should == 0
   end
 end
