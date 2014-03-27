@@ -81,7 +81,10 @@ class Coreon.Views.ApplicationView extends Backbone.View
     @$("#coreon-notifications").empty()
 
   syncOffset: ->
-    $("#coreon-main").css paddingTop: $("#coreon-top").height()
+    header = $("#coreon-header").outerHeight(on)
+    filters = $('#coreon-filters').outerHeight(on)
+    top = header + filters
+    $("#coreon-main").css 'top', "#{top}px"
 
   navigate: (event) ->
     event.preventDefault()

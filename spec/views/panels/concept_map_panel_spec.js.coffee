@@ -622,6 +622,29 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       transform = origin.attr('transform')
       expect(transform).to.include 'translate(150, 100)'
 
+    context 'widget mode', ->
+
+      beforeEach ->
+        panel.set 'widget', on, silent: yes
+
+      it 'keeps width', ->
+        panel.set 'width', 450, silent: yes
+        view.resize()
+        style = view.$el.attr 'style'
+        expect(style).to.exist
+        expect(style).to.include 'width: 450px'
+
+    context 'fullscreen mode', ->
+
+      beforeEach ->
+        panel.set 'widget', off, silent: yes
+
+      it 'nullifies style', ->
+        panel.set 'width', 450, silent: yes
+        view.resize()
+        style = view.$el.attr 'style'
+        expect(style).to.not.exist
+
   describe '#toggleOrientation()', ->
 
     beforeEach ->
