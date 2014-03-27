@@ -69,14 +69,17 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
 
   resize: ->
     if @panel.get('widget')
+      width = @panel.get('widget')
       @$el.css
         left: 0
         width: @panel.get('width')
         height: @panel.get('height')
     else
       @$el.attr 'style', null
+      width = @$el.width() - @panel.get('width')
+      @$el.width width
 
-    @updateSizes @$el.width()
+    @updateSizes width
 
   updateSizes: (width) ->
     for name, limits of @sizes
