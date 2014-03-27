@@ -306,7 +306,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       ids = _(list).pluck 'id'
       expect(ids).to.eql ['789', '456']
 
-    it 'updates navigator with padding and scaling applied', ->
+    it 'updates navigator with scaling applied', ->
       center.returns
         x: 100
         y: 200
@@ -314,7 +314,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       view.navigator.scale = -> 2
       view.centerSelection nodes
       expect(translate).to.have.been.calledOnce
-      expect(translate).to.have.been.calledWith [225, 425]
+      expect(translate).to.have.been.calledWith [200, 400]
 
     it 'applies transformation to map', ->
       view.centerSelection nodes, animate: on
@@ -613,33 +613,14 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       expect(resize).to.have.been.calledOnce
       expect(resize).to.have.been.calledWith 300, 200
 
-    context 'in widget mode', ->
-
-      beforeEach ->
-        panel.set 'widget', on, silent: yes
-
-      it 'adjusts svg dimensions', ->
-        view.dimensions = ->
-          width: 300
-          height: 200
-        view.resize()
-        svg = view.$('svg')
-        expect(svg).to.have.attr 'width', '300px'
-        expect(svg).to.have.attr 'height', '200px'
-
-    context 'in fullsize mode', ->
-
-      beforeEach ->
-        panel.set 'widget', off, silent: yes
-
-      it 'adjusts svg dimensions', ->
-        view.dimensions = ->
-          width: 300
-          height: 200
-        view.resize()
-        svg = view.$('svg')
-        expect(svg).to.have.attr 'width', '100%'
-        expect(svg).to.have.attr 'height', '100%'
+    it 'translates origin to center of viewport', ->
+      view.dimensions = ->
+        width: 300
+        height: 200
+      view.resize()
+      origin = view.origin
+      transform = origin.attr('transform')
+      expect(transform).to.include 'translate(150, 100)'
 
   describe '#toggleOrientation()', ->
 

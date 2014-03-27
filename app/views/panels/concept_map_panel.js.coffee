@@ -38,6 +38,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       Coreon.Lib.ConceptMap.LeftToRight
     ]
 
+    @origin = d3.select @$('svg g.origin')[0]
+
     @map = d3.select @$('svg g.concept-map')[0]
     Coreon.Modules.extend @map, Coreon.Modules.Loop
     @renderStrategy = new @renderStrategies[0] @map
@@ -81,7 +83,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   padding: (width, height) ->
     relative = Math.min(width, height) * 0.1
-    Math.min relative, 30
+    Math.min relative, 100
 
   centerSelection: (nodes, options) ->
     {width, height} = @dimensions()
@@ -105,8 +107,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     center = @renderStrategy.center viewport, hits
 
     offset =
-      x: center.x * scale + padding
-      y: center.y * scale + padding
+      x: center.x * scale
+      y: center.y * scale
 
     @navigator.translate [offset.x, offset.y]
     @_panAndZoom options
@@ -135,31 +137,17 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @_panAndZoom()
 
   dimensions: ->
-    height = @$el.innerHeight()
-    height -= @$('.titlebar').outerHeight() if @panel.get('widget')
-
     width: @$el.innerWidth()
-    height: height
+    height: @$el.innerHeight()
 
   resize: ->
     super
 
     {width, height} = @dimensions()
 
-    if width and height or true
-
-      svg = @$('svg')
-
-      if @panel.get('widget')
-        svg.attr
-          width: "#{width}px"
-          height: "#{height}px"
-      else
-        svg.attr
-          width: '100%'
-          height: '100%'
-
-      @renderStrategy.resize width, height
+    @origin.attr 'transform'
+               , "translate(#{width / 2}, #{height / 2})"
+    @renderStrategy.resize width, height
 
   _renderMarkupSkeleton: ->
     @$el.html @template actions: [
@@ -177,11 +165,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
     [x, y] = @navigator.translate()
 
-    unless @panel.get('widget')
-      y += 100
-      x -= 120
-      @navigator.translate [x, y]
-
     map.attr 'transform'
            , "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})"
 
@@ -190,6 +173,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     views = @renderStrategy.views
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
+    @map.selectAll('*').remove()
     @render()
 
   remove: ->

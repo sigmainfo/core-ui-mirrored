@@ -35,8 +35,8 @@ class Coreon.Lib.Panels.PanelsManager
     @model.forEach (model) =>
       panel = model.view
       if model.get('widget')
-        panel.widgetize()
         @view.$('#coreon-widgets').append panel.$el
+        panel.widgetize()
       else
-        panel.maximize()
         @view.$('#coreon-main').append panel.$el
+        panel.maximize()
