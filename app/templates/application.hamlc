@@ -15,6 +15,7 @@
         |
         %a.logout{href: "/logout"}= I18n.t "account.logout"
       %p.themes
-        %span Coreon Themes
-        %a.selected.theme-berlin{href: 'javascript:void(0)'} Default
-        %a.theme-athens{href: 'javascript:void(0)'} Contrast
+        %span= I18n.t 'themes.caption'
+        - ['berlin', 'athens'].forEach (name, index) ->
+          %a{href: 'javascript:void(0)', data-name: name, class: 'selected' if index is 0}<
+            = I18n.t "themes.names.#{name}"

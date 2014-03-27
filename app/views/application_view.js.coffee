@@ -21,8 +21,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
   events:
     "click a[href^='/']": "navigate"
     "click #coreon-footer .toggle": "toggle"
-    "click #coreon-footer .theme-berlin": 'switchBerlin'
-    "click #coreon-footer .theme-athens": 'switchAthens'
+    'click .themes a[data-name]': 'switchTheme'
 
   initialize: ->
     @session = null
@@ -127,13 +126,17 @@ class Coreon.Views.ApplicationView extends Backbone.View
       @listenTo session, "change:current_repository_id", @render
       @listenTo session, "change:auth_token", @reauthenticate
     @session = session
-    
-  switchBerlin: ->
-    $('#coreon-theme').attr 'href', '/assets/themes/berlin.css?body=1'
-    @$(".theme-berlin").addClass "selected"
-    @$(".theme-athens").removeClass "selected"
-    
-  switchAthens: ->
-    $('#coreon-theme').attr 'href', '/assets/themes/athens.css?body=1'
-    @$(".theme-berlin").removeClass "selected"
-    @$(".theme-athens").addClass "selected"
+
+  switchTheme: (event) ->
+    event.preventDefault()
+
+    el = $ event.target
+    name = el.data 'name'
+
+    link = $('#coreon-theme')
+    current = link.attr 'href'
+    next = current.replace /[^/]+\.css/, "#{name}.css"
+    link.attr 'href', next
+
+    @$('.themes a.selected').removeClass 'selected'
+    el.addClass 'selected'

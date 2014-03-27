@@ -152,37 +152,68 @@ describe "Coreon.Views.ApplicationView", ->
         view.render()
         Backbone.history.start.should.not.have.been.called
 
-      it "renders footer", ->
-        view.render()
-        view.$el.should.have "#coreon-footer"
-        view.$("#coreon-footer").should.have ".toggle"
-        view.$("#coreon-footer .toggle").should.have "h3"
-        view.$("#coreon-footer .toggle").should.have "#coreon-progress-indicator"
+      context 'footer', ->
 
-      it "renders account info", ->
-        I18n.t.withArgs("account.status", name: "Nobody").returns "Logged in as Nobody"
-        view.model.get("session").set "user", {name: "Nobody"}, silent: yes
-        view.render()
-        view.$("#coreon-footer").should.have "#coreon-account"
-        view.$("#coreon-account p").should.contain "Logged in as Nobody"
-
-      it "hides account info after a short delay", ->
-        clock = sinon.useFakeTimers()
-        try
-          $("#konacha").append view.$el
+        it "renders footer", ->
           view.render()
-          view.$("#coreon-account").should.be.visible
-          clock.tick 5000
-          view.$("#coreon-account").should.be.hidden
-        finally
-          clock.restore()
+          view.$el.should.have "#coreon-footer"
+          view.$("#coreon-footer").should.have ".toggle"
+          view.$("#coreon-footer .toggle").should.have "h3"
+          view.$("#coreon-footer .toggle").should.have "#coreon-progress-indicator"
 
-      it "renders logout link", ->
-        I18n.t.withArgs("account.logout").returns "Log out"
-        view.render()
-        view.$("#coreon-footer").should.have "a.logout"
-        view.$("a.logout").should.have.attr "href", "/logout"
-        view.$("a.logout").should.have.text "Log out"
+        it "renders account info", ->
+          I18n.t.withArgs("account.status", name: "Nobody").returns "Logged in as Nobody"
+          view.model.get("session").set "user", {name: "Nobody"}, silent: yes
+          view.render()
+          view.$("#coreon-footer").should.have "#coreon-account"
+          view.$("#coreon-account p").should.contain "Logged in as Nobody"
+
+        it "hides account info after a short delay", ->
+          clock = sinon.useFakeTimers()
+          try
+            $("#konacha").append view.$el
+            view.render()
+            view.$("#coreon-account").should.be.visible
+            clock.tick 5000
+            view.$("#coreon-account").should.be.hidden
+          finally
+            clock.restore()
+
+        it "renders logout link", ->
+          I18n.t.withArgs("account.logout").returns "Log out"
+          view.render()
+          view.$("#coreon-footer").should.have "a.logout"
+          view.$("a.logout").should.have.attr "href", "/logout"
+          view.$("a.logout").should.have.text "Log out"
+
+        it 'renders theme switcher', ->
+          I18n.t.withArgs('themes.caption').returns 'Theme'
+          view.render()
+          caption = view.$('#coreon-footer .themes span')
+          expect(caption).to.exist
+          expect(caption).to.have.text 'Theme'
+
+        it 'renders switches for themes', ->
+          view.render()
+          link = view.$('#coreon-footer .themes a[data-name]')
+          expect(link).to.have.lengthOf 2
+          expect(link).to.have.attr 'href', 'javascript:void(0)'
+
+        it 'renders switch for default theme', ->
+          I18n.t.withArgs('themes.names.berlin').returns 'Default'
+          view.render()
+          link = view.$('#coreon-footer .themes a[data-name]').eq(0)
+          expect(link).to.have.data 'name', 'berlin'
+          expect(link).to.have.text 'Default'
+          expect(link).to.have.class 'selected'
+
+        it 'renders switch for high contrast theme', ->
+          I18n.t.withArgs('themes.names.athens').returns 'High contrast'
+          view.render()
+          link = view.$('#coreon-footer .themes a[data-name]').eq(1)
+          expect(link).to.have.data 'name', 'athens'
+          expect(link).to.have.text 'High contrast'
+          expect(link).to.not.have.class 'selected'
 
     context "without session", ->
 
@@ -487,3 +518,49 @@ describe "Coreon.Views.ApplicationView", ->
       view.$("#coreon-account").should.be.hidden
       view.toggle @event
       view.$("#coreon-account").should.be.visible
+
+  describe '#switchTheme()', ->
+
+    link = null
+    event = null
+
+    beforeEach ->
+      $('#konacha').html '''
+        <a id="coreon-theme" rel="stylesheet" href="athens.css">
+      '''
+      view.$el.html '''
+        <div class="themes">
+          <a href="javascript:void(0)" data-name="berlin">Default</a>
+        </div>
+      '''
+      link = view.$('a')
+      event = $.Event 'click'
+      event.target = link[0]
+
+    it 'is triggered by click on theme switch', ->
+      switchTheme = sinon.spy()
+      view.switchTheme = switchTheme
+      view.delegateEvents()
+      link.trigger event
+      expect(switchTheme).to.have.been.calledOnce
+      expect(switchTheme).to.have.been.calledOn view
+      expect(switchTheme).to.have.been.calledWith event
+
+    it 'prevents default', ->
+      preventDefault = sinon.spy()
+      event.preventDefault = preventDefault
+      view.switchTheme event
+      expect(preventDefault).to.have.been.calledOnce
+
+    it 'switches link to stylesheet', ->
+      style = $('#coreon-theme')
+      style.attr 'href', 'assets/athens.css?body=1'
+      view.switchTheme event
+      expect(style).to.have.attr 'href', 'assets/berlin.css?body=1'
+
+    it 'marks current switch es selected', ->
+      other = $('<a href="javascript:void(0)" data-name="athens">Other</a>')
+      view.$('.themes').append other
+      view.switchTheme event
+      expect(other).to.not.have.class 'selected'
+      expect(link).to.have.class 'selected'
