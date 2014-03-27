@@ -14,3 +14,7 @@
         = I18n.t "account.status", name: @session.get("user").name
         |
         %a.logout{href: "/logout"}= I18n.t "account.logout"
+      %p.themes
+        %span Coreon Themes
+        %a.selected.theme-berlin{href: 'javascript:void(0)'} Default
+        %a.theme-athens{href: 'javascript:void(0)'} Contrast
