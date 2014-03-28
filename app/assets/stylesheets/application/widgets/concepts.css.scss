@@ -55,7 +55,7 @@
     }
     
     &>table {
-      td {
+      td:not(.empty-list) {
         padding: 1px 0;
       }
 
