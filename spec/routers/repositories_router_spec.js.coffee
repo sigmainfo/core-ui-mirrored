@@ -47,6 +47,30 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
       router.navigate '123', trigger: yes
       expect(show).to.not.have.been.called
 
+    it 'allows trailing slash in route', ->
+      show = sinon.spy()
+      router.show = show
+      router._bindRoutes()
+      router.navigate '5272466670686f14a0030000/', trigger: yes
+      expect(show).to.have.been.calledOnce
+      expect(show).to.have.been.calledWith '5272466670686f14a0030000'
+
+    it 'allows concepts path in route', ->
+      show = sinon.spy()
+      router.show = show
+      router._bindRoutes()
+      router.navigate '5272466670686f14a0030000/concepts', trigger: yes
+      expect(show).to.have.been.calledOnce
+      expect(show).to.have.been.calledWith '5272466670686f14a0030000'
+
+    it 'allows trailing slash with concepts path in route', ->
+      show = sinon.spy()
+      router.show = show
+      router._bindRoutes()
+      router.navigate '5272466670686f14a0030000/concepts/', trigger: yes
+      expect(show).to.have.been.calledOnce
+      expect(show).to.have.been.calledWith '5272466670686f14a0030000'
+
   describe '#index()', ->
 
     navigate = null

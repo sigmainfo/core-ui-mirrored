@@ -91,6 +91,14 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       router.navigate path, trigger: yes
       expect(action).to.have.been.calledOnce
 
+    it 'allows trailing slash in route to #new', ->
+      action = sinon.spy()
+      router.new = action
+      router._bindRoutes()
+      path = '5272466670686f14a0030000/concepts/new/'
+      router.navigate path, trigger: yes
+      expect(action).to.have.been.calledOnce
+
     it 'routes /new/broader/:id to #newWithSuper', ->
       newWithSuper = sinon.spy()
       router.newWithSuper = newWithSuper

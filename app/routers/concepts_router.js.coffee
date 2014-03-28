@@ -13,7 +13,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
   routes:
     '([0-9a-f]{24})'                  : 'show'
     'search/(?:([^/]+)/)?([^/]+)'     : 'search'
-    'new'                             : 'new'
+    'new\/?'                          : 'new'
     'new/broader/([0-9a-f]{24})'      : 'newWithSuper'
     'new/terms/([^/]+)/([^/]+)'       : 'newWithTerm'
 

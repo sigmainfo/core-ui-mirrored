@@ -7,7 +7,7 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
 
   _bindRoutes: ->
     super
-    @route /^([0-9a-f]{24})$/, 'show'
+    @route /^([0-9a-f]{24})\/?(?:concepts)?\/?$/, 'show'
 
   initialize: (@app) ->
 
