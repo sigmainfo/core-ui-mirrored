@@ -13,7 +13,7 @@ module Api
         @maintainer_session = session[:auth_token]
       end
 
-      def create_concept attributes
+      def create_concept(attributes = {})
         response = CoreAPI.post(
           "concepts",
           {concept: attributes},
