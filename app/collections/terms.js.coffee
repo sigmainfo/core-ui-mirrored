@@ -31,8 +31,29 @@ class Coreon.Collections.Terms extends Backbone.Collection
   url: ->
     "#{Coreon.application.graphUri()}terms"
 
-  comparator: ( term ) ->
-    term.get 'sort_key'
+  comparator: (a, b) ->
+    [a, b] = [a, b].map (term) ->
+      precedence = term.properties().findWhere(key: 'precedence')
+
+      precedence: precedence?.get('value') or null
+      sortKey: term.get('sort_key') or null
+
+    unless a.precedence is b.precedence
+      if a.precedence is null
+        1
+      else if b.precedence is null
+        -1
+      else if a.precedence < b.precedence
+        -1
+      else
+        1
+    else
+      if a.sortKey is b.sortKey
+        0
+      else if a.sortKey < b.sortKey
+        -1
+      else
+        1
 
   lang: (lang) ->
     lang = lang?.toLowerCase()

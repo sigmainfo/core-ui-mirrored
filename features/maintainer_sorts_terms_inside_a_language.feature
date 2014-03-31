@@ -21,7 +21,7 @@ Feature: maintainer sorts terms inside a language
     Then I see a drag handler inside each term
     When I click on "Edit term" inside "pistol"
     Then I see no drag handlers anymore
-    When I click on "Cancel
+    When I click on "Cancel"
     Then I see a drag handler inside each term
     When I drag "handgun" to the top of the list
     Then the order of the terms has changed to "handgun", "revolver", "pistol"

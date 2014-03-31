@@ -38,15 +38,15 @@ describe "Coreon.Collections.Terms", ->
 
       concept1 = new Backbone.Model
       concept1.terms = -> new Backbone.Collection [
-        { value: 'Billiard' , lang: 'de' }
-        { value: 'billiards', lang: 'en' }
+        new Coreon.Models.Term value: 'Billiard' , lang: 'de'
+        new Coreon.Models.Term value: 'billiards', lang: 'en'
       ]
       concept2 = new Backbone.Model
       concept2.terms = -> new Backbone.Collection [
-        { value: 'Queue', lang: 'de' }
+        new Coreon.Models.Term value: 'Queue', lang: 'de'
       ]
       concept3 = new Backbone.Model
-      concept3.terms = -> new Backbone.Collection [ ]
+      concept3.terms = -> new Backbone.Collection []
 
       @hits.reset [
         { result: concept1 }
@@ -64,10 +64,14 @@ describe "Coreon.Collections.Terms", ->
 
     it 'updates itself when terms on hit change', ->
       concept = new Backbone.Model
-      concept.terms = -> new Backbone.Collection [ { value: 'Billiard' , lang: 'de' } ]
+      concept.terms = -> new Backbone.Collection [
+        new Coreon.Models.Term value: 'Billiard' , lang: 'de'
+      ]
       @hits.reset [ result: concept ], silent: yes
       @hits.trigger 'update'
-      concept.terms = -> new Backbone.Collection [ { value: 'Foo' , lang: 'de' } ]
+      concept.terms = -> new Backbone.Collection [
+        new Coreon.Models.Term value: 'Foo' , lang: 'de'
+      ]
       concept.trigger 'change:terms'
       expect( @collection ).to.have.lengthOf 1
       term = @collection.at 0
@@ -75,16 +79,35 @@ describe "Coreon.Collections.Terms", ->
 
   describe '#comparator()', ->
 
-    it 'sorts by sort key', ->
+    it 'sorts by precedence', ->
       @collection.reset [
-        { lang: 'de', value: 'Billiard', sort_key: '29373d3d3727492d010c018f' }
-        { lang: 'de', value: 'Queue'   , sort_key: '474f2f4f2f0109018f08'     }
-        { lang: 'en', value: 'Cue'     , sort_key: '2b4f2f0107018f06'         }
+        { value: 'Billiard', properties: [ key: 'precedence', value: 3 ] }
+        { value: 'Cue'     , properties: [ key: 'precedence', value: 1 ] }
+        { value: 'Queue'   , properties: [ key: 'precedence', value: 2 ] }
       ]
       values = @collection.pluck 'value'
-      expect( values[0] ).to.eql 'Billiard'
-      expect( values[1] ).to.eql 'Cue'
-      expect( values[2] ).to.eql 'Queue'
+      expect(values).to.eql ['Cue', 'Queue', 'Billiard']
+
+    it 'appends terms that have no precedence set', ->
+      @collection.reset [
+        { value: 'Billiard', properties: [ key: 'precedence', value: 3 ] }
+        { value: 'Cue'     , properties: [] }
+        { value: 'Queue'   , properties: [ key: 'precedence', value: 2 ] }
+      ]
+      values = @collection.pluck 'value'
+      expect(values).to.eql ['Queue', 'Billiard', 'Cue']
+
+    it 'sorts by sort key when precedence is equal', ->
+      @collection.reset [
+        { value: 'Billiard', sort_key: '29373d3d3727492d010c018f'
+        , properties: [ key: 'precedence', value: 2 ] }
+        { value: 'Queue'   , sort_key: '474f2f4f2f0109018f08'
+        , properties: [ key: 'precedence', value: 2 ] }
+        { value: 'Cue'     , sort_key: '2b4f2f0107018f06'
+        , properties: [ key: 'precedence', value: 2 ] }
+      ]
+      values = @collection.pluck 'value'
+      expect(values).to.eql ['Billiard', 'Cue', 'Queue']
 
   describe '#lang()', ->
 
