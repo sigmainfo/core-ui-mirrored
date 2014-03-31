@@ -46,6 +46,12 @@ class Spinach::Features::MaintainerSortsTermsInsideALanguage < Spinach::FeatureS
     end.should == ['revolver', 'pistol', 'handgun']
   end
 
+  step 'I see no properties on any of them' do
+    within language(:en) do
+      page.should have_no_css('.term .properties')
+    end
+  end
+
   step 'I toggle "EDIT MODE"' do
     pending 'step not implemented'
   end

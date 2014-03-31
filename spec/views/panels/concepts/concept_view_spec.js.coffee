@@ -252,6 +252,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         @term = new Backbone.Model value: 'top head'
         @term.info = -> {}
         @term.properties = -> new Backbone.Collection
+        @term.propertiesByKeyAndLang = -> {}
         @concept.termsByLang = => de: [ @term ]
         Coreon.application.langs = -> [ 'de' ]
 
@@ -265,8 +266,10 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       it 'renders section for languages', ->
         term1 = new Backbone.Model
         term1.info = -> {}
+        term1.propertiesByKeyAndLang = -> {}
         term2 = new Backbone.Model
         term2.info = -> {}
+        term2.propertiesByKeyAndLang = -> {}
         Coreon.application.langs = -> [ 'de', 'en', 'hu' ]
         @concept.termsByLang = ->
           de: [ term1 ]
@@ -329,49 +332,39 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
       context 'term properties', ->
 
+        properties = null
+
+        beforeEach ->
+          property = new Backbone.Model key: 'source', value: 'Wikipedia'
+          property.info = -> {}
+          properties = source: [ property ]
+          @term.propertiesByKeyAndLang = -> properties
+          terms = new Backbone.Collection [@term]
+          @concept.terms = -> terms
+
         it 'renders term properties', ->
-          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-          property = new Backbone.Model source: 'Wikipedia'
-          @term.propertiesByKeyAndLang = -> source: [ property ]
-          sinon.stub Coreon.Templates, 'concepts/properties'
-          try
-            Coreon.Templates['concepts/properties'].withArgs(
-              properties: @term.propertiesByKeyAndLang(),
-              collapsed: true,
-              noEditButton: true
-            ).returns '<ul class="properties collapsed"></ul>'
-            @view.render()
-            expect( @view.$('.term') ).to.have '.properties'
-          finally
-            Coreon.Templates['concepts/properties'].restore()
+          @view.render()
+          expect( @view.$('.term') ).to.have '.properties'
 
         it 'collapses properties by default', ->
-          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-          property = new Backbone.Model source: 'Wikipedia'
-          property.info = -> {}
-          @term.propertiesByKeyAndLang = -> source: [ property ]
           @view.render()
           expect( @view.$('.term .properties') ).to.have.class 'collapsed'
           expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
 
         it 'renders toggle for properties', ->
           I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
-          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-          property = new Backbone.Model source: 'Wikipedia'
-          property.info = -> {}
-          @term.propertiesByKeyAndLang = -> source: [ property ]
           @view.render()
           expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
 
         it 'renders toggle all button', ->
-          I18n.t.withArgs('terms.properties.toggle_all.hint').returns 'Toggle all properties'
-          @concept.terms = -> [ properties: -> [ new Backbone.Model ] ]
+          I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
           @view.render()
           expect( @view.$('.terms') ).to.have '> .properties-toggle'
           toggle = @view.$('.terms > .properties-toggle')
           expect( toggle ).to.have.attr 'title', 'Toggle all properties'
 
         it 'renders toggle button only when applicable', ->
+          @term.propertiesByKeyAndLang = -> {}
           @view.render()
           expect( @view.$('.terms') ).to.not.have '.properties-toggle'
 
@@ -746,6 +739,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         @term.errors = => @errors
         @term.persistedAttributes = => @persistedAttributes
         @term.properties = -> []
+        @term.propertiesByKeyAndLang = -> {}
         @term
       @view.$el.append '''
         <form class="term create">
@@ -1010,6 +1004,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         '''
       term = new Backbone.Model id: '518d2569edc797ef6d000008'
       term.properties = -> []
+      term.propertiesByKeyAndLang = -> {}
       term.destroy = sinon.spy()
       terms = new Backbone.Collection [ term ]
       @view.model.terms = -> terms

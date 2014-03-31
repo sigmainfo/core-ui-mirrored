@@ -13,7 +13,7 @@ describe 'Coreon.Modules.PropertiesByKey', ->
   beforeEach ->
     @model = new Coreon.Models.MyModel
 
-  describe 'propertiesByKey()', ->
+  describe '#propertiesByKey()', ->
 
     it 'returns empty hash when empty', ->
       @model.properties = -> models: []
@@ -28,7 +28,16 @@ describe 'Coreon.Modules.PropertiesByKey', ->
         label: [ prop1 ]
         definition: [ prop2, prop3 ]
 
-  describe 'propertiesByKeyAndLang()', ->
+    it 'skips hidden properties', ->
+      @model.hiddenProperties = ['precedence']
+      prop1 = new Backbone.Model key: 'label'
+      prop2 = new Backbone.Model key: 'precedence'
+      @model.properties = -> models: [ prop1, prop2 ]
+      expect( @model.propertiesByKey() ).to.eql
+        label: [ prop1 ]
+
+  describe '#propertiesByKeyAndLang()', ->
+
     it 'returns empty hash when empty', ->
       @model.properties = -> models: []
       expect( @model.propertiesByKeyAndLang() ).to.eql {}
@@ -41,19 +50,19 @@ describe 'Coreon.Modules.PropertiesByKey', ->
       expect( @model.propertiesByKeyAndLang() ).to.eql
         label: [ prop1 ]
         definition: [ prop2, prop3 ]
-    
-    context "with source language set to French", ->  
-    
+
+    context "with source language set to French", ->
+
       beforeEach ->
-        Coreon.application = 
-          repositorySettings: () -> 
+        Coreon.application =
+          repositorySettings: () ->
             get: (arg)->
               return 'fr' if arg == 'sourceLanguage'
             on: ->
-            
+
       afterEach ->
         delete Coreon.application
-    
+
       it 'returns properties grouped by key, French first', ->
         prop1 = new Backbone.Model key: 'label'
         prop2 = new Backbone.Model key: 'definition'
@@ -63,19 +72,19 @@ describe 'Coreon.Modules.PropertiesByKey', ->
         expect( @model.propertiesByKeyAndLang() ).to.eql
           label: [ prop1, prop4 ]
           definition: [ prop3, prop2 ]
-    
-    context "with target language set to German", ->  
-    
+
+    context "with target language set to German", ->
+
       beforeEach ->
-        Coreon.application = 
-          repositorySettings: () -> 
+        Coreon.application =
+          repositorySettings: () ->
             get: (arg)->
               return 'de' if arg == 'targetLanguage'
             on: ->
-            
+
       afterEach ->
         delete Coreon.application
-    
+
       it 'returns properties grouped by key, German first', ->
         prop1 = new Backbone.Model key: 'label'
         prop2 = new Backbone.Model key: 'definition'
@@ -85,20 +94,20 @@ describe 'Coreon.Modules.PropertiesByKey', ->
         expect( @model.propertiesByKeyAndLang() ).to.eql
           label: [ prop4, prop1 ]
           definition: [ prop2, prop3 ]
-      
-    context "with source language set to French and target language set to German", ->  
-    
+
+    context "with source language set to French and target language set to German", ->
+
       beforeEach ->
-        Coreon.application = 
-          repositorySettings: () -> 
+        Coreon.application =
+          repositorySettings: () ->
             get: (arg)->
               return 'fr' if arg == 'sourceLanguage'
               return 'de' if arg == 'targetLanguage'
             on: ->
-            
+
       afterEach ->
         delete Coreon.application
-    
+
       it 'returns properties grouped by key, French first, German second', ->
         prop1 = new Backbone.Model key: 'label'
         prop2 = new Backbone.Model key: 'definition'
@@ -108,4 +117,3 @@ describe 'Coreon.Modules.PropertiesByKey', ->
         expect( @model.propertiesByKeyAndLang() ).to.eql
           label: [ prop1 ]
           definition: [ prop4, prop3, prop2 ]
-      

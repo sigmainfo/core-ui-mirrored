@@ -2,12 +2,15 @@
 
 Coreon.Modules.PropertiesByKey =
 
+  hiddenProperties: []
+
   propertiesByKey: ->
     props = {}
     for prop in @properties().models
       key = prop.get "key"
-      props[key] ?= []
-      props[key].push prop
+      unless key in @hiddenProperties
+        props[key] ?= []
+        props[key].push prop
     props
 
   propertiesByKeyAndLang: ->

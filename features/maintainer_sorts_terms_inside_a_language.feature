@@ -17,6 +17,7 @@ Feature: maintainer sorts terms inside a language
     When I visit the concept details page
     Then I see all 3 terms inside language "EN"
     And they have the following order: "revolver", "pistol", "handgun"
+    And I see no properties on any of them
     When I toggle "EDIT MODE"
     Then I see a drag handler inside each term
     When I click on "Edit term" inside "pistol"

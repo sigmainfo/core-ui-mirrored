@@ -80,6 +80,11 @@ describe 'Coreon.Models.Term', ->
         label: [ prop1 ]
         definition: [ prop2, prop3 ]
 
+    it 'hides precedence property', ->
+      prop = new Backbone.Model key: 'precedence'
+      @model.properties = -> models: [ prop ]
+      @model.propertiesByKey().should.eql {}
+
   describe '#save()', ->
 
     beforeEach ->

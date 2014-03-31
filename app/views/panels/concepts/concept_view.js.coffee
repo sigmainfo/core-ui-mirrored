@@ -95,7 +95,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     for lang, terms of termsByLang
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
-    hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
+    hasTermProperties = @model.terms().some (term) ->
+      _( term.propertiesByKeyAndLang() ).size() > 0
     editing = Coreon.application.get 'editing'
 
     @$el.toggleClass 'edit', editing
