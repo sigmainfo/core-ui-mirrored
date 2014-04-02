@@ -1,4 +1,4 @@
-.system-info{style: "display: none;"}
+.system-info
   %table
     - for attr, value of @data
       %tr

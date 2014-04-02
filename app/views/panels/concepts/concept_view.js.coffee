@@ -22,6 +22,7 @@
 #= require modules/confirmation
 #= require jquery.serializeJSON
 #= require modules/draggable
+#= require views/terms/terms_view
 
 class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
@@ -112,9 +113,15 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
-
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @subviews.push broaderAndNarrower
+
+    unless editing
+      terms = new Coreon.Views.Terms.TermsView model: @model.terms()
+      @$el.append terms.render().$el
+      @subviews.push terms
+
+    @$('.system-info').hide()
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 

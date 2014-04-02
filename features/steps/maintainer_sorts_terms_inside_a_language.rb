@@ -53,11 +53,16 @@ class Spinach::Features::MaintainerSortsTermsInsideALanguage < Spinach::FeatureS
   end
 
   step 'I toggle "EDIT MODE"' do
-    pending 'step not implemented'
+    click_on "Edit mode"
   end
 
   step 'I see a drag handler inside each term' do
-    pending 'step not implemented'
+    within language(:en) do
+      @terms = page.all('.term')
+      @terms.each do |term|
+        term.should have_css('.drag-handle')
+      end
+    end
   end
 
   step 'I drag "handgun" to the top of the list' do

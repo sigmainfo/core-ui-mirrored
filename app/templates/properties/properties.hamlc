@@ -1,17 +1,21 @@
 %section.properties
-  %h3= I18n.t "properties.title"
-  %table
-    - for key, properties of @properties
-      %tr
-        %th= key
-        %td
-          - if properties.length is 1 and not properties[0].get("lang")
-            .value= properties[0].get "value"
-          - else
-            %ul.index
-              - for property, index in properties
-                %li{class: "selected" if index is 0, "data-index": index }= property.get("lang") or index + 1
-            %ul.values
-              - for property, index in properties
-                %li{class: "selected" if index is 0}= property.get "value"
-          != @render "shared/info", data: properties[0].info()
+  %h3{title: I18n.t('properties.toggle')}= I18n.t('properties.title')
+  %div
+    %table
+      - for group in @properties
+        %tr
+          %th= group.key
+          %td
+            - properties = group.properties
+            - if properties.length is 1 and not properties[0].get('lang')
+              - property = properties[0]
+              .value= property.get('value')
+              != @render 'shared/info', data: property.info()
+            - else
+              %ul.index
+                - for property, index in properties
+                  %li{'data-index': index}= property.get('lang') or index + 1
+              %ul.values
+                - for property, index in properties
+                  %li
+                    != @render 'properties/property', property: property

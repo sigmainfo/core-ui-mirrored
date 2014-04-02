@@ -4,14 +4,28 @@ Coreon.Modules.PropertiesByKey =
 
   hiddenProperties: []
 
-  propertiesByKey: ->
-    props = {}
-    for prop in @properties().models
-      key = prop.get "key"
-      unless key in @hiddenProperties
-        props[key] ?= []
-        props[key].push prop
-    props
+  propertiesByKey: (options) ->
+    unless options?
+      props = {}
+      for prop in @properties().models
+        key = prop.get "key"
+        unless key in @hiddenProperties
+          props[key] ?= []
+          props[key].push prop
+      props
+    else
+      options.precedence ?= []
+      precedence = options.precedence
+      groups = @properties().groupBy('key')
+      for key, properties of groups when key not in @hiddenProperties
+        key: key
+        properties: properties.sort (a, b) ->
+          [a, b] = [a, b].map (property) ->
+            lang = property.get('lang')
+            pos = precedence.indexOf lang
+            pos = precedence.length if pos < 0
+            pos
+          a - b
 
   propertiesByKeyAndLang: ->
     props = {}

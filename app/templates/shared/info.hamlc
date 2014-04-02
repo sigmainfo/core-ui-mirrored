@@ -1,6 +1,6 @@
-.system-info{style: "display: none;"}
+.system-info
   %table
-    - for attr, value of @data
+    - for name, value of @data
       %tr
-        %th= attr
-        %td= value or "-"
+        %th= name
+        %td= if value? then value else '-'

@@ -3,6 +3,8 @@
 
 describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
+  TermsView = null
+
   beforeEach ->
     Coreon.application = new Backbone.Model
     Coreon.application.repositorySettings = ->
@@ -12,6 +14,10 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     sinon.stub I18n, 't'
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
+
+    termsView = new Backbone.View
+    sinon.stub Coreon.Views.Terms, 'TermsView'
+    Coreon.Views.Terms.TermsView.returns termsView
 
     @property = new Backbone.Model key: 'label', value: 'top hat'
     @property.info = -> {}
@@ -33,6 +39,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
+    Coreon.Views.Terms.TermsView.restore()
     Coreon.application = null
     Coreon.Helpers.can.restore()
 
@@ -75,7 +82,6 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       expect( @view.$el ).to.have "> .concept-head .actions .system-info-toggle"
       expect( @view.$("> .concept-head .actions .system-info-toggle") ).to.have.text "System Info"
       expect( @view.$el ).to.have "> .concept-head .system-info"
-      expect( @view.$("> .concept-head .system-info").css("display") ).to.equal "none"
       expect( @view.$("> .concept-head .system-info th").eq(0) ).to.have.text "id"
       expect( @view.$("> .concept-head .system-info td").eq(0) ).to.have.text "123"
       expect( @view.$("> .concept-head .system-info th").eq(1) ).to.have.text "legacy_id"
@@ -86,6 +92,12 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       @view.render()
       expect( @broaderAndNarrower.render ).to.have.been.calledOnce
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
+
+    it 'hides all system info', ->
+      @concept.info = -> import_id: '123'
+      @view.render()
+      info = @view.$('.system-info')
+      expect(info).to.have.css 'display', 'none'
 
     context 'edit mode off', ->
 
@@ -246,143 +258,97 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
     context 'terms', ->
 
+      terms = null
+
       beforeEach ->
-        sinon.stub Coreon.Templates, 'concepts/info'
-        @concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
-        @term = new Backbone.Model value: 'top head'
-        @term.info = -> {}
-        @term.properties = -> new Backbone.Collection
-        @term.propertiesByKeyAndLang = -> {}
-        @concept.termsByLang = => de: [ @term ]
-        Coreon.application.langs = -> [ 'de' ]
+        terms = new Backbone.Collection
+        @concept.terms = -> terms
 
-      afterEach ->
-        Coreon.Templates['concepts/info'].restore()
-
-      it 'renders container', ->
+      it 'creates subview instance', ->
+        subview = new Backbone.View
+        constructor = Coreon.Views.Terms.TermsView
+        constructor.withArgs(model: terms).returns subview
         @view.render()
-        expect( @view.$el ).to.have '.terms'
+        expect(constructor).to.have.been.calledOnce
+        subviews = @view.subviews
+        expect(subviews).to.include subview
 
-      it 'renders section for languages', ->
-        term1 = new Backbone.Model
-        term1.info = -> {}
-        term1.propertiesByKeyAndLang = -> {}
-        term2 = new Backbone.Model
-        term2.info = -> {}
-        term2.propertiesByKeyAndLang = -> {}
-        Coreon.application.langs = -> [ 'de', 'en', 'hu' ]
-        @concept.termsByLang = ->
-          de: [ term1 ]
-          en: [ term2 ]
+      it 'renders subview', ->
+        subview = new Backbone.View
+        render = sinon.stub()
+        render.returns subview
+        subview.render = render
+        constructor = Coreon.Views.Terms.TermsView
+        constructor.returns subview
         @view.render()
-        expect( @view.$el ).to.have '.terms section.language'
-        expect( @view.$('section.language') ).to.have.lengthOf 2
-        expect( @view.$('section.language').eq(0) ).to.have.class 'de'
-        expect( @view.$('section.language').eq(1) ).to.have.class 'en'
+        expect(render).to.have.been.calledOnce
+        el = @view.el
+        node = subview.el
+        expect($.contains el, node).to.be.true
 
-      it 'renders caption for language', ->
-        @concept.termsByLang = => de: [ @term ]
-        @view.render()
-        expect( @view.$('.language') ).to.have 'h3'
-        expect( @view.$('.language h3') ).to.have.text 'de'
-
-      it 'renders terms', ->
-        @term.set 'value', 'top hat', silent: true
-        @concept.termsByLang = => de: [ @term ]
-        @view.render()
-        expect( @view.$('.language') ).to.have '.term'
-        expect( @view.$('.term') ).to.have '.value'
-        expect( @view.$('.term .value') ).to.have.text 'top hat'
-
-      it 'renders placeholder text when terms in source lang are empty', ->
-        I18n.t.withArgs('terms.empty').returns 'No terms for this language'
-        Coreon.application.sourceLang = -> 'de'
-        Coreon.application.langs = -> ['de', 'hu', 'en']
-        @concept.termsByLang = => {}
-        @view.render()
-        expect( @view.$('.language.de') ).to.not.have '.term'
-        expect( @view.$('.language.de') ).to.have '.no-terms'
-        expect( @view.$('.de .no-terms') ).to.have.text 'No terms for this language'
-
-      it 'renders placeholder text when terms in target lang are empty', ->
-        I18n.t.withArgs('terms.empty').returns 'No terms for this language'
-        Coreon.application.targetLang = -> 'hu'
-        Coreon.application.langs = -> ['de', 'hu', 'en']
-        @concept.termsByLang = => {}
-        @view.render()
-        expect( @view.$('.language.hu') ).to.not.have '.term'
-        expect( @view.$('.language.hu') ).to.have '.no-terms'
-        expect( @view.$('.hu .no-terms') ).to.have.text 'No terms for this language'
-
-      it 'renders unknown langs', ->
-        @term.set 'value', 'foo', silent: true
-        Coreon.application.langs = -> ['de', 'hu', 'en']
-        @concept.termsByLang = => ko: [ @term ]
-        @view.render()
-        expect( @view.$('.language.ko') ).to.exist
-        expect( @view.$('.language.ko') ).to.have '.term'
-        expect( @view.$('.ko .term .value') ).to.have.text 'foo'
-
-      it 'renders system info for of term', ->
-        @term.info = -> id: '#1234'
-        Coreon.Templates['concepts/info'].withArgs(data: id: '#1234')
-          .returns '<div class="system-info">id: #1234</div>'
-        @view.render()
-        expect( @view.$('.term') ).to.have '.system-info'
-
-      context 'term properties', ->
-
-        properties = null
+      context 'editing', ->
 
         beforeEach ->
-          property = new Backbone.Model key: 'source', value: 'Wikipedia'
-          property.info = -> {}
-          properties = source: [ property ]
-          @term.propertiesByKeyAndLang = -> properties
-          terms = new Backbone.Collection [@term]
-          @concept.terms = -> terms
+          Coreon.application.set 'editing', on, silent: yes
+          sinon.stub Coreon.Templates, 'concepts/info'
+          @concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
+          @term = new Backbone.Model value: 'top head'
+          @term.info = -> {}
+          @term.properties = -> new Backbone.Collection
+          @term.propertiesByKeyAndLang = -> {}
+          @concept.termsByLang = => de: [ @term ]
+          Coreon.application.langs = -> [ 'de' ]
 
-        it 'renders term properties', ->
-          @view.render()
-          expect( @view.$('.term') ).to.have '.properties'
+        afterEach ->
+          Coreon.Templates['concepts/info'].restore()
 
-        it 'collapses properties by default', ->
-          @view.render()
-          expect( @view.$('.term .properties') ).to.have.class 'collapsed'
-          expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
-
+<<<<<<< HEAD
         it 'renders toggle for properties', ->
           I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
+=======
+        it 'renders container', ->
+>>>>>>> Extract rendering of terms into separate view
           @view.render()
-          expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
+          expect( @view.$el ).to.have '.terms'
 
-        it 'renders toggle all button', ->
-          I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
+        it 'renders section for languages', ->
+          term1 = new Backbone.Model
+          term1.info = -> {}
+          term1.propertiesByKeyAndLang = -> {}
+          term2 = new Backbone.Model
+          term2.info = -> {}
+          term2.propertiesByKeyAndLang = -> {}
+          Coreon.application.langs = -> [ 'de', 'en', 'hu' ]
+          @concept.termsByLang = ->
+            de: [ term1 ]
+            en: [ term2 ]
           @view.render()
-          expect( @view.$('.terms') ).to.have '> .properties-toggle'
-          toggle = @view.$('.terms > .properties-toggle')
-          expect( toggle ).to.have.attr 'title', 'Toggle all properties'
+          expect( @view.$el ).to.have '.terms section.language'
+          expect( @view.$('section.language') ).to.have.lengthOf 2
+          expect( @view.$('section.language').eq(0) ).to.have.class 'de'
+          expect( @view.$('section.language').eq(1) ).to.have.class 'en'
 
-        it 'renders toggle button only when applicable', ->
-          @term.propertiesByKeyAndLang = -> {}
+        it 'renders caption for language', ->
+          @concept.termsByLang = => de: [ @term ]
           @view.render()
-          expect( @view.$('.terms') ).to.not.have '.properties-toggle'
+          expect( @view.$('.language') ).to.have 'h3'
+          expect( @view.$('.language h3') ).to.have.text 'de'
 
-      context 'with edit privileges', ->
-
-        beforeEach ->
-          Coreon.Helpers.can.returns true
-
-        it 'renders add term link', ->
-          I18n.t.withArgs('term.new').returns 'Add term'
+        it 'renders terms', ->
+          @term.set 'value', 'top hat', silent: true
+          @concept.termsByLang = => de: [ @term ]
           @view.render()
-          expect( @view.$('.terms') ).to.have '.edit a.add-term'
-          expect( @view.$('.add-term') ).to.have.text 'Add term'
+          expect( @view.$('.language') ).to.have '.term'
+          expect( @view.$('.term') ).to.have '.value'
+          expect( @view.$('.term .value') ).to.have.text 'top hat'
 
-        it 'renders remove term links', ->
-          I18n.t.withArgs('term.delete').returns 'Remove term'
-          @term.id = '56789fghj'
+        it 'renders placeholder text when terms in source lang are empty', ->
+          I18n.t.withArgs('terms.empty').returns 'No terms for this language'
+          Coreon.application.sourceLang = -> 'de'
+          Coreon.application.langs = -> ['de', 'hu', 'en']
+          @concept.termsByLang = => {}
           @view.render()
+<<<<<<< HEAD
           expect( @view.$('.term') ).to.have '.edit a.remove-term'
           expect( @view.$('.term a.remove-term') ).to.have.text 'Remove term'
           expect( @view.$('.term a.remove-term') ).to.have.data 'id', '56789fghj'
@@ -390,24 +356,116 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         it 'renders edit term links', ->
           I18n.t.withArgs('term.edit.label').returns 'Edit term'
           @term.id = '56789fghj'
+=======
+          expect( @view.$('.language.de') ).to.not.have '.term'
+          expect( @view.$('.language.de') ).to.have '.no-terms'
+          expect( @view.$('.de .no-terms') ).to.have.text 'No terms for this language'
+
+        it 'renders placeholder text when terms in target lang are empty', ->
+          I18n.t.withArgs('terms.empty').returns 'No terms for this language'
+          Coreon.application.targetLang = -> 'hu'
+          Coreon.application.langs = -> ['de', 'hu', 'en']
+          @concept.termsByLang = => {}
+>>>>>>> Extract rendering of terms into separate view
           @view.render()
-          expect( @view.$('.term') ).to.have '.edit a.edit-term'
-          expect( @view.$('.term a.edit-term') ).to.have.text 'Edit term'
-          expect( @view.$('.term a.edit-term') ).to.have.data 'id', '56789fghj'
+          expect( @view.$('.language.hu') ).to.not.have '.term'
+          expect( @view.$('.language.hu') ).to.have '.no-terms'
+          expect( @view.$('.hu .no-terms') ).to.have.text 'No terms for this language'
 
-      context 'without edit privileges', ->
-
-        beforeEach ->
-          Coreon.Helpers.can.returns false
-
-        it 'does not render add term link', ->
+        it 'renders unknown langs', ->
+          @term.set 'value', 'foo', silent: true
+          Coreon.application.langs = -> ['de', 'hu', 'en']
+          @concept.termsByLang = => ko: [ @term ]
           @view.render()
-          expect( @view.$el ).to.not.have '.add-term'
+          expect( @view.$('.language.ko') ).to.exist
+          expect( @view.$('.language.ko') ).to.have '.term'
+          expect( @view.$('.ko .term .value') ).to.have.text 'foo'
 
-        it 'does not render remove term link', ->
-          @view.model.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
+        it 'renders system info for of term', ->
+          @term.info = -> id: '#1234'
+          Coreon.Templates['concepts/info'].withArgs(data: id: '#1234')
+            .returns '<div class="system-info">id: #1234</div>'
           @view.render()
-          expect( @view.$('.term') ).to.not.have 'a.remove-term'
+          expect( @view.$('.term') ).to.have '.system-info'
+
+        context 'term properties', ->
+
+          properties = null
+
+          beforeEach ->
+            property = new Backbone.Model key: 'source', value: 'Wikipedia'
+            property.info = -> {}
+            properties = source: [ property ]
+            @term.propertiesByKeyAndLang = -> properties
+            terms = new Backbone.Collection [@term]
+            @concept.terms = -> terms
+
+          it 'renders term properties', ->
+            @view.render()
+            expect( @view.$('.term') ).to.have '.properties'
+
+          it 'collapses properties by default', ->
+            @view.render()
+            expect( @view.$('.term .properties') ).to.have.class 'collapsed'
+            expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
+
+          it 'renders toggle for properties', ->
+            I18n.t.withArgs('terms.properties.toggle').returns 'Toggle properties'
+            @view.render()
+            expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
+
+          it 'renders toggle all button', ->
+            I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
+            @view.render()
+            expect( @view.$('.terms') ).to.have '> .properties-toggle'
+            toggle = @view.$('.terms > .properties-toggle')
+            expect( toggle ).to.have.attr 'title', 'Toggle all properties'
+
+          it 'renders toggle button only when applicable', ->
+            @term.propertiesByKeyAndLang = -> {}
+            @view.render()
+            expect( @view.$('.terms') ).to.not.have '.properties-toggle'
+
+        context 'with edit privileges', ->
+
+          beforeEach ->
+            Coreon.Helpers.can.returns true
+
+          it 'renders add term link', ->
+            I18n.t.withArgs('term.new').returns 'Add term'
+            @view.render()
+            expect( @view.$('.terms') ).to.have '.edit a.add-term'
+            expect( @view.$('.add-term') ).to.have.text 'Add term'
+
+          it 'renders remove term links', ->
+            I18n.t.withArgs('term.delete').returns 'Remove term'
+            @term.id = '56789fghj'
+            @view.render()
+            expect( @view.$('.term') ).to.have '.edit a.remove-term'
+            expect( @view.$('.term a.remove-term') ).to.have.text 'Remove term'
+            expect( @view.$('.term a.remove-term') ).to.have.data 'id', '56789fghj'
+
+          it 'renders edit term links', ->
+            I18n.t.withArgs('term.edit').returns 'Edit term'
+            @term.id = '56789fghj'
+            @view.render()
+            expect( @view.$('.term') ).to.have '.edit a.edit-term'
+            expect( @view.$('.term a.edit-term') ).to.have.text 'Edit term'
+            expect( @view.$('.term a.edit-term') ).to.have.data 'id', '56789fghj'
+
+        context 'without edit privileges', ->
+
+          beforeEach ->
+            Coreon.Helpers.can.returns false
+
+          it 'does not render add term link', ->
+            @view.render()
+            expect( @view.$el ).to.not.have '.add-term'
+
+          it 'does not render remove term link', ->
+            @view.model.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
+            @view.render()
+            expect( @view.$('.term') ).to.not.have 'a.remove-term'
 
   describe '#toggleInfo()', ->
 
@@ -625,6 +683,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
   describe '#addTerm()', ->
 
     beforeEach ->
+      Coreon.application.set 'editing', on, silent: yes
       @view.render()
 
     it 'is triggered by click on add-term link', ->

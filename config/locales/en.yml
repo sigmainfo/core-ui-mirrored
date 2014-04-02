@@ -141,6 +141,7 @@ en:
 
   properties:
     title: "Properties"
+    toggle: "Toggle properties"
     add: "Add property"
     edit: "Edit properties"
 

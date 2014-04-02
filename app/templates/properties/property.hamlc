@@ -1,2 +1,2 @@
-.value= @value
-!= @info
+.value= @property.get('value')
+!= @render 'shared/info', data: @property.info()
