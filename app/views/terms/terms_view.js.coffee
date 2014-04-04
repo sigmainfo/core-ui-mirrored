@@ -36,7 +36,8 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
       .children('div')
         .css('display', 'none')
 
-        .find('td>ul li:first')
+        .find('td>ul')
+          .find('li:first')
           .addClass('selected')
 
     @

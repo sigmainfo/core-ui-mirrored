@@ -400,10 +400,19 @@ describe 'Coreon.Views.Terms.TermsView', ->
               expect(index).to.have.text 'de'
               expect(index).to.have.attr 'data-index', '1'
 
-            it 'selects first item', ->
+            it 'selects first item of index', ->
               view.render()
               td = view.$('.properties tr td')
               items = td.find('ul.index li')
+              first = items.eq(0)
+              expect(first).to.have.class 'selected'
+              other = items.eq(1)
+              expect(other).to.not.have.class 'selected'
+
+            it 'selects first item of values', ->
+              view.render()
+              td = view.$('.properties tr td')
+              items = td.find('ul.values li')
               first = items.eq(0)
               expect(first).to.have.class 'selected'
               other = items.eq(1)
