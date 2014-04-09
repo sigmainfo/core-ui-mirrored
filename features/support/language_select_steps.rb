@@ -36,6 +36,16 @@ module LanguageSelectSteps
     ]
   end
 
+  step 'the repository provides the languages "English", "German", and "French"' do
+    @repository.update_attributes languages: %w{en de fr}
+
+    create_concept terms: [
+      {lang: 'en', value: 'English'},
+      {lang: 'de', value: 'deutsch'},
+      {lang: 'fr', value: 'français'}
+    ]
+  end
+
   step 'I click the "Source Language" selector' do
     page.find(source_language_css).click
   end
@@ -88,6 +98,13 @@ module LanguageSelectSteps
     end
   end
 
+  step 'I select "French" as source language' do
+    page.find(source_language_css).click
+    within dropdown_css do
+      page.find("li", text: "French").click
+    end
+  end
+
   step 'I select "None" as source language' do
     page.find(source_language_css).click
     within dropdown_css do
@@ -113,6 +130,13 @@ module LanguageSelectSteps
     page.find(target_language_css).click
     within dropdown_css do
       page.find("li", text: "German").click
+    end
+  end
+
+  step 'I select "French" as target language' do
+    page.find(target_language_css).click
+    within dropdown_css do
+      page.find("li", text: "French").click
     end
   end
 

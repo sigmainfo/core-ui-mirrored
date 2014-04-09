@@ -10,5 +10,5 @@ Coreon.Modules =
   include: (target, modules...) ->
     for module in modules
       for key, value of module
-        target::[key] = value 
+        target::[key] = value
     target

@@ -3,63 +3,65 @@
 
 describe 'Coreon.Models.Term', ->
 
+  model = null
+
   beforeEach ->
     sinon.stub I18n, 't'
-    @model = new Coreon.Models.Term
+    model = new Coreon.Models.Term
 
   afterEach ->
     I18n.t.restore()
 
   it 'is a Backbone model', ->
-    @model.should.been.an.instanceof Backbone.Model
+    model.should.been.an.instanceof Backbone.Model
 
   context 'defaults', ->
 
     it 'has an empty set of properties', ->
-      @model.get('properties').should.eql []
+      model.get('properties').should.eql []
 
     it 'has an empty value attribure', ->
-      @model.get('value').should.eql ''
+      model.get('value').should.eql ''
 
     it 'has an empty lang attribure', ->
-      @model.get('lang').should.eql ''
+      model.get('lang').should.eql ''
 
     it 'has an empty concept_id attribure', ->
-      @model.get('lang').should.eql ''
+      model.get('lang').should.eql ''
 
   describe '#urlRoot()', ->
 
     it 'is constructed from concept id', ->
-      @model.set 'concept_id', '4567asdf'
-      @model.urlRoot().should.equal '/concepts/4567asdf/terms'
+      model.set 'concept_id', '4567asdf'
+      model.urlRoot().should.equal '/concepts/4567asdf/terms'
 
   describe '#toJSON()', ->
 
     it 'wraps term', ->
-      @model.set 'value', 'foo', silent: true
-      @model.toJSON().should.have.deep.property 'term.value', 'foo'
+      model.set 'value', 'foo', silent: true
+      model.toJSON().should.have.deep.property 'term.value', 'foo'
 
     it 'skips concept_id', ->
-      @model.toJSON().term.should.not.have.property 'concept_id'
+      model.toJSON().term.should.not.have.property 'concept_id'
 
   describe '#properties()', ->
 
     it 'syncs with attr', ->
-      @model.set 'properties', [key: 'label']
-      @model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
-      @model.properties().at(0).get('key').should.equal 'label'
+      model.set 'properties', [key: 'label']
+      model.properties().at(0).should.be.an.instanceof Coreon.Models.Property
+      model.properties().at(0).get('key').should.equal 'label'
 
   describe '#info()', ->
 
     it 'returns hash with system info attributes', ->
-      @model.set {
+      model.set {
         id: 'abcd1234'
         admin: {author: 'Nobody'}
         properties : [ 'foo', 'bar' ]
         created_at: '2013-09-12 13:48'
         updated_at: '2013-09-12 13:50'
       }, silent: true
-      @model.info().should.eql
+      model.info().should.eql
         id: 'abcd1234'
         author: 'Nobody'
         created_at: '2013-09-12 13:48'
@@ -67,23 +69,12 @@ describe 'Coreon.Models.Term', ->
 
   describe '#propertiesByKey()', ->
 
-    it 'returns empty hash when empty', ->
-      @model.properties = -> models: []
-      @model.propertiesByKey().should.eql {}
+    it 'delegates to module', ->
+      method = Coreon.Modules.Properties.propertiesByKey
+      propertiesByKey = model.propertiesByKey
+      expect(propertiesByKey).to.exist
+      expect(propertiesByKey).to.equal method
 
-    it 'returns properties grouped by key', ->
-      prop1 = new Backbone.Model key: 'label'
-      prop2 = new Backbone.Model key: 'definition'
-      prop3 = new Backbone.Model key: 'definition'
-      @model.properties = -> models: [ prop1, prop2, prop3 ]
-      @model.propertiesByKey().should.eql
-        label: [ prop1 ]
-        definition: [ prop2, prop3 ]
-
-    it 'hides precedence property', ->
-      prop = new Backbone.Model key: 'precedence'
-      @model.properties = -> models: [ prop ]
-      @model.propertiesByKey().should.eql {}
 
   describe '#save()', ->
 
@@ -98,38 +89,38 @@ describe 'Coreon.Models.Term', ->
 
     it 'triggers custom event', ->
       spy = sinon.spy()
-      @model.on 'create', spy
-      @model.save 'value', 'high hat'
-      @model.save 'value', 'beaver hat'
+      model.on 'create', spy
+      model.save 'value', 'high hat'
+      model.save 'value', 'beaver hat'
       spy.should.have.been.calledOnce
-      spy.should.have.been.calledWith @model, @model.id
+      spy.should.have.been.calledWith model, model.id
 
   describe '#errors()', ->
 
     it 'collects remote validation errors', ->
-      @model.trigger 'error', @model,
+      model.trigger 'error', model,
         responseText: '{"errors":{"foo":["must be bar"]}}'
-      @model.errors().should.eql
+      model.errors().should.eql
         foo: ['must be bar']
 
 
   describe '#revert()', ->
 
     it 'restores persisted state', ->
-      @model.set 'value', 'hat', silent: true
-      @model.trigger 'sync'
-      @model.set 'value', '####', silent: true
-      @model.set 'value', '****', silent: true
-      @model.revert()
-      @model.get('value').should.equal 'hat'
+      model.set 'value', 'hat', silent: true
+      model.trigger 'sync'
+      model.set 'value', '####', silent: true
+      model.set 'value', '****', silent: true
+      model.revert()
+      model.get('value').should.equal 'hat'
 
     it 'restores initial state', ->
-      @model.set 'value', 'hat', silent: true
-      @model.initialize()
-      @model.set 'value', '####', silent: true
-      @model.set 'value', '****', silent: true
-      @model.revert()
-      @model.get('value').should.equal 'hat'
+      model.set 'value', 'hat', silent: true
+      model.initialize()
+      model.set 'value', '####', silent: true
+      model.set 'value', '****', silent: true
+      model.revert()
+      model.get('value').should.equal 'hat'
 
   describe '#conceptPath()', ->
 
@@ -142,5 +133,5 @@ describe 'Coreon.Models.Term', ->
 
     it 'returns path to parent concept', ->
       Coreon.application.repository().path = -> '/my-repo'
-      @model.set 'concept_id', 'my-concept-123', silent: yes
-      expect( @model.conceptPath() ).to.equal '/my-repo/concepts/my-concept-123'
+      model.set 'concept_id', 'my-concept-123', silent: yes
+      expect( model.conceptPath() ).to.equal '/my-repo/concepts/my-concept-123'

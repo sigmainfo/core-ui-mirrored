@@ -9,12 +9,16 @@ describe 'Coreon.Views.Terms.TermsView', ->
 
   beforeEach ->
     sinon.stub I18n, 't'
+    termView = new Backbone.View
+    sinon.stub Coreon.Views.Terms, 'TermView'
+    Coreon.Views.Terms.TermView.returns termView
 
-    app = new Backbone.Model
+    app = new Backbone.Model langs: []
     app.langs = -> []
 
     collection = new Backbone.Collection
-    collection.byLang = -> []
+    collection.langs = -> []
+    collection.hasProperties = -> no
 
     view = new Coreon.Views.Terms.TermsView
       model: collection
@@ -22,6 +26,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
 
   afterEach ->
     I18n.t.restore()
+    Coreon.Views.Terms.TermView.restore()
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
@@ -38,7 +43,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
       assigned = view.app
       expect(assigned).to.equal app2
 
-    it 'defaults to global application', ->
+    it 'defaults app to singleton instance', ->
       app2 = new Backbone.Model
       Coreon.application = app2
       try
@@ -48,386 +53,174 @@ describe 'Coreon.Views.Terms.TermsView', ->
       finally
         delete Coreon.application
 
+    it 'sets template from options', ->
+      template = ->
+      view.initialize template: template
+      assigned = view.template
+      expect(assigned).to.equal template
+
+    it 'defaults template to be terms/terms', ->
+      view.initialize()
+      assigned = view.template
+      expect(assigned).to.equal Coreon.Templates['terms/terms']
+
+    it 'creates empty subviews set', ->
+      subviews = view.subviews
+      expect(subviews).to.exist
+
   describe '#render()', ->
 
-    term = null
-
-    createTerm = (attrs) ->
-      term = new Backbone.Model attrs
-      term.info = -> {}
-      term.propertiesByKey = -> []
-      term
+    template = null
 
     beforeEach ->
-      term = createTerm()
+      template = sinon.stub()
+      view.template = template
+      app.set 'langs', [], silent: yes
+      collection.reset [], silent: yes
+      collection.langs = -> []
 
     it 'can be chained', ->
       result = view.render()
       expect(result).to.equal view
 
-    context 'properties toggle', ->
+    it 'updates content via template', ->
+      view.$el.html '<ul class="old"></ul>'
+      template.withArgs(
+        languages: []
+        hasProperties: no
+      ).returns '<ul class="terms"></ul>'
+      view.render()
+      updated = view.$('ul.terms')
+      expect(updated).to.exist
+      old = view.$('ul.old')
+      expect(old).to.not.exist
+
+    it 'clears subviews', ->
+      remove = sinon.spy()
+      subview = remove: remove
+      view.subviews = [subview]
+      view.render()
+      expect(remove).to.have.been.calledOnce
+      subviews = view.subviews
+      expect(subviews).to.be.empty
+
+    context 'languages', ->
+
+      it 'creates language groups from used langs', ->
+        collection.langs = -> ['de']
+        view.render()
+        expect(template).to.have.been.calledOnce
+        languages = template.firstCall.args[0].languages
+        expect(languages).eql [id: 'de', className: 'de', empty: no]
+
+      it 'unifies class name', ->
+        collection.langs = -> ['DE-AT']
+        view.render()
+        expect(template).to.have.been.calledOnce
+        language = template.firstCall.args[0].languages[0]
+        expect(language).to.have.property 'className', 'de'
+        expect(language).to.have.property 'id', 'DE-AT'
+
+      it 'sorts language groups by available language order', ->
+        app.langs = -> ['fr', 'hu', 'de']
+        collection.langs = -> ['hu', 'de', 'fr']
+        view.render()
+        expect(template).to.have.been.calledOnce
+        langs = template.firstCall.args[0].languages.map (language) ->
+          language.id
+        expect(langs).eql ['fr', 'hu', 'de']
+
+      it 'appends language groups for unknown langs', ->
+        app.langs = -> ['fr']
+        collection.langs = -> ['hu', 'fr']
+        view.render()
+        expect(template).to.have.been.calledOnce
+        langs = template.firstCall.args[0].languages.map (language) ->
+          language.id
+        expect(langs).eql ['fr', 'hu']
+
+      it 'prepends language groups for selection', ->
+        app.langs = -> ['fr', 'hu', 'de']
+        app.set 'langs', ['de', 'hu']
+        collection.langs = -> ['hu', 'de', 'fr']
+        view.render()
+        expect(template).to.have.been.calledOnce
+        langs = template.firstCall.args[0].languages.map (language) ->
+          language.id
+        expect(langs).eql ['de', 'hu', 'fr']
+
+      it 'prepends selected languages even when not present', ->
+        app.langs = -> ['fr', 'hu', 'de']
+        app.set 'langs', ['de', 'hu'], silent: yes
+        collection.langs = -> ['hu', 'el']
+        view.render()
+        expect(template).to.have.been.calledOnce
+        langs = template.firstCall.args[0].languages.map (language) ->
+          language.id
+        expect(langs).eql ['de', 'hu', 'el']
+
+      it 'marks empty language groups', ->
+        app.set 'langs', ['de'], silent: yes
+        collection.langs -> []
+        view.render()
+        language = template.firstCall.args[0].languages[0]
+        expect(language).to.have.property 'empty', yes
+
+    context 'hasProperties', ->
+
+      it 'is false when there are no properties on any term', ->
+        collection.hasProperties = -> no
+        view.render()
+        expect(template).to.have.been.calledOnce
+        data = template.firstCall.args[0]
+        expect(data).to.have.property 'hasProperties', no
+
+      it 'is true when there are properties on any term', ->
+        collection.hasProperties = -> yes
+        view.render()
+        expect(template).to.have.been.calledOnce
+        data = template.firstCall.args[0]
+        expect(data).to.have.property 'hasProperties', yes
+
+    context 'terms', ->
+
+      term = null
+      subview = null
 
       beforeEach ->
-        collection.reset [term], silent: yes
+        collection.reset [lang: 'de', value: 'Schuh']
+        [term] = collection.models
+        subview = new Backbone.View
+        constructor = Coreon.Views.Terms.TermView
+        constructor.returns subview
 
-      it 'renders toggle all switch', ->
-        I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all'
-        term.propertiesByKey = -> [ key: 'source', properties: [] ]
+      it 'creates subview for each term', ->
+        constructor = Coreon.Views.Terms.TermView
         view.render()
-        toggle = view.$('h4.properties-toggle')
-        expect(toggle).to.exist
-        expect(toggle).to.have.attr 'title', 'Toggle all'
-        text = toggle.text()
-        expect(text).to.match /\s*Toggle all\s*/
+        expect(constructor).to.have.been.calledOnce
+        expect(constructor).to.have.been.calledWithNew
+        expect(constructor).to.have.been.calledWith
+          model: term
 
-      it 'does not render switch when there are no properties', ->
-        term.propertiesByKey = -> []
+      it 'renders subview', ->
+        render = sinon.stub()
+        subview.render = render
         view.render()
-        toggle = view.$('h4.properties-toggle')
-        expect(toggle).to.not.exist
+        expect(render).to.have.been.calledOnce
 
-
-    context 'language sections', ->
-
-
-      beforeEach ->
-        view.app.set 'langs', [], silent: yes
-
-      it 'renders section containers', ->
-        view.app.langs = -> ['de', 'en']
-        byLang = sinon.stub()
-        collection.byLang = byLang
-        byLang.withArgs('de', 'en').returns [
-          {id: 'de', terms: [term]}
-          {id: 'en', terms: [term]}
-        ]
+      it 'appends subview to language section', ->
+        view.$el.html '''
+          <section class="language" data-id="de-AT">
+            <ul></ul>
+          </section>
+        '''
+        term.set 'lang', 'de-AT', silent: yes
         view.render()
-        languages = view.$('section.language')
-        expect(languages).to.have.lengthOf 2
+        ul = view.$('ul')[0]
+        el = subview.el
+        expect($.contains ul, el).to.be.true
 
-      it 'classifies section', ->
-        collection.byLang = ->
-          [ id: 'de', terms: [term] ]
+      it 'keeps reference to subview', ->
         view.render()
-        language = view.$('.language')
-        expect(language).to.have.class 'de'
-
-      it 'abbreviates class name', ->
-        collection.byLang = ->
-          [ id: 'de-AT', terms: [term] ]
-        view.render()
-        language = view.$('.language')
-        expect(language).to.have.class 'de'
-
-      it 'renders caption', ->
-        collection.byLang = ->
-          [ id: 'de-AT', terms: [term] ]
-        view.render()
-        caption = view.$('.language h3')
-        expect(caption).to.have.text 'de-AT'
-
-      context 'empty section', ->
-
-        it 'renders empty list when selected', ->
-          view.app.set 'langs', ['de'], silent: yes
-          I18n.t.withArgs('terms.empty').returns '[no terms]'
-          collection.byLang = ->
-            [ id: 'de', terms: [] ]
-          view.render()
-          terms = view.$('.language ul li')
-          expect(terms).to.have.lengthOf 1
-          expect(terms).to.have.class 'no-terms'
-          expect(terms).to.have.text '[no terms]'
-
-        it 'renders nothing', ->
-          view.app.set 'langs', [], silent: yes
-          collection.byLang = ->
-            [ id: 'de', terms: [] ]
-          view.render()
-          terms = view.$('.language')
-          expect(terms).to.not.exist
-
-      context 'with terms', ->
-
-        it 'renders term containers', ->
-          term1 = createTerm()
-          term2 = createTerm()
-          collection.byLang = ->
-            [ id: 'hu', terms: [term1, term2] ]
-          view.render()
-          terms = view.$('.language ul li')
-          expect(terms).to.have.lengthOf 2
-          expect(terms).to.have.class 'term'
-
-        it 'renders term value', ->
-          term = createTerm value: 'handgun'
-          collection.byLang = ->
-            [ id: 'en', terms: [term] ]
-          view.render()
-          value = view.$('.language ul li.term > h4.value')
-          expect(value).to.exist
-          expect(value).to.have.text 'handgun'
-
-        context 'system info', ->
-
-          term = null
-
-          beforeEach ->
-            term = createTerm value: 'handgun'
-            collection.byLang = ->
-              [ id: 'en', terms: [term] ]
-
-          it 'renders table', ->
-            term.info = -> {}
-            view.render()
-            info = view.$('li.term .system-info table')
-            expect(info).to.exist
-
-          it 'renders data', ->
-            term.info = ->
-              import_id: '123'
-            view.render()
-            label = view.$('.system-info table tr th')
-            expect(label).to.have.lengthOf 1
-            expect(label).to.have.text 'import_id'
-            value = view.$('.system-info tr td')
-            expect(value).to.have.lengthOf 1
-            expect(value).to.have.text '123'
-
-          it 'renders placeholder for empty value', ->
-            term.info = ->
-              import_id: null
-            view.render()
-            value = view.$('.system-info table tr td')
-            expect(value).to.have.text '-'
-
-        context 'no properties', ->
-
-          term = null
-
-
-          beforeEach ->
-            term = createTerm value: 'gun'
-            term.propertiesByKey = -> []
-            collection.byLang = ->
-              [ id: 'en', terms: [term] ]
-
-          it 'does not render section', ->
-            view.render()
-            section = view.$('section.properties')
-            expect(section).to.not.exist
-
-        context 'properties', ->
-
-          term = null
-          property = null
-
-          createProperty = (attrs) ->
-            property = new Backbone.Model attrs
-            property.info = -> {}
-            property
-
-          beforeEach ->
-            term = createTerm value: 'gun'
-            property = createProperty key: 'author', value: 'Nobody'
-            term.propertiesByKey = -> [
-              key: property.get('key')
-              properties: [property]
-            ]
-            collection.byLang = ->
-              [ id: 'en', terms: [term] ]
-
-          it 'renders section', ->
-            view.render()
-            section = view.$('section.properties')
-            expect(section).to.exist
-
-          it 'renders caption', ->
-            I18n.t.withArgs('properties.title').returns 'Properties'
-            I18n.t.withArgs('properties.toggle').returns 'Toggle properties'
-            view.render()
-            caption = view.$('.properties h3')
-            expect(caption).to.exist
-            expect(caption).to.have.text 'Properties'
-            expect(caption).to.have.attr 'title', 'Toggle properties'
-
-          it 'renders table', ->
-            view.render()
-            table = view.$('.properties div table')
-            expect(table).to.exist
-
-          it 'collapses section by default', ->
-            view.render()
-            section = view.$('section.properties')
-            expect(section).to.have.class 'collapsed'
-            content = section.children('div')
-            expect(content).to.have.css 'display', 'none'
-
-          it 'renders row for property group', ->
-            property.set
-              key: 'source'
-              value: 'common sense'
-            , silent: yes
-            view.render()
-            row = view.$('.properties table tr')
-            expect(row).to.exist
-            th = row.find('th')
-            expect(th).to.exist
-            expect(th).to.have.text 'source'
-            td = row.find('td')
-            expect(td).to.exist
-
-          context 'single non-textual property', ->
-
-            beforeEach ->
-              property.set
-                key: 'abbreviation'
-                value: 'CRN'
-                lang: ''
-              , silent: yes
-              term.propertiesByKey = -> [
-                key: 'abbreviation'
-                properties: [property]
-              ]
-
-            it 'renders plain value', ->
-              view.render()
-              td = view.$('.properties tr td')
-              value = td.find('.value')
-              expect(value).to.exist
-              expect(value).to.have.text 'CRN'
-
-            it 'does not render index', ->
-              view.render()
-              td = view.$('.properties tr td')
-              index = td.find('.index')
-              expect(index).to.not.exist
-
-            it 'renders system info', ->
-              property.info = -> import_id: '1234'
-              view.render()
-              td = view.$('.properties tr td')
-              info = td.find('.system-info table')
-              expect(info).to.exist
-              label = info.find('tr th')
-              expect(label).to.exist
-              expect(label).to.have.text 'import_id'
-              value = info.find('tr td')
-              expect(value).to.exist
-              expect(value).to.have.text '1234'
-
-          context 'single textual property', ->
-
-            beforeEach ->
-              property.set
-                key: 'description'
-                value: 'It is what it is.'
-                lang: 'en'
-              , silent: yes
-              term.propertiesByKey = -> [
-                key: 'description'
-                properties: [property]
-              ]
-
-            it 'renders value as list item', ->
-              property.set 'value', 'a rose', silent: yes
-              view.render()
-              td = view.$('.properties tr td')
-              item = td.find('ul.values li')
-              value = item.find('.value')
-              expect(value).to.exist
-              expect(value).to.have.text 'a rose'
-
-            it 'renders index', ->
-              property.set 'lang', 'hu', silent: yes
-              view.render()
-              td = view.$('.properties tr td')
-              index = td.find('ul.index li')
-              expect(index).to.exist
-              expect(index).to.have.text 'hu'
-              expect(index).to.have.class 'selected'
-              expect(index).to.have.attr 'data-index', '0'
-
-            it 'renders system info', ->
-              property.info = -> import_id: '1234'
-              view.render()
-              td = view.$('.properties tr td')
-              item = td.find('ul.values li')
-              info = item.find('.system-info table')
-              expect(info).to.exist
-              label = info.find('tr th')
-              expect(label).to.exist
-              expect(label).to.have.text 'import_id'
-              value = info.find('tr td')
-              expect(value).to.exist
-              expect(value).to.have.text '1234'
-
-          context 'multiple properties', ->
-
-            property2 = null
-
-            beforeEach ->
-              property2 = createProperty key: 'source', value: 'Wikipedia'
-              term.propertiesByKey = -> [
-                key: 'description'
-                properties: [property, property2]
-              ]
-
-            it 'renders value as list item', ->
-              property2.set 'value', 'a rose', silent: yes
-              view.render()
-              td = view.$('.properties tr td')
-              item = td.find('ul.values li:nth-child(2)')
-              value = item.find('.value')
-              expect(value).to.exist
-              expect(value).to.have.text 'a rose'
-
-            it 'renders numerical index', ->
-              property.set 'lang', null, silent: yes
-              view.render()
-              td = view.$('.properties tr td')
-              index = td.find('ul.index li:nth-child(2)')
-              expect(index).to.exist
-              expect(index).to.have.text '2'
-              expect(index).to.have.attr 'data-index', '1'
-
-            it 'renders language index', ->
-              property.set 'lang', 'de', silent: yes
-              view.render()
-              td = view.$('.properties tr td')
-              index = td.find('ul.index li:nth-child(2)')
-              expect(index).to.exist
-              expect(index).to.have.text 'de'
-              expect(index).to.have.attr 'data-index', '1'
-
-            it 'selects first item of index', ->
-              view.render()
-              td = view.$('.properties tr td')
-              items = td.find('ul.index li')
-              first = items.eq(0)
-              expect(first).to.have.class 'selected'
-              other = items.eq(1)
-              expect(other).to.not.have.class 'selected'
-
-            it 'selects first item of values', ->
-              view.render()
-              td = view.$('.properties tr td')
-              items = td.find('ul.values li')
-              first = items.eq(0)
-              expect(first).to.have.class 'selected'
-              other = items.eq(1)
-              expect(other).to.not.have.class 'selected'
-
-            it 'renders system info', ->
-              property2.info = -> import_id: '1234'
-              view.render()
-              td = view.$('.properties tr td')
-              item = td.find('ul.values li:nth-child(2)')
-              info = item.find('.system-info table')
-              expect(info).to.exist
-              label = info.find('tr th')
-              expect(label).to.exist
-              expect(label).to.have.text 'import_id'
-              value = info.find('tr td')
-              expect(value).to.exist
-              expect(value).to.have.text '1234'
+        subviews = view.subviews
+        expect(subviews).to.include subview

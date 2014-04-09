@@ -124,48 +124,43 @@ describe 'Coreon.Collections.Terms', ->
       expect( values ).to.contain 'Billiards', 'Cue'
       expect( values ).to.not.contain 'Queue'
 
-  describe '#byLang()', ->
+  describe '#langs()', ->
+
+    it 'returns a unique list of used langs', ->
+      collection.reset [
+        {lang: 'en'}
+        {lang: 'de'}
+        {lang: 'en'}
+        {lang: 'el'}
+      ], silent: yes
+      langs = collection.langs()
+      expect(langs).to.eql ['en', 'de', 'el']
+
+  describe '#hasProperties()', ->
+
+    term1 = null
+    term2 = null
 
     beforeEach ->
+      collection.reset [
+        {value: 'foo'}
+        {value: 'bar'}
+      ], silent: yes
+      [term1, term2] = collection.models
+      term1.hasProperties = -> no
+      term2.hasProperties = -> no
 
-    context 'without arguments', ->
+    it 'is true when any term has properties', ->
+      term1.hasProperties = -> no
+      term2.hasProperties = -> yes
+      hasProperties = collection.hasProperties()
+      expect(hasProperties).to.be.true
 
-      it 'groups terms by given languages', ->
-        collection.reset [
-          { lang: 'de', value: 'Auto'     }
-          { lang: 'de', value: 'Fahrzeug' }
-          { lang: 'hu', value: 'kocsi'    }
-        ], silent: yes
-        [term1, term2, term3] = collection.models
-        languages = collection.byLang()
-        expect(languages).to.have.lengthOf 2
-        de = _(languages).findWhere id: 'de'
-        expect(de).to.exist
-        terms = de.terms
-        expect(terms).to.eql [term1, term2]
-
-    context 'with langs specified', ->
-
-      it 'creates empty set for missing languages', ->
-        collection.reset [], silent: yes
-        languages = collection.byLang 'en'
-        expect(languages).to.have.lengthOf 1
-        en = _(languages).findWhere id: 'en'
-        terms = en.terms
-        expect(terms).to.have.eql []
-
-      it 'returns requested languages', ->
-        collection.reset [
-          { lang: 'de', value: 'Auto'     }
-          { lang: 'de', value: 'Fahrzeug' }
-          { lang: 'hu', value: 'kocsi'    }
-        ], silent: yes
-        [term1, term2, term3] = collection.models
-        languages = collection.byLang 'hu'
-        expect(languages).to.have.lengthOf 1
-        hu = _(languages).findWhere id: 'hu'
-        terms = hu.terms
-        expect(terms).to.have.eql [term3]
+    it 'is false when no term has any properties', ->
+      term1.hasProperties = -> no
+      term2.hasProperties = -> no
+      hasProperties = collection.hasProperties()
+      expect(hasProperties).to.be.false
 
   describe '#toJSON()', ->
 

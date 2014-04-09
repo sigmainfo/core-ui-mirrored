@@ -13,6 +13,10 @@ module AuthSteps
     @repository_user = create_repository_user
   end
 
+  step 'I am a user of the repository' do
+    @repository_user = repository_user
+  end
+
   step 'I am logged in as user of the repository' do
     @repository_user ||= create_repository_user
     login

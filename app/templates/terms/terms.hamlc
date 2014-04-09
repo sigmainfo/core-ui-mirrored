@@ -1,17 +1,9 @@
 - if @hasProperties
   %h4.properties-toggle{title: I18n.t('terms.properties.toggle-all')}
     = I18n.t('terms.properties.toggle-all')
-- for language in @terms
-  %section.language{class: language.id[0..1]}
+- for language in @languages
+  %section.language{class: language.className, 'data-id': language.id}
     %h3= language.id
     %ul
-      - if language.terms.length is 0
+      - if language.empty
         %li.no-terms= I18n.t('terms.empty')
-      - else
-        - for term in language.terms
-          %li.term
-            %h4.value= term.get('value')
-            != @render 'shared/info', data: term.info()
-            - properties = term.propertiesByKey precedence: @langs
-            - if properties.length > 0
-              != @render 'properties/properties', properties: properties

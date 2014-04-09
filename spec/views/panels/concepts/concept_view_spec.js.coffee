@@ -28,6 +28,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     @concept.set 'properties', [ @property ], silent: true
     @concept.termsByLang = -> {}
     terms = new Backbone.Collection
+    terms.hasProperties = -> no
     @concept.terms = -> terms
     @concept.propertiesByKeyAndLang = => label: [ @property ]
 
@@ -262,6 +263,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
       beforeEach ->
         terms = new Backbone.Collection
+        terms.hasProperties = -> no
         @concept.terms = -> terms
 
       it 'creates subview instance', ->
@@ -302,12 +304,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         afterEach ->
           Coreon.Templates['concepts/info'].restore()
 
-<<<<<<< HEAD
-        it 'renders toggle for properties', ->
-          I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
-=======
         it 'renders container', ->
->>>>>>> Extract rendering of terms into separate view
           @view.render()
           expect( @view.$el ).to.have '.terms'
 
@@ -348,15 +345,6 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           Coreon.application.langs = -> ['de', 'hu', 'en']
           @concept.termsByLang = => {}
           @view.render()
-<<<<<<< HEAD
-          expect( @view.$('.term') ).to.have '.edit a.remove-term'
-          expect( @view.$('.term a.remove-term') ).to.have.text 'Remove term'
-          expect( @view.$('.term a.remove-term') ).to.have.data 'id', '56789fghj'
-
-        it 'renders edit term links', ->
-          I18n.t.withArgs('term.edit.label').returns 'Edit term'
-          @term.id = '56789fghj'
-=======
           expect( @view.$('.language.de') ).to.not.have '.term'
           expect( @view.$('.language.de') ).to.have '.no-terms'
           expect( @view.$('.de .no-terms') ).to.have.text 'No terms for this language'
@@ -366,7 +354,6 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           Coreon.application.targetLang = -> 'hu'
           Coreon.application.langs = -> ['de', 'hu', 'en']
           @concept.termsByLang = => {}
->>>>>>> Extract rendering of terms into separate view
           @view.render()
           expect( @view.$('.language.hu') ).to.not.have '.term'
           expect( @view.$('.language.hu') ).to.have '.no-terms'
@@ -398,6 +385,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
             properties = source: [ property ]
             @term.propertiesByKeyAndLang = -> properties
             terms = new Backbone.Collection [@term]
+            terms.hasProperties = -> no
             @concept.terms = -> terms
 
           it 'renders term properties', ->
@@ -410,12 +398,13 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
             expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
 
           it 'renders toggle for properties', ->
-            I18n.t.withArgs('terms.properties.toggle').returns 'Toggle properties'
+            I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
             @view.render()
             expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
 
           it 'renders toggle all button', ->
-            I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
+            I18n.t.withArgs('terms.properties.toggle-all.hint').returns 'Toggle all properties'
+            terms.hasProperties = -> yes
             @view.render()
             expect( @view.$('.terms') ).to.have '> .properties-toggle'
             toggle = @view.$('.terms > .properties-toggle')
@@ -423,6 +412,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
           it 'renders toggle button only when applicable', ->
             @term.propertiesByKeyAndLang = -> {}
+            terms.hasProperties = -> no
             @view.render()
             expect( @view.$('.terms') ).to.not.have '.properties-toggle'
 
@@ -446,7 +436,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
             expect( @view.$('.term a.remove-term') ).to.have.data 'id', '56789fghj'
 
           it 'renders edit term links', ->
-            I18n.t.withArgs('term.edit').returns 'Edit term'
+            I18n.t.withArgs('term.edit.label').returns 'Edit term'
             @term.id = '56789fghj'
             @view.render()
             expect( @view.$('.term') ).to.have '.edit a.edit-term'
@@ -811,6 +801,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       @trigger = @view.$('form')
       @event.target = @trigger[0]
       terms = new Backbone.Collection
+      terms.hasProperties = -> no
       @view.model.terms = -> terms
 
     afterEach ->
@@ -1066,6 +1057,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       term.propertiesByKeyAndLang = -> {}
       term.destroy = sinon.spy()
       terms = new Backbone.Collection [ term ]
+      terms.hasProperties = -> no
       @view.model.terms = -> terms
       @event = $.Event 'click'
       @trigger = @view.$('a.remove-term')

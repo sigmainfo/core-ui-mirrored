@@ -55,17 +55,16 @@ class Coreon.Collections.Terms extends Backbone.Collection
       else
         1
 
-  byLang: (langs...) ->
-    terms = @groupBy('lang')
-    langs = _(terms).keys() if langs.length is 0
-    langs.map (id) ->
-      id: id
-      terms: if terms[id] then terms[id] else []
-
   lang: (lang) ->
     lang = lang?.toLowerCase()
     @filter (term) ->
       term.get('lang').toLowerCase() is lang
+
+  langs: ->
+    _.uniq @pluck('lang')
+
+  hasProperties: ->
+    @any (term) -> term.hasProperties()
 
   toJSON: ->
     term.term for term in super

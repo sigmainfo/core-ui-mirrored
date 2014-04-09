@@ -1,0 +1,7 @@
+-#   - for term in language.terms
+-#     %li.term
+-#       %h4.value= term.get('value')
+-#       != @render 'shared/info', data: term.info()
+-#       - properties = term.propertiesByKey precedence: @langs
+-#       - if properties.length > 0
+-#         != @render 'properties/properties', properties: properties

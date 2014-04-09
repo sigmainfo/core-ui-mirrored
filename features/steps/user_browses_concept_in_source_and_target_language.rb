@@ -1,7 +1,34 @@
-class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::FeatureSteps
+class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::FeatureSteps
+
   include AuthSteps
   include LanguageSelectSteps
   include Api::Graph::Factory
+
+  def term
+    expect(page).to have_css('.concept.show .terms .term')
+    page.find('.concept.show .terms .term')
+  end
+
+  def term_properties
+    expect(term).to have_css('section.properties')
+    term.find('section.properties')
+  end
+
+  def term_property(label)
+    term.find('th', text: label).find(:xpath, 'following-sibling::td')
+  end
+
+  def term_property_tabs(label)
+    term_property(label).all('ul.index li')
+  end
+
+  def term_property_selection(label)
+    p = term_property(label)
+    {
+      tab:   p.find('ul.index  li.selected'),
+      value: p.find('ul.values li.selected')
+    }
+  end
 
   step 'a concept' do
     @concept = create_concept nil
@@ -41,7 +68,7 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "DE", "EN", "KO", "RU" ]
   end
 
-  step 'I should see the languages in following order: "KO", "DE", "EN", "RU"' do
+  step 'I should see the languages in following oUne rose est une roserder: "KO", "DE", "EN", "RU"' do
     sleep 0.2
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "KO", "DE", "EN", "RU" ]
   end
@@ -109,51 +136,65 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
     page.all(".concept > .properties ul.index li").map{|n| n.text}.should == ["EN", "RU", "KO", "DE"]
   end
 
-  step 'this term hat the Russian property "description": "пистолет"' do
-    create_concept_term_property @concept, @term, key: 'description', value: 'пистолет', lang: 'ru'
+  step 'a concept with an English term "rose" exists' do
+    @concept = create_concept
+    @term = create_concept_term @concept, value: 'rose', lang: 'en'
   end
 
-  step 'this term has the English property "description": "gun"' do
-    create_concept_term_property @concept,  @term, key: 'description', value: 'gun', lang: 'en'
+  step 'it has an English description "A rose is a rose."' do
+    create_concept_term_property @concept, @term,
+                                 key: 'description', lang: 'en',
+                                 value: 'A rose is a rose.'
   end
 
-  step 'this term has the Korean property "description": "산탄 총"' do
-    create_concept_term_property @concept,  @term, key: 'description', value: '산탄 총', lang: 'ko'
+  step 'it has a German description "Eine Rose ist eine Rose."' do
+    create_concept_term_property @concept, @term,
+                                 key: 'description', lang: 'de',
+                                 value: 'Eine Rose ist eine Rose.'
   end
 
-  step 'this term has the German property "description": "Schusswaffe"' do
-    create_concept_term_property @concept,  @term, key: 'description', value: 'Schusswaffe', lang: 'de'
+  step 'it has a French description "Une rose est une rose."' do
+    create_concept_term_property @concept, @term,
+                                 key: 'description', lang: 'fr',
+                                 value: 'Une rose est une rose.'
   end
 
-  step 'I toggle the term\'s properties' do
-    page.find(".concept .terms .term .properties h3").click
+  step 'it has a Greek description "Ένα τριαντάφυλλο είναι ένα τριαντάφυλλο."' do
+    create_concept_term_property @concept, @term,
+                              key: 'description', lang: 'el',
+                              value: 'Ένα τριαντάφυλλο είναι ένα τριαντάφυλλο.'
   end
 
-  step 'I should see "пистолет" displayed as property "description" of term' do
-    page.find(".concept .terms .term .properties ul.values li.selected").text.should == 'пистолет'
+  step 'I visit the details page of this concept' do
+    visit "/#{@repository.id}/concepts/#{@concept['id']}"
   end
 
-  step 'I should see "Schusswaffe" displayed as property "description" of term' do
-    page.find(".concept .terms .term .properties ul.values li.selected").text.should == 'Schusswaffe'
+  step 'I click "Toggle properties" on the term' do
+    within term do
+      expect(page).to have_css('h3[title="Toggle properties"]')
+      page.find('h3[title="Toggle properties"]').click
+    end
   end
 
-  step 'I should see "gun" displayed as property "description" of term' do
-    page.find(".concept .terms .term .properties ul.values li.selected").text.should == 'gun'
+  step 'I see a property group "DESCRIPTION"' do
+    within term_properties do
+      expect(page).to have_css('th', text: 'DESCRIPTION')
+    end
   end
 
-  step 'I should see the property "description" of term in following language order: "Russian", "English", "Korean", "German"' do
-    page.all(".concept .terms .term .properties ul.index li").map{|n| n.text}.should == ["RU", "EN", "KO", "DE"]
+  step 'I see tabs "EN", "FR", "DE", "EL" in order' do
+    tab_names = term_property_tabs('DESCRIPTION').map(&:text)
+    expect(tab_names).to eql(['EN', 'FR', 'DE', 'EL'])
   end
 
-  step 'I should see the property "description" of term in following language order: "German", "Russian", "English", "Korean"' do
-    page.all(".concept .terms .term .properties ul.index li").map{|n| n.text}.should == ["DE", "RU", "EN", "KO"]
+  step 'the English description "A rose is a rose." is selected' do
+    selection = term_property_selection('DESCRIPTION')
+    expect(selection[:tab].text).to eql('EN')
+    expect(selection[:value].text).to eql('A rose is a rose.')
   end
 
-  step 'I should see the property "description" of term in following language order: "German", "English", "Russian", "Korean"' do
-    page.all(".concept .terms .term .properties ul.index li").map{|n| n.text}.should == ["DE", "EN", "RU", "KO"]
-  end
-
-  step 'I should see the property "description" of term in following language order: "English", "Russian", "Korean", "German"' do
-    page.all(".concept .terms .term .properties ul.index li").map{|n| n.text}.should == ["EN", "RU", "KO", "DE"]
+  step 'I see tabs "DE", "FR", "EN", "EL" in order' do
+    tab_names = term_property_tabs('DESCRIPTION').map(&:text)
+    expect(tab_names).to eql(['DE', 'FR', 'EN', 'EL'])
   end
 end
