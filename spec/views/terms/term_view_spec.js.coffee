@@ -19,7 +19,6 @@ describe 'Coreon.Views.Terms.TermView', ->
     model.hasProperties = -> no
     properties = new Backbone.Collection
 
-    #TODO
     model.publicProperties = -> properties
 
     view = new Coreon.Views.Terms.TermView

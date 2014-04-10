@@ -59,3 +59,8 @@ class Coreon.Models.Term extends Backbone.Model
 
   conceptPath: ->
     new FakeConcept( id: @get 'concept_id' ).path()
+
+  publicProperties: ->
+    models = @properties().reject (property) ->
+      property.get('key') is 'precedence'
+    new Backbone.Collection models

@@ -135,3 +135,30 @@ describe 'Coreon.Models.Term', ->
       Coreon.application.repository().path = -> '/my-repo'
       model.set 'concept_id', 'my-concept-123', silent: yes
       expect( model.conceptPath() ).to.equal '/my-repo/concepts/my-concept-123'
+
+  describe '#publicProperties()', ->
+
+    properties = null
+
+    beforeEach ->
+      properties = new Backbone.Collection
+      model.properties = -> properties
+
+    it 'creates a collection', ->
+      publicProperties = model.publicProperties()
+      expect(publicProperties).to.be.an.instanceOf Backbone.Collection
+
+    it 'fills collection with current models', ->
+      property = new Backbone.Model
+      properties.reset [property], silent: yes
+      publicProperties = model.publicProperties()
+      models = publicProperties.models
+      expect(models).to.eql [property]
+
+    it 'filters out precedence from models', ->
+      property1 = new Backbone.Model key: 'author', value: 'Nobody'
+      property2 = new Backbone.Model key: 'precedence', value: '9'
+      properties.reset [property1, property2], silent: yes
+      publicProperties = model.publicProperties()
+      models = publicProperties.models
+      expect(models).to.eql [property1]
