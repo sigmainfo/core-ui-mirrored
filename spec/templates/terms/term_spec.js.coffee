@@ -25,7 +25,7 @@ describe 'Coreon.Templates[terms/term]', ->
     it 'renders term value', ->
       data.value = 'rose'
       el = render()
-      value = el.find('h4')
+      value = el.find('h4.value')
       expect(value).to.exist
       expect(value).to.have.text 'rose'
 

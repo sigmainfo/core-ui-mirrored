@@ -1,5 +1,6 @@
 #= require environment
 #= require templates/terms/term
+#= require templates/shared/info
 #= require views/properties/properties_view
 
 class Coreon.Views.Terms.TermView extends Backbone.View

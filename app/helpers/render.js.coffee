@@ -1,4 +1,7 @@
 #= require environment
 
-Coreon.Helpers.render = (template, context) ->
-  Coreon.Templates[template] context
+Coreon.Helpers.render = (id, context) ->
+  if template = Coreon.Templates[id]
+    template context
+  else
+    throw "Template not found: #{id}"

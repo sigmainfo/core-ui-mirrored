@@ -1,2 +1,2 @@
-%h4= @value
+%h4.value= @value
 != @render 'shared/info', data: @info
