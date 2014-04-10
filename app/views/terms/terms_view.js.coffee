@@ -17,8 +17,7 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
     @subviews = []
 
   render: ->
-    @subviews.forEach (subview) ->
-      subview.remove()
+    _(@subviews).invoke 'remove'
     @subviews = []
 
     selectedLangs  = @app.get('langs')
