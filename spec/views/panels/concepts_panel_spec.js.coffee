@@ -1,7 +1,7 @@
 #= require spec_helper
 #= require views/panels/concepts_panel
 
-describe 'Coreon.Views.Panels.ConceptsPanel', ->
+describe 'Coreon.Views.ConceptsPanel', ->
 
   view = null
   panel = null
@@ -18,15 +18,15 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
       repositoryView
 
     conceptListView = new Backbone.View
-    sinon.stub Coreon.Views.Panels.Concepts, 'ConceptListView', ->
+    sinon.stub Coreon.Views.Concepts, 'ConceptListView', ->
       conceptListView
 
     conceptView = new Backbone.View
-    sinon.stub Coreon.Views.Panels.Concepts, 'ConceptView', ->
+    sinon.stub Coreon.Views.Concepts, 'ConceptView', ->
       conceptView
 
     newConceptView = new Backbone.View
-    sinon.stub Coreon.Views.Panels.Concepts, 'NewConceptView', ->
+    sinon.stub Coreon.Views.Concepts, 'NewConceptView', ->
       newConceptView
 
     view = new Coreon.Views.Panels.ConceptsPanel
@@ -35,14 +35,14 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
   afterEach ->
     Coreon.Views.Panels.Concepts.RepositoryView.restore()
-    Coreon.Views.Panels.Concepts.ConceptListView.restore()
-    Coreon.Views.Panels.Concepts.ConceptView.restore()
-    Coreon.Views.Panels.Concepts.NewConceptView.restore()
+    Coreon.Views.Concepts.ConceptListView.restore()
+    Coreon.Views.Concepts.ConceptView.restore()
+    Coreon.Views.Concepts.NewConceptView.restore()
     I18n.t.restore()
 
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
-    
+
   it 'creates container', ->
     el = view.$el
     expect(el).to.have.attr 'id', 'coreon-concepts'
@@ -181,7 +181,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
           view.model.set 'scope', 'index', silent: yes
 
         it 'creates concept list view', ->
-          constructor = Coreon.Views.Panels.Concepts.ConceptListView
+          constructor = Coreon.Views.Concepts.ConceptListView
           constructor.reset()
           view.switchView()
           expect(constructor).to.have.been.calledOnce
@@ -218,7 +218,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
             concept.isNew = -> no
 
           it 'creates concept view', ->
-            constructor = Coreon.Views.Panels.Concepts.ConceptView
+            constructor = Coreon.Views.Concepts.ConceptView
             constructor.reset()
             view.switchView()
             expect(constructor).to.have.been.calledOnce
@@ -246,7 +246,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
             concept.isNew = -> yes
 
           it 'creates new concept view', ->
-            constructor = Coreon.Views.Panels.Concepts.NewConceptView
+            constructor = Coreon.Views.Concepts.NewConceptView
             constructor.reset()
             view.switchView()
             expect(constructor).to.have.been.calledOnce

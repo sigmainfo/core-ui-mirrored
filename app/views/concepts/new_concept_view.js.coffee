@@ -2,10 +2,10 @@
 #= require helpers/render
 #= require helpers/form_for
 #= require helpers/input
-#= require templates/concepts/_caption
 #= require templates/concepts/new_concept
-#= require templates/properties/new_property
+#= require templates/concepts/_caption
 #= require templates/concepts/_new_term
+#= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
 #= require models/notification
@@ -13,7 +13,7 @@
 #= require modules/helpers
 #= require modules/nested_fields_for
 
-class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
+class Coreon.Views.Concepts.NewConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
 

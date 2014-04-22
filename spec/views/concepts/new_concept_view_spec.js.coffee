@@ -1,13 +1,13 @@
 #= require spec_helper
-#= require views/panels/concepts/new_concept_view
+#= require views/concepts/new_concept_view
 
-describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
+describe 'Coreon.Views.Concepts.NewConceptView', ->
 
   beforeEach ->
     sinon.stub I18n, 't'
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
       @broaderAndNarrower = new Backbone.View options
-    @view = new Coreon.Views.Panels.Concepts.NewConceptView
+    @view = new Coreon.Views.Concepts.NewConceptView
       model: new Backbone.Model
         properties: []
         terms: []

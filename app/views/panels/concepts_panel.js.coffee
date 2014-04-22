@@ -3,9 +3,9 @@
 #= require helpers/titlebar
 #= require templates/panels/concepts
 #= require views/panels/concepts/repository_view
-#= require views/panels/concepts/concept_list_view
-#= require views/panels/concepts/concept_view
-#= require views/panels/concepts/new_concept_view
+#= require views/concepts/concept_list_view
+#= require views/concepts/concept_view
+#= require views/concepts/new_concept_view
 
 class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
@@ -31,15 +31,15 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
     @currentView =
       if selection = @model.get 'selection'
         if @model.get('scope') is 'index'
-          new Coreon.Views.Panels.Concepts.ConceptListView
+          new Coreon.Views.Concepts.ConceptListView
             model: selection
         else
           model = selection.first()
           if model.isNew()
-            new Coreon.Views.Panels.Concepts.NewConceptView
+            new Coreon.Views.Concepts.NewConceptView
               model: model
           else
-            new Coreon.Views.Panels.Concepts.ConceptView
+            new Coreon.Views.Concepts.ConceptView
               model: model
       else
         if repository = @model.get('repository')

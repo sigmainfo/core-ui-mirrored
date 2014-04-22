@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/panels/concepts/concept_list_view
+#= require views/concepts/concept_list_view
 
-describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
+describe 'Coreon.Views.Concepts.ConceptListView', ->
 
   view = null
   selection = null
@@ -31,19 +31,19 @@ describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
       render: -> @
       remove: ->
 
-    sinon.stub Coreon.Views.Panels.Concepts.ConceptList, 'TermsView'
-    Coreon.Views.Panels.Concepts.ConceptList.TermsView.returns
+    sinon.stub Coreon.Views.Concepts.ConceptList, 'TermsView'
+    Coreon.Views.Concepts.ConceptList.TermsView.returns
       render: -> @
       remove: ->
 
     selection = new Backbone.Collection
-    view = new Coreon.Views.Panels.Concepts.ConceptListView
+    view = new Coreon.Views.Concepts.ConceptListView
       model: selection
 
   afterEach ->
     Coreon.Views.Concepts.ConceptLabelView.restore()
     Coreon.Views.Concepts.ConceptLabelListView.restore()
-    Coreon.Views.Panels.Concepts.ConceptList.TermsView.restore()
+    Coreon.Views.Concepts.ConceptList.TermsView.restore()
     delete Coreon.application
 
   it 'is a Backbone view', ->
@@ -229,7 +229,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
         terms = new Backbone.View tagName: 'tbody'
         render = sinon.spy()
         terms.render = render
-        constructor = Coreon.Views.Panels.Concepts.ConceptList.TermsView
+        constructor = Coreon.Views.Concepts.ConceptList.TermsView
         constructor.withArgs(model: concept).returns terms
         view.render()
         expect(render).to.have.been.calledOnce

@@ -3,7 +3,7 @@
 #= require helpers/can
 #= require helpers/form_for
 #= require helpers/input
-#= require templates/panels/concepts/concept
+#= require templates/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
@@ -24,7 +24,7 @@
 #= require modules/draggable
 #= require views/terms/terms_view
 
-class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
+class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
   Coreon.Modules.include @, Coreon.Modules.Confirmation
@@ -34,7 +34,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   editProperties: no
   editTerm: no
 
-  template: Coreon.Templates["panels/concepts/concept"]
+  template: Coreon.Templates["concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
 
   @nestedFieldsFor "properties", name: "property"

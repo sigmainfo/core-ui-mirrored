@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/panels/concepts/concept_view
+#= require views/concepts/concept_view
 
-describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
+describe 'Coreon.Views.Concepts.ConceptView', ->
 
   TermsView = null
 
@@ -32,7 +32,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     @concept.terms = -> terms
     @concept.propertiesByKeyAndLang = => label: [ @property ]
 
-    @view = new Coreon.Views.Panels.Concepts.ConceptView
+    @view = new Coreon.Views.Concepts.ConceptView
       model: @concept
     sinon.stub Coreon.Helpers, 'can'
     Coreon.Helpers.can.returns true

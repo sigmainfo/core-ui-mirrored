@@ -1,19 +1,19 @@
 #= require environment
-#= require templates/panels/concepts/concept_list
-#= require templates/panels/concepts/concept_list/empty
-#= require templates/panels/concepts/concept_list/list
+#= require templates/concepts/concept_list
+#= require templates/concepts/concept_list/empty
+#= require templates/concepts/concept_list/list
 #= require views/concepts/concept_label_view
 #= require views/concepts/concept_label_list_view
-#= require views/panels/concepts/concept_list/terms_view
+#= require views/concepts/concept_list/terms_view
 #= require helpers/can
 
-class Coreon.Views.Panels.Concepts.ConceptListView extends Backbone.View
+class Coreon.Views.Concepts.ConceptListView extends Backbone.View
 
   className: 'concept-list'
 
-  template : Coreon.Templates['panels/concepts/concept_list']
-  info     : Coreon.Templates['panels/concepts/concept_list/empty']
-  list     : Coreon.Templates['panels/concepts/concept_list/list']
+  template : Coreon.Templates['concepts/concept_list']
+  info     : Coreon.Templates['concepts/concept_list/empty']
+  list     : Coreon.Templates['concepts/concept_list/list']
 
   initialize: ->
     @stopListening()
@@ -41,7 +41,7 @@ class Coreon.Views.Panels.Concepts.ConceptListView extends Backbone.View
     $(row).find('tr.broader td').append broader.$el
 
   insertTerms = (concept, row) ->
-    terms = new Coreon.Views.Panels.Concepts.ConceptList.TermsView
+    terms = new Coreon.Views.Concepts.ConceptList.TermsView
       model: concept
     terms.render()
     $(row).find('table').append terms.$el

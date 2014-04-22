@@ -1,7 +1,7 @@
 #= require spec_helper
-#= require views/panels/concepts/concept_list/terms_view
+#= require views/concepts/concept_list/terms_view
 
-describe 'Coreon.Views.Panels.Concepts.ConceptList.TermsView', ->
+describe 'Coreon.Views.Concepts.ConceptList.TermsView', ->
 
   view = null
   concept = null
@@ -12,7 +12,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptList.TermsView', ->
     app.lang = -> 'en'
     concept = new Backbone.Model
     concept.termsByLang = -> {}
-    view = new Coreon.Views.Panels.Concepts.ConceptList.TermsView
+    view = new Coreon.Views.Concepts.ConceptList.TermsView
       model: concept
     , app: app
 

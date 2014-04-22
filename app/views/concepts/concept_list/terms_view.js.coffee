@@ -1,11 +1,11 @@
 #= require environment
-#= require templates/panels/concepts/concept_list/terms
+#= require templates/concepts/concept_list/terms
 
-class Coreon.Views.Panels.Concepts.ConceptList.TermsView extends Backbone.View
+class Coreon.Views.Concepts.ConceptList.TermsView extends Backbone.View
 
   tagName: 'tbody'
 
-  template: Coreon.Templates['panels/concepts/concept_list/terms']
+  template: Coreon.Templates['concepts/concept_list/terms']
 
   initialize: (attrs, options = {}) ->
     @app = options.app or Coreon.application
