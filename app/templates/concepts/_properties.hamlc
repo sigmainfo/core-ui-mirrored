@@ -6,10 +6,11 @@
 
   %div{style: "display: none" if @collapsed}
     %table
-      - for key, properties of @properties
+      - for propertyGroup in @properties
         %tr
-          %th= key
+          %th= propertyGroup.key
           %td
+            - properties = propertyGroup.properties
             - if properties.length is 1 and not properties[0].get("lang")
               .value= properties[0].get "value"
               != @render "concepts/info", data: properties[0].info()

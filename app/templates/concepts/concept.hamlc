@@ -18,7 +18,8 @@
 - if @editing and @editProperties
   != @render "concepts/edit_properties", concept: @concept, editToggle: yes
 - else if @editing or @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties: @concept.propertiesByKeyAndLang(), editToggle: yes
+  - properties = ( key: key, properties: props for key, props of @concept.propertiesByKeyAndLang() )
+  != @render "concepts/properties", properties: properties, editToggle: yes
 
 - if @editing
   .terms

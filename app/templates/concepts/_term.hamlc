@@ -8,5 +8,5 @@
   %h4.value= @term.get "value"
 
   != @render "concepts/info", data: @term.info()
-  - if _( properties = @term.propertiesByKeyAndLang() ).size() > 0
+  - if _( properties = @term.propertiesByKey() ).size() > 0
     != @render 'concepts/properties', properties: properties, collapsed: true, noEditButton: true

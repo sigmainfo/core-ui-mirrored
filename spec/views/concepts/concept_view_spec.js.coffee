@@ -297,7 +297,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           @term = new Backbone.Model value: 'top head'
           @term.info = -> {}
           @term.properties = -> new Backbone.Collection
-          @term.propertiesByKeyAndLang = -> {}
+          @term.propertiesByKey = -> []
           @concept.termsByLang = => de: [ @term ]
           Coreon.application.langs = -> [ 'de' ]
 
@@ -311,10 +311,10 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         it 'renders section for languages', ->
           term1 = new Backbone.Model
           term1.info = -> {}
-          term1.propertiesByKeyAndLang = -> {}
+          term1.propertiesByKey = -> []
           term2 = new Backbone.Model
           term2.info = -> {}
-          term2.propertiesByKeyAndLang = -> {}
+          term2.propertiesByKey = -> []
           Coreon.application.langs = -> [ 'de', 'en', 'hu' ]
           @concept.termsByLang = ->
             de: [ term1 ]
@@ -382,8 +382,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           beforeEach ->
             property = new Backbone.Model key: 'source', value: 'Wikipedia'
             property.info = -> {}
-            properties = source: [ property ]
-            @term.propertiesByKeyAndLang = -> properties
+            properties = [ key: 'source', properties: [ property ] ]
+            @term.propertiesByKey = -> properties
             terms = new Backbone.Collection [@term]
             terms.hasProperties = -> no
             @concept.terms = -> terms
