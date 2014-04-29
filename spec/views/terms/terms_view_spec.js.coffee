@@ -224,3 +224,80 @@ describe 'Coreon.Views.Terms.TermsView', ->
         view.render()
         subviews = view.subviews
         expect(subviews).to.include subview
+
+      it 'collapses all propery sections', ->
+        $('#konacha').append view.$el
+        view.$el.html '''
+          <section class="properties">
+            <h3>Toggle Properties</h3>
+            <div>
+              <p>foo</p>
+            </div>
+          </section>
+        '''
+        view.render()
+        properties = view.$('.properties')
+        expect(properties).to.have.class 'collapsed'
+        container = properties.children('div')
+        expect(container).to.be.hidden
+
+  describe '#toggleAllProperties()', ->
+
+    toggle = null
+    event = null
+
+    beforeEach ->
+      view.$el.html '''
+        <h4 class="properties-toggle">Toggle all properties</h4>
+        <ul>
+          <li class="term">
+            <section class="properties collapsed">
+              <h3>Toggle Properties</h3>
+              <div>foo</div>
+            </section>
+          </li>
+          <li class="term">
+            <section class="properties collapsed">
+              <h3>Toggle Properties</h3>
+              <div>bar</div>
+            </section>
+          </li>
+        </ul>
+      '''
+      $('#konacha').append view.$el
+      toggle = view.$('.properties-toggle')
+      event = $.Event 'click'
+      event.target = toggle.el
+
+    it 'is triggered by click on toggle', ->
+      toggleAllProperties = sinon.spy()
+      view.toggleAllProperties = toggleAllProperties
+      view.delegateEvents()
+      toggle.trigger event
+      expect(toggleAllProperties).to.have.been.calledOnce
+      expect(toggleAllProperties).to.have.been.calledWith event
+      expect(toggleAllProperties).to.have.been.calledOn view
+
+    it 'eats event', ->
+      toggle.trigger event
+      defaultPrevented = event.isDefaultPrevented()
+      expect(defaultPrevented).to.be.true
+      propagationStopped = event.isPropagationStopped()
+      expect(propagationStopped).to.be.true
+
+    it 'expands all properties', ->
+      toggle.trigger event
+      view.$('.properties').each ->
+        properties = $ @
+        expect(properties).to.not.have.class 'collapsed'
+        container = properties.children('div')
+        expect(container).to.be.visible
+
+    it 'collapses properties when all are already expanded', ->
+      view.$('.collapsed').removeClass 'collapsed'
+      toggle.trigger event
+      view.$('.properties').each ->
+        properties = $ @
+        expect(properties).to.have.class 'collapsed'
+        container = properties.children('div')
+        expect(container).to.be.hidden

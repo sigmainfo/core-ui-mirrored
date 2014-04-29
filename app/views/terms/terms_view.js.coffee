@@ -7,6 +7,9 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
 
   className: 'terms'
 
+  events:
+    'click .properties-toggle': 'toggleAllProperties'
+
   initialize: (options = {}) ->
     _(options).defaults
       app: Coreon.application
@@ -45,4 +48,29 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
         .append termView.$el
       @subviews.push termView
 
+    @$('.properties')
+      .addClass('collapsed')
+
+      .children('div').not('.edit')
+        .hide()
+
     @
+
+  toggleAllProperties: (event) =>
+    event.stopPropagation()
+    event.preventDefault()
+
+    properties = @$ '.properties'
+
+    if properties.filter('.collapsed').length is 0
+      properties
+        .addClass('collapsed')
+
+        .children('div').not('.edit')
+          .slideUp()
+    else
+      properties
+        .removeClass('collapsed')
+
+        .children('div').not('.edit')
+          .slideDown()
