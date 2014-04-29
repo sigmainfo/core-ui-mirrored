@@ -68,7 +68,7 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "DE", "EN", "KO", "RU" ]
   end
 
-  step 'I should see the languages in following oUne rose est une roserder: "KO", "DE", "EN", "RU"' do
+  step 'I should see the languages in following order: "KO", "DE", "EN", "RU"' do
     sleep 0.2
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "KO", "DE", "EN", "RU" ]
   end
@@ -196,5 +196,16 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
   step 'I see tabs "DE", "FR", "EN", "EL" in order' do
     tab_names = term_property_tabs('DESCRIPTION').map(&:text)
     expect(tab_names).to eql(['DE', 'FR', 'EN', 'EL'])
+  end
+
+  step 'the German description "Eine Rose ist eine Rose." is selected' do
+    selection = term_property_selection('DESCRIPTION')
+    expect(selection[:tab].text).to eql('DE')
+    expect(selection[:value].text).to eql('Eine Rose ist eine Rose.')
+  end
+
+  step 'I see tabs "DE", "EN", "FR", "EL" in order' do
+    tab_names = term_property_tabs('DESCRIPTION').map(&:text)
+    expect(tab_names).to eql(["DE", "EN", "FR", "EL"])
   end
 end

@@ -35,4 +35,6 @@ class Coreon.Views.Properties.PropertiesView extends Backbone.View
 
     @$el.html @template
       properties: properties
+
+    @$('ul li:first-child').addClass 'selected'
     @

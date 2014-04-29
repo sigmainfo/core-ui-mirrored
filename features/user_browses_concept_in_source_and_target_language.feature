@@ -64,11 +64,10 @@ Feature: user browses concept in source and target language
     When I click the "Source Language" selector
     And I select "None" from the dropdown
     When I click the "Target Language" selector
-    And I select "German" from the dropdownUne rose est une rose
+    And I select "German" from the dropdown
     Then I should see "Schusswaffe" displayed as property "description" of concept
     And I should see the property "description" of concept in following language order: "German", "Russian", "English", "Korean"
 
-  @wip
   Scenario: browse term property groups by language
     Given a concept with an English term "rose" exists
     And it has an English description "A rose is a rose."
@@ -82,9 +81,11 @@ Feature: user browses concept in source and target language
     Then I see a property group "DESCRIPTION"
     And I see tabs "EN", "FR", "DE", "EL" in order
     And the English description "A rose is a rose." is selected
-    And I select "German" as source language
+    When I select "German" as source language
+    And I click "Toggle properties" on the term
     Then I see tabs "DE", "FR", "EN", "EL" in order
     And the German description "Eine Rose ist eine Rose." is selected
     When I select "None" as source language
     When I select "None" as target language
-    Then I see tabs "DE", "EL", "EN", "FR" in order
+    And I click "Toggle properties" on the term
+    Then I see tabs "DE", "EN", "FR", "EL" in order
