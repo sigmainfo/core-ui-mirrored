@@ -3,11 +3,12 @@
 #= require helpers/can
 #= require helpers/form_for
 #= require helpers/input
+#= require helpers/action_for
 #= require templates/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
-#= require templates/concepts/_properties
 #= require templates/concepts/_edit_properties
+#= require templates/concepts/_properties
 #= require templates/concepts/_term
 #= require templates/terms/new_term
 #= require templates/properties/new_property
@@ -42,7 +43,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   events:
     "click  .concept-to-clipboard.add"           : "addConceptToClipboard"
     "click  .concept-to-clipboard.remove"        : "removeConceptFromClipboard"
-    "click  .edit-concept"                       : "toggleEditMode"
+    "click  .toggle-edit-mode"                   : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"

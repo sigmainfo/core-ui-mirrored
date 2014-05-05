@@ -8,6 +8,7 @@ describe "Coreon.Helpers.action_for()", ->
 
   beforeEach ->
     sinon.stub I18n, "t"
+
     template = sinon.stub Coreon.Templates, 'helpers/action_for'
     helper = Coreon.Helpers.action_for
 

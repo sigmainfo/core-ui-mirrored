@@ -1,18 +1,14 @@
 .concept-head
+  - if @can 'manage'
+    != @action_for 'concept.toggle_edit_mode', className: 'button'
+    .edit
+      != @action_for 'concept.delete_concept'
   .actions
-    - if @can "edit", Coreon.Models.Concept
-      %a.edit-concept.button{href: 'javascript:void(0)', title: I18n.t('concept.edit.hint')}= I18n.t('concept.edit.label')
-
     %a.concept-to-clipboard.remove{ href: "javascript: void(0)", title: I18n.t "concept.remove_from_clipboard" }= I18n.t "concept.remove_from_clipboard"
     %a.concept-to-clipboard.add{ href: "javascript: void(0)", title: I18n.t "concept.add_to_clipboard" }= I18n.t "concept.add_to_clipboard"
     %h4.system-info-toggle{title: I18n.t('concept.info.hint')}= I18n.t('concept.info.label')
 
-    .edit
-      - if @can "delete", Coreon.Models.Concept
-        %a.delete-concept{href: "javascript:void(0)", title: I18n.t "concept.delete" }= I18n.t "concept.delete"
-
   != @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("id")
-
   != @render "concepts/info", data: @concept.info()
 
 - if @editing and @editProperties

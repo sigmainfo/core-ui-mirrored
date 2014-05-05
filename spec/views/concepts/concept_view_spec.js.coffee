@@ -120,36 +120,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         expect( @view.$el ).to.have.class 'edit'
         expect( @view.$el ).to.not.have.class 'show'
 
-    context 'with edit privileges', ->
-
-      beforeEach ->
-        Coreon.Helpers.can.returns true
-
-      it 'renders delete concept link', ->
-        I18n.t.withArgs('concept.delete').returns 'Delete concept'
-        @view.render()
-        expect( @view.$el ).to.have '.edit a.delete-concept'
-        expect( @view.$('a.delete-concept') ).to.have.text 'Delete concept'
-
-      it 'renders edit concept link', ->
-        I18n.t.withArgs('concept.edit.label').returns 'Edit concept'
-        @view.render()
-        expect( @view.$el ).to.have 'a.edit-concept'
-        expect( @view.$('a.edit-concept') ).to.have.text 'Edit concept'
-
-    context 'without edit privileges', ->
-
-      beforeEach ->
-        Coreon.Helpers.can.returns false
-
-      it 'does not render delete concept link', ->
-        @view.render()
-        expect( @view.$el ).to.not.have 'a.delete'
-
-      it 'does not render edit concept link', ->
-        @view.render()
-        expect( @view.$el ).to.not.have 'a.edit-concept'
-
     context 'properties', ->
 
       beforeEach ->
@@ -559,21 +529,30 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
   describe '#toggleEditMode()', ->
 
+    toggle = null
+    event = null
+
     beforeEach ->
-      @view.render()
-      Coreon.application.set 'editing', off
+      @view.$el.html '<a class="toggle-edit-mode">Edit mode</a>'
+      toggle = @view.$('.toggle-edit-mode')
+      event = $.Event 'click'
+      event.target = toggle[0]
 
     it 'is triggered by click on edit mode toggle', ->
-      @view.toggleEditMode = sinon.stub().returns false
+      toggleEditMode = sinon.stub @view, 'toggleEditMode'
       @view.delegateEvents()
-      @view.$('.edit-concept').click()
-      expect( @view.toggleEditMode ).to.have.been.calledOnce
+      toggle.trigger event
+      expect(toggleEditMode).to.have.been.calledOnce
 
-    it 'toggles edit mode value', ->
-      @view.$('.edit-concept').click()
-      expect( Coreon.application.get 'editing' ).to.be.true
-      @view.$('.edit-concept').click()
-      expect( Coreon.application.get 'editing' ).to.be.false
+    it 'toggles edit mode from off to on', ->
+      Coreon.application.set 'editing', off, silent: yes
+      @view.toggleEditMode event
+      expect(Coreon.application.get 'editing').to.be.true
+
+    it 'toggles edit mode from on to off', ->
+      Coreon.application.set 'editing', on, silent: yes
+      @view.toggleEditMode event
+      expect(Coreon.application.get 'editing').to.be.false
 
   describe '#toggleEditConceptProperties()', ->
 

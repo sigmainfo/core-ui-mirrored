@@ -24,7 +24,7 @@ describe "Coreon.Helpers.input()", ->
     tag.should.have.attr "required", "required"
 
   context "input tag", ->
-    
+
     it "renders input tag", ->
       @model.set "attrName", "foo bar baz", silent: true
       markup = @helper "model", "attrName", @model
@@ -98,7 +98,7 @@ describe "Coreon.Helpers.input()", ->
 
 
   context "label tag", ->
-    
+
     it "renders label tag", ->
       I18n.t.withArgs("property.prop_value").returns "Value"
       markup = @helper "property", "propValue", null
@@ -115,7 +115,7 @@ describe "Coreon.Helpers.input()", ->
       label.should.have.text "Foo"
 
   context "errors", ->
-    
+
     it "renders errors", ->
       markup = @helper "property", "propValue", null, errors: [ "can't be blank" ]
       input = $(markup)
@@ -129,7 +129,7 @@ describe "Coreon.Helpers.input()", ->
 
     it "extracts errors from model", ->
       @model.errors = -> attrName: [ "can't be blank" ]
-      markup = @helper "model", "attrName", @model 
+      markup = @helper "model", "attrName", @model
       input = $(markup)
       error = input.find ".error-message"
       error.should.have.text "can't be blank"

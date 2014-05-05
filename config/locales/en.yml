@@ -99,7 +99,7 @@ en:
       label: 'Edit mode'
       hint: 'Enter/leave edit mode'
     create: "Create concept"
-    delete: "Delete concept"
+    delete_concept: "Delete concept"
     confirm_delete: "This concept including all terms will be deleted permanently!"
     confirm_update: "Saving the concept will delete {{count}} properties permanently!"
     update: "Save concept"
