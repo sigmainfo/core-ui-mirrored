@@ -17,18 +17,16 @@ describe 'Coreon.Templates[concepts/concept]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
 
     concept = buildConcept()
 
     data =
+      concept: concept
+
       render: -> ''
       can: -> no
       action_for: -> ''
-      concept: concept
-
-  afterEach ->
-    I18n.t.restore()
 
   context 'head', ->
 
