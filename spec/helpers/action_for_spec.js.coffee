@@ -59,8 +59,10 @@ describe "Coreon.Helpers.action_for()", ->
 
   it 'passes name to template', ->
     helper 'concept.toggle_edit_mode'
-    expect(context template).to.have.property 'name', 'toggle-edit-mode'
+    context = template.firstCall.args[0]
+    expect(context).to.have.property 'name', 'toggle-edit-mode'
 
   it 'appends additional class to name', ->
     helper 'concept.toggle_edit_mode', className: 'button'
-    expect(context template).to.have.property 'name', 'toggle-edit-mode button'
+    context = template.firstCall.args[0]
+    expect(context).to.have.property 'name', 'toggle-edit-mode button'
