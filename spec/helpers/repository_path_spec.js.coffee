@@ -14,9 +14,5 @@ describe "Coreon.Helpers.repository_path()", ->
   it "prefixes with repository id", ->
     @helper("foo").should.equal "/coffeebabe23coffeebabe42/foo"
 
-  xit "joins multiple fragments", ->
-    @helper("1", "2", "3").should.equal "/coffeebabe23coffeebabe42/1/2/3"
-
   it "avoids multiple slashes", ->
     @helper("/1/").should.equal "/coffeebabe23coffeebabe42/1/"
-
