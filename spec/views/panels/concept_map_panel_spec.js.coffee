@@ -21,7 +21,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       delete window.cancelAnimationFrame
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     Coreon.application =
       cacheId: -> 'face42'
       repositorySettings: (key = null) ->
@@ -44,14 +44,14 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     hits = new Backbone.Collection
 
-    sinon.stub Coreon.Lib.ConceptMap, 'LeftToRight', =>
+    @stub Coreon.Lib.ConceptMap, 'LeftToRight', =>
        @leftToRight =
-         resize: sinon.spy()
+         resize: @spy()
          render: => @leftToRight
 
-    sinon.stub Coreon.Lib.ConceptMap, 'TopDown', =>
+    @stub Coreon.Lib.ConceptMap, 'TopDown', =>
       @topDown =
-        resize: sinon.spy()
+        resize: @spy()
         render: => @topDown
 
     panel = new Backbone.Model
@@ -65,9 +65,6 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
   afterEach ->
     Coreon.application = null
-    I18n.t.restore()
-    Coreon.Lib.ConceptMap.LeftToRight.restore()
-    Coreon.Lib.ConceptMap.TopDown.restore()
 
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
@@ -82,30 +79,27 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
   describe '#initialize()', ->
 
     it 'calls super implementation', ->
-      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
-      try
-        panel = new Backbone.Model
-        view.initialize
-          model: nodes
-          hits: hits
-          panel: panel
-        original = Coreon.Views.Panels.PanelView::initialize
-        # FOLLOWING RAISES ERROR IN NODE.JS:
-        #
-        # expect(original).to.have.been.calledOnce
-        # expect(original).to.have.been.calledWith
-        #   model: nodes
-        #   hits: hits
-        #   panel: panel
-        #
-        # SO IT IS REPLACED BY:
-        expect(original.callCount).to.equal 1
-        expect(original.firstCall.args[0]).to.eql
-          model: nodes
-          hits: hits
-          panel: panel
-      finally
-        Coreon.Views.Panels.PanelView::initialize.restore()
+      @spy Coreon.Views.Panels.PanelView::, 'initialize'
+      panel = new Backbone.Model
+      view.initialize
+        model: nodes
+        hits: hits
+        panel: panel
+      original = Coreon.Views.Panels.PanelView::initialize
+      # FOLLOWING RAISES ERROR IN NODE.JS:
+      #
+      # expect(original).to.have.been.calledOnce
+      # expect(original).to.have.been.calledWith
+      #   model: nodes
+      #   hits: hits
+      #   panel: panel
+      #
+      # SO IT IS REPLACED BY:
+      expect(original.callCount).to.equal 1
+      expect(original.firstCall.args[0]).to.eql
+        model: nodes
+        hits: hits
+        panel: panel
 
     it 'assigns hits', ->
       hits = new Backbone.Collection
@@ -144,20 +138,20 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
   describe '#render()', ->
 
     beforeEach ->
-      sinon.spy view.model, 'build'
+      @spy view.model, 'build'
       deferred = null
-      view.update = sinon.spy ->
+      view.update = @spy ->
         deferred = $.Deferred()
         deferred.promise()
       @updated = (nodes) =>
         deferred.resolveWith view, [nodes]
-      view.centerSelection = sinon.spy()
+      view.centerSelection = @spy()
 
     it 'can be chained', ->
       view.render().should.equal view
 
     it 'is triggered on hits update', ->
-      view.render = sinon.spy()
+      view.render = @spy()
       view.initialize hits: view.hits, panel: panel
       view.hits.trigger 'update'
       view.render.should.have.been.calledOnce
@@ -260,14 +254,14 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
     nodes = null
 
     beforeEach ->
-      center = sinon.stub()
+      center = @stub()
       center.returns x: 90, y: 30
       view.renderStrategy.center = center
 
-      translate = sinon.spy()
+      translate = @spy()
       view.navigator.translate = translate
 
-      pan = sinon.spy()
+      pan = @spy()
       view._panAndZoom = pan
 
       nodes = []
@@ -329,7 +323,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         deferred.resolve()
 
     it 'is triggered on placeholder updates', ->
-      view.update = sinon.spy()
+      view.update = @spy()
       view.initialize hits: view.hits, panel: panel
       view.model.trigger 'placeholder:update'
       expect( view.update ).to.have.been.calledOnce
@@ -338,7 +332,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       graph = root: {id: 'root'}, edges: []
       view.model.graph = -> graph
       strategy = view.renderStrategy
-      sinon.spy strategy, 'render'
+      @spy strategy, 'render'
       view.renderStrategy = strategy
       view.update()
       strategy.render.should.have.been.calledWith graph
@@ -352,14 +346,14 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       expect( model2.get 'rendered' ).to.be.true
 
     it 'defers promise', ->
-      done = sinon.spy()
+      done = @spy()
       view.renderStrategy.render = ->
         done: (done) ->
       view.update().done done
       expect( done ).to.not.have.been.called
 
     it 'resolves promise when finished', ->
-      done = sinon.spy()
+      done = @spy()
       nodes = []
       edges = []
       view.renderStrategy.render = ->
@@ -373,19 +367,16 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
     beforeEach ->
       callbacks = []
-      sinon.stub _, 'defer', (callback) =>
+      @stub _, 'defer', (callback) =>
         callbacks.push callback
       @next = ->
         callback() for callback in callbacks
         callbacks = []
-      view.update = sinon.spy()
+      view.update = @spy()
       @model = new Backbone.Model rendered: yes
 
-    afterEach ->
-      _.defer.restore()
-
     it 'is triggered on concept node changes', ->
-      view.scheduleForUpdate = sinon.spy()
+      view.scheduleForUpdate = @spy()
       view.initialize hits: view.hits, panel: panel
       view.model.trigger "change", @model
       expect( view.scheduleForUpdate ).to.have.been.calledOnce
@@ -441,11 +432,11 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       @event = $.Event 'click'
       @event.target = @placeholder[0]
       @deferred = $.Deferred()
-      view.update = sinon.spy()
-      view.model.expand = sinon.stub().returns @deferred.promise()
+      view.update = @spy()
+      view.model.expand = @stub().returns @deferred.promise()
 
     it 'is triggered by click on placeholder', ->
-      view.expand = sinon.spy()
+      view.expand = @spy()
       view.delegateEvents()
       @placeholder.trigger @event
       expect( view.expand.callCount ).to.equal 1
@@ -453,7 +444,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       expect( view.expand.thisValues[0] ).to.equal view
 
     it 'is not triggered when placeholder is busy', ->
-      view.expand = sinon.spy()
+      view.expand = @spy()
       view.delegateEvents()
       @placeholder.addClass 'busy'
       @placeholder.trigger @event
@@ -469,7 +460,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       expect( view.model.expand ).to.have.been.calledWith '86f14a'
 
     it 'updates view to render progress indicator', ->
-      set = sinon.spy()
+      set = @spy()
       @model.set = set
       view.expand @event
       expect( view.update ).to.have.been.calledOnce
@@ -495,7 +486,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         expect( view.update ).to.have.been.calledOnce
 
       it 'resets busy state to idle before updating', ->
-        sinon.spy @model, 'set'
+        @spy @model, 'set'
         view.expand @event
         view.update.reset()
         @deferred.resolve()
@@ -511,7 +502,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         expect( view.update ).to.have.been.calledOnce
 
       it 'resets busy state to idle before updating', ->
-        sinon.spy @model, 'set'
+        @spy @model, 'set'
         view.expand @event
         view.update.reset()
         @deferred.reject()
@@ -525,7 +516,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         done: ->
 
     it 'is triggered by click on button', ->
-      view.zoomIn = sinon.spy()
+      view.zoomIn = @spy()
       view.delegateEvents()
       view.$('.zoom-in').click()
       view.zoomIn.should.have.been.calledOnce
@@ -557,7 +548,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         done: ->
 
     it 'is triggered by click on button', ->
-      view.zoomOut = sinon.spy()
+      view.zoomOut = @spy()
       view.delegateEvents()
       view.$('.zoom-out').click()
       view.zoomOut.should.have.been.calledOnce
@@ -585,20 +576,17 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
   describe '#resize()', ->
 
     it 'calls super implementation', ->
-      sinon.spy Coreon.Views.Panels.PanelView::, 'resize'
-      try
-        view.resize()
-        original = Coreon.Views.Panels.PanelView::resize
-        # FOLLOWING RAISES ERROR IN NODE.JS:
-        #
-        # expect(original).to.have.been.calledOnce
-        # expect(original).to.have.been.calledOn view
-        #
-        # SO IT IS REPLACED BY:
-        expect(original.callCount).to.equal 1
-        expect(original.firstCall.thisValue).to.equal view
-      finally
-        Coreon.Views.Panels.PanelView::resize.restore()
+      @spy Coreon.Views.Panels.PanelView::, 'resize'
+      view.resize()
+      original = Coreon.Views.Panels.PanelView::resize
+      # FOLLOWING RAISES ERROR IN NODE.JS:
+      #
+      # expect(original).to.have.been.calledOnce
+      # expect(original).to.have.been.calledOn view
+      #
+      # SO IT IS REPLACED BY:
+      expect(original.callCount).to.equal 1
+      expect(original.firstCall.thisValue).to.equal view
 
     it 'resizes render strategy', ->
       view.dimensions = ->
@@ -648,7 +636,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       view.map = d3.select $('<svg>')[0]
 
     it 'is triggered by click on toggle', ->
-      view.toggleOrientation = sinon.spy()
+      view.toggleOrientation = @spy()
       view.delegateEvents()
       view.$('.toggle-orientation').click()
       view.toggleOrientation.should.have.been.calledOnce
@@ -675,7 +663,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       view.renderStrategy.should.equal @topDown
 
     it 'renders view', ->
-      view.render = sinon.spy()
+      view.render = @spy()
       view.toggleOrientation()
       view.render.should.have.been.calledOnce
 
@@ -690,8 +678,8 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
       it 'applies transition', ->
         transition = d3.transition()
-        transition.attr = sinon.spy()
-        view.map.transition = sinon.stub().returns transition
+        transition.attr = @spy()
+        view.map.transition = @stub().returns transition
         view._panAndZoom animate: yes
         expect( transition.attr ).to.have.been.calledOnce
         expect( transition.attr ).to.have.been.calledWith 'transform',

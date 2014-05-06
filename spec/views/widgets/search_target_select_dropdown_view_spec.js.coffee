@@ -5,12 +5,9 @@
 describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
     @view = new Coreon.Views.Widgets.SearchTargetSelectDropdownView
       model: new Coreon.Models.SearchType
-
-  afterEach ->
-    I18n.t.restore()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
@@ -72,7 +69,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
 
     it "keeps aligment on resize", ->
       @view.alignTo @parent
-      @view.alignTo = sinon.spy()
+      @view.alignTo = @spy()
       @view.initialize()
       $(window).resize()
       @view.alignTo.should.have.been.calledOnce
@@ -84,13 +81,13 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @event = jQuery.Event "click"
 
     it "is triggered by click", ->
-      @view.onClick = sinon.spy()
+      @view.onClick = @spy()
       @view.delegateEvents()
       @view.$el.trigger @event
       @view.onClick.should.have.been.calledWith @event
 
     it "hides itself", ->
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @view.onClick @event
       @view.remove.should.have.been.calledOnce
 
@@ -115,7 +112,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.render()
 
     it "is triggered when hovering an option", ->
-      @view.onFocus = sinon.spy()
+      @view.onFocus = @spy()
       @view.delegateEvents()
       @view.$("li.option").eq(1).trigger @event
       @view.onFocus.should.have.been.calledWith @event
@@ -133,7 +130,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       @view.render()
 
     it "is triggered when hovering out of an option", ->
-      @view.onBlur = sinon.spy()
+      @view.onBlur = @spy()
       @view.delegateEvents()
       @view.$("li.option").eq(1).trigger @event
       @view.onBlur.should.have.been.calledWith @event
@@ -152,33 +149,33 @@ describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
       $("#konacha").append @view.render().$el
 
     it "is triggered by keydown", ->
-      @view.onKeydown = sinon.spy()
+      @view.onKeydown = @spy()
       @view.initialize()
       $(document).trigger @event
       @view.onKeydown.should.have.been.calledWith @event
 
     it "is not triggered after undelegating events", ->
-      @view.onKeydown = sinon.spy()
+      @view.onKeydown = @spy()
       @view.delegateEvents()
       $(document).trigger @event
       @view.onKeydown.should.not.have.been.called
 
     it "hides itself on <esc>", ->
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @event.keyCode = 27
       @view.onKeydown @event
       @view.remove.should.have.been.calledOnce
 
     it "selects focused on <enter", ->
       @view.$("li.option").eq(1).addClass "focus"
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @event.keyCode = 13
       @view.onKeydown @event
       @view.model.get("selectedTypeIndex").should.equal 1
       @view.remove.should.have.been.calledOnce
 
     it "simply keeps selection when nothing is focused on <enter>", ->
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @event.keyCode = 13
       @view.onKeydown @event
       @view.model.get("selectedTypeIndex").should.equal 0

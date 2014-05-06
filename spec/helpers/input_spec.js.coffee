@@ -4,12 +4,9 @@
 describe "Coreon.Helpers.input()", ->
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
     @model = new Backbone.Model
     @helper = Coreon.Helpers.input
-
-  afterEach ->
-    I18n.t.restore()
 
   it "creates container", ->
     markup = @helper "model", "attrName"

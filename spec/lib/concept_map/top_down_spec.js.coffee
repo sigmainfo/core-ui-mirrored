@@ -4,25 +4,19 @@
 describe 'Coreon.Lib.ConceptMap.TopDown', ->
 
   beforeEach ->
-    sinon.stub _, 'defer'
+    @stub _, 'defer'
     @svg = $ '<svg:g class="map">'
     @parent = d3.select @svg[0]
     @strategy = new Coreon.Lib.ConceptMap.TopDown @parent
 
-  afterEach ->
-    _.defer.restore()
-
   describe '#constructor()', ->
 
     it 'calls super', ->
-      sinon.spy Coreon.Lib.ConceptMap.RenderStrategy::, 'constructor'
-      try
-        @strategy = new Coreon.Lib.ConceptMap.TopDown @parent
-        Coreon.Lib.ConceptMap.RenderStrategy::constructor.should.have.been.calledOnce
-        Coreon.Lib.ConceptMap.RenderStrategy::constructor.should.have.been.calledOn @strategy
-        Coreon.Lib.ConceptMap.RenderStrategy::constructor.should.have.been.calledWith @parent
-      finally
-        Coreon.Lib.ConceptMap.RenderStrategy::constructor.restore()
+      @spy Coreon.Lib.ConceptMap.RenderStrategy::, 'constructor'
+      @strategy = new Coreon.Lib.ConceptMap.TopDown @parent
+      Coreon.Lib.ConceptMap.RenderStrategy::constructor.should.have.been.calledOnce
+      Coreon.Lib.ConceptMap.RenderStrategy::constructor.should.have.been.calledOn @strategy
+      Coreon.Lib.ConceptMap.RenderStrategy::constructor.should.have.been.calledWith @parent
 
     it 'sets node size of layout', ->
       nodeSize = @strategy.layout.nodeSize()
@@ -32,22 +26,16 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
   describe '#updateNodes()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers.Text, 'wrap'
+      @stub Coreon.Helpers.Text, 'wrap'
       @selection = @parent.append('g').attr('class', 'concept-node')
 
-    afterEach ->
-      Coreon.Helpers.Text.wrap.restore()
-
     it 'calls super', ->
-      sinon.spy Coreon.Lib.ConceptMap.RenderStrategy::, 'updateNodes'
-      try
-        nodes = @selection.data []
-        @strategy.updateNodes nodes
-        Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledOnce
-        Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledOn @strategy
-        Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledWith nodes
-      finally
-        Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.restore()
+      @spy Coreon.Lib.ConceptMap.RenderStrategy::, 'updateNodes'
+      nodes = @selection.data []
+      @strategy.updateNodes nodes
+      Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledOnce
+      Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledOn @strategy
+      Coreon.Lib.ConceptMap.RenderStrategy::updateNodes.should.have.been.calledWith nodes
 
     it 'moves nodes to new position', ->
       nodes = @selection.data [
@@ -225,15 +213,12 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
       @strategy.updateEdges.should.have.been.calledWith @edges
 
     it 'calls super', ->
-      sinon.spy Coreon.Lib.ConceptMap.RenderStrategy::, 'updateLayout'
-      try
-        updateOfSuper = Coreon.Lib.ConceptMap.RenderStrategy::updateLayout
-        returnValue = @strategy.updateLayout @nodes, @edges, @deferred
-        expect( updateOfSuper ).to.have.been.calledOnce
-        expect( updateOfSuper ).to.have.been.calledWith @nodes, @edges, @deferred
-        expect( returnValue ).to.equal @deferred
-      finally
-        Coreon.Lib.ConceptMap.RenderStrategy::updateLayout.restore()
+      @spy Coreon.Lib.ConceptMap.RenderStrategy::, 'updateLayout'
+      updateOfSuper = Coreon.Lib.ConceptMap.RenderStrategy::updateLayout
+      returnValue = @strategy.updateLayout @nodes, @edges, @deferred
+      expect( updateOfSuper ).to.have.been.calledOnce
+      expect( updateOfSuper ).to.have.been.calledWith @nodes, @edges, @deferred
+      expect( returnValue ).to.equal @deferred
 
   describe '#center()', ->
 

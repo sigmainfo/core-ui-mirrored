@@ -4,8 +4,8 @@
 describe 'Coreon.Views.Concepts.NewConceptView', ->
 
   beforeEach ->
-    sinon.stub I18n, 't'
-    sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
+    @stub I18n, 't'
+    @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
       @broaderAndNarrower = new Backbone.View options
     @view = new Coreon.Views.Concepts.NewConceptView
       model: new Backbone.Model
@@ -15,10 +15,6 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
-
-  afterEach ->
-    I18n.t.restore()
-    Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
 
   it 'is a Backbone view', ->
     @view.should.be.an.instanceof Backbone.View
@@ -54,12 +50,12 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
     context 'broader and narrower', ->
 
       it 'renders view', ->
-        @view.broaderAndNarrower.render = sinon.spy()
+        @view.broaderAndNarrower.render = @spy()
         @view.render()
         @view.broaderAndNarrower.render.should.have.been.calledOnce
 
       it 'renders view only once', ->
-        @view.broaderAndNarrower.render = sinon.spy()
+        @view.broaderAndNarrower.render = @spy()
         @view.render()
         @view.render()
         @view.broaderAndNarrower.render.should.have.been.calledOnce
@@ -182,18 +178,15 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
   describe '#addProperty()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) ->
+      @stub Coreon.Helpers, 'input', (name, attr, model, options) ->
         "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
       @event = $.Event 'click'
       @view.render()
       $('#konacha').append @view.$el
       @event.target = @view.$('.add-property').get(0)
 
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
     it 'is triggered by click on action', ->
-      @view.addProperty = sinon.stub().returns false
+      @view.addProperty = @stub().returns false
       @view.delegateEvents()
       @view.$('a.add-property').trigger @event
       @view.addProperty.should.have.been.calledOnce
@@ -233,7 +226,7 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
   describe '#removeProperty()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
+      @stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
       @event = $.Event 'click'
       @view.render()
       @view.$('.properties').append '''
@@ -242,11 +235,8 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
         </fieldset>
         '''
 
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
     it 'is triggered by click on remove action', ->
-      @view.removeProperty = sinon.stub().returns false
+      @view.removeProperty = @stub().returns false
       @view.delegateEvents()
       @view.$('.property a.remove-property').trigger @event
       @view.removeProperty.should.have.been.calledOnce
@@ -259,17 +249,14 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
   describe '#addTerm()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) ->
+      @stub Coreon.Helpers, 'input', (name, attr, model, options) ->
         "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
       @view.render()
       @event = $.Event 'click'
       @event.target = @view.$('a.add-term')[0]
 
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
     it 'is triggered by click on action', ->
-      @view.addTerm = sinon.stub().returns false
+      @view.addTerm = @stub().returns false
       @view.delegateEvents()
       @view.$('a.add-term').trigger @event
       @view.addTerm.should.have.been.calledOnce
@@ -308,7 +295,7 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
   describe '#removeTerm()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
+      @stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
       @view.$el.append '''
         <fieldset class='term not-persisted'>
           <a class='remove-term'>Remove term</a>
@@ -317,11 +304,8 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
       @event = $.Event 'click'
       @event.target = @view.$('a.remove-term')[0]
 
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
     it 'is triggered by click on remove action', ->
-      @view.removeTerm = sinon.stub().returns false
+      @view.removeTerm = @stub().returns false
       @view.delegateEvents()
       @view.$('.term a.remove-term').trigger @event
       @view.removeTerm.should.have.been.calledOnce
@@ -335,23 +319,20 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
 
     beforeEach ->
       @event = $.Event 'submit'
-      sinon.stub Backbone.history, 'navigate'
-      sinon.stub @view.model, 'save', =>
+      @stub Backbone.history, 'navigate'
+      @stub @view.model, 'save', =>
         @request = $.Deferred()
       @view.render()
 
-    afterEach ->
-      Backbone.history.navigate.restore()
-
     it 'is triggered on form submit', ->
-      @view.create = sinon.stub().returns false
+      @view.create = @stub().returns false
       @view.delegateEvents()
       @view.$('form').trigger @event
       @view.create.should.have.been.calledOne
       @view.create.should.have.been.calledWith @event
 
     it 'prevents default action', ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       @view.create @event
       @event.preventDefault.should.have.been.calledOnce
 
@@ -383,11 +364,8 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
           session:
             currentRepository: -> id: 'coffee23'
         collection = new Backbone.Collection
-        sinon.stub Coreon.Models.Concept, 'collection', -> collection
+        @stub Coreon.Models.Concept, 'collection', -> collection
         @view.model.path = -> 'my-repo/concepts/my-concept-123'
-
-      afterEach ->
-        Coreon.Models.Concept.collection.restore()
 
       it 'accumulates newly created model', ->
         @view.model.id = 'babe42'
@@ -405,7 +383,7 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
 
       it 'notifies about success', ->
         I18n.t.withArgs('notifications.concept.created').returns 'yay!'
-        Coreon.Models.Notification.info = sinon.spy()
+        Coreon.Models.Notification.info = @spy()
         @view.create @event
         @request.resolve()
         Coreon.Models.Notification.info.should.have.been.calledOnce
@@ -428,13 +406,10 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
         repository:
           path: -> '/my-repository'
       @view.app = app
-      sinon.stub Backbone.history, 'navigate'
-
-    afterEach ->
-      Backbone.history.navigate.restore()
+      @stub Backbone.history, 'navigate'
 
     it 'is triggered by click on cancel link', ->
-      @view.cancel = sinon.stub().returns false
+      @view.cancel = @stub().returns false
       @view.delegateEvents()
       @view.$el.html '''
         <a class='cancel'>Cancel</a>
@@ -463,16 +438,13 @@ describe 'Coreon.Views.Concepts.NewConceptView', ->
   describe '#remove()', ->
 
     beforeEach ->
-      sinon.stub Backbone.View::, 'remove', -> @
-
-    afterEach ->
-      Backbone.View::remove.restore()
+      @stub Backbone.View::, 'remove', -> @
 
     it 'can be chained', ->
       @view.remove().should.equal @view
 
     it 'removes broader and narrower view', ->
-      @view.broaderAndNarrower.remove = sinon.spy()
+      @view.broaderAndNarrower.remove = @spy()
       @view.remove()
       @view.broaderAndNarrower.remove.should.have.been.calledOnce
 

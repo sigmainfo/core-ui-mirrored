@@ -21,13 +21,13 @@ describe "Coreon.Modules.Loop", ->
   beforeEach ->
     frame = []
     id = 0
-    sinon.stub window, "requestAnimationFrame", (callback) ->
+    @stub window, "requestAnimationFrame", (callback) ->
       id += 1
       frame.push callback
       callback.id = id
 
     cancelled = []
-    sinon.stub window, "cancelAnimationFrame", (id) ->
+    @stub window, "cancelAnimationFrame", (id) ->
       cancelled.push id
 
     @nextFrame = (now = Date.now) ->
@@ -37,25 +37,21 @@ describe "Coreon.Modules.Loop", ->
 
     @view = new Coreon.Views.ViewWithLoop
 
-  afterEach ->
-    window.requestAnimationFrame.restore()
-    window.cancelAnimationFrame.restore()
-
   describe "startLoop()", ->
 
     it "does not trigger callback immediately", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.startLoop spy
       spy.should.not.have.been.called
 
     it "triggers callback on next frame", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.startLoop spy
       @nextFrame()
       spy.should.have.been.calledOnce
 
     it "keeps triggering callback on subsequent frames", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.startLoop spy
       @nextFrame()
       @nextFrame()
@@ -63,13 +59,13 @@ describe "Coreon.Modules.Loop", ->
       spy.should.have.been.calledThrice
 
     it "binds callback to instance", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.startLoop spy
       @nextFrame()
       spy.should.have.been.calledOn @view
 
     it "passes loop status to callback", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.startLoop spy
       @nextFrame 34567
       @nextFrame 34589
@@ -80,7 +76,7 @@ describe "Coreon.Modules.Loop", ->
       status.should.have.property "frame", 2
 
     it "returns loop status", ->
-      spy = sinon.spy()
+      spy = @spy()
       status = @view.startLoop spy
       @nextFrame()
       spy.should.have.been.calledWith status
@@ -98,14 +94,14 @@ describe "Coreon.Modules.Loop", ->
   describe "stopLoop()", ->
 
     it "stops triggering callback with given handle", ->
-      spy = sinon.spy()
+      spy = @spy()
       status = @view.startLoop spy
       @view.stopLoop status
       @nextFrame()
       spy.should.not.have.been.called
 
     it "stops all loops when no handle is specified", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.startLoop spy
       @view.startLoop spy
       @view.startLoop spy

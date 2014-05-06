@@ -2,14 +2,14 @@
 #= require models/notification
 
 describe "Coreon.Models.Notification", ->
-  
+
   context "class", ->
 
     afterEach ->
       Coreon.Models.Notification.collection().reset []
 
     describe "collection()", ->
-      
+
       it "defaults to empty collection", ->
         collection = Coreon.Models.Notification.collection()
         collection.should.be.an.instanceof Backbone.Collection
@@ -24,7 +24,7 @@ describe "Coreon.Models.Notification", ->
 
       beforeEach ->
         @collection = Coreon.Models.Notification.collection()
-      
+
       it "creates info message", ->
         Coreon.Models.Notification.info "You are being followed, William Blake."
         @collection.should.have.lengthOf 1
@@ -32,12 +32,12 @@ describe "Coreon.Models.Notification", ->
         info.should.be.an.instanceof Coreon.Models.Notification
         info.get("type").should.equal "info"
         info.get("message").should.equal "You are being followed, William Blake."
-    
+
     describe "error()", ->
-    
+
       beforeEach ->
         @collection = Coreon.Models.Notification.collection()
-      
+
       it "creates error message", ->
         Coreon.Models.Notification.error "Shit. You ain't even old enough to smoke."
         @collection.should.have.lengthOf 1
@@ -45,9 +45,9 @@ describe "Coreon.Models.Notification", ->
         info.should.be.an.instanceof Coreon.Models.Notification
         info.get("type").should.equal "error"
         info.get("message").should.equal "Shit. You ain't even old enough to smoke."
-    
+
   context "instance", ->
-     
+
     beforeEach ->
       @notification = new Coreon.Models.Notification
 
@@ -60,15 +60,10 @@ describe "Coreon.Models.Notification", ->
     describe "destroy()", ->
 
       beforeEach ->
-        @clock = sinon.useFakeTimers()
-        sinon.stub Backbone.Model::, "destroy"
-
-      afterEach ->
-        @clock.restore()
-        Backbone.Model::destroy.restore()
+        @stub Backbone.Model::, "destroy"
 
       it "is triggered after timeout", ->
-        @notification.destroy = sinon.spy()
+        @notification.destroy = @spy()
         @notification.initialize()
         @notification.destroy.should.not.have.been.called
         @clock.tick 6000
@@ -89,4 +84,3 @@ describe "Coreon.Models.Notification", ->
         finally
           window.clearTimeout.restore()
           clearTimeout orig
-        

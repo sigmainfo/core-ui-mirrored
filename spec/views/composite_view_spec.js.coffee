@@ -18,7 +18,7 @@ describe "Coreon.Views.CompositeView", ->
     @view.subviews.should.eql []
 
   describe "#add", ->
-    
+
     it "adds view to subviews", ->
       @view.add @subview
       @view.subviews.should.have.lengthOf 1
@@ -38,7 +38,7 @@ describe "Coreon.Views.CompositeView", ->
 
     beforeEach ->
       @view.add @subview1, @subview2
-    
+
     it "removes view from subviews", ->
       @view.drop @subview2
       @view.subviews.should.eql [@subview1]
@@ -46,10 +46,10 @@ describe "Coreon.Views.CompositeView", ->
     it "takes multiple arguments", ->
       @view.drop @subview2, @subview1
       @view.subviews.should.eql []
-    
+
 
   describe "#append", ->
-    
+
     it "adds subview to collection", ->
       @view.append @subview
       @view.subviews.should.eql [@subview]
@@ -64,7 +64,7 @@ describe "Coreon.Views.CompositeView", ->
       @view.$(".target").should.have ".subview"
 
     it "calls delegateEvents on subview", ->
-      @subview.delegateEvents = sinon.spy()
+      @subview.delegateEvents = @spy()
       @view.append @subview
       @subview.delegateEvents.should.have.been.calledOnce
 
@@ -80,7 +80,7 @@ describe "Coreon.Views.CompositeView", ->
       @view.subviews.should.eql [@subview]
 
     it "prepends el", ->
-      @view.$el.prepend = sinon.spy()
+      @view.$el.prepend = @spy()
       @view.prepend @subview
       @view.$el.prepend.should.have.been.calledWith @subview.$el
 
@@ -90,7 +90,7 @@ describe "Coreon.Views.CompositeView", ->
       @view.$(".target").should.have ".subview"
 
     it "calls delegateEvents on subview", ->
-      @subview.delegateEvents = sinon.spy()
+      @subview.delegateEvents = @spy()
       @view.prepend @subview
       @subview.delegateEvents.should.have.been.calledOnce
 
@@ -103,53 +103,44 @@ describe "Coreon.Views.CompositeView", ->
 
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
-    
+
     it "can be chained", ->
       @view.render().should.equal @view
 
     it "calls render on every subview", ->
-      @subview1.render = sinon.spy()
-      @subview2.render = sinon.spy()
+      @subview1.render = @spy()
+      @subview2.render = @spy()
       @view.render()
       @subview1.render.should.have.been.calledOnce
       @subview2.render.should.have.been.calledOnce
 
     it "calls super", ->
-      sinon.spy Coreon.Views.SimpleView::, "render"
-      try
-        @view.render()
-        Coreon.Views.SimpleView::render.should.have.been.calledOn @view
-      finally
-        Coreon.Views.SimpleView::render.restore()
+      @spy Coreon.Views.SimpleView::, "render"
+      @view.render()
+      Coreon.Views.SimpleView::render.should.have.been.calledOn @view
 
   describe "#delegateEvents", ->
 
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
-    
+
     it "calls delegateEvents on every subview", ->
-      @subview1.delegateEvents = sinon.spy()
-      @subview2.delegateEvents = sinon.spy()
+      @subview1.delegateEvents = @spy()
+      @subview2.delegateEvents = @spy()
       @view.delegateEvents()
       @subview1.delegateEvents.should.have.been.calledOnce
       @subview2.delegateEvents.should.have.been.calledOnce
 
     it "calls super", ->
-      sinon.spy Coreon.Views.SimpleView::, "delegateEvents"
-      try
-        @view.delegateEvents()
-        Coreon.Views.SimpleView::delegateEvents.should.have.been.calledOn @view
-      finally
-        Coreon.Views.SimpleView::delegateEvents.restore()
+      @spy Coreon.Views.SimpleView::, "delegateEvents"
+      @view.delegateEvents()
+      Coreon.Views.SimpleView::delegateEvents.should.have.been.calledOn @view
 
     it "passes arguments to calls", ->
       method = ->
-      sinon.spy Coreon.Views.SimpleView::, "delegateEvents"
-      try
-        @view.delegateEvents "click": method
-        Coreon.Views.SimpleView::delegateEvents.should.always.have.been.calledWithExactly "click": method
-      finally
-        Coreon.Views.SimpleView::delegateEvents.restore()
+      @spy Coreon.Views.SimpleView::, "delegateEvents"
+      @view.delegateEvents "click": method
+      Coreon.Views.SimpleView::delegateEvents.should.always.have.been.calledWithExactly "click": method
 
 
   describe "#undelegateEvents", ->
@@ -158,39 +149,36 @@ describe "Coreon.Views.CompositeView", ->
       @view.subviews = [@subview1, @subview2]
 
     it "calls undelegateEvents on every subview", ->
-      @subview1.undelegateEvents = sinon.spy()
-      @subview2.undelegateEvents = sinon.spy()
+      @subview1.undelegateEvents = @spy()
+      @subview2.undelegateEvents = @spy()
       @view.undelegateEvents()
       @subview1.undelegateEvents.should.have.been.calledOnce
       @subview2.undelegateEvents.should.have.been.calledOnce
 
 
     it "calls super", ->
-      sinon.spy Coreon.Views.SimpleView::, "undelegateEvents"
-      try
-        @view.undelegateEvents()
-        Coreon.Views.SimpleView::undelegateEvents.should.have.been.calledOn @view
-      finally
-        Coreon.Views.SimpleView::undelegateEvents.restore()
+      @spy Coreon.Views.SimpleView::, "undelegateEvents"
+      @view.undelegateEvents()
+      Coreon.Views.SimpleView::undelegateEvents.should.have.been.calledOn @view
 
   describe "#remove", ->
-    
+
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
 
     context "with no arguments", ->
 
       it "removes element", ->
-        @view.$el.remove = sinon.spy()
+        @view.$el.remove = @spy()
         @view.remove()
         @view.$el.remove.should.have.been.calledOnce
 
     context "with arguments", ->
 
       it "removes subview elements", ->
-        @view.$el.remove = sinon.spy()
-        @subview1.$el.remove = sinon.spy()
-        @subview2.$el.remove = sinon.spy()
+        @view.$el.remove = @spy()
+        @subview1.$el.remove = @spy()
+        @subview2.$el.remove = @spy()
         @view.remove @subview2
         @subview2.$el.remove.should.have.been.calledOnce
         @view.$el.remove.should.not.have.been.called
@@ -201,33 +189,33 @@ describe "Coreon.Views.CompositeView", ->
         @view.subviews.should.eql [@subview1]
 
   describe "#destroy", ->
-    
+
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
 
     context "with no arguments", ->
-      
+
       it "destroys subviews", ->
-        @subview1.destroy = sinon.spy()
-        @subview2.destroy = sinon.spy()
+        @subview1.destroy = @spy()
+        @subview2.destroy = @spy()
         @view.destroy()
         @subview1.destroy.should.have.been.calledOnce
         @subview2.destroy.should.have.been.calledOnce
 
       it "destroys itself", ->
-        @view.dissolve = sinon.spy()
-        @view.remove = sinon.spy()
+        @view.dissolve = @spy()
+        @view.remove = @spy()
         @view.destroy()
         @view.dissolve.should.have.been.calledOnce
         @view.remove.should.have.been.calledOnce
 
     context "with arguments", ->
-    
+
       it "destroys given subviews only", ->
-        @view.dissolve = sinon.spy()
-        @view.remove = sinon.spy()
-        @subview1.destroy = sinon.spy()
-        @subview2.destroy = sinon.spy()
+        @view.dissolve = @spy()
+        @view.remove = @spy()
+        @subview1.destroy = @spy()
+        @subview2.destroy = @spy()
         @view.destroy @subview2
         @subview2.destroy.should.have.been.calledOnce
         @view.dissolve.should.not.have.been.called
@@ -248,38 +236,35 @@ describe "Coreon.Views.CompositeView", ->
       @view.subviews.should.eql []
 
     it "destroys subviews", ->
-      @subview1.destroy = sinon.spy()
-      @subview2.destroy = sinon.spy()
+      @subview1.destroy = @spy()
+      @subview2.destroy = @spy()
       @view.clear()
       @subview1.destroy.should.have.been.calledOnce
       @subview2.destroy.should.have.been.calledOnce
 
     it "calls super", ->
-      sinon.spy Coreon.Views.SimpleView::, "clear"
-      try
-        @view.clear()
-        Coreon.Views.SimpleView::clear.should.have.been.calledOn @view
-      finally
-        Coreon.Views.SimpleView::clear.restore()
+      @spy Coreon.Views.SimpleView::, "clear"
+      @view.clear()
+      Coreon.Views.SimpleView::clear.should.have.been.calledOn @view
 
     it "can be chained", ->
       @view.clear().should.equal @view
 
     it "does not destroy itself on empty subview list", ->
       @view.subviews = []
-      @view.destroy = sinon.spy()
+      @view.destroy = @spy()
       @view.clear()
       @view.destroy.should.not.have.been.called
 
 
   describe "#destroy", ->
-    
+
     beforeEach ->
       @view.subviews = [@subview1, @subview2]
 
     it "destroys subviews", ->
-      @subview1.destroy = sinon.spy()
-      @subview2.destroy = sinon.spy()
+      @subview1.destroy = @spy()
+      @subview2.destroy = @spy()
       @view.destroy()
       @subview1.destroy.should.have.been.calledOnce
       @subview2.destroy.should.have.been.calledOnce

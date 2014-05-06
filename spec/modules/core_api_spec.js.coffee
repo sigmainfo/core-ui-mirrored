@@ -13,11 +13,11 @@ describe "Coreon.Modules.CoreAPI", ->
 
   beforeEach ->
     @session = new Backbone.Model
-    Coreon.application = new Backbone.Model session: @session 
+    Coreon.application = new Backbone.Model session: @session
     Coreon.application.graphUri = -> "https://repo123.coreon.com"
 
     @requests = []
-    sinon.stub Backbone, "sync", (method, model, options) =>
+    @stub Backbone, "sync", (method, model, options) =>
       request = $.Deferred()
       request.status = 200
       request.abort = -> @reject()
@@ -29,7 +29,6 @@ describe "Coreon.Modules.CoreAPI", ->
 
   afterEach ->
     @model.sync "abort"
-    Backbone.sync.restore()
     Coreon.application = null
 
   describe "sync()", ->
@@ -65,22 +64,22 @@ describe "Coreon.Modules.CoreAPI", ->
         Backbone.sync.firstCall.args[2].should.have.property "wait", no
 
       it "triggers global request event", ->
-        spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "request", spy 
+        spy = @spy()
+        Coreon.Modules.CoreAPI.on "request", spy
         @model.sync "read", @model, url: "https://foo.net/1234"
         spy.should.have.been.calledOnce
         spy.should.have.been.calledWith "read", "https://foo.net/1234", @requests[0]
 
       it "triggers global start event", ->
-        spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "start", spy 
+        spy = @spy()
+        Coreon.Modules.CoreAPI.on "start", spy
         @model.sync "read", @model, url: "https://foo.net/1234"
         @model.sync "read", @model, url: "https://foo.net/abcd"
         spy.should.have.been.calledOnce
 
       it "triggers global stop event", ->
-        spy = sinon.spy()
-        Coreon.Modules.CoreAPI.on "stop", spy 
+        spy = @spy()
+        Coreon.Modules.CoreAPI.on "stop", spy
         @model.sync "read", @model, url: "https://foo.net/1234"
         @model.sync "read", @model, url: "https://foo.net/abcd"
         @requests[1].resolve()
@@ -90,7 +89,7 @@ describe "Coreon.Modules.CoreAPI", ->
     context "done", ->
 
       it "triggers done callbacks", ->
-        done = sinon.spy()
+        done = @spy()
         promise = @model.sync "create", @model
         promise.done done
         @requests[0].resolve {concept: "foo"}, "success", @requests[0]
@@ -99,16 +98,16 @@ describe "Coreon.Modules.CoreAPI", ->
         done.should.have.been.calledWith {concept: "foo"}, @requests[0]
 
       it "does not trigger fail callbacks", ->
-        fail = sinon.spy()
+        fail = @spy()
         promise = @model.sync "create", @model
         promise.fail fail
         @requests[0].resolve {concept: "foo"}, "success", @requests[0]
         fail.should.not.have.been.called
 
     context "fail", ->
-      
+
       it "triggers fail callbacks", ->
-        fail = sinon.spy()
+        fail = @spy()
         promise = @model.sync "create", @model
         promise.fail fail
         @requests[0].responseText = '{"errors":{"lang":["must be given"]}}'
@@ -118,14 +117,14 @@ describe "Coreon.Modules.CoreAPI", ->
         fail.should.have.been.calledWith {errors: lang: ["must be given"]}, @requests[0]
 
       it "does not trigger done callbacks", ->
-        done = sinon.spy()
+        done = @spy()
         promise = @model.sync "create", @model
         promise.done done
         @requests[0].reject @requests[0], "error", "Unprocessible Entity"
         done.should.not.have.been.called
 
       it "fails gracefully when response text is not valid JSON", ->
-        fail = sinon.spy()
+        fail = @spy()
         promise = @model.sync "create", @model
         promise.fail fail
         @requests[0].responseText = "Me ain't JSON!"
@@ -133,8 +132,8 @@ describe "Coreon.Modules.CoreAPI", ->
         fail.should.have.been.calledWith {}, @requests[0]
 
       it "triggers global error events", ->
-        spy1 = sinon.spy()
-        spy2 = sinon.spy()
+        spy1 = @spy()
+        spy2 = @spy()
         Coreon.Modules.CoreAPI.on "error", spy1
         Coreon.Modules.CoreAPI.on "error:422", spy2
         @model.sync "create", @model
@@ -145,12 +144,12 @@ describe "Coreon.Modules.CoreAPI", ->
         spy1.should.have.been.calledWith 422, "Unprocessible Entity", error: "is not valid", @requests[0]
         spy2.should.have.been.calledOnce
         spy2.should.have.been.calledWith "Unprocessible Entity", error: "is not valid", @requests[0]
-    
+
     context "unauthorized", ->
 
       it "does not trigger any callbacks", ->
-        done = sinon.spy()
-        fail = sinon.spy()
+        done = @spy()
+        fail = @spy()
         promise = @model.sync "create", @model
         promise.done done
         promise.fail fail
@@ -161,7 +160,7 @@ describe "Coreon.Modules.CoreAPI", ->
         fail.should.not.have.been.called
 
       it "does not trigger error event", ->
-        spy = sinon.spy()
+        spy = @spy()
         Coreon.Modules.CoreAPI.on "error error:403", spy
         @model.sync "read", @model
         @requests[0].status = 403
@@ -170,7 +169,7 @@ describe "Coreon.Modules.CoreAPI", ->
         spy.should.not.have.been.called
 
       it "does not trigger stop event", ->
-        spy = sinon.spy()
+        spy = @spy()
         Coreon.Modules.CoreAPI.on "stop", spy
         @model.sync "read", @model
         @requests[0].status = 403
@@ -185,7 +184,7 @@ describe "Coreon.Modules.CoreAPI", ->
         @requests[0].responseText = '{"required":"relogin"}'
         @requests[0].reject @requests[0], "error", "Unauthorized"
         @session.has("auth_token").should.be.false
-      
+
       it "resumes ajax request", ->
         @model.sync "read", @model, username: "Nobody"
         @requests[0].status = 403
@@ -206,7 +205,7 @@ describe "Coreon.Modules.CoreAPI", ->
         @session.set "auth_token", "beef48548969b046148ba2d2361930c02"
         Backbone.sync.firstCall.args[2].should.have.property "headers"
         Backbone.sync.firstCall.args[2].headers.should.have.property "X-Core-Session", "beef48548969b046148ba2d2361930c02"
-    
+
     context "batch requests", ->
 
       it "triggers first request immediately", ->
@@ -309,7 +308,7 @@ describe "Coreon.Modules.CoreAPI", ->
 
       it "triggers request events", ->
         Coreon.application.graphUri = -> "https://123-456-789.coreon.com/"
-        spy = sinon.spy()
+        spy = @spy()
         promises = []
         models = []
         for i in [1..3]
@@ -337,11 +336,11 @@ describe "Coreon.Modules.CoreAPI", ->
         spy.thirdCall.args[2].should.have.property "url", "https://123-456-789.coreon.com/concepts/fetch"
 
       context "done", ->
-        
+
         it "resolves each promise individually", ->
           promises = []
           models = []
-          spy = sinon.spy()
+          spy = @spy()
           for i in [1..3]
             model = new Coreon.Models.CoreAPIModel
             model.id = "m-#{i}"
@@ -371,7 +370,7 @@ describe "Coreon.Modules.CoreAPI", ->
             model = new Coreon.Models.CoreAPIModel
             model.id = "m-#{i}"
             models.push model
-            spy = sinon.spy()
+            spy = @spy()
             spies.push spy
             model.sync "read", model, batch: on, success: spy
           @requests[0].resolve {id: "m-1"}, "success", @requests[0]
@@ -390,14 +389,14 @@ describe "Coreon.Modules.CoreAPI", ->
         it "rejects each promise individually", ->
           promises = []
           models = []
-          spy = sinon.spy()
+          spy = @spy()
           for i in [1..3]
             model = new Coreon.Models.CoreAPIModel
             model.id = "m-#{i}"
             promises.push model.sync "read", model, batch: on
             models.push model
           promise.fail spy for promise in promises
-          
+
           @requests[0].status = 404
           @requests[0].responseText = '{"message":"Whahappan?"}'
           @requests[0].reject @requests[0], "error", "Not Found"
@@ -424,7 +423,7 @@ describe "Coreon.Modules.CoreAPI", ->
             model = new Coreon.Models.CoreAPIModel
             model.id = "m-#{i}"
             models.push model
-            spy = sinon.spy()
+            spy = @spy()
             spies.push spy
             model.sync "read", model, batch: on, error: spy
 
@@ -442,7 +441,7 @@ describe "Coreon.Modules.CoreAPI", ->
           spies[2].should.have.been.calledWith @requests[1], "error", "Not Found"
 
     context "abort", ->
-      
+
       it "cancels pending requests", ->
         connections = (@model.sync "read", @model for i in [1..5])
         @model.sync "abort"

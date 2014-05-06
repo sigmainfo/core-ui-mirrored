@@ -12,18 +12,14 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
     new Backbone.Model
 
   beforeEach ->
-    sinon.stub I18n, 't'
-    startLoop = sinon.stub Coreon.Views.Sessions.NewSessionView::, 'startLoop'
-    stopLoop  = sinon.stub Coreon.Views.Sessions.NewSessionView::, 'stopLoop'
+    @stub I18n, "t"
+    startLoop = @stub Coreon.Views.Sessions.NewSessionView::, 'startLoop'
+    stopLoop = @stub Coreon.Views.Sessions.NewSessionView::, 'stopLoop'
     model = fakeModel()
     view = new Coreon.Views.Sessions.NewSessionView
       model: model
-      template: -> ''
-
-  afterEach ->
-    I18n.t.restore()
-    Coreon.Views.Sessions.NewSessionView::startLoop.restore()
-    Coreon.Views.Sessions.NewSessionView::stopLoop.restore()
+    Coreon.Views.Sessions.NewSessionView::startLoop.reset()
+    Coreon.Views.Sessions.NewSessionView::stopLoop.reset()
 
   it "is a Backbone view", ->
     view.should.be.an.instanceOf Backbone.View
@@ -171,146 +167,10 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
         expect(authenticate).to.have.been.calledWith 'nobody@blake.com'
                                                    , 'se7en!'
 
-  describe '#createGuestSession()', ->
-
-    context 'trigger', ->
-
-      createGuestSession = null
-
-      beforeEach ->
-        createGuestSession = sinon.stub view, 'createGuestSession'
-
-      it 'is triggered by click on action', ->
-        trigger = $ '<a class="create-guest-session" href="#">Guest</a>'
-        view.$el.append trigger
-        view.delegateEvents()
-        trigger.click()
-        expect(createGuestSession).to.have.been.calledOnce
-
-    context 'authenticate', ->
-
-      authenticate = null
-
-      beforeEach ->
-        authenticate = sinon.stub view, 'authenticate'
-
-
-      it 'authenticates with guest credentials', ->
-        view.createGuestSession()
-        expect(authenticate).to.have.been.calledOnce
-        expect(authenticate).to.have.been.calledWithExactly null
-
-  describe '#authenticate()', ->
-
-    authenticate = null
-    promise = null
-
-    fakePromise = ->
-      done: ->
-
-    fakeSubmit = ->
-      submit = $ '<button type="submit">Log in</button>'
-      view.$el.append submit
-      submit
-
-    fakeInput = (type = 'text', value = '')->
-      input = $ "<input type=\"#{type}\">"
-      input.val value
-      view.$el.append input
-      input
-
-    beforeEach ->
-      promise = fakePromise()
-      authenticate = sinon.stub(Coreon.Models.Session, 'authenticate')
-        .returns promise
-
-    afterEach ->
-      Coreon.Models.Session.authenticate.restore()
-
-    it 'disables submit button', ->
-      submit = fakeSubmit()
-      view.authenticate 'nobody@blake.com', 'xxx'
-      expect(submit).to.be.disabled
-
-    it 'disables text inputs', ->
-      input = fakeInput()
-      view.authenticate 'nobody@blake.com', 'xxx'
-      expect(input).to.be.disabled
-
-    it 'halts update loop', ->
-      view.authenticate 'nobody@blake.com', 'xxx'
-      expect(stopLoop).to.have.been.calledOnce
-
-    it 'remotely requests a new session', ->
-      view.authenticate 'nobody@blake.com', 'xxx'
-      expect(authenticate).to.have.been.calledOnce
-      expect(authenticate).to.have.been.calledWith 'nobody@blake.com', 'xxx'
-
-    context 'done', ->
-
-      done = null
-
-      beforeEach ->
-        promise.done = (callback) -> done = callback
-        view.authenticate 'nobody@blake.com', 'xxx'
-
-      fakeSession = (name = 'Nobody') ->
-        new Backbone.Model user: name: name
-
-      resolve = (session) ->
-        done session
-
-      context 'with session', ->
-
-        session = null
-        info = null
-
-        beforeEach ->
-          info = sinon.stub Coreon.Models.Notification, 'info'
-          session = fakeSession()
-
-        afterEach ->
-          Coreon.Models.Notification.info.restore()
-
-        it 'updates session on model', ->
-          resolve session
-          expect(model.get 'session').to.equal session
-
-      context 'without session', ->
-
-        it 'clears session', ->
-          model.set 'session', fakeSession(), silent: yes
-          resolve null
-          expect(model.get 'session').to.equal null
-
-        it 'reenables submit button', ->
-          submit = fakeSubmit()
-          resolve null
-          expect(submit).to.not.be.disabled
-
-        it 'reenables text inputs', ->
-          input = fakeInput()
-          resolve null
-          expect(input).to.not.be.disabled
-
-        it 'clears password', ->
-          input = fakeInput 'password', 'xxx'
-          resolve null
-          expect(input.val()).to.be.empty
-
-        it 'restarts update loop', ->
-          startLoop.reset()
-          resolve null
-          expect(startLoop).to.have.been.calledOnce
-          expect(startLoop).to.have.been.calledWith view.updateState
-
   describe '#remove()', ->
 
     beforeEach ->
-      sinon.spy Backbone.View::, 'remove'
-
-    afterEach ->
-      Backbone.View::remove.restore()
+      @spy Backbone.View::, 'remove'
 
     it 'calls super', ->
       view.remove()

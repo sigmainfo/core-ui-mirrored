@@ -9,9 +9,9 @@ describe 'Coreon.Views.Terms.TermView', ->
   propertiesView = null
 
   beforeEach ->
-    sinon.stub Coreon.Views.Properties, 'PropertiesView', ->
+    @stub Coreon.Views.Properties, 'PropertiesView', =>
       propertiesView = new Backbone.View
-      propertiesView.render = sinon.spy()
+      propertiesView.render = @spy()
       propertiesView
 
     model = new Backbone.Model
@@ -23,9 +23,6 @@ describe 'Coreon.Views.Terms.TermView', ->
 
     view = new Coreon.Views.Terms.TermView
       model: model
-
-  afterEach ->
-    Coreon.Views.Properties.PropertiesView.restore()
 
   it 'is a Backbone  view', ->
     expect(view).to.be.an.instanceOf Backbone.View
@@ -58,7 +55,7 @@ describe 'Coreon.Views.Terms.TermView', ->
     template = null
 
     beforeEach ->
-      template = sinon.stub()
+      template = @stub()
       view.template = template
 
     it 'can be chained', ->
@@ -66,7 +63,7 @@ describe 'Coreon.Views.Terms.TermView', ->
       expect(result).to.equal view
 
     it 'is triggered by changes on term', ->
-      render = sinon.spy()
+      render = @spy()
       view.render = render
       view.initialize()
       model.trigger 'change'
@@ -74,7 +71,7 @@ describe 'Coreon.Views.Terms.TermView', ->
 
     it 'clears subviews', ->
       subview = new Backbone.View
-      remove = sinon.spy()
+      remove = @spy()
       subview.remove = remove
       view.subviews.push subview
       view.render()

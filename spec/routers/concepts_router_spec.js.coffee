@@ -9,13 +9,10 @@ describe 'Coreon.Routers.ConceptsRouter', ->
 
   beforeEach ->
     hits = new Backbone.Collection
-    sinon.stub Coreon.Collections.Hits, 'collection', -> hits
+    @stub Coreon.Collections.Hits, 'collection', -> hits
     app = new Backbone.Model
     app.selectRepository = ->
     router = new Coreon.Routers.ConceptsRouter app
-
-  afterEach ->
-    Coreon.Collections.Hits.collection.restore()
 
   it 'is a Backbone router', ->
     expect(router).to.be.an.instanceOf Backbone.Router
@@ -42,9 +39,9 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       Backbone.history.stop()
 
     it 'selects repository before every action', ->
-      selectRepository = sinon.spy()
+      selectRepository = @spy()
       router.selectRepository = selectRepository
-      action = sinon.spy()
+      action = @spy()
       router.action = action
       router.routes = -> 'path': 'action'
       router._bindRoutes()
@@ -57,7 +54,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(selectRepository).to.have.been.calledBefore action
 
     it 'routes /:id to #show', ->
-      show = sinon.spy()
+      show = @spy()
       router.show = show
       router._bindRoutes()
       path = '5272466670686f14a0030000/concepts/52334519fe4156ec4d0000f4'
@@ -66,7 +63,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(show).to.have.been.calledWith '52334519fe4156ec4d0000f4'
 
     it 'routes /search/:target/:query to #search', ->
-      search = sinon.spy()
+      search = @spy()
       router.search = search
       router._bindRoutes()
       path = '5272466670686f14a0030000/concepts/search/description/foo'
@@ -75,7 +72,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(search).to.have.been.calledWith 'description', 'foo'
 
     it 'allows skipping search :target', ->
-      search = sinon.spy()
+      search = @spy()
       router.search = search
       router._bindRoutes()
       path = '5272466670686f14a0030000/concepts/search/foo'
@@ -84,7 +81,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(search).to.have.been.calledWith null, 'foo'
 
     it 'routes /new to #new', ->
-      action = sinon.spy()
+      action = @spy()
       router.new = action
       router._bindRoutes()
       path = '5272466670686f14a0030000/concepts/new'
@@ -92,7 +89,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(action).to.have.been.calledOnce
 
     it 'allows trailing slash in route to #new', ->
-      action = sinon.spy()
+      action = @spy()
       router.new = action
       router._bindRoutes()
       path = '5272466670686f14a0030000/concepts/new/'
@@ -100,7 +97,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(action).to.have.been.calledOnce
 
     it 'routes /new/broader/:id to #newWithSuper', ->
-      newWithSuper = sinon.spy()
+      newWithSuper = @spy()
       router.newWithSuper = newWithSuper
       router._bindRoutes()
       base = '5272466670686f14a0030000/concepts'
@@ -110,7 +107,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       expect(newWithSuper).to.have.been.calledWith '52334519fe4156ec4d0000f4'
 
     it 'routes /new/terms/:lang/:value to #newWithTerm', ->
-      newWithTerm = sinon.spy()
+      newWithTerm = @spy()
       router.newWithTerm = newWithTerm
       router._bindRoutes()
       base = '5272466670686f14a0030000/concepts'
@@ -122,7 +119,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
   describe '#selectRepository()', ->
 
     it 'delegates call to application', ->
-      selectRepository = sinon.spy()
+      selectRepository = @spy()
       app.selectRepository = selectRepository
       router.selectRepository('my-repo-345')
       expect(selectRepository).to.have.been.calledOnce
@@ -131,10 +128,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
   describe '#show()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Models.Concept, 'find'
-
-    afterEach ->
-      Coreon.Models.Concept.find.restore()
+      @stub Coreon.Models.Concept, 'find'
 
     it 'updates selection', ->
       concept = new Backbone.Model
@@ -152,7 +146,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       find = Coreon.Models.Concept.find
       find.withArgs('my-concept-234', fetch: yes).returns concept
       router.show 'my-concept-234'
-      callback = sinon.spy()
+      callback = @spy()
       app.on 'change:selection', callback
       router.show 'my-concept-234'
       expect(callback).to.have.been.calledOnce
@@ -180,11 +174,8 @@ describe 'Coreon.Routers.ConceptsRouter', ->
 
     beforeEach ->
       request = $.Deferred()
-      sinon.stub Coreon.Models, 'ConceptSearch', ->
-        search = fetch: sinon.spy(request.promise)
-
-    afterEach ->
-      Coreon.Models.ConceptSearch.restore()
+      @stub Coreon.Models, 'ConceptSearch', =>
+        search = fetch: @spy request.promise
 
     it 'updates query on application', ->
       router.search null, 'foo'
@@ -243,7 +234,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
     can = null
 
     beforeEach ->
-      can = sinon.stub()
+      can = @stub()
       can.returns false
       router.can = can
 
@@ -254,7 +245,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
 
       it 'is redirected to repository root page', ->
         app.set 'repository', {id: '5272466670686f14a0030000'}, silent: yes
-        navigate = sinon.spy()
+        navigate = @spy()
         router.navigate = navigate
         router.new()
         expect(navigate).to.have.been.calledOnce
@@ -267,12 +258,9 @@ describe 'Coreon.Routers.ConceptsRouter', ->
       concept = null
 
       beforeEach ->
-        sinon.stub Coreon.Models, 'Concept', ->
+        @stub Coreon.Models, 'Concept', ->
           concept = new Backbone.Model arguments...
         can.withArgs('create', Coreon.Models.Concept).returns true
-
-      afterEach ->
-        Coreon.Models.Concept.restore()
 
       it 'creates new concept', ->
         router.new()
@@ -311,7 +299,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
     create = null
 
     beforeEach ->
-      create = sinon.spy()
+      create = @spy()
       router.new = create
 
     it 'delegates to #new passing superconcept id', ->
@@ -324,7 +312,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
     create = null
 
     beforeEach ->
-      create = sinon.spy()
+      create = @spy()
       router.new = create
 
     it 'delegates to #new passing term attrs', ->

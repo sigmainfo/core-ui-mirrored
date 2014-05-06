@@ -4,19 +4,15 @@
 describe 'Coreon.Models.Session', ->
 
   beforeEach ->
-    sinon.stub  Backbone.history, 'navigate'
+    @stub  Backbone.history, 'navigate'
     @authRoot = Coreon.Models.Session.authRoot
     Coreon.Models.Session.authRoot = 'https://auth.coreon.com'
-    sinon.stub window.localStorage, 'getItem'
-    sinon.stub window.localStorage, 'setItem'
-    sinon.stub window.localStorage, 'removeItem'
+    @stub window.localStorage, 'getItem'
+    @stub window.localStorage, 'setItem'
+    @stub window.localStorage, 'removeItem'
 
   afterEach ->
-    localStorage.getItem.restore()
-    localStorage.setItem.restore()
-    localStorage.removeItem.restore()
     Coreon.Models.Session.authRoot = @authRoot
-    Backbone.history.navigate.restore()
 
   describe '.load()', ->
 
@@ -31,35 +27,33 @@ describe 'Coreon.Models.Session', ->
 
     context 'with local session', ->
 
-      beforeEach ->
-        localStorage.getItem.withArgs('coreon-session').returns '0457-a33a403-f562fb6f'
-        @request = $.Deferred()
-        @session = fetch: sinon.stub().returns @request
-        sinon.stub Coreon.Models, 'Session', => @session
+      context 'with local session', ->
+
+        beforeEach ->
+          localStorage.getItem.withArgs('coreon-session').returns '0457-a33a403-f562fb6f'
+          @request = $.Deferred()
+          @session = fetch: @stub().returns @request
+          @stub Coreon.Models, 'Session', => @session
+
+        it 'creates session object', ->
+          Coreon.Models.Session.load()
+          Coreon.Models.Session.should.have.been.calledOnce
+          Coreon.Models.Session.should.have.been.calledWithNew
+          Coreon.Models.Session.should.have.been.calledWith
+            auth_token: '0457-a33a403-f562fb6f'
 
       afterEach ->
         Coreon.Models.Session.restore()
 
-      it 'creates session object', ->
-        Coreon.Models.Session.load()
-        Coreon.Models.Session.should.have.been.calledOnce
-        Coreon.Models.Session.should.have.been.calledWithNew
-        Coreon.Models.Session.should.have.been.calledWith
-          auth_token: '0457-a33a403-f562fb6f'
+        it 'resolves callbacks with session instance when done', ->
+          Coreon.Models.Session.load().always (@arg) =>
+          @request.resolve()
+          @arg.should.equal @session
 
-      it 'loads session from auth service', ->
-        Coreon.Models.Session.load()
-        @session.fetch.should.have.been.calledOnce
-
-      it 'resolves callbacks with session instance when done', ->
-        Coreon.Models.Session.load().always (@arg) =>
-        @request.resolve()
-        @arg.should.equal @session
-
-      it 'resolves callbacks with null on failure', ->
-        Coreon.Models.Session.load().always (@arg) =>
-        @request.reject()
-        should.equal @arg, null
+        it 'resolves callbacks with null on failure', ->
+          Coreon.Models.Session.load().always (@arg) =>
+          @request.reject()
+          should.equal @arg, null
 
   describe '.authenticate()', ->
 
@@ -150,10 +144,7 @@ describe 'Coreon.Models.Session', ->
           id: 'nobody-repo-123'
           name: "Nobody's Repository"
         ], silent: yes
-        sinon.spy Backbone.Model::, 'set'
-
-      afterEach ->
-        Backbone.Model::set.restore()
+        @spy Backbone.Model::, 'set'
 
       it 'delegates to super', ->
         session.set {foo: 'bar'}, silent: yes
@@ -229,7 +220,7 @@ describe 'Coreon.Models.Session', ->
     describe '#onChangeToken()', ->
 
       it 'is triggered by changes on token', ->
-        session.onChangeToken = sinon.spy()
+        session.onChangeToken = @spy()
         session.initialize()
         session.trigger 'change:auth_token', session, 'my-brandnew-token-123'
         session.onChangeToken.should.have.been.calledOnce
@@ -250,7 +241,7 @@ describe 'Coreon.Models.Session', ->
 
       beforeEach ->
         session.set 'user', id: '123456dfhg', silent: yes
-        session.save = sinon.spy()
+        session.save = @spy()
 
       it 'can be chained', ->
         session.reauthenticate('se7en!').should.equal session
@@ -267,10 +258,7 @@ describe 'Coreon.Models.Session', ->
     describe '#destroy()', ->
 
       beforeEach ->
-        sinon.stub Backbone.Model::, 'destroy', -> abort: ->
-
-      afterEach ->
-        Backbone.Model::destroy.restore()
+        @stub Backbone.Model::, 'destroy', -> abort: ->
 
       it 'clears local session', ->
         session.destroy()
@@ -289,22 +277,17 @@ describe 'Coreon.Models.Session', ->
       hits = null
 
       beforeEach ->
-        clips = reset: sinon.spy()
-        sinon.stub Coreon.Collections.Clips, 'collection', -> clips
+        clips = reset: @spy()
+        @stub Coreon.Collections.Clips, 'collection', -> clips
 
-        concepts = reset: sinon.spy()
-        sinon.stub Coreon.Models.Concept, 'collection', -> concepts
+        concepts = reset: @spy()
+        @stub Coreon.Models.Concept, 'collection', -> concepts
 
-        hits = reset: sinon.spy()
-        sinon.stub Coreon.Collections.Hits, 'collection', -> hits
-
-      afterEach ->
-        Coreon.Collections.Clips.collection.restore()
-        Coreon.Models.Concept.collection.restore()
-        Coreon.Collections.Hits.collection.restore()
+        hits = reset: @spy()
+        @stub Coreon.Collections.Hits, 'collection', -> hits
 
       it 'is triggered on changes of current repository id', ->
-        session.updateRepository = sinon.spy()
+        session.updateRepository = @spy()
         session.initialize()
         session.trigger 'change:current_repository_id'
         session.updateRepository.should.have.been.calledOnce

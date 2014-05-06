@@ -3,20 +3,16 @@
 #= require models/search_type
 
 describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
-  
+
   beforeEach ->
-    sinon.stub I18n, "t"
-    sinon.stub Coreon.Views.Widgets, "SearchTargetSelectDropdownView", =>
+    @stub I18n, "t"
+    @stub Coreon.Views.Widgets, "SearchTargetSelectDropdownView", =>
       @dropdown = new Backbone.View
-      @dropdown.alignTo = sinon.spy()
+      @dropdown.alignTo = @spy()
       @dropdown
     @view = new Coreon.Views.Widgets.SearchTargetSelectView
       model: new Coreon.Models.SearchType
 
-  afterEach ->
-    I18n.t.restore()
-    Coreon.Views.Widgets.SearchTargetSelectDropdownView.restore()
-     
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View
 
@@ -42,11 +38,11 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.$el.should.have ".toggle"
 
     it "is triggered by changes on model", ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.initialize()
       @view.model.set "selected", 1
       @view.render.should.have.been.calledOnce
-      
+
 
   describe "showDropdown()", ->
 
@@ -55,9 +51,9 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       $("#konacha").append $('<div id="coreon-modal">')
       $("#konacha").append $('<input id="coreon-search-query">')
       @view.render()
-    
+
     it "is triggered by click on toggle", ->
-      @view.showDropdown = sinon.spy()
+      @view.showDropdown = @spy()
       @view.delegateEvents()
       @view.$(".toggle").trigger @event
       @view.showDropdown.should.have.been.calledWith @event
@@ -65,9 +61,9 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
     it "can prompt", ->
       should.exist Coreon.Modules.Prompt
       @view.prompt.should.eql Coreon.Modules.Prompt.prompt
-    
+
     it "renders dropdown as an overlay", ->
-      @view.prompt = sinon.spy()
+      @view.prompt = @spy()
       @view.showDropdown()
       Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledOnce
       Coreon.Views.Widgets.SearchTargetSelectDropdownView.should.have.been.calledWithNew
@@ -75,7 +71,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
         model: @view.model
       @view.prompt.should.have.been.calledOnce
       @view.prompt.should.have.been.calledWith @dropdown
-      
+
     it "aligns to query input", ->
       input = $("#coreon-search-query")
       @view.showDropdown()
@@ -90,7 +86,7 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
       @view.render().$el.appendTo $("#konacha")
 
     it "is triggered by click on link", ->
-      @view.onFocus = sinon.spy()
+      @view.onFocus = @spy()
       @view.delegateEvents()
       @view.$(".hint").trigger @event
       @view.onFocus.should.have.been.calledWith @event
@@ -98,9 +94,9 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
     it "hides hint", ->
       @view.onFocus @event
       @view.$(".hint").should.not.be.visible
-      
+
     it "triggers event", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.on "focus", spy
       @view.onFocus @event
       spy.should.have.been.calledOnce
@@ -109,17 +105,17 @@ describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
 
     beforeEach ->
       @view.render().$el.appendTo $("#konacha")
-    
+
     it "hides hint", ->
       @view.hideHint()
       @view.$(".hint").should.not.be.visible
-    
+
   describe "revealHint()", ->
 
     beforeEach ->
       @view.render().$el.appendTo $("#konacha")
       @view.hideHint()
-    
+
     it "reveals hint", ->
       @view.revealHint()
       @view.$(".hint").should.be.visible

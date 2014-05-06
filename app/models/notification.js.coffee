@@ -19,6 +19,7 @@ class Coreon.Models.Notification extends Backbone.Model
     type: "info"
 
   initialize: ->
+    clearTimeout @timeout
     @timeout = setTimeout ( => @destroy() ), 5000
 
   destroy: ->

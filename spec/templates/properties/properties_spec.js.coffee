@@ -10,13 +10,10 @@ describe 'Coreon.Templates[properties/properties]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     data =
       properties: []
       render: -> ''
-
-  afterEach ->
-    I18n.t.restore()
 
   context 'caption', ->
 
@@ -71,7 +68,7 @@ describe 'Coreon.Templates[properties/properties]', ->
           expect(values).to.not.exist
 
         it 'renders value', ->
-          helper = sinon.stub()
+          helper = @stub()
           data.render = helper
           helper
             .withArgs('properties/property', property: property)
@@ -97,7 +94,7 @@ describe 'Coreon.Templates[properties/properties]', ->
           expect(tab).to.have.attr 'data-index', '0'
 
         it 'renders value', ->
-          helper = sinon.stub()
+          helper = @stub()
           data.render = helper
           helper
             .withArgs('properties/property', property: property)
@@ -142,7 +139,7 @@ describe 'Coreon.Templates[properties/properties]', ->
         expect(tab2).to.have.text '2'
 
       it 'renders values', ->
-        helper = sinon.stub()
+        helper = @stub()
         data.render = helper
         helper
           .withArgs('properties/property', property: property2)

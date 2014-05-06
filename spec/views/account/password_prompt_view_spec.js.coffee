@@ -15,10 +15,7 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
   describe "render()", ->
 
     beforeEach ->
-      sinon.stub I18n, "t"
-
-    afterEach ->
-      I18n.t.restore()
+      @stub I18n, "t"
 
     it "can be chained", ->
       @view.render().should.equal @view
@@ -62,12 +59,12 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
     beforeEach ->
       @event = $.Event "submit"
       @view.model = new Backbone.Model
-      @view.model.reauthenticate = sinon.spy()
+      @view.model.reauthenticate = @spy()
       @view.render().$el.appendTo "#konacha"
 
     it "handles submit events exclusively", ->
-      sinon.spy @event, "preventDefault"
-      sinon.spy @event, "stopPropagation"
+      @spy @event, "preventDefault"
+      @spy @event, "stopPropagation"
       @view.$("form").trigger @event
       @event.preventDefault.should.have.been.calledOnce
       @event.stopPropagation.should.have.been.calledOnce

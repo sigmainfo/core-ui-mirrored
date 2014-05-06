@@ -6,11 +6,8 @@ describe 'Coreon.Models.Term', ->
   model = null
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     model = new Coreon.Models.Term
-
-  afterEach ->
-    I18n.t.restore()
 
   it 'is a Backbone model', ->
     model.should.been.an.instanceof Backbone.Model
@@ -80,15 +77,12 @@ describe 'Coreon.Models.Term', ->
 
     beforeEach ->
       Coreon.application = graphUri:-> '/coffee23'
-      sinon.stub Coreon.Modules.CoreAPI, 'sync', (method, model, options = {}) ->
+      @stub Coreon.Modules.CoreAPI, 'sync', (method, model, options = {}) ->
         model.id = '1234'
         options.success?()
 
-    afterEach ->
-      Coreon.Modules.CoreAPI.sync.restore()
-
     it 'triggers custom event', ->
-      spy = sinon.spy()
+      spy = @spy()
       model.on 'create', spy
       model.save 'value', 'high hat'
       model.save 'value', 'beaver hat'

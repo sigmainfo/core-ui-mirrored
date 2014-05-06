@@ -11,12 +11,12 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     Coreon.application.langs = -> []
     Coreon.application.sourceLang = -> 'none'
     Coreon.application.targetLang = -> 'none'
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     @broaderAndNarrower = new Backbone.View
-    sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
+    @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
 
     termsView = new Backbone.View
-    sinon.stub Coreon.Views.Terms, 'TermsView'
+    @stub Coreon.Views.Terms, 'TermsView'
     Coreon.Views.Terms.TermsView.returns termsView
 
     @property = new Backbone.Model key: 'label', value: 'top hat'
@@ -34,15 +34,11 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     @view = new Coreon.Views.Concepts.ConceptView
       model: @concept
-    sinon.stub Coreon.Helpers, 'can'
+    @stub Coreon.Helpers, 'can'
     Coreon.Helpers.can.returns true
 
   afterEach ->
-    I18n.t.restore()
-    Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
-    Coreon.Views.Terms.TermsView.restore()
     Coreon.application = null
-    Coreon.Helpers.can.restore()
 
   it 'is a Backbone view', ->
     expect( @view ).to.be.an.instanceof Backbone.View
@@ -56,13 +52,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.render() ).to.equal @view
 
     it 'is triggered by model change', ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.initialize()
       @concept.trigger 'change'
       expect( @view.render ).to.have.been.calledOnce
 
     it 'is triggered by edit mode change', ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.initialize()
       Coreon.application.trigger 'change:editing'
       expect( @view.render ).to.have.been.calledOnce
@@ -89,7 +85,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.$("> .concept-head .system-info td").eq(1) ).to.have.text "543"
 
     it 'renders tree', ->
-      @broaderAndNarrower.render = sinon.stub().returns @broaderAndNarrower
+      @broaderAndNarrower.render = @stub().returns @broaderAndNarrower
       @view.render()
       expect( @broaderAndNarrower.render ).to.have.been.calledOnce
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
@@ -123,10 +119,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     context 'properties', ->
 
       beforeEach ->
-        sinon.stub Coreon.Templates, 'concepts/info'
-
-      afterEach ->
-        Coreon.Templates['concepts/info'].restore()
+        @stub Coreon.Templates, 'concepts/info'
 
       it 'renders section', ->
         I18n.t.withArgs('properties.title').returns 'Properties'
@@ -247,7 +240,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
       it 'renders subview', ->
         subview = new Backbone.View
-        render = sinon.stub()
+        render = @stub()
         render.returns subview
         subview.render = render
         constructor = Coreon.Views.Terms.TermsView
@@ -262,7 +255,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
         beforeEach ->
           Coreon.application.set 'editing', on, silent: yes
-          sinon.stub Coreon.Templates, 'concepts/info'
+          @stub Coreon.Templates, 'concepts/info'
           @concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
           @term = new Backbone.Model value: 'top head'
           @term.info = -> {}
@@ -270,9 +263,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           @term.propertiesByKey = -> []
           @concept.termsByLang = => de: [ @term ]
           Coreon.application.langs = -> [ 'de' ]
-
-        afterEach ->
-          Coreon.Templates['concepts/info'].restore()
 
         it 'renders container', ->
           @view.render()
@@ -441,7 +431,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       $("#konacha").append @view.$el
 
     it "is triggered by click on system info toggle", ->
-      @view.toggleInfo = sinon.spy()
+      @view.toggleInfo = @spy()
       @view.delegateEvents()
       @view.$(".system-info-toggle").click()
       expect( @view.toggleInfo ).to.have.been.calledOnce
@@ -464,13 +454,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @event = $.Event()
 
     it 'is triggered by click on caption for section', ->
-      @view.toggleSection = sinon.stub().returns false
+      @view.toggleSection = @stub().returns false
       @view.delegateEvents()
       @view.$('section *:first-child').first().click()
       expect( @view.toggleSection ).to.have.been.calledOnce
 
     it 'is not triggered for section within a form', ->
-      @view.toggleSection = sinon.stub().returns false
+      @view.toggleSection = @stub().returns false
       @view.delegateEvents()
       @view.$('section').wrap '<form>'
       @view.$('section *:first-child').first().click()
@@ -514,7 +504,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @event.target = @tab[0]
 
     it 'is triggered by click on selector', ->
-      @view.selectProperty = sinon.stub().returns false
+      @view.selectProperty = @stub().returns false
       @view.delegateEvents()
       @tab.trigger @event
       expect( @view.selectProperty ).to.have.been.calledOnce
@@ -539,7 +529,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       event.target = toggle[0]
 
     it 'is triggered by click on edit mode toggle', ->
-      toggleEditMode = sinon.stub @view, 'toggleEditMode'
+      toggleEditMode = @stub @view, 'toggleEditMode'
       @view.delegateEvents()
       toggle.trigger event
       expect(toggleEditMode).to.have.been.calledOnce
@@ -564,7 +554,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @view.render()
 
     it 'is triggered by click on edit-properties toggle', ->
-      @view.toggleEditConceptProperties = sinon.stub().returns false
+      @view.toggleEditConceptProperties = @stub().returns false
       @view.delegateEvents()
       @view.$('.edit-properties').click()
       expect( @view.toggleEditConceptProperties ).to.have.been.calledOnce
@@ -575,7 +565,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.editProperties ).to.be.true
 
     it 'rerenders the view', ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.delegateEvents()
       @view.$('.edit-properties').click()
       expect( @view.render ).to.have.been.calledOnce
@@ -600,7 +590,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @view.render()
 
     it 'is triggered by click on add-term link', ->
-      @view.addTerm = sinon.stub().returns false
+      @view.addTerm = @stub().returns false
       @view.delegateEvents()
       @view.$('.add-term').click()
       expect( @view.addTerm ).to.have.been.calledOnce
@@ -666,7 +656,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @event.target = @trigger[0]
 
     it 'is triggered by click on add property link', ->
-      @view.addProperty = sinon.stub().returns false
+      @view.addProperty = @stub().returns false
       @view.delegateEvents()
       @view.$('.add-property').click()
       expect( @view.addProperty ).to.have.been.calledOnce
@@ -678,7 +668,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
   describe '#removeProperty()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
+      @stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
       @event = $.Event 'click'
       @view.render()
       @view.$el.append '''
@@ -687,11 +677,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         </fieldset>
         '''
 
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
     it 'is triggered by click on remove action', ->
-      @view.removeProperty = sinon.stub().returns false
+      @view.removeProperty = @stub().returns false
       @view.delegateEvents()
       @view.$('.property a.remove-property').trigger @event
       expect( @view.removeProperty ).to.have.been.calledOnce
@@ -705,9 +692,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     beforeEach ->
       @attrs = {}
-      sinon.stub Coreon.Models, 'Term', =>
+      @stub Coreon.Models, 'Term', =>
         @term = new Backbone.Model @attrs
-        @term.save = sinon.spy => @request = $.Deferred()
+        @term.save = @spy => @request = $.Deferred()
         @term.errors = => @errors
         @term.persistedAttributes = => @persistedAttributes
         @term.properties = -> []
@@ -727,17 +714,14 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       terms.hasProperties = -> no
       @view.model.terms = -> terms
 
-    afterEach ->
-      Coreon.Models.Term.restore()
-
     it 'is triggered by submit', ->
-      @view.createTerm = sinon.stub().returns false
+      @view.createTerm = @stub().returns false
       @view.delegateEvents()
       @view.$('form').submit()
       expect( @view.createTerm ).to.have.been.calledOnce
 
     it 'prevents default', ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       @view.createTerm @event
       expect( @event.preventDefault ).to.have.been.calledOnce
 
@@ -756,7 +740,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @attrs = value: 'Cowboyhut'
       I18n.t.withArgs('notifications.term.created', value: 'Cowboyhut')
         .returns 'Successfully created "Cowboyhut".'
-      Coreon.Models.Notification.info = sinon.spy()
+      Coreon.Models.Notification.info = @spy()
       @view.createTerm @event
       @request.resolve()
       expect( Coreon.Models.Notification.info ).to.have.been.calledOnce
@@ -829,16 +813,16 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @view.model.terms = =>
         get: =>
           @term = new Backbone.Model
-          @term.save = sinon.spy => @request = $.Deferred()
+          @term.save = @spy => @request = $.Deferred()
           @term
 
     it 'prevents default', ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       @view.updateTerm @event
       expect( @event.preventDefault ).to.have.been.calledOnce
 
     it '#calls saveTerm()', ->
-      @view.saveTerm = sinon.stub().returns false
+      @view.saveTerm = @stub().returns false
       @view.updateTerm @event
       expect( @view.saveTerm ).to.have.been.calledOnce
 
@@ -846,7 +830,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     it 'notifies about update', ->
       I18n.t.withArgs('notifications.term.saved').returns 'wohoow!'
-      Coreon.Models.Notification.info = sinon.spy()
+      Coreon.Models.Notification.info = @spy()
       model =
         save: => @request = $.Deferred()
         get: ->
@@ -876,20 +860,20 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @event.target = @trigger[0]
 
     it 'is triggered by click on cancel link', ->
-      @view.cancelForm = sinon.stub().returns false
+      @view.cancelForm = @stub().returns false
       @view.delegateEvents()
       @trigger.click()
       expect( @view.cancelForm ).to.have.been.calledOnce
 
     it 'is not triggered when link is disabled', ->
-      @view.cancelForm = sinon.stub().returns false
+      @view.cancelForm = @stub().returns false
       @view.delegateEvents()
       @trigger.addClass 'disabled'
       @trigger.click()
       expect( @view.cancelForm ).to.not.have.been.called
 
     it 'prevents default action', ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       @view.cancelForm @event
       expect( @event.preventDefault ).to.have.been.calledOnce
 
@@ -927,25 +911,25 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @event.target = @trigger[0]
 
     it 'is triggered by click on reset link', ->
-      @view.reset = sinon.stub().returns false
+      @view.reset = @stub().returns false
       @view.delegateEvents()
       @trigger.click()
       expect( @view.reset ).to.have.been.calledOnce
 
     it 'is not triggered when link is disabled', ->
-      @view.reset = sinon.stub().returns false
+      @view.reset = @stub().returns false
       @view.delegateEvents()
       @trigger.addClass 'disabled'
       @trigger.click()
       expect( @view.reset ).to.not.have.been.called
 
     it 'prevents default action', ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       @view.reset @event
       expect( @event.preventDefault ).to.have.been.calledOnce
 
     it 'rerenders form', ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.reset @event
       expect( @view.render ).to.have.been.calledOnce
 
@@ -955,7 +939,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.model ).to.have.property 'remoteError', null
 
     it 'restores previous state', ->
-      @view.model.revert = sinon.stub().returns false
+      @view.model.revert = @stub().returns false
       @view.reset @event
       expect( @view.model.revert ).to.have.been.calledOnce
 
@@ -978,17 +962,17 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       term = new Backbone.Model id: '518d2569edc797ef6d000008'
       term.properties = -> []
       term.propertiesByKeyAndLang = -> {}
-      term.destroy = sinon.spy()
+      term.destroy = @spy()
       terms = new Backbone.Collection [ term ]
       terms.hasProperties = -> no
       @view.model.terms = -> terms
       @event = $.Event 'click'
       @trigger = @view.$('a.remove-term')
       @event.target = @trigger[0]
-      @view.confirm = sinon.spy()
+      @view.confirm = @spy()
 
     it 'is triggered by click on remove term link', ->
-      @view.removeTerm = sinon.stub().returns false
+      @view.removeTerm = @stub().returns false
       @view.delegateEvents()
       @trigger.click()
       expect( @view.removeTerm ).to.have.been.calledOnce
@@ -1023,7 +1007,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
       it 'notifies about destruction', ->
         I18n.t.withArgs('notifications.term.deleted').returns 'baaam!'
-        Coreon.Models.Notification.info = sinon.spy()
+        Coreon.Models.Notification.info = @spy()
         @action()
         expect( Coreon.Models.Notification.info ).to.have.been.calledOnce
         expect( Coreon.Models.Notification.info ).to.have.been.calledWith 'baaam!'
@@ -1046,10 +1030,10 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @trigger = @view.$('a.delete-concept')
       @event = $.Event 'click'
       @event.target = @trigger[0]
-      @view.confirm = sinon.spy()
+      @view.confirm = @spy()
 
     it 'is triggered by click on remove concept link', ->
-      @view.delete = sinon.stub().returns false
+      @view.delete = @stub().returns false
       @view.delegateEvents()
       @view.$('.edit .delete-concept').trigger @event
       expect( @view.delete ).to.have.been.calledOnce
@@ -1075,13 +1059,12 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
       beforeEach ->
         Coreon.application = repository: -> id: '8765jhgf'
-        sinon.stub Backbone.history, 'navigate'
+        @stub Backbone.history, 'navigate'
         @view.delete @event
         @action = @view.confirm.firstCall.args[0].action
 
       afterEach ->
         Coreon.application = null
-        Backbone.history.navigate.restore()
 
       it 'redirects to repository root when done', ->
         Coreon.application = repository: -> id: '8765jhgf'
@@ -1091,21 +1074,18 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
       it 'clears hits', ->
         hits = fakeHits [result: fakeConcept()]
-        try
-          sinon.stub Coreon.Collections.Hits, 'collection', -> hits
-          @action()
-          expect(hits).to.have.property 'length', 0
-        finally
-          Coreon.Collections.Hits.collection.restore()
+        @stub Coreon.Collections.Hits, 'collection', -> hits
+        action()
+        expect(hits).to.have.property 'length', 0
 
       it 'destroys model', ->
-        @view.model.destroy = sinon.spy()
+        @view.model.destroy = @spy()
         @action()
         expect( @view.model.destroy ).to.have.been.calledOnce
 
       it 'notifies about destruction', ->
         I18n.t.withArgs('notifications.concept.deleted').returns 'baaam!'
-        Coreon.Models.Notification.info = sinon.spy()
+        Coreon.Models.Notification.info = @spy()
         @action()
         expect( Coreon.Models.Notification.info ).to.have.been.calledOnce
         expect( Coreon.Models.Notification.info ).to.have.been.calledWith 'baaam!'
@@ -1114,12 +1094,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     beforeEach ->
       @collection = new Backbone.Collection
-      sinon.stub Coreon.Collections.Clips, 'collection', => @collection
-      sinon.spy @view, 'setClipboardButton'
-
-    afterEach ->
-      Coreon.Collections.Clips.collection.restore()
-      @view.setClipboardButton.restore()
+      @stub Coreon.Collections.Clips, 'collection', => @collection
+      @spy @view, 'setClipboardButton'
 
     it 'sets button if clips changing', ->
       @view.initialize()

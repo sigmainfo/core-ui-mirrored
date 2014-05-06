@@ -6,15 +6,13 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
   beforeEach ->
     @repository = new Backbone.Model
     Coreon.application = repository: => @repository
-    sinon.stub Coreon.Models.Concept, 'find'
-    sinon.stub Coreon.Models.Concept, 'roots', =>
+    @stub Coreon.Models.Concept, 'find'
+    @stub Coreon.Models.Concept, 'roots', =>
       @deferred = $.Deferred()
       @deferred.promise()
     @collection = new Coreon.Collections.ConceptMapNodes
 
   afterEach ->
-    Coreon.Models.Concept.find.restore()
-    Coreon.Models.Concept.roots.restore()
     delete Coreon.application
 
   it 'is a Backbone collection', ->
@@ -378,15 +376,12 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
   describe '#graph()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Lib, 'TreeGraph', =>
+      @stub Coreon.Lib, 'TreeGraph', =>
         generate: =>
           @graph =
             root:
               children: []
             edges: []
-
-    afterEach ->
-      Coreon.Lib.TreeGraph.restore()
 
     it 'generates tree data structure', ->
       graph = @collection.graph()

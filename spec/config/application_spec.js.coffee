@@ -14,27 +14,18 @@ describe 'Coreon.Application', ->
     new Backbone.Model user: user
 
   beforeEach ->
-    sinon.stub I18n, 't'
     request = $.Deferred()
-    sinon.stub Backbone.history, 'start'
-    sinon.stub Coreon.Routers, 'SessionsRouter'
-    sinon.stub Coreon.Routers, 'RepositoriesRouter'
-    sinon.stub Coreon.Routers, 'ConceptsRouter'
-    sinon.stub Coreon.Models.Session, 'load', -> request
-    sinon.stub Coreon.Views, 'ApplicationView', ->
+    @stub Backbone.history, 'start'
+    @stub Coreon.Routers, 'SessionsRouter'
+    @stub Coreon.Routers, 'RepositoriesRouter'
+    @stub Coreon.Routers, 'ConceptsRouter'
+    @stub Coreon.Models.Session, 'load', -> request
+    @stub Coreon.Views, 'ApplicationView', ->
       view = new Backbone.View arguments...
 
     app = new Coreon.Application auth_root: 'https://auth.coreon.com'
 
   afterEach ->
-    I18n.t.restore()
-    Backbone.history.start.restore()
-    Coreon.Routers.SessionsRouter.restore()
-    Coreon.Routers.RepositoriesRouter.restore()
-    Coreon.Routers.ConceptsRouter.restore()
-    Coreon.Models.Session.load.restore()
-    Coreon.Views.ApplicationView.restore()
-
     delete Coreon.application
 
   it 'is a Backbone model', ->
@@ -257,6 +248,7 @@ describe 'Coreon.Application', ->
     info = null
 
     beforeEach ->
+      @stub I18n, 't'
       info = sinon.stub Coreon.Models.Notification, 'info'
 
     afterEach ->

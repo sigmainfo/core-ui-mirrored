@@ -4,24 +4,18 @@
 describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     @svg = $('<svg:g class="map">')
     @parent = d3.select @svg[0]
     loops = []
     @parent.startLoop = (callback) -> loops.push callback
     @parent.stopLoop = -> loops = []
     @nextFrame = -> callback arguments... for callback in loops
-    sinon.stub d3.layout, 'tree', => @layout =
-      nodes: sinon.stub().returns []
-    sinon.stub d3.svg, 'diagonal', => @diagonal = {}
+    @stub d3.layout, 'tree', => @layout =
+      nodes: @stub().returns []
+    @stub d3.svg, 'diagonal', => @diagonal = {}
     @strategy = new Coreon.Lib.ConceptMap.RenderStrategy @parent, d3.layout.tree()
-    sinon.stub _, 'defer', (@deferred) =>
-
-  afterEach ->
-    I18n.t.restore()
-    d3.layout.tree.restore()
-    d3.svg.diagonal.restore()
-    _.defer.restore()
+    @stub _, 'defer', (@deferred) =>
 
   describe '#constructor()', ->
 
@@ -71,49 +65,43 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
 
     it 'defers update of layout', ->
       deferred = promise: ->
-      sinon.stub $, 'Deferred', -> deferred
-      try
-        nodes = ['node']
-        nodes.data = -> nodes
-        siblings = ['sibling']
-        siblings.data = -> siblings
-        edges = []
-        selection = @strategy.parent.selectAll '.concept-node, .sibling-node'
-        selection.data = sinon.stub()
-        selection.data.withArgs(['node', 'sibling']).returns selection
-        @strategy.updateLayout = sinon.spy()
-        @strategy.renderNodes = -> nodes
-        @strategy.renderSiblings = -> siblings
-        @strategy.renderEdges = -> edges
-        @strategy.parent.selectAll = sinon.stub()
-        @strategy.parent.selectAll
-          .withArgs('.concept-node, .sibling-node')
-          .returns selection
-        @strategy.render @graph
-        expect( @strategy.updateLayout ).to.not.have.been.called
-        expect( _.defer ).to.have.been.calledOnce
-        expect( _.defer ).to.have.been.calledWith @strategy.updateLayout
-        expect( _.defer.firstCall.args[2] ).to.have.equal edges
-        expect( _.defer.firstCall.args[3] ).to.have.equal deferred
-        identify = selection.data.firstCall.args[1]
-        expect( identify( id: '1234' ) ).to.equal '1234'
-        expect( _.defer.firstCall.args[1] ).to.equal selection
-      finally
-        $.Deferred.restore()
+      @stub $, 'Deferred', -> deferred
+      nodes = ['node']
+      nodes.data = -> nodes
+      siblings = ['sibling']
+      siblings.data = -> siblings
+      edges = []
+      selection = @strategy.parent.selectAll '.concept-node, .sibling-node'
+      selection.data = sinon.stub()
+      selection.data.withArgs(['node', 'sibling']).returns selection
+      @strategy.updateLayout = sinon.spy()
+      @strategy.renderNodes = -> nodes
+      @strategy.renderSiblings = -> siblings
+      @strategy.renderEdges = -> edges
+      @strategy.parent.selectAll = sinon.stub()
+      @strategy.parent.selectAll
+        .withArgs('.concept-node, .sibling-node')
+        .returns selection
+      @strategy.render @graph
+      expect( @strategy.updateLayout ).to.not.have.been.called
+      expect( _.defer ).to.have.been.calledOnce
+      expect( _.defer ).to.have.been.calledWith @strategy.updateLayout
+      expect( _.defer.firstCall.args[2] ).to.have.equal edges
+      expect( _.defer.firstCall.args[3] ).to.have.equal deferred
+      identify = selection.data.firstCall.args[1]
+      expect( identify( id: '1234' ) ).to.equal '1234'
+      expect( _.defer.firstCall.args[1] ).to.equal selection
 
     it 'returns promise', ->
       promise = {}
       deferred = promise: -> promise
-      sinon.stub $, 'Deferred', -> deferred
-      try
-        expect( @strategy.render @graph ).to.equal promise
-      finally
-        $.Deferred.restore()
+      @stub $, 'Deferred', -> deferred
+      expect( @strategy.render @graph ).to.equal promise
 
   describe '#renderNodes()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'repositoryPath'
+      @stub Coreon.Helpers, 'repositoryPath'
       @parent.append('g')
         .attr('class', 'concept-node')
         .datum(id: 'remove', type: 'concept')
@@ -128,9 +116,6 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @root = @data[0]
       @root.children = @data[1..]
       @layout.nodes.withArgs(@root).returns @data
-
-    afterEach ->
-      Coreon.Helpers.repositoryPath.restore()
 
     it 'maps nodes to data', ->
       nodes = @strategy.renderNodes @root
@@ -205,7 +190,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
   describe '#createNodes()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'repositoryPath'
+      @stub Coreon.Helpers, 'repositoryPath'
       @enter = @parent
         .selectAll('.concept-node')
         .data([
@@ -214,9 +199,6 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
           { id: 'placeholder' , type: 'placeholder' , path: 'javascript:void(0)' }
         ])
         .enter()
-
-    afterEach ->
-      Coreon.Helpers.repositoryPath.restore()
 
     it 'returns selection of newly created nodes', ->
       nodes = @strategy.createNodes @enter

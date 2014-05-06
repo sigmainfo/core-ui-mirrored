@@ -8,9 +8,9 @@ describe 'Coreon.Views.Terms.TermsView', ->
   app = null
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     termView = new Backbone.View
-    sinon.stub Coreon.Views.Terms, 'TermView'
+    @stub Coreon.Views.Terms, 'TermView'
     Coreon.Views.Terms.TermView.returns termView
 
     app = new Backbone.Model langs: []
@@ -23,10 +23,6 @@ describe 'Coreon.Views.Terms.TermsView', ->
     view = new Coreon.Views.Terms.TermsView
       model: collection
       app: app
-
-  afterEach ->
-    I18n.t.restore()
-    Coreon.Views.Terms.TermView.restore()
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
@@ -73,7 +69,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
     template = null
 
     beforeEach ->
-      template = sinon.stub()
+      template = @stub()
       view.template = template
       app.set 'langs', [], silent: yes
       collection.reset [], silent: yes
@@ -96,7 +92,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
       expect(old).to.not.exist
 
     it 'clears subviews', ->
-      remove = sinon.spy()
+      remove = @spy()
       subview = remove: remove
       view.subviews = [subview]
       view.render()
@@ -203,7 +199,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
           model: term
 
       it 'renders subview', ->
-        render = sinon.stub()
+        render = @stub()
         subview.render = render
         view.render()
         expect(render).to.have.been.calledOnce
@@ -270,7 +266,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
       event.target = toggle.el
 
     it 'is triggered by click on toggle', ->
-      toggleAllProperties = sinon.spy()
+      toggleAllProperties = @spy()
       view.toggleAllProperties = toggleAllProperties
       view.delegateEvents()
       toggle.trigger event

@@ -3,7 +3,7 @@
 #= require views/notifications/notification_view
 
 describe "Coreon.Views.Notifications.NotificationView", ->
-  
+
   beforeEach ->
     @view = new Coreon.Views.Notifications.NotificationView
       model: new Backbone.Model
@@ -18,13 +18,13 @@ describe "Coreon.Views.Notifications.NotificationView", ->
 
     it "can be chained", ->
       @view.render().should.equal @view
-    
+
     it "is triggered on model changes", ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.initialize()
-      @view.model.trigger "change" 
+      @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
-    
+
     it "renders notification type", ->
       @view.model.set "type", "error", silent: true
       @view.render()
@@ -57,11 +57,11 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       @view.render()
 
     it "is triggered by click on hide button", ->
-      @view.close = sinon.spy()
+      @view.close = @spy()
       @view.delegateEvents()
       @view.$(".hide").click()
       @view.close.should.have.been.calledOnce
-  
+
     it "removes model from collection", ->
       collection = new Backbone.Collection
       collection.add @view.model
@@ -74,7 +74,7 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       $("#konacha").append @view.render().$el
 
     it "is triggered when removed", ->
-      @view.hide = sinon.spy()
+      @view.hide = @spy()
       @view.initialize()
       @view.model.trigger "remove"
       @view.hide.should.have.been.calledOnce
@@ -82,21 +82,21 @@ describe "Coreon.Views.Notifications.NotificationView", ->
     it "hides el", ->
       @view.hide()
       @view.$el.should.be.hidden
-  
+
     it "removes el", ->
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @view.hide()
       @view.remove.should.have.been.calledOnce
 
     it "triggers resize event during animation", ->
-      @view.$el.slideUp = sinon.spy()
-      spy = sinon.spy()
+      @view.$el.slideUp = @spy()
+      spy = @spy()
       @view.on "resize", spy
       @view.hide()
       @view.$el.slideUp.should.have.been.calledOnce
       @view.$el.slideUp.firstCall.args[0].step()
       spy.should.have.been.calledOnce
-      
+
   describe "show()", ->
 
     beforeEach ->
@@ -108,8 +108,8 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       @view.$el.should.not.be.hidden
 
     it "triggers resize event during animation", ->
-      @view.$el.slideDown = sinon.spy()
-      spy = sinon.spy()
+      @view.$el.slideDown = @spy()
+      spy = @spy()
       @view.on "resize", spy
       @view.show()
       @view.$el.slideDown.should.have.been.calledOnce
@@ -117,18 +117,15 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       spy.should.have.been.calledOnce
 
   describe "remove()", ->
-  
+
     it "calls super", ->
-      sinon.stub Backbone.View::, "remove"
-      try
-        @view.remove()
-        Backbone.View::remove.should.have.been.calledOnce
-        Backbone.View::remove.should.have.been.calledOn @view
-      finally
-        Backbone.View::remove.restore()
+      @stub Backbone.View::, "remove"
+      @view.remove()
+      Backbone.View::remove.should.have.been.calledOnce
+      Backbone.View::remove.should.have.been.calledOn @view
 
     it "releases all registered listeners", ->
-      @view.off = sinon.spy()
+      @view.off = @spy()
       @view.remove()
       @view.off.should.have.been.calledOnce
       @view.off.firstCall.args.should.have.lengthOf 0

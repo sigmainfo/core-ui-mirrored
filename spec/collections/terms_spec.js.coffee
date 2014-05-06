@@ -19,12 +19,11 @@ describe 'Coreon.Collections.Terms', ->
 
     beforeEach ->
       @hits = new Backbone.Collection
-      sinon.stub Coreon.Collections.Hits, 'collection', => @hits
+      @stub Coreon.Collections.Hits, 'collection', => @hits
       collection = Coreon.Collections.Terms.hits()
 
     afterEach ->
       Coreon.Collections.Terms._hits = null
-      Coreon.Collections.Hits.collection.restore()
 
     it 'creates instance', ->
       expect( collection ).to.be.an.instanceof Coreon.Collections.Terms
@@ -180,10 +179,9 @@ describe 'Coreon.Collections.Terms', ->
   describe '#fetch()', ->
 
     beforeEach ->
-      sinon.stub Backbone.Collection::, 'fetch'
+      @stub Backbone.Collection::, 'fetch'
 
     afterEach ->
-      Backbone.Collection::fetch.restore()
 
     it 'raises exception when no lang is given', ->
       expect( => collection.fetch() ).to.throw 'No language given'
@@ -228,10 +226,7 @@ describe 'Coreon.Collections.Terms', ->
   describe '#sync()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Modules.CoreAPI, 'sync'
-
-    afterEach ->
-      Coreon.Modules.CoreAPI.sync.restore()
+      @stub Coreon.Modules.CoreAPI, 'sync'
 
     it 'delegates to API sync', ->
       collection.sync 'read', collection, url: 'terms/de'

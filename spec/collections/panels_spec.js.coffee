@@ -152,14 +152,12 @@ describe 'Coreon.Collections.Panels', ->
       repositorySettings = null
 
       beforeEach ->
-        @clock = sinon.useFakeTimers()
         repositorySettings = sinon.spy()
         Coreon.application =
           repositorySettings: repositorySettings
 
       afterEach ->
         delete Coreon.application
-        @clock.restore()
 
       it 'is triggered on every change', ->
         save = sinon.spy()

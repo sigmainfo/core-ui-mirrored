@@ -10,13 +10,12 @@ describe 'Coreon.Models.TermList', ->
       sourceLang: -> null
       targetLang: -> null
       graphUri: -> 'coreon.api'
-    sinon.stub Coreon.Models.Concept, 'find'
+    @stub Coreon.Models.Concept, 'find'
     concept = new Backbone.Model
     Coreon.Models.Concept.find.returns concept
     @model = new Coreon.Models.TermList
 
   afterEach ->
-    Coreon.Models.Concept.find.restore()
     delete Coreon.application
     @model.stopListening()
 
@@ -60,12 +59,9 @@ describe 'Coreon.Models.TermList', ->
 
     it 'assigns reference to term hits', ->
       hits = new Backbone.Collection
-      sinon.stub Coreon.Collections.Terms, 'hits', -> hits
-      try
-        @model.initialize()
-        expect( @model.hits ).to.equal hits
-      finally
-        Coreon.Collections.Terms.hits.restore()
+      @stub Coreon.Collections.Terms, 'hits', -> hits
+      @model.initialize()
+      expect( @model.hits ).to.equal hits
 
     it 'creates empty concepts collection', ->
       collection = @model.concepts
@@ -76,23 +72,23 @@ describe 'Coreon.Models.TermList', ->
   describe '#reset()', ->
 
     it 'is triggered on source change', ->
-      @model.reset = sinon.spy()
+      @model.reset = @spy()
       @model.initialize()
       @model.set 'source', 'hu'
       expect( @model.reset ).to.have.been.calledOnce
       expect( @model.reset ).to.have.been.calledOn @model
 
     it 'is triggered on scope change', ->
-      @model.reset = sinon.spy()
+      @model.reset = @spy()
       @model.initialize()
       @model.trigger 'change:scope'
       expect( @model.reset ).to.have.been.calledOnce
       expect( @model.reset ).to.have.been.calledOn @model
 
     it 'triggers reset event', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.on 'reset', spy
-      @model.terms.reset = sinon.spy()
+      @model.terms.reset = @spy()
       @model.reset()
       expect( spy ).to.have.been.calledOnce
       expect( @model.terms.reset ).to.have.been.calledOnce
@@ -117,7 +113,7 @@ describe 'Coreon.Models.TermList', ->
       context 'with scope narrowed down to hits', ->
 
         beforeEach ->
-          @model.hits.lang = sinon.stub()
+          @model.hits.lang = @stub()
           @model.set 'scope', 'hits', silent: yes
 
         it 'fills collection with terms from source lang', ->
@@ -129,7 +125,7 @@ describe 'Coreon.Models.TermList', ->
 
         it 'does not fetch terms', ->
           collection = @model.terms
-          collection.fetch = sinon.spy()
+          collection.fetch = @spy()
           @model.reset()
           expect( collection.fetch ).to.not.have.been.called
 
@@ -148,12 +144,12 @@ describe 'Coreon.Models.TermList', ->
           expect( collection.models ).to.be.empty
 
         it 'fetches first batch', ->
-          @model.next = sinon.spy()
+          @model.next = @spy()
           @model.reset()
           expect( @model.next ).to.have.been.calledOnce
 
         it 'triggers event on response', ->
-          spy = sinon.spy()
+          spy = @spy()
           @model.on 'append', spy
           @model.reset()
           spy.reset()
@@ -168,7 +164,7 @@ describe 'Coreon.Models.TermList', ->
       @model.reset = ->
 
     it 'is triggered on source lang change', ->
-      @model.updateSource = sinon.spy()
+      @model.updateSource = @spy()
       @model.initialize()
       @model.updateSource.reset()
       @repositorySettings.trigger 'change:sourceLanguage'
@@ -184,7 +180,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#updateTarget()', ->
 
     it 'is triggered on target lang change', ->
-      @model.updateTarget = sinon.spy()
+      @model.updateTarget = @spy()
       @model.initialize()
       @model.updateTarget.reset()
       @repositorySettings.trigger 'change:targetLanguage'
@@ -200,7 +196,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#onRoute()', ->
 
     it 'is triggered when history routes', ->
-      @model.onRoute = sinon.spy()
+      @model.onRoute = @spy()
       @model.initialize()
       Backbone.history.trigger new Backbone.Router
                              , 'show'
@@ -218,7 +214,7 @@ describe 'Coreon.Models.TermList', ->
 
     it 'forces update', ->
       @model.set 'scope', 'all', silent: yes
-      @model.reset = sinon.spy()
+      @model.reset = @spy()
       @model.initialize()
       @model.onRoute new Coreon.Routers.RepositoriesRouter
                    , 'show'
@@ -228,7 +224,7 @@ describe 'Coreon.Models.TermList', ->
 
     it 'does not trigger double update', ->
       @model.set 'scope', 'hits', silent: yes
-      @model.reset = sinon.spy()
+      @model.reset = @spy()
       @model.initialize()
       @model.onRoute new Coreon.Routers.RepositoriesRouter
                    , 'show'
@@ -239,7 +235,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#onHitsReset()', ->
 
     it 'is triggered when hits are reset', ->
-      @model.onHitsReset = sinon.spy()
+      @model.onHitsReset = @spy()
       @model.initialize()
       @model.hits.trigger 'reset'
       expect( @model.onHitsReset ).to.have.been.calledOnce
@@ -252,7 +248,7 @@ describe 'Coreon.Models.TermList', ->
 
     it 'forces update', ->
       @model.set 'scope', 'hits', silent: yes
-      @model.reset = sinon.spy()
+      @model.reset = @spy()
       @model.initialize()
       @model.onHitsReset()
       expect( @model.reset ).to.have.been.calledOnce
@@ -260,7 +256,7 @@ describe 'Coreon.Models.TermList', ->
 
     it 'does not trigger double update', ->
       @model.set 'scope', 'all', silent: yes
-      @model.reset = sinon.spy()
+      @model.reset = @spy()
       @model.initialize()
       @model.onHitsReset()
       expect( @model.reset ).to.have.been.calledOnce
@@ -269,7 +265,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#next()', ->
 
     beforeEach ->
-      @model.terms.fetch = sinon.spy =>
+      @model.terms.fetch = @spy =>
         @request = $.Deferred()
         @request.promise()
 
@@ -283,7 +279,7 @@ describe 'Coreon.Models.TermList', ->
         expect( promise.state() ).to.equal 'resolved'
 
       it 'resolves callbacks with empty set', ->
-        done = sinon.spy()
+        done = @spy()
         @model.next().then done
         expect( done ).to.have.been.calledOnce
         expect( done ).to.have.been.calledWith []
@@ -347,7 +343,7 @@ describe 'Coreon.Models.TermList', ->
         expect( @model.get 'loadingNext' ).to.be.false
 
       it 'triggers event on response', ->
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'append', spy
         @model.next()
         spy.reset()
@@ -356,7 +352,7 @@ describe 'Coreon.Models.TermList', ->
 
       it 'passes appended terms along when triggering event', ->
         @model.terms.reset [], silent: yes
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'append', spy
         @model.next 'term-456'
         spy.reset()
@@ -381,7 +377,7 @@ describe 'Coreon.Models.TermList', ->
           { id: 'term-123' }
           { id: 'term-456' }
         ], silent: yes
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'append', spy
         @model.next 'term-456'
         spy.reset()
@@ -443,7 +439,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#prev()', ->
 
     beforeEach ->
-      @model.terms.fetch = sinon.spy =>
+      @model.terms.fetch = @spy =>
         @request = $.Deferred()
         @request.promise()
 
@@ -457,7 +453,7 @@ describe 'Coreon.Models.TermList', ->
         expect( promise.state() ).to.equal 'resolved'
 
       it 'resolves callbacks with empty set', ->
-        done = sinon.spy()
+        done = @spy()
         @model.prev().then done
         expect( done ).to.have.been.calledOnce
         expect( done ).to.have.been.calledWith []
@@ -521,7 +517,7 @@ describe 'Coreon.Models.TermList', ->
         expect( @model.get 'loadingPrev' ).to.be.false
 
       it 'triggers event on response', ->
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'prepend', spy
         @model.prev()
         spy.reset()
@@ -531,7 +527,7 @@ describe 'Coreon.Models.TermList', ->
       it 'passes prepended terms along when triggering event', ->
         @model.terms.comparator = ( t ) -> t.id
         @model.terms.reset [], silent: yes
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'prepend', spy
         @model.prev 'term-456'
         spy.reset()
@@ -557,7 +553,7 @@ describe 'Coreon.Models.TermList', ->
           { id: 'term-456' }
           { id: 'term-9ab' }
         ], silent: yes
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'prepend', spy
         @model.prev 'term-456'
         spy.reset()
@@ -637,9 +633,9 @@ describe 'Coreon.Models.TermList', ->
       expect( @model.hasNext() ).to.be.true
 
     it 'triggers reset event', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.on 'reset', spy
-      @model.terms.reset = sinon.spy()
+      @model.terms.reset = @spy()
       @model.clearTerms()
       expect( spy ).to.have.been.calledOnce
       expect( @model.terms.reset ).to.have.been.calledOnce
@@ -647,7 +643,7 @@ describe 'Coreon.Models.TermList', ->
       expect( spy ).to.have.been.calledWith @model.terms, @model.attributes
 
     it 'can be silenced', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.on 'reset', spy
       @model.clearTerms silent: yes
       expect( spy ).to.not.have.been.called
@@ -655,7 +651,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#onTermsReset()', ->
 
     it 'is triggered by reset of terms collection', ->
-      @model.onTermsReset = sinon.spy()
+      @model.onTermsReset = @spy()
       @model.initialize()
       @model.terms.trigger 'reset'
       expect( @model.onTermsReset ).to.have.been.calledOnce
@@ -678,7 +674,7 @@ describe 'Coreon.Models.TermList', ->
   describe '#onTermsAdd()', ->
 
     it 'is triggered when a term was added', ->
-      @model.onTermsAdd = sinon.spy()
+      @model.onTermsAdd = @spy()
       @model.initialize()
       @model.terms.trigger 'add'
       expect( @model.onTermsAdd ).to.have.been.calledOnce
@@ -701,18 +697,18 @@ describe 'Coreon.Models.TermList', ->
       @model.set 'target', 'de', silent: yes
       @concept = new Backbone.Model
       terms = new Backbone.Collection
-      terms.lang = sinon.stub()
+      terms.lang = @stub()
       terms.lang.returns []
       @concept.terms = -> terms
 
     it 'is triggered on changes on concept terms', ->
-      @model.onConceptsChange = sinon.spy()
+      @model.onConceptsChange = @spy()
       @model.initialize()
       @model.concepts.trigger 'change:terms'
       expect( @model.onConceptsChange ).to.have.been.calledOnce
 
     it 'triggers update event', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.on 'updateTargetTerms', spy
       @model.set 'target', 'de', silent: yes
       terms = [
@@ -724,7 +720,7 @@ describe 'Coreon.Models.TermList', ->
       expect( spy ).to.have.been.calledWith terms
 
     it 'does not trigger update event when no target terms exist', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.on 'updateTargetTerms', spy
       @model.set 'target', 'de', silent: yes
       @concept.terms().lang.withArgs('de').returns []

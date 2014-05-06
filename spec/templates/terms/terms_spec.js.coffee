@@ -10,13 +10,10 @@ describe 'Coreon.Templates[terms/terms]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
     data =
       languages: []
       hasProperties: no
-
-  afterEach ->
-    I18n.t.restore()
 
   context 'languages', ->
 

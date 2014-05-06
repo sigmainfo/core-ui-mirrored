@@ -11,34 +11,27 @@ describe 'Coreon.Views.ConceptsPanel', ->
   newConceptView = null
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
 
     repositoryView = new Backbone.View
-    sinon.stub Coreon.Views.Panels.Concepts, 'RepositoryView', ->
+    @stub Coreon.Views.Panels.Concepts, 'RepositoryView', ->
       repositoryView
 
     conceptListView = new Backbone.View
-    sinon.stub Coreon.Views.Concepts, 'ConceptListView', ->
+    @stub Coreon.Views.Concepts, 'ConceptListView', ->
       conceptListView
 
     conceptView = new Backbone.View
-    sinon.stub Coreon.Views.Concepts, 'ConceptView', ->
+    @stub Coreon.Views.Concepts, 'ConceptView', ->
       conceptView
 
     newConceptView = new Backbone.View
-    sinon.stub Coreon.Views.Concepts, 'NewConceptView', ->
+    @stub Coreon.Views.Concepts, 'NewConceptView', ->
       newConceptView
 
     view = new Coreon.Views.Panels.ConceptsPanel
       model: new Backbone.Model
       panel: new Backbone.Model
-
-  afterEach ->
-    Coreon.Views.Panels.Concepts.RepositoryView.restore()
-    Coreon.Views.Concepts.ConceptListView.restore()
-    Coreon.Views.Concepts.ConceptView.restore()
-    Coreon.Views.Concepts.NewConceptView.restore()
-    I18n.t.restore()
 
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
@@ -50,15 +43,12 @@ describe 'Coreon.Views.ConceptsPanel', ->
   describe '#initialize panel: panel', ->
 
     it 'calls super implementation', ->
-      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
-      try
-        panel = new Backbone.Model
-        view.initialize panel: panel
-        original = Coreon.Views.Panels.PanelView::initialize
-        expect(original).to.have.been.calledOnce
-        expect(original).to.have.been.calledWith panel: panel
-      finally
-        Coreon.Views.Panels.PanelView::initialize.restore()
+      @spy Coreon.Views.Panels.PanelView::, 'initialize'
+      panel = new Backbone.Model
+      view.initialize panel: panel
+      original = Coreon.Views.Panels.PanelView::initialize
+      expect(original).to.have.been.calledOnce
+      expect(original).to.have.been.calledWith panel: panel
 
     it 'renders title', ->
       I18n.t.withArgs('panels.concepts.title').returns 'Concepts'
@@ -73,7 +63,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
       expect(container).to.exist
 
     it 'switches to appropriate view', ->
-      switchView = sinon.spy()
+      switchView = @spy()
       view.switchView = switchView
       view.initialize panel: panel
       expect(switchView).to.have.been.calledOnce
@@ -85,7 +75,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
       spy = null
 
       beforeEach ->
-        spy = sinon.spy()
+        spy = @spy()
         view.switchView = spy
         view.initialize panel: panel
         spy.reset()
@@ -108,7 +98,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
     context 'cleanup', ->
 
       it 'removes current view', ->
-        remove = sinon.spy()
+        remove = @spy()
         currentView = remove: remove
         view.currentView = currentView
         view.switchView()
@@ -161,7 +151,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
           expect($.contains content, el).to.be.true
 
         it 'renders repository view', ->
-          render = sinon.stub()
+          render = @stub()
           render.returns repositoryView
           repositoryView.render = render
           view.switchView()
@@ -197,7 +187,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
           expect($.contains content, el).to.be.true
 
         it 'renders concept list view', ->
-          render = sinon.stub()
+          render = @stub()
           render.returns conceptListView
           conceptListView.render = render
           view.switchView()
@@ -234,7 +224,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
             expect($.contains content, el).to.be.true
 
           it 'renders concept view', ->
-            render = sinon.stub()
+            render = @stub()
             render.returns conceptView
             conceptView.render = render
             view.switchView()
@@ -262,7 +252,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
             expect($.contains content, el).to.be.true
 
           it 'renders new concept view', ->
-            render = sinon.stub()
+            render = @stub()
             render.returns newConceptView
             newConceptView.render = render
             view.switchView()
@@ -275,7 +265,7 @@ describe 'Coreon.Views.ConceptsPanel', ->
       expect(result).to.equal view
 
     it 'delegates to current view', ->
-      render = sinon.spy()
+      render = @spy()
       view.currentView = render: render
       view.render()
       expect(render).to.have.been.calledOnce

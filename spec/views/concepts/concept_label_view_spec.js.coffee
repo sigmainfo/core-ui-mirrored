@@ -7,13 +7,12 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     @concept = _(new Backbone.Model).extend
       label: -> "poem"
       hit: -> false
-    sinon.stub Coreon.Models.Concept, "find"
+    @stub Coreon.Models.Concept, "find"
     Coreon.Models.Concept.find.withArgs("1234").returns @concept
     @view = new Coreon.Views.Concepts.ConceptLabelView id: "1234"
 
   afterEach ->
     @view.destroy()
-    Coreon.Models.Concept.find.restore()
 
   it "is a simple view", ->
     @view.should.be.an.instanceof Coreon.Views.SimpleView
@@ -57,7 +56,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       @view.$el.should.have.text "Zitrone"
 
     it "is triggered on model changes", ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.initialize model: new Backbone.Model
       @view.model.trigger "change"
       @view.render.should.have.been.calledOnce
@@ -81,7 +80,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       $("#konacha").should.have ".concept-label"
 
     it "delegates events", ->
-      @view.delegateEvents = sinon.spy()
+      @view.delegateEvents = @spy()
       @view.appendTo "#konacha"
       @view.delegateEvents.should.have.been.calledOnce
 
@@ -93,7 +92,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
       $("#konacha").should.not.have ".concept-label"
 
     it "disposes events on model", ->
-      @view.render = sinon.spy()
+      @view.render = @spy()
       @view.initialize model: new Backbone.Model
       @view.destroy()
       @view.model.trigger "change"

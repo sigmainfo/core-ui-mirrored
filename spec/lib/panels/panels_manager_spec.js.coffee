@@ -19,15 +19,8 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
       instance = null
 
       beforeEach ->
-        sinon.stub Coreon.Collections.Panels, 'instance', ->
-          collection
-
-        sinon.stub Coreon.Lib.Panels.PanelFactory, 'instance', ->
-          factory
-
-      afterEach ->
-        Coreon.Collections.Panels.instance.restore()
-        Coreon.Lib.Panels.PanelFactory.instance.restore()
+        @stub Coreon.Collections.Panels, 'instance', -> collection
+        @stub Coreon.Lib.Panels.PanelFactory, 'instance', -> factory
 
       it 'creates manager instance', ->
         instance = Coreon.Lib.Panels.PanelsManager.create view

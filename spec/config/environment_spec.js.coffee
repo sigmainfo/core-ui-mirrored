@@ -61,10 +61,7 @@ describe "config/environment", ->
   context "error notifications", ->
 
     beforeEach ->
-      sinon.stub Backbone.$, "ajax", => $.Deferred()
-
-    afterEach ->
-      Backbone.$.ajax.restore()
+      @stub Backbone.$, "ajax", => $.Deferred()
 
     it "delegates to $", ->
       Backbone.ajax "https://auth.coreon.com/login"

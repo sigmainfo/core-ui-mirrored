@@ -6,11 +6,8 @@ describe 'Coreon.Models.Concept', ->
   beforeEach ->
     @hits = new Backbone.Collection
     @hits.findByResult = -> null
-    sinon.stub Coreon.Collections.Hits, 'collection', => @hits
+    @stub Coreon.Collections.Hits, 'collection', => @hits
     @model = new Coreon.Models.Concept id: '123'
-
-  afterEach ->
-    Coreon.Collections.Hits.collection.restore()
 
   it 'is a Backbone model', ->
     expect( @model ).to.been.an.instanceof Backbone.Model
@@ -43,12 +40,9 @@ describe 'Coreon.Models.Concept', ->
       context 'when newly created', ->
 
         beforeEach ->
-          sinon.stub I18n, 't'
+          @stub I18n, 't'
           I18n.t.withArgs('concept.new_concept').returns '<new concept>'
           @model.isNew = -> true
-
-        afterEach ->
-          I18n.t.restore()
 
         it 'defaults to <new concept>', ->
           @model.set properties: [ key: 'label', value: 'gun' ]
@@ -409,16 +403,14 @@ describe 'Coreon.Models.Concept', ->
       Coreon.application =
         graphUri: -> 'https://api.coreon.com/123/'
       @collection = new Backbone.Collection
-      sinon.stub Coreon.Models.Concept, 'collection', =>
+      @stub Coreon.Models.Concept, 'collection', =>
         @collection
-      sinon.stub Coreon.Modules.CoreAPI, 'sync', =>
+      @stub Coreon.Modules.CoreAPI, 'sync', =>
         @request = $.Deferred()
         @request.promise()
 
     afterEach ->
       delete Coreon.application
-      Coreon.Models.Concept.collection.restore()
-      Coreon.Modules.CoreAPI.sync.restore()
 
     it 'fetches root concept ids thru API call', ->
       request = Coreon.Models.Concept.roots()
@@ -519,10 +511,7 @@ describe 'Coreon.Models.Concept', ->
   describe '#fetch()', ->
 
       beforeEach ->
-        sinon.stub Coreon.Modules.CoreAPI, 'sync'
-
-      afterEach ->
-        Coreon.Modules.CoreAPI.sync.restore()
+        @stub Coreon.Modules.CoreAPI, 'sync'
 
       it 'combines multiple subsequent calls into a single batch request', ->
         @model.fetch()
@@ -534,10 +523,7 @@ describe 'Coreon.Models.Concept', ->
     context 'application sync', ->
 
       beforeEach ->
-        sinon.stub Coreon.Modules.CoreAPI, 'sync'
-
-      afterEach ->
-        Coreon.Modules.CoreAPI.sync.restore()
+        @stub Coreon.Modules.CoreAPI, 'sync'
 
       it 'delegates to application sync', ->
         @model.save {}, wait: true
@@ -549,15 +535,12 @@ describe 'Coreon.Models.Concept', ->
 
       beforeEach ->
         @model.id = null
-        sinon.stub Coreon.Modules.CoreAPI, 'sync', (method, model, options = {}) ->
+        @stub Coreon.Modules.CoreAPI, 'sync', (method, model, options = {}) ->
           model.id = '1234'
           options.success?()
 
-      afterEach ->
-        Coreon.Modules.CoreAPI.sync.restore()
-
       it 'triggers custom event', ->
-        spy = sinon.spy()
+        spy = @spy()
         @model.on 'create', spy
         @model.save 'label', 'dead man'
         @model.save 'label', 'nobody'
@@ -621,13 +604,9 @@ describe 'Coreon.Models.Concept', ->
     sorted = null
 
     beforeEach ->
-      sinon.stub Coreon.Models.Concept, 'find'
-      sinon.stub Coreon.Modules.Collation, 'sortBy', ->
+      @stub Coreon.Models.Concept, 'find'
+      @stub Coreon.Modules.Collation, 'sortBy', ->
         sorted = @.slice()
-
-    afterEach ->
-      Coreon.Models.Concept.find.restore()
-      Coreon.Modules.Collation.sortBy.restore()
 
     it 'returns a set containing the superconcepts', ->
       parent = new Backbone.Model

@@ -8,11 +8,11 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
   view = null
 
   beforeEach ->
-    sinon.stub I18n, 't'
-    sinon.stub jQuery.fn, 'coreonSelect'
+    @stub I18n, 't'
+    @stub jQuery.fn, 'coreonSelect'
 
     application = new Backbone.Model
-    application.langs = sinon.stub()
+    application.langs = @stub()
     application.langs.returns []
     application.sourceLang = -> null
     application.targetLang = -> null
@@ -20,10 +20,6 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
     view = new Coreon.Views.Widgets.LanguagesView
       model: model
       app: application
-
-  afterEach ->
-    I18n.t.restore()
-    jQuery.fn.coreonSelect.restore()
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
@@ -44,7 +40,7 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
       render = null
 
       beforeEach ->
-        render = sinon.spy()
+        render = @spy()
         view.render = render
         view.initialize
           model: model
@@ -158,8 +154,8 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
         expect(en).to.have.attr 'selected'
 
     it 'transforms rendered selects into custom components', ->
-      transform = sinon.spy()
-      sinon.stub view, '$'
+      transform = @spy()
+      @stub view, '$'
       view.$.withArgs('select').returns coreonSelect: transform
       view.render()
       expect(transform).to.have.been.calledOnce
@@ -171,7 +167,7 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
     settings = null
 
     beforeEach ->
-      settings = sinon.spy()
+      settings = @spy()
       application.repositorySettings = settings
       view.$el.html '''
         <select name="source_language">
@@ -184,7 +180,7 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
       event.target = select[0]
 
     it 'is triggered on selection change', ->
-      updateSource = sinon.spy()
+      updateSource = @spy()
       view.updateSource = updateSource
       view.delegateEvents()
       select.trigger 'change'
@@ -212,7 +208,7 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
     settings = null
 
     beforeEach ->
-      settings = sinon.spy()
+      settings = @spy()
       application.repositorySettings = settings
       view.$el.html '''
         <select name="target_language">
@@ -225,7 +221,7 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
       event.target = select[0]
 
     it 'is triggered on selection change', ->
-      updateTarget = sinon.spy()
+      updateTarget = @spy()
       view.updateTarget = updateTarget
       view.delegateEvents()
       select.trigger 'change'

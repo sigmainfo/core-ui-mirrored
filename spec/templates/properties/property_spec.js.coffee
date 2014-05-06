@@ -11,7 +11,7 @@ describe 'Coreon.Templates[properties/property]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
 
     property = new Backbone.Model key: 'gender', value: 'f'
     property.info = -> {}
@@ -19,9 +19,6 @@ describe 'Coreon.Templates[properties/property]', ->
     data =
       property: property
       render: -> ''
-
-  afterEach ->
-    I18n.t.restore()
 
   it 'renders value', ->
     property.set 'value', 'female', silent: yes
@@ -33,7 +30,7 @@ describe 'Coreon.Templates[properties/property]', ->
   it 'renders info', ->
     info = source: 'Wikipedia'
     property.info = -> info
-    helper = sinon.stub()
+    helper = @stub()
     data.render = helper
     helper
       .withArgs('shared/info', data: info)

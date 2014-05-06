@@ -30,23 +30,20 @@ describe 'Coreon.Views.Panels.PanelView', ->
   describe '#widgetize()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, 'action_for'
+      @stub Coreon.Helpers, 'action_for'
       model.set 'widget', on
-
-    afterEach ->
-      Coreon.Helpers.action_for.restore()
 
     context 'triggers', ->
 
       it 'is triggered when changed to widget mode', ->
-        widgetize = sinon.spy()
+        widgetize = @spy()
         view.widgetize = widgetize
         model.trigger 'change:widget', model, on
         expect(widgetize).to.have.been.calledOnce
         expect(widgetize).to.have.been.calledOn view
 
       it 'is not triggered when changed to maximized mode', ->
-        widgetize = sinon.spy()
+        widgetize = @spy()
         view.widgetize = widgetize
         model.trigger 'change:widget', model, off
         expect(widgetize).to.not.have.been.called
@@ -129,14 +126,14 @@ describe 'Coreon.Views.Panels.PanelView', ->
     context 'triggers', ->
 
       it 'is triggered when changed to maximized mode', ->
-        maximize = sinon.spy()
+        maximize = @spy()
         view.maximize = maximize
         model.trigger 'change:widget', model, off
         expect(maximize).to.have.been.calledOnce
         expect(maximize).to.have.been.calledOn view
 
       it 'is not triggered when changed to widget mode', ->
-        maximize = sinon.spy()
+        maximize = @spy()
         view.maximize = maximize
         model.trigger 'change:widget', model, on
         expect(maximize).to.not.have.been.called
@@ -172,7 +169,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
 
     it 'removes resizable functionality', ->
       view.$el.addClass 'ui-resizable'
-      resizable = sinon.spy()
+      resizable = @spy()
       view.$el.resizable = resizable
       view.maximize()
       expect(resizable).to.have.been.calledOnce
@@ -185,7 +182,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
       resize = null
 
       beforeEach ->
-        resize = sinon.spy()
+        resize = @spy()
         view.resize = resize
         view.initialize panel: model
 
@@ -247,7 +244,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
 
     it 'is called by #resize()', ->
       $('#konacha').append view.$el
-      update = sinon.spy()
+      update = @spy()
       view.updateSizes = update
       model.set
         widget: on
@@ -296,7 +293,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
       view.widgetize()
 
     it 'is called by resizable', ->
-      start = sinon.spy()
+      start = @spy()
       view.resizeStart = start
       trigger = view.$el.resizable('option', 'start')
       event = $.Event 'drag'
@@ -314,7 +311,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
       view.widgetize()
 
     it 'is called by resizable', ->
-      step = sinon.spy()
+      step = @spy()
       view.resizeStep = step
       trigger = view.$el.resizable('option', 'resize')
       event = $.Event 'drag'
@@ -342,7 +339,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
       view.widgetize()
 
     it 'is called by resizable', ->
-      stop = sinon.spy()
+      stop = @spy()
       view.resizeStop = stop
       trigger = view.$el.resizable('option', 'stop')
       event = $.Event 'drag'
@@ -370,7 +367,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
       event.target = action[0]
 
     it 'is triggered by click on action', ->
-      switchToMax = sinon.spy()
+      switchToMax = @spy()
       view.switchToMax = switchToMax
       view.delegateEvents()
       action.trigger event
@@ -385,7 +382,7 @@ describe 'Coreon.Views.Panels.PanelView', ->
       expect(widgetized).to.be.false
 
     it 'prevents default action', ->
-      preventDefault = sinon.spy()
+      preventDefault = @spy()
       event.preventDefault = preventDefault
       view.switchToMax event
       expect(preventDefault).to.have.been.calledOnce

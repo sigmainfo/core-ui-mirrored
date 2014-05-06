@@ -9,17 +9,17 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
     Coreon.application.repositorySettings = -> new Backbone.Model
     Coreon.application.sourceLang = -> null
 
-    sinon.stub Coreon.Models, "SearchType", =>
+    @stub Coreon.Models, "SearchType", =>
       @searchType = new Backbone.Model
 
-    sinon.stub Coreon.Views.Widgets, "SearchView", =>
+    @stub Coreon.Views.Widgets, "SearchView", =>
       @search = new Backbone.View
-      @search.render = sinon.stub().returns @search
+      @search.render = @stub().returns @search
       @search
 
-    sinon.stub Coreon.Views.Widgets, "LanguagesView", =>
+    @stub Coreon.Views.Widgets, "LanguagesView", =>
       @languages = new Backbone.View
-      @languages.render = sinon.stub().returns @languages
+      @languages.render = @stub().returns @languages
       @languages
 
     @view = new Coreon.Views.Widgets.WidgetsView
@@ -27,9 +27,6 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
         hits: new Backbone.Collection
 
   afterEach ->
-    Coreon.Models.SearchType.restore()
-    Coreon.Views.Widgets.SearchView.restore()
-    Coreon.Views.Widgets.LanguagesView.restore()
     Coreon.application = null
 
   it "is a Backbone view", ->
@@ -41,12 +38,9 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
   describe "#initialize()", ->
 
     beforeEach ->
-      sinon.stub Coreon.application, "repositorySettings"
+      @stub Coreon.application, "repositorySettings"
       Coreon.application.repositorySettings
         .withArgs('widgets').returns width: 347
-
-    afterEach ->
-      Coreon.application.repositorySettings.restore()
 
   describe "#render()", ->
 
@@ -55,7 +49,7 @@ describe "Coreon.Views.Widgets.WidgetsView", ->
 
     it "removes subviews", ->
       subview = new Backbone.View
-      subview.remove = sinon.spy()
+      subview.remove = @spy()
       @view.subviews = [ subview ]
       @view.render()
       subview.remove.should.have.been.calledOnce

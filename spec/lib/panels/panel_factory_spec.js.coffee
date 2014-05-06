@@ -60,11 +60,8 @@ describe 'Coreon.Lib.Panels.PanelFactory', ->
       context 'concepts', ->
 
         beforeEach ->
-          sinon.stub Coreon.Views.Panels, 'ConceptsPanel', ->
+          @stub Coreon.Views.Panels, 'ConceptsPanel', ->
             panel = new Backbone.View
-
-        afterEach ->
-          Coreon.Views.Panels.ConceptsPanel.restore()
 
         it 'creates panel', ->
           instance = factory.create 'concepts', model
@@ -93,19 +90,14 @@ describe 'Coreon.Lib.Panels.PanelFactory', ->
         hits = null
 
         beforeEach ->
-          sinon.stub Coreon.Collections, 'ConceptMapNodes', ->
+          @stub Coreon.Collections, 'ConceptMapNodes', ->
             nodes = new Backbone.Collection
 
-          sinon.stub Coreon.Collections.Hits, 'collection', ->
+          @stub Coreon.Collections.Hits, 'collection', ->
             hits ?= new Backbone.Collection
 
-          sinon.stub Coreon.Views.Panels, 'ConceptMapPanel', ->
+          @stub Coreon.Views.Panels, 'ConceptMapPanel', ->
             panel = new Backbone.View
-
-        afterEach ->
-          Coreon.Collections.ConceptMapNodes.restore()
-          Coreon.Collections.Hits.collection.restore()
-          Coreon.Views.Panels.ConceptMapPanel.restore()
 
         it 'creates panel', ->
           instance = factory.create 'conceptMap', model
@@ -121,14 +113,11 @@ describe 'Coreon.Lib.Panels.PanelFactory', ->
         terms = null
 
         beforeEach ->
-          sinon.stub Coreon.Models, 'TermList', ->
+          @stub Coreon.Models, 'TermList', ->
             terms = new Backbone.Model
 
-          sinon.stub Coreon.Views.Panels, 'TermListPanel', ->
+          @stub Coreon.Views.Panels, 'TermListPanel', ->
             panel = new Backbone.View
-
-        afterEach ->
-          Coreon.Models.TermList.restore()
 
         it 'creates panel', ->
           instance = factory.create 'termList', model

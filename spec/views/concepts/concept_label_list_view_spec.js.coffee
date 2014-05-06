@@ -6,14 +6,11 @@ describe 'Coreon.Views.Concept.ConceptLabelListView', ->
   view = null
 
   beforeEach ->
-    sinon.stub Coreon.Views.Concepts, 'ConceptLabelView'
+    @stub Coreon.Views.Concepts, 'ConceptLabelView'
     Coreon.Views.Concepts.ConceptLabelView.returns new Backbone.View
 
     view = new Coreon.Views.Concepts.ConceptLabelListView
       models: []
-
-  afterEach ->
-    Coreon.Views.Concepts.ConceptLabelView.restore()
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
@@ -37,7 +34,7 @@ describe 'Coreon.Views.Concept.ConceptLabelListView', ->
       expect(result).to.equal view
 
     it 'is triggered on label changes', ->
-      render = sinon.spy()
+      render = @spy()
       view.render = render
       view.initialize()
       view.model.trigger 'change:label'
@@ -54,7 +51,7 @@ describe 'Coreon.Views.Concept.ConceptLabelListView', ->
       label = new Backbone.View
       constructor = Coreon.Views.Concepts.ConceptLabelView
       constructor.returns label
-      remove = sinon.spy()
+      remove = @spy()
       label.remove = remove
       view.model.reset [ new Backbone.Model ], silent: yes
       view.render()
@@ -66,7 +63,7 @@ describe 'Coreon.Views.Concept.ConceptLabelListView', ->
       concept = new Backbone.Model
       view.model.reset [concept], silent: yes
       label = new Backbone.View
-      render = sinon.spy()
+      render = @spy()
       label.render = render
       constructor = Coreon.Views.Concepts.ConceptLabelView
       constructor.withArgs(model: concept).returns label

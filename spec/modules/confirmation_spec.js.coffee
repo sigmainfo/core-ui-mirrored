@@ -12,7 +12,7 @@ describe "Coreon.Modules.Confirmation", ->
     delete Coreon.Views.MyView
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
     @view = new Coreon.Views.MyView
     $("#konacha")
       .append(@view.$el)
@@ -27,7 +27,6 @@ describe "Coreon.Modules.Confirmation", ->
     @trigger = @view.$("a.delete")
 
   afterEach ->
-    I18n.t.restore()
     $(window).off ".coreonConfirm"
 
   describe "confirm()", ->
@@ -39,7 +38,7 @@ describe "Coreon.Modules.Confirmation", ->
         container: @view.$ ".concept"
         message: "Are you sure?"
         action: ->
-      $("#coreon-modal").should.have ".modal-shim .confirm" 
+      $("#coreon-modal").should.have ".modal-shim .confirm"
       $("#coreon-modal .confirm .message").should.have.text "Are you sure?"
       $("#coreon-modal .confirm .ok").should.have.text "OK"
 
@@ -58,8 +57,8 @@ describe "Coreon.Modules.Confirmation", ->
           container: null
           message: "Are you sure?"
           action: ->
-      confirm.should.not.throw Error 
-      
+      confirm.should.not.throw Error
+
 
     context "cancel", ->
 
@@ -89,7 +88,7 @@ describe "Coreon.Modules.Confirmation", ->
           @view.$(".concept").should.not.have.class "delete"
 
       context "without container", ->
-        
+
         beforeEach ->
           @view.confirm
             trigger: @trigger
@@ -100,12 +99,12 @@ describe "Coreon.Modules.Confirmation", ->
         it "does not throw an error", ->
           cancel = ->
             $(".modal-shim").click()
-          cancel.should.not.throw Error 
+          cancel.should.not.throw Error
 
     context "destroy", ->
 
       beforeEach ->
-        @action = sinon.spy()
+        @action = @spy()
         @view.confirm
           trigger: @trigger
           container: @view.$ ".concept"
@@ -114,14 +113,14 @@ describe "Coreon.Modules.Confirmation", ->
 
       it "stops propagation", ->
         event = $.Event "click"
-        event.stopPropagation = sinon.spy()
+        event.stopPropagation = @spy()
         $(".confirm").trigger event
         event.stopPropagation.should.have.been.calledOnce
-        
+
       it "removes dialog", ->
         $(".confirm").click()
         $("#coreon-modal").should.be.empty
-      
+
       it "calls action", ->
         $(".confirm").click()
         @action.should.have.been.calledOnce

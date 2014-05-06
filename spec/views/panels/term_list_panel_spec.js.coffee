@@ -7,14 +7,14 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   panel = null
 
   beforeEach ->
-    sinon.stub I18n, "t"
-    sinon.stub Coreon.Models.Concept, 'find'
+    @stub I18n, "t"
+    @stub Coreon.Models.Concept, 'find'
     concept = new Backbone.Model
     Coreon.Models.Concept.find.returns concept
     repository = new Backbone.Model
     settings = new Backbone.Model
     Coreon.application =
-      repositorySettings: sinon.stub().returns settings
+      repositorySettings: @stub().returns settings
       repository: -> repository
     model = new Backbone.Model
     model.hits = new Backbone.Collection
@@ -27,10 +27,6 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       panel: panel
     view.widgetize()
 
-  afterEach ->
-    I18n.t.restore()
-    Coreon.Models.Concept.find.restore()
-
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
 
@@ -40,15 +36,12 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#initialize()', ->
 
     it 'calls super implementation', ->
-      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
-      try
-        panel = new Backbone.Model
-        view.initialize panel: panel
-        original = Coreon.Views.Panels.PanelView::initialize
-        expect(original).to.have.been.calledOnce
-        expect(original).to.have.been.calledWith panel: panel
-      finally
-        Coreon.Views.Panels.PanelView::initialize.restore()
+      @spy Coreon.Views.Panels.PanelView::, 'initialize'
+      panel = new Backbone.Model
+      view.initialize panel: panel
+      original = Coreon.Views.Panels.PanelView::initialize
+      expect(original).to.have.been.calledOnce
+      expect(original).to.have.been.calledWith panel: panel
 
     it 'renders title', ->
       I18n.t.withArgs('panels.term_list.title').returns 'Term List'
@@ -83,7 +76,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       expect( view.render() ).to.equal view
 
     it 'is triggered on model updates', ->
-      view.render = sinon.spy()
+      view.render = @spy()
       view.initialize panel: panel
       view.model.trigger 'reset'
       expect( view.render ).to.have.been.calledOnce
@@ -174,7 +167,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       it 'renders translations', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
         term.conceptPath = -> ''
-        terms = lang: sinon.stub()
+        terms = lang: @stub()
         terms.lang.withArgs( 'de' ).returns [
           new Backbone.Model( value: 'Ball' )
           new Backbone.Model( value: 'Kugel' )
@@ -194,7 +187,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       it 'renders empty target column when translations are empty', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
         term.conceptPath = -> ''
-        terms = lang: sinon.stub()
+        terms = lang: @stub()
         terms.lang.withArgs( 'de' ).returns []
         concept = terms: -> terms
         Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
@@ -208,7 +201,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       it 'does not render target column when no target lang is set', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
         term.conceptPath = -> ''
-        terms = lang: sinon.stub()
+        terms = lang: @stub()
         terms.lang.withArgs( 'de' ).returns []
         concept = terms: -> terms
         Coreon.Models.Concept.find.withArgs( '52fe4156ec4d' ).returns concept
@@ -224,7 +217,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       $('#konacha').append view.$el
 
     it 'is triggered on scroll', ->
-      view.topUp = sinon.spy()
+      view.topUp = @spy()
       view.delegateEvents()
       view.$( 'tbody' ).scroll()
       expect( view.topUp ).to.have.been.calledOnce
@@ -235,7 +228,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       beforeEach ->
         view.$('table').height 100
         view.$('tbody').height 120
-        view.model.next = sinon.spy =>
+        view.model.next = @spy =>
           @deferred = $.Deferred()
           @deferred.promise()
 
@@ -264,7 +257,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
             view.$('tbody').height 300
 
           it 'does not call next on model', ->
-            view.model.next = sinon.spy()
+            view.model.next = @spy()
             view.topUp()
             expect( view.model.next ).to.not.have.been.called
 
@@ -285,7 +278,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
           .height( 100 )
           .scrollTop 10
         view.$('tbody').height 120
-        view.model.prev = sinon.spy =>
+        view.model.prev = @spy =>
           @deferred = $.Deferred()
           @deferred.promise()
 
@@ -323,7 +316,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
               .scrollTop 200
 
           it 'does not call prev on model', ->
-            view.model.prev = sinon.spy()
+            view.model.prev = @spy()
             view.topUp()
             expect( view.model.prev ).to.not.have.been.called
 
@@ -339,13 +332,13 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#updateLoadingState()', ->
 
     it 'is triggered when model loads next', ->
-      view.updateLoadingState = sinon.spy()
+      view.updateLoadingState = @spy()
       view.initialize panel: panel
       view.model.trigger 'change:loadingNext'
       expect( view.updateLoadingState ).to.have.been.calledOnce
 
     it 'is triggered when model loads prev', ->
-      view.updateLoadingState = sinon.spy()
+      view.updateLoadingState = @spy()
       view.initialize panel: panel
       view.model.trigger 'change:loadingPrev'
       expect( view.updateLoadingState ).to.have.been.calledOnce
@@ -415,7 +408,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#toggleScope()', ->
 
     it 'is triggered by click on toggle', ->
-      view.toggleScope = sinon.spy()
+      view.toggleScope = @spy()
       view.delegateEvents()
       view.$( '.toggle-scope' ).click()
       expect(  view.toggleScope ).to.have.been.calledOnce
@@ -423,14 +416,14 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
 
     it 'limits scope when expanded', ->
       view.model.set 'scope', 'all', silent: yes
-      view.limitScope = sinon.spy()
+      view.limitScope = @spy()
       view.toggleScope()
       expect( view.limitScope ).to.have.been.calledOnce
       expect( view.limitScope ).to.have.been.calledOn view
 
     it 'expands scope when limited', ->
       view.model.set 'scope', 'hits', silent: yes
-      view.expandScope = sinon.spy()
+      view.expandScope = @spy()
       view.toggleScope()
       expect( view.expandScope ).to.have.been.calledOnce
       expect( view.expandScope ).to.have.been.calledOn view
@@ -450,7 +443,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       expect( view.model.get 'scope' ).to.equal 'hits'
 
     it 'triggers change event', ->
-      spy = sinon.spy()
+      spy = @spy()
       view.model.on 'change:scope', spy
       view.limitScope()
       expect( spy ).to.have.been.calledOnce
@@ -468,15 +461,15 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
     beforeEach ->
       view.anchor = -> $( '<tr class="term hit" data-id="543ffaa23">' )
       view.model.set 'scope', 'hits', silent: yes
-      view.model.clearTerms = sinon.spy()
-      view.model.next = sinon.spy()
+      view.model.clearTerms = @spy()
+      view.model.next = @spy()
 
     it 'changes scope on model', ->
       view.expandScope()
       expect( view.model.get 'scope' ).to.equal 'all'
 
     it 'does not trigger change event', ->
-      spy = sinon.spy()
+      spy = @spy()
       view.model.on 'change:scope', spy
       view.expandScope()
       expect( spy ).to.not.have.been.called
@@ -518,7 +511,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#appendItems()', ->
 
     it 'is triggered by model', ->
-      view.appendItems = sinon.spy()
+      view.appendItems = @spy()
       view.initialize panel: panel
       data = []
       view.model.trigger 'append', data
@@ -543,14 +536,14 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
 
     it 'calls top up method', ->
-      view.topUp = sinon.spy()
+      view.topUp = @spy()
       view.appendItems []
       expect( view.topUp ).to.have.been.calledOnce
 
   describe '#prependItems()', ->
 
     it 'is triggered by model', ->
-      view.prependItems = sinon.spy()
+      view.prependItems = @spy()
       view.initialize panel: panel
       data = []
       view.model.trigger 'prepend', data
@@ -575,7 +568,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       expect( added ).to.have.attr 'href', '/my-repository/concepts/concept-123'
 
     it 'calls top up method', ->
-      view.topUp = sinon.spy()
+      view.topUp = @spy()
       view.prependItems []
       expect( view.topUp ).to.have.been.calledOnce
 
@@ -601,9 +594,9 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#anchorHit()', ->
 
     beforeEach ->
-      view.anchor = sinon.stub()
+      view.anchor = @stub()
       view.model.hits = new Backbone.Collection
-      view.model.hits.lang = sinon.stub()
+      view.model.hits.lang = @stub()
       view.model.hits.lang.returns []
       view.model.set 'source', 'hu', silent: yes
 
@@ -654,7 +647,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#updateTargetLang()', ->
 
     it 'is triggered by change on model', ->
-      view.updateTargetLang = sinon.spy()
+      view.updateTargetLang = @spy()
       view.initialize panel: panel
       view.model.trigger 'change:target'
       expect( view.updateTargetLang ).to.have.been.calledOnce
@@ -728,7 +721,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       term = new Backbone.Model
         id: '54ff4320001'
         concept_id: '52fe4156ec4d'
-      terms = lang: sinon.stub()
+      terms = lang: @stub()
       terms.lang.withArgs( 'de' ).returns [
         new Backbone.Model( value: 'Ball' )
         new Backbone.Model( value: 'Kugel' )
@@ -745,7 +738,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#updateTranslations()', ->
 
     it 'is triggered by model event', ->
-      view.updateTranslations = sinon.spy()
+      view.updateTranslations = @spy()
       view.initialize panel: panel
       view.model.trigger 'updateTargetTerms', [ new Backbone.Model ]
       expect( view.updateTranslations ).to.have.been.calledOnce
@@ -762,7 +755,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
         new Backbone.Model( concept_id: '52fe4156ec4d', value: 'Ball' )
         new Backbone.Model( concept_id: '52fe4156ec4d', value: 'Kugel' )
       ]
-      lang = sinon.stub()
+      lang = @stub()
       lang.withArgs( 'en' ).returns [
         new Backbone.Model concept_id: '52fe4156ec4d', id: '54ff4320001'
       ]
@@ -780,13 +773,13 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#updateLangs()', ->
 
     it 'is triggered by change of source lang', ->
-      view.updateLangs = sinon.spy()
+      view.updateLangs = @spy()
       view.initialize panel: panel
       view.model.trigger 'change:source'
       expect( view.updateLangs ).to.have.been.calledOnce
 
     it 'is triggered by change of target lang', ->
-      view.updateLangs = sinon.spy()
+      view.updateLangs = @spy()
       view.initialize panel: panel
       view.model.trigger 'change:target'
       expect( view.updateLangs ).to.have.been.calledOnce
@@ -813,7 +806,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   describe '#openConcept()', ->
 
     beforeEach ->
-      sinon.stub Backbone.history, 'navigate'
+      @stub Backbone.history, 'navigate'
       view.$el.html '''
         <table>
           <tr class="term">
@@ -828,11 +821,8 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       @event = $.Event 'click'
       @event.target = @td.get( 0 )
 
-    afterEach ->
-      Backbone.history.navigate.restore()
-
     it 'is triggered by click on term row', ->
-      view.openConcept = sinon.spy()
+      view.openConcept = @spy()
       view.delegateEvents()
       @td.trigger @event
       expect( view.openConcept ).to.have.been.calledOnce
@@ -840,8 +830,8 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       expect( view.openConcept ).to.have.been.calledWith @event
 
     it 'eats event', ->
-      @event.stopPropagation = sinon.spy()
-      @event.preventDefault = sinon.spy()
+      @event.stopPropagation = @spy()
+      @event.preventDefault = @spy()
       view.openConcept @event
       expect( @event.stopPropagation ).to.have.been.calledOnce
       expect( @event.preventDefault ).to.have.been.calledOnce

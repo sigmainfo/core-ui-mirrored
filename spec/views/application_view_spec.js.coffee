@@ -9,12 +9,12 @@ describe "Coreon.Views.ApplicationView", ->
 
   beforeEach ->
     app = Coreon.application = new Backbone.Model
-    sinon.stub Coreon.Views.Layout, "ProgressIndicatorView", -> new Backbone.View
-    sinon.stub Coreon.Views.Sessions, "NewSessionView", -> login = new Backbone.View
-    sinon.stub Coreon.Views.Repositories, "RepositorySelectView", -> new Backbone.View
-    sinon.stub Coreon.Views.Widgets, "WidgetsView", =>
+    @stub Coreon.Views.Layout, "ProgressIndicatorView", -> new Backbone.View
+    @stub Coreon.Views.Sessions, "NewSessionView", -> login = new Backbone.View
+    @stub Coreon.Views.Repositories, "RepositorySelectView", -> new Backbone.View
+    @stub Coreon.Views.Widgets, "WidgetsView", =>
       @widgets = new Backbone.View
-      @widgets.render = sinon.stub().returns @widgets
+      @widgets.render = @stub().returns @widgets
       @widgets
     @session = new Backbone.Model
       current_repository_id: "coffeebabe23"
@@ -25,21 +25,15 @@ describe "Coreon.Views.ApplicationView", ->
       removeAll: ->
       createAll: ->
       update: ->
-    sinon.stub Coreon.Lib.Panels.PanelsManager, 'create'
+    @stub Coreon.Lib.Panels.PanelsManager, 'create'
     Coreon.Lib.Panels.PanelsManager.create.returns panels
 
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
     view = new Coreon.Views.ApplicationView
       model: Coreon.application
 
   afterEach ->
     delete Coreon.application
-    I18n.t.restore()
-    Coreon.Views.Layout.ProgressIndicatorView.restore()
-    Coreon.Views.Repositories.RepositorySelectView.restore()
-    Coreon.Views.Widgets.WidgetsView.restore()
-    Coreon.Views.Sessions.NewSessionView.restore()
-    Coreon.Lib.Panels.PanelsManager.create.restore()
 
   it "is a Backbone View", ->
     view.should.be.an.instanceof Backbone.View
@@ -51,7 +45,7 @@ describe "Coreon.Views.ApplicationView", ->
   describe "initialize()", ->
 
     it "enables xml form handling", ->
-      view.xhrFormsOn = sinon.spy()
+      view.xhrFormsOn = @spy()
       view.initialize()
       view.xhrFormsOn.should.have.been.calledOnce
 
@@ -75,7 +69,7 @@ describe "Coreon.Views.ApplicationView", ->
       Coreon.application.cacheId = null
 
     it "is triggered when session changes", ->
-      view.render = sinon.spy()
+      view.render = @spy()
       view.initialize()
       view.model.set "session", null
       view.render.should.have.been.calledOnce
@@ -83,20 +77,20 @@ describe "Coreon.Views.ApplicationView", ->
     it "is triggered when repository changes", ->
       view.model.set "session", @session, silent: true
       @session.set "current_repository_id", "myrepositoryzuio", silent: true
-      view.render = sinon.spy()
+      view.render = @spy()
       view.updateSession()
       @session.set "current_repository_id", "coffeebabe23"
       view.render.should.have.been.calledOnce
 
     it "removes subviews", ->
-      subview = remove: sinon.spy()
+      subview = remove: @spy()
       view.subviews = [ subview ]
       view.render()
       subview.remove.should.have.been.calledOnce
       view.subviews.should.not.include subview
 
     it 'removes panels', ->
-      remove = sinon.spy()
+      remove = @spy()
       panels = view.panels
       panels.removeAll = remove
       view.render()
@@ -113,12 +107,9 @@ describe "Coreon.Views.ApplicationView", ->
     context "with session", ->
 
       beforeEach ->
-        sinon.stub Backbone.history, "start"
+        @stub Backbone.history, "start"
         view.model.set "session", @session, silent: on
         @session.set "repositories", [], silent: on
-
-      afterEach ->
-        Backbone.history.start.restore()
 
       it "creates widgets", ->
         view.render()
@@ -134,9 +125,9 @@ describe "Coreon.Views.ApplicationView", ->
 
       it 'creates panels', ->
         panels = view.panels
-        create = sinon.spy()
+        create = @spy()
         panels.createAll = create
-        update = sinon.spy()
+        update = @spy()
         panels.update = update
         view.render()
         expect(create).to.have.been.calledOnce
@@ -169,15 +160,11 @@ describe "Coreon.Views.ApplicationView", ->
           view.$("#coreon-account p").should.contain "Logged in as Nobody"
 
         it "hides account info after a short delay", ->
-          clock = sinon.useFakeTimers()
-          try
-            $("#konacha").append view.$el
-            view.render()
-            view.$("#coreon-account").should.be.visible
-            clock.tick 5000
-            view.$("#coreon-account").should.be.hidden
-          finally
-            clock.restore()
+          $("#konacha").append view.$el
+          view.render()
+          view.$("#coreon-account").should.be.visible
+          @clock.tick 5000
+          view.$("#coreon-account").should.be.hidden
 
         it "renders logout link", ->
           I18n.t.withArgs("account.logout").returns "Log out"
@@ -218,11 +205,8 @@ describe "Coreon.Views.ApplicationView", ->
     context "without session", ->
 
       beforeEach ->
-        sinon.stub Backbone.history, "stop"
+        @stub Backbone.history, "stop"
         view.$el.append '<div id="coreon-main"></div>'
-
-      afterEach ->
-        Backbone.history.stop.restore()
 
       it "disables history", ->
         view.render()
@@ -252,21 +236,17 @@ describe "Coreon.Views.ApplicationView", ->
   describe "notify()", ->
 
     beforeEach ->
-      sinon.stub Coreon.Views.Notifications, "NotificationView", =>
+      @stub Coreon.Views.Notifications, "NotificationView", =>
         @info = new Backbone.View
-        @info.render = sinon.stub().returns @info
-        @info.show = sinon.spy()
+        @info.render = @stub().returns @info
+        @info.show = @spy()
         @info
       @collection = new Backbone.Collection
-      sinon.stub Coreon.Models.Notification, "collection", => @collection
+      @stub Coreon.Models.Notification, "collection", => @collection
       view.render()
 
-    afterEach ->
-      Coreon.Models.Notification.collection.restore()
-      Coreon.Views.Notifications.NotificationView.restore()
-
     it "is triggered when notification was added", ->
-      view.notify = sinon.spy()
+      view.notify = @spy()
       view.initialize()
       @collection.trigger "add", message: "I preferred to be called Nobody.", @collection, by: "Nobody"
       view.notify.should.have.been.calledOnce
@@ -294,16 +274,13 @@ describe "Coreon.Views.ApplicationView", ->
   describe "syncOffset()", ->
 
     beforeEach ->
-      sinon.stub Coreon.Views.Notifications, "NotificationView", =>
+      @stub Coreon.Views.Notifications, "NotificationView", =>
         @info = new Backbone.View
         @info.show = ->
         @info
 
-    afterEach ->
-      Coreon.Views.Notifications.NotificationView.restore()
-
     it "is triggered on notification resize", ->
-      view.syncOffset = sinon.spy()
+      view.syncOffset = @spy()
       view.notify new Backbone.Model
       @info.trigger "resize"
       view.syncOffset.should.have.been.calledOnce
@@ -312,14 +289,11 @@ describe "Coreon.Views.ApplicationView", ->
 
     beforeEach ->
       @collection = new Backbone.Collection
-      sinon.stub Coreon.Models.Notification, "collection", => @collection
+      @stub Coreon.Models.Notification, "collection", => @collection
       view.render()
 
-    afterEach ->
-      Coreon.Models.Notification.collection.restore()
-
     it "is triggered when notifications are reset", ->
-      view.clearNotifications = sinon.spy()
+      view.clearNotifications = @spy()
       view.initialize()
       @collection.trigger "reset", []
       view.clearNotifications.should.have.been.calledOnce
@@ -336,7 +310,7 @@ describe "Coreon.Views.ApplicationView", ->
   describe "navigate()", ->
 
     beforeEach ->
-      sinon.stub Backbone.history, "navigate"
+      @stub Backbone.history, "navigate"
       view.$el.append '''
         <a id="inside" href="/path">Click me</a>
         <a id="outside" href="http://url">Click me</a>
@@ -344,25 +318,22 @@ describe "Coreon.Views.ApplicationView", ->
       @event = $.Event "click"
       @event.target = view.$("a#inside")[0]
 
-    afterEach ->
-      Backbone.history.navigate.restore()
-
     it "is triggered by click on internal link", ->
-      view.navigate = sinon.spy()
+      view.navigate = @spy()
       view.delegateEvents()
       view.$("a#inside").trigger @event
       view.navigate.should.have.been.calledOnce
       view.navigate.should.have.been.calledWith @event
 
     it "is not triggered by click on external link", ->
-      view.navigate = sinon.spy()
+      view.navigate = @spy()
       view.delegateEvents()
       @event.target = view.$("a#outside")[0]
       view.$("a#outside").trigger @event
       view.navigate.should.not.have.been.called
 
     it "prevents default", ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       view.navigate @event
       @event.preventDefault.should.have.been.calledOnce
 
@@ -383,7 +354,7 @@ describe "Coreon.Views.ApplicationView", ->
 
     beforeEach ->
       Coreon.application.cacheId = -> "coffee23"
-      sinon.stub Coreon.Views.Account, "PasswordPromptView", =>
+      @stub Coreon.Views.Account, "PasswordPromptView", =>
         @prompt = new Backbone.View
       @session = new Backbone.Model
         auth_token: "supersecrettoken"
@@ -394,10 +365,9 @@ describe "Coreon.Views.ApplicationView", ->
 
     afterEach ->
       Coreon.application.cacheId = null
-      Coreon.Views.Account.PasswordPromptView.restore()
 
     it "is triggered by changes on session token", ->
-      view.reauthenticate = sinon.spy()
+      view.reauthenticate = @spy()
       view.updateSession()
       @session.set "auth_token", "someothersecrettoken"
       view.reauthenticate.callCount.should.equal 1
@@ -409,7 +379,7 @@ describe "Coreon.Views.ApplicationView", ->
       view.prompt.should.equal Coreon.Modules.Prompt.prompt
 
     it "displays password prompt when token is not set", ->
-      view.prompt = sinon.spy()
+      view.prompt = @spy()
       view.reauthenticate @session, null
       Coreon.Views.Account.PasswordPromptView.callCount.should.equal 1
       Coreon.Views.Account.PasswordPromptView.should.have.been.calledWithNew
@@ -418,7 +388,7 @@ describe "Coreon.Views.ApplicationView", ->
       view.prompt.firstCall.args[0].should.equal @prompt
 
     it "hides password prompt when token is set", ->
-      view.prompt = sinon.spy()
+      view.prompt = @spy()
       view.reauthenticate @session, "newcoolsessiontoken"
       Coreon.Views.Account.PasswordPromptView.should.not.have.been.called
       view.prompt.should.have.been.calledOnce
@@ -439,7 +409,7 @@ describe "Coreon.Views.ApplicationView", ->
     it "doesn't switch to default repository when no id is given", ->
       repository = new Backbone.Model
       @session.currentRepository = -> repository
-      @session.set = sinon.spy()
+      @session.set = @spy()
       view.repository().should.equal repository
       @session.set.should.not.have.been.called
 
@@ -468,7 +438,7 @@ describe "Coreon.Views.ApplicationView", ->
       hint = view.$('#coreon-search-target-select .hint')
 
     it 'is triggerd when query changes', ->
-      update = sinon.spy()
+      update = @spy()
       view.updateQuery = update
       view.initialize()
       view.model.trigger 'change:query'
@@ -508,7 +478,7 @@ describe "Coreon.Views.ApplicationView", ->
       @event.target = view.$(".toggle h3")[0]
 
     it "is triggered by click on toggle", ->
-      view.toggle = sinon.spy()
+      view.toggle = @spy()
       view.delegateEvents()
       view.$(".toggle").trigger @event
       view.toggle.should.have.been.calledOnce
@@ -538,7 +508,7 @@ describe "Coreon.Views.ApplicationView", ->
       event.target = link[0]
 
     it 'is triggered by click on theme switch', ->
-      switchTheme = sinon.spy()
+      switchTheme = @spy()
       view.switchTheme = switchTheme
       view.delegateEvents()
       link.trigger event
@@ -547,7 +517,7 @@ describe "Coreon.Views.ApplicationView", ->
       expect(switchTheme).to.have.been.calledWith event
 
     it 'prevents default', ->
-      preventDefault = sinon.spy()
+      preventDefault = @spy()
       event.preventDefault = preventDefault
       view.switchTheme event
       expect(preventDefault).to.have.been.calledOnce

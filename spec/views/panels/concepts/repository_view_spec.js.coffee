@@ -7,10 +7,7 @@ describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
     Coreon.Helpers.repositoryPath = -> "/coffee23/concepts/new"
     @view = new Coreon.Views.Panels.Concepts.RepositoryView
       model: new Backbone.Model managers: []
-    sinon.stub I18n, "t"
-
-  afterEach ->
-    I18n.t.restore()
+    @stub I18n, "t"
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceof Backbone.View

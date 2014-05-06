@@ -17,12 +17,8 @@ describe 'Coreon.Models.ConceptSearch', ->
   describe '#fetch()', ->
 
     beforeEach ->
-      sinon.stub Coreon.Models.Search::, 'fetch'
-      sinon.stub Coreon.Models.Concept, 'upsert'
-
-    afterEach ->
-      Coreon.Models.Search::fetch.restore()
-      Coreon.Models.Concept.upsert.restore()
+      @stub Coreon.Models.Search::, 'fetch'
+      @stub Coreon.Models.Concept, 'upsert'
 
     it 'calls super', ->
       @search.fetch foo: 'bar'
@@ -32,7 +28,7 @@ describe 'Coreon.Models.ConceptSearch', ->
 
       it 'calls passed callback', ->
         Coreon.Models.Search::fetch.yieldsTo 'success', @search, hits: []
-        spy = sinon.spy()
+        spy = @spy()
         @search.fetch success: spy
         spy.should.have.been.calledOnce
 
@@ -69,10 +65,7 @@ describe 'Coreon.Models.ConceptSearch', ->
         { score: 1.7, result: @concept1 }
         { score: 1.1, result: @concept2 }
       ]
-      sinon.stub Coreon.Collections.Hits, 'collection', -> hits
-
-    afterEach ->
-      Coreon.Collections.Hits.collection.restore()
+      @stub Coreon.Collections.Hits, 'collection', -> hits
 
     it 'delegates to hits collection', ->
       expect( @search.results() ).to.eql [ @concept1, @concept2 ]

@@ -47,13 +47,10 @@ describe 'Coreon.Collections.Hits', ->
   describe '#reset()', ->
 
     it 'calls super', ->
-      sinon.spy Backbone.Collection::, 'reset'
-      try
-        collectionReset = Backbone.Collection::reset
-        hits.reset []
-        expect(collectionReset).to.have.been.calledOnce
-      finally
-        Backbone.Collection::reset.restore()
+      @spy Backbone.Collection::, 'reset'
+      collectionReset = Backbone.Collection::reset
+      hits.reset []
+      expect(collectionReset).to.have.been.calledOnce
 
     it 'triggers update event', ->
       reset = sinon.spy()

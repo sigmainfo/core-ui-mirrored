@@ -20,18 +20,18 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
     app.repositorySettings = -> settings
     Coreon.application = app
 
-    sinon.stub Coreon.Views.Concepts, 'ConceptLabelView'
+    @stub Coreon.Views.Concepts, 'ConceptLabelView'
     Coreon.Views.Concepts.ConceptLabelView.returns
       render: -> @
       remove: ->
 
 
-    sinon.stub Coreon.Views.Concepts, 'ConceptLabelListView'
+    @stub Coreon.Views.Concepts, 'ConceptLabelListView'
     Coreon.Views.Concepts.ConceptLabelListView.returns
       render: -> @
       remove: ->
 
-    sinon.stub Coreon.Views.Concepts.ConceptList, 'TermsView'
+    @stub Coreon.Views.Concepts.ConceptList, 'TermsView'
     Coreon.Views.Concepts.ConceptList.TermsView.returns
       render: -> @
       remove: ->
@@ -41,9 +41,6 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
       model: selection
 
   afterEach ->
-    Coreon.Views.Concepts.ConceptLabelView.restore()
-    Coreon.Views.Concepts.ConceptLabelListView.restore()
-    Coreon.Views.Concepts.ConceptList.TermsView.restore()
     delete Coreon.application
 
   it 'is a Backbone view', ->
@@ -56,10 +53,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
   describe '#render()', ->
 
     beforeEach ->
-      sinon.stub I18n, 't'
-
-    afterEach ->
-      I18n.t.restore()
+      @stub I18n, 't'
 
     it 'can be chained', ->
       result = view.render()
@@ -70,7 +64,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
       render = null
 
       beforeEach ->
-        render = sinon.spy()
+        render = @spy()
         view.render = render
         view.initialize()
 
@@ -101,11 +95,8 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
       can = null
 
       beforeEach ->
-        sinon.stub Coreon.Helpers, 'can'
+        @stub Coreon.Helpers, 'can'
         can = Coreon.Helpers.can
-
-      afterEach ->
-        Coreon.Helpers.can.restore()
 
       context 'with maintainer privileges', ->
 
@@ -173,7 +164,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
       it 'inserts concept label', ->
         label = new Backbone.View
-        render = sinon.spy()
+        render = @spy()
         label.render = render
         constructor = Coreon.Views.Concepts.ConceptLabelView
         constructor.withArgs(model: concept).returns label
@@ -194,7 +185,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
         broader = [ new Backbone.Model ]
         concept.broader = -> broader
         labelList = new Backbone.View
-        render = sinon.spy()
+        render = @spy()
         labelList.render = render
         constructor = Coreon.Views.Concepts.ConceptLabelListView
         constructor.withArgs(models: broader).returns labelList
@@ -227,7 +218,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
       it 'inserts terms', ->
         terms = new Backbone.View tagName: 'tbody'
-        render = sinon.spy()
+        render = @spy()
         terms.render = render
         constructor = Coreon.Views.Concepts.ConceptList.TermsView
         constructor.withArgs(model: concept).returns terms

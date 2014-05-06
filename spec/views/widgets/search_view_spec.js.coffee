@@ -4,23 +4,19 @@
 describe "Coreon.Views.Widgets.SearchView", ->
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
 
-    sinon.stub Coreon.Views.Widgets, "SearchTargetSelectView", =>
+    @stub Coreon.Views.Widgets, "SearchTargetSelectView", =>
       @select = new Backbone.View
-      @select.render = sinon.stub().returns @select
-      @select.hideHint = sinon.spy()
-      @select.revealHint = sinon.spy()
+      @select.render = @stub().returns @select
+      @select.hideHint = @spy()
+      @select.revealHint = @spy()
       @select
 
     model = new Backbone.Model
     model.getSelectedType = -> "all"
     @view = new Coreon.Views.Widgets.SearchView
       model: model
-
-  afterEach ->
-    Coreon.Views.Widgets.SearchTargetSelectView.restore()
-    I18n.t.restore()
 
   it "is a Backbone view", ->
     @view.should.be.an.instanceOf Backbone.View
@@ -60,7 +56,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
     it "removes old search type select", ->
       @view.render()
       old = @select
-      old.remove = sinon.spy()
+      old.remove = @spy()
       @view.render()
       old.remove.should.have.been.calledOnce
 
@@ -68,24 +64,20 @@ describe "Coreon.Views.Widgets.SearchView", ->
 
     beforeEach ->
       Coreon.Helpers.repositoryPath = (s)-> "/coffee23/#{s}"
-      sinon.stub Backbone.history, "navigate"
-      sinon.stub Backbone.history, "loadUrl"
+      @stub Backbone.history, "navigate"
+      @stub Backbone.history, "loadUrl"
       Backbone.history.fragment = "coffee23"
       @event = $.Event "submit"
 
-    afterEach ->
-      Backbone.history.navigate.restore()
-      Backbone.history.loadUrl.restore()
-
     it "triggers on submit", ->
-      sinon.spy @view, "submitHandler"
+      @spy @view, "submitHandler"
       @view.delegateEvents()
       @view.render()
       @view.$("form").trigger @event
       @view.submitHandler.should.have.been.calledOnce
 
     it "prevents default and stops propagation", ->
-      @event.preventDefault = sinon.spy()
+      @event.preventDefault = @spy()
       @view.submitHandler @event
       @event.preventDefault.should.have.been.calledOnce
 
@@ -110,13 +102,13 @@ describe "Coreon.Views.Widgets.SearchView", ->
   describe "onClickedToFocus()", ->
 
     it "is triggered by select", ->
-      @view.onClickedToFocus = sinon.spy()
+      @view.onClickedToFocus = @spy()
       @view.render()
       @select.trigger "focus"
       @view.onClickedToFocus.should.have.been.calledOnce
 
     it "is not triggered by removed select", ->
-      @view.onClickedToFocus = sinon.spy()
+      @view.onClickedToFocus = @spy()
       @view.render()
       old = @select
       @view.render()
@@ -124,8 +116,8 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.onClickedToFocus.should.not.have.been.called
 
     it "puts focus on search input", ->
-      spy = sinon.spy()
-      @view.$ = sinon.stub()
+      spy = @spy()
+      @view.$ = @stub()
       @view.$.withArgs("input#coreon-search-query").returns focus: spy
       @view.onClickedToFocus()
       spy.should.have.been.calledOnce
@@ -137,7 +129,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.render().$el.appendTo $("#konacha")
 
     it "is triggered by focus of input", ->
-      @view.onFocus = sinon.spy()
+      @view.onFocus = @spy()
       @view.delegateEvents()
       @view.$("input#coreon-search-query").trigger @event
       @view.onFocus.should.have.been.calledWith @event
@@ -153,7 +145,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.render().$el.appendTo $("#konacha")
 
     it "is triggered by focus of input", ->
-      @view.onBlur = sinon.spy()
+      @view.onBlur = @spy()
       @view.delegateEvents()
       @view.$("input#coreon-search-query").trigger @event
       @view.onBlur.should.have.been.calledWith @event
@@ -173,7 +165,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.render().$el.appendTo $("#konacha")
 
     it "is triggered by change on model", ->
-      @view.onChangeSelectedType = sinon.spy()
+      @view.onChangeSelectedType = @spy()
       @view.initialize()
       @view.model.trigger "change:selectedTypeIndex"
       @view.onChangeSelectedType.should.have.been.calledOnce

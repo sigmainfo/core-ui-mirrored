@@ -8,8 +8,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     @session = new Backbone.Model
     @session.currentRepository = => @repo
     Coreon.application = new Backbone.Model session: @session
-    sinon.stub I18n, "t"
-    sinon.stub(Coreon.Helpers, "can").returns true
+    @stub I18n, "t"
+    @stub(Coreon.Helpers, "can").returns true
     model = new Backbone.Model
       superconcept_ids: []
       subconcept_ids: []
@@ -20,15 +20,11 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     Coreon.Models.BroaderAndNarrowerForm = -> model
     @view = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView model: model
     concepts = {}
-    sinon.stub Coreon.Models.Concept, "find", (id) ->
+    @stub Coreon.Models.Concept, "find", (id) ->
       concepts[id] ?= new Backbone.Model id: id, label: id
-    sinon.stub _, "defer", (func)-> func()
+    @stub _, "defer", (func)-> func()
 
   afterEach ->
-    I18n.t.restore()
-    Coreon.Helpers.can.restore()
-    Coreon.Models.Concept.find.restore()
-    _.defer.restore()
     Coreon.application = null
 
   it "is a Backbone view", ->
@@ -59,13 +55,10 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
   describe "render()", ->
 
     beforeEach ->
-      sinon.stub Coreon.Views.Concepts, "ConceptLabelView", (options) =>
+      @stub Coreon.Views.Concepts, "ConceptLabelView", (options) =>
         @label = new Backbone.View model: options.model
-        @label.render = sinon.stub().returns @label
+        @label.render = @stub().returns @label
         @label
-
-    afterEach ->
-      Coreon.Views.Concepts.ConceptLabelView.restore()
 
     it "can be chained", ->
       @view.render().should.equal @view
@@ -88,7 +81,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       it "renders container for broader concepts", ->
         @view.render()
         @view.$el.should.have ".broader ul"
-        
+
       it "renders container for narrower concepts", ->
         @view.render()
         @view.$el.should.have ".narrower ul"
@@ -102,12 +95,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
 
     context "itself", ->
-      
+
       it "renders label", ->
         @view.model.set "label", "Whahappan?", silent: true
         @view.render()
         @view.$(".self").should.have.text "Whahappan?"
-  
+
       it "escapes label", ->
         @view.model.set "label", "<script>evil()</script>", silent: true
         @view.render()
@@ -128,7 +121,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         ( view.model.id for view in @view.broader ).should.eql [ "c1", "c2", "c3" ]
 
       it "removes old concept label views", ->
-        parent = remove: sinon.spy()
+        parent = remove: @spy()
         @view.broader = [ parent ]
         @view.render()
         parent.remove.should.have.been.calledOnce
@@ -160,7 +153,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$("[data-drag-ident=c45]").length.should.equal 1
 
       context "with empty super concepts list", ->
-        
+
         beforeEach ->
           @repo.set
             id: "coffeebabe23"
@@ -190,7 +183,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
           @view.model.blank = false
           @view.model.trigger "nonblank"
           @view.$(".broader ul").should.have ".repository-label"
-          
+
 
     context "narrower", ->
 
@@ -201,7 +194,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         ( view.model.id for view in @view.narrower ).should.eql [ "c1", "c2", "c3" ]
 
       it "removes old concept label views", ->
-        child = remove: sinon.spy()
+        child = remove: @spy()
         @view.narrower = [ child ]
         @view.render()
         child.remove.should.have.been.calledOnce
@@ -233,19 +226,16 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$el.find("[data-drag-ident=c45]").length.should.equal 1
 
   describe "remove()", ->
-    
-    beforeEach ->
-      sinon.stub Backbone.View::, "remove", -> @
 
-    afterEach ->
-      Backbone.View::remove.restore()
+    beforeEach ->
+      @stub Backbone.View::, "remove", -> @
 
     it "can be chain", ->
       @view.remove().should.equal @view
 
     it "removes concepts", ->
-      parent = remove: sinon.spy()
-      child  = remove: sinon.spy()
+      parent = remove: @spy()
+      child  = remove: @spy()
       @view.broader = [ parent ]
       @view.narrower = [ child ]
       @view.remove()
@@ -256,7 +246,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.remove()
       Backbone.View::remove.should.have.been.calledOn @view
 
-      
+
   describe "toggleEditMode()", ->
 
     beforeEach ->
@@ -265,7 +255,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
     afterEach ->
       $(window).off ".coreonSubmit"
- 
+
     context "outside edit mode", ->
 
       beforeEach ->
@@ -278,14 +268,14 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       it "doesn't disable concept-label links", ->
         clickEvent = $.Event "click"
-        clickEvent.preventDefault = sinon.spy()
-        clickEvent.stopPropagation = sinon.spy()
+        clickEvent.preventDefault = @spy()
+        clickEvent.stopPropagation = @spy()
         @view.$(".concept-label").first().trigger clickEvent
         clickEvent.preventDefault.should.not.have.been.called
         clickEvent.stopPropagation.should.not.have.been.called
 
       it "does not submit form when pressing enter", ->
-        spy = sinon.spy()
+        spy = @spy()
         @view.$("form").on "submit", spy
         event = $.Event "keydown"
         event.keyCode = 13
@@ -302,7 +292,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @el_narrow = $("<div data-drag-ident='deadbeef'>")
         @el_foreign = $("<div data-drag-ident='bad1dea'>")
         @el_own = $("<div data-drag-ident='#{@view.model.id}'>")
-        sinon.stub @view, "createConcept", (id)->
+        @stub @view, "createConcept", (id)->
           new Backbone.View model: new Backbone.Model id:id
 
         @view.model.set "superconcept_ids", ["c0ffee"], silent: true
@@ -322,14 +312,14 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       it "calls preventLabelClicks on click", ->
         clickEvent = $.Event "click"
-        clickEvent.preventDefault = sinon.spy()
-        clickEvent.stopPropagation = sinon.spy()
+        clickEvent.preventDefault = @spy()
+        clickEvent.stopPropagation = @spy()
         @view.$('.concept-label').trigger clickEvent
         clickEvent.preventDefault.should.have.been.calledOnce
         clickEvent.stopPropagation.should.have.been.calledOnce
 
       it "submits form when pressing enter", ->
-        spy = sinon.spy()
+        spy = @spy()
         @view.$("form").on "submit", spy
         event = $.Event "keydown"
         event.keyCode = 13
@@ -355,7 +345,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
   describe "onDisconnect()", ->
 
     beforeEach ->
-      sinon.stub @view, "createConcept", ->
+      @stub @view, "createConcept", ->
         new Backbone.View model: new Backbone.Model
 
       @el_broad = $("<div data-drag-ident='c0ffee'>")
@@ -393,7 +383,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
     beforeEach ->
       @event = $.Event()
-      sinon.stub @view.model, "save"
+      @stub @view.model, "save"
 
       @view.$el.html $('
         <form class="active">
@@ -435,11 +425,8 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
       @view.toggleEditMode()
 
-    afterEach ->
-      @view.model.save.restore()
-
     it "is triggered on submit", ->
-      @view.updateConceptConnections = sinon.spy()
+      @view.updateConceptConnections = @spy()
       @view.delegateEvents()
       @view.$("form").submit()
       @view.updateConceptConnections.should.have.been.calledOnce
@@ -489,7 +476,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         I18n.t.withArgs("notifications.concept.broader_deleted", count: 1, label: "c0ffee1").returns "one broader deleted"
         I18n.t.withArgs("notifications.concept.narrower_added", count: 1, label: "deadbeef2").returns "one narrower added"
         I18n.t.withArgs("notifications.concept.narrower_deleted", count: 1, label: "deadbeef1").returns "one narrower deleted"
-        Coreon.Models.Notification.info = sinon.spy()
+        Coreon.Models.Notification.info = @spy()
 
         @view.updateConceptConnections @event
         @deferred.resolve()
@@ -508,21 +495,21 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @event = $.Event "click"
 
     it "is triggered by click on cancel button", ->
-      @view.cancelConceptConnections = sinon.spy()
+      @view.cancelConceptConnections = @spy()
       @view.delegateEvents()
       @link.trigger @event
       @view.cancelConceptConnections.should.have.been.calledOnce
       @view.cancelConceptConnections.should.have.been.calledWith @event
 
     it "is not triggered when link is disabled", ->
-      @view.cancelConceptConnections = sinon.spy()
+      @view.cancelConceptConnections = @spy()
       @view.delegateEvents()
       @link.addClass "disabled"
       @link.trigger @event
       @view.cancelConceptConnections.should.not.have.been.called
 
   describe "resetConceptConnections()", ->
-  
+
     beforeEach ->
       @view.$el.html '''
         <div class="submit">
@@ -533,14 +520,14 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @event = $.Event "click"
 
     it "is triggered by click on cancel button", ->
-      @view.resetConceptConnections = sinon.spy()
+      @view.resetConceptConnections = @spy()
       @view.delegateEvents()
       @link.trigger @event
       @view.resetConceptConnections.should.have.been.calledOnce
       @view.resetConceptConnections.should.have.been.calledWith @event
 
     it "is not triggered when link is disabled", ->
-      @view.resetConceptConnections = sinon.spy()
+      @view.resetConceptConnections = @spy()
       @view.delegateEvents()
       @link.addClass "disabled"
       @link.trigger @event

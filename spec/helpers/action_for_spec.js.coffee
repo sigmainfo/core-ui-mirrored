@@ -7,14 +7,11 @@ describe "Coreon.Helpers.action_for()", ->
   helper = null
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    #TODO 140505 [tc] always stub I18n.t
+    @stub I18n, "t"
 
-    template = sinon.stub Coreon.Templates, 'helpers/action_for'
+    template = @stub Coreon.Templates, 'helpers/action_for'
     helper = Coreon.Helpers.action_for
-
-  afterEach ->
-    Coreon.Templates['helpers/action_for'].restore()
-    I18n.t.restore()
 
   context = (template) ->
     template.firstCall.args[0]
@@ -58,12 +55,6 @@ describe "Coreon.Helpers.action_for()", ->
     helper 'concept.toggle_edit_mode'
     expect(context template).to.have.property 'hint', 'Toggle'
 
-  it 'passes name to template', ->
-    helper 'concept.toggle_edit_mode'
-    context = template.firstCall.args[0]
-    expect(context).to.have.property 'name', 'toggle-edit-mode'
-
   it 'appends additional class to name', ->
     helper 'concept.toggle_edit_mode', className: 'button'
-    context = template.firstCall.args[0]
-    expect(context).to.have.property 'name', 'toggle-edit-mode button'
+    expect(context template).to.have.property 'name', 'toggle-edit-mode button'

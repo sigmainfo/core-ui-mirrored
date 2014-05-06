@@ -10,15 +10,12 @@ describe 'Coreon.Templates[terms/term]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    sinon.stub I18n, 't'
+    @stub I18n, 't'
 
     data =
       value: ''
       info: {}
       render: -> ''
-
-  afterEach ->
-    I18n.t.restore()
 
   context 'value', ->
 
@@ -33,7 +30,7 @@ describe 'Coreon.Templates[terms/term]', ->
 
     it 'renders info', ->
       data.info = created_at: '2014-04-09'
-      helper = sinon.stub()
+      helper = @stub()
       data.render = helper
       helper
         .withArgs('shared/info', data: data.info)

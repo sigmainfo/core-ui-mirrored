@@ -4,12 +4,9 @@
 describe "Coreon.Helpers.form_for()", ->
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
     @model = new Backbone.Model
     @helper = Coreon.Helpers.form_for
-
-  afterEach ->
-    I18n.t.restore()
 
   it "wraps block with form tag", ->
     markup = @helper "model", @model, -> '<input type="text" name="title" value="Wahappan?"/>'
@@ -38,7 +35,7 @@ describe "Coreon.Helpers.form_for()", ->
     form.find("a.cancel").should.have.text "Cancel"
 
   context "new model", ->
-    
+
     beforeEach ->
       @model.isNew = -> true
 
@@ -96,7 +93,7 @@ describe "Coreon.Helpers.form_for()", ->
 
     it "renders error count for attrs", ->
       I18n.t.withArgs("form.errors.attribute", name: "properties", count: 3).returns "3 errors on properties"
-      @model.errors = -> 
+      @model.errors = ->
         properties: ["are invalid"],
         nested_errors_on_properties: [
           { value: ["can't be foo", "can't be bar"] }
@@ -109,11 +106,8 @@ describe "Coreon.Helpers.form_for()", ->
   describe "input()", ->
 
     beforeEach ->
-      sinon.stub Coreon.Helpers, "input"
+      @stub Coreon.Helpers, "input"
 
-    afterEach ->
-      Coreon.Helpers.input.restore()
-    
     it "delegates call to input helper", ->
       @helper "model", @model, -> @form.input "label", required: true
       Coreon.Helpers.input.should.have.been.calledOnce

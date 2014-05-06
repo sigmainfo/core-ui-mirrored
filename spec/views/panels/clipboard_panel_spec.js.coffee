@@ -8,26 +8,21 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
   view = null
 
   beforeEach ->
-    sinon.stub I18n, "t"
+    @stub I18n, "t"
 
     @clips = new Backbone.Collection
-    sinon.stub Coreon.Collections.Clips, "collection", => @clips
+    @stub Coreon.Collections.Clips, "collection", => @clips
     @labels = []
-    sinon.stub Coreon.Views.Concepts, "ConceptLabelView", =>
+    @stub Coreon.Views.Concepts, "ConceptLabelView", =>
       label = new Backbone.View arguments...
-      label.render = sinon.stub().returns label
-      sinon.spy label, "remove"
+      label.render = @stub().returns label
+      @spy label, "remove"
       @labels.push label
       label
 
     panel = new Backbone.Model
     view = new Coreon.Views.Panels.ClipboardPanel
       panel: panel
-
-  afterEach ->
-    I18n.t.restore()
-    Coreon.Collections.Clips.collection.restore()
-    Coreon.Views.Concepts.ConceptLabelView.restore()
 
   it "is a panel view", ->
     view.should.be.an.instanceof Coreon.Views.Panels.PanelView
@@ -38,21 +33,15 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
   describe "#initialize()", ->
 
     beforeEach ->
-      sinon.spy view, "droppableOn"
-
-    afterEach ->
-      view.droppableOn.restore()
+      @spy view, "droppableOn"
 
     it 'calls super implementation', ->
-      sinon.spy Coreon.Views.Panels.PanelView::, 'initialize'
-      try
-        panel = new Backbone.Model
-        view.initialize panel: panel
-        original = Coreon.Views.Panels.PanelView::initialize
-        expect(original).to.have.been.calledOnce
-        expect(original).to.have.been.calledWith panel: panel
-      finally
-        Coreon.Views.Panels.PanelView::initialize.restore()
+      @spy Coreon.Views.Panels.PanelView::, 'initialize'
+      panel = new Backbone.Model
+      view.initialize panel: panel
+      original = Coreon.Views.Panels.PanelView::initialize
+      expect(original).to.have.been.calledOnce
+      expect(original).to.have.been.calledWith panel: panel
 
     it "renders template skeleton", ->
       I18n.t.withArgs("widgets.clipboard.title").returns "Clipboard"
@@ -67,7 +56,7 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
       view.droppableOn.should.have.been.calledWith view.$("ul")
 
     it "uses function for acceptance test", ->
-      view.dropItemAcceptance = sinon.spy()
+      view.dropItemAcceptance = @spy()
       view.initialize panel: panel
       view.droppableOn.firstCall.args[2].accept()
       view.dropItemAcceptance.should.have.been.calledOnce
@@ -132,13 +121,11 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
       view.dropItemAcceptance(@drop_el).should.be.false
 
   context "drop item", ->
-    beforeEach ->
-      sinon.stub @clips, "add"
-      @drop = draggable: $('<div id="c0ffeebabe">')
-      sinon.stub Coreon.Models.Concept, "find", -> new Backbone.Model id: "c0ffeebabe"
 
-    afterEach ->
-      @clips.add.restore()
+    beforeEach ->
+      @stub @clips, "add"
+      @drop = draggable: $('<div id="c0ffeebabe">')
+      @stub Coreon.Models.Concept, "find", -> new Backbone.Model id: "c0ffeebabe"
 
     it "adds dropped items", ->
       view.onDropItem({}, @drop)
@@ -148,7 +135,7 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
   context "event handling", ->
 
     beforeEach ->
-      view.render = sinon.spy()
+      view.render = @spy()
       view.initialize panel: panel
 
     it "rerenders when a model is added", ->
