@@ -47,7 +47,7 @@ describe 'Coreon.Templates[concepts/concept]', ->
           can.withArgs('manage').returns yes
 
         it 'renders edit mode toggle', ->
-          action_for.withArgs('concept.toggle_edit_mode', className: 'button')
+          action_for.withArgs('concept.toggle_edit_mode')
             .returns '<a class="toggle-edit-mode">Edit mode</a>'
           el = render()
           head = el.find('.concept-head')
@@ -66,7 +66,7 @@ describe 'Coreon.Templates[concepts/concept]', ->
           can.withArgs('manage').returns no
 
         it 'does not render edit mode toggle', ->
-          action_for.withArgs('concept.toggle_edit_mode', className: 'button')
+          action_for.withArgs('concept.toggle_edit_mode')
             .returns '<a class="toggle-edit-mode">Edit mode</a>'
           el = render()
           head = el.find('.concept-head')
