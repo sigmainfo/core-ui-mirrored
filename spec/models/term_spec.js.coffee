@@ -6,7 +6,6 @@ describe 'Coreon.Models.Term', ->
   model = null
 
   beforeEach ->
-    @stub I18n, 't'
     model = new Coreon.Models.Term
 
   it 'is a Backbone model', ->

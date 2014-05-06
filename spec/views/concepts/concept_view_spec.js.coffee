@@ -11,7 +11,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     Coreon.application.langs = -> []
     Coreon.application.sourceLang = -> 'none'
     Coreon.application.targetLang = -> 'none'
-    @stub I18n, 't'
     @broaderAndNarrower = new Backbone.View
     @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
 

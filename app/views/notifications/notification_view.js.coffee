@@ -11,7 +11,7 @@ class Coreon.Views.Notifications.NotificationView extends Backbone.View
 
   events:
     "click a.hide": "close"
-  
+
   initialize: ->
     @listenTo @model, "change", @render
     @listenTo @model, "remove", @hide
@@ -23,7 +23,7 @@ class Coreon.Views.Notifications.NotificationView extends Backbone.View
       message: @model.get("message")
       label: I18n.t "notification.label.#{type}"
     @
-  
+
   close: ->
     @model.destroy()
 

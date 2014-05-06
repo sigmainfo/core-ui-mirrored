@@ -4,7 +4,6 @@
 describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
 
   beforeEach ->
-    @stub I18n, 't'
     @svg = $('<svg:g class="map">')
     @parent = d3.select @svg[0]
     loops = []

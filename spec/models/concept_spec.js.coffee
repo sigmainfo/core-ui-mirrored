@@ -40,7 +40,6 @@ describe 'Coreon.Models.Concept', ->
       context 'when newly created', ->
 
         beforeEach ->
-          @stub I18n, 't'
           I18n.t.withArgs('concept.new_concept').returns '<new concept>'
           @model.isNew = -> true
 

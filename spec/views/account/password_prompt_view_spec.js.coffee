@@ -14,9 +14,6 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
 
   describe "render()", ->
 
-    beforeEach ->
-      @stub I18n, "t"
-
     it "can be chained", ->
       @view.render().should.equal @view
 

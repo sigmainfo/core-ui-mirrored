@@ -8,8 +8,6 @@ describe "Coreon.Views.Panels.ClipboardPanel", ->
   view = null
 
   beforeEach ->
-    @stub I18n, "t"
-
     @clips = new Backbone.Collection
     @stub Coreon.Collections.Clips, "collection", => @clips
     @labels = []

@@ -20,6 +20,11 @@ do -> #set up sinon sandbox
   afterEach ->
     sandbox.restore()
 
+do -> # stub all translations
+
+  beforeEach ->
+    @stub I18n, 't'
+
 do -> # clobber context
   keep = null
 

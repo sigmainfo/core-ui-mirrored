@@ -4,8 +4,6 @@
 describe "Coreon.Views.Widgets.SearchView", ->
 
   beforeEach ->
-    @stub I18n, "t"
-
     @stub Coreon.Views.Widgets, "SearchTargetSelectView", =>
       @select = new Backbone.View
       @select.render = @stub().returns @select

@@ -21,7 +21,6 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       delete window.cancelAnimationFrame
 
   beforeEach ->
-    @stub I18n, 't'
     Coreon.application =
       cacheId: -> 'face42'
       repositorySettings: (key = null) ->

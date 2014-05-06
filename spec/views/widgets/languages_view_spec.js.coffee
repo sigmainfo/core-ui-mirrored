@@ -8,7 +8,6 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
   view = null
 
   beforeEach ->
-    @stub I18n, 't'
     @stub jQuery.fn, 'coreonSelect'
 
     application = new Backbone.Model

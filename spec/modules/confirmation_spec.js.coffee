@@ -12,7 +12,6 @@ describe "Coreon.Modules.Confirmation", ->
     delete Coreon.Views.MyView
 
   beforeEach ->
-    @stub I18n, "t"
     @view = new Coreon.Views.MyView
     $("#konacha")
       .append(@view.$el)

@@ -4,7 +4,6 @@
 describe 'Coreon.Views.Concepts.NewConceptView', ->
 
   beforeEach ->
-    @stub I18n, 't'
     @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
       @broaderAndNarrower = new Backbone.View options
     @view = new Coreon.Views.Concepts.NewConceptView

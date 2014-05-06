@@ -8,7 +8,6 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     @session = new Backbone.Model
     @session.currentRepository = => @repo
     Coreon.application = new Backbone.Model session: @session
-    @stub I18n, "t"
     @stub(Coreon.Helpers, "can").returns true
     model = new Backbone.Model
       superconcept_ids: []

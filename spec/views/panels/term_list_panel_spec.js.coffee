@@ -7,7 +7,6 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
   panel = null
 
   beforeEach ->
-    @stub I18n, "t"
     @stub Coreon.Models.Concept, 'find'
     concept = new Backbone.Model
     Coreon.Models.Concept.find.returns concept

@@ -17,8 +17,6 @@ describe 'Coreon.Templates[concepts/concept]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    @stub I18n, 't'
-
     concept = buildConcept()
 
     data =

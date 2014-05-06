@@ -4,7 +4,6 @@
 describe "Coreon.Helpers.input()", ->
 
   beforeEach ->
-    @stub I18n, "t"
     @model = new Backbone.Model
     @helper = Coreon.Helpers.input
 

@@ -4,7 +4,6 @@
 describe "Coreon.Helpers.form_for()", ->
 
   beforeEach ->
-    @stub I18n, "t"
     @model = new Backbone.Model
     @helper = Coreon.Helpers.form_for
 

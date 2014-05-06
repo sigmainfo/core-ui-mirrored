@@ -11,8 +11,6 @@ describe 'Coreon.Templates[properties/property]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    @stub I18n, 't'
-
     property = new Backbone.Model key: 'gender', value: 'f'
     property.info = -> {}
 

@@ -52,9 +52,6 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
   describe '#render()', ->
 
-    beforeEach ->
-      @stub I18n, 't'
-
     it 'can be chained', ->
       result = view.render()
       expect(result).to.equal view

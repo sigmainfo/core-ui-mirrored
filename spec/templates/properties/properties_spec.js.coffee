@@ -10,7 +10,6 @@ describe 'Coreon.Templates[properties/properties]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    @stub I18n, 't'
     data =
       properties: []
       render: -> ''

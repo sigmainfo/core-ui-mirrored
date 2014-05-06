@@ -5,7 +5,6 @@
 describe "Coreon.Views.Widgets.SearchTargetSelectDropdownView", ->
 
   beforeEach ->
-    @stub I18n, "t"
     @view = new Coreon.Views.Widgets.SearchTargetSelectDropdownView
       model: new Coreon.Models.SearchType
 

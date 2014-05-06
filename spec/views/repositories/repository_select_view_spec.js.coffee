@@ -15,7 +15,6 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
     @model.set repositories: @repositories, silent: true
     @view = new Coreon.Views.Repositories.RepositorySelectView
       model: @model
-    @stub I18n, "t"
 
   it "is a Backbone view", ->
     expect( @view ).to.be.an.instanceof Backbone.View

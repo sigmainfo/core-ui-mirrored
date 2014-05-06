@@ -8,7 +8,6 @@ describe 'Coreon.Views.Terms.TermsView', ->
   app = null
 
   beforeEach ->
-    @stub I18n, 't'
     termView = new Backbone.View
     @stub Coreon.Views.Terms, 'TermView'
     Coreon.Views.Terms.TermView.returns termView

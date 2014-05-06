@@ -10,7 +10,6 @@ describe 'Coreon.Templates[terms/terms]', ->
     $('<div>').html(template data)
 
   beforeEach ->
-    @stub I18n, 't'
     data =
       languages: []
       hasProperties: no

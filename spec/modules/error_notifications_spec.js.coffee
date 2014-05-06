@@ -6,7 +6,6 @@ describe "Coreon.Modules.ErrorNotifications", ->
   describe "failHandler", ->
 
     beforeEach ->
-      @stub I18n, "t"
       @stub Coreon.Models.Notification, "error"
       @xhr = status: 404, responseText: "{}"
 

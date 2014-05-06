@@ -5,7 +5,6 @@
 describe "Coreon.Views.Widgets.SearchTargetSelectView", ->
 
   beforeEach ->
-    @stub I18n, "t"
     @stub Coreon.Views.Widgets, "SearchTargetSelectDropdownView", =>
       @dropdown = new Backbone.View
       @dropdown.alignTo = @spy()

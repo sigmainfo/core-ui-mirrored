@@ -39,11 +39,12 @@ describe "Coreon.Views.Notifications.NotificationView", ->
       @view.$el.should.not.have.class "error"
 
     it "renders hide button", ->
+      I18n.t.withArgs('notification.actions.hide').returns 'Hide'
       @view.model.id = "123"
       @view.model.url = -> "notifications/123"
       @view.render()
       @view.$el.should.have "span.actions a.hide"
-      @view.$("a.hide").should.have.text I18n.t "notification.actions.hide"
+      @view.$("a.hide").should.have.text 'Hide'
 
     it "renders message", ->
       @view.model.set message: "If you kill him, he will win."

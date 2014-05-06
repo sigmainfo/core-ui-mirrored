@@ -11,8 +11,6 @@ describe 'Coreon.Views.ConceptsPanel', ->
   newConceptView = null
 
   beforeEach ->
-    @stub I18n, 't'
-
     repositoryView = new Backbone.View
     @stub Coreon.Views.Panels.Concepts, 'RepositoryView', ->
       repositoryView

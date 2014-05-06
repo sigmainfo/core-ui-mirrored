@@ -7,9 +7,6 @@ describe "Coreon.Helpers.action_for()", ->
   helper = null
 
   beforeEach ->
-    #TODO 140505 [tc] always stub I18n.t
-    @stub I18n, "t"
-
     template = @stub Coreon.Templates, 'helpers/action_for'
     helper = Coreon.Helpers.action_for
 

@@ -28,7 +28,6 @@ describe "Coreon.Views.ApplicationView", ->
     @stub Coreon.Lib.Panels.PanelsManager, 'create'
     Coreon.Lib.Panels.PanelsManager.create.returns panels
 
-    @stub I18n, "t"
     view = new Coreon.Views.ApplicationView
       model: Coreon.application
 
