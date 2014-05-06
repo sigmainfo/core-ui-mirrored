@@ -38,7 +38,6 @@ describe 'Coreon.Templates[concepts/concept]', ->
       action_for = null
 
       beforeEach ->
-        # TODO 140506 [tc] use sandbox for all spies
         can = @stub data, 'can'
         action_for = @stub data, 'action_for'
 
@@ -75,7 +74,6 @@ describe 'Coreon.Templates[concepts/concept]', ->
           el = render()
           expect(head el).to.not.have '.edit'
 
-
     context 'actions', ->
 
       action_for = null
@@ -107,3 +105,14 @@ describe 'Coreon.Templates[concepts/concept]', ->
           .returns '<a class="toggle-system-info">Toggle system info</a>'
         el = render()
         expect(actions el).to.have 'a.toggle-system-info'
+
+    context 'caption', ->
+
+      beforeEach ->
+        @stub data, 'render'
+
+      it 'renders label', ->
+        data.render.withArgs('concepts/caption')
+          .returns '<h2 class="concept-label">My Concept</h2>'
+        el = render()
+        expect(head el).to.have 'h2.concept-label'

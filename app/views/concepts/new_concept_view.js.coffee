@@ -3,7 +3,7 @@
 #= require helpers/form_for
 #= require helpers/input
 #= require templates/concepts/new_concept
-#= require templates/concepts/_caption
+#= require templates/concepts/caption
 #= require templates/concepts/_new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view

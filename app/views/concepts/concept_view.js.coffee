@@ -5,7 +5,7 @@
 #= require helpers/input
 #= require helpers/action_for
 #= require templates/concepts/concept
-#= require templates/concepts/_caption
+#= require templates/concepts/caption
 #= require templates/concepts/_info
 #= require templates/concepts/_edit_properties
 #= require templates/concepts/_properties
