@@ -8,8 +8,8 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     @term = create_concept_term @concept, lang: "en", value: "ten-gallon hat"
   end
 
-  step 'this term has a property "notice" of "TODO: translate"' do
-    @prop = create_concept_term_property @concept, @term, key: "notice", value: "TODO: translate"
+  step 'this term has a property "notice" of "[next]: translate"' do
+    @prop = create_concept_term_property @concept, @term, key: "notice", value: "[next]: translate"
   end
 
   step 'I click "Edit term" within term "ten-gallon hat"' do
@@ -113,9 +113,9 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     end
   end
 
-  step 'I should see "TODO: translate" for property input "Value"' do
+  step 'I should see "[next]: translate" for property input "Value"' do
     within ".term .property" do
-      page.find_field("Value").value.should == "TODO: translate"
+      page.find_field("Value").value.should == "[next]: translate"
     end
   end
 

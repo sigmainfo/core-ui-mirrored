@@ -13,11 +13,6 @@ class Coreon.Views.Concepts.ConceptLabelView extends Coreon.Views.SimpleView
   className: "concept-label"
 
   initialize: (options = {}) ->
-    @model = if options.model?
-        options.model
-      else #TODO: remove, too much magic
-        Coreon.Models.Concept.find options.id
-
     @model.on "change", @render, @
     @$el.attr "data-drag-ident", @model.get "id"
     @draggableOn(@$el)

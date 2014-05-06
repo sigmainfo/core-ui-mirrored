@@ -7,9 +7,7 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
     @concept = _(new Backbone.Model).extend
       label: -> "poem"
       hit: -> false
-    @stub Coreon.Models.Concept, "find"
-    Coreon.Models.Concept.find.withArgs("1234").returns @concept
-    @view = new Coreon.Views.Concepts.ConceptLabelView id: "1234"
+    @view = new Coreon.Views.Concepts.ConceptLabelView model: @concept
 
   afterEach ->
     @view.destroy()
@@ -24,17 +22,6 @@ describe "Coreon.Views.Concepts.ConceptLabelView", ->
 
     beforeEach ->
       @concept = new Backbone.Model
-
-    it "gets model by id", ->
-      Coreon.Models.Concept.find.withArgs("1234abcf").returns @concept
-      @view.initialize id: "1234abcf"
-      @view.model.should.equal @concept
-
-    it "sets model from options", ->
-      Coreon.Models.Concept.find.reset()
-      @view.initialize model: @concept
-      @view.model.should.equal @concept
-      Coreon.Models.Concept.find.should.not.have.been.calledWith "1234"
 
   describe "#render", ->
     beforeEach ->

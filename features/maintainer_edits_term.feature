@@ -32,14 +32,14 @@ Feature: maintainer edits term
     But I should not see "Save term"
 
   Scenario: removing existing properties
-    Given this term has a property "notice" of "TODO: translate"
+    Given this term has a property "notice" of "[next]: translate"
     And I am a maintainer of the repository
     And I visit the page of this concept
     When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
     Then I should see a set of property inputs with labels "Key", "Value", "Language"
     And I should see "notice" for property input "Key"
-    And I should see "TODO: translate" for property input "Value"
+    And I should see "[next]: translate" for property input "Value"
     When I click "Remove property"
     Then the property inputs should be disabled
     When I click "Save term"
@@ -74,7 +74,7 @@ Feature: maintainer edits term
     But I should see a message 'Successfully saved term "Stetson".'
 
   Scenario: reset and cancel
-    Given this term has a property "notice" of "TODO: translate"
+    Given this term has a property "notice" of "[next]: translate"
     And I am a maintainer of the repository
     And I visit the page of this concept
     When I toggle "EDIT MODE"
@@ -88,7 +88,7 @@ Feature: maintainer edits term
     Then I should see "ten-gallon hat" for input "Value"
     And I should see exactly one set of property inputs
     And I should see "notice" for property input "Key"
-    And I should see "TODO: translate" for property input "Value"
+    And I should see "[next]: translate" for property input "Value"
     And I should see "Save term"
     And I fill in "Value" with "high hat" within term inputs
     And I click "Remove property"
@@ -99,6 +99,6 @@ Feature: maintainer edits term
     Then I should see "ten-gallon hat" for input "Value"
     And I should see exactly one set of property inputs
     And I should see "notice" for property input "Key"
-    And I should see "TODO: translate" for property input "Value"
+    And I should see "[next]: translate" for property input "Value"
     And I should see "Save term"
 

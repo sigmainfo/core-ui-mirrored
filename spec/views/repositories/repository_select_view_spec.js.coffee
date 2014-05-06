@@ -68,35 +68,3 @@ describe "Coreon.Views.Repositories.RepositorySelectView", ->
       it "marks single", ->
         @view.render()
         expect( @view.$(".coreon-select") ).to.have.class "single"
-
-  #
-  # Not needed anymore, but a test for CoreonSelectPopup would be nice
-  # TODO: Test for CoreonSelectPopup
-  #
-  # describe "select()", ->
-  #
-  #   beforeEach ->
-  #     $("#konacha").append $('<div id="coreon-modal">')
-  #     $("#konacha").append @view.render().$el
-  #     @event = $.Event "click"
-  #
-  #   it "creates dropdown view", ->
-  #     Coreon.Views.Repositories.RepositorySelectDropdownView.reset()
-  #     @view.prompt = @spy()
-  #     @view.select @event
-  #     expect( Coreon.Views.Repositories.RepositorySelectDropdownView ).to.have.been.calledOnce
-  #     expect( Coreon.Views.Repositories.RepositorySelectDropdownView ).to.have.been.calledWithNew
-  #     expect( Coreon.Views.Repositories.RepositorySelectDropdownView ).to.have.been.calledWith model: @model
-  #     expect( @view.prompt ).to.have.been.calledOnce
-  #     expect( @view.prompt ).to.have.been.calledWith @dropdown
-  #
-  #   it "positions dropdown relative to current", ->
-  #     @view.$("h4").css
-  #       position: "absolute"
-  #       left: 44
-  #       top: 8
-  #       height: 16
-  #     @view.select @event
-  #     pos = @dropdown.$el.position()
-  #     expect( pos.left ).to.equal 44
-  #     expect( pos.top ).to.equal 28
