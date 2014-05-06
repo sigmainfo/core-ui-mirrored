@@ -22,7 +22,7 @@ div.concept {
     padding-right: 6px;
   }
 
-  .concept-to-clipboard, .system-info-toggle, .properties-toggle {
+  .add-to-clipboard, .remove-from-clipboard, .toggle-system-info, .properties-toggle {
     text-indent: -2000px;
     overflow: hidden;
     display: inline-block;
@@ -31,15 +31,16 @@ div.concept {
     @include svg-icons;
   }
 
-  .concept-to-clipboard {
+  .add-to-clipboard {
     background-position: -52px -1002px;
     @include scale(1.1);
-    &.remove {
-      background-position: -101px -1002px;
-    }
+  }
+  .remove-from-clipboard {
+    @include scale(1.1);
+    background-position: -101px -1002px;
   }
 
-  .system-info-toggle {
+  .toggle-system-info {
     background-position: -48px -650px;
     &:hover {
       background-position: -98px -650px;
@@ -325,7 +326,7 @@ div.concept {
       max-width: 65%;
     }
 
-    .system-info-toggle {
+    .toggle-system-info {
       display: none;
     }
 
