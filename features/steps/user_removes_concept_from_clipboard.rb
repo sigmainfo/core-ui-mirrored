@@ -15,7 +15,7 @@ class UserRemovesConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'I should see a button "Remove from clipboard"' do
-    page.should have_css("#coreon-main .concept .concept-to-clipboard", text: "Remove from clipboard")
+    page.should have_css("#coreon-main .concept .actions a", text: "Remove from clipboard")
   end
 
   step 'I click the button "Add to clipboard"' do

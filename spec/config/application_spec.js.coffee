@@ -248,7 +248,6 @@ describe 'Coreon.Application', ->
     info = null
 
     beforeEach ->
-      @stub I18n, 't'
       info = sinon.stub Coreon.Models.Notification, 'info'
 
     afterEach ->

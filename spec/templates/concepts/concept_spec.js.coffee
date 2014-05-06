@@ -18,19 +18,19 @@ describe 'Coreon.Templates[concepts/concept]', ->
 
   beforeEach ->
     concept = buildConcept()
-
     data =
       concept: concept
-
       render: -> ''
       can: -> no
       action_for: -> ''
 
   context 'head', ->
 
+    head = (el) -> el.find '.concept-head'
+
     it 'renders head division', ->
       el = render()
-      expect(el).to.have '.concept-head'
+      expect(head el).to.exist
 
     context 'edit', ->
 
@@ -38,8 +38,9 @@ describe 'Coreon.Templates[concepts/concept]', ->
       action_for = null
 
       beforeEach ->
-        can = sinon.stub data, 'can'
-        action_for = sinon.stub data, 'action_for'
+        # TODO 140506 [tc] use sandbox for all spies
+        can = @stub data, 'can'
+        action_for = @stub data, 'action_for'
 
       context 'with maintainer privileges', ->
 
@@ -50,14 +51,13 @@ describe 'Coreon.Templates[concepts/concept]', ->
           action_for.withArgs('concept.toggle_edit_mode')
             .returns '<a class="toggle-edit-mode">Edit mode</a>'
           el = render()
-          head = el.find('.concept-head')
-          expect(head).to.have 'a.toggle-edit-mode'
+          expect(head el).to.have 'a.toggle-edit-mode'
 
         it 'renders delete action', ->
           action_for.withArgs('concept.delete_concept')
             .returns '<a class="delete-concept">Delete concept</a>'
           el = render()
-          edit = el.find('.concept-head .edit')
+          edit = head(el).find('.edit')
           expect(edit).to.have 'a.delete-concept'
 
       context 'without maintainer privileges', ->
@@ -69,10 +69,41 @@ describe 'Coreon.Templates[concepts/concept]', ->
           action_for.withArgs('concept.toggle_edit_mode')
             .returns '<a class="toggle-edit-mode">Edit mode</a>'
           el = render()
-          head = el.find('.concept-head')
-          expect(head).to.not.have '.toggle-edit-mode'
+          expect(head el).to.not.have '.toggle-edit-mode'
 
         it 'does not render edit division', ->
           el = render()
-          head = el.find('.concept-head')
-          expect(head).to.not.have '.edit'
+          expect(head el).to.not.have '.edit'
+
+
+    context 'actions', ->
+
+      action_for = null
+
+      actions = (el) ->
+        head(el).find '.actions'
+
+      beforeEach ->
+        action_for = @stub data, 'action_for'
+
+      it 'renders actions division', ->
+        el = render()
+        expect(actions el).to.exist
+
+      it 'renders add-to-clipbaord action', ->
+        action_for.withArgs('concept.add_to_clipboard')
+          .returns '<a class="add-to-clipboard">Add to clipboard</a>'
+        el = render()
+        expect(actions el).to.have 'a.add-to-clipboard'
+
+      it 'renders remove-from-clipbaord action', ->
+        action_for.withArgs('concept.remove_from_clipboard')
+          .returns '<a class="remove-from-clipboard">Remove from clipboard</a>'
+        el = render()
+        expect(actions el).to.have 'a.remove-from-clipboard'
+
+      it 'renders toggle-system-info action', ->
+        action_for.withArgs('concept.toggle_system_info')
+          .returns '<a class="toggle-system-info">Toggle system info</a>'
+        el = render()
+        expect(actions el).to.have 'a.toggle-system-info'

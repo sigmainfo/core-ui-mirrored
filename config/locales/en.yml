@@ -81,7 +81,7 @@ en:
         definition: 'Definition'
 
   concept:
-    info:
+    toggle_system_info:
       label: 'System Info'
       hint: 'Show/hide system info'
     tree: "Broader & Narrower"

@@ -19,7 +19,7 @@ class UserAddsConceptToClipboard < Spinach::FeatureSteps
   end
 
   step 'I should see a button "Add to clipboard"' do
-    page.should have_css("#coreon-main .concept .concept-to-clipboard", text: "Add to clipboard")
+    page.should have_css("#coreon-main .concept .actions a", text: "Add to clipboard")
   end
 
   step 'I click the button "Add to clipboard"' do

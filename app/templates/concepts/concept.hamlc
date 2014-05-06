@@ -3,10 +3,11 @@
     != @action_for 'concept.toggle_edit_mode', className: 'button'
     .edit
       != @action_for 'concept.delete_concept'
+
   .actions
-    %a.concept-to-clipboard.remove{ href: "javascript: void(0)", title: I18n.t "concept.remove_from_clipboard" }= I18n.t "concept.remove_from_clipboard"
-    %a.concept-to-clipboard.add{ href: "javascript: void(0)", title: I18n.t "concept.add_to_clipboard" }= I18n.t "concept.add_to_clipboard"
-    %h4.system-info-toggle{title: I18n.t('concept.info.hint')}= I18n.t('concept.info.label')
+    != @action_for 'concept.add_to_clipboard'
+    != @action_for 'concept.remove_from_clipboard'
+    != @action_for 'concept.toggle_system_info'
 
   != @render "concepts/caption", label: @concept.get("label"), dragId: @concept.get("id")
   != @render "concepts/info", data: @concept.info()

@@ -41,11 +41,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click  .concept-to-clipboard.add"           : "addConceptToClipboard"
-    "click  .concept-to-clipboard.remove"        : "removeConceptFromClipboard"
+    "click  .add-to-clipboard"                   : "addConceptToClipboard"
+    "click  .remove-from-clipboard"              : "removeConceptFromClipboard"
     "click  .toggle-edit-mode"                   : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
-    "click  .system-info-toggle"                 : "toggleInfo"
+    "click  .toggle-system-info"                 : "toggleSystemInfo"
     "click  section:not(form *) > *:first-child" : "toggleSection"
     "click  .properties .index li"               : "selectProperty"
     "click  .add-property"                       : "addProperty"
@@ -132,7 +132,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.add").show()
     @
 
-  toggleInfo: (evt) ->
+  toggleSystemInfo: (evt) ->
     @$(".system-info")
       .slideToggle()
 
@@ -294,9 +294,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   setClipboardButton: ->
     if Coreon.Collections.Clips.collection().get @model
-      @$(".concept-to-clipboard.add").hide()
-      @$(".concept-to-clipboard.remove").show()
+      @$('.add-to-clipboard').hide()
+      @$('.remove-from-clipboard').show()
     else
-      @$(".concept-to-clipboard.remove").hide()
-      @$(".concept-to-clipboard.add").show()
+      @$('.add-to-clipboard').show()
+      @$('.remove-from-clipboard').hide()
 

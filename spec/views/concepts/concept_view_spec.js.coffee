@@ -50,18 +50,20 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     it 'can be chained', ->
       expect( @view.render() ).to.equal @view
 
-    it 'is triggered by model change', ->
-      @view.render = @spy()
-      @view.initialize()
-      @concept.trigger 'change'
-      expect( @view.render ).to.have.been.calledOnce
+    context 'triggers', ->
 
-    it 'is triggered by edit mode change', ->
-      @view.render = @spy()
-      @view.initialize()
-      Coreon.application.trigger 'change:editing'
-      expect( @view.render ).to.have.been.calledOnce
-      expect( @view.render ).to.have.been.calledOn @view
+      it 'is triggered by model change', ->
+        @view.render = @spy()
+        @view.initialize()
+        @concept.trigger 'change'
+        expect( @view.render ).to.have.been.calledOnce
+
+      it 'is triggered by edit mode change', ->
+        @view.render = @spy()
+        @view.initialize()
+        Coreon.application.trigger 'change:editing'
+        expect( @view.render ).to.have.been.calledOnce
+        expect( @view.render ).to.have.been.calledOn @view
 
     it 'renders label', ->
       @concept.set 'label', 'Handgun', silent: true
@@ -69,31 +71,11 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect( @view.$el ).to.have 'h2.label'
       expect( @view.$('h2.label') ).to.have.text 'Handgun'
 
-    it 'renders system info', ->
-      I18n.t.withArgs('concept.info.label').returns 'System Info'
-      @concept.info = ->
-        id: '123'
-        legacy_id: '543'
-      @view.render()
-      expect( @view.$el ).to.have "> .concept-head .actions .system-info-toggle"
-      expect( @view.$("> .concept-head .actions .system-info-toggle") ).to.have.text "System Info"
-      expect( @view.$el ).to.have "> .concept-head .system-info"
-      expect( @view.$("> .concept-head .system-info th").eq(0) ).to.have.text "id"
-      expect( @view.$("> .concept-head .system-info td").eq(0) ).to.have.text "123"
-      expect( @view.$("> .concept-head .system-info th").eq(1) ).to.have.text "legacy_id"
-      expect( @view.$("> .concept-head .system-info td").eq(1) ).to.have.text "543"
-
     it 'renders tree', ->
       @broaderAndNarrower.render = @stub().returns @broaderAndNarrower
       @view.render()
       expect( @broaderAndNarrower.render ).to.have.been.calledOnce
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
-
-    it 'hides all system info', ->
-      @concept.info = -> import_id: '123'
-      @view.render()
-      info = @view.$('.system-info')
-      expect(info).to.have.css 'display', 'none'
 
     context 'edit mode off', ->
 
@@ -416,13 +398,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
             @view.render()
             expect( @view.$('.term') ).to.not.have 'a.remove-term'
 
-  describe '#toggleInfo()', ->
+  describe '#toggleSystemInfo()', ->
 
     beforeEach ->
       @view.$el.append """
         <section>
           <div class="actions">
-            <h3 class="system-info-toggle">INFO</h3>
+            <h3 class="toggle-system-info">INFO</h3>
           </div>
           <div class="system-info">foo</div>
         </section>
@@ -430,15 +412,15 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       $("#konacha").append @view.$el
 
     it "is triggered by click on system info toggle", ->
-      @view.toggleInfo = @spy()
+      @view.toggleSystemInfo = @spy()
       @view.delegateEvents()
-      @view.$(".system-info-toggle").click()
-      expect( @view.toggleInfo ).to.have.been.calledOnce
+      @view.$(".toggle-system-info").click()
+      expect( @view.toggleSystemInfo ).to.have.been.calledOnce
 
     it "toggles system info", ->
-      @view.toggleInfo()
+      @view.toggleSystemInfo()
       expect( @view.$(".system-info") ).to.be.hidden
-      @view.toggleInfo()
+      @view.toggleSystemInfo()
       expect( @view.$(".system-info") ).to.be.visible
 
   describe "toggleSection()", ->
