@@ -105,7 +105,7 @@
     background-color: rgba($button-color, 0.05);
   }
 
-  .button.edit-concept {
+  .button.toggle-edit-mode {
     background-color: $editmode-color;
     color: $button-color;
     &:before {

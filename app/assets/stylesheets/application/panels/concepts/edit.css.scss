@@ -26,7 +26,7 @@
     @extend .big;
   }
 
-  &.edit-concept {
+  &.toggle-edit-mode {
     @extend .big;
     padding-left: 6px;
     position: absolute;
@@ -340,9 +340,8 @@ form.create.term {
 
 
 
-  .button.edit-concept {
-//    background-color: $editmode-color;
-    color: $button-color;
+  .button.toggle-edit-mode {
+//    color: $button-color;
     margin-left: -38px;
     &:before {
       background-position: -2px -703px;
