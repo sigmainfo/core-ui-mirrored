@@ -72,7 +72,7 @@ describe 'Creon.Models.Search', ->
 
     it 'sends POST with params', ->
       @model.params = -> 'search[only]': 'terms'
-      sinon.spy @model, 'sync'
+      @spy @model, 'sync'
       @model.fetch parse: yes
       expect( @model.sync ).to.have.been.calledOnce
       expect( @model.sync ).to.have.been.calledWith 'read', @model

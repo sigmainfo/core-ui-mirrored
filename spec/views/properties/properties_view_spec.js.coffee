@@ -55,7 +55,7 @@ describe 'Coreon.Views.Properties.PropertiesView', ->
     template = null
 
     beforeEach ->
-      template = sinon.stub()
+      template = @stub()
       view.template = template
 
     it 'can be chained', ->
@@ -63,7 +63,7 @@ describe 'Coreon.Views.Properties.PropertiesView', ->
       expect(result).to.equal view
 
     it 'is triggered by changes on collection', ->
-      render = sinon.spy()
+      render = @spy()
       view.render = render
       view.initialize()
       collection.trigger 'change'

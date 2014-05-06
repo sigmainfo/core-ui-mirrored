@@ -32,7 +32,7 @@ describe "Coreon.Modules.Accumulation", ->
   describe "create()", ->
 
     it "passes arguments to collection's create()", ->
-        Coreon.Models.MyModel.collection().create = sinon.spy()
+        Coreon.Models.MyModel.collection().create = @spy()
         Coreon.Models.MyModel.create "attr", foo: "bar"
         Coreon.Models.MyModel.collection().create.should.have.been.calledOnce
 
@@ -41,8 +41,8 @@ describe "Coreon.Modules.Accumulation", ->
     context "on unknown model", ->
 
       beforeEach ->
-        Coreon.Models.MyModel.collection().on "add", (model) ->
-          model.fetch = sinon.stub()
+        Coreon.Models.MyModel.collection().on "add", (model) =>
+          model.fetch = @stub()
 
       afterEach ->
         Coreon.Models.MyModel.collection().off "add"
@@ -69,7 +69,7 @@ describe "Coreon.Modules.Accumulation", ->
         model.blank.should.be.false
 
       it "triggers event when no longer blank", ->
-        spy = sinon.spy()
+        spy = @spy()
         model = Coreon.Models.MyModel.find "123"
         model.on "nonblank", spy
         model.trigger "sync", model
@@ -86,14 +86,14 @@ describe "Coreon.Modules.Accumulation", ->
 
       it "does not fetch model by default", ->
         model = new Coreon.Models.MyModel id: "123"
-        model.fetch = sinon.spy()
+        model.fetch = @spy()
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123").should.equal model
         model.fetch.should.not.have.been.called
 
       it "fetches model when option is set", ->
         model = new Coreon.Models.MyModel id: "123"
-        model.fetch = sinon.spy()
+        model.fetch = @spy()
         Coreon.Models.MyModel.collection().add model
         Coreon.Models.MyModel.find("123", fetch: yes).should.equal model
         model.fetch.should.have.been.calledOnce

@@ -55,7 +55,7 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
     describe '#removeAll()', ->
 
       it 'removes panels', ->
-        remove = sinon.spy()
+        remove = @spy()
         panel = remove: remove
         model = new Backbone.Model
         model.view = panel
@@ -91,13 +91,13 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
         panel = new Backbone.View
 
       it 'populates collection', ->
-        load = sinon.spy()
+        load = @spy()
         collection.load = load
         manager.createAll()
         expect(load).to.have.been.calledOnce
 
       it 'creates panels', ->
-        create = sinon.stub()
+        create = @stub()
         factory.create = create
         create.withArgs('concepts', model).returns panel
         manager.createAll()
@@ -105,9 +105,9 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
         expect(instance).to.equal panel
 
       it 'renders panels', ->
-        render = sinon.spy()
+        render = @spy()
         panel.render = render
-        create = sinon.stub()
+        create = @stub()
         factory.create = create
         create.returns panel
         manager.createAll()
@@ -127,7 +127,7 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
         collection.reset [ model ], silent: yes
 
       it 'is triggered on widget mode change', ->
-        update = sinon.spy()
+        update = @spy()
         manager.update = update
         manager.initialize()
         collection.trigger 'change:widget'
@@ -140,7 +140,7 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
           panel.maximize = ->
 
         it 'maximizes panel', ->
-          maximize = sinon.spy()
+          maximize = @spy()
           panel.maximize = maximize
           manager.update()
           expect(maximize).to.have.been.calledOnce
@@ -161,7 +161,7 @@ describe 'Coreon.Lib.Panels.PanelsManager', ->
           panel.widgetize = ->
 
         it 'widgetizes panel', ->
-          widgetize = sinon.spy()
+          widgetize = @spy()
           panel.widgetize = widgetize
           manager.update()
           expect(widgetize).to.have.been.calledOnce

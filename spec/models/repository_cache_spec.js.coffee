@@ -27,7 +27,7 @@ describe 'Coreon.Models.RepositoryCache', ->
       updateLangs = null
 
       beforeEach ->
-        updateLangs = sinon.spy()
+        updateLangs = @spy()
         cache.updateLangs = updateLangs
         cache.initialize {}, app: app
         updateLangs.reset()

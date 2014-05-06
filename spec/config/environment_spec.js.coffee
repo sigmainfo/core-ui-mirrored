@@ -53,7 +53,7 @@ describe "config/environment", ->
 
     it "calls remove", ->
       @view = new Backbone.View
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @view.destroy()
       @view.remove.should.have.been.calledOnce
       @view.remove.should.have.been.calledOn @view
@@ -69,7 +69,7 @@ describe "config/environment", ->
       Backbone.$.ajax.should.have.been.calledWith "https://auth.coreon.com/login"
 
     it "uses error notifications when possible", ->
-      Coreon.Modules.ErrorNotifications = failHandler: sinon.spy()
+      Coreon.Modules.ErrorNotifications = failHandler: @spy()
       request = Backbone.ajax()
       request.reject error: "Stupid fucking white man."
       Coreon.Modules.ErrorNotifications.failHandler.should.have.been.calledOnce

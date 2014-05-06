@@ -20,14 +20,14 @@ describe 'Coreon.Routers.SessionsRouter', ->
   describe '#destroy()', ->
 
     it 'is routed', ->
-      destroy = sinon.spy()
+      destroy = @spy()
       router.destroy = destroy
       router._bindRoutes()
       router.navigate 'logout', trigger: yes
       expect(destroy).to.have.been.calledOnce
 
     it 'clears notifications', ->
-      reset = sinon.spy()
+      reset = @spy()
       Coreon.Models.Notification.collection = ->
         reset: reset
       router.destroy()
@@ -41,7 +41,7 @@ describe 'Coreon.Routers.SessionsRouter', ->
 
       beforeEach ->
         request = $.Deferred()
-        session = destroy: sinon.spy -> request.promise()
+        session = destroy: @spy -> request.promise()
         app.set 'session', session, silent: yes
 
       it 'destroys session', ->
@@ -52,13 +52,13 @@ describe 'Coreon.Routers.SessionsRouter', ->
         expect(current).to.be.null
 
       it 'defers navigate', ->
-        navigate = sinon.spy()
+        navigate = @spy()
         router.navigate = navigate
         router.destroy()
         expect(navigate).to.not.have.been.called
 
       it 'navigates to root when defered request is resolved', ->
-        navigate = sinon.spy()
+        navigate = @spy()
         router.navigate = navigate
         router.destroy()
         request.resolve()
@@ -66,7 +66,7 @@ describe 'Coreon.Routers.SessionsRouter', ->
         expect(navigate).to.have.been.calledWith '', reload: yes
 
       it 'navigates to root when defered request is rejected', ->
-        navigate = sinon.spy()
+        navigate = @spy()
         router.navigate = navigate
         router.destroy()
         request.reject()
@@ -79,7 +79,7 @@ describe 'Coreon.Routers.SessionsRouter', ->
         app.set 'session', null, silent: yes
 
       it 'navigates to root', ->
-        navigate = sinon.spy()
+        navigate = @spy()
         router.navigate = navigate
         router.destroy()
         expect(navigate).to.have.been.calledOnce

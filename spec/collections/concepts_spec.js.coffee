@@ -2,7 +2,7 @@
 #= require models/concept
 
 describe "Coreon.Collections.Concepts", ->
-  
+
   beforeEach ->
     @collection = new Coreon.Collections.Concepts
 
@@ -42,13 +42,13 @@ describe "Coreon.Collections.Concepts", ->
 
     it "does not trigger change events", ->
       @collection.reset [ id: "parent" ], silent: true
-      spy = sinon.spy()
+      spy = @spy()
       @collection.on "change", spy
       @collection.add id: "child", superconcept_ids: [ "parent" ], subconcept_ids: [ "child" ]
       spy.should.not.have.been.called
 
   describe "when concept is removed", ->
-    
+
     it "removes itself from parents", ->
       @collection.reset [
         { id: "parent", subconcept_ids: [ "child" ] }
@@ -79,13 +79,13 @@ describe "Coreon.Collections.Concepts", ->
         { id: "parent", subconcept_ids: [ "123" ] }
         { id: "child", superconcept_ids: [ "123" ] }
       ], silent: true
-      spy = sinon.spy()
+      spy = @spy()
       @collection.on "change", spy
       @collection.remove "123"
       spy.should.not.have.been.called
 
   describe "when superconcept_ids change", ->
-    
+
     it "removes itself from deprecated parents", ->
       @collection.reset [
         { id: "parent", subconcept_ids: [ "child" ] }
@@ -117,7 +117,7 @@ describe "Coreon.Collections.Concepts", ->
       @collection.get("123").set
         superconcept_ids: [ "foo" ]
         subconcept_ids: [ "bar" ]
-    
+
     it "does not trigger change events", ->
       @collection.reset [
         { id: "123", superconcept_ids: [ "parent" ], subconcept_ids: [ "child" ] }
@@ -126,7 +126,7 @@ describe "Coreon.Collections.Concepts", ->
         { id: "parent2" }
         { id: "child2" }
       ], silent: true
-      spy = sinon.spy()
+      spy = @spy()
       @collection.on "change", spy
       @collection.get("123").set
         superconcept_ids: [ "parent2" ]
@@ -134,7 +134,7 @@ describe "Coreon.Collections.Concepts", ->
       spy.should.have.been.calledOnce
 
   describe "when subconcept_ids change", ->
-    
+
     it "removes itself from deprecated children", ->
       @collection.reset [
         { id: "child", superconcept_ids: [ "parent" ] }
@@ -166,7 +166,7 @@ describe "Coreon.Collections.Concepts", ->
       @collection.get("123").set
         subconcept_ids: [ "foo" ]
         superconcept_ids: [ "bar" ]
-    
+
     it "does not trigger change events", ->
       @collection.reset [
         { id: "123", subconcept_ids: [ "child" ], superconcept_ids: [ "parent" ] }
@@ -175,7 +175,7 @@ describe "Coreon.Collections.Concepts", ->
         { id: "child2" }
         { id: "parent2" }
       ], silent: true
-      spy = sinon.spy()
+      spy = @spy()
       @collection.on "change", spy
       @collection.get("123").set
         subconcept_ids: [ "child2" ]

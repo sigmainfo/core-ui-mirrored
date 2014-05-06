@@ -96,7 +96,7 @@ describe 'Coreon.Lib.ConceptMap.LeftToRight', ->
   describe '#updateEdges()', ->
 
     beforeEach ->
-      @strategy.diagonal = sinon.stub()
+      @strategy.diagonal = @stub()
       @selection = @parent.append('path').attr('class', 'concept-edge')
 
     it 'updates path between concepts', ->
@@ -210,7 +210,7 @@ describe 'Coreon.Lib.ConceptMap.LeftToRight', ->
       @selection = @parent.append('g').attr('class', 'concept-node')
       @label = @selection.append('text').attr('class', 'label')
       @label.node().getBBox = -> width: 100
-      @strategy.updateEdges = sinon.spy()
+      @strategy.updateEdges = @spy()
 
     it 'resizes background', ->
       background = @selection.append('rect').attr('class', 'background')
@@ -271,7 +271,7 @@ describe 'Coreon.Lib.ConceptMap.LeftToRight', ->
         viewport =
           width:  300
           height: 200
-        @strategy.box = sinon.stub()
+        @strategy.box = @stub()
         @strategy.box.withArgs(@data, 200, 300).returns
           x     : 12
           y     : 34

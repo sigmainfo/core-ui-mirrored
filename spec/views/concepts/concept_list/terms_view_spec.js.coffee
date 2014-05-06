@@ -40,7 +40,7 @@ describe 'Coreon.Views.Concepts.ConceptList.TermsView', ->
       render = null
 
       beforeEach ->
-        render = sinon.spy()
+        render = @spy()
         view.render = render
         view.initialize
           model: concept

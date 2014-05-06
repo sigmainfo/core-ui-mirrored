@@ -18,7 +18,7 @@ describe "Coreon.Modules.PersistedAttributes", ->
     @model = new Coreon.Models.ModelWithPersistedAttributes
 
   describe "persistedAttributes()", ->
-  
+
     it "returns empty hash when new", ->
       @model.persistedAttributes().should.eql {}
       @model.persistedAttributes().should.not.be.an.instanceof Array
@@ -33,7 +33,7 @@ describe "Coreon.Modules.PersistedAttributes", ->
     it "returns copy of attributes hash", ->
       @model.trigger "sync"
       @model.persistedAttributes().should.not.equal @model.attributes
-      
+
   describe "isPersisted()", ->
 
     it "returns false for non-existent attribute", ->
@@ -61,15 +61,15 @@ describe "Coreon.Modules.PersistedAttributes", ->
       @model.trigger "sync"
 
     it "can be chained", ->
-      @model.revert().should.equal @model 
+      @model.revert().should.equal @model
 
     it "restores persisted model state", ->
       @model.set { foo: "baz", poo: "foo" }, silent: true
       @model.revert()
       @model.attributes.should.eql foo: "bar", bar: "baz"
-     
+
     it "triggers change event", ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.set "foo", "baz", silent: true
       @model.on "change", spy
       @model.revert areYouSure: yes
@@ -77,8 +77,8 @@ describe "Coreon.Modules.PersistedAttributes", ->
       spy.should.have.been.calledWith @model, areYouSure: yes
 
     it "triggers change events for restored attrs", ->
-      spy1 = sinon.spy()
-      spy2 = sinon.spy()
+      spy1 = @spy()
+      spy2 = @spy()
       @model.set { foo: "baz", bar: "poo" }, silent: true
       @model.on "change:foo", spy1
       @model.on "change:bar", spy2
@@ -89,7 +89,7 @@ describe "Coreon.Modules.PersistedAttributes", ->
       spy2.should.have.been.calledWith @model, "baz", areYouSure: yes
 
     it "silences events", ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.set foo: "baz", bar: "poo"
       @model.on "all", spy
       @model.revert silent: on

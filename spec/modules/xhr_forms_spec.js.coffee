@@ -13,7 +13,7 @@ describe "Coreon.Modules.XhrForms", ->
 
   after ->
     delete Coreon.Views.ViewWithXhrForms
-    
+
   beforeEach ->
     @view = new Coreon.Views.ViewWithXhrForms
 
@@ -47,7 +47,7 @@ describe "Coreon.Modules.XhrForms", ->
         @view.$(".outside").should.not.have.class "disabled"
 
       it "deactivates all links", ->
-        spy = sinon.spy()
+        spy = @spy()
         @link = $ '<a href="#">click me</a>'
         @view.$("form").append @link
         @view.$el.on "click", "a", spy
@@ -81,7 +81,7 @@ describe "Coreon.Modules.XhrForms", ->
         @view.$("a").should.not.have.class "disabled"
 
       it "deactivates all links", ->
-        spy = sinon.spy()
+        spy = @spy()
         @link = $ '<a href="#">click me</a>'
         @view.$("form").append @link
         @view.$el.on "click", "a", spy

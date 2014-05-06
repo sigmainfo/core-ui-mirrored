@@ -74,7 +74,7 @@ describe "Coreon.Models.Notification", ->
         Backbone.Model::destroy.should.have.been.calledOnce
 
       it "clears timeout", ->
-        sinon.stub window, "clearTimeout"
+        @stub window, "clearTimeout"
         orig = @notification.timeout
         @notification.timeout = 1234
         try

@@ -26,14 +26,14 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
       Backbone.history.stop()
 
     it 'routes root to index', ->
-      index = sinon.spy()
+      index = @spy()
       router.index = index
       router._bindRoutes()
       router.navigate '', trigger: yes
       expect(index).to.have.been.calledOnce
 
     it 'routes id to show', ->
-      show = sinon.spy()
+      show = @spy()
       router.show = show
       router._bindRoutes()
       router.navigate '5272466670686f14a0030000', trigger: yes
@@ -41,14 +41,14 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
       expect(show).to.have.been.calledWith '5272466670686f14a0030000'
 
     it 'does not route invalid ids', ->
-      show = sinon.spy()
+      show = @spy()
       router.show = show
       router._bindRoutes()
       router.navigate '123', trigger: yes
       expect(show).to.not.have.been.called
 
     it 'allows trailing slash in route', ->
-      show = sinon.spy()
+      show = @spy()
       router.show = show
       router._bindRoutes()
       router.navigate '5272466670686f14a0030000/', trigger: yes
@@ -56,7 +56,7 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
       expect(show).to.have.been.calledWith '5272466670686f14a0030000'
 
     it 'allows concepts path in route', ->
-      show = sinon.spy()
+      show = @spy()
       router.show = show
       router._bindRoutes()
       router.navigate '5272466670686f14a0030000/concepts', trigger: yes
@@ -64,7 +64,7 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
       expect(show).to.have.been.calledWith '5272466670686f14a0030000'
 
     it 'allows trailing slash with concepts path in route', ->
-      show = sinon.spy()
+      show = @spy()
       router.show = show
       router._bindRoutes()
       router.navigate '5272466670686f14a0030000/concepts/', trigger: yes
@@ -76,7 +76,7 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
     navigate = null
 
     beforeEach ->
-      navigate = sinon.spy()
+      navigate = @spy()
       router.navigate = navigate
 
     it 'redirects to default repository', ->
@@ -99,7 +99,7 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
     select = null
 
     beforeEach ->
-      select = sinon.spy()
+      select = @spy()
       app.selectRepository = select
       repository = new Backbone.Model
 

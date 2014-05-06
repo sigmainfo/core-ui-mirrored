@@ -77,7 +77,7 @@ describe 'Coreon.Models.ConceptMapNode', ->
       expect( @model.get 'score' ).to.equal 1.876
 
     it 'updates from model', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.update = spy
       @model.initialize()
       expect( spy ).to.have.been.calledOnce
@@ -91,7 +91,7 @@ describe 'Coreon.Models.ConceptMapNode', ->
       @model.initialize()
 
     it 'is triggered on model changes', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.update = spy
       @model.initialize()
       spy.reset()
@@ -99,7 +99,7 @@ describe 'Coreon.Models.ConceptMapNode', ->
       expect( spy ).to.have.been.calledOnce
 
     it 'is triggered when model is fully loaded', ->
-      spy = sinon.spy()
+      spy = @spy()
       @model.update = spy
       @model.initialize()
       spy.reset()

@@ -41,8 +41,8 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
         tree     : {}
         edges    : {}
         siblings : []
-      @strategy.renderNodes = sinon.spy -> data: -> []
-      @strategy.renderSiblings = sinon.spy -> data: -> []
+      @strategy.renderNodes = @spy -> data: -> []
+      @strategy.renderSiblings = @spy -> data: -> []
 
     it 'renders nodes', ->
       @strategy.render @graph
@@ -57,7 +57,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.renderSiblings.should.have.been.calledAfter renderNodes
 
     it 'renders edges', ->
-      @strategy.renderEdges = sinon.spy()
+      @strategy.renderEdges = @spy()
       @strategy.render @graph
       @strategy.renderEdges.should.have.been.calledOnce
       @strategy.renderEdges.should.have.been.calledWith @graph.edges
@@ -71,13 +71,13 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       siblings.data = -> siblings
       edges = []
       selection = @strategy.parent.selectAll '.concept-node, .sibling-node'
-      selection.data = sinon.stub()
+      selection.data = @stub()
       selection.data.withArgs(['node', 'sibling']).returns selection
-      @strategy.updateLayout = sinon.spy()
+      @strategy.updateLayout = @spy()
       @strategy.renderNodes = -> nodes
       @strategy.renderSiblings = -> siblings
       @strategy.renderEdges = -> edges
-      @strategy.parent.selectAll = sinon.stub()
+      @strategy.parent.selectAll = @stub()
       @strategy.parent.selectAll
         .withArgs('.concept-node, .sibling-node')
         .returns selection
@@ -121,7 +121,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       nodes.data().should.eql @data
 
     it 'creates missing nodes including root node', ->
-      @strategy.createNodes = sinon.spy()
+      @strategy.createNodes = @spy()
       enter = @strategy.renderNodes(@root).enter()
       ids = (node.__data__.id for i, node of enter[0] when node.__data__?)
       ids.should.eql [ 'root', 'create' ]
@@ -129,7 +129,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.createNodes.should.have.been.calledWith enter
 
     it 'deletes deprecated nodes', ->
-      @strategy.deleteNodes = sinon.spy()
+      @strategy.deleteNodes = @spy()
       exit = @strategy.renderNodes(@root).exit()
       ids = (node.__data__.id for i, node of exit[0] when node.__data__?)
       ids.should.eql [ 'remove' ]
@@ -137,7 +137,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.deleteNodes.should.have.been.calledWith exit
 
     it 'updates all nodes', ->
-      @strategy.updateNodes = sinon.spy()
+      @strategy.updateNodes = @spy()
       nodes = @strategy.renderNodes @root
       @strategy.updateNodes.should.have.been.calledOnce
       @strategy.updateNodes.should.have.been.calledWith nodes
@@ -155,7 +155,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
         { id: 'create', type: 'placeholder' }
         { id: 'update', type: 'placeholder' }
       ]
-      @strategy.layoutSiblings = sinon.stub()
+      @strategy.layoutSiblings = @stub()
       @strategy.layoutSiblings.withArgs(@data).returns @data
 
     it 'maps nodes to data', ->
@@ -163,7 +163,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       nodes.data().should.eql @data
 
     it 'creates missing nodes including root node', ->
-      @strategy.createNodes = sinon.spy()
+      @strategy.createNodes = @spy()
       nodes = @strategy.renderSiblings @data
       enter = nodes.enter()
       ids = (node.__data__.id for i, node of enter[0] when node.__data__?)
@@ -172,7 +172,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.createNodes.should.have.been.calledWith enter
 
     it 'deletes deprecated nodes', ->
-      @strategy.deleteNodes = sinon.spy()
+      @strategy.deleteNodes = @spy()
       nodes = @strategy.renderSiblings @data
       exit = nodes.exit()
       ids = (node.__data__.id for i, node of exit[0] when node.__data__?)
@@ -181,7 +181,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.deleteNodes.should.have.been.calledWith exit
 
     it 'updates all nodes', ->
-      @strategy.updateNodes = sinon.spy()
+      @strategy.updateNodes = @spy()
       nodes = @strategy.renderSiblings @data
       @strategy.updateNodes.should.have.been.calledOnce
       @strategy.updateNodes.should.have.been.calledWith nodes
@@ -326,13 +326,13 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
         .exit()
 
     it 'stops loop of placeholders', ->
-      @parent.stopLoop = sinon.spy()
+      @parent.stopLoop = @spy()
       @strategy.deleteNodes @exit
       @parent.stopLoop.should.have.been.calledOnce
       @parent.stopLoop.should.have.been.calledWith @animation
 
     it 'removes nodes', ->
-      @exit.remove = sinon.spy()
+      @exit.remove = @spy()
       @strategy.deleteNodes @exit
       @exit.remove.should.have.been.calledOnce
 
@@ -512,7 +512,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
         it 'stops running animation loop', ->
           cursor = @selection.append('path').attr('class', 'cursor')
           animation = duration: 12
-          @parent.stopLoop = sinon.spy()
+          @parent.stopLoop = @spy()
           nodes = @selection.data [
             type: 'placeholder'
             busy: no
@@ -524,7 +524,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
 
         it 'does not stop loop that does not exist', ->
           cursor = @selection.append('path').attr('class', 'cursor')
-          @parent.stopLoop = sinon.spy()
+          @parent.stopLoop = @spy()
           nodes = @selection.data [
             type: 'placeholder'
             busy: no
@@ -584,7 +584,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
         it 'does not start animation more than once', ->
           cursor = @selection.append('path').attr('class', 'cursor')
           animation = duration: 12
-          @parent.startLoop = sinon.spy()
+          @parent.startLoop = @spy()
           nodes = @selection.data [
             type: 'placeholder'
             busy: yes
@@ -618,7 +618,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       ]
 
     it 'creates missing edges', ->
-      @strategy.createEdges = sinon.spy()
+      @strategy.createEdges = @spy()
       enter = @strategy.renderEdges(@edges).enter()
       data = (edge.__data__ for i, edge of enter[0] when edge.__data__?)
       data.should.eql [
@@ -629,7 +629,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.createEdges.should.have.been.calledWith enter
 
     it 'deletes deprecated edges', ->
-      @strategy.deleteEdges = sinon.spy()
+      @strategy.deleteEdges = @spy()
       exit = @strategy.renderEdges(@edges).exit()
       data = (edge.__data__ for i, edge of exit[0] when edge.__data__?)
       data.should.eql [
@@ -640,7 +640,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       @strategy.deleteEdges.should.have.been.calledWith exit
 
     it 'updates all edges', ->
-      @strategy.updateEdges = sinon.spy()
+      @strategy.updateEdges = @spy()
       edges = @strategy.renderEdges @edges
       @strategy.updateEdges.should.have.been.calledOnce
       @strategy.updateEdges.should.have.been.calledWith edges
@@ -664,7 +664,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
   describe '#deleteEdges()', ->
 
     it 'removes paths', ->
-      exit = remove: sinon.spy()
+      exit = remove: @spy()
       @strategy.deleteEdges exit
       exit.remove.should.have.been.calledOnce
 
@@ -685,7 +685,7 @@ describe "Coreon.Lib.ConceptMap.RenderStrategy", ->
       background.attr('width').should.equal '112'
 
     it 'reolves passed in deferred', ->
-      deferred = resolve: sinon.spy()
+      deferred = resolve: @spy()
       edges = []
       @strategy.updateLayout @nodes, edges, deferred
       expect( deferred.resolve ).to.have.been.calledOnce

@@ -101,7 +101,7 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
   describe '#updateEdges()', ->
 
     beforeEach ->
-      @strategy.diagonal = sinon.stub()
+      @strategy.diagonal = @stub()
       @selection = @parent.append('path').attr('class', 'concept-edge')
 
     it 'updates path between concepts', ->
@@ -207,7 +207,7 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
       background.attr('x').should.equal '-58'
 
     it 'updates edges', ->
-      @strategy.updateEdges = sinon.spy()
+      @strategy.updateEdges = @spy()
       @strategy.updateLayout @nodes, @edges, @deferred
       @strategy.updateEdges.should.have.been.calledOnce
       @strategy.updateEdges.should.have.been.calledWith @edges
@@ -254,7 +254,7 @@ describe 'Coreon.Lib.ConceptMap.TopDown', ->
         viewport =
           width:  300
           height: 200
-        @strategy.box = sinon.stub()
+        @strategy.box = @stub()
         @strategy.box.withArgs(@data, 300, 200).returns
           x     : 12
           y     : 34

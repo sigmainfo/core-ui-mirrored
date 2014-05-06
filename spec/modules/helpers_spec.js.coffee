@@ -11,7 +11,7 @@ describe "Coreon.Modules", ->
 
     it "returns target", ->
       Coreon.Modules.extend(@target, {}).should.equal @target
-     
+
     it "copy properties from module to target", ->
       Coreon.Modules.extend @target, foo: "bar"
       @target.should.have.property "foo", "bar"
@@ -20,9 +20,9 @@ describe "Coreon.Modules", ->
       Coreon.Modules.extend @target, { foo: "bar" }, { bar: "baz" }
       @target.should.have.property "foo", "bar"
       @target.should.have.property "bar", "baz"
-      
+
   describe "include", ->
-  
+
     beforeEach ->
       @target = class Target
         name: "target"
@@ -38,7 +38,7 @@ describe "Coreon.Modules", ->
       @target::.should.have.property "foo", "bar"
 
     it "takes multiple modules", ->
-      hook = sinon.spy()
+      hook = @spy()
       Coreon.Modules.include @target, { foo: "bar" }, { bar: "baz" }
       @target::.should.have.property "foo", "bar"
       @target::.should.have.property "bar", "baz"

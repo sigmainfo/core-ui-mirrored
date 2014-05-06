@@ -49,7 +49,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
     it 'updates placeholders when updating root ids after build', ->
       deferred = $.Deferred()
       @collection.rootIds = -> deferred.promise()
-      update = @collection.updatePlaceholderNode = sinon.spy()
+      update = @collection.updatePlaceholderNode = @spy()
       @collection.build()
       delete @collection.build.deferred
       update.reset()
@@ -61,7 +61,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
     it 'it does not update placeholders when setting root ids during build', ->
       deferred = $.Deferred()
       @collection.rootIds = -> deferred.promise()
-      update = @collection.updatePlaceholderNode = sinon.spy()
+      update = @collection.updatePlaceholderNode = @spy()
       @collection.build()
       @collection.build.deferred = $.Deferred()
       update.reset()
@@ -82,7 +82,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         @collection.isLoaded = -> yes
 
       it 'succeeds immediately', ->
-        spy = sinon.spy()
+        spy = @spy()
         promise = @collection.build()
         promise.done spy
         expect( promise.state() ).to.equal 'resolved'
@@ -91,8 +91,8 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( spy ).to.have.been.calledWith @collection.models
 
       it 'adds placeholder nodes', ->
-        callback = sinon.spy()
-        spy = sinon.spy()
+        callback = @spy()
+        spy = @spy()
         @collection.updateAllPlaceholderNodes = spy
         promise = @collection.build()
         promise.done callback
@@ -105,14 +105,14 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         @collection.isLoaded = -> no
 
       it 'defers callbacks', ->
-        spy = sinon.spy()
+        spy = @spy()
         promise = @collection.build()
         promise.done spy
         expect( promise.state() ).to.equal 'pending'
         expect( spy ).to.not.have.been.called
 
       it 'succeeds when all nodes are loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         promise = @collection.build()
         promise.done spy
         @collection.isLoaded = -> yes
@@ -122,8 +122,8 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( spy ).to.have.been.calledWith @collection.models
 
       it 'adds placeholder nodes when nodes are loaded', ->
-        callback = sinon.spy()
-        spy = sinon.spy()
+        callback = @spy()
+        spy = @spy()
         @collection.updateAllPlaceholderNodes = spy
         promise = @collection.build()
         promise.done callback
@@ -134,7 +134,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( callback ).to.have.been.calledAfter spy
 
       it 'fails when build is called again', ->
-        spy = sinon.spy()
+        spy = @spy()
         promise = @collection.build()
         nodes = (node for node in @collection.models)
         promise.fail spy
@@ -144,7 +144,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( spy ).to.have.been.calledWith nodes
 
       it 'fails if a request is aborted', ->
-        spy = sinon.spy()
+        spy = @spy()
         promise = @collection.build()
         nodes = (node for node in @collection.models)
         promise.fail spy
@@ -178,14 +178,14 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( Coreon.Models.Concept.roots ).to.have.been.calledOnce
 
     it 'resolves with root ids', ->
-      spy = sinon.spy()
+      spy = @spy()
       @collection.rootIds().done spy
       @deferred.resolve ['8fa451', '4156fe']
       expect( spy ).to.have.been.calledOnce
       expect( spy ).to.have.been.calledWith ['8fa451', '4156fe']
 
     it 'memoizes root ids', ->
-      spy = sinon.spy()
+      spy = @spy()
       @collection.rootIds().done spy
       @deferred.resolve ['8fa451', '4156fe']
       @collection.rootIds()
@@ -194,7 +194,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( spy ).to.have.been.calledWith ['8fa451', '4156fe']
 
     it 'can be forced to fetch root ids again', ->
-      spy = sinon.spy()
+      spy = @spy()
       @collection.rootIds()
       @deferred.resolve ['8fa451', '4156fe']
       @collection.rootIds(yes).done spy
@@ -212,7 +212,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         child_node_ids: []
 
     it 'is triggered when a node was added', ->
-      spy = sinon.spy()
+      spy = @spy()
       @collection.addParentNodes = spy
       @collection.initialize()
       @collection.trigger 'add', @node
@@ -221,7 +221,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( spy ).to.have.been.calledWith @node
 
     it 'is triggered when parent node ids change', ->
-      spy = sinon.spy()
+      spy = @spy()
       @collection.addParentNodes = spy
       @collection.initialize()
       @collection.trigger 'change:parent_node_ids', @node
@@ -249,7 +249,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
   describe '#updateAllPlaceholderNodes()', ->
 
     it 'silently updates every single model', ->
-      update = @collection.updatePlaceholderNode = sinon.spy()
+      update = @collection.updatePlaceholderNode = @spy()
       node1 = new Backbone.Model id: 'fghj567', child_node_ids: ['58765fh']
       node2 = new Backbone.Model id: '58765fh', child_node_ids: []
       @collection.reset [
@@ -262,7 +262,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( update ).to.have.been.calledWith node2, [], silent: yes
 
     it 'does not call update on placeholders itself', ->
-      update = @collection.updatePlaceholderNode = sinon.spy()
+      update = @collection.updatePlaceholderNode = @spy()
       node1 = new Backbone.Model id: 'fghj567', type: 'concept', child_node_ids: []
       node2 = new Backbone.Model id: '58765fh', type: 'placeholder', child_node_ids: []
       @collection.reset [
@@ -285,7 +285,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       expect( placeholder.id ).to.equal '+[fghj567]'
 
     it 'silently adds placeholder', ->
-      spy = sinon.spy()
+      spy = @spy()
       @collection.on "add", spy
       @collection.updatePlaceholderNode @node, ['5678jkl']
       expect( spy ).to.not.have.been.called
@@ -325,13 +325,13 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
     context 'events', ->
 
       it 'triggers event', ->
-        spy = sinon.spy()
+        spy = @spy()
         @collection.on 'placeholder:update', spy
         @collection.updatePlaceholderNode @node, ['5678jkl']
         expect( spy ).to.have.been.calledOnce
 
       it 'does not trigger event when silent', ->
-        spy = sinon.spy()
+        spy = @spy()
         @collection.on 'placeholder:update', spy
         @collection.updatePlaceholderNode @node, ['5678jkl'], silent: yes
         expect( spy ).to.not.have.been.called
@@ -401,8 +401,8 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
       Coreon.Models.Concept.find.withArgs('4156fe').returns @concept2
 
     it 'updates placeholders before resolving', ->
-        done = sinon.spy()
-        update = @collection.updateAllPlaceholderNodes = sinon.spy()
+        done = @spy()
+        update = @collection.updateAllPlaceholderNodes = @spy()
         @collection.expand('8fa451').done done
         expect( update ).to.have.been.calledOnce
         expect( update ).to.have.been.calledBefore done
@@ -414,7 +414,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         @model.set 'type', 'repository', silent: yes
 
       it 'refetches root node ids', ->
-        sinon.spy @collection, 'rootIds'
+        @spy @collection, 'rootIds'
         @collection.expand '8fa451'
         expect( @collection.rootIds ).to.have.been.calledOnce
         expect( @collection.rootIds ).to.have.been.calledWith yes
@@ -430,7 +430,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( node2.get 'model' ).to.equal @concept2
 
       it 'succeeds when all concepts are already loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         @concept1.blank = no
         @concept2.blank = no
         @collection.expand('8fa451').done spy
@@ -441,7 +441,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( spy ).to.have.been.calledWith [node1, node2]
 
       it 'defers callback if not all concepts are already loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         @concept1.blank = no
         @concept2.blank = yes
         @collection.expand('8fa451').done spy
@@ -449,7 +449,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( spy ).to.not.have.been.called
 
       it 'triggers callback when all concepts are loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         @concept1.blank = yes
         @concept2.blank = yes
         @collection.expand('8fa451').done spy
@@ -483,7 +483,7 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( node2.get 'model' ).to.equal @concept2
 
       it 'succeeds immediately if all concepts are already loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         @concept1.blank = no
         @concept2.blank = no
         @collection.expand('8fa451').done spy
@@ -493,14 +493,14 @@ describe 'Coreon.Collections.ConceptMapNodes', ->
         expect( spy ).to.have.been.calledWith [node1, node2]
 
       it 'defers callback if not all concepts are already loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         @concept1.blank = no
         @concept2.blank = yes
         @collection.expand('8fa451').done spy
         expect( spy ).to.not.have.been.called
 
       it 'triggers callback when all concepts are loaded', ->
-        spy = sinon.spy()
+        spy = @spy()
         @concept1.blank = yes
         @concept2.blank = yes
         @collection.expand('8fa451').done spy

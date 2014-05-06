@@ -53,9 +53,9 @@ describe 'Coreon.Collections.Hits', ->
       expect(collectionReset).to.have.been.calledOnce
 
     it 'triggers update event', ->
-      reset = sinon.spy()
+      reset = @spy()
       hits.on "reset", reset
-      change = sinon.spy()
+      change = @spy()
       hits.on "update", change
       options = log: yes
       hits.reset [], options
@@ -65,7 +65,7 @@ describe 'Coreon.Collections.Hits', ->
       expect( options ).to.have.property 'previousModels'
 
     it 'does not trigger update event when silenced', ->
-      change = sinon.spy()
+      change = @spy()
       hits.on "update", change
       hits.reset [], silent: yes
       expect( change ).to.not.have.been.called

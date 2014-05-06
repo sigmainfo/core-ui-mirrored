@@ -12,20 +12,20 @@ describe "Coreon.Modules.NestedFieldsFor", ->
       Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
 
   after ->
-    Coreon.Templates = @original_templates 
+    Coreon.Templates = @original_templates
     delete Coreon.Views.MyView
 
   beforeEach ->
     @view = new Coreon.Views.MyView
 
   context "with defaults", ->
-    
-    before ->
-      Coreon.Templates["terms/new_term"] = sinon.stub()
+
+    beforeEach ->
+      Coreon.Templates["terms/new_term"] = @stub()
       Coreon.Views.MyView.nestedFieldsFor "terms"
 
     describe "removeTerm()", ->
-      
+
       beforeEach ->
         @view.$el.append '''
           <fieldset id="existing-term" class="term">
@@ -99,7 +99,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         @view.$(".term").should.match ".not-persisted"
 
   context "with custom options", ->
-     
+
     before ->
       Coreon.Views.MyView.nestedFieldsFor "properties",
         className: "term-property"
@@ -107,7 +107,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         as: "TermProperty"
 
     describe "removeTermProperty()", ->
-      
+
       beforeEach ->
         @view.$el.append '''
           <fieldset class="term-property not-persisted">
@@ -122,7 +122,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         @view.$el.should.not.have ".term-property"
 
     describe "addTermProperty()", ->
-    
+
       beforeEach ->
         @view.$el.append '''
           <div class="properties">
@@ -134,7 +134,7 @@ describe "Coreon.Modules.NestedFieldsFor", ->
         @event = $.Event "click"
         @trigger = @view.$(".add-term-property")
         @event.target = @trigger[0]
-        
+
       it "inserts template", ->
         @view.addTermProperty @event
         @view.$el.should.have ".term-property"

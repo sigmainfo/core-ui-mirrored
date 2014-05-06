@@ -4,7 +4,7 @@
 describe "Coreon.Helpers.can", ->
 
   beforeEach ->
-    @ability = can: sinon.spy()
+    @ability = can: @spy()
     @session = ability:=> @ability
     Coreon.application = get:=> @session
     @helper = Coreon.Helpers.can

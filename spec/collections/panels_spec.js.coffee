@@ -94,7 +94,7 @@ describe 'Coreon.Collections.Panels', ->
         widget = new Backbone.Model widget: on
 
       it 'is triggered by changes of width', ->
-        sync = sinon.spy()
+        sync = @spy()
         panels.syncWidgetWidths = sync
         panels.initialize()
         panels.trigger 'change:width', widget, 123
@@ -125,7 +125,7 @@ describe 'Coreon.Collections.Panels', ->
         panel = new Backbone.Model widget: off
 
       it 'is triggered by changes on widget mode', ->
-        cycle = sinon.spy()
+        cycle = @spy()
         panels.cyclePanels = cycle
         panels.initialize()
         panels.trigger 'change:widget', panel, off
@@ -152,7 +152,7 @@ describe 'Coreon.Collections.Panels', ->
       repositorySettings = null
 
       beforeEach ->
-        repositorySettings = sinon.spy()
+        repositorySettings = @spy()
         Coreon.application =
           repositorySettings: repositorySettings
 
@@ -160,7 +160,7 @@ describe 'Coreon.Collections.Panels', ->
         delete Coreon.application
 
       it 'is triggered on every change', ->
-        save = sinon.spy()
+        save = @spy()
         panels.saveSettings = save
         panels.initialize()
         panels.trigger 'change'

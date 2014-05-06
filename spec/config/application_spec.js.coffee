@@ -139,7 +139,7 @@ describe 'Coreon.Application', ->
       expect(current).to.be.null
 
     it 'triggers change event for empty session', ->
-      change = sinon.spy()
+      change = @spy()
       app.on 'change:session', change
       app.start()
       request.resolve null
@@ -174,7 +174,7 @@ describe 'Coreon.Application', ->
 
       beforeEach ->
         session = fakeSession()
-        updateRepository = sinon.spy()
+        updateRepository = @spy()
         app.updateRepository = updateRepository
         app.start()
         app.set 'session', session
@@ -225,7 +225,7 @@ describe 'Coreon.Application', ->
       settings = new Backbone.Model
       app.repositorySettings = -> settings
       app.updateRepository()
-      trigger = sinon.spy()
+      trigger = @spy()
       app.on 'change:repositorySettings', trigger
       repository.trigger 'remoteSettingChange'
       expect(trigger).to.have.been.calledOnce

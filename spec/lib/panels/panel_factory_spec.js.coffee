@@ -74,7 +74,7 @@ describe 'Coreon.Lib.Panels.PanelFactory', ->
       context 'clipbaord', ->
 
         beforeEach ->
-          sinon.stub Coreon.Views.Panels, 'ClipboardPanel', ->
+          @stub Coreon.Views.Panels, 'ClipboardPanel', ->
             panel = new Backbone.View
 #
         it 'creates panel', ->

@@ -23,20 +23,20 @@ describe "Coreon.Modules.Prompt", ->
     it "clears modal layer", ->
       @modal.html "<p>fooo</p>"
       @view.prompt()
-      @modal.should.be.empty 
+      @modal.should.be.empty
 
     it "renders passed view on modal layer", ->
       widget = new Backbone.View
-      widget.render = sinon.stub().returns widget
+      widget.render = @stub().returns widget
       @view.prompt widget
       widget.render.should.have.been.calledOnce
       $.contains(@modal[0], widget.el).should.be.true
 
     it "removes currently displayed view", ->
       current = new Backbone.View
-      current.remove = sinon.spy()
+      current.remove = @spy()
       next = new Backbone.View
       @view.prompt current
       @view.prompt next
       current.remove.should.have.been.calledOnce
-      
+

@@ -2,24 +2,24 @@
 #= require views/simple_view
 
 describe "Coreon.Views.SimpleView", ->
-  
+
   beforeEach ->
     @view = new Coreon.Views.SimpleView className: "simple"
 
   afterEach ->
     @view.destroy()
 
-  it "is a backbone view", -> 
+  it "is a backbone view", ->
     @view.should.be.an.instanceof Backbone.View
 
   describe "#appendTo", ->
-    
+
     it "appends el to target", ->
       @view.appendTo "#konacha"
       $("#konacha").should.have @view.$el
 
     it "delegates events", ->
-      @view.delegateEvents = sinon.spy()
+      @view.delegateEvents = @spy()
       @view.remove()
       @view.appendTo "#konacha"
       @view.delegateEvents.should.have.been.calledOnce
@@ -28,13 +28,13 @@ describe "Coreon.Views.SimpleView", ->
       @view.appendTo("#konacha").should.equal @view
 
   describe "#prependTo", ->
-    
+
     it "prepends el to target", ->
       @view.prependTo "#konacha"
       $("#konacha").should.have @view.$el
 
     it "delegates events", ->
-      @view.delegateEvents = sinon.spy()
+      @view.delegateEvents = @spy()
       @view.remove()
       @view.prependTo "#konacha"
       @view.delegateEvents.should.have.been.calledOnce
@@ -46,13 +46,13 @@ describe "Coreon.Views.SimpleView", ->
 
     beforeEach ->
       $("#konacha").append $("<div id='target'>")
-    
+
     it "inserts el after target", ->
       @view.insertAfter "#target"
       $("#target").next().should.be @view.$el
 
     it "delegates events", ->
-      @view.delegateEvents = sinon.spy()
+      @view.delegateEvents = @spy()
       @view.remove()
       @view.insertAfter "#target"
       @view.delegateEvents.should.have.been.calledOnce
@@ -64,13 +64,13 @@ describe "Coreon.Views.SimpleView", ->
 
     beforeEach ->
       $("#konacha").append $("<div id='target'>")
-    
+
     it "inserts el before target", ->
       @view.insertBefore "#target"
       $("#target").prev().should.be @view.$el
 
     it "delegates events", ->
-      @view.delegateEvents = sinon.spy()
+      @view.delegateEvents = @spy()
       @view.remove()
       @view.insertBefore "#target"
       @view.delegateEvents.should.have.been.calledOnce
@@ -79,7 +79,7 @@ describe "Coreon.Views.SimpleView", ->
       @view.appendTo("#konacha").should.equal @view
 
   describe "#clear", ->
-    
+
     it "can be chained", ->
       @view.clear().should.equal @view
 
@@ -88,21 +88,21 @@ describe "Coreon.Views.SimpleView", ->
       @view.$el.appendTo "#konacha"
       @view.clear()
       @view.$el.should.be.empty
-    
+
   describe "#remove", ->
-    
+
     it "can be chained", ->
       @view.remove().should.equal @view
 
     it "calls remove on el", ->
-      @view.$el.remove = sinon.spy()
+      @view.$el.remove = @spy()
       @view.remove()
       @view.$el.remove.should.have.been.calledOnce
 
   describe "#dissolve", ->
-    
+
     it "unbinds model", ->
-      spy = sinon.spy()
+      spy = @spy()
       @view.model = new Backbone.Model
       @view.model.on "change", spy, @view
       @view.dissolve()
@@ -116,18 +116,18 @@ describe "Coreon.Views.SimpleView", ->
 
     it "can be chained", ->
       @view.dissolve().should.equal @view
- 
+
   describe "#destroy", ->
-    
+
     it "removes view el", ->
-      @view.remove = sinon.spy()
+      @view.remove = @spy()
       @view.destroy()
       @view.remove.should.have.been.calledOnce
 
     it "dissolves view instance", ->
-      @view.dissolve = sinon.spy()
+      @view.dissolve = @spy()
       @view.destroy()
-      @view.dissolve.should.have.been.calledOnce   
+      @view.dissolve.should.have.been.calledOnce
 
     it "can be chained", ->
       @view.appendTo("#konacha").should.equal @view

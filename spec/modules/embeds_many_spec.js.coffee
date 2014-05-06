@@ -36,7 +36,7 @@ describe 'Coreon.Modules.EmbedsMany', ->
         model.submodels().should.have.lengthOf 0
 
       it 'triggers change events', ->
-        spy = sinon.spy()
+        spy = @spy()
         model.on 'change:submodels', spy
         model.submodels().add foo: 'bar'
         spy.should.have.been.calledOnce
