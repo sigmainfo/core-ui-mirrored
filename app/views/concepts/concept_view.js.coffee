@@ -124,12 +124,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 
-    if Coreon.Collections.Clips.collection().get(@model)
-      @$(".concept-to-clipboard.add").hide()
-      @$(".concept-to-clipboard.remove").show()
-    else
-      @$(".concept-to-clipboard.remove").hide()
-      @$(".concept-to-clipboard.add").show()
+    @setClipboardButton()
     @
 
   toggleSystemInfo: (evt) ->
