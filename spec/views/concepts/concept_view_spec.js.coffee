@@ -7,6 +7,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
   property = null
   concept = null
   view = null
+  application = null
 
   buildConcept = (property, terms) ->
     concept = new Backbone.Model
@@ -30,41 +31,61 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
   buildApplication = ->
     application = new Backbone.Model
-    application.repositorySettings = ->
+    settings = new Backbone.Model
+    application.repositorySettings = -> settings
     application.langs = -> []
     application.sourceLang = -> 'none'
     application.targetLang = -> 'none'
     application
 
   beforeEach ->
-    #TODO 140507 [tc] inject app instance
-    Coreon.application = buildApplication()
-
     broaderAndNarrowerView = new Backbone.View
-    @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => broaderAndNarrowerView
+    @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', -> broaderAndNarrowerView
 
     termsView = new Backbone.View
-    @stub Coreon.Views.Terms, 'TermsView'
-    Coreon.Views.Terms.TermsView.returns termsView
+    @stub(Coreon.Views.Terms, 'TermsView').returns termsView
 
-    property = buildProperty()
-    terms = buildTerms()
-    concept = buildConcept property, terms
+    property    = buildProperty()
+    terms       = buildTerms()
+    concept     = buildConcept property, terms
+    application = buildApplication()
 
     view = new Coreon.Views.Concepts.ConceptView
       model: concept
+      app: application
 
     @stub Coreon.Helpers, 'can'
     Coreon.Helpers.can.returns true
-
-  afterEach ->
-    Coreon.application = null
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceof Backbone.View
 
   it 'creates container', ->
     expect(view.$el).to.match '.concept'
+
+  describe '#initialize()', ->
+
+    beforeEach ->
+      Coreon.application = buildApplication()
+
+    afterEach ->
+      delete Coreon.application
+
+    it 'assigns app', ->
+      app2 = buildApplication()
+      view.initialize
+        model: concept
+        app: app2
+      assigned = view.app
+      expect(assigned).to.equal app2
+
+    it 'defaults to global reference', ->
+      app2 = Coreon.application
+      view.initialize
+        model: concept
+        app: null
+      assigned = view.app
+      expect(assigned).to.equal app2
 
   describe '#render()', ->
 
@@ -75,32 +96,37 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
       it 'is triggered by model change', ->
         view.render = @spy()
-        view.initialize()
+        view.initialize
+          model: concept
+          app: application
         concept.trigger 'change'
         expect(view.render).to.have.been.calledOnce
 
       it 'is triggered by edit mode change', ->
         view.render = @spy()
-        view.initialize()
-        Coreon.application.trigger 'change:editing'
+        view.initialize
+          model: concept
+          app: application
+        application.trigger 'change:editing'
         expect(view.render).to.have.been.calledOnce
         expect(view.render).to.have.been.calledOn view
 
     context 'edit mode', ->
 
       it 'is in show concept mode by default', ->
-        Coreon.application.set 'editing', off, silent: yes
+        application.set 'editing', off, silent: yes
         view.render()
         expect(view.$el).to.have.class 'show'
         expect(view.$el).to.not.have.class 'edit'
 
       it 'marks el to be in edit mode', ->
-        Coreon.application.set 'editing', on, silent: yes
+        application.set 'editing', on, silent: yes
         view.render()
         expect(view.$el).to.have.class 'edit'
         expect(view.$el).to.not.have.class 'show'
 
     context 'template', ->
+
       #TODO 140507 [tc] test template call
 
     context 'subviews', ->
@@ -222,18 +248,17 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       terms = null
 
       beforeEach ->
-        terms = new Backbone.Collection
-        terms.hasProperties = -> no
+        terms = buildTerms()
         concept.terms = -> terms
 
       it 'creates subview instance', ->
         subview = new Backbone.View
         constructor = Coreon.Views.Terms.TermsView
         constructor.withArgs(model: terms).returns subview
-        view.render()
-        expect(constructor).to.have.been.calledOnce
-        subviews = view.subviews
-        expect(subviews).to.include subview
+        # view.render()
+        # expect(constructor).to.have.been.calledOnce
+        # subviews = view.subviews
+        # expect(subviews).to.include subview
 
       it 'renders subview', ->
         subview = new Backbone.View
@@ -253,7 +278,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         term = null
 
         beforeEach ->
-          Coreon.application.set 'editing', on, silent: yes
+          application.set 'editing', on, silent: yes
           @stub Coreon.Templates, 'concepts/info'
           concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
           term = new Backbone.Model value: 'top head'
@@ -261,7 +286,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           term.properties = -> new Backbone.Collection
           term.propertiesByKey = -> []
           concept.termsByLang = => de: [ term ]
-          Coreon.application.langs = -> [ 'de' ]
+          application.langs = -> [ 'de' ]
 
         it 'renders container', ->
           view.render()
@@ -274,7 +299,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           term2 = new Backbone.Model
           term2.info = -> {}
           term2.propertiesByKey = -> []
-          Coreon.application.langs = -> [ 'de', 'en', 'hu' ]
+          application.langs = -> [ 'de', 'en', 'hu' ]
           concept.termsByLang = ->
             de: [ term1 ]
             en: [ term2 ]
@@ -300,8 +325,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
         it 'renders placeholder text when terms in source lang are empty', ->
           I18n.t.withArgs('terms.empty').returns 'No terms for this language'
-          Coreon.application.sourceLang = -> 'de'
-          Coreon.application.langs = -> ['de', 'hu', 'en']
+          application.sourceLang = -> 'de'
+          application.langs = -> ['de', 'hu', 'en']
           concept.termsByLang = => {}
           view.render()
           expect( view.$('.language.de') ).to.not.have '.term'
@@ -310,8 +335,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
         it 'renders placeholder text when terms in target lang are empty', ->
           I18n.t.withArgs('terms.empty').returns 'No terms for this language'
-          Coreon.application.targetLang = -> 'hu'
-          Coreon.application.langs = -> ['de', 'hu', 'en']
+          application.targetLang = -> 'hu'
+          application.langs = -> ['de', 'hu', 'en']
           concept.termsByLang = => {}
           view.render()
           expect( view.$('.language.hu') ).to.not.have '.term'
@@ -320,7 +345,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
         it 'renders unknown langs', ->
           term.set 'value', 'foo', silent: true
-          Coreon.application.langs = -> ['de', 'hu', 'en']
+          application.langs = -> ['de', 'hu', 'en']
           concept.termsByLang = => ko: [ term ]
           view.render()
           expect( view.$('.language.ko') ).to.exist
@@ -539,21 +564,21 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       expect(toggleEditMode).to.have.been.calledOnce
 
     it 'toggles edit mode from off to on', ->
-      Coreon.application.set 'editing', off, silent: yes
+      application.set 'editing', off, silent: yes
       view.toggleEditMode event
-      expect(Coreon.application.get 'editing').to.be.true
+      expect(application.get 'editing').to.be.true
 
     it 'toggles edit mode from on to off', ->
-      Coreon.application.set 'editing', on, silent: yes
+      application.set 'editing', on, silent: yes
       view.toggleEditMode event
-      expect(Coreon.application.get 'editing').to.be.false
+      expect(application.get 'editing').to.be.false
 
   describe '#toggleEditConceptProperties()', ->
 
     beforeEach ->
       concept.properties = -> models: []
       concept.persistedAttributes = -> {}
-      Coreon.application.set 'editing', on, silent: yes
+      application.set 'editing', on, silent: yes
       view.editProperties = no
       view.render()
 
@@ -590,7 +615,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
   describe '#addTerm()', ->
 
     beforeEach ->
-      Coreon.application.set 'editing', on, silent: yes
+      application.set 'editing', on, silent: yes
       view.render()
 
     it 'is triggered by click on add-term link', ->
@@ -1094,16 +1119,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       action = null
 
       beforeEach ->
-        Coreon.application = repository: -> id: '8765jhgf'
+        application.repository = -> id: '8765jhgf'
         @stub Backbone.history, 'navigate'
         view.delete event
         action = view.confirm.firstCall.args[0].action
 
-      afterEach ->
-        Coreon.application = null
-
       it 'redirects to repository root when done', ->
-        Coreon.application = repository: -> id: '8765jhgf'
+        application.repository = -> id: '8765jhgf'
         action()
         expect( Backbone.history.navigate ).to.have.been.calledOnce
         expect( Backbone.history.navigate ).to.have.been.calledWith '/8765jhgf', trigger: true
@@ -1136,7 +1158,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       @spy view, 'setClipboardButton'
 
     it 'sets button if clips changing', ->
-      view.initialize()
+      view.initialize
+        model: concept
+        app: application
       collection.add concept
       collection.reset []
-      expect( view.setClipboardButton ).to.have.been.calledTwice
+      expect(view.setClipboardButton).to.have.been.calledTwice

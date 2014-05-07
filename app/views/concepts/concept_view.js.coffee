@@ -62,15 +62,20 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
-  initialize: ->
+  initialize: (options = {}) ->
+    @app = options.app or Coreon.application
+
     @stopListening()
-    @listenTo @model, "change", @render
-    @listenTo Coreon.application, 'change:editing', @render
 
-    if settings = Coreon.application?.repositorySettings()
-      @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
+    @listenTo @model, 'change', @render
+    @listenTo @app, 'change:editing', @render
 
-    @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
+    settings = @app.repositorySettings()
+    @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
+
+    clips = Coreon.Collections.Clips.collection()
+    @listenTo clips, 'add remove reset', @setClipboardButton
+
     @subviews = []
     @
 
@@ -79,12 +84,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     subview.remove() for subview in @subviews
     @subviews = []
 
-
     #TODO 140507 [tc] extract method for preparing data
     termsByLang = @model.termsByLang()
-    sourceLang = Coreon.application.sourceLang()
-    targetLang = Coreon.application.targetLang()
-    langs = Coreon.application.langs()
+    sourceLang = @app.sourceLang()
+    targetLang = @app.targetLang()
+    langs = @app.langs()
 
     sortedTermsByLang = langs
       .map (lang) ->
@@ -99,7 +103,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
     hasTermProperties = @model.terms().hasProperties()
-    editing = Coreon.application.get 'editing'
+    editing = @app.get 'editing'
 
     @$el.toggleClass 'edit', editing
     @$el.toggleClass 'show', not editing
@@ -147,8 +151,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       .addClass "selected"
 
   toggleEditMode: ->
-    Coreon.application.set 'editing',
-      not Coreon.application.get 'editing'
+    @app.set 'editing',
+      not @app.get 'editing'
 
   toggleEditConceptProperties: (evt)->
     evt.preventDefault() if evt?
@@ -282,7 +286,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         Coreon.Collections.Hits.collection().reset []
         @model.destroy()
         Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: label)
-        Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true
+        Backbone.history.navigate "/#{@app.repository().id}", trigger: true
 
   addConceptToClipboard: ->
     Coreon.Collections.Clips.collection().add @model
