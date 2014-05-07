@@ -87,6 +87,10 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       assigned = view.app
       expect(assigned).to.equal app2
 
+    it 'creates empty set for subviews', ->
+      subviews = view.subviews
+      expect(subviews).to.be.emptyArray
+
   describe '#render()', ->
 
     it 'can be chained', ->

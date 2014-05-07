@@ -33,3 +33,10 @@ do -> # clobber context
 
   afterEach ->
     delete @[name] for name, value of @ when name not in keep
+
+chai.use (chai, utils) -> # custom matchers
+
+  chai.Assertion.addProperty 'emptyArray', ->
+    obj = utils.flag @, 'object'
+    new chai.Assertion(obj).to.be.empty
+    new chai.Assertion(obj).to.be.instanceof Array
