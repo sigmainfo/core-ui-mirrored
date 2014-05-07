@@ -135,7 +135,19 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     context 'subviews', ->
 
-      #TODO 140507 [tc] test clearing of subviews
+      it 'removes deprecated subviews', ->
+        remove = @spy()
+        old = remove: remove
+        view.subviews = [old]
+        view.render()
+        expect(remove).to.have.been.calledOnce
+
+      it 'clears references to subviews', ->
+        old = remove: ->
+        view.subviews = [old]
+        view.render()
+        subviews = view.subviews
+        expect(subviews).to.not.include old
 
       it 'renders subview', ->
         broaderAndNarrowerView.render = @stub().returns broaderAndNarrowerView
