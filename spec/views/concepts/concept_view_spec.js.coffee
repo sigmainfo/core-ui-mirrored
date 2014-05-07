@@ -6,8 +6,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
   broaderAndNarrowerView = null
   property = null
   concept = null
-  view = null
   application = null
+  template = null
+  view = null
 
   buildConcept = (property, terms) ->
     concept = new Backbone.Model
@@ -39,8 +40,11 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     application
 
   beforeEach ->
+    template = @stub(Coreon.Templates, 'concepts/concept').returns ''
+
     broaderAndNarrowerView = new Backbone.View
-    @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', -> broaderAndNarrowerView
+    @stub(Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView')
+      .returns broaderAndNarrowerView
 
     termsView = new Backbone.View
     @stub(Coreon.Views.Terms, 'TermsView').returns termsView
@@ -129,10 +133,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         expect(view.$el).to.have.class 'edit'
         expect(view.$el).to.not.have.class 'show'
 
-    context 'template', ->
-
-      #TODO 140507 [tc] test template call
-
     context 'subviews', ->
 
       it 'removes deprecated subviews', ->
@@ -150,114 +150,25 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         expect(subviews).to.not.include old
 
       it 'renders subview', ->
+        template.returns '<div class="concept-head"><div>'
         broaderAndNarrowerView.render = @stub().returns broaderAndNarrowerView
         view.render()
         expect(broaderAndNarrowerView.render).to.have.been.calledOnce
         expect($.contains view.el, broaderAndNarrowerView.el).to.be.true
 
+    context 'template', ->
+
+      it 'clears deprecated markup', ->
+        view.$el.html '<div class="old-stuff">Deprecated</div>'
+        view.render()
+        old = view.$ 'div.old-stuff'
+        expect(old).to.not.exist
+
+      xit 'inserts newly rendered template', ->
+
     context 'properties', ->
 
-      beforeEach ->
-        @stub Coreon.Templates, 'concepts/info'
-
-      it 'renders section', ->
-        I18n.t.withArgs('properties.title').returns 'Properties'
-        view.render()
-        expect( view.$el ).to.have 'section.properties'
-        expect( view.$('.properties') ).to.have.match 'section'
-        expect( view.$('.properties') ).to.have 'h3'
-        expect( view.$('.properties h3') ).to.have.text 'Properties'
-
-      it 'renders section only when applicable', ->
-        concept.set 'properties', [], silent: true
-        view.render()
-        expect( view.$el ).to.not.have '.properties'
-
-      it 'renders properties table', ->
-        concept.propertiesByKeyAndLang = => label: [ property ]
-        view.render()
-        expect( view.$('.properties') ).to.have 'table tr'
-        expect( view.$('.properties table tr') ).to.have 'th'
-        expect( view.$('.properties table th') ).to.have.text 'label'
-
-      it 'renders simple values as plain text', ->
-        property.set 'value', 'top hat', silent: true
-        view.render()
-        expect( view.$('.properties') ).to.have 'table tr td .value'
-        expect( view.$('.properties table td .value') ).to.have.text 'top hat'
-
-      it 'renders system info', ->
-        Coreon.Templates['concepts/info'].withArgs(data: id: '1234567890')
-          .returns '<div class="system-info">id: 1234567890</div>'
-        property.info = -> id: '1234567890'
-        view.render()
-        expect( view.$('.properties') ).to.have 'table tr td .system-info'
-        expect( view.$('.properties table td .system-info') ).to.have.text 'id: 1234567890'
-
-      it 'renders multiple values in list', ->
-        prop1 = new Backbone.Model value: 'top hat'
-        prop1.info = -> {}
-        prop2 = new Backbone.Model value: 'cylinder'
-        prop2.info = -> {}
-        concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
-        view.render()
-        expect( view.$('.properties') ).to.have 'table tr td ul.values'
-        expect( view.$('.properties ul.values') ).to.have 'li .value'
-        expect( view.$('.properties ul.values li .value') ).to.have.lengthOf 2
-        expect( view.$('.properties ul.values li .value').eq(0) ).to.have.text 'top hat'
-        expect( view.$('.properties ul.values li .value').eq(1) ).to.have.text 'cylinder'
-
-      it 'renders index for list', ->
-        prop1 = new Backbone.Model value: 'top hat'
-        prop1.info = -> {}
-        prop2 = new Backbone.Model value: 'cylinder'
-        prop2.info = -> {}
-        concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
-        view.render()
-        expect( view.$('.properties') ).to.have 'table tr td ul.index'
-        expect( view.$('.properties ul.index') ).to.have 'li'
-        expect( view.$('.properties ul.index li') ).to.have.lengthOf 2
-        expect( view.$('.properties ul.index li').eq(0) ).to.have.text '1'
-        expect( view.$('.properties ul.index li').eq(0) ).to.have.attr 'data-index', '0'
-        expect( view.$('.properties ul.index li').eq(1) ).to.have.text '2'
-        expect( view.$('.properties ul.index li').eq(1) ).to.have.attr 'data-index', '1'
-
-      it 'uses lang as index when given', ->
-        prop1 = new Backbone.Model value: 'top hat', lang: 'en'
-        prop1.info = -> {}
-        prop2 = new Backbone.Model value: 'Zylinderhut', lang: 'de'
-
-        prop2.info = -> {}
-        concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
-        view.render()
-        expect( view.$('.properties ul.index li').eq(0) ).to.have.text 'en'
-        expect( view.$('.properties ul.index li').eq(1) ).to.have.text 'de'
-
-      it 'renders single value in list when lang is given', ->
-        property.set 'lang', 'de', silent: true
-        view.render()
-        expect( view.$('.properties') ).to.have 'table tr td ul.index'
-        expect( view.$('.properties ul.index li').eq(0) ).to.have.text 'de'
-
-      it 'renders system info in list', ->
-        Coreon.Templates['concepts/info'].withArgs(data: id: '1234567890')
-          .returns '<div class="system-info">id: 1234567890</div>'
-        property.set 'lang', 'de', silent: true
-        property.info = -> id: '1234567890'
-        view.render()
-        expect( view.$('.properties .values li') ).to.have '.system-info'
-
-      it 'marks first item as being selected', ->
-        prop1 = new Backbone.Model value: 'top hat'
-        prop1.info = -> {}
-        prop2 = new Backbone.Model value: 'cylinder'
-        prop2.info = -> {}
-        concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
-        view.render()
-        expect( view.$('.properties ul.index li').eq(0) ).to.have.class 'selected'
-        expect( view.$('.properties ul.values li').eq(0) ).to.have.class 'selected'
-        expect( view.$('.properties ul.index li').eq(1) ).to.not.have.class 'selected'
-        expect( view.$('.properties ul.values li').eq(1) ).to.not.have.class 'selected'
+      #TODO 140507 [tc] it renders subview
 
     context 'terms', ->
 
@@ -271,10 +182,10 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         subview = new Backbone.View
         constructor = Coreon.Views.Terms.TermsView
         constructor.withArgs(model: terms).returns subview
-        # view.render()
-        # expect(constructor).to.have.been.calledOnce
-        # subviews = view.subviews
-        # expect(subviews).to.include subview
+        view.render()
+        expect(constructor).to.have.been.calledOnce
+        subviews = view.subviews
+        expect(subviews).to.include subview
 
       it 'renders subview', ->
         subview = new Backbone.View
@@ -294,6 +205,10 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         term = null
 
         beforeEach ->
+          #TODO 140507 [tc] extract edit template view
+          template.restore()
+          view.template = Coreon.Templates['concepts/concept']
+
           application.set 'editing', on, silent: yes
           @stub Coreon.Templates, 'concepts/info'
           concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
@@ -596,7 +511,15 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       concept.persistedAttributes = -> {}
       application.set 'editing', on, silent: yes
       view.editProperties = no
-      view.render()
+      view.$el.html '''
+        <section class="properties">
+          <div class="edit">
+            <a class="edit-properties" href="javascript:void(0)">
+              Edit properties
+            </a>
+          </div>
+        </section>
+      '''
 
     it 'is triggered by click on edit-properties toggle', ->
       view.toggleEditConceptProperties = @stub().returns false
@@ -615,75 +538,21 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       view.$('.edit-properties').click()
       expect( view.render ).to.have.been.calledOnce
 
-    it 'renders properties template in edit mode', ->
-      view.editing = yes
-      view.editProperties = no
-      view.render()
-      expect( view.$el ).to.have('section.properties')
-      expect( view.$el ).to.not.have('section.edit')
-
-    it 'renders properties edit template in edit properties mode', ->
-      view.editing = yes
-      view.editProperties = yes
-      view.render()
-      expect( view.$el ).to.have('section.properties.edit')
-
   describe '#addTerm()', ->
 
     beforeEach ->
       application.set 'editing', on, silent: yes
-      view.render()
+      view.$el.html '''
+        <div class="edit">
+          <a class="add-term" href="">Add term</a>
+        </div>
+      '''
 
     it 'is triggered by click on add-term link', ->
       view.addTerm = @stub().returns false
       view.delegateEvents()
       view.$('.add-term').click()
       expect( view.addTerm ).to.have.been.calledOnce
-
-    it 'renders form', ->
-      I18n.t.withArgs('term.create').returns 'Create term'
-      I18n.t.withArgs('form.cancel').returns 'Cancel'
-      view.addTerm()
-      expect( view.$el ).to.have '.terms form.term.create'
-      expect( view.$('form.term.create') ).to.have 'button[type="submit"]'
-      expect( view.$('form.term.create button[type="submit"]') ).to.have.text 'Create term'
-      expect( view.$('form.term.create') ).to.have '.cancel'
-      expect( view.$('form.term.create .cancel') ).to.have.text 'Cancel'
-
-    it 'hides add-term link', ->
-      I18n.t.withArgs('term.new').returns 'Add term'
-      $('#konacha').append view.render().$el
-      view.addTerm()
-      expect( view.$('.terms .edit .add-term') ).to.be.hidden
-
-    it 'renders inputs', ->
-      I18n.t.withArgs('term.value').returns 'Value'
-      I18n.t.withArgs('term.lang').returns 'Language'
-      view.addTerm()
-      expect( view.$el ).to.have 'form.term.create .value input'
-      expect( view.$('form.term.create .value input') ).to.have.attr 'required'
-      expect( view.$el ).to.have 'form.term.create .value label'
-      expect( view.$('form.term.create .value label') ).to.have.text 'Value'
-      expect( view.$el ).to.have 'form.term.create .lang input'
-      expect( view.$('form.term.create .lang input') ).to.have.attr 'required'
-      expect( view.$el ).to.have 'form.term.create .lang label'
-      expect( view.$('form.term.create .lang label') ).to.have.text 'Language'
-
-    context 'properties', ->
-
-      it 'renders section with title', ->
-        I18n.t.withArgs('properties.title').returns 'Properties'
-        view.addTerm()
-        expect( view.$('form.term.create') ).to.have 'section.properties'
-        expect( view.$('form.term.create .properties') ).to.have 'h3:first-child'
-        expect( view.$('form.term.create .properties h3') ).to.have.text 'Properties'
-
-      it 'renders link for adding a property', ->
-        I18n.t.withArgs('properties.add').returns 'Add Property'
-        view.addTerm()
-        expect( view.$('form.term.create .properties') ).to.have '.edit a.add-property'
-        expect( view.$('form.term.create .add-property') ).to.have.text 'Add Property'
-        expect( view.$('form.term.create .add-property') ).to.have.data 'scope', 'term[properties][]'
 
   describe '#addProperty()', ->
 

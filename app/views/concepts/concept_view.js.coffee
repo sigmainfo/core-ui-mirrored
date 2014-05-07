@@ -35,8 +35,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   editProperties: no
   editTerm: no
 
-  template: Coreon.Templates["concepts/concept"]
-  term:     Coreon.Templates["terms/new_term"]
+  term: Coreon.Templates['terms/new_term']
 
   @nestedFieldsFor "properties", name: "property"
 
@@ -64,6 +63,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
   initialize: (options = {}) ->
     @app = options.app or Coreon.application
+    @template = Coreon.Templates['concepts/concept']
 
     @stopListening()
 
@@ -166,7 +166,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       @editTerm = if @editTerm == term_id then no else term_id
     else
       @editTerm = !@editTerm
-
     @render()
 
   addTerm: ->
