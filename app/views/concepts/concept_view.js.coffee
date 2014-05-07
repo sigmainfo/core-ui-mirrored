@@ -79,6 +79,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     subview.remove() for subview in @subviews
     @subviews = []
 
+
+    #TODO 140507 [tc] extract method for preparing data
     termsByLang = @model.termsByLang()
     sourceLang = Coreon.application.sourceLang()
     targetLang = Coreon.application.targetLang()
@@ -110,6 +112,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       editProperties: @editProperties
       editTerm: @editTerm
 
+    #TODO 140507 [tc] move view one level up, i.e. skip shared
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
