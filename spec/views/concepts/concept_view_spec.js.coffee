@@ -8,14 +8,37 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
   concept = null
   view = null
 
+  buildConcept = (property, terms) ->
+    concept = new Backbone.Model
+    concept.info = -> {}
+    concept.revert = ->
+    concept.set 'properties', [ property ], silent: true
+    concept.termsByLang = -> {}
+    concept.terms = -> terms
+    concept.propertiesByKeyAndLang = -> label: [ property ]
+    concept
+
+  buildTerms = ->
+    terms = new Backbone.Collection
+    terms.hasProperties = -> no
+    terms
+
+  buildProperty = ->
+    property = new Backbone.Model key: 'label', value: 'top hat'
+    property.info = -> {}
+    property
+
+  buildApplication = ->
+    application = new Backbone.Model
+    application.repositorySettings = ->
+    application.langs = -> []
+    application.sourceLang = -> 'none'
+    application.targetLang = -> 'none'
+    application
+
   beforeEach ->
     #TODO 140507 [tc] inject app instance
-    #TODO 140507 [tc] extract factory method
-    Coreon.application = new Backbone.Model
-    Coreon.application.repositorySettings = ->
-    Coreon.application.langs = -> []
-    Coreon.application.sourceLang = -> 'none'
-    Coreon.application.targetLang = -> 'none'
+    Coreon.application = buildApplication()
 
     broaderAndNarrowerView = new Backbone.View
     @stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => broaderAndNarrowerView
@@ -24,22 +47,13 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     @stub Coreon.Views.Terms, 'TermsView'
     Coreon.Views.Terms.TermsView.returns termsView
 
-    property = new Backbone.Model key: 'label', value: 'top hat'
-    property.info = -> {}
-
-    #TODO 140507 [tc] extract factory method
-    concept = new Backbone.Model
-    concept.info = -> {}
-    concept.revert = ->
-    concept.set 'properties', [ property ], silent: true
-    concept.termsByLang = -> {}
-    terms = new Backbone.Collection
-    terms.hasProperties = -> no
-    concept.terms = -> terms
-    concept.propertiesByKeyAndLang = => label: [ property ]
+    property = buildProperty()
+    terms = buildTerms()
+    concept = buildConcept property, terms
 
     view = new Coreon.Views.Concepts.ConceptView
       model: concept
+
     @stub Coreon.Helpers, 'can'
     Coreon.Helpers.can.returns true
 
