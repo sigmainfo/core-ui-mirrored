@@ -28,6 +28,10 @@ describe 'Coreon.Templates[concepts/concept]', ->
     data =
       model: concept
       concept: conceptData
+      langs: []
+
+      editing: no
+
       render: -> ''
       can: -> no
       action_for: -> ''
@@ -147,3 +151,52 @@ describe 'Coreon.Templates[concepts/concept]', ->
           '''
         el = render()
         expect(head el).to.have 'table.system-info'
+
+  context 'properties', ->
+
+    context 'edit', ->
+
+      beforeEach ->
+        @stub data, 'render'
+        data.editing = on
+        data.render
+          .withArgs('concepts/edit_properties')
+          .returns '''
+            <form class="edit-properties" action="javascript:void(0)">
+              <input type="submit">
+            </form>
+          '''
+
+      context 'editing properties', ->
+
+        beforeEach ->
+          data.editProperties = on
+
+        it 'renders form', ->
+          data.render
+            .withArgs('concepts/edit_properties' , concept: concept)
+            .returns '''
+              <form class="edit-properties" action="javascript:void(0)">
+                <input type="submit">
+              </form>
+            '''
+          el = render()
+          expect(el).to.have 'form.edit-properties'
+
+      context 'editing other', ->
+
+        beforeEach ->
+          data.editProperties = off
+
+        it 'does not render form', ->
+          el = render()
+          expect(el).to.not.have '.edit-properties'
+
+    context 'show', ->
+
+      beforeEach ->
+        data.editing = on
+
+      it 'does not render form', ->
+        el = render()
+        expect(el).to.not.have '.edit-properties'

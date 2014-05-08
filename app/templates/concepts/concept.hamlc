@@ -12,13 +12,11 @@
   != @render 'concepts/caption', label: @concept.label , dragId: @concept.id
   != @render 'shared/info', data: @concept.info
 
-- if @editing and @editProperties
-  != @render "concepts/edit_properties", concept: @model, editToggle: yes
-- else if @editing or @model.get("properties")?.length > 0
-  - properties = ( key: key, properties: props for key, props of @model.propertiesByKeyAndLang() )
-  != @render "concepts/properties", properties: properties, editToggle: yes
-
 - if @editing
+
+  - if @editProperties
+    != @render 'concepts/edit_properties', concept: @model
+
   .terms
     - if @hasTermProperties
       %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all.hint' }= I18n.t 'terms.properties.toggle-all.label'

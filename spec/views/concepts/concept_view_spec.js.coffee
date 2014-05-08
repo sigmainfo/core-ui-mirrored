@@ -18,6 +18,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     concept.termsByLang = -> {}
     concept.terms = -> terms
     concept.propertiesByKeyAndLang = -> label: [ property ]
+    properties = new Backbone.Collection
+    concept.properties = -> properties
     concept
 
   buildTerms = ->
@@ -45,6 +47,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     broaderAndNarrowerView = new Backbone.View
     @stub(Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView')
       .returns broaderAndNarrowerView
+
+    propertiesView = new Backbone.View
+    @stub(Coreon.Views.Properties, 'PropertiesView').returns propertiesView
 
     termsView = new Backbone.View
     @stub(Coreon.Views.Terms, 'TermsView').returns termsView
@@ -215,19 +220,49 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
     context 'properties', ->
 
-      #TODO 140507 [tc] it renders subview
+      subview = null
+      constructor = null
+      properties = null
+
+      beforeEach ->
+        subview = new Backbone.View
+        constructor = Coreon.Views.Properties.PropertiesView
+        constructor.returns subview
+        properties = new Backbone.Collection
+        concept.publicProperties = -> properties
+
+      it 'creates subview', ->
+        constructor.withArgs(model: properties).returns subview
+        view.render()
+        expect(constructor).to.have.been.calledOnce
+        subviews = view.subviews
+        expect(subviews).to.include subview
+
+      it 'renders subview', ->
+        render = @stub subview, 'render'
+        render.returns subview
+        view.render()
+        expect(render).to.have.been.calledOnce
+        el = view.el
+        node = subview.el
+        expect($.contains el, node).to.be.true
+
+      #TODO 140508 [tc] extract edit properties view
 
     context 'terms', ->
 
+      subview = null
+      constructor = null
       terms = null
 
       beforeEach ->
+        constructor = Coreon.Views.Terms.TermsView
+        constructor.returns subview
         terms = buildTerms()
         concept.terms = -> terms
 
       it 'creates subview instance', ->
         subview = new Backbone.View
-        constructor = Coreon.Views.Terms.TermsView
         constructor.withArgs(model: terms).returns subview
         view.render()
         expect(constructor).to.have.been.calledOnce
@@ -235,12 +270,8 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         expect(subviews).to.include subview
 
       it 'renders subview', ->
-        subview = new Backbone.View
-        render = @stub()
+        render = @stub subview, 'render'
         render.returns subview
-        subview.render = render
-        constructor = Coreon.Views.Terms.TermsView
-        constructor.returns subview
         view.render()
         expect(render).to.have.been.calledOnce
         el = view.el

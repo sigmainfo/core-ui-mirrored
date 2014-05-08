@@ -7,12 +7,14 @@
 #= require templates/concepts/concept
 #= require templates/concepts/caption
 #= require templates/shared/info
-#= require templates/concepts/_edit_properties
 #= require templates/concepts/_properties
+#= require templates/concepts/_edit_properties
 #= require templates/concepts/_term
 #= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
+#= require views/terms/terms_view
+#= require views/properties/properties_view
 #= require collections/clips
 #= require collections/hits
 #= require models/broader_and_narrower_form
@@ -23,7 +25,7 @@
 #= require modules/confirmation
 #= require jquery.serializeJSON
 #= require modules/draggable
-#= require views/terms/terms_view
+
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
@@ -108,6 +110,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @subviews.push broaderAndNarrower
 
     unless editing
+      properties = new Coreon.Views.Properties.PropertiesView
+        model: @model.properties()
+      @$el.append properties.render().$el
+      @subviews.push properties
+
       terms = new Coreon.Views.Terms.TermsView model: @model.terms()
       @$el.append terms.render().$el
       @subviews.push terms
@@ -310,4 +317,3 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     else
       @$('.add-to-clipboard').show()
       @$('.remove-from-clipboard').hide()
-
