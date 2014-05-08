@@ -257,7 +257,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           view.template = Coreon.Templates['concepts/concept']
 
           application.set 'editing', on, silent: yes
-          @stub Coreon.Templates, 'concepts/info'
+          @stub Coreon.Templates, 'shared/info'
           concept.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
           term = new Backbone.Model value: 'top head'
           term.info = -> {}
@@ -332,7 +332,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
 
         it 'renders system info for of term', ->
           term.info = -> id: '#1234'
-          Coreon.Templates['concepts/info'].withArgs(data: id: '#1234')
+          Coreon.Templates['shared/info'].withArgs(data: id: '#1234')
             .returns '<div class="system-info">id: #1234</div>'
           view.render()
           expect( view.$('.term') ).to.have '.system-info'

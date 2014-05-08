@@ -6,7 +6,7 @@
 #= require helpers/action_for
 #= require templates/concepts/concept
 #= require templates/concepts/caption
-#= require templates/concepts/_info
+#= require templates/shared/info
 #= require templates/concepts/_edit_properties
 #= require templates/concepts/_properties
 #= require templates/concepts/_term

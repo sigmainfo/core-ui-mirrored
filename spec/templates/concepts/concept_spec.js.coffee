@@ -114,13 +114,36 @@ describe 'Coreon.Templates[concepts/concept]', ->
         el = render()
         expect(actions el).to.have 'a.toggle-system-info'
 
-    context 'caption', ->
+    context 'label', ->
 
       beforeEach ->
         @stub data, 'render'
 
-      it 'renders label', ->
-        data.render.withArgs('concepts/caption')
+      it 'renders caption', ->
+        _(conceptData).extend
+          id: 'c123'
+          label: 'My Concept'
+        data.render
+          .withArgs('concepts/caption', label: 'My Concept', dragId: 'c123')
           .returns '<h2 class="concept-label">My Concept</h2>'
         el = render()
         expect(head el).to.have 'h2.concept-label'
+
+    context 'system info', ->
+
+      beforeEach ->
+        @stub data, 'render'
+
+      it 'renders table', ->
+        conceptData.info = created_at: '2014-05-05'
+        data.render.withArgs('shared/info', data: created_at: '2014-05-05')
+          .returns '''
+            <table class="system-info">
+              <tr>
+                <th>created_at</th>
+                <td>1014-05-05</td>
+              </tr>
+            </table>
+          '''
+        el = render()
+        expect(head el).to.have 'table.system-info'

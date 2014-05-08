@@ -13,7 +13,7 @@
             - properties = propertyGroup.properties
             - if properties.length is 1 and not properties[0].get("lang")
               .value= properties[0].get "value"
-              != @render "concepts/info", data: properties[0].info()
+              != @render "shared/info", data: properties[0].info()
             - else
               %ul.index
                 - for property, index in properties
@@ -22,4 +22,4 @@
                 - for property, index in properties
                   %li{class: "selected" if index is 0}
                     .value= property.get "value"
-                    != @render "concepts/info", data: property.info()
+                    != @render "shared/info", data: property.info()

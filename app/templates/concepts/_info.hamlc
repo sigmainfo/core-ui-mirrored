@@ -1,6 +1,0 @@
-.system-info
-  %table
-    - for attr, value of @data
-      %tr
-        %th= attr
-        %td= value or "-"

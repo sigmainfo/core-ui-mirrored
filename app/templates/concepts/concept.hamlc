@@ -10,7 +10,7 @@
     != @action_for 'concept.toggle_system_info'
 
   != @render 'concepts/caption', label: @concept.label , dragId: @concept.id
-  != @render 'concepts/info', data: @concept.info
+  != @render 'shared/info', data: @concept.info
 
 - if @editing and @editProperties
   != @render "concepts/edit_properties", concept: @model, editToggle: yes
