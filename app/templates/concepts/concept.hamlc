@@ -9,16 +9,13 @@
     != @action_for 'concept.remove_from_clipboard'
     != @action_for 'concept.toggle_system_info'
 
-  -#TODO 140506 [tc] do not pass a real concept to template
-  != @render 'concepts/caption'           |
-           , label: @concept.get('label') |
-           , dragId: @concept.get('id')   |
-  != @render 'concepts/info', data: @concept.info()
+  != @render 'concepts/caption', label: @concept.label , dragId: @concept.id
+  != @render 'concepts/info', data: @concept.info
 
 - if @editing and @editProperties
-  != @render "concepts/edit_properties", concept: @concept, editToggle: yes
-- else if @editing or @concept.get("properties")?.length > 0
-  - properties = ( key: key, properties: props for key, props of @concept.propertiesByKeyAndLang() )
+  != @render "concepts/edit_properties", concept: @model, editToggle: yes
+- else if @editing or @model.get("properties")?.length > 0
+  - properties = ( key: key, properties: props for key, props of @model.propertiesByKeyAndLang() )
   != @render "concepts/properties", properties: properties, editToggle: yes
 
 - if @editing

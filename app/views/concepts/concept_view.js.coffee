@@ -71,7 +71,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @listenTo @app, 'change:editing', @render
 
     settings = @app.repositorySettings()
-    @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
+    @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render
 
     clips = Coreon.Collections.Clips.collection()
     @listenTo clips, 'add remove reset', @setClipboardButton
@@ -84,37 +84,22 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     subview.remove() for subview in @subviews
     @subviews = []
 
-    #TODO 140507 [tc] extract method for preparing data
-    termsByLang = @model.termsByLang()
-    sourceLang = @app.sourceLang()
-    targetLang = @app.targetLang()
-    langs = @app.langs()
-
-    sortedTermsByLang = langs
-      .map (lang) ->
-        [ lang, termsByLang[lang] or [] ]
-      .filter (tuple) ->
-        [lang, terms] = tuple
-        terms.length > 0 or
-        lang is sourceLang or
-        lang is targetLang
-
-    for lang, terms of termsByLang
-      sortedTermsByLang.push [lang, terms] unless lang in langs
-
-    hasTermProperties = @model.terms().hasProperties()
+    conceptData = @conceptData @model
+    termGroups = @termGroups @model, @app
+    hasTermProperties = @model.terms().hasProperties() #TODO 140508 move this back here?
     editing = @app.get 'editing'
 
-    @$el.toggleClass 'edit', editing
-    @$el.toggleClass 'show', not editing
-
     @$el.html @template
-      concept: @model
-      langs: sortedTermsByLang
+      model: @model #TODO 140508 [tc] remove direct reference to model
+      concept: conceptData
+      langs: termGroups #TODO 140508 [tc] rename to terms
       hasTermProperties: hasTermProperties
       editing: editing
       editProperties: @editProperties
       editTerm: @editTerm
+
+    @$el.toggleClass 'edit', editing
+    @$el.toggleClass 'show', not editing
 
     #TODO 140507 [tc] move view one level up, i.e. skip shared
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
@@ -133,6 +118,31 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     @setClipboardButton()
     @
+
+  conceptData: ->
+    id: @model.id
+    label: @model.get('label')
+    info: @model.info()
+
+  termGroups: ->
+    termsByLang = @model.termsByLang()
+    sourceLang = @app.sourceLang()
+    targetLang = @app.targetLang()
+    langs = @app.langs()
+
+    sortedTermsByLang = langs
+      .map (lang) ->
+        [ lang, termsByLang[lang] or [] ]
+      .filter (tuple) ->
+        [lang, terms] = tuple
+        terms.length > 0 or
+        lang is sourceLang or
+        lang is targetLang
+
+    for lang, terms of termsByLang
+      sortedTermsByLang.push [lang, terms] unless lang in langs
+
+    sortedTermsByLang
 
   toggleSystemInfo: (evt) ->
     @$(".system-info")

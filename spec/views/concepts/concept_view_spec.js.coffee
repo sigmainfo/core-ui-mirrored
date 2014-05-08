@@ -164,7 +164,54 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         old = view.$ 'div.old-stuff'
         expect(old).to.not.exist
 
-      xit 'inserts newly rendered template', ->
+      it 'inserts newly rendered template', ->
+        template.returns '<div class="new-stuff">Tempus fugit</div>'
+        view.render()
+        el = view.$el
+        expect(el).to.have '.new-stuff'
+
+      context 'passing in data', ->
+
+        firstArg = (spy) -> spy.firstCall.args[0]
+
+        it 'references model', ->
+          view.render()
+          data = firstArg template
+          expect(data).to.have.property 'model', concept
+
+        it 'extracts relevant data from concept', ->
+          conceptData =
+            id: 'c1234'
+            label: 'My Concept'
+            info: created_at: 'yesterday'
+          view.conceptData = -> conceptData
+          view.render()
+          data = firstArg template
+          expect(data).to.have.property 'concept', conceptData
+
+        it 'passes terms as lang groups to template', ->
+          termGroups = [[ 'de', [] ]]
+          view.termGroups = -> termGroups
+          view.render()
+          data = firstArg template
+          expect(data).to.have.property 'langs', termGroups
+
+        it 'checks for term properties', ->
+          terms = concept.terms()
+          terms.hasProperties = -> yes
+          view.render()
+          data = firstArg template
+          expect(data).to.have.property 'hasTermProperties', yes
+
+        it 'passes edit states', ->
+          application.set 'editing', on, silent: yes
+          view.editProperties = on
+          view.editTerm = on
+          view.render()
+          data = firstArg template
+          expect(data).to.have.property 'editing', on
+          expect(data).to.have.property 'editProperties', on
+          expect(data).to.have.property 'editTerm', on
 
     context 'properties', ->
 
@@ -371,6 +418,62 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
             view.model.set 'terms', [ lang: 'de', value: 'top head' ], silent: true
             view.render()
             expect( view.$('.term') ).to.not.have 'a.remove-term'
+
+  describe '#conceptData()', ->
+
+    it 'extracts id and label from model', ->
+      concept.set
+        id: 'c123'
+        label: 'My Concept'
+      , silent: yes
+      data = view.conceptData()
+      expect(data).to.have.property 'id', 'c123'
+      expect(data).to.have.property 'label', 'My Concept'
+
+    it 'assigns info', ->
+      info = { created_at: '2014-05-05' }
+      concept.info = -> info
+      data = view.conceptData()
+      expect(data).to.have.property 'info', info
+
+  describe '#termGroups()', ->
+
+    buildTerm = (attrs = {}) ->
+      _(attrs).defaults lang: 'en', value: 'foo'
+      new Backbone.Model attrs
+
+    beforeEach ->
+      application.langs = -> ['en', 'de', 'el']
+
+    it 'groups terms by lang', ->
+      terms1 = [ buildTerm lang: 'el' ]
+      terms2 = [ buildTerm lang: 'de' ]
+      concept.termsByLang = ->
+        el: terms1
+        de: terms2
+      termGroups = view.termGroups()
+      expect(termGroups).to.eql [['de', terms2], ['el', terms1]]
+
+    it 'creates empty group for source lang', ->
+      concept.termsByLang = -> {}
+      application.sourceLang = -> 'el'
+      termGroups = view.termGroups()
+      expect(termGroups).to.eql [['el', [] ]]
+
+    it 'creates empty group for target lang', ->
+      concept.termsByLang = -> {}
+      application.targetLang = -> 'el'
+      termGroups = view.termGroups()
+      expect(termGroups).to.eql [['el', [] ]]
+
+    it 'appends concept specific lang', ->
+      terms1 = [ buildTerm lang: 'hu' ]
+      terms2 = [ buildTerm lang: 'el' ]
+      concept.termsByLang = ->
+        hu: terms1
+        el: terms2
+      termGroups = view.termGroups()
+      expect(termGroups).to.eql [['el', terms2], ['hu', terms1]]
 
   describe '#toggleSystemInfo()', ->
 

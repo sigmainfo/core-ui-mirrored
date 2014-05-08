@@ -7,19 +7,27 @@ describe 'Coreon.Templates[concepts/concept]', ->
 
   data = null
   concept = null
+  conceptData = null
 
   buildConcept = ->
     concept = new Backbone.Model
     concept.info = -> []
     concept
 
+  buildConceptData = ->
+    id: ''
+    label: ''
+    info: {}
+
   render = ->
     $('<div>').html(template data)
 
   beforeEach ->
     concept = buildConcept()
+    conceptData = buildConceptData()
     data =
-      concept: concept
+      model: concept
+      concept: conceptData
       render: -> ''
       can: -> no
       action_for: -> ''
