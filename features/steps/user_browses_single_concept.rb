@@ -212,6 +212,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'the concept properties should be hidden' do
+    sleep 0.5
     section_for("PROPERTIES").should_not be_visible
   end
 

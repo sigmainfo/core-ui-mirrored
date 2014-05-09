@@ -30,6 +30,16 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
     }
   end
 
+  def property_tabs(label)
+    page.find('.concept > .properties th', text: label)
+      .find(:xpath, '../td').all('ul.index li')
+  end
+
+  def property_values(label)
+    page.find('.concept > .properties th', text: label)
+      .find(:xpath, '../td').all('ul.values li')
+  end
+
   step 'a concept' do
     @concept = create_concept nil
   end
@@ -49,7 +59,7 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
     create_concept_term @concept, value: 'Flinte', lang: 'de'
   end
 
-  step 'this concept hat the following Russian terms: "пистолет", "огнестрельное оружие"' do
+  step 'this concept has the following Russian terms: "пистолет", "огнестрельное оружие"' do
     create_concept_term @concept, value: 'пистолет', lang: 'ru'
     create_concept_term @concept, value: 'огнестрельное оружие', lang: 'ru'
   end
@@ -92,48 +102,43 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
     page.find(".concept .terms section.fr .no-terms").should have_text "No terms for this language"
   end
 
-  step 'this concept hat the Russian property "description": "пистолет"' do
-    create_concept_property @concept, key: 'description', value: 'пистолет', lang: 'ru'
+  step 'the following languages are available: "German", "English", "French"' do
+    @repository.update_attributes languages: %w|de en fr|
   end
 
-  step 'this concept has the English property "description": "gun"' do
-    create_concept_property @concept, key: 'description', value: 'gun', lang: 'en'
+  step 'a concept with a multilingual property "description" exists' do
+    @concept = create_concept nil
+    @property_attrs = {key: 'description', value: 'foo'}
   end
 
-  step 'this concept has the Korean property "description": "산탄 총"' do
-    create_concept_property @concept, key: 'description', value: '산탄 총', lang: 'ko'
+  step 'this property has values for Greek, German, and English' do
+    %w|el de en|.each do |lang|
+      attrs = @property_attrs.merge lang: lang
+      create_concept_property @concept, attrs
+    end
   end
 
-  step 'this concept has the German property "description": "Schusswaffe"' do
-    create_concept_property @concept, key: 'description', value: 'Schusswaffe', lang: 'de'
+  step 'I visit the concept details page' do
+    visit "/#{@repository.id}/concepts/#{@concept['id']}"
   end
 
-  step 'I should see "пистолет" displayed as property "description" of concept' do
-    page.find(".concept > .properties ul.values li.selected").text.should == 'пистолет'
+  step 'no source or target language is selected' do
+    select_source_lang :none
   end
 
-  step 'I should see "Schusswaffe" displayed as property "description" of concept' do
-    page.find(".concept > .properties ul.values li.selected").text.should == 'Schusswaffe'
+  step 'I should see language tabs for "description" in order: "DE", "EN", "EL"' do
+    labels = property_tabs('DESCRIPTION').map &:text
+    expect(labels).to eql(%w|DE EN EL|)
   end
 
-  step 'I should see "gun" displayed as property "description" of concept' do
-    page.find(".concept > .properties ul.values li.selected").text.should == 'gun'
+  step 'the first tab should be selected' do
+    first = property_values('DESCRIPTION').first
+    expect(first).to be_visible
   end
 
-  step 'I should see the property "description" of concept in following language order: "Russian", "English", "Korean", "German"' do
-    page.all(".concept > .properties ul.index li").map{|n| n.text}.should == ["RU", "EN", "KO", "DE"]
-  end
-
-  step 'I should see the property "description" of concept in following language order: "German", "Russian", "English", "Korean"' do
-    page.all(".concept > .properties ul.index li").map{|n| n.text}.should == ["DE", "RU", "EN", "KO"]
-  end
-
-  step 'I should see the property "description" of concept in following language order: "German", "English", "Russian", "Korean"' do
-    page.all(".concept > .properties ul.index li").map{|n| n.text}.should == ["DE", "EN", "RU", "KO"]
-  end
-
-  step 'I should see the property "description" of concept in following language order: "English", "Russian", "Korean", "German"' do
-    page.all(".concept > .properties ul.index li").map{|n| n.text}.should == ["EN", "RU", "KO", "DE"]
+  step 'the language tabs should have changed order to: "EN", "DE", "EL"' do
+    labels = property_tabs('DESCRIPTION').map &:text
+    expect(labels).to eql(%w|EN DE EL|)
   end
 
   step 'a concept with an English term "rose" exists' do
