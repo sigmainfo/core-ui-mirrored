@@ -20,6 +20,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     concept.propertiesByKeyAndLang = -> label: [ property ]
     properties = new Backbone.Collection
     concept.properties = -> properties
+    concept.hasProperties = -> yes
     concept
 
   buildTerms = ->
@@ -229,6 +230,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         constructor = Coreon.Views.Properties.PropertiesView
         constructor.returns subview
         properties = new Backbone.Collection
+        concept.hasProperties = -> yes
         concept.publicProperties = -> properties
         template.returns '''
           <div class="broader-and-narrower"></div>
@@ -241,6 +243,11 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         subviews = view.subviews
         expect(subviews).to.include subview
 
+      it 'creates subview only when there are any properties', ->
+        concept.hasProperties = -> no
+        view.render()
+        expect(constructor).to.not.have.been.called
+
       it 'renders subview', ->
         render = @stub subview, 'render'
         render.returns subview
@@ -249,6 +256,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         el = view.el
         node = subview.el
         expect($.contains el, node).to.be.true
+
 
       #TODO 140508 [tc] extract edit properties view
 
