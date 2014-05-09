@@ -1,4 +1,8 @@
 %h3{title: I18n.t('properties.toggle')}= I18n.t('properties.title')
+- if @can 'manage'
+  .edit
+    != @action_for 'properties.edit-properties'
+
 %div
   %table
     - for propertyGroup in @properties

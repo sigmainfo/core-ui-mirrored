@@ -12,6 +12,8 @@ describe 'Coreon.Templates[properties/properties]', ->
   beforeEach ->
     data =
       properties: []
+      can: -> no
+      action_for: -> ''
       render: -> ''
 
   context 'caption', ->
@@ -29,6 +31,38 @@ describe 'Coreon.Templates[properties/properties]', ->
       el = render()
       toggle = el.find('h3')
       expect(toggle).to.have.attr 'title', 'Toggle properties'
+
+  context 'edit', ->
+
+    can = null
+    action_for = null
+
+    edit = (el) -> el.find '.edit'
+
+    beforeEach ->
+      can = @stub data, 'can'
+      action_for = @stub data, 'action_for'
+
+    context 'with maintainer privileges', ->
+
+      beforeEach ->
+        can.withArgs('manage').returns yes
+
+      it 'renders edit mode toggle', ->
+        action_for.withArgs('properties.edit-properties')
+          .returns '<a class="edit-properties">Edit properties</a>'
+        el = render()
+        expect(edit el).to.have 'a.edit-properties'
+
+    context 'without maintainer privileges', ->
+
+      beforeEach ->
+        can.withArgs('manage').returns no
+
+      it 'does not render edit division', ->
+        el = render()
+        expect(edit el).to.not.exist
+
 
   context 'property group', ->
 

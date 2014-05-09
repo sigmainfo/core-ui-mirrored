@@ -230,6 +230,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         constructor.returns subview
         properties = new Backbone.Collection
         concept.publicProperties = -> properties
+        template.returns '''
+          <div class="broader-and-narrower"></div>
+        '''
 
       it 'creates subview', ->
         constructor.withArgs(model: properties).returns subview
