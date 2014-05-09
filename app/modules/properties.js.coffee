@@ -2,19 +2,16 @@
 
 Coreon.Modules.Properties =
 
-  hiddenPropertyKeys: []
-
-  visibleProperties: ->
-    @properties().reject (property) =>
-      property.get('key') in @hiddenPropertyKeys
+  publicProperties: ->
+    @properties()
 
   hasProperties: ->
-    @visibleProperties().length > 0
+    @publicProperties().length > 0
 
   propertiesByKey: (options = {}) ->
     precedence = options.precedence or []
 
-    properties = @visibleProperties().sort (a, b) ->
+    properties = @publicProperties().sort (a, b) ->
       [a, b] = [a, b].map (property) ->
         lang = property.get('lang')
         pos = precedence.indexOf lang

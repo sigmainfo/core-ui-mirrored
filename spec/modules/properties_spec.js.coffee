@@ -19,35 +19,29 @@ describe 'Coreon.Modules.Properties', ->
     properties = new Backbone.Collection
     model.properties = -> properties
 
-  describe '#visibleProperties()', ->
+  describe '#publicProperties()', ->
 
-    it 'filters out hidden properties', ->
-      model.hiddenPropertyKeys = ['precedence']
-      properties.reset [
-        {key: 'precedence'}
-        {key: 'description'}
-      ], silent: yes
-      [prop1, prop2] = properties.models
-      visible = model.visibleProperties()
-      expect(visible).to.eql [prop2]
+    it 'defaults to all properties', ->
+      publicProperties = model.publicProperties()
+      expect(publicProperties).to.equal properties
 
   describe '#hasProperties()', ->
 
-    it 'returns false when there are no visible properties', ->
-      model.visibleProperties = -> []
+    it 'returns false when there are no public properties', ->
+      model.publicProperties = -> []
       hasProperties = model.hasProperties()
       expect(hasProperties).to.be.false
 
-    it 'returns true when there are any visible properties', ->
+    it 'returns true when there are any public properties', ->
       property = new Backbone.Model
-      model.visibleProperties = -> [property]
+      model.publicProperties = -> [property]
       hasProperties = model.hasProperties()
       expect(hasProperties).to.be.true
 
   describe '#propertiesByKey()', ->
 
     it 'when no properties exist', ->
-      model.visibleProperties = -> []
+      model.publicProperties = -> []
       result = model.propertiesByKey()
       expect(result).to.eql []
 
@@ -55,7 +49,7 @@ describe 'Coreon.Modules.Properties', ->
       property1 = new Backbone.Model key: 'source'
       property2 = new Backbone.Model key: 'lenoch code'
       property3 = new Backbone.Model key: 'source'
-      model.visibleProperties = -> [property1, property2, property3]
+      model.publicProperties = -> [property1, property2, property3]
       result = model.propertiesByKey()
       expect(result).to.have.lengthOf 2
       source = _(result).findWhere key: 'source'
@@ -67,7 +61,7 @@ describe 'Coreon.Modules.Properties', ->
       property1 = new Backbone.Model key: 'src', lang: 'de'
       property2 = new Backbone.Model key: 'src', lang: 'en'
       property3 = new Backbone.Model key: 'src', lang: 'de'
-      model.visibleProperties = -> [property1, property2, property3]
+      model.publicProperties = -> [property1, property2, property3]
       result = model.propertiesByKey precedence: ['en', 'de']
       group = result[0].properties
       expect(group).to.eql [property2, property1, property3]
@@ -76,7 +70,7 @@ describe 'Coreon.Modules.Properties', ->
       property1 = new Backbone.Model key: 'src', lang: 'fr'
       property2 = new Backbone.Model key: 'src', lang: 'de'
       property3 = new Backbone.Model key: 'src', lang: 'en'
-      model.visibleProperties = -> [property1, property2, property3]
+      model.publicProperties = -> [property1, property2, property3]
       result = model.propertiesByKey precedence: ['en', 'de']
       group = result[0].properties
       expect(group).to.eql [property3, property2, property1]

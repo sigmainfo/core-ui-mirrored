@@ -26,8 +26,6 @@ class Coreon.Models.Term extends Backbone.Model
     lang: ""
     concept_id: ""
 
-  hiddenProperties: ['precedence']
-
   urlRoot: ->
     "/concepts/#{@get "concept_id"}/terms"
 
