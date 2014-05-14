@@ -137,21 +137,15 @@ describe 'Coreon.Models.Term', ->
       properties = new Backbone.Collection
       model.properties = -> properties
 
-    it 'creates a collection', ->
-      publicProperties = model.publicProperties()
-      expect(publicProperties).to.be.an.instanceOf Backbone.Collection
-
-    it 'fills collection with current models', ->
+    it 'returns current models', ->
       property = new Backbone.Model
       properties.reset [property], silent: yes
-      publicProperties = model.publicProperties()
-      models = publicProperties.models
-      expect(models).to.eql [property]
+      properties = model.publicProperties()
+      expect(properties).to.eql [property]
 
-    it 'filters out precedence from models', ->
+    it 'filters out precedence', ->
       property1 = new Backbone.Model key: 'author', value: 'Nobody'
       property2 = new Backbone.Model key: 'precedence', value: '9'
       properties.reset [property1, property2], silent: yes
-      publicProperties = model.publicProperties()
-      models = publicProperties.models
-      expect(models).to.eql [property1]
+      properties = model.publicProperties()
+      expect(properties).to.eql [property1]
