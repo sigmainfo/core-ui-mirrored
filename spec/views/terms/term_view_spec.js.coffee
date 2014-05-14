@@ -19,7 +19,7 @@ describe 'Coreon.Views.Terms.TermView', ->
     model.hasProperties = -> no
     properties = new Backbone.Collection
 
-    model.publicProperties = -> properties
+    model.publicProperties = -> properties.models
 
     view = new Coreon.Views.Terms.TermView
       model: model
@@ -121,8 +121,8 @@ describe 'Coreon.Views.Terms.TermView', ->
         it 'creates subview', ->
           view.render()
           expect(constructor).to.have.been.calledOnce
-          expect(constructor).to.have.been.calledWith
-            model: properties
+          collection = constructor.firstCall.args[0].model
+          expect(collection.models).to.eql properties.models
 
         it 'renders subview', ->
           view.render()

@@ -111,10 +111,11 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
     unless @editProperties
       if @model.hasProperties()
-        properties = new Coreon.Views.Properties.PropertiesView
-          model: @model.properties()
-        @$('.broader-and-narrower').after properties.render().$el
-        @subviews.push properties
+        properties = new Backbone.Collection @model.publicProperties()
+        propertiesView = new Coreon.Views.Properties.PropertiesView
+          model: properties
+        @$('.broader-and-narrower').after propertiesView.render().$el
+        @subviews.push propertiesView
 
     unless editing
       terms = new Coreon.Views.Terms.TermsView model: @model.terms()

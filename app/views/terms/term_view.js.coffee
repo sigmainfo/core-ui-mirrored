@@ -29,8 +29,9 @@ class Coreon.Views.Terms.TermView extends Backbone.View
       info  : @model.info()
 
     if @model.hasProperties()
+      properties = new Backbone.Collection @model.publicProperties()
       propertiesView = new Coreon.Views.Properties.PropertiesView
-        model: @model.publicProperties()
+        model: properties
       propertiesView.render()
       @$el.append propertiesView.$el
 
