@@ -52,7 +52,8 @@ describe 'Coreon.Models.ConceptMapNode', ->
   describe '#initialize()', ->
 
     beforeEach ->
-      @concept = new Coreon.Models.Concept
+      application = new Backbone.Model
+      @concept = new Coreon.Models.Concept {}, app: application
       @model.set 'model', @concept, silent: yes
 
     it 'derives id from model', ->

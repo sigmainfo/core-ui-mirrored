@@ -3,7 +3,7 @@
 Coreon.Modules.Properties =
 
   publicProperties: ->
-    @properties()
+    @properties().models[..]
 
   hasProperties: ->
     @publicProperties().length > 0

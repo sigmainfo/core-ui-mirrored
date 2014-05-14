@@ -23,7 +23,7 @@ describe 'Coreon.Modules.Properties', ->
 
     it 'defaults to all properties', ->
       publicProperties = model.publicProperties()
-      expect(publicProperties).to.equal properties
+      expect(publicProperties).to.eql properties.models
 
   describe '#hasProperties()', ->
 

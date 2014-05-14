@@ -4,7 +4,11 @@
 describe "Coreon.Collections.Concepts", ->
 
   beforeEach ->
+    Coreon.application = new Backbone.Model langs: []
     @collection = new Coreon.Collections.Concepts
+
+  afterEach ->
+    delete Coreon.application
 
   it "is a Backbone collection", ->
     @collection.should.be.an.instanceof Backbone.Collection

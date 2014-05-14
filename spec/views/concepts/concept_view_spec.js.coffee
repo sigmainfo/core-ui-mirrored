@@ -17,7 +17,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     concept.set 'properties', [ property ], silent: true
     concept.termsByLang = -> {}
     concept.terms = -> terms
-    concept.propertiesByKeyAndLang = -> label: [ property ]
     properties = new Backbone.Collection
     concept.properties = -> properties
     concept.hasProperties = -> yes

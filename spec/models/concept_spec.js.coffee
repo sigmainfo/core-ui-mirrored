@@ -3,11 +3,17 @@
 
 describe 'Coreon.Models.Concept', ->
 
+  application = null
+
+  buildApplication = ->
+    new Backbone.Model langs: []
+
   beforeEach ->
     @hits = new Backbone.Collection
     @hits.findByResult = -> null
     @stub Coreon.Collections.Hits, 'collection', => @hits
-    @model = new Coreon.Models.Concept id: '123'
+    application = buildApplication()
+    @model = new Coreon.Models.Concept {}, app: application
 
   it 'is a Backbone model', ->
     expect( @model ).to.been.an.instanceof Backbone.Model
@@ -33,340 +39,104 @@ describe 'Coreon.Models.Concept', ->
       expect( @model.get('superconcept_ids') ).to.eql []
       expect( @model.get('subconcept_ids') ).to.eql []
 
+  describe '#initialize()', ->
+
+    afterEach ->
+      delete Coreon.application
+
+    it 'assigns app from options', ->
+      app2 = new Backbone.Model
+      @model.initialize null, app: app2
+      assigned = @model.app
+      expect(assigned).to.equal app2
+
+    it 'defaults app to global reference', ->
+      app2 = new Backbone.Model
+      Coreon.application = app2
+      @model.initialize()
+      assigned = @model.app
+      expect(assigned).to.equal app2
+
+  describe '#updateLabel()', ->
+
+    context 'triggers', ->
+
+      updateLabel = null
+
+      beforeEach ->
+        # TODO 140512 [tc] replace assignments with local vars
+        updateLabel = @stub @model, 'updateLabel'
+        @model.initialize null, app: application
+        updateLabel.reset()
+
+      it 'is called silently on initialize', ->
+        @model.initialize null, app: application
+        expect(updateLabel).to.have.been.calledOnce
+        expect(updateLabel).to.have.been.calledWith @model, silent: yes
+
+      it 'is triggered on term changes', ->
+        @model.trigger 'change:terms'
+        expect(updateLabel).to.have.been.calledOnce
+
+      it 'is triggered on property changes', ->
+        @model.trigger 'change:properties'
+        expect(updateLabel).to.have.been.calledOnce
+
+      it 'is triggered on id changes', ->
+        @model.trigger 'change:id'
+        expect(updateLabel).to.have.been.calledOnce
+
+      it 'is triggered on change of selected langs', ->
+        application.trigger 'change:langs'
+        expect(updateLabel).to.have.been.calledOnce
+
+    context 'options', ->
+
+      it 'can be silenced', ->
+        @model.set 'label', 'foo', silent: yes
+        callback = @spy()
+        @model.on 'change:label', callback
+        @model.updateLabel @model, silent: yes
+        expect(callback).to.not.have.been.called
+
+    context 'new', ->
+
+      beforeEach ->
+        @model.isNew = -> yes
+
+      it 'creates placeholder label', ->
+        I18n.t.withArgs('concept.new_concept').returns '<new concept>'
+        @model.updateLabel()
+        label = @model.get 'label'
+        expect(label).to.equal '<new concept>'
+
+    context 'persisted', ->
+
+      label = (model) -> model.get 'label'
+
+      beforeEach ->
+        @model.isNew = -> no
+
+      it 'takes value from preferred term', ->
+        term = new Backbone.Model value: 'My Concept'
+        @model.preferredTerm = -> term
+        @model.updateLabel()
+        expect(label @model).to.equal 'My Concept'
+
+      it 'uses id as a fallback', ->
+        @model.id = 'c123abcdef'
+        @model.updateLabel()
+        expect(label @model).to.equal 'c123abcdef'
+
+      it 'is shadowed by label property', ->
+        property = new Backbone.Model value: 'No. 123'
+        @model.propertiesByKey = -> [
+          key: 'label', properties: [property]
+        ]
+        @model.updateLabel()
+        expect(label @model).to.equal 'No. 123'
+
   describe 'attributes', ->
-
-    describe 'label', ->
-
-      context 'when newly created', ->
-
-        beforeEach ->
-          I18n.t.withArgs('concept.new_concept').returns '<new concept>'
-          @model.isNew = -> true
-
-        it 'defaults to <new concept>', ->
-          @model.set properties: [ key: 'label', value: 'gun' ]
-          expect( @model.get('label') ).to.equal '<new concept>'
-
-      context "after save", ->
-        context "by term", ->
-          it "uses first English term when no source language set", ->
-            @model.set terms: [
-                {
-                  lang: "fr"
-                  value: "poésie"
-                }
-                {
-                  lang: "en"
-                  value: "poetry"
-                }
-                {
-                  lang: "en"
-                  value: "poetics"
-                }
-              ]
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "poetry"
-
-          it "falls back to term in other language", ->
-            @model.set terms: [
-              lang: "fr"
-              value: "poésie"
-            ]
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "poésie"
-
-          it "handles term lang gracefully", ->
-            @model.set terms: [
-              {
-                lang: "fr"
-                value: "poésie"
-              }
-              {
-                lang: "EN_US"
-                value: "poetry"
-              }
-            ]
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "poetry"
-
-          context "with source language set", ->
-
-            beforeEach ->
-              Coreon.application =
-                repositorySettings: ->
-                  get: (arg) ->
-                    return 'fr' if arg == 'sourceLanguage'
-                  on: ->
-
-            afterEach ->
-              delete Coreon.application
-
-            it "uses term in selected source language", ->
-              @model.set terms: [
-                {
-                  lang: "fr"
-                  value: "poésie"
-                }
-                {
-                  lang: "en"
-                  value: "poetry"
-                }
-              ]
-              @model.initialize()
-              expect( @model.get("label") ).to.equal "poésie"
-
-            it "uses English term if not available in selected source language", ->
-              @model.set terms: [
-                {
-                  lang: "de"
-                  value: "Poesie"
-                }
-                {
-                  lang: "en"
-                  value: "poetry"
-                }
-              ]
-              @model.initialize()
-              expect( @model.get("label") ).to.equal "poetry"
-
-          context "with source and target language set", ->
-
-            beforeEach ->
-              Coreon.application =
-                repositorySettings: ->
-                  get: (arg) ->
-                    return 'fr' if arg == 'sourceLanguage'
-                    return 'de' if arg == 'targetLanguage'
-                  on: ->
-
-            afterEach ->
-              delete Coreon.application
-
-            it "uses term in selected source language", ->
-              @model.set terms: [
-                {
-                  lang: "fr"
-                  value: "poésie"
-                }
-                {
-                  lang: "en"
-                  value: "poetry"
-                }
-              ]
-              @model.initialize()
-              expect( @model.get("label") ).to.equal "poésie"
-
-            it "uses term in target language if not available in selected source language", ->
-              @model.set terms: [
-                {
-                  lang: "de"
-                  value: "Poesie"
-                }
-                {
-                  lang: "en"
-                  value: "poetry"
-                }
-              ]
-              @model.initialize()
-              expect( @model.get("label") ).to.equal "Poesie"
-
-            it "uses English term if not available in selected source or target language", ->
-              @model.set terms: [
-                {
-                  lang: "ru"
-                  value: "поэзия"
-                }
-                {
-                  lang: "en"
-                  value: "poetry"
-                }
-              ]
-              @model.initialize()
-              expect( @model.get("label") ).to.equal "poetry"
-
-
-        it "is overwritten by property", ->
-          @model.set {
-            properties: [
-              key: "label"
-              value: "My_label"
-            ]
-            terms: [
-              lang: "en"
-              value: "poetry"
-            ]
-          }
-          @model.initialize()
-          expect( @model.get("label") ).to.equal "My_label"
-
-        context "with source language set to French", ->
-
-          beforeEach ->
-            Coreon.application =
-              repositorySettings: () ->
-                get: (arg)->
-                  return 'fr' if arg == 'sourceLanguage'
-                on: ->
-
-          afterEach ->
-            delete Coreon.application
-
-          it "is overwritten by property in French", ->
-            @model.set {
-              properties: [
-                {
-                  key: "label"
-                  value: "My_label"
-                  lang: "en"
-                }, {
-                  key: "label"
-                  value: "Mon_étiquette"
-                  lang: "fr"
-                }
-              ]
-              terms: [
-                lang: "en"
-                value: "poetry"
-              ]
-            }
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "Mon_étiquette"
-
-          it "is overwritten by first property if no French label property", ->
-            @model.set {
-              properties: [
-                {
-                  key: "label"
-                  value: "My_label"
-                }, {
-                  key: "label"
-                  value: "Mein_Label"
-                  lang: "de"
-                }
-              ]
-              terms: [
-                lang: "en"
-                value: "poetry"
-              ]
-            }
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "My_label"
-
-        context "with target language set to German", ->
-
-          beforeEach ->
-            Coreon.application =
-              repositorySettings: () ->
-                get: (arg)->
-                  return 'de' if arg == 'targetLanguage'
-                on: ->
-
-          afterEach ->
-            delete Coreon.application
-
-          it "is overwritten by property in German", ->
-            @model.set {
-              properties: [
-                {
-                  key: "label"
-                  value: "My_label"
-                  lang: "en"
-                }, {
-                  key: "label"
-                  value: "Mein_Label"
-                  lang: "de"
-                }
-              ]
-              terms: [
-                lang: "en"
-                value: "poetry"
-              ]
-            }
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "Mein_Label"
-
-          it "is overwritten by first property if no German label property", ->
-            @model.set {
-              properties: [
-                {
-                  key: "label"
-                  value: "My_label"
-                }, {
-                  key: "label"
-                  value: "Mon_étiquette"
-                  lang: "fr"
-                }
-              ]
-              terms: [
-                lang: "en"
-                value: "poetry"
-              ]
-            }
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "My_label"
-
-
-
-        context "with source language set to French and target language set to German", ->
-
-          beforeEach ->
-            Coreon.application =
-              repositorySettings: () ->
-                get: (arg)->
-                  return 'fr' if arg == 'sourceLanguage'
-                  return 'de' if arg == 'targetLanguage'
-                on: ->
-
-          afterEach ->
-            delete Coreon.application
-
-          it "is overwritten by property in German", ->
-            @model.set {
-              properties: [
-                {
-                  key: "label"
-                  value: "My_label"
-                  lang: "en"
-                }, {
-                  key: "label"
-                  value: "Mein_Label"
-                  lang: "de"
-                }, {
-                  key: "label"
-                  value: "Mon_étiquette"
-                  lang: "fr"
-                }
-              ]
-              terms: [
-                lang: "en"
-                value: "poetry"
-              ]
-            }
-            @model.initialize()
-            expect( @model.get("label") ).to.equal "Mon_étiquette"
-
-
-
-      context 'on changes', ->
-
-        it 'updates label on id attribute changes', ->
-          @model.set 'id', 'abc123'
-          expect( @model.get('label') ).to.equal 'abc123'
-
-        it 'updates label on property changes', ->
-          @model.set 'properties', [
-            key: 'label'
-            value: 'My Label'
-          ]
-          expect( @model.get('label') ).to.equal 'My Label'
-
-        it 'updates label on term changes', ->
-          @model.set 'terms', [
-            lang: 'en'
-            value: 'poetry'
-          ]
-          expect( @model.get('label') ).to.equal 'poetry'
-
 
     describe 'hit', ->
 
@@ -377,7 +147,7 @@ describe 'Coreon.Models.Concept', ->
           for hit in @hits.models
             return hit if hit.get('result') is result
           null
-        @model.initialize()
+        @model.initialize null, app: application
 
       it 'gets hit from id', ->
         expect( @model.get('hit') ).to.equal @hit
@@ -422,6 +192,49 @@ describe 'Coreon.Models.Concept', ->
       expect( options ).to.not.have.property 'batch'
       expect( request ).to.equal @request.promise()
 
+  describe '#preferredTerm()', ->
+
+    term = null
+    terms = null
+
+    beforeEach ->
+      term = new Backbone.Model
+      terms = new Backbone.Collection []
+      @model.terms = -> terms
+
+    it 'defaults to first term', ->
+      terms.reset [term]
+      preferred = @model.preferredTerm()
+      expect(preferred).to.equal term
+
+    it 'takes first term in source lang when set', ->
+      term2 = new Backbone.Model lang: 'de'
+      application.set 'langs', ['de'], silent: yes
+      terms.reset [term, term2]
+      preferred = @model.preferredTerm()
+      expect(preferred).to.equal term2
+
+    it 'falls back to first term in target lang when source not available', ->
+      term2 = new Backbone.Model lang: 'de'
+      application.set 'langs', ['en', 'de'], silent: yes
+      terms.reset [term, term2]
+      preferred = @model.preferredTerm()
+      expect(preferred).to.equal term2
+
+    it 'falls back to first term in target lang when others not available', ->
+      term2 = new Backbone.Model lang: 'en'
+      application.set 'langs', ['hu', 'de'], silent: yes
+      terms.reset [term, term2]
+      preferred = @model.preferredTerm()
+      expect(preferred).to.equal term2
+
+    it 'normalizes lang for detection', ->
+      term2 = new Backbone.Model lang: 'DE_AT'
+      application.set 'langs', ['hu', 'de'], silent: yes
+      terms.reset [term, term2]
+      preferred = @model.preferredTerm()
+      expect(preferred).to.equal term2
+
   describe '#properties()', ->
 
     it 'syncs with attr', ->
@@ -455,36 +268,6 @@ describe 'Coreon.Models.Concept', ->
         author: 'Nobody'
         created_at: '2013-09-12 13:48'
         updated_at: '2013-09-12 13:50'
-
-  describe '#propertiesByKey()', ->
-
-    it 'returns empty hash when empty', ->
-      @model.properties = -> models: []
-      expect( @model.propertiesByKey() ).to.eql {}
-
-    it 'returns properties grouped by key', ->
-      prop1 = new Backbone.Model key: 'label'
-      prop2 = new Backbone.Model key: 'definition'
-      prop3 = new Backbone.Model key: 'definition'
-      @model.properties = -> models: [ prop1, prop2, prop3 ]
-      expect( @model.propertiesByKey() ).to.eql
-        label: [ prop1 ]
-        definition: [ prop2, prop3 ]
-
-  describe '#termsByLang()', ->
-
-    it 'returns empty hash when empty', ->
-      @model.terms = -> new Backbone.Collection
-      expect( @model.termsByLang() ).to.eql {}
-
-    it 'returns terms grouped by lang', ->
-      term1 = new Backbone.Model lang: 'en'
-      term2 = new Backbone.Model lang: 'de'
-      term3 = new Backbone.Model lang: 'de'
-      @model.terms = -> new Backbone.Collection [ term1, term2, term3 ]
-      expect( @model.termsByLang() ).to.eql
-        en: [ term1 ]
-        de: [ term2, term3 ]
 
   describe '#toJSON()', ->
 
@@ -525,6 +308,7 @@ describe 'Coreon.Models.Concept', ->
         @stub Coreon.Modules.CoreAPI, 'sync'
 
       it 'delegates to application sync', ->
+        @model.isNew = -> false
         @model.save {}, wait: true
         expect( Coreon.Modules.CoreAPI.sync ).to.have.been.calledOnce
         expect( Coreon.Modules.CoreAPI.sync ).to.have.been.calledWith 'update', @model
@@ -616,13 +400,14 @@ describe 'Coreon.Models.Concept', ->
   describe '#definition()', ->
 
     it 'returns null when no definition is given', ->
-      @model.propertiesByKeyAndLang = -> {}
-      expect( @model.definition() ).to.be.null
+      @model.propertiesByKey = -> []
+      definition = @model.definition()
+      expect(definition).to.be.null
 
     it 'returns first definition in preferred lang', ->
-      @model.propertiesByKeyAndLang = ->
-       definition: [
-        new Backbone.Model value: 'Eine Rose'
-        new Backbone.Model value: "C'est ne pas un pipe"
-       ]
-      expect( @model.definition() ).to.equal 'Eine Rose'
+      property = new Backbone.Model value: 'A rose is a rose.'
+      @model.propertiesByKey = -> [
+        key: 'definition', properties: [property]
+      ]
+      definition = @model.definition()
+      expect(definition).to.equal 'A rose is a rose.'

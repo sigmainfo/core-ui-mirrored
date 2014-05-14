@@ -29,10 +29,11 @@ class Coreon.Models.Concept extends Backbone.Model
   Coreon.Modules.extend @, Coreon.Modules.EmbedsMany
 
   @embedsMany "properties", model: Coreon.Models.Property
+  Coreon.Modules.include @, Coreon.Modules.Properties
+
   @embedsMany "terms", collection: Coreon.Collections.Terms
 
   Coreon.Modules.include @, Coreon.Modules.SystemInfo
-  Coreon.Modules.include @, Coreon.Modules.PropertiesByKey
   Coreon.Modules.include @, Coreon.Modules.RemoteValidation
   Coreon.Modules.include @, Coreon.Modules.PersistedAttributes
   Coreon.Modules.include @, Coreon.Modules.Path
@@ -45,18 +46,23 @@ class Coreon.Models.Concept extends Backbone.Model
     terms: []
     superconcept_ids: []
     subconcept_ids: []
-    label: ""
+    label: ''
     hit: null
 
-  initialize: (attrs, options) ->
-    @set "label", @_label(), silent: true
-    @on "change:#{@idAttribute} change:terms change:properties"
-      , @_updateLabel
-      , @
-    if Coreon.application?.repositorySettings()
-      @listenTo Coreon.application.repositorySettings()
-              , 'change:sourceLanguage change:targetLanguage'
-              , @_updateLabel
+  initialize: (attrs, options = {}) ->
+
+    @app = options.app or Coreon.application
+
+    @stopListening()
+
+    @updateLabel @, silent: yes
+    @listenTo @
+            , 'change:id change:terms change:properties'
+            , @updateLabel
+    @listenTo @app
+            , 'change:langs'
+            , @updateLabel
+
     @_updateHit()
     @listenTo Coreon.Collections.Hits.collection()
             , "reset add remove"
@@ -79,46 +85,43 @@ class Coreon.Models.Concept extends Backbone.Model
       serialized[key] = value
     concept: serialized
 
-  _updateLabel: ->
-    @set "label", @_label()
+  updateLabel: (model, options) ->
+    label = if @isNew()
+      I18n.t 'concept.new_concept'
+    else
+      @propLabel() or @termLabel() or @id
+
+    @set 'label', label, options
+
+  termLabel: ->
+    if term = @preferredTerm()
+      term.get('value')
+    else
+      null
+
+  normalized = (lang = '') ->
+    lang[0..1].toLowerCase()
+
+  preferredTerm: ->
+    terms = @terms()
+    term = null
+    langs = @app.get('langs').concat 'en'
+    for lang in langs
+      term = terms.find (term) ->
+        normalized(term.get 'lang') is normalized(lang)
+      break if term?
+    term ?= terms.first()
+    term
+
+  propLabel: ->
+    properties = @propertiesByKey()
+    if labels = _(properties).findWhere(key: 'label')
+      labels.properties[0].get 'value'
+    else
+      null
 
   _updateHit: ->
     @set "hit", Coreon.Collections.Hits.collection().findByResult(@)
-
-  _label: ->
-    if @isNew()
-      I18n.t "concept.new_concept"
-    else
-      @_propLabel() or @_termLabel() or @id
-
-  _propLabel: ->
-    @propertiesByKeyAndLang()['label']?[0]?.get('value')
-
-  _termLabel: ->
-    terms = @get "terms"
-
-    if settings = Coreon.application?.repositorySettings()
-      sourceLang = settings.get('sourceLanguage')
-      targetLang = settings.get('targetLanguage')
-      locale = settings.get('locale')
-
-    locale ||= 'en'
-
-    langRegexp = new RegExp("^#{sourceLang}", 'i') if sourceLang
-    fallbackLangRegexp = new RegExp("^#{targetLang}", 'i') if targetLang
-    localeRegexp = new RegExp("^#{locale}", 'i')
-
-    for term in terms
-      if sourceLang and !!term.lang?.match langRegexp
-        label = term.value
-        break
-      if targetLang and not fallbackLabel? and !!term.lang?.match fallbackLangRegexp
-        fallbackLabel = term.value
-      if not localeLabel? and !!term.lang?.match localeRegexp
-        localeLabel = term.value
-
-    label ?= fallbackLabel || localeLabel || terms[0]?.value
-    label
 
   acceptsConnection: (item_id)->
     item_id != @id &&
@@ -138,4 +141,9 @@ class Coreon.Models.Concept extends Backbone.Model
       Coreon.Models.Concept.find id
 
   definition: ->
-    @propertiesByKeyAndLang().definition?[0].get('value') or null
+    properties = @propertiesByKey()
+    if definitions = _(properties).findWhere(key: 'definition')
+      definitions.properties[0].get 'value'
+    else
+      null
+

@@ -29,7 +29,7 @@ class Coreon.Collections.Concepts extends Backbone.Collection
           child.set "superconcept_ids", superconcept_ids, silent: yes
 
   onRemove: (model, collection, options) ->
-    
+
     for superconcept_id in model.get "superconcept_ids"
       if parent = @get superconcept_id
         subconcept_ids =
