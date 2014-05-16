@@ -2,82 +2,63 @@ class Spinach::Features::MaintainerSortsTermsInsideALanguage < Spinach::FeatureS
 
   include AuthSteps
   include Api::Graph::Factory
+  include Navigation
+  include Selectors
 
   def language(id)
     page.find ".language.#{id.downcase}"
   end
 
-  step 'a concept with English terms "pistol", "handgun", and "revolver"' do
-    @concept  = create_concept
-    @pistol   = create_concept_term @concept, lang: 'en', value: 'pistol'
-    @handgun  = create_concept_term @concept, lang: 'en', value: 'handgun'
-    @revolver = create_concept_term @concept, lang: 'en', value: 'revolver'
+  def create_term(value, options = {})
+    options[:precedence] ||= 0
+    @concept ||= create_concept
+    create_concept_term @concept, {
+      value: value,
+      lang: 'en',
+      properties: [ key: 'precedence', value: options[:precedence] ]
+    }
   end
 
-  step '"revolver" has a precedence of 1' do
-    create_concept_term_property @concept, @revolver,
-                                 key: 'precedence', value: 1
+  def term_order
+    within language_section(:en) do
+      page.all('.term').map do |term|
+        term.find('.value').text()
+      end
+    end
   end
 
-  step '"pistol" has a precedence of 2' do
-    create_concept_term_property @concept, @pistol,
-                                 key: 'precedence', value: 2
+  step 'I am logged in as a maintainer of the repository' do
+    repository_user :maintainer
+    login
   end
 
-  step '"handgun" has a precedence of 3' do
-    create_concept_term_property @concept, @handgun,
-                                 key: 'precedence', value: 3
+  step 'a concept with English terms "handgun" and "firearm" exists' do
+    create_term 'handgun', precedence: 1
+    create_term 'firearm', precedence: 2
   end
 
   step 'I visit the concept details page' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit_concept_details_page @concept
   end
 
-  step 'I see all 3 terms inside language "EN"' do
-    within language(:en) do
-      page.should have_css('.term', count: 3)
-      @terms = page.all('.term')
-    end
+  step 'I see the terms in following order: "handgun", "firearm"' do
+    expect(term_order).to eq(['handgun', 'firearm'])
   end
 
-  step 'they have the following order: "revolver", "pistol", "handgun"' do
-    @terms.map do |term|
-      term.first('.value').text
-    end.should == ['revolver', 'pistol', 'handgun']
-  end
-
-  step 'I see no properties on any of them' do
-    within language(:en) do
-      page.should have_no_css('.term .properties')
-    end
+  step 'I see the terms in following order: "firearm", "handgun"' do
+    expect(term_order).to eq(['firearm', 'handgun'])
   end
 
   step 'I toggle "EDIT MODE"' do
     click_on "Edit mode"
   end
 
-  step 'I see a drag handler inside each term' do
+  step 'I see a drag handler for each term' do
     within language(:en) do
       @terms = page.all('.term')
       @terms.each do |term|
         term.should have_css('.drag-handle')
       end
     end
-  end
-
-  step 'I drag "handgun" to the top of the list' do
-    pending 'step not implemented'
-  end
-
-  step 'the order of the terms has changed to "handgun", "revolver", "pistol"' do
-    pending 'step not implemented'
-  end
-
-  step 'I reload the concept details page' do
-    pending 'step not implemented'
-  end
-
-  step 'the order of the terms is still "handgun", "revolver", "pistol"' do
-    pending 'step not implemented'
   end
 end

@@ -1,43 +1,56 @@
 Feature: maintainer sorts terms inside a language
-  In order to define the order of precedence of terms inside a language
+  In order to define the precedence terms inside a language
   As a maintainer of the repository
   I want to sort the terms by dragging them to a specific position in the list
 
   Background:
-    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
-    And I am a maintainer of the repository
-    And I am logged in
+    Given I am logged in as a maintainer of the repository
 
   @wip
   Scenario: edit order of precedece
-    Given a concept with English terms "pistol", "handgun", and "revolver"
-    And "revolver" has a precedence of 1
-    And "pistol" has a precedence of 2
-    And "handgun" has a precedence of 3
+    Given a concept with English terms "handgun" and "firearm" exists
     When I visit the concept details page
-    Then I see all 3 terms inside language "EN"
-    And they have the following order: "revolver", "pistol", "handgun"
-    And I see no properties on any of them
+    Then I see the terms in following order: "handgun", "firearm"
     When I toggle "EDIT MODE"
-    Then I see a drag handler inside each term
-    When I click on "Edit term" inside "pistol"
-    Then I see no drag handlers anymore
-    When I click on "Cancel"
-    Then I see a drag handler inside each term
-    When I drag "handgun" to the top of the list
-    Then the order of the terms has changed to "handgun", "revolver", "pistol"
-    And I see an edit form with actions "Reset", "Cancel" and "Save precedence"
-    And I do not see "Edit term" or "Remove term" inside any term
+    Then I see a drag handler for each term
+    When I drag "firearm" above "handgun"
+    Then I see the terms in following order: "firearm", "handgun"
+    And I see a form with actions "Reset", "Cancel" and "Save precedence"
+    When I click "Save precedence"
+    Then I do not see the form anymore
+    And I see the terms in following order: "firearm", "handgun"
+
+  @wip
+  Scenario: switching editing states
+    Given a concept with English terms "handgun" and "firearm" exists
+    When I visit the concept details page
+    And I toggle "EDIT MODE"
+    Then I see a drag handler for each term
+    And I see "Edit term" and "Remove term" actions for every term
+    When I drag "firearm" above "handgun"
+    Then I do not see any "Edit term" or "Remove term" actions
+    But I see a drag handler for each term
     When I click "Cancel"
-    Then I do not see "Reset", "Cancel" or "Save precedence" anymore
-    And the order of the terms is reverted to "revolver", "pistol", "handgun"
-    But I see "Edit term" and "Remove term" inside each term
-    When I drag "handgun" to the top of the list
-    And I click "Reset"
-    Then the order of the terms is reverted to "revolver", "pistol", "handgun"
-    When I drag "handgun" to the top of the list
-    And I click "Save precedence"
-    Then I do not see "Reset", "Cancel" or "Save precedence" anymore
-    But I see "Edit term" and "Remove term" inside each term
-    When I reload the concept details page
-    Then the order of the terms is still "handgun", "revolver", "pistol"
+    Then I see "Edit term" and "Remove term" actions for every term
+    And I see a drag handler for each term
+    When I click "Edit term"
+    Then I do not see any drag handlers for terms
+    When I click "Cancel"
+    Then I see a drag handler for each term
+    And I see "Edit term" and "Remove term" actions for every term
+
+  @wip
+  Scenario: reset and cancel
+    Given a concept with English terms "handgun" and "firearm" exists
+    When I visit the concept details page
+    And I toggle "EDIT MODE"
+    And I drag "firearm" above "handgun"
+    Then I see the terms in following order: "firearm", "handgun"
+    And I see a form with actions "Reset", "Cancel" and "Save precedence"
+    When I click "Reset"
+    Then I see the terms in following order: "handgun", "firearm"
+    And I see a form with actions "Reset", "Cancel" and "Save precedence"
+    When I drag "firearm" above "handgun"
+    And I click "Cancel"
+    Then I should not see the form anymore
+    And I see the terms in following order: "handgun", "firearm"

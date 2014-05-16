@@ -47,4 +47,12 @@ module Selectors
       page.find(:table_row, label.downcase)
     end
   end
+
+  def concept_map
+    page.find :panel, 'Concept Map'
+  end
+
+  def language_section(lang)
+    page.find "section.language.#{lang}"
+  end
 end

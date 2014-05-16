@@ -2,7 +2,7 @@ class Spinach::Features::UserBrowsesConceptMapInSourceAndTargetLanguage < Spinac
   include AuthSteps
   include LanguageSelectSteps
   include Api::Graph::Factory
-  include ComponentSelectors
+  include Selectors
 
   def label(node)
     node.find('text').text()
