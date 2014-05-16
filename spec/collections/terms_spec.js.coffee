@@ -82,9 +82,9 @@ describe 'Coreon.Collections.Terms', ->
 
     it 'sorts by precedence', ->
       collection.reset [
-        { value: 'Billiard', properties: [ key: 'precedence', value: 3 ] }
-        { value: 'Cue'     , properties: [ key: 'precedence', value: 1 ] }
-        { value: 'Queue'   , properties: [ key: 'precedence', value: 2 ] }
+        { value: 'Billiard', properties: [ key: 'precedence', value: 2 ] }
+        { value: 'Cue'     , properties: [ key: 'precedence', value: 0 ] }
+        { value: 'Queue'   , properties: [ key: 'precedence', value: 1 ] }
       ]
       values = collection.pluck 'value'
       expect(values).to.eql ['Cue', 'Queue', 'Billiard']

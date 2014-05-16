@@ -33,10 +33,15 @@ class Coreon.Collections.Terms extends Backbone.Collection
 
   comparator: (a, b) ->
     [a, b] = [a, b].map (term) ->
-      precedence = term.properties().findWhere(key: 'precedence')
+      precedence =
+        if property = term.properties().findWhere(key: 'precedence')
+          property.get('value')
+        else
+          null
+      sortKey = term.get('sort_key') or null
 
-      precedence: precedence?.get('value') or null
-      sortKey: term.get('sort_key') or null
+      precedence: precedence
+      sortKey: sortKey
 
     unless a.precedence is b.precedence
       if a.precedence is null
