@@ -55,6 +55,9 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     termsView = new Backbone.View
     @stub(Coreon.Views.Terms, 'TermsView').returns termsView
 
+    editTermsView = new Backbone.View
+    @stub(Coreon.Views.Terms, 'EditTermsView').returns editTermsView
+
     property    = buildProperty()
     terms       = buildTerms()
     concept     = buildConcept property, terms
@@ -285,29 +288,57 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       terms = null
 
       beforeEach ->
-        constructor = Coreon.Views.Terms.TermsView
-        constructor.returns subview
         terms = buildTerms()
         concept.terms = -> terms
-
-      it 'creates subview instance', ->
         subview = new Backbone.View
-        constructor.withArgs(model: terms).returns subview
-        view.render()
-        expect(constructor).to.have.been.calledOnce
-        subviews = view.subviews
-        expect(subviews).to.include subview
 
-      it 'renders subview', ->
-        render = @stub subview, 'render'
-        render.returns subview
-        view.render()
-        expect(render).to.have.been.calledOnce
-        el = view.el
-        node = subview.el
-        expect($.contains el, node).to.be.true
+      context 'show', ->
 
-      context 'editing', ->
+        beforeEach ->
+          view.editing = -> off
+          constructor = Coreon.Views.Terms.TermsView
+          constructor.returns subview
+
+        it 'creates subview instance', ->
+          view.render()
+          expect(constructor).to.have.been.calledOnce
+          subviews = view.subviews
+          expect(subviews).to.include subview
+
+        it 'passes terms to subview', ->
+          view.render()
+          expect(constructor).to.have.been.calledWith model: terms
+
+        it 'renders subview', ->
+          render = @stub subview, 'render'
+          render.returns subview
+          view.render()
+          expect(render).to.have.been.calledOnce
+          el = view.el
+          node = subview.el
+          expect($.contains el, node).to.be.true
+
+      context 'edit', ->
+
+        beforeEach ->
+          view.editing = -> on
+          constructor = Coreon.Views.Terms.EditTermsView
+          constructor.returns subview
+
+        it 'creates subview instance', ->
+          view.render()
+          expect(constructor).to.have.been.calledOnce
+          subviews = view.subviews
+          expect(subviews).to.include subview
+
+        it 'passes deep copy of terms to subview', ->
+          term = new Backbone.Model value: 'gun'
+          terms.reset [term], silent: yes
+          view.render()
+          model = constructor.firstCall.args[0].model
+          expect(model).to.be.a.deepCopyOf terms
+
+      xcontext 'editing', ->
 
         term = null
 

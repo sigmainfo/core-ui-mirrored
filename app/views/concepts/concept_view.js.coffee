@@ -14,6 +14,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require views/terms/terms_view
+#= require views/terms/edit_terms_view
 #= require views/properties/properties_view
 #= require collections/clips
 #= require collections/hits
@@ -117,10 +118,14 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         @$('.broader-and-narrower').after propertiesView.render().$el
         @subviews.push propertiesView
 
-    unless editing
-      terms = new Coreon.Views.Terms.TermsView model: @model.terms()
-      @$el.append terms.render().$el
-      @subviews.push terms
+    termsView =
+      if editing
+        terms = new Backbone.Collection @model.terms().toJSON()
+        new Coreon.Views.Terms.EditTermsView model: terms
+      else
+        new Coreon.Views.Terms.TermsView model: @model.terms()
+    @$el.append termsView.render().$el
+    @subviews.push termsView
 
     @$('.system-info').hide()
 
