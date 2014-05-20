@@ -5,7 +5,7 @@
 
 class Coreon.Views.Terms.TermsView extends Backbone.View
 
-  className: 'terms'
+  className: 'terms show'
 
   events:
     'click .properties-toggle': 'toggleAllProperties'

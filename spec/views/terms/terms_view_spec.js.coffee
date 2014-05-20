@@ -29,6 +29,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
   it 'creates container', ->
     el = view.$el
     expect(el).to.have.class 'terms'
+    expect(el).to.have.class 'show'
 
   describe '#initialize()', ->
 
