@@ -8,6 +8,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
   concept = null
   application = null
   template = null
+  can = null
   view = null
 
   buildConcept = (property, terms) ->
@@ -63,7 +64,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       model: concept
       app: application
 
-    @stub Coreon.Helpers, 'can'
+    can = @stub Coreon.Helpers, 'can'
     Coreon.Helpers.can.returns true
 
   it 'is a Backbone view', ->
@@ -99,6 +100,24 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     it 'creates empty set for subviews', ->
       subviews = view.subviews
       expect(subviews).to.be.emptyArray
+
+  describe '#editing()', ->
+
+    it 'defaults to no', ->
+      editing = view.editing()
+      expect(editing).to.be.false
+
+    it 'delegates to application', ->
+      application.set 'editing', on, silent: yes
+      editing = view.editing()
+      expect(editing).to.be.true
+
+    it 'is never true without sufficient privileges', ->
+      application.set 'editing', on, silent: yes
+      can.withArgs('manage').returns no
+      editing = view.editing()
+      expect(editing).to.be.false
+
 
   describe '#render()', ->
 
@@ -209,7 +228,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           expect(data).to.have.property 'hasTermProperties', yes
 
         it 'passes edit states', ->
-          application.set 'editing', on, silent: yes
+          view.editing = -> on
           view.editProperties = on
           view.editTerm = on
           view.render()

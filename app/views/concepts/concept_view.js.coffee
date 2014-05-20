@@ -89,7 +89,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     conceptData = @conceptData @model
     termGroups = @termGroups @model, @app
     hasTermProperties = @model.terms().hasProperties() #TODO 140508 move this back here?
-    editing = @app.get 'editing'
+    editing = @editing()
 
     @$el.html @template
       model: @model #TODO 140508 [tc] remove direct reference to model
@@ -153,6 +153,9 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
       sortedTermsByLang.push [lang, terms] unless lang in langs
 
     sortedTermsByLang
+
+  editing: ->
+    if Coreon.Helpers.can('manage') and @app.get('editing') then on else off
 
   toggleSystemInfo: (evt) ->
     @$(".system-info")
