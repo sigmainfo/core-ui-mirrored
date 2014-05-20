@@ -132,6 +132,7 @@ en:
     title: "Terms"
     add: "Add term"
     empty: "No terms for this language"
+    toggle_all_properties: "Toggle all properties"
     properties:
       toggle_all:
         label: 'Toggle all properties'

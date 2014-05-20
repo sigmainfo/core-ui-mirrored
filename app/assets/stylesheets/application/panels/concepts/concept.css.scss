@@ -22,7 +22,7 @@ div.concept {
     padding-right: 6px;
   }
 
-  .add-to-clipboard, .remove-from-clipboard, .toggle-system-info, .properties-toggle {
+  .add-to-clipboard, .remove-from-clipboard, .toggle-system-info, .toggle-all-properties {
     text-indent: -2000px;
     overflow: hidden;
     display: inline-block;
@@ -48,7 +48,7 @@ div.concept {
     }
   }
 
-  .properties-toggle {
+  .toggle-all-properties {
     float: right;
     background-position: -49px -599px;
     margin: 6px;
@@ -352,12 +352,11 @@ div.concept {
         padding-bottom: 0px;
       }
     }
-    .properties-toggle {
+
+    .toggle-all-properties {
       margin: 4px 2px 2px 0;
     }
   }
-
-
 
   div.concept.show, div.concept.edit {
     section.language {

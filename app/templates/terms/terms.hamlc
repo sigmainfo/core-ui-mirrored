@@ -1,6 +1,4 @@
-- if @hasProperties
-  %h4.properties-toggle{title: I18n.t('terms.properties.toggle-all')}
-    = I18n.t('terms.properties.toggle-all')
+!= @action_for 'terms.toggle_all_properties'
 - for language in @languages
   %section.language{class: language.className, 'data-id': language.id}
     %h3= language.id

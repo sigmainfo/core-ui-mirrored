@@ -1,3 +1,4 @@
+-# TODO 140520 [tc] use action_for helper for toggle
 %h3{title: I18n.t('properties.toggle')}= I18n.t('properties.title')
 - if @can 'manage'
   .edit

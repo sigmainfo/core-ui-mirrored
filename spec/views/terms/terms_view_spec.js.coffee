@@ -244,7 +244,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
 
     beforeEach ->
       view.$el.html '''
-        <h4 class="properties-toggle">Toggle all properties</h4>
+        <h4 class="toggle-all-properties">Toggle all properties</h4>
         <ul>
           <li class="term">
             <section class="properties collapsed">
@@ -261,7 +261,7 @@ describe 'Coreon.Views.Terms.TermsView', ->
         </ul>
       '''
       $('#konacha').append view.$el
-      toggle = view.$('.properties-toggle')
+      toggle = view.$('.toggle-all-properties')
       event = $.Event 'click'
       event.target = toggle.el
 

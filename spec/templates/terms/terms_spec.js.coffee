@@ -1,20 +1,32 @@
 #= require spec_helper
 #= require templates/terms/terms
+#= require templates/helpers/action_for
 
 describe 'Coreon.Templates[terms/terms]', ->
 
   template = Coreon.Templates['terms/terms']
+  action_for = null
   data = null
 
   render = ->
     $('<div>').html(template data)
 
   beforeEach ->
+    action_for = @stub().returns ''
     data =
       languages: []
-      hasProperties: no
+      action_for: action_for
 
-  context 'languages', ->
+  context 'actions', ->
+
+    it 'renders properties toggle', ->
+      action_for
+        .withArgs('terms.toggle_all_properties')
+        .returns '<a class="toggle-all-properties" href="#">Toggle all</a>'
+      el = render()
+      expect(el).to.have 'a.toggle-all-properties'
+
+  context 'language sections', ->
 
     language = null
 
@@ -63,23 +75,3 @@ describe 'Coreon.Templates[terms/terms]', ->
       expect(li).to.have.lengthOf 1
       expect(li).to.have.class 'no-terms'
       expect(li).to.have.text '[No terms]'
-
-  context 'properties', ->
-
-    it 'renders toggle when applicable', ->
-      data.hasProperties = yes
-      I18n.t
-        .withArgs('terms.properties.toggle-all')
-        .returns 'Toggle all properties'
-      el = render()
-      toggle = el.find('.properties-toggle')
-      expect(toggle).to.exist
-      expect(toggle).to.have.attr 'title', 'Toggle all properties'
-      text = toggle.text().trim()
-      expect(text).to.equal 'Toggle all properties'
-
-    it 'does not render toggle when not applicable', ->
-      data.hasProperties = no
-      el = render()
-      toggle = el.find('.properties-toggle')
-      expect(toggle).to.not.exist

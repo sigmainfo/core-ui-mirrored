@@ -8,7 +8,7 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
   className: 'terms show'
 
   events:
-    'click .properties-toggle': 'toggleAllProperties'
+    'click .toggle-all-properties': 'toggleAllProperties'
 
   initialize: (options = {}) ->
     _(options).defaults
