@@ -57,3 +57,14 @@ chai.use (chai, utils) -> # custom matchers
       copiedAttrs = copy.attributes
       new chai.Assertion(copiedAttrs).to.not.equal originalAttrs
       new chai.Assertion(copiedAttrs).to.eql originalAttrs
+
+  chai.Assertion.addMethod 'childOf', (parent) ->
+    obj = utils.flag @, 'object'
+    parentNode = $(parent)[0]
+    childNode  = $(obj)[0]
+    assertion = new chai.Assertion
+    utils.transferFlags @, assertion, no
+    expectation = if utils.flag @, 'negation' then no else yes
+    assertion.assert $.contains(parentNode, childNode) is expectation
+                  , "Expected #{childNode} to be a child node of #{parentNode}"
+                  , "Expected #{childNode} to not be a child node of #{parentNode}"

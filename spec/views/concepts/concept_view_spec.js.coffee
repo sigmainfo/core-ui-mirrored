@@ -181,7 +181,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         broaderAndNarrowerView.render = @stub().returns broaderAndNarrowerView
         view.render()
         expect(broaderAndNarrowerView.render).to.have.been.calledOnce
-        expect($.contains view.el, broaderAndNarrowerView.el).to.be.true
+        expect(broaderAndNarrowerView.el).to.be.childOf view.el
 
     context 'template', ->
 
@@ -274,10 +274,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         render.returns subview
         view.render()
         expect(render).to.have.been.calledOnce
-        el = view.el
-        node = subview.el
-        expect($.contains el, node).to.be.true
-
+        expect(subview.el).to.be.childOf view.el
 
       #TODO 140508 [tc] extract edit properties view
 
@@ -314,9 +311,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           render.returns subview
           view.render()
           expect(render).to.have.been.calledOnce
-          el = view.el
-          node = subview.el
-          expect($.contains el, node).to.be.true
+          expect(subview.el).to.be.childOf view.el
 
       context 'edit', ->
 
@@ -1134,7 +1129,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
       it 'removes term from listing', ->
         li = view.$('.term')[0]
         action()
-        expect( $.contains(view.$el[0], li) ).to.be.false
+        expect(li).not.to.be.childOf view.el
 
       it 'destroys model', ->
         term = view.model.terms().at 0
