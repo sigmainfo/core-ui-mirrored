@@ -118,12 +118,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
         @$('.broader-and-narrower').after propertiesView.render().$el
         @subviews.push propertiesView
 
-    termsView =
-      if editing
-        terms = new Backbone.Collection @model.terms().toJSON()
-        new Coreon.Views.Terms.EditTermsView model: terms
-      else
-        new Coreon.Views.Terms.TermsView model: @model.terms()
+    termsViewType = if editing then 'EditTermsView' else 'TermsView'
+    termsView = new Coreon.Views.Terms[termsViewType] model: @model.terms()
     @$el.append termsView.render().$el
     @subviews.push termsView
 
