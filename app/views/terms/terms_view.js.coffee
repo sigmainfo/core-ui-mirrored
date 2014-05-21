@@ -36,9 +36,7 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
       className: lang[0..1].toLowerCase()
       empty: lang in emptyLangs
 
-    @$el.html @template
-      languages: languages
-      hasProperties: @model.hasProperties()
+    @$el.html @template languages: languages
 
     @model.forEach (term) =>
       termView = new Coreon.Views.Terms.TermView
@@ -50,9 +48,13 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
 
     @$('.properties')
       .addClass('collapsed')
-
       .children('div').not('.edit')
         .hide()
+
+    hasTermProperties = _(@model.models).any (term) ->
+      term.get('properties').length > 0
+    unless hasTermProperties
+      @$('.toggle-all-properties').hide()
 
     @
 

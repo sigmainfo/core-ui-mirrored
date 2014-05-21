@@ -17,11 +17,14 @@ describe 'Coreon.Views.Terms.TermsView', ->
 
     collection = new Backbone.Collection
     collection.langs = -> []
-    collection.hasProperties = -> no
 
     view = new Coreon.Views.Terms.TermsView
       model: collection
       app: app
+
+  buildTerm = (attrs = {}) ->
+    _(attrs).defaults properties: []
+    term = new Backbone.Model attrs
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
@@ -81,10 +84,9 @@ describe 'Coreon.Views.Terms.TermsView', ->
 
     it 'updates content via template', ->
       view.$el.html '<ul class="old"></ul>'
-      template.withArgs(
-        languages: []
-        hasProperties: no
-      ).returns '<ul class="terms"></ul>'
+      template
+        .withArgs(languages: [])
+        .returns '<ul class="terms"></ul>'
       view.render()
       updated = view.$('ul.terms')
       expect(updated).to.exist
@@ -99,6 +101,29 @@ describe 'Coreon.Views.Terms.TermsView', ->
       expect(remove).to.have.been.calledOnce
       subviews = view.subviews
       expect(subviews).to.be.empty
+
+    context 'properties toggle', ->
+
+      term = null
+
+      beforeEach ->
+        term = buildTerm()
+        collection.reset [term], silent: yes
+        template.returns '<a class="toggle-all-properties" href="#">toggle</a>'
+        view.$el.appendTo 'body'
+
+      toggle = (view) ->
+        view.$ '.toggle-all-properties'
+
+      it 'keeps toggle visible when there are term properties', ->
+        term.set 'properties', [key: 'label', value: 'gun'], silent: yes
+        view.render()
+        expect(toggle view).to.be.visible
+
+      it 'hides toggle when there are no term properties', ->
+        term.set 'properties', {}, silent: yes
+        view.render()
+        expect(toggle view).to.be.hidden
 
     context 'languages', ->
 
@@ -162,30 +187,14 @@ describe 'Coreon.Views.Terms.TermsView', ->
         language = template.firstCall.args[0].languages[0]
         expect(language).to.have.property 'empty', yes
 
-    context 'hasProperties', ->
-
-      it 'is false when there are no properties on any term', ->
-        collection.hasProperties = -> no
-        view.render()
-        expect(template).to.have.been.calledOnce
-        data = template.firstCall.args[0]
-        expect(data).to.have.property 'hasProperties', no
-
-      it 'is true when there are properties on any term', ->
-        collection.hasProperties = -> yes
-        view.render()
-        expect(template).to.have.been.calledOnce
-        data = template.firstCall.args[0]
-        expect(data).to.have.property 'hasProperties', yes
-
     context 'terms', ->
 
       term = null
       subview = null
 
       beforeEach ->
-        collection.reset [lang: 'de', value: 'Schuh']
-        [term] = collection.models
+        term = buildTerm()
+        collection.reset [term], silent: yes
         subview = new Backbone.View
         constructor = Coreon.Views.Terms.TermView
         constructor.returns subview
