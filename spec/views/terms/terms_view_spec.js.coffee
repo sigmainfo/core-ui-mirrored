@@ -67,13 +67,20 @@ describe 'Coreon.Views.Terms.TermsView', ->
       subviews = view.subviews
       expect(subviews).to.exist
 
+  describe '#langs()', ->
+
+    it 'delegates to module', ->
+      expect(view.langs).to.equal Coreon.Modules.LanguageSections.langs
+
   describe '#render()', ->
 
     template = null
 
+    el = (view) ->
+      view.$el
+
     beforeEach ->
-      template = @stub()
-      view.template = template
+      template = @stub view, 'template'
       app.set 'langs', [], silent: yes
       collection.reset [], silent: yes
       collection.langs = -> []
@@ -81,17 +88,6 @@ describe 'Coreon.Views.Terms.TermsView', ->
     it 'can be chained', ->
       result = view.render()
       expect(result).to.equal view
-
-    it 'updates content via template', ->
-      view.$el.html '<ul class="old"></ul>'
-      template
-        .withArgs(languages: [])
-        .returns '<ul class="terms"></ul>'
-      view.render()
-      updated = view.$('ul.terms')
-      expect(updated).to.exist
-      old = view.$('ul.old')
-      expect(old).to.not.exist
 
     it 'clears subviews', ->
       remove = @spy()
@@ -102,90 +98,39 @@ describe 'Coreon.Views.Terms.TermsView', ->
       subviews = view.subviews
       expect(subviews).to.be.empty
 
-    context 'properties toggle', ->
+    context 'template', ->
 
-      term = null
+      langs = null
 
       beforeEach ->
-        term = buildTerm()
-        collection.reset [term], silent: yes
-        template.returns '<a class="toggle-all-properties" href="#">toggle</a>'
-        view.$el.appendTo 'body'
+        langs = @stub(view, 'langs')
+          .returns []
+        template.returns ''
 
-      toggle = (view) ->
-        view.$ '.toggle-all-properties'
-
-      it 'keeps toggle visible when there are term properties', ->
-        term.set 'properties', [key: 'label', value: 'gun'], silent: yes
+      it 'wipes out old markup', ->
+        view.$el.html '<ul class="old"></ul>'
         view.render()
-        expect(toggle view).to.be.visible
+        expect(el view).to.not.have '.old'
 
-      it 'hides toggle when there are no term properties', ->
-        term.set 'properties', {}, silent: yes
+      it 'collects langs', ->
+        collection.langs = -> ['en']
+        app.langs = -> ['en', 'de', 'fr']
+        app.set 'langs', [], silent: yes
         view.render()
-        expect(toggle view).to.be.hidden
+        expect(langs).to.have.been.calledOnce
+        expect(langs).to.have.been.calledWith ['en'], ['en', 'de', 'fr'], []
 
-    context 'languages', ->
-
-      it 'creates language groups from used langs', ->
-        collection.langs = -> ['de']
+      it 'calls template', ->
+        languages = [ id: 'en' ]
+        langs.returns languages
         view.render()
         expect(template).to.have.been.calledOnce
-        languages = template.firstCall.args[0].languages
-        expect(languages).eql [id: 'de', className: 'de', empty: no]
+        expect(template).to.have.been.calledWith languages: languages
 
-      it 'unifies class name', ->
-        collection.langs = -> ['DE-AT']
+      it 'inserts markup from template', ->
+        template.returns '<section class="lang en"></section>'
         view.render()
-        expect(template).to.have.been.calledOnce
-        language = template.firstCall.args[0].languages[0]
-        expect(language).to.have.property 'className', 'de'
-        expect(language).to.have.property 'id', 'DE-AT'
-
-      it 'sorts language groups by available language order', ->
-        app.langs = -> ['fr', 'hu', 'de']
-        collection.langs = -> ['hu', 'de', 'fr']
-        view.render()
-        expect(template).to.have.been.calledOnce
-        langs = template.firstCall.args[0].languages.map (language) ->
-          language.id
-        expect(langs).eql ['fr', 'hu', 'de']
-
-      it 'appends language groups for unknown langs', ->
-        app.langs = -> ['fr']
-        collection.langs = -> ['hu', 'fr']
-        view.render()
-        expect(template).to.have.been.calledOnce
-        langs = template.firstCall.args[0].languages.map (language) ->
-          language.id
-        expect(langs).eql ['fr', 'hu']
-
-      it 'prepends language groups for selection', ->
-        app.langs = -> ['fr', 'hu', 'de']
-        app.set 'langs', ['de', 'hu']
-        collection.langs = -> ['hu', 'de', 'fr']
-        view.render()
-        expect(template).to.have.been.calledOnce
-        langs = template.firstCall.args[0].languages.map (language) ->
-          language.id
-        expect(langs).eql ['de', 'hu', 'fr']
-
-      it 'prepends selected languages even when not present', ->
-        app.langs = -> ['fr', 'hu', 'de']
-        app.set 'langs', ['de', 'hu'], silent: yes
-        collection.langs = -> ['hu', 'el']
-        view.render()
-        expect(template).to.have.been.calledOnce
-        langs = template.firstCall.args[0].languages.map (language) ->
-          language.id
-        expect(langs).eql ['de', 'hu', 'el']
-
-      it 'marks empty language groups', ->
-        app.set 'langs', ['de'], silent: yes
-        collection.langs -> []
-        view.render()
-        language = template.firstCall.args[0].languages[0]
-        expect(language).to.have.property 'empty', yes
+        expect(el view).to.have 'section.lang.en'
 
     context 'terms', ->
 
@@ -245,6 +190,29 @@ describe 'Coreon.Views.Terms.TermsView', ->
         expect(properties).to.have.class 'collapsed'
         container = properties.children('div')
         expect(container).to.be.hidden
+
+    context 'properties toggle', ->
+
+      term = null
+
+      beforeEach ->
+        term = buildTerm()
+        collection.reset [term], silent: yes
+        template.returns '<a class="toggle-all-properties" href="#">toggle</a>'
+        view.$el.appendTo 'body'
+
+      toggle = (view) ->
+        view.$ '.toggle-all-properties'
+
+      it 'keeps toggle visible when there are term properties', ->
+        term.set 'properties', [key: 'label', value: 'gun'], silent: yes
+        view.render()
+        expect(toggle view).to.be.visible
+
+      it 'hides toggle when there are no term properties', ->
+        term.set 'properties', {}, silent: yes
+        view.render()
+        expect(toggle view).to.be.hidden
 
   describe '#toggleAllProperties()', ->
 

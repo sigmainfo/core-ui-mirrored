@@ -342,7 +342,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         term = null
 
         beforeEach ->
-          #TODO 140507 [tc] extract edit template view
           template.restore()
           view.template = Coreon.Templates['concepts/concept']
 
@@ -356,33 +355,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           concept.termsByLang = => de: [ term ]
           application.langs = -> [ 'de' ]
 
-        it 'renders container', ->
-          view.render()
-          expect( view.$el ).to.have '.terms'
-
-        it 'renders section for languages', ->
-          term1 = new Backbone.Model
-          term1.info = -> {}
-          term1.propertiesByKey = -> []
-          term2 = new Backbone.Model
-          term2.info = -> {}
-          term2.propertiesByKey = -> []
-          application.langs = -> [ 'de', 'en', 'hu' ]
-          concept.termsByLang = ->
-            de: [ term1 ]
-            en: [ term2 ]
-          view.render()
-          expect( view.$el ).to.have '.terms section.language'
-          expect( view.$('section.language') ).to.have.lengthOf 2
-          expect( view.$('section.language').eq(0) ).to.have.class 'de'
-          expect( view.$('section.language').eq(1) ).to.have.class 'en'
-
-        it 'renders caption for language', ->
-          concept.termsByLang = => de: [ term ]
-          view.render()
-          expect( view.$('.language') ).to.have 'h3'
-          expect( view.$('.language h3') ).to.have.text 'de'
-
         it 'renders terms', ->
           term.set 'value', 'top hat', silent: true
           concept.termsByLang = => de: [ term ]
@@ -390,35 +362,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
           expect( view.$('.language') ).to.have '.term'
           expect( view.$('.term') ).to.have '.value'
           expect( view.$('.term .value') ).to.have.text 'top hat'
-
-        it 'renders placeholder text when terms in source lang are empty', ->
-          I18n.t.withArgs('terms.empty').returns 'No terms for this language'
-          application.sourceLang = -> 'de'
-          application.langs = -> ['de', 'hu', 'en']
-          concept.termsByLang = => {}
-          view.render()
-          expect( view.$('.language.de') ).to.not.have '.term'
-          expect( view.$('.language.de') ).to.have '.no-terms'
-          expect( view.$('.de .no-terms') ).to.have.text 'No terms for this language'
-
-        it 'renders placeholder text when terms in target lang are empty', ->
-          I18n.t.withArgs('terms.empty').returns 'No terms for this language'
-          application.targetLang = -> 'hu'
-          application.langs = -> ['de', 'hu', 'en']
-          concept.termsByLang = => {}
-          view.render()
-          expect( view.$('.language.hu') ).to.not.have '.term'
-          expect( view.$('.language.hu') ).to.have '.no-terms'
-          expect( view.$('.hu .no-terms') ).to.have.text 'No terms for this language'
-
-        it 'renders unknown langs', ->
-          term.set 'value', 'foo', silent: true
-          application.langs = -> ['de', 'hu', 'en']
-          concept.termsByLang = => ko: [ term ]
-          view.render()
-          expect( view.$('.language.ko') ).to.exist
-          expect( view.$('.language.ko') ).to.have '.term'
-          expect( view.$('.ko .term .value') ).to.have.text 'foo'
 
         it 'renders system info for of term', ->
           term.info = -> id: '#1234'
@@ -453,20 +396,6 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
             I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
             view.render()
             expect( view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
-
-          it 'renders toggle all button', ->
-            I18n.t.withArgs('terms.properties.toggle-all.hint').returns 'Toggle all properties'
-            terms.hasProperties = -> yes
-            view.render()
-            expect( view.$('.terms') ).to.have '> .properties-toggle'
-            toggle = view.$('.terms > .properties-toggle')
-            expect( toggle ).to.have.attr 'title', 'Toggle all properties'
-
-          it 'renders toggle button only when applicable', ->
-            term.propertiesByKeyAndLang = -> {}
-            terms.hasProperties = -> no
-            view.render()
-            expect( view.$('.terms') ).to.not.have '.properties-toggle'
 
         context 'with edit privileges', ->
 

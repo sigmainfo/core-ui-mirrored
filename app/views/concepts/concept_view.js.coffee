@@ -30,6 +30,7 @@
 
 class Coreon.Views.Concepts.ConceptView extends Backbone.View
 
+  # TODO 140522 [tc] deprecate module helpers in favor of using Underscore
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable

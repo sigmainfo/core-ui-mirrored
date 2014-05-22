@@ -1,4 +1,4 @@
--# != @render 'terms/terms'
+!= @render 'terms/terms', languages: @languages
 
 -#   - if @hasTermProperties
 -#     %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.properties.toggle-all'

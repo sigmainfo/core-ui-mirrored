@@ -2,8 +2,11 @@
 #= require helpers/render
 #= require templates/terms/terms
 #= require views/terms/term_view
+#= require modules/language_sections
 
 class Coreon.Views.Terms.TermsView extends Backbone.View
+
+  _(@::).extend Coreon.Modules.LanguageSections
 
   className: 'terms show'
 
@@ -23,18 +26,7 @@ class Coreon.Views.Terms.TermsView extends Backbone.View
     _(@subviews).invoke 'remove'
     @subviews = []
 
-    selectedLangs  = @app.get('langs')
-    availableLangs = @app.langs()
-    usedLangs      = @model.langs()
-
-    presentLangs = _.intersection availableLangs, usedLangs
-    emptyLangs   = _.difference selectedLangs, presentLangs
-    langs        = _.union selectedLangs, presentLangs, usedLangs
-
-    languages = langs.map (lang) ->
-      id: lang
-      className: lang[0..1].toLowerCase()
-      empty: lang in emptyLangs
+    languages = @langs @model.langs(), @app.langs(), @app.get('langs')
 
     @$el.html @template languages: languages
 
