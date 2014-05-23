@@ -3,268 +3,175 @@
 
 describe "Coreon.Views.CompositeView", ->
 
+  collection = null
+  view = null
+
+  stubModel = ->
+    {}
+
+  stubCollection = ->
+    models: []
+
+  stubSubview = ->
+    render: -> @
+    remove: ->
+    el: $('<div>')
+
   beforeEach ->
-    @view = new Coreon.Views.CompositeView
-    @subview = @subview1 = new Coreon.Views.SimpleView className: "subview", id: "subview1"
-    @subview2 = new Coreon.Views.SimpleView className: "subview", id: "subview2"
+    collection = stubCollection()
+    view = new Coreon.Views.CompositeView model: collection
 
-  afterEach ->
-    view.destroy() for view in [@view, @subview1, @subview2]
+  describe '#initialize()', ->
 
-  it "is a Coreon view", ->
-    @view.should.be.an.instanceof Coreon.Views.SimpleView
+    it 'creates empty list for subviews', ->
+      expect(view).to.have.property('subviews').that.is.an.emptyArray
 
-  it "creates an empty subview collection by default", ->
-    @view.subviews.should.eql []
+  describe '#render()', ->
 
-  describe "#add", ->
+    it 'can be chained', ->
+      result = view.render()
+      expect(result).to.equal view
 
-    it "adds view to subviews", ->
-      @view.add @subview
-      @view.subviews.should.have.lengthOf 1
-      @view.subviews[0].should.equal @subview
+    it 'renders subviews', ->
+      renderSubviews = @spy view, 'renderSubviews'
+      view.render()
+      expect(renderSubviews).to.have.been.calledOnce
 
-    it "adds view only once", ->
-      @view.add @subview
-      @view.add @subview
-      @view.subviews.should.have.lengthOf 1
-      @view.subviews[0].should.equal @subview
+  describe '#renderSubviews()', ->
 
-    it "takes multiple views simultaneously", ->
-      @view.add @subview1, @subview2
-      @view.subviews.should.eql [@subview1, @subview2]
+    it 'removes subviews', ->
+      removeSubviews = @spy view, 'removeSubviews'
+      view.renderSubviews()
+      expect(removeSubviews).to.have.been.calledOnce
 
-  describe "#drop", ->
+    it 'creates subviews for models', ->
+      createSubviews = @spy view, 'createSubviews'
+      models = [ stubModel() ]
+      view.renderSubviews models
+      expect(createSubviews).to.have.been.calledOnce
+      expect(createSubviews).to.have.been.calledWith models
 
-    beforeEach ->
-      @view.add @subview1, @subview2
+    it 'creates subviews from collection by default', ->
+      createSubviews = @spy view, 'createSubviews'
+      models = [ stubModel() ]
+      collection.models = models
+      view.renderSubviews()
+      expect(createSubviews).to.have.been.calledWith models
 
-    it "removes view from subviews", ->
-      @view.drop @subview2
-      @view.subviews.should.eql [@subview1]
+    it 'renders created subviews', ->
+      subview = stubSubview()
+      render = @spy subview, 'render'
+      createSubviews = @stub(view, 'createSubviews').returns [subview]
+      view.renderSubviews [ stubModel() ]
+      expect(render).to.have.been.calledOnce
 
-    it "takes multiple arguments", ->
-      @view.drop @subview2, @subview1
-      @view.subviews.should.eql []
+    it 'inserts rendered subviews', ->
+      subviews = [ stubSubview() ]
+      createSubviews = @stub(view, 'createSubviews').returns subviews
+      insertSubviews = @stub view, 'insertSubviews'
+      view.renderSubviews [ stubModel() ]
+      expect(insertSubviews).to.have.been.calledOnce
+      expect(insertSubviews).to.have.been.calledWith subviews
 
+    it 'returns rendered subviews', ->
+      subviews = [ stubSubview() ]
+      createSubviews = @stub(view, 'createSubviews').returns subviews
+      result = view.renderSubviews [ stubModel() ]
+      expect(result).to.equal subviews
 
-  describe "#append", ->
+  describe '#removeSubviews()', ->
 
-    it "adds subview to collection", ->
-      @view.append @subview
-      @view.subviews.should.eql [@subview]
+    it 'triggers removal of subviews', ->
+      subview = stubSubview()
+      remove = @spy subview, 'remove'
+      view.removeSubviews [subview]
+      expect(remove).to.have.been.calledOnce
 
-    it "appends el", ->
-      @view.append @subview
-      @view.$el.should.have ".subview"
+    it 'defaults to remove all subviews', ->
+      subview = stubSubview()
+      remove = @spy subview, 'remove'
+      view.subviews = [subview]
+      view.removeSubviews()
+      expect(remove).to.have.been.calledOnce
 
-    it "appends el to matching node", ->
-      @view.$el.append $("<div>").addClass("target")
-      @view.append ".target", @subview
-      @view.$(".target").should.have ".subview"
+    it 'removes references to subviews', ->
+      subview1 = stubSubview()
+      subview2 = stubSubview()
+      view.subviews = [subview1, subview2]
+      view.removeSubviews [subview1]
+      expect(view.subviews).to.eql [subview2]
 
-    it "calls delegateEvents on subview", ->
-      @subview.delegateEvents = @spy()
-      @view.append @subview
-      @subview.delegateEvents.should.have.been.calledOnce
+  describe '#createSubviews()', ->
 
-    it "takes multiple subviews as arguments", ->
-      @view.append @subview1, @subview2
-      @view.$el.should.have "#subview1"
-      @view.$el.should.have "#subview2"
+    it 'creates subviews for models', ->
+      model = stubModel()
+      factory = @spy view, 'createSubview'
+      view.createSubviews [model]
+      expect(factory).to.have.been.calledOnce
+      expect(factory).to.have.been.calledWith model
 
-  describe "#prepend", ->
+    it 'defaults to models from collection', ->
+      model = stubModel()
+      factory = @spy view, 'createSubview'
+      collection.models = [model]
+      view.createSubviews()
+      expect(factory).to.have.been.calledOnce
+      expect(factory).to.have.been.calledWith model
 
-    it "adds subview to collection", ->
-      @view.prepend @subview
-      @view.subviews.should.eql [@subview]
+    it 'adds references to subviews', ->
+      subview1 = stubSubview()
+      subview2 = stubSubview()
+      view.createSubview = -> subview2
+      view.subviews = [subview1]
+      view.createSubviews [ stubModel() ]
+      expect(view.subviews).to.eql [subview1, subview2]
 
-    it "prepends el", ->
-      @view.$el.prepend = @spy()
-      @view.prepend @subview
-      @view.$el.prepend.should.have.been.calledWith @subview.$el
+    it 'returns newly created subviews', ->
+      subview1 = stubSubview()
+      subview2 = stubSubview()
+      view.createSubview = -> subview2
+      view.subviews = [subview1]
+      result = view.createSubviews [ stubModel() ]
+      expect(result).to.eql [subview2]
 
-    it "prepends el to matching node", ->
-      @view.$el.append $("<div>").addClass("target")
-      @view.prepend ".target", @subview
-      @view.$(".target").should.have ".subview"
+  describe 'createSubview()', ->
 
-    it "calls delegateEvents on subview", ->
-      @subview.delegateEvents = @spy()
-      @view.prepend @subview
-      @subview.delegateEvents.should.have.been.calledOnce
-
-    it "takes multiple subviews as arguments", ->
-      @view.prepend @subview1, @subview2
-      @view.$el.should.have "#subview1"
-      @view.$el.should.have "#subview2"
-
-  describe "#render", ->
-
-    beforeEach ->
-      @view.subviews = [@subview1, @subview2]
-
-    it "can be chained", ->
-      @view.render().should.equal @view
-
-    it "calls render on every subview", ->
-      @subview1.render = @spy()
-      @subview2.render = @spy()
-      @view.render()
-      @subview1.render.should.have.been.calledOnce
-      @subview2.render.should.have.been.calledOnce
-
-    it "calls super", ->
-      @spy Coreon.Views.SimpleView::, "render"
-      @view.render()
-      Coreon.Views.SimpleView::render.should.have.been.calledOn @view
-
-  describe "#delegateEvents", ->
-
-    beforeEach ->
-      @view.subviews = [@subview1, @subview2]
-
-    it "calls delegateEvents on every subview", ->
-      @subview1.delegateEvents = @spy()
-      @subview2.delegateEvents = @spy()
-      @view.delegateEvents()
-      @subview1.delegateEvents.should.have.been.calledOnce
-      @subview2.delegateEvents.should.have.been.calledOnce
-
-    it "calls super", ->
-      @spy Coreon.Views.SimpleView::, "delegateEvents"
-      @view.delegateEvents()
-      Coreon.Views.SimpleView::delegateEvents.should.have.been.calledOn @view
-
-    it "passes arguments to calls", ->
-      method = ->
-      @spy Coreon.Views.SimpleView::, "delegateEvents"
-      @view.delegateEvents "click": method
-      Coreon.Views.SimpleView::delegateEvents.should.always.have.been.calledWithExactly "click": method
-
-
-  describe "#undelegateEvents", ->
+    model = null
 
     beforeEach ->
-      @view.subviews = [@subview1, @subview2]
+      model = stubModel()
 
-    it "calls undelegateEvents on every subview", ->
-      @subview1.undelegateEvents = @spy()
-      @subview2.undelegateEvents = @spy()
-      @view.undelegateEvents()
-      @subview1.undelegateEvents.should.have.been.calledOnce
-      @subview2.undelegateEvents.should.have.been.calledOnce
+    it 'creates plain Backbone view', ->
+      result = view.createSubview model
+      expect(result).to.be.an.instanceOf Backbone.View
 
+    it 'assigns model instance', ->
+      result = view.createSubview model
+      expect(result).to.have.property 'model', model
 
-    it "calls super", ->
-      @spy Coreon.Views.SimpleView::, "undelegateEvents"
-      @view.undelegateEvents()
-      Coreon.Views.SimpleView::undelegateEvents.should.have.been.calledOn @view
+  describe '#insertSubviews()', ->
 
-  describe "#remove", ->
+    subview = null
 
     beforeEach ->
-      @view.subviews = [@subview1, @subview2]
+      subview = stubSubview()
 
-    context "with no arguments", ->
+    it 'inserts each subview', ->
+      insert = @spy view, 'insertSubview'
+      view.insertSubviews [subview]
+      expect(insert).to.have.been.calledOnce
+      expect(insert).to.have.been.calledWith subview
 
-      it "removes element", ->
-        @view.$el.remove = @spy()
-        @view.remove()
-        @view.$el.remove.should.have.been.calledOnce
+    it 'defaults to all subviews', ->
+      insert = @spy view, 'insertSubview'
+      view.subviews = [subview]
+      view.insertSubviews()
+      expect(insert).to.have.been.calledOnce
+      expect(insert).to.have.been.calledWith subview
 
-    context "with arguments", ->
+  describe '#insertSubview()', ->
 
-      it "removes subview elements", ->
-        @view.$el.remove = @spy()
-        @subview1.$el.remove = @spy()
-        @subview2.$el.remove = @spy()
-        @view.remove @subview2
-        @subview2.$el.remove.should.have.been.calledOnce
-        @view.$el.remove.should.not.have.been.called
-        @subview1.$el.remove.should.not.have.been.called
-
-      it "drops removed subviews", ->
-        @view.remove @subview2
-        @view.subviews.should.eql [@subview1]
-
-  describe "#destroy", ->
-
-    beforeEach ->
-      @view.subviews = [@subview1, @subview2]
-
-    context "with no arguments", ->
-
-      it "destroys subviews", ->
-        @subview1.destroy = @spy()
-        @subview2.destroy = @spy()
-        @view.destroy()
-        @subview1.destroy.should.have.been.calledOnce
-        @subview2.destroy.should.have.been.calledOnce
-
-      it "destroys itself", ->
-        @view.dissolve = @spy()
-        @view.remove = @spy()
-        @view.destroy()
-        @view.dissolve.should.have.been.calledOnce
-        @view.remove.should.have.been.calledOnce
-
-    context "with arguments", ->
-
-      it "destroys given subviews only", ->
-        @view.dissolve = @spy()
-        @view.remove = @spy()
-        @subview1.destroy = @spy()
-        @subview2.destroy = @spy()
-        @view.destroy @subview2
-        @subview2.destroy.should.have.been.calledOnce
-        @view.dissolve.should.not.have.been.called
-        @view. remove.should.not.have.been.called
-        @subview1.destroy.should.not.have.been.called
-
-     it "drops destroyed subviews", ->
-        @view.destroy @subview2
-        @view.subviews.should.eql [@subview1]
-
-  describe "#clear", ->
-
-   beforeEach ->
-      @view.subviews = [@subview1, @subview2]
-
-    it "clears subview references", ->
-      @view.clear()
-      @view.subviews.should.eql []
-
-    it "destroys subviews", ->
-      @subview1.destroy = @spy()
-      @subview2.destroy = @spy()
-      @view.clear()
-      @subview1.destroy.should.have.been.calledOnce
-      @subview2.destroy.should.have.been.calledOnce
-
-    it "calls super", ->
-      @spy Coreon.Views.SimpleView::, "clear"
-      @view.clear()
-      Coreon.Views.SimpleView::clear.should.have.been.calledOn @view
-
-    it "can be chained", ->
-      @view.clear().should.equal @view
-
-    it "does not destroy itself on empty subview list", ->
-      @view.subviews = []
-      @view.destroy = @spy()
-      @view.clear()
-      @view.destroy.should.not.have.been.called
-
-
-  describe "#destroy", ->
-
-    beforeEach ->
-      @view.subviews = [@subview1, @subview2]
-
-    it "destroys subviews", ->
-      @subview1.destroy = @spy()
-      @subview2.destroy = @spy()
-      @view.destroy()
-      @subview1.destroy.should.have.been.calledOnce
-      @subview2.destroy.should.have.been.calledOnce
+    it 'appends subview to container', ->
+      subview = stubSubview()
+      view.insertSubview subview
+      expect(subview.el).to.be.childOf view.el

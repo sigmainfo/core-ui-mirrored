@@ -1,55 +1,35 @@
 #= require environment
-#= require views/simple_view
 
-class Coreon.Views.CompositeView extends Coreon.Views.SimpleView
+class Coreon.Views.CompositeView extends Backbone.View
 
   initialize: ->
-    super
     @subviews = []
 
-  add: (views...) ->
-    @subviews = _(@subviews).union views
+  render: ->
+    @renderSubviews()
+    @
 
-  drop: (views...) ->
-    @subviews = _(@subviews).difference views
-  
-  for method in ["render", "delegateEvents", "undelegateEvents"]
-    do (method) ->
-      CompositeView::[method] = ->
-        CompositeView.__super__[method].apply @, arguments
-        subview[method].apply subview, arguments for subview in @subviews
-        @
+  renderSubviews: (models = @model.models) ->
+    @removeSubviews()
+    subviews = @createSubviews models
+    _(subviews).invoke 'render'
+    @insertSubviews subviews
+    subviews
 
-  for method in ["append", "prepend"]
-    do (method) ->
-      CompositeView::[method] = (selector, views...) ->
-        if typeof selector is "string"
-          collection = @$ selector
-          collection[method].apply collection, _(views).pluck "$el"
-        else
-          views.unshift selector
-          @$el[method].apply @$el, _(views).pluck "$el"
+  removeSubviews: (subviews = @subviews)->
+    _(subviews).invoke 'remove'
+    @subviews = _(@subviews).difference subviews
 
-        @add.apply @, views
-        view.delegateEvents() for view in views
+  createSubviews: (models = @model.models) ->
+    subviews = models.map @createSubview
+    @subviews = _(@subviews).union subviews
+    subviews
 
-  remove: (subviews...) ->
-    if subviews.length is 0
-      super
-    else
-      for subview in subviews
-        subview.remove() 
-        @drop subview
+  createSubview: (model) ->
+    new Backbone.View model: model
 
-  destroy: (subviews...) ->
-    if subviews.length is 0
-      subviews = @subviews
-      super
-    for subview in subviews
-      subview.remove()
-      subview.destroy() if subview.destroy
-      @drop subview
+  insertSubviews: (subviews = @subviews) ->
+    subviews.forEach _(@insertSubview).bind @
 
-  clear: ->
-    @destroy.apply @, @subviews if @subviews.length > 0
-    super
+  insertSubview: (subview) ->
+    @$el.append subview.el
