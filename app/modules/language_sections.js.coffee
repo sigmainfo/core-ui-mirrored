@@ -2,7 +2,7 @@
 
 Coreon.Modules.LanguageSections =
 
-  langs: (used, available = [], selected = []) ->
+  languageSections: (used, available = [], selected = []) ->
     present = _.intersection available, used
     empty = _.difference selected, present
 
