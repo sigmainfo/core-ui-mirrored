@@ -30,7 +30,7 @@ module EditSteps
     page.should have_no_css(".confirm")
   end
 
-  step 'I click "Edit concept"' do
+  step 'I toggle "EDIT MODE"' do
     click_link "Edit mode"
   end
 

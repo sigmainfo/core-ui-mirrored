@@ -19,6 +19,7 @@ class UserDragsConceptLabelToClipboard < Spinach::FeatureSteps
       fill_in "coreon-search-query", with: "panopticum"
       find('input[type="submit"]').click
     end
+    expect(page).to have_css('.concept-list-item a', text: 'panopticum')
   end
 
   step 'I should see two draggable elements' do

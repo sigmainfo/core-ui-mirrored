@@ -10,7 +10,7 @@ Feature: maintainer disconnects broader and narrower concepts
     And I am logged in
     And a concept with label "panopticum", superconcept "surveillance" and subconcept "camera" exists
     And I am on the show concept page of "panopticum"
-    And I click "Edit concept"
+    And I toggle "EDIT MODE"
     And I click "Edit broader & narrower concepts"
 
   @firefox

@@ -11,7 +11,7 @@ Feature: user drags concept label to clipboard
   Scenario: drag concept label to clipboard
     Given I visit the home page
     And I search for "panopticum"
-    Then I should see two draggable elements 
+    Then I should see two draggable elements
     When I drag the label of "panopticum" into the clipboard
     Then I should see "panopticum" in clipboard
     When I click on the "surveillance" concept

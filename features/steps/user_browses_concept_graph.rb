@@ -70,12 +70,16 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     @edges.should include("Nobody's Repository -> tool")
   end
 
-  step 'a concept "hand"' do
+  step 'a concept "hand" exists' do
     @concept = create_concept_with_label "hand"
   end
 
-  step 'a concept "handkerchief"' do
-    @concept = create_concept_with_label "handkerchief"
+  step 'a concept "second hand" exists' do
+    @concept = create_concept_with_label "second hand"
+  end
+
+  step 'a concept "hand-leafed" exists' do
+    @concept = create_concept_with_label "hand-leafed"
   end
 
   step 'I search for "hand"' do
@@ -89,8 +93,16 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
     page.should have_css("#coreon-concept-map .concept-node", text: "hand")
   end
 
-  step 'I should see a node "handkerchief"' do
-    page.should have_css("#coreon-concept-map .concept-node", text: "handkerchief")
+  step 'I should see "hand" displayed in the concept map' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "hand")
+  end
+
+  step 'I should see a node "second hand"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "second hand")
+  end
+
+  step 'I should see a node "hand-leafed"' do
+    page.should have_css("#coreon-concept-map .concept-node", text: "hand-leafed")
   end
 
   step 'all nodes should be classified as hits' do

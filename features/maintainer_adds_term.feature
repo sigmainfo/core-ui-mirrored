@@ -11,7 +11,7 @@ Feature: maintainer adds term
     And I visit the page of this concept
 
   Scenario: add term
-    When I click "Edit concept"
+    When I toggle "EDIT MODE"
     And I click "Add term"
     Then I should see a set of term inputs with labels "Value", "Language"
     When I fill in "Value" with "high hat" within term inputs
@@ -28,7 +28,7 @@ Feature: maintainer adds term
     And I should not see "Create term"
 
   Scenario: validation errors
-    When I click "Edit concept"
+    When I toggle "EDIT MODE"
     And I click "Add term"
     And client-side validation is turned off
     And I fill in "Value" with "high hat" within term inputs
@@ -48,7 +48,7 @@ Feature: maintainer adds term
     But I should see a message 'Successfully created term "high hat".'
 
   Scenario: cancel adding term
-    When I click "Edit concept"
+    When I toggle "EDIT MODE"
     And I click "Add term"
     And I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs

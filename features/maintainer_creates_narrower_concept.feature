@@ -11,7 +11,7 @@ Feature: maintainer creates narrower concept
   Scenario: create a narrower concept
     Given a concept with label "panopticum" exists
     When I visit the page of this concept
-    And I click "Edit concept"
+    And I toggle "EDIT MODE"
     Then I should see a button "Add narrower concept"
     When I click "Add narrower concept"
     Then I should be on the new concept page

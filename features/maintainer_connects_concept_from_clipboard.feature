@@ -13,10 +13,10 @@ Feature: maintainer connects concept from clipboard
 
   Scenario: connect a concept as subconcept
     Given I search for "panopticum"
-    And I drag the search result to the clipboard
+    When I drag the search result to the clipboard
     And I search for "surveillance"
     And I click on the search result
-    And I click "Edit concept"
+    And I toggle "EDIT MODE"
     And I click "Edit broader & narrower concepts"
     And I drag the clipped concept to the subconcept dropzone
     Then I should see "panopticum" unsaved as narrower concept
@@ -26,10 +26,10 @@ Feature: maintainer connects concept from clipboard
 
   Scenario: connect a concept as superconcept
     Given I search for "panopticum"
-    And I drag the search result to the clipboard
+    When I drag the search result to the clipboard
     And I search for "surveillance"
     And I click on the search result
-    And I click "Edit concept"
+    And I toggle "EDIT MODE"
     And I click "Edit broader & narrower concepts"
     And I drag the clipped concept to the superconcept dropzone
     Then I should see "panopticum" unsaved as broader concept
@@ -39,10 +39,10 @@ Feature: maintainer connects concept from clipboard
 
   Scenario: reset and cancel form
     Given I search for "panopticum"
-    And I drag the search result to the clipboard
+    When I drag the search result to the clipboard
     And I search for "surveillance"
     And I click on the search result
-    And I click "Edit concept"
+    And I toggle "EDIT MODE"
     And I click "Edit broader & narrower concepts"
     And I drag the clipped concept to the superconcept dropzone
     And I click Reset

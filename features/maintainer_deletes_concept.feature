@@ -11,7 +11,7 @@ Feature: maintainer deletes concept
 
   Scenario: delete concept
     Given I am on the show concept page of "beaver hat"
-    When I click "Edit concept"
+    When I toggle "EDIT MODE"
     And I click "Delete concept"
     Then I should see a confirmation dialog "This concept including all terms will be deleted permanently."
     When I click outside the dialog
@@ -28,7 +28,7 @@ Feature: maintainer deletes concept
   Scenario: delete subconcept
     Given "beaver hat" is a subconcept of "hat"
     And I am on the show concept page of "beaver hat"
-    When I click "Edit concept"
+    When I toggle "EDIT MODE"
     And I click "Delete concept"
     And I click "OK" within the dialog
     Then I should be on the repository root page

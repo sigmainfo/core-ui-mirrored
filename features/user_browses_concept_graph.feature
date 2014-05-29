@@ -25,14 +25,14 @@ Feature: user browses concept graph
     And the repository root node should be connected to "tool"
 
   Scenario: hit list
-    Given a concept "handgun"
-    And a concept "hand"
-    And a concept "handkerchief"
+    Given a concept "hand" exists
+    And a concept "second hand" exists
+    And a concept "hand-leafed" exists
     When I enter the application
     And I search for "hand"
-    Then I should see "handgun" displayed in the concept map
-    And I should see a node "hand"
-    And I should see a node "handkerchief"
+    Then I should see "hand" displayed in the concept map
+    And I should see a node "second hand"
+    And I should see a node "hand-leafed"
     And all nodes should be classified as hits
 
   Scenario: zoom and pan

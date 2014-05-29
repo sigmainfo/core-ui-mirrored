@@ -70,6 +70,7 @@ Feature: user browses single concept
     Then I should see property "GENDER" with value "f"
     Then I should see property "status" with value "pending"
 
+  @wip
   Scenario: browse system info
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"

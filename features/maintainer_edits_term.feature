@@ -12,7 +12,7 @@ Feature: maintainer edits term
   Scenario: edit term
     Given I am a maintainer of the repository
     And I visit the page of this concept
-    When I click "Edit concept" 
+    When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
     Then I should see a set of term inputs with labels "Value", "Language"
     And I should see "ten-gallon hat" for input "Value"
@@ -35,7 +35,7 @@ Feature: maintainer edits term
     Given this term has a property "notice" of "TODO: translate"
     And I am a maintainer of the repository
     And I visit the page of this concept
-    When I click "Edit concept" 
+    When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
     Then I should see a set of property inputs with labels "Key", "Value", "Language"
     And I should see "notice" for property input "Key"
@@ -52,7 +52,7 @@ Feature: maintainer edits term
   Scenario: validation errors
     Given I am a maintainer of the repository
     And I visit the page of this concept
-    When I click "Edit concept"
+    When I toggle "EDIT MODE"
     When I click "Edit term"
     Given client-side validation is turned off
     When I fill in "Value" with "Stetson" within term inputs
@@ -77,7 +77,7 @@ Feature: maintainer edits term
     Given this term has a property "notice" of "TODO: translate"
     And I am a maintainer of the repository
     And I visit the page of this concept
-    When I click "Edit concept" 
+    When I toggle "EDIT MODE"
     When I click "Edit term"
     And I fill in "Value" with "high hat" within term inputs
     And I click "Remove property"

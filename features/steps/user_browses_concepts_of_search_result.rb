@@ -24,23 +24,23 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     create_concept_term @concept, value: 'Kugel', lang: 'de'
   end
 
-  step 'a concept with label "ballistics" exists' do
-    @ballistics = @concept = create_concept_with_label 'ballistics'
+  step 'a concept with label "ball-shaped" exists' do
+    @ball_shaped = @concept = create_concept_with_label 'ball-shaped'
   end
 
-  step 'it is defined as "Mechanics that describe behavior of projectiles"' do
+  step 'it is defined as "a spherical object"' do
     create_concept_property @concept, {
       key: 'definition',
-      value: 'Mechanics that describe behavior of projectiles'
+      value: 'a spherical object'
     }
   end
 
-  step 'this concept has a German term "Ballistik"' do
-    create_concept_term @concept, value: 'Ballistik', lang: 'de'
+  step 'this concept has a German term "kugelförmig"' do
+    create_concept_term @concept, value: 'kugelförmig', lang: 'de'
   end
 
-  step 'a concept with label "balloon" exists' do
-    @concept = create_concept_with_label 'balloon'
+  step 'a concept with label "ball and chain" exists' do
+    @concept = create_concept_with_label 'ball and chain'
   end
 
   step 'a concept with label "game play" exists' do
@@ -60,9 +60,9 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     page.find('.concept-list tbody').text.should == 'No concepts found for "gun"'
   end
 
-  step 'it should display labels for "ball", "ballistics", "balloon"' do
+  step 'it should display labels for "ball", "ball-shaped", "ball and chain"' do
     within '.concept-list' do
-      %w(ball ballistics balloon).each do |label|
+      ['ball', 'ball-shaped', 'ball and chain'].each do |label|
         page.should have_css('.concept-list-item .label', text: label)
       end
     end
@@ -89,9 +89,9 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     end
   end
 
-  step 'it should be empty for "ballistics" and "balloon"' do
+  step 'it should be empty for "ball-shaped" and "ball and chain"' do
     within '.concept-list' do
-      %w(ballistics balloon).each do |label|
+      ['ball-shaped', 'ball and chain'].each do |label|
         concept = page.all('.concept-list-item .label td a').find do |a|
           a.text == label
         end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
@@ -100,24 +100,24 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     end
   end
 
-  step '"ballistics" should have a section "DEFINITION"' do
+  step '"ball-shaped" should have a section "DEFINITION"' do
     within '.concept-list' do
-      @ballistics_row = page.all('.concept-list-item .label td a').find do |a|
-        a.text == 'ballistics'
+      @ball_shaped_row = page.all('.concept-list-item .label td a').find do |a|
+        a.text == 'ball-shaped'
       end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
-      @ballistics_row.should have_css('tr.definition th', text: 'DEFINITION')
+      @ball_shaped_row.should have_css('tr.definition th', text: 'DEFINITION')
     end
 
   end
 
-  step 'it should contain "Mechanics that describe behavior of projectiles"' do
-    definition = @ballistics_row.find('tr.definition td').text
-    definition.should == 'Mechanics that describe behavior of projectiles'
+  step 'it should contain "a spherical object"' do
+    definition = @ball_shaped_row.find('tr.definition td').text
+    definition.should == 'a spherical object'
   end
 
-  step '"DEFINITION" should not be displayed for "ball" and "balloon"' do
+  step '"DEFINITION" should not be displayed for "ball" and "ball and chain"' do
     within '.concept-list' do
-      %w(ball balloon).each do |label|
+      ['ball', 'ball and chain'].each do |label|
         concept = page.all('.concept-list-item .label td a').find do |a|
           a.text == label
         end.find :xpath, 'ancestor::*[contains(@class, "concept-list-item")]'
@@ -127,9 +127,9 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
 
   end
 
-  step 'I should see "ball", "ballistics", and "balloon" as search results' do
+  step 'I should see "ball", "ball-shaped", and "ball and chain" as search results' do
     within '.concept-list' do
-      %w(ball ballistics balloon).each do |label|
+      ['ball', 'ball-shaped', 'ball and chain'].each do |label|
         page.should have_css('.concept-list-item .label', text: label)
       end
     end
@@ -172,21 +172,21 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     end
   end
 
-  step 'it should contain "Ballistik" for "ballistics"' do
+  step 'it should contain "kugelförmig" for "ball-shaped"' do
     within '.concept-list' do
-      ballistics = page.find('.concept-list-item .label td a',
-        text: 'ballistics').find :xpath,
+      ball_shaped = page.find('.concept-list-item .label td a',
+        text: 'ball-shaped').find :xpath,
         'ancestor::*[contains(@class, "concept-list-item")]'
-      ballistics.find('tr.lang td').text.should == 'Ballistik'
+      ball_shaped.find('tr.lang td').text.should == 'kugelförmig'
     end
   end
 
-  step 'it should be empty for "balloon"' do
+  step 'it should be empty for "ball and chain"' do
     within '.concept-list' do
-      balloon = page.find('.concept-list-item .label td a',
-        text: 'balloon').find :xpath,
+      ball_and_chain = page.find('.concept-list-item .label td a',
+        text: 'ball and chain').find :xpath,
         'ancestor::*[contains(@class, "concept-list-item")]'
-      balloon.find('tr.lang td').text.should == ''
+      ball_and_chain.find('tr.lang td').text.should == ''
     end
   end
 
@@ -199,17 +199,17 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
     end
   end
 
-  step 'I click on "ballistics"' do
+  step 'I click on "ball-shaped"' do
     within '.concept-list' do
-      page.find('.concept-list-item .label td a', text: 'ballistics').click
+      page.find('.concept-list-item .label td a', text: 'ball-shaped').click
     end
   end
 
-  step 'I should see the details for concept "ballistics"' do
-    page.should have_css('.concept.show .concept-head .concept-label', text: 'ballistics')
+  step 'I should see the details for concept "ball-shaped"' do
+    page.should have_css('.concept.show .concept-head .concept-label', text: 'ball-shaped')
   end
 
-  step 'I should be on the concept details page for "ballistics"' do
-    current_path.should == "/#{@repository.id}/concepts/#{@ballistics['id']}"
+  step 'I should be on the concept details page for "ball-shaped"' do
+    current_path.should == "/#{@repository.id}/concepts/#{@ball_shaped['id']}"
   end
 end

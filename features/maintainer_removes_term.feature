@@ -11,7 +11,7 @@ Feature: maintainer removes term
     And I visit the page of this concept
 
   Scenario: remove term
-    When I click "Edit concept" 
+    When I toggle "EDIT MODE"
     And I click "Remove term" within term "beaver hat"
     Then I should see a confirmation dialog "This term will be deleted permanently."
     When I click outside the dialog

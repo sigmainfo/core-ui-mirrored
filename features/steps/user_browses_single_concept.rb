@@ -225,8 +225,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(".concept > .properties th", text: "NOTES").find(:xpath, "./following-sibling::td[1]//ul[@class='index']/li[@data-index='1']").click
   end
 
-  Then 'I should see "author" with value "Nobody" for property "notes"' do
-    page.find(:xpath, "//*[@class='properties']//th[text()='notes']/following-sibling::td/ul[@class='values']/li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("Nobody")
+  Then 'I should see "author" with value "Nobody" for property "NOTES"' do
+    page.find(:xpath, "//*[@class='properties']//th[text()='NOTES']/following-sibling::td/ul[@class='values']/li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("Nobody")
   end
 
   Then 'I should not see information for "id", "author", and "legacy_id"' do
