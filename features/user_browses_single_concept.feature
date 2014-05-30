@@ -66,9 +66,9 @@ Feature: user browses single concept
     And I click the search button
     And I click on the label "handgun"
     Then I should be on the show concept page for "handgun"
-    When I click on toggle "TOGGLE ALL PROPERTIES"
+    When I click on "Toggle all properties"
     Then I should see property "GENDER" with value "f"
-    Then I should see property "status" with value "pending"
+    Then I should see property "STATUS" with value "pending"
 
   Scenario: browse system info
     Given a concept with label "handgun"

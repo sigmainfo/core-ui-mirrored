@@ -176,11 +176,11 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(:xpath, "//th[text() = 'gender']/following-sibling::td").text.should == "f"
   end
 
-  When 'I click on toggle "TOGGLE ALL PROPERTIES"' do
-    page.find(".properties-toggle").click
+  When 'I click on "Toggle all properties"' do
+    click_link "Toggle all properties"
   end
 
-  Then 'I should see property "status" with value "pending"' do
+  Then 'I should see property "STATUS" with value "pending"' do
     sleep 1
     page.find(:xpath, "//th[text() = 'status']/following-sibling::td").text.should == "pending"
   end
