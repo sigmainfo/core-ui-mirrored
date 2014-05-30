@@ -1,18 +1,16 @@
 #= require environment
-#= require modules/language_sections
+#= require views/terms/abstract_terms_view
+#= require views/terms/edit_term_view
 #= require templates/terms/edit_terms
 
-class Coreon.Views.Terms.EditTermsView extends Backbone.View
+class Coreon.Views.Terms.EditTermsView extends Coreon.Views.Terms.AbstractTermsView
 
-  _(@::).extend Coreon.Modules.LanguageSections
-
-  className: 'edit terms'
+  className: ->
+    "#{super} edit"
 
   initialize: (options = {}) ->
-    @template = options.template or Coreon.Templates['terms/edit_terms']
-    @app      = options.app      or Coreon.application
+    options.template ?= Coreon.Templates['terms/edit_terms']
+    super options
 
-  render: ->
-    languages = @langs @model.langs(), @app.langs(), @app.get('langs')
-    @$el.html @template languages: languages
-    @
+  createSubview: (model) ->
+    new Coreon.Views.Terms.EditTermView model: model
