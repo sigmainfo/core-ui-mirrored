@@ -9,8 +9,8 @@ class Coreon.Views.Terms.AbstractTermsView extends Coreon.Views.CompositeView
   events: ->
     'click .toggle-all-properties': 'toggleAllProperties'
 
-  initialize: (options) ->
-    @app      = options.app
+  initialize: (options = {}) ->
+    @app      = options.app or Coreon.application
     @template = options.template
 
   render: ->

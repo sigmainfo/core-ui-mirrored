@@ -8,19 +8,19 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
   app = null
   template = null
 
-  stubApplication = ->
+  fakeApplication = ->
     app = new Backbone.Model langs: []
     app.langs = -> []
     app
 
-  stubCollection = ->
+  fakeCollection = ->
     collection = new Backbone.Collection
     collection.langs = -> []
     collection
 
   beforeEach ->
-    app = stubApplication()
-    collection = stubCollection()
+    app = fakeApplication()
+    collection = fakeCollection()
     template = @stub().returns ''
 
     view = new Coreon.Views.Terms.AbstractTermsView
@@ -37,14 +37,23 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
 
   describe '#initialize()', ->
 
+    afterEach ->
+      delete Coreon.application
+
     it 'assigns template from options', ->
       template2 = -> ''
       view.initialize template: template2
       expect(view.template).to.equal template2
 
     it 'assigns app from options', ->
-      app2 = stubApplication()
+      app2 = fakeApplication()
       view.initialize app: app2
+      expect(view.app).to.equal app2
+
+    it 'defaults app to global reference', ->
+      app2 = fakeApplication()
+      Coreon.application = app2
+      view.initialize()
       expect(view.app).to.equal app2
 
   describe '#render()', ->
