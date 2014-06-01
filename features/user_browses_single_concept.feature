@@ -18,20 +18,20 @@ Feature: user browses single concept
     And given a broader concept with label "weapon"
     And given a narrower concept with label "pistol"
     And given a narrower concept with label "revolver"
-    When I enter "gun" in the search field
-    And I click the search button
-    And I click on the label "handgun"
-    Then I should be on the show concept page for "handgun"
-    And I should see the label "handgun"
+    When I visit the concept details pasge of "handgun"
+    Then I should see the label "handgun"
     And I should see the section "BROADER & NARROWER"
     And this section should display "pistol" as being narrower
     And it should display "revolver" as being narrower
     And it should display "weapon" as being broader
     And I should see the section "PROPERTIES"
-    And it should have an English property "DEFINITION" with value "A portable firearm"
-    When I click on "de" for that property
-    Then the value should have changed to "Tragbare Feuerwaffe"
-    And it should have a property "notes" with value "Bitte überprüfen!!!"
+    And I see a property "NOTES" with value "Bitte überprüfen!!!"
+    And I see a property "DEFINITION"
+    And within this property the tab "DE" is selected
+    And the value is "Tragbare Feuerwaffe"
+    When I click on the tab "EN" for that property
+    Then the tab "EN" is selected
+    And the value should have changed to "A portable firearm"
     And I should see a section for locale "EN"
     And it shoud have the following terms "gun", "firearm", "shot gun", "musket"
     And I should see a section for locale "DE"

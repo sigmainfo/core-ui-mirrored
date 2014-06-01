@@ -3,6 +3,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
+  include Navigation
   include Selectors
 
   def click_on_toggle(name)
@@ -11,6 +12,18 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   def section_for(name)
     find("section *:first-child", text: name).find(:xpath, "./following-sibling::*[1]", visible: false)
+  end
+
+  def tab(label)
+    find('ul.index li', text: label)
+  end
+
+  def selected_tab
+    find('ul.index li.selected')
+  end
+
+  def selected_value
+    find('ul.values li.selected')
   end
 
   def concept_property_system_info(label)
@@ -98,6 +111,10 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(".concept-list a.concept-label", text: "handgun").click
   end
 
+  step 'I visit the concept details pasge of "handgun"' do
+    visit_concept_details_page @handgun
+  end
+
   Then 'I should be on the show concept page for "handgun"' do
     current_path.should == "/#{current_repository.id}/concepts/#{@handgun['id']}"
   end
@@ -126,44 +143,66 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.should have_css("section h3", text: "PROPERTIES")
   end
 
-  And 'it should have an English property "DEFINITION" with value "A portable firearm"' do
-    @td = page.find("th", text: "DEFINITION").find :xpath, "parent::*/td"
-    @td.find("ul.index li.selected").text.should == "EN"
-    @td.find("ul.values li.selected").text.should == "A portable firearm"
+  step 'I see a property "NOTES" with value "Bitte überprüfen!!!"' do
+    property = concept_property 'NOTES'
+    expect(property.find '.value').to have_text('Bitte überprüfen!!!')
   end
 
-  When 'I click on "DE" for that property' do
-    @td.find("ul.index li", text: "DE").click
+  step 'I see a property "DEFINITION"' do
+    @property = concept_property 'DEFINITION'
   end
 
-  Then 'the value should have changed to "Tragbare Feuerwaffe"' do
-    @td.find("ul.values li.selected").text.should == "Tragbare Feuerwaffe"
+  step 'within this property the tab "DE" is selected' do
+    within @property do
+      expect(selected_tab).to have_text('DE')
+    end
   end
 
-  And 'it should have a property "NOTES" with value "Bitte überprüfen!!!"' do
-    @td = page.find("th", text: "NOTES").find :xpath, "parent::*/td"
-    @td.text.should == "Bitte überprüfen!!!"
+  step 'the value is "Tragbare Feuerwaffe"' do
+    within @property do
+      expect(selected_value).to have_text('Tragbare Feuerwaffe')
+    end
+  end
+
+  step 'I click on the tab "EN" for that property' do
+    within @property do
+      tab('EN').click
+    end
+  end
+
+  step 'the tab "EN" is selected' do
+    within @property do
+      expect(selected_tab).to have_text('EN')
+    end
+  end
+
+  step 'the value should have changed to "A portable firearm"' do
+    within @property do
+      expect(selected_value).to have_text('A portable firearm')
+    end
   end
 
   And 'I should see a section for locale "EN"' do
-    page.should have_css("section.language.en h3")
-    @lang = page.find("section.language.en ul")
+    @lang = language_section(:en)
   end
 
   And 'it shoud have the following terms "gun", "firearm", "shot gun", "musket"' do
-    ["gun", "firearm", "shot gun", "musket"].each do |term|
-      @lang.should have_content(term)
+    within @lang do
+      ['gun', 'firearm', 'shot gun', 'musket'].each do |term|
+        expect(page).to have_css('.term .value', text: term)
+      end
     end
   end
 
   And 'I should see a section for locale "DE"' do
-    page.should have_css("section.language.de h3", text: "DE")
-    @lang = page.find("section.language.de ul")
+    @lang = language_section(:de)
   end
 
   And 'it shoud have the following terms "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"' do
-    ["Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"].each do |term|
-      @lang.should have_content(term)
+    within @lang do
+      ['Schusswaffe', 'Flinte', 'Pistole', 'Schießgewehr', 'Geschütz'].each do |term|
+        expect(page).to have_css('.term .value', text: term)
+      end
     end
   end
 
