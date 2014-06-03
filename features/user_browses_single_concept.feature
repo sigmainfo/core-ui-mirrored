@@ -84,12 +84,12 @@ Feature: user browses single concept
     And I click the search button
     And I click on the label "handgun"
     And I click on the toggle "PROPERTIES" for term "shot gun"
-    When I click the toggle "System Info" on the concept
+    When I click on "Toggle system info"
     Then I should see "id" of the "handgun" concept
     And I should see "legacy_id" with value "543" for term "shot gun"
     And I should see "author" with value "Mr. Blake" for property "parts of speach"
     And I should see "author" with value "William" for property "notes"
     When I click on index item "2" for property "NOTES"
     Then I should see "author" with value "Nobody" for property "NOTES"
-    When I click the toggle "System Info" on the concept
+    When I click on "Toggle system info"
     Then I should not see information for "id", "author", and "legacy_id"
