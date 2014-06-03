@@ -70,7 +70,6 @@ Feature: user browses single concept
     Then I should see property "GENDER" with value "f"
     Then I should see property "status" with value "pending"
 
-  @wip
   Scenario: browse system info
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
@@ -91,6 +90,6 @@ Feature: user browses single concept
     And I should see "author" with value "Mr. Blake" for property "parts of speach"
     And I should see "author" with value "William" for property "notes"
     When I click on index item "2" for property "NOTES"
-    Then I should see "author" with value "Nobody" for property "notes"
+    Then I should see "author" with value "Nobody" for property "NOTES"
     When I click the toggle "System Info" on the concept
     Then I should not see information for "id", "author", and "legacy_id"

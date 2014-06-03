@@ -29,3 +29,22 @@ Capybara.add_selector( :concept_node ) do
     """
   end
 end
+
+Capybara.add_selector(:table_row) do
+  xpath do |label|
+    ".//tr/th[normalize-space(.)='#{label}']/.."
+  end
+end
+
+module Selectors
+
+  def concept_properties
+    page.find('.concept>section>h3', text: 'PROPERTIES' ).find(:xpath, '..')
+  end
+
+  def concept_property(label)
+    within concept_properties do
+      page.find(:table_row, label.downcase)
+    end
+  end
+end

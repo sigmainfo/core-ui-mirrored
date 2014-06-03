@@ -3,6 +3,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
   include Api::Graph::Factory
+  include Selectors
 
   def click_on_toggle(name)
     find("section *:first-child", text: name).click
@@ -10,6 +11,10 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
 
   def section_for(name)
     find("section *:first-child", text: name).find(:xpath, "./following-sibling::*[1]", visible: false)
+  end
+
+  def concept_property_system_info(label)
+    concept_property(label).find '.selected .system-info'
   end
 
   Given 'a concept with label "handgun"' do
@@ -225,8 +230,11 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     page.find(".concept > .properties th", text: "NOTES").find(:xpath, "./following-sibling::td[1]//ul[@class='index']/li[@data-index='1']").click
   end
 
-  Then 'I should see "author" with value "Nobody" for property "NOTES"' do
-    page.find(:xpath, "//*[@class='properties']//th[text()='NOTES']/following-sibling::td/ul[@class='values']/li[not(contains(@style, 'none'))]//th[text()='author']/following-sibling::td").should have_content("Nobody")
+  step 'I should see "author" with value "Nobody" for property "NOTES"' do
+    within concept_property_system_info('NOTES') do
+      author = page.find(:table_row, 'author')
+      expect(author).to have_text('Nobody')
+    end
   end
 
   Then 'I should not see information for "id", "author", and "legacy_id"' do
