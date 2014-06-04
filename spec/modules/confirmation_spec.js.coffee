@@ -4,6 +4,9 @@
 
 describe "Coreon.Modules.Confirmation", ->
 
+  view = null
+  trigger = null
+
   before ->
     class Coreon.Views.MyView extends Backbone.View
       Coreon.Modules.include @, Coreon.Modules.Confirmation
@@ -12,18 +15,18 @@ describe "Coreon.Modules.Confirmation", ->
     delete Coreon.Views.MyView
 
   beforeEach ->
-    @view = new Coreon.Views.MyView
+    view = new Coreon.Views.MyView
     $("#konacha")
-      .append(@view.$el)
+      .append(view.$el)
       .append '''
         <div id="coreon-modal"></div>
         '''
-    @view.$el.append '''
+    view.$el.append '''
       <div class="concept">
         <a class="delete" href="javascript:void(0)">Delete concept</a>
       </div>
     '''
-    @trigger = @view.$("a.delete")
+    trigger = view.$("a.delete")
 
   afterEach ->
     $(window).off ".coreonConfirm"
@@ -32,9 +35,9 @@ describe "Coreon.Modules.Confirmation", ->
 
     it "renders confirmation dialog", ->
       I18n.t.withArgs("confirm.ok").returns "OK"
-      @view.confirm
-        trigger: @trigger
-        container: @view.$ ".concept"
+      view.confirm
+        trigger: trigger
+        container: view.$ ".concept"
         message: "Are you sure?"
         action: ->
       $("#coreon-modal").should.have ".modal-shim .confirm"
@@ -42,31 +45,30 @@ describe "Coreon.Modules.Confirmation", ->
       $("#coreon-modal .confirm .ok").should.have.text "OK"
 
     it "marks container for deletetion", ->
-      @view.confirm
-        trigger: @trigger
-        container: @view.$ ".concept"
+      view.confirm
+        trigger: trigger
+        container: view.$('.concept')[0]
         message: "Are you sure?"
         action: ->
-      @view.$(".concept").should.have.class "delete"
+      view.$(".concept").should.have.class "delete"
 
     it "does not require container option", ->
       confirm = =>
-        @view.confirm
-          trigger: @trigger
+        view.confirm
+          trigger: trigger
           container: null
           message: "Are you sure?"
           action: ->
       confirm.should.not.throw Error
-
 
     context "cancel", ->
 
       context "with container", ->
 
         beforeEach ->
-          @view.confirm
-            trigger: @trigger
-            container: @view.$ ".concept"
+          view.confirm
+            trigger: trigger
+            container: view.$ ".concept"
             message: "Are you sure?"
             action: ->
 
@@ -76,7 +78,7 @@ describe "Coreon.Modules.Confirmation", ->
 
         it "unmarks container for deletion", ->
           $(".modal-shim").click()
-          @view.$(".concept").should.not.have.class "delete"
+          view.$(".concept").should.not.have.class "delete"
 
 
         it "cancels on escape key", ->
@@ -84,13 +86,13 @@ describe "Coreon.Modules.Confirmation", ->
           keypress.keyCode = 27
           $(document).trigger keypress
           $("#coreon-modal").should.be.empty
-          @view.$(".concept").should.not.have.class "delete"
+          view.$(".concept").should.not.have.class "delete"
 
       context "without container", ->
 
         beforeEach ->
-          @view.confirm
-            trigger: @trigger
+          view.confirm
+            trigger: trigger
             container: null
             message: "Are you sure?"
             action: ->
@@ -100,15 +102,17 @@ describe "Coreon.Modules.Confirmation", ->
             $(".modal-shim").click()
           cancel.should.not.throw Error
 
-    context "destroy", ->
+    context "action", ->
+
+      action = null
 
       beforeEach ->
-        @action = @spy()
-        @view.confirm
-          trigger: @trigger
-          container: @view.$ ".concept"
+        action = @spy()
+        view.confirm
+          trigger: trigger
+          container: view.$ ".concept"
           message: "Are you sure?"
-          action: @action
+          action: action
 
       it "stops propagation", ->
         event = $.Event "click"
@@ -122,11 +126,32 @@ describe "Coreon.Modules.Confirmation", ->
 
       it "calls action", ->
         $(".confirm").click()
-        @action.should.have.been.calledOnce
+        action.should.have.been.calledOnce
 
-      it "destroys on return key", ->
+      it "calls action on return key", ->
         keypress= $.Event "keydown"
         keypress.keyCode = 13
         $(document).trigger keypress
         $("#coreon-modal").should.be.empty
-        @action.should.have.been.calledOnce
+        action.should.have.been.calledOnce
+
+    context 'method as action', ->
+
+      opts = null
+
+      beforeEach ->
+        view.nowDoIt = @spy()
+
+      fakeOpts = (opts) ->
+        _(opts).defaults
+          trigger: trigger
+          message: "Are you sure?"
+          action: ''
+
+      it 'calls method on view when passed in as a string', ->
+        method = @spy()
+        view.doItNow = method
+        view.confirm fakeOpts(action: 'doItNow')
+        $(".confirm").click()
+        expect(method).to.have.been.calledOnce
+        expect(method).to.have.been.calledOn view

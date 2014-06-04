@@ -64,8 +64,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
-    # "click  .remove-term"                        : "removeTerm"
-
   initialize: (options = {}) ->
     @app = options.app or Coreon.application
     @template = Coreon.Templates['concepts/concept']

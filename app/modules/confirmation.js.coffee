@@ -15,8 +15,14 @@ Coreon.Modules.Confirmation =
     modal = $ "#coreon-modal"
     shim = $ template message: options.message
     dialog = shim.find ".confirm"
+    container = $ options.container if options.container?
+    action =
+      if _(options.action).isString()
+        @[options.action]
+      else
+        options.action
 
-    options.container?.addClass "delete"
+    container?.addClass "delete"
     shim.appendTo modal
 
     position = ->
@@ -31,14 +37,14 @@ Coreon.Modules.Confirmation =
 
     cancel = ->
       $(window).off ".coreonConfirm"
-      options.container?.removeClass "delete"
+      container?.removeClass "delete"
       modal.empty()
 
-    destroy = (event) ->
+    confirm = (event) =>
       event.stopPropagation()
       $(window).off ".coreonConfirm"
       modal.empty()
-      options.action()
+      action.call @
 
     position()
     $(window).on "scroll.coreonConfirm resize.coreonConfirm", position
@@ -46,7 +52,7 @@ Coreon.Modules.Confirmation =
     $(window).on "keydown.coreonConfirm", (event) ->
       switch event.keyCode
         when KEYCODE.esc   then cancel event
-        when KEYCODE.enter then destroy event
+        when KEYCODE.enter then confirm event
 
     shim.click cancel
-    dialog.click destroy
+    dialog.click confirm
