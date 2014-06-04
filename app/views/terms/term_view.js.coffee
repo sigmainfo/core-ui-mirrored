@@ -7,13 +7,11 @@ class Coreon.Views.Terms.TermView extends Backbone.View
 
   tagName: 'li'
 
-  className: 'term'
+  className: 'term show'
 
   initialize: (options = {}) ->
-    _(options).defaults
-      template: Coreon.Templates['terms/term']
-
-    @template = options.template
+    @template = options.template or Coreon.Templates['terms/term']
+    # TODO 140604 [tc] Make a composite view
     @subviews = []
 
     @stopListening()

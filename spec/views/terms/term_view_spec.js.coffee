@@ -29,7 +29,7 @@ describe 'Coreon.Views.Terms.TermView', ->
 
   it 'creates container', ->
     el = view.$el
-    expect(el).to.match 'li.term'
+    expect(el).to.match 'li.term.show'
 
   describe '#initialize()', ->
 
