@@ -1,7 +1,7 @@
 .concept-list {
   min-width: 200px;
 
-  .edit {
+  .edit-actions {
     height: 26px;
 
     .create-concept {
@@ -36,7 +36,7 @@
           vertical-align: top;
           color: $button-color;
         }
-        
+
         td:empty:before {
           content:"-";
         }
@@ -66,7 +66,7 @@
             font: 1.1em $serif;
             line-height: 1.4em;
           }
-          
+
           td, th {
             border: none;
             padding-bottom: 0;
@@ -106,7 +106,7 @@
               line-height: 1.3em;
             }
           }
-          
+
           tr.definition {
             td {
               font-size: 0.9em;
@@ -133,14 +133,14 @@
           th, td {
             padding: 2px 0;
           }
-          
+
           th {
             border: none;
             width: 50px;
             text-align:left;
             font-size: 0.7em;
           }
-          
+
           td {
             padding-top: 0;
             &:empty {
@@ -153,7 +153,7 @@
               padding: 4px 0 2px 0;
             }
           }
-          
+
           tr.definition {
             display: none;
           }

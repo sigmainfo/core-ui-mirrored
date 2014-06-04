@@ -37,7 +37,7 @@ describe 'Coreon.Templates[properties/properties]', ->
     can = null
     action_for = null
 
-    edit = (el) -> el.find '.edit'
+    edit = (el) -> el.find '.edit-actions'
 
     beforeEach ->
       can = @stub data, 'can'

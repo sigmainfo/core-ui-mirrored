@@ -68,7 +68,7 @@ describe 'Coreon.Templates[concepts/concept]', ->
           action_for.withArgs('concept.delete_concept')
             .returns '<a class="delete-concept">Delete concept</a>'
           el = render()
-          edit = head(el).find('.edit')
+          edit = head(el).find('.edit-actions')
           expect(edit).to.have 'a.delete-concept'
 
       context 'without maintainer privileges', ->
@@ -84,7 +84,7 @@ describe 'Coreon.Templates[concepts/concept]', ->
 
         it 'does not render edit division', ->
           el = render()
-          expect(head el).to.not.have '.edit'
+          expect(head el).to.not.have '.edit-actions'
 
     context 'actions', ->
 

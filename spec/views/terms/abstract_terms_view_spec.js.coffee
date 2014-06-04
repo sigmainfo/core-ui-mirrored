@@ -105,7 +105,7 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
         template.returns '''
           <div class="properties">
             <h3>PROPERTIES</h3>
-            <div class="edit"></div>
+            <div class="edit-actions"></div>
             <div></div>
           </div>
         '''
@@ -115,7 +115,7 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
         view.$ '.properties'
 
       content = (view) ->
-        properties(view).find('div:not(.edit)')
+        properties(view).find('div:not(.edit-actions)')
 
       it 'collapses all properties', ->
         view.render()
@@ -123,7 +123,7 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
 
       it 'immediately hides content of properties', ->
         view.render()
-        content = properties(view).find 'div:not(.edit)'
+        content = properties(view).find 'div:not(.edit-actions)'
         expect(content).to.be.hidden
 
       it 'does not hide caption', ->
@@ -133,7 +133,7 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
 
       it 'does not hide edit form', ->
         view.render()
-        edit = properties(view).find '.edit'
+        edit = properties(view).find '.edit-actions'
         expect(edit).to.be.visible
 
   describe '#insertSubview()', ->
@@ -200,7 +200,7 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
         expect(caption).to.be.visible
 
       it 'does not hide edit forms', ->
-        edit = $('<div class="edit">').appendTo properties
+        edit = $('<div class="edit-actions">').appendTo properties
         view.toggleAllProperties()
         expect(edit).to.be.visible
 

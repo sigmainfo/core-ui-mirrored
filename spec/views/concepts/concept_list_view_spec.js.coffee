@@ -105,7 +105,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
           app.set 'query', 'März', silent: yes
           app.lang = -> 'de'
           view.render()
-          button = view.$('.edit a.create-concept')
+          button = view.$('.edit-actions a.create-concept')
           expect(button).to.exist
           expect(button).to.have.attr 'href'
                                     , '/repo-1/concepts/new/terms/de/M%C3%A4rz'
@@ -117,7 +117,7 @@ describe 'Coreon.Views.Concepts.ConceptListView', ->
 
         it 'does not render edit buttons', ->
           view.render()
-          button = view.$('.edit a')
+          button = view.$('.edit-actions a')
           expect(button).to.not.exist
 
     context 'empty selection', ->

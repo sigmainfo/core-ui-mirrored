@@ -10,5 +10,5 @@
       - for property, index in @term.properties().models
         != @render "properties/new_property", index: index, property: property, scope: "term[properties][]", errors: @term.errors()?.nested_errors_on_properties?[index], notPersisted: index > persisted - 1
     .add
-      .edit
+      .edit-actions
         %a.add-property{href: "javascript:void(0)", "data-scope": "term[properties][]", "data-index": @term?.get("properties")?.length}= I18n.t "properties.add"

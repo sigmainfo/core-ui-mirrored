@@ -13,7 +13,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I click "Edit term" within term "ten-gallon hat"' do
-    page.find(".term .value", text: "ten-gallon hat").find(:xpath, './parent::*').find(".edit a", text: "Edit term").click
+    page.find(".term .value", text: "ten-gallon hat").find(:xpath, './parent::*').find(".edit-actions a", text: "Edit term").click
   end
 
   step 'I should see a set of term inputs with labels "Value", "Language"' do

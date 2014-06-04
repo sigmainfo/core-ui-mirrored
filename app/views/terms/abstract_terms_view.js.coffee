@@ -30,14 +30,14 @@ class Coreon.Views.Terms.AbstractTermsView extends Coreon.Views.CompositeView
 
   collapseAllProperties: ->
     properties = @$('.properties')
-    content = properties.children('div').not('.edit')
+    content = properties.children('div').not('.edit-actions')
 
     properties.addClass 'collapsed'
     content.hide()
 
   toggleAllProperties: ->
     properties = @$('.properties')
-    content = properties.children('div').not('.edit')
+    content = properties.children('div').not('.edit-actions')
     collapsed = properties.hasClass 'collapsed'
 
     properties.toggleClass 'collapsed', not collapsed

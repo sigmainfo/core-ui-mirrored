@@ -1,7 +1,7 @@
 %section.properties{class: "collapsed" if @collapsed}
   %h3{ title: I18n.t 'terms.properties.toggle.hint' }= I18n.t "properties.title"
   -unless @noEditButton
-    .edit
+    .edit-actions
       %a.edit-properties{href: "javascript:void(0)", title: I18n.t "properties.edit"}= I18n.t "properties.edit"
 
   %div{style: "display: none" if @collapsed}

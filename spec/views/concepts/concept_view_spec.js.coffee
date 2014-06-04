@@ -805,7 +805,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
               <button type="submit">Create term</button>
             </div>
           </form>
-          <div class="edit" style="display:none">
+          <div class="edit-actions" style="display:none">
             <a class="add-term" ref="javascript:void(0)">Add term</a>
           </div>
         </div>
@@ -843,7 +843,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     it 'shows related edit actions', ->
       $('#konacha').append view.$el
       view.cancelForm event
-      expect( view.$('.edit a.add-term') ).to.be.visible
+      expect( view.$('.edit-actions a.add-term') ).to.be.visible
 
   describe '#reset()', ->
 
@@ -913,7 +913,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
         '''
       view.$el.append '''
         <div class="concept">
-          <div class="edit">
+          <div class="edit-actions">
             <a class="delete-concept" href="javascript:void(0)">Delete concept</a>
           </div>
         </div>
@@ -926,7 +926,7 @@ describe 'Coreon.Views.Concepts.ConceptView', ->
     it 'is triggered by click on remove concept link', ->
       view.delete = @stub().returns false
       view.delegateEvents()
-      view.$('.edit .delete-concept').trigger event
+      view.$('.edit-actions .delete-concept').trigger event
       expect( view.delete ).to.have.been.calledOnce
 
     it 'renders confirmation dialog', ->

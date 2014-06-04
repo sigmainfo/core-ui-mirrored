@@ -1,5 +1,5 @@
 #coreon-concepts.widget {
-  
+
   .titlebar h3:before {
     background:none;
     width: 5px;
@@ -10,7 +10,7 @@
     margin-right: 4px;
     border: 2px solid $label-color;
   }
-  
+
   .content {
     overflow: auto;
     position: absolute;
@@ -21,20 +21,20 @@
     padding: 0 12px;
     background-color: rgba(white, 0.5);
   }
-  
+
   div.repository {
-    
+
     h2 {
       font-size: 1em;
       margin: 7px 0;
       padding: 3px 8px 2px 8px;
     }
-    
-    .edit {
+
+    .edit-actions {
       display: none;
     }
   }
-  
+
   .concept {
     .toggle-edit-mode {
       float: right;
@@ -45,15 +45,15 @@
       width: 14px;
       padding: 3px;
       margin-left: 3px;
-    }   
+    }
   }
-  
+
   .concept-list {
-    
-    .edit {
+
+    .edit-actions {
       display: none;
     }
-    
+
     &>table {
       td:not(.empty-list) {
         padding: 1px 0;
@@ -61,7 +61,7 @@
 
       .concept-list-item>td{
 
-        table {          
+        table {
           tr.definition, tr.lang {
             display: none;
           }
@@ -69,10 +69,10 @@
       }
     }
   }
-  
-//  &.medi, &.maxi {
-//    .content {
-//      padding-left: 24px;
-//    }
-//  }
+
+  &.medi, &.maxi {
+    .content {
+      padding-left: 24px;
+    }
+  }
 }

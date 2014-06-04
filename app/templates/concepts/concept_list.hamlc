@@ -1,5 +1,5 @@
 - if @can 'create', Coreon.Models.Concept
-  .edit
+  .edit-actions
     %a.button.create-concept{href: @createConceptPath
                            , title: I18n.t('concept.new.hint.term')}
       = I18n.t('concept.new.label')

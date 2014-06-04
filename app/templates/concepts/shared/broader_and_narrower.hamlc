@@ -16,7 +16,7 @@
 -else
 
   -if @editable
-    .edit
+    .edit-actions
       %a.edit-connections( href="javascript:void(0)" title="#{I18n.t('concept.edit_concept_connections.hint')}" )= I18n.t('concept.edit_concept_connections.label')
       - if @can "create", Coreon.Models.Concept
         %a.add-narrower{ href: @repositoryPath("concepts/new/broader/#{@model.id}"), title:I18n.t('concept.add.hint') }= I18n.t 'concept.add.label'

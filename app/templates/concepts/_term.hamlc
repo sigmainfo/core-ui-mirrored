@@ -1,5 +1,5 @@
 %li.term
-  .edit
+  .edit-actions
     - if @can "delete", Coreon.Models.Term
       %a.remove-term{href: "javascript:void(0)", "data-id": @term.id, title: I18n.t "term.delete"}= I18n.t "term.delete"
     - if @can "edit", Coreon.Models.Term

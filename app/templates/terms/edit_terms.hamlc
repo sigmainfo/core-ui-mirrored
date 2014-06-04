@@ -4,7 +4,7 @@
 -#     %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.properties.toggle-all'
 -#   - if @can 'create', Coreon.Models.Term
 -#     .add
--#       .edit
+-#       .edit-actions
 -#         %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
 -#   - for tuple in @langs
 -#     - [lang, terms] = tuple

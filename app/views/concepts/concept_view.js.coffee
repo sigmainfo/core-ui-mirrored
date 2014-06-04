@@ -167,7 +167,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
   toggleSection: (evt) ->
     target = $(evt.target)
     target.closest("section").toggleClass "collapsed"
-    target.siblings().not(".edit").slideToggle()
+    target.siblings().not(".edit-actions").slideToggle()
 
   selectProperty: (evt) ->
     target = $(evt.target)
@@ -277,7 +277,7 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @model.revert()
     @model.remoteError = null
     form = $(evt.target).closest "form"
-    form.siblings(".edit").show()
+    form.siblings(".edit-actions").show()
     form.remove()
 
   reset: (evt) ->

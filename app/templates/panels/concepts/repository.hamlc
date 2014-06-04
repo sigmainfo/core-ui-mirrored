@@ -1,4 +1,4 @@
-.edit
+.edit-actions
   - if @can 'create', Coreon.Models.Concept
     %a.button.create-concept{href: @repositoryPath("concepts/new")
                            , title: I18n.t('concept.new.hint.root')}

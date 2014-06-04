@@ -1,7 +1,7 @@
 .concept-head
   - if @can 'manage'
     != @action_for 'concept.toggle_edit_mode', className: 'button'
-    .edit
+    .edit-actions
       != @action_for 'concept.delete_concept'
 
   .actions
