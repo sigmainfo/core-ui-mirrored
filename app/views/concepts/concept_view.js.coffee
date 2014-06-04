@@ -54,7 +54,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
     "click  .add-term"                           : "addTerm"
-    "click  .remove-term"                        : "removeTerm"
     "submit form.concept.update"                 : "updateConceptProperties"
     "submit form.term.create"                    : "createTerm"
     "submit form.term.update"                    : "updateTerm"
@@ -64,6 +63,8 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     "click  .delete-concept"                     : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
     "click  form.term.update .submit .cancel"    : "toggleEditTerm"
+
+    # "click  .remove-term"                        : "removeTerm"
 
   initialize: (options = {}) ->
     @app = options.app or Coreon.application
@@ -285,19 +286,19 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @model.remoteError = null
     @render()
 
-  removeTerm: (evt) =>
-    trigger = $ evt.target
-    container = trigger.closest ".term"
-    model = @model.terms().get trigger.data "id"
-    @confirm
-      trigger: trigger
-      container: container
-      message: I18n.t "term.confirm_delete"
-      action: =>
-        value = model.get "value"
-        model.destroy()
-        Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value:value)
-        @render()
+  # removeTerm: (evt) =>
+  #   trigger = $ evt.target
+  #   container = trigger.closest ".term"
+  #   model = @model.terms().get trigger.data "id"
+  #   @confirm
+  #     trigger: trigger
+  #     container: container
+  #     message: I18n.t "term.confirm_delete"
+  #     action: =>
+  #       value = model.get "value"
+  #       model.destroy()
+  #       Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value:value)
+  #       @render()
 
   delete: (evt) ->
     trigger = $ evt.target
