@@ -124,7 +124,7 @@ en:
       label: 'Edit term'
       hint: 'Edit this term an its properties'
     update: "Save term"
-    delete: "Remove term"
+    remove_term: "Remove term"
     confirm_delete: "This term will be deleted permanently."
     confirm_update: "Saving the term will delete {{count}} properties permanently!"
 

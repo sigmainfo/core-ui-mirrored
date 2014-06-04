@@ -43,9 +43,12 @@ Capybara.add_selector(:term) do
 end
 
 module Selectors
+  def concept_details
+    find('#coreon-concepts .concept')
+  end
 
   def concept_properties
-    page.find('.concept>section>h3', text: 'PROPERTIES' ).find(:xpath, '..')
+    page.find('#coreon-concepts .concept>section>h3', text: 'PROPERTIES' ).find(:xpath, '..')
   end
 
   def concept_property(label)

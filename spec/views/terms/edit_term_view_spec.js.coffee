@@ -23,3 +23,10 @@ describe 'Coreon.Views.Terms.EditTermView', ->
     expect(el).to.have.class 'term'
     expect(el).to.have.class 'edit'
     expect(el).to.not.have.class 'show'
+
+  describe '#initialize()', ->
+
+    it 'assigns default template', ->
+      view.initialize()
+      assigned = view.template
+      expect(assigned).to.equal Coreon.Templates['terms/edit_term']

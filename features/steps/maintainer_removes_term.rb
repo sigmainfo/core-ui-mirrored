@@ -14,6 +14,15 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
   end
 
   step 'I see a term "beaver hat"' do
-    expect(page).to have_selector(:term, 'beaver hat')
+    within concept_details do
+      expect(page).to have_selector(:term, 'beaver hat')
+      @term = find(:term, 'beaver hat')
+    end
+  end
+
+  step 'I click "Remove term" inside of it' do
+    within @term do
+      click_link 'Remove term'
+    end
   end
 end

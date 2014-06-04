@@ -1,0 +1,3 @@
+.edit-actions
+  != @action_for 'term.remove_term'
+!= @render 'terms/term', value: @value, info: @info
