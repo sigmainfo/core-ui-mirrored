@@ -31,6 +31,7 @@ describe "Coreon.Modules.Confirmation", ->
         trigger: fakeTrigger()
         message: ''
         template: -> ''
+        action: ->
 
     context 'template', ->
 
@@ -80,7 +81,7 @@ describe "Coreon.Modules.Confirmation", ->
         view.confirm fakeOpts(trigger: trigger)
         expect(position).to.have.been.calledOnce
         expect(opts position).to.have.property 'my', 'left bottom'
-        expect(opts position).to.have.property 'of', trigger
+        expect(opts(position).of[0]).to.equal trigger[0]
 
       it 'repositions dialog on resize', ->
         view.confirm fakeOpts()
@@ -94,169 +95,88 @@ describe "Coreon.Modules.Confirmation", ->
         $(window).scroll()
         expect(position).to.have.been.calledOnce
 
-    xcontext 'cancel', ->
+    context 'cancel', ->
 
-      it 'is triggered by click on cancel button', ->
+      template = null
+      modal = null
 
-      # it 'removes markup', ->
-      #   modal = $('<div id="coreon-modal">').appendTo 'body'
-      #   template = -> '''
-      #     <div class="dialog">
-      #       <p>Do you want to proceed?</p>
-      #     </div>
-      #   '''
-      #   view.confirm fakeOpts template: template
-      #
-      #   expect(modal).to.be.empty
+      beforeEach ->
+        modal = $('<div id="coreon-modal">').appendTo 'body'
+        template = -> '''
+          <div class="dialog">
+            <a class="cancel" href="#">Nope</a>
+          </div>
+        '''
 
-#   view = null
-#   trigger = null
-#
-#   before ->
-#     class Coreon.Views.MyView extends Backbone.View
-#       Coreon.Modules.include @, Coreon.Modules.Confirmation
-#
-#   after ->
-#     delete Coreon.Views.MyView
-#
-#   beforeEach ->
-#     view = new Coreon.Views.MyView
-#     $("#konacha")
-#       .append(view.$el)
-#       .append '''
-#         <div id="coreon-modal"></div>
-#         '''
-#     view.$el.append '''
-#       <div class="concept">
-#         <a class="delete" href="javascript:void(0)">Delete concept</a>
-#       </div>
-#     '''
-#     trigger = view.$("a.delete")
-#
-#   afterEach ->
-#     $(window).off ".coreonConfirm"
-#
-#   describe "confirm()", ->
-#
-#     it "renders confirmation dialog", ->
-#       I18n.t.withArgs("confirm.ok").returns "OK"
-#       view.confirm
-#         trigger: trigger
-#         container: view.$ ".concept"
-#         message: "Are you sure?"
-#         action: ->
-#       $("#coreon-modal").should.have ".modal-shim .confirm"
-#       $("#coreon-modal .confirm .message").should.have.text "Are you sure?"
-#       $("#coreon-modal .confirm .ok").should.have.text "OK"
-#
-#     it "marks container for deletetion", ->
-#       view.confirm
-#         trigger: trigger
-#         container: view.$('.concept')[0]
-#         message: "Are you sure?"
-#         action: ->
-#       view.$(".concept").should.have.class "delete"
-#
-#     it "does not require container option", ->
-#       confirm = =>
-#         view.confirm
-#           trigger: trigger
-#           container: null
-#           message: "Are you sure?"
-#           action: ->
-#       confirm.should.not.throw Error
-#
-#     context "cancel", ->
-#
-#       context "with container", ->
-#
-#         beforeEach ->
-#           view.confirm
-#             trigger: trigger
-#             container: view.$ ".concept"
-#             message: "Are you sure?"
-#             action: ->
-#
-#         it "removes dialog", ->
-#           $(".modal-shim").click()
-#           $("#coreon-modal").should.be.empty
-#
-#         it "unmarks container for deletion", ->
-#           $(".modal-shim").click()
-#           view.$(".concept").should.not.have.class "delete"
-#
-#
-#         it "cancels on escape key", ->
-#           keypress= $.Event "keydown"
-#           keypress.keyCode = 27
-#           $(document).trigger keypress
-#           $("#coreon-modal").should.be.empty
-#           view.$(".concept").should.not.have.class "delete"
-#
-#       context "without container", ->
-#
-#         beforeEach ->
-#           view.confirm
-#             trigger: trigger
-#             container: null
-#             message: "Are you sure?"
-#             action: ->
-#
-#         it "does not throw an error", ->
-#           cancel = ->
-#             $(".modal-shim").click()
-#           cancel.should.not.throw Error
-#
-#     context "action", ->
-#
-#       action = null
-#
-#       beforeEach ->
-#         action = @spy()
-#         view.confirm
-#           trigger: trigger
-#           container: view.$ ".concept"
-#           message: "Are you sure?"
-#           action: action
-#
-#       it "stops propagation", ->
-#         event = $.Event "click"
-#         event.stopPropagation = @spy()
-#         $(".confirm").trigger event
-#         event.stopPropagation.should.have.been.calledOnce
-#
-#       it "removes dialog", ->
-#         $(".confirm").click()
-#         $("#coreon-modal").should.be.empty
-#
-#       it "calls action", ->
-#         $(".confirm").click()
-#         action.should.have.been.calledOnce
-#
-#       it "calls action on return key", ->
-#         keypress= $.Event "keydown"
-#         keypress.keyCode = 13
-#         $(document).trigger keypress
-#         $("#coreon-modal").should.be.empty
-#         action.should.have.been.calledOnce
-#
-#     context 'method as action', ->
-#
-#       opts = null
-#
-#       beforeEach ->
-#         view.nowDoIt = @spy()
-#
-#       fakeOpts = (opts) ->
-#         _(opts).defaults
-#           trigger: trigger
-#           message: "Are you sure?"
-#           action: ''
-#
-#       it 'calls method on view when passed in as a string', ->
-#         method = @spy()
-#         view.doItNow = method
-#         view.confirm fakeOpts(action: 'doItNow')
-#         $(".confirm").click()
-#         expect(method).to.have.been.calledOnce
-#         expect(method).to.have.been.calledOn view
+      cancel = (modal) ->
+        modal.find('a.cancel')
+
+      it 'removes markup', ->
+        view.confirm fakeOpts template: template
+        cancel(modal).click()
+        expect(modal).to.be.empty
+
+    context 'confirm', ->
+
+      template = null
+      modal = null
+
+      beforeEach ->
+        modal = $('<div id="coreon-modal">').appendTo 'body'
+        template = -> '''
+          <div class="dialog">
+            <a class="confirm" href="#">Yes</a>
+          </div>
+        '''
+
+      confirm = (modal) ->
+        modal.find('a.confirm')
+
+      it 'removes markup', ->
+        view.confirm fakeOpts template: template
+        confirm(modal).click()
+        expect(modal).to.be.empty
+
+      it 'triggers action', ->
+        action = @spy()
+        view.confirm fakeOpts
+          template: template
+          action: action
+        confirm(modal).click()
+        expect(action).to.have.been.calledOnce
+        expect(action).to.have.been.calledOn view
+
+      it 'calls method with matching name', ->
+        view.myMethod = @spy()
+        view.confirm fakeOpts
+          template: template
+          action: 'myMethod'
+        confirm(modal).click()
+        expect(view.myMethod).to.have.been.calledOnce
+        expect(view.myMethod).to.have.been.calledOn view
+
+    context 'container', ->
+
+      container = null
+
+      fakeContainer = -> $ '<div>'
+
+      beforeEach ->
+        container = fakeContainer()
+
+      it 'is classified for deletion', ->
+        view.confirm fakeOpts container: container
+        expect(container).to.have.class 'delete'
+
+      it 'is removed on cancel', ->
+        modal = $('<div id="coreon-modal">').appendTo 'body'
+        template = -> '''
+          <div class="dialog">
+            <a class="cancel" href="#">abort</a>
+          </div>
+        '''
+        view.confirm fakeOpts
+          template: template
+          container: container
+        modal.find('a.cancel').click()
+        expect(container).to.not.have.class 'delete'
