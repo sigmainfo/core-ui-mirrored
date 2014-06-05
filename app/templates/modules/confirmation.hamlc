@@ -2,5 +2,5 @@
   .dialog
     %p.message= @message
     .actions
-      %a.cancel{href: 'javascript:void(0)'}= I18n.t 'confirmation.cancel'
+      %a.button.cancel{href: 'javascript:void(0)'}= I18n.t 'confirmation.cancel'
       %a.button.confirm{href: 'javascript:void(0)'}= I18n.t 'confirmation.confirm'

@@ -5,29 +5,43 @@
     height: 3000px;
   }
   
-  .confirm {
+  .dialog {
     @include box-sizing(border-box);
-    display: table;
     background-color: $button-color;
     @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset, rgba(black, 0.4) 2px 2px 5px);
-    min-width: 220px;
+    min-width: 200px;
     width: 30%;
     max-width: 400px;
     color: white;
+    padding-bottom: 42px;
+    
+    .actions {
+      overflow: hidden;
+      float: right;
+      padding: 8px 10px;
+      
+      a {
+        margin-left: 8px;
+      }
+      
+      .confirm {
+        font-size: 18px;
+        padding: 4px 10px;
+      }
+      
+      .cancel {
+        margin-top: 4px;
+      }
+
+    }
     
     p {
-      padding: 15px;
-      display: table-cell;
-      vertical-align: middle;
+      padding: 10px 15px;
+       @include box-shadow(rgba(black, 0.2) 0px -1px 1px inset);
+       border-bottom: 1px solid rgba(white, 0.2);
     }
     
-    .ok {
-      font-size: 1.4em;
-      text-align: center;
-      background-color: $button-hover-color;
-      border-left: 1px solid rgba(black, 0.2);
-      @include box-shadow(rgba(white, 0.2) 1px 1px 1px inset, rgba(black, 0.2) -1px -1px 2px inset);      
-    }
+
     
     &:before {
       content: "";
@@ -47,13 +61,6 @@
         top: -6px;
         background-color: lighten($button-color, 6);
         @include box-shadow(rgba(white, 0.2) -1px 1px 1px inset);
-      }
-    }
-    
-    &:hover {
-      @include background(linear-gradient(lighten($button-hover-color, 6), $button-hover-color));
-      &:before {
-        background-color: $button-hover-color;
       }
     }
   }

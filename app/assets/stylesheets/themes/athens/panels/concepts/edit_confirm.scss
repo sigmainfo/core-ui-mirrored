@@ -1,14 +1,8 @@
 #coreon-modal {
   
-  .confirm {
+  .dialog {
     background-color: $button-hover-color;
-    @include border-radius(6px);
-//    @include background(linear-gradient(lighten($button-color, 6), $button-color));
-    
-    .ok {
-      background-color: $link-color;
-      @include border-right-radius(6px);
-    }
+    @include border-radius(6px);    
     
     &:before {
     	background-color: $button-hover-color;
@@ -19,13 +13,7 @@
         background-color: $button-hover-color;
       }
     }
-    
-    &:hover {
-      @include background(linear-gradient(lighten($link-color, 6), $link-color));
-      &:before {
-        background-color: $link-color;
-      }
-    }
+
   }
   
 }

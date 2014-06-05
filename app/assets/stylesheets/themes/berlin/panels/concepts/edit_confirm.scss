@@ -1,14 +1,24 @@
 #coreon-modal {
   
-  .confirm {
+  .dialog {
     background-color: $button-color;
     @include border-radius(6px);
     @include background(linear-gradient(lighten($button-color, 6), $button-color));
     
-    .ok {
-      background-color: $button-hover-color;
-      @include border-right-radius(6px);
-      @include retina-stripes(white);
+    p {
+      @include retina-stripes("white");
+    }
+    
+    .actions {
+      .confirm {
+        background-color: $button-hover-color;
+        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.4) -1px -1px 1px inset);
+        @include retina-stripes(white);
+
+         &:hover {
+           background-color: saturate($button-hover-color, 10);
+         }
+      }
     }
     
     &:before {
@@ -18,13 +28,6 @@
     &.flipped {
       &:before {
         background-color: lighten($button-color, 6);
-      }
-    }
-    
-    &:hover {
-      @include background(linear-gradient(lighten($button-hover-color, 6), $button-hover-color));
-      &:before {
-        background-color: $button-hover-color;
       }
     }
   }
