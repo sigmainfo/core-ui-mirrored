@@ -16,11 +16,15 @@ Coreon.Modules.Confirmation =
     shim.appendTo('#coreon-modal')
 
     position = ->
-      dialog.position
-        my: 'left bottom'
-        at: 'left-34 top-12'
-        of: trigger
-        collision: 'none flip'
+      dialog
+        .position
+          my: 'left bottom'
+          at: 'left-34 top-12'
+          of: trigger
+          collision: 'none flip'
+        .toggleClass 'flipped',
+          dialog.offset().top > trigger.offset().top
+
     position()
     $(window).on 'scroll.coreonConfirmation resize.coreonConfirmation', position
 
