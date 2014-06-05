@@ -213,8 +213,9 @@ en:
     service:
       unavailable: "Service is currently unavailable."
 
-  confirm:
-    ok: "OK"
+  confirmation:
+    confirm: "OK"
+    cancel: "Cancel"
 
   panel:
     maximize: "Maximize"
