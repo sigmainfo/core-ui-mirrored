@@ -131,6 +131,8 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
   end
 
   step 'I should see a confirmation dialog warning that one property will be deleted' do
-    page.find("#coreon-modal .confirm").should have_content("delete 1 properties")
+    within :confirmation_dialog do
+      expect(page).to have_text('delete 1 prop')
+    end
   end
 end

@@ -13,12 +13,12 @@ Feature: maintainer deletes concept
     Given I am on the show concept page of "beaver hat"
     When I toggle "EDIT MODE"
     And I click "Delete concept"
-    Then I should see a confirmation dialog "This concept including all terms will be deleted permanently."
-    When I click outside the dialog
+    Then I should see a confirmation dialog
+    When I click to cancel
     Then I should not see a confirmation dialog
     And I should still be on the show concept page
     When I click "Delete concept"
-    And I click "OK" within the dialog
+    And I click to confirm
     Then I should be on the repository root page
     And I should not see a confirmation dialog
     And I should see a message 'Successfully deleted concept "beaver hat".'
@@ -30,7 +30,7 @@ Feature: maintainer deletes concept
     And I am on the show concept page of "beaver hat"
     When I toggle "EDIT MODE"
     And I click "Delete concept"
-    And I click "OK" within the dialog
+    And I click to confirm
     Then I should be on the repository root page
     When I navigate to the show concept of "hat"
     Then I should see no narrower concepts for "hat"

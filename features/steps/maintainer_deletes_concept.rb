@@ -2,6 +2,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
 
   include AuthSteps
   include EditSteps
+  include Editing
   include Api::Graph::Factory
 
   step 'a concept with an English term "beaver hat" exists' do
@@ -18,10 +19,9 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
     click_link "Delete concept"
   end
 
-  step 'I should see a confirmation dialog "This concept including all terms will be deleted permanently."' do
-    page.should have_css(".confirm .message", text: "This concept including all terms will be deleted permanently!")
+  step 'I should see a confirmation dialog' do
+    expect(page).to have_selector(:confirmation_dialog)
   end
-
 
   step 'I should still be on the show concept page' do
     page.current_path.should == "/#{current_repository.id}/concepts/#{@concept['id']}"
@@ -63,5 +63,13 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
     within "section.broader-and-narrower" do
       page.should have_no_css(".narrower li")
     end
+  end
+
+  step 'I click to cancel' do
+    cancel_edit
+  end
+
+  step 'I click to confirm' do
+    confirm_edit
   end
 end
