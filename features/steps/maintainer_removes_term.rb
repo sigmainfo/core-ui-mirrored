@@ -31,8 +31,29 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
   end
 
   step 'I click to confirm' do
-    within :confirmation_dialog do
-      click_link 'OK'
+    confirm_edit
+  end
+
+  step 'I do not see the confirmation dialog anymore' do
+    expect(page).to have_no_selector(:confirmation_dialog)
+  end
+
+  step 'I do not see the term "beaver hat" anymore' do
+    expect(page).to have_no_selector(:term, 'beaver habeaver hatt')
+  end
+
+  step 'I see a message \'Successfully deleted term "beaver hat"\'' do
+    expect(page).to have_selector(:notification,
+                                  'Successfully deleted term "beaver hat"')
+  end
+
+  step 'I click to cancel' do
+    cancel_edit
+  end
+
+  step 'I still see the term "beaver hat"' do
+    within concept_details do
+      expect(page).to have_selector(:term, 'beaver hat')
     end
   end
 end

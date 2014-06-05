@@ -44,7 +44,13 @@ end
 
 Capybara.add_selector(:confirmation_dialog) do
   xpath do
-    ".//*[#{has_class :confirm} and .//*[#{has_class :ok}]]"
+    ".//*[#{has_class :dialog} and .//*[#{has_class :confirm}]]"
+  end
+end
+
+Capybara.add_selector(:notification) do
+  xpath do |message|
+    ".//*[#{has_class :notification} and contains(., '#{message}')]"
   end
 end
 

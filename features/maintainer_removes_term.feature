@@ -13,7 +13,8 @@ Feature: maintainer removes term
     When I click "Remove term" inside of it
     Then I see a confirmation dialog
     When I click to confirm
-    Then I do not see the term "beaver hat" anymore
+    Then I do not see the confirmation dialog anymore
+    And I do not see the term "beaver hat" anymore
     But I see a message 'Successfully deleted term "beaver hat"'
 
   Scenario: cancel deletion
@@ -24,4 +25,4 @@ Feature: maintainer removes term
     Then I see a confirmation dialog
     When I click to cancel
     Then I do not see the confirmation dialog anymore
-    And I still see the term "beaver hat"
+    But I still see the term "beaver hat"
