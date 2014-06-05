@@ -10,7 +10,7 @@ div.concept {
     }
   }
 
-  .add-to-clipboard, .remove-from-clipboard, .toggle-system-info, .properties-toggle {
+  .add-to-clipboard, .remove-from-clipboard, .toggle-system-info, .toggle-all-properties {
     @include edit-button;
     padding: 1px;
   }
@@ -35,7 +35,7 @@ div.concept {
     }
   }
 
-  .properties-toggle {
+  .toggle-all-properties {
     float: right;
     background-position: -149px -598px;
     &:hover {
