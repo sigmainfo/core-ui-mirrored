@@ -10,7 +10,7 @@ describe 'Coreon.Views.Terms.EditTermView', ->
   fakeTerm = (attrs) -> new Backbone.Model attrs
 
   beforeEach ->
-    term = fakeTerm()
+    term = fakeTerm value: ''
     view = new Coreon.Views.Terms.EditTermView
       model: term
       template: -> ''
@@ -92,3 +92,59 @@ describe 'Coreon.Views.Terms.EditTermView', ->
       it 'destroys term when confirmed', ->
         view.removeTerm event
         expect(opts confirm).to.have.property 'action', 'destroyTerm'
+
+  describe '#destroyTerm()', ->
+
+    destroy = null
+    promise = null
+
+    fakePromise = -> $.Deferred()
+
+    beforeEach ->
+      promise = fakePromise()
+      destroy = @stub(term, 'destroy').returns promise
+      $('body').append view.el
+
+    el = (view) -> view.$el
+
+    it 'destroys model', ->
+      view.destroyTerm()
+      expect(destroy).to.have.been.calledOnce
+
+    it 'hides container', ->
+      view.destroyTerm()
+      expect(el view).to.be.hidden
+
+    context 'done', ->
+
+      info = null
+
+      beforeEach ->
+        info = @stub Coreon.Models.Notification, 'info'
+
+      done = ->
+        view.destroyTerm()
+        promise.resolve()
+
+      it 'generates success message', ->
+        term.set 'value', 'Wild West', silent: yes
+        I18n.t
+          .withArgs('term.deleted.success', value: 'Wild West')
+          .returns 'Deleted "Wild West"'
+        done()
+        expect(info).to.have.been.calledWith 'Deleted "Wild West"'
+
+      it 'destroys view instance', ->
+        remove = @stub view, 'remove'
+        done()
+        expect(remove).to.have.been.calledOnce
+
+    context 'fail', ->
+
+      fail = ->
+        view.destroyTerm()
+        promise.reject()
+
+      it 'reveals container', ->
+        fail()
+        expect(el view).to.be.visible

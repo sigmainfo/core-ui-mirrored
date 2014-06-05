@@ -2,6 +2,7 @@
 #= require views/terms/term_view
 #= require templates/terms/edit_term
 #= require modules/confirmation
+#= require models/notification
 
 class Coreon.Views.Terms.EditTermView extends Coreon.Views.Terms.TermView
 
@@ -24,4 +25,11 @@ class Coreon.Views.Terms.EditTermView extends Coreon.Views.Terms.TermView
       action: 'destroyTerm'
 
   destroyTerm: ->
-    console.log @, @model
+    @$el.hide()
+    @model.destroy()
+      .done =>
+        message = I18n.t 'term.deleted.success', value: @model.get('value')
+        Coreon.Models.Notification.info message
+        @remove()
+      .fail =>
+        @$el.show()

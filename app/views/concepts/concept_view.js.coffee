@@ -284,20 +284,6 @@ class Coreon.Views.Concepts.ConceptView extends Backbone.View
     @model.remoteError = null
     @render()
 
-  # removeTerm: (evt) =>
-  #   trigger = $ evt.target
-  #   container = trigger.closest ".term"
-  #   model = @model.terms().get trigger.data "id"
-  #   @confirm
-  #     trigger: trigger
-  #     container: container
-  #     message: I18n.t "term.confirm_delete"
-  #     action: =>
-  #       value = model.get "value"
-  #       model.destroy()
-  #       Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value:value)
-  #       @render()
-
   delete: (evt) ->
     trigger = $ evt.target
     label = @model.get "label"
