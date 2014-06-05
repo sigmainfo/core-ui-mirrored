@@ -42,6 +42,12 @@ Capybara.add_selector(:term) do
   end
 end
 
+Capybara.add_selector(:confirmation_dialog) do
+  xpath do
+    ".//*[#{has_class :confirm} and .//*[#{has_class :ok}]]"
+  end
+end
+
 module Selectors
   def concept_details
     find('#coreon-concepts .concept')

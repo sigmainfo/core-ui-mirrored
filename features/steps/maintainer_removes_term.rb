@@ -25,4 +25,14 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
       click_link 'Remove term'
     end
   end
+
+  step 'I see a confirmation dialog' do
+    expect(page).to have_selector(:confirmation_dialog)
+  end
+
+  step 'I click to confirm' do
+    within :confirmation_dialog do
+      click_link 'OK'
+    end
+  end
 end
