@@ -16,7 +16,7 @@ class Coreon.Views.Terms.AbstractTermsView extends Coreon.Views.CompositeView
   render: ->
     @$el.html @template languages: @languageSections()
     @renderSubviews()
-    @collapseAllProperties()
+    @initProperties()
     @
 
   languageSections: ->
@@ -28,12 +28,15 @@ class Coreon.Views.Terms.AbstractTermsView extends Coreon.Views.CompositeView
     lang = subview.model.get('lang')
     @$("section.language[data-id='#{lang}'] ul").append subview.el
 
-  collapseAllProperties: ->
+  initProperties: ->
     properties = @$('.properties')
     content = properties.children('div').not('.edit-actions')
 
-    properties.addClass 'collapsed'
-    content.hide()
+    if properties.length is 0
+      @$('.toggle-all-properties').hide()
+    else
+      properties.addClass 'collapsed'
+      content.hide()
 
   toggleAllProperties: ->
     properties = @$('.properties')

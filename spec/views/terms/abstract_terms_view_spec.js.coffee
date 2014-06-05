@@ -136,6 +136,34 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
         edit = properties(view).find '.edit-actions'
         expect(edit).to.be.visible
 
+    describe 'properties toggle', ->
+
+      beforeEach ->
+        view.$el.appendTo 'body'
+
+      toggle = (view) -> view.$ '.toggle-all-properties'
+
+      it 'hides toggle if not applicable', ->
+        template.returns '''
+          <a class="toggle-all-properties" href="#">Toggle properties</a>
+          <div class="term">
+            <h3 class="value">Term without properties</h3>
+          </div>
+        '''
+        view.render()
+        expect(toggle view).to.be.hidden
+
+      it 'keeps toggle visible when there are any properties', ->
+        template.returns '''
+          <a class="toggle-all-properties" href="#">Toggle properties</a>
+          <div class="term">
+            <h3 class="value">Term with properties</h3>
+            <div class="properties">PROPERTIES</div>
+          </div>
+        '''
+        view.render()
+        expect(toggle view).to.be.visible
+
   describe '#insertSubview()', ->
 
     fakeTerm = (attrs) ->
