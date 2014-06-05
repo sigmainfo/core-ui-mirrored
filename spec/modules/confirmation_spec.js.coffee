@@ -45,7 +45,7 @@ describe "Coreon.Modules.Confirmation", ->
         view.confirm fakeOpts
           template: template
           message: 'Are you sure?'
-        expect(template).to.have.been.calledWith 'Are you sure?'
+        expect(template).to.have.been.calledWith message: 'Are you sure?'
 
       it 'appends markup to modal layer', ->
         modal = $('<div id="coreon-modal">').appendTo 'body'

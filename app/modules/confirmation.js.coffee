@@ -10,7 +10,7 @@ Coreon.Modules.Confirmation =
     message = options.message
     trigger = options.trigger
 
-    shim = $(template message)
+    shim = $(template message: message)
     dialog = shim.find('.dialog')
 
     shim.appendTo('#coreon-modal')
