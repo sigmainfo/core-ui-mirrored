@@ -147,13 +147,17 @@ describe 'Coreon.Views.Terms.AbstractTermsView', ->
 
     it 'appends subview to corresponding language section', ->
       view.$el.html '''
-        <section class="language" data-id="en"></section>
-        <section class="language" data-id="de"></section>
+        <section class="language" data-id="en">
+          <ul></ul>
+        </section>
+        <section class="language" data-id="de">
+          <ul></ul>
+        </section>
       '''
       model = fakeTerm lang: 'de'
       subview = fakeSubview model
       view.insertSubview subview
-      section = view.$ 'section[data-id="de"]'
+      section = view.$ 'section[data-id="de"] ul'
       expect(subview.el).to.be.childOf section
 
   describe '#toggleAllProperties()', ->

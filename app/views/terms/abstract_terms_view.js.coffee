@@ -26,7 +26,7 @@ class Coreon.Views.Terms.AbstractTermsView extends Coreon.Views.CompositeView
 
   insertSubview: (subview) ->
     lang = subview.model.get('lang')
-    @$("section.language[data-id='#{lang}']").append subview.el
+    @$("section.language[data-id='#{lang}'] ul").append subview.el
 
   collapseAllProperties: ->
     properties = @$('.properties')
