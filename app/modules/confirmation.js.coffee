@@ -14,12 +14,15 @@ Coreon.Modules.Confirmation =
     dialog = shim.find('.dialog')
 
     shim.appendTo('#coreon-modal')
-      .find('.dialog')
-        .position
-          my: 'left bottom'
-          at: 'left-34 top-12'
-          of: trigger
-          collision: 'none flip'
+
+    position = ->
+      dialog.position
+        my: 'left bottom'
+        at: 'left-34 top-12'
+        of: trigger
+        collision: 'none flip'
+    position()
+    $(window).on 'scroll.coreonConfirmation resize.coreonConfirmation', position
 
 
 # KEYCODE =

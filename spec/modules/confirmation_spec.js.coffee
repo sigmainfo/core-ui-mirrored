@@ -16,6 +16,9 @@ describe "Coreon.Modules.Confirmation", ->
   beforeEach ->
     view = new Coreon.Views.ViewWithConfirmation
 
+  afterEach ->
+    $(window).off '.coreonConfirmation'
+
   describe '#confirm()', ->
 
     fakeTrigger = -> $ '<a>'
@@ -62,16 +65,32 @@ describe "Coreon.Modules.Confirmation", ->
 
     context 'position', ->
 
+      position = null
+
+      beforeEach ->
+        position = @stub $.fn, 'position'
+
       opts = (stub) ->
         stub.firstCall.args[0]
 
       it 'aligns dialog above trigger', ->
         trigger = fakeTrigger()
-        position = @stub $.fn, 'position'
         view.confirm fakeOpts(trigger: trigger)
         expect(position).to.have.been.calledOnce
         expect(opts position).to.have.property 'my', 'left bottom'
         expect(opts position).to.have.property 'of', trigger
+
+      it 'repositions dialog on resize', ->
+        view.confirm fakeOpts()
+        position.reset()
+        $(window).resize()
+        expect(position).to.have.been.calledOnce
+
+      it 'repositions dialog on scroll', ->
+        view.confirm fakeOpts()
+        position.reset()
+        $(window).scroll()
+        expect(position).to.have.been.calledOnce
 
 #   view = null
 #   trigger = null
