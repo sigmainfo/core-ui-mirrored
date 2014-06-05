@@ -16,10 +16,6 @@ describe 'Coreon.Templates[terms/edit_term]', ->
   render = ->
     $('<div>').html(template data)
 
-  it 'does not fail', ->
-    el = render()
-    expect(el).to.exist
-
   context 'term', ->
 
     beforeEach ->

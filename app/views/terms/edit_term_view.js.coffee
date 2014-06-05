@@ -28,7 +28,7 @@ class Coreon.Views.Terms.EditTermView extends Coreon.Views.Terms.TermView
     @$el.hide()
     @model.destroy()
       .done =>
-        message = I18n.t 'term.deleted.success', value: @model.get('value')
+        message = I18n.t 'notifications.term.deleted', value: @model.get('value')
         Coreon.Models.Notification.info message
         @remove()
       .fail =>

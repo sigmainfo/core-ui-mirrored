@@ -129,7 +129,7 @@ describe 'Coreon.Views.Terms.EditTermView', ->
       it 'generates success message', ->
         term.set 'value', 'Wild West', silent: yes
         I18n.t
-          .withArgs('term.deleted.success', value: 'Wild West')
+          .withArgs('notifications.term.deleted', value: 'Wild West')
           .returns 'Deleted "Wild West"'
         done()
         expect(info).to.have.been.calledWith 'Deleted "Wild West"'
