@@ -21,6 +21,9 @@ describe "Coreon.Modules.Confirmation", ->
 
   describe '#confirm()', ->
 
+    beforeEach ->
+      @stub $.fn, 'offset', -> top: 0
+
     fakeTrigger = -> $ '<a>'
 
     fakeOpts = (opts = {}) ->
@@ -52,14 +55,13 @@ describe "Coreon.Modules.Confirmation", ->
 
       it 'appends markup to modal layer', ->
         modal = $('<div id="coreon-modal">').appendTo 'body'
-        markup = '''
+        template = -> '''
           <div class="shim">
             <div class="dialog">
               <p>Do you want to proceed?</p>
             </div>
           </div>
         '''
-        template = -> markup
         view.confirm fakeOpts template: template
         expect(modal).to.have '.shim .dialog'
 
@@ -68,7 +70,7 @@ describe "Coreon.Modules.Confirmation", ->
       position = null
 
       beforeEach ->
-        position = @stub $.fn, 'position'
+        position = @spy $.fn, 'position'
 
       opts = (stub) ->
         stub.firstCall.args[0]
@@ -91,6 +93,21 @@ describe "Coreon.Modules.Confirmation", ->
         position.reset()
         $(window).scroll()
         expect(position).to.have.been.calledOnce
+
+    xcontext 'cancel', ->
+
+      it 'is triggered by click on cancel button', ->
+
+      # it 'removes markup', ->
+      #   modal = $('<div id="coreon-modal">').appendTo 'body'
+      #   template = -> '''
+      #     <div class="dialog">
+      #       <p>Do you want to proceed?</p>
+      #     </div>
+      #   '''
+      #   view.confirm fakeOpts template: template
+      #
+      #   expect(modal).to.be.empty
 
 #   view = null
 #   trigger = null

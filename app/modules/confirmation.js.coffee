@@ -22,12 +22,10 @@ Coreon.Modules.Confirmation =
           at: 'left-34 top-12'
           of: trigger
           collision: 'none flip'
-        .toggleClass 'flipped',
-          dialog.offset().top > trigger.offset().top
+        .toggleClass 'flipped', dialog.offset().top > trigger.offset().top
 
     position()
     $(window).on 'scroll.coreonConfirmation resize.coreonConfirmation', position
-
 
 # KEYCODE =
 #   esc: 27
