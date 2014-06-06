@@ -31,8 +31,11 @@ Coreon.Modules.Confirmation =
           my: 'left bottom'
           at: 'left-34 top-12'
           of: trigger
-          collision: 'none flip'
-        .toggleClass 'flipped', dialog.offset().top > trigger.offset().top
+          collision: 'flip'
+        .toggleClass('y-flipped'
+                   , dialog.offset().top > trigger.offset().top)
+        .toggleClass('x-flipped'
+                   , trigger.offset().left - dialog.offset().left > 50)
 
     position()
     $(window).on 'scroll.coreonConfirmation resize.coreonConfirmation', position

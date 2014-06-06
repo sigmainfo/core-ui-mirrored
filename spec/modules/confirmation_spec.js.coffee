@@ -22,7 +22,9 @@ describe "Coreon.Modules.Confirmation", ->
   describe '#confirm()', ->
 
     beforeEach ->
-      @stub $.fn, 'offset', -> top: 0
+      @stub $.fn, 'offset', ->
+        top: 0
+        left: 0
 
     fakeTrigger = -> $ '<a>'
 
