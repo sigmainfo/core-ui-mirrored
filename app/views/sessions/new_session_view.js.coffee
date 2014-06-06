@@ -1,5 +1,6 @@
 #= require environment
 #= require templates/sessions/new_session
+#= require helpers/action_for
 #= require models/session
 #= require models/notification
 #= require modules/helpers

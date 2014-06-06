@@ -3,5 +3,5 @@
 
 Coreon.Helpers.action_for = ( id ) ->
   Coreon.Templates['helpers/action_for']
-    name: _.last( id.split '.' ).replace '_', '-'
+    name: _.last( id.split '.' ).replace /_/g, '-'
     title: I18n.t( id )

@@ -2,25 +2,23 @@ class Spinach::Features::VisitorBrowsesRepositoryAsGuest < Spinach::FeatureSteps
   include Authentication
 
   step 'a public repository "Coreon Demo" exists' do
-    guest = guest_account 'guest'
-    repository = repository 'Coreon Demo'
-    assign_roles guest, repository, :user
+    grant_repository_access :user, user: guest_user
   end
 
   step 'I am not logged in' do
-    pending 'step not implemented'
+    logout
   end
 
   step 'I visit the welcome page' do
-    pending 'step not implemented'
+    visit '/'
   end
 
   step 'I see a link "Login as guest"' do
-    pending 'step not implemented'
+    expect(page).to have_link('Login as guest')
   end
 
   step 'I click "Login as guest"' do
-    pending 'step not implemented'
+    click_link 'Login as guest'
   end
 
   step 'I see "Logged in as guest"' do

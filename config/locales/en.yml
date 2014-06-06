@@ -13,6 +13,9 @@ en:
       message: "Please enter your password to proceed:"
       submit: "Proceed"
 
+  sessions:
+    login_as_guest: 'Login as guest'
+
   themes:
     caption: "Theme"
     names:

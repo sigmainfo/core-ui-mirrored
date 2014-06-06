@@ -38,6 +38,7 @@ module Authentication
       state: :confirmed
     )
   end
+  alias grant_repository_access create_repository_user
 
   def default_account
     @default_account ||= create_account 'Test Account'
