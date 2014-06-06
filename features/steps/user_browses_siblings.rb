@@ -28,7 +28,7 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   end
 
   step 'I visit the concept details page for "pool"' do
-    visit "/#{@repository.id}/concepts/#{@pool['id']}"
+    visit "/#{current_repository.id}/concepts/#{@pool['id']}"
   end
 
   step 'I should see a concept node "pool"' do
@@ -144,7 +144,7 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   end
 
   step 'I visit the concept details page for "five pin billiards"' do
-    visit "/#{@repository.id}/concepts/#{@five_pin_billiards['id']}"
+    visit "/#{current_repository.id}/concepts/#{@five_pin_billiards['id']}"
   end
 
   step 'I click the placeholder to expand the siblings of "five pin billiards"' do
@@ -207,7 +207,7 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   end
 
   step 'I visit the concept details page for "Pavel"' do
-    visit "/#{@repository.id}/concepts/#{@pavel['id']}"
+    visit "/#{current_repository.id}/concepts/#{@pavel['id']}"
   end
 
   step 'I should see "Pavel" horizontally centered below "Fyodor"' do
@@ -251,7 +251,7 @@ class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   end
 
   step 'I visit the concept details page for "Dmitri"' do
-    visit "/#{@repository.id}/concepts/#{@dmitri['id']}"
+    visit "/#{current_repository.id}/concepts/#{@dmitri['id']}"
   end
 
   step 'I should see "Dmitri" horizontally centered below "Adelaida"' do

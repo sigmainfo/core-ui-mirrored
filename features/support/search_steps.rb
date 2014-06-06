@@ -59,7 +59,7 @@ module SearchSteps
   end
 
   step 'I should be on the search result page' do
-    current_path.should =~ %r|^/#{@repository.id}/concepts/search|
+    current_path.should =~ %r|^/#{current_repository.id}/concepts/search|
   end
 
   step 'I should see the query "poet" within the navigation' do

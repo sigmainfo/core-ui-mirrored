@@ -8,11 +8,11 @@ class Spinach::Features::UserBrowsesRepositoryRootNode < Spinach::FeatureSteps
   end
 
   step 'the name of the current repository is "Top Movies from the 80ies"' do
-    @repository.update_attributes name: "Top Movies from the 80ies"
+    current_repository.update_attributes name: "Top Movies from the 80ies"
   end
 
   step 'I visit the show concept page for "Top Gun"' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I should see a single repository node within the broader listing' do
@@ -33,6 +33,6 @@ class Spinach::Features::UserBrowsesRepositoryRootNode < Spinach::FeatureSteps
   step 'I should be on the repository root page of "Top Movies from the 80ies"' do
     page.should have_css(".repository.show")
     page.should have_css("h2.name", text: "Top Movies from the 80ies")
-    current_path.should == "/#{@repository.id}"
+    current_path.should == "/#{current_repository.id}"
   end
 end

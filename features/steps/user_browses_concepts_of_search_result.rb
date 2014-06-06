@@ -69,7 +69,7 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   end
 
   step 'I should be on the search results page for query "ball"' do
-    current_path.should == "/#{@repository.id}/concepts/search/ball"
+    current_path.should == "/#{current_repository.id}/concepts/search/ball"
   end
 
   step 'each of them should have a section "BROADER"' do
@@ -210,6 +210,6 @@ class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSte
   end
 
   step 'I should be on the concept details page for "ball-shaped"' do
-    current_path.should == "/#{@repository.id}/concepts/#{@ball_shaped['id']}"
+    current_path.should == "/#{current_repository.id}/concepts/#{@ball_shaped['id']}"
   end
 end

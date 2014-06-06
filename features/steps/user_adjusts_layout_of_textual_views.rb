@@ -7,7 +7,7 @@ class Spinach::Features::UserAdjustsLayoutOfTextualViews < Spinach::FeatureSteps
   end
 
   step 'I visit the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I drag the resize handle of the concept map to the left by 200px' do

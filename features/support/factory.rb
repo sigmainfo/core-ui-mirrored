@@ -6,7 +6,7 @@ module Api
         return @maintainer_session if @maintainer_session
 
         user = CoreClient::Auth::User.create! name: "Given Maintainer", emails: ["maintainer@user.given"], password: "secret123", password_confirmation: "secret123"
-        CoreClient::Auth::RepositoryUser.create! repository: @repository, user: user, email: "maintainer@user.given", roles: [:maintainer], state: :confirmed
+        CoreClient::Auth::RepositoryUser.create! repository: current_repository, user: user, email: "maintainer@user.given", roles: [:maintainer], state: :confirmed
 
         session = CoreClient::Auth.get_session 'maintainer@user.given', 'secret123'
 

@@ -4,7 +4,7 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
   include Api::Graph::Factory
 
   step 'I am browsing a repository called "Games"' do
-    @repository.update_attributes name: "Games"
+    current_repository.update_attributes name: "Games"
   end
 
   step 'a top level concept "billiards" exists' do
@@ -35,7 +35,7 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
   end
 
   step 'I visit the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I should see a repository root node "Games"' do
@@ -98,6 +98,6 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
 
   step 'I should be on the repository root page' do
     page.should have_css(".repository.show h2.name", text: "Games")
-    page.current_path.should == "/#{@repository.id}"
+    page.current_path.should == "/#{current_repository.id}"
   end
 end

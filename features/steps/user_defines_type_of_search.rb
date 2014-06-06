@@ -66,6 +66,6 @@ class UserDefinesTypeOfSearch < Spinach::FeatureSteps
   end
 
   Then 'I should be on the search concepts page with target "terms" and query "poet"' do
-    current_path.should == "/#{@repository.id}/concepts/search/terms/poet"
+    current_path.should == "/#{current_repository.id}/concepts/search/terms/poet"
   end
 end

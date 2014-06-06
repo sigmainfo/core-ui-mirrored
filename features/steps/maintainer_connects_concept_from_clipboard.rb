@@ -23,6 +23,7 @@ class MaintainerConnectsConceptFromClipboard < Spinach::FeatureSteps
   end
 
   step 'I click on the search result' do
+    expect(page).to have_css('.concept-list .concept-list-item a.concept-label')
     find(".concept-list a.concept-label").click
   end
 

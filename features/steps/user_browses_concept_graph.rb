@@ -67,7 +67,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
   end
 
   step 'the repository root node should be connected to "tool"' do
-    @edges.should include("Nobody's Repository -> tool")
+    @edges.should include("Test Repository -> tool")
   end
 
   step 'a concept "hand" exists' do

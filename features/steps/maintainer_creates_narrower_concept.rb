@@ -18,7 +18,7 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the new concept page' do
-    page.current_path.should == "/#{@repository.id}/concepts/new/broader/#{@concept['id']}"
+    page.current_path.should == "/#{current_repository.id}/concepts/new/broader/#{@concept['id']}"
   end
 
   step 'I should see "panopticum" within the list of broader concepts' do
@@ -31,7 +31,7 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
 
   step 'I should be on the show concept page' do
     page.should have_no_css(".concept.new")
-    page.current_path.should =~ %r|^/#{@repository.id}/concepts/[0-9a-f]{24}$|
+    page.current_path.should =~ %r|^/#{current_repository.id}/concepts/[0-9a-f]{24}$|
     @id = current_path.split("/").last
   end
 
@@ -44,7 +44,7 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the show concept page of "panopticum"' do
-    current_path.should == "/#{@repository.id}/concepts/#{@concept['id']}"
+    current_path.should == "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I should see the id of the newly created concept within the list of narrower concepts' do

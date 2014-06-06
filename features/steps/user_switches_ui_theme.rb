@@ -3,7 +3,7 @@ class Spinach::Features::UserSwitchesUiTheme < Spinach::FeatureSteps
   include AuthSteps
 
   step 'I am on the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I click to toggle the footer' do

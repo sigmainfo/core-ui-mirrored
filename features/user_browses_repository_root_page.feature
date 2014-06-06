@@ -13,5 +13,5 @@ Feature: user browses repository root page
     And I am logged in
     When I visit the repository root page
     Then I should see the title "The Art of War" with description "Ancient Chinese military treatise"
-    And I should see a table containing the meta data for "CREATED AT", "COPYRIGHT", and "INFO" 
+    And I should see a table containing the meta data for "CREATED AT", "COPYRIGHT", and "INFO"
     And I should see a section "CONTACT" with my "NAME" and "EMAIL" listed
