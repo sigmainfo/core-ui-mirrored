@@ -30,14 +30,21 @@ class Form extends Coreon.Lib.FormContext
 
   template: Coreon.Templates["forms/form_for"]
 
-  constructor: (@name, @model, context, block) ->
+  constructor: (@name, @model, context, block, options = {}) ->
     super context, block
-    @action = if @model.isNew() then "create" else "update"
-    @errors = @model?.errors?()
+    @action = if @model.isNew() then 'create' else 'update'
+    @errors = @model.errors?()
     @errorCounts = errorCounts @errors if @errors?
+    @noCancel = options.noCancel or off
 
   input: (attr, options = {}) ->
     Coreon.Helpers.input @name, attr, @model, options
 
-Coreon.Helpers.form_for = (name, model, block) ->
-  (new Form name, model, @, block).render()
+Coreon.Helpers.form_for = (name, model, options, block) ->
+  block = _(arguments).last()
+  if arguments.length < 4
+    options = {}
+  if arguments.length < 3 or model is null
+    model = new Backbone.Model
+
+  (new Form name, model, @, block, options).render()

@@ -1,6 +1,7 @@
 #= require environment
 #= require templates/sessions/new_session
 #= require helpers/action_for
+#= require helpers/form_for
 #= require models/session
 #= require models/notification
 #= require modules/helpers
@@ -12,12 +13,11 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
   id: "coreon-login"
 
-  template: Coreon.Templates["sessions/new_session"]
-
   events:
     "submit form"  : "create"
 
-  initialize: ->
+  initialize: (options = {}) ->
+    @template = options.template or Coreon.Templates['sessions/new_session']
     @startLoop @updateState
 
   render: ->
@@ -25,23 +25,26 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
     @
 
   updateState: (event) ->
-    valid = @$("#coreon-login-email").val().length and @$("#coreon-login-password").val().length
-    @$("input[type='submit']").prop "disabled", not valid
+    valid = @$('input[type="email"]').val().length and
+      @$('input[type="password"]').val().length
+    @$('*[type="submit"]').prop "disabled", not valid
 
   create: (event) ->
     event.preventDefault()
     @stopLoop()
     @$("input,button").prop "disabled", yes
-    Coreon.Models.Session.authenticate(@$("#coreon-login-email").val(), @$("#coreon-login-password").val())
-      .done( (session) =>
+    Coreon.Models.Session.authenticate(@$('input[type="email"]').val()
+                                     , @$('input[type="password"]').val()
+    )
+      .done (session) =>
         @model.set "session", session
         if session?
-          Coreon.Models.Notification.info I18n.t "notifications.account.login", name: session.get("user").name
+          Coreon.Models.Notification.info I18n.t 'notifications.account.login'
+                                        , name: session.get('user').name
         else
-          @$("#coreon-login-password").val ""
+          @$('input[type="password"]').val ""
           @$("input,button").prop "disabled", no
           @startLoop @updateState
-      )
 
   remove: ->
     @stopLoop()

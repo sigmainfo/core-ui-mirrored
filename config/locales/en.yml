@@ -4,17 +4,18 @@
 en:
   account:
     logout: "Log out"
-    login:
-      email: "Email"
-      password: "Password"
-      submit: "Log in"
     status: "Logged in as {{name}}"
     password_prompt:
       message: "Please enter your password to proceed:"
       submit: "Proceed"
 
   sessions:
-    login_as_guest: 'Login as guest'
+    login_as_guest: 'Log in as guest'
+
+  session:
+    email: 'Email'
+    password: 'Password'
+    create: 'Log in'
 
   themes:
     caption: "Theme"

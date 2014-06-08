@@ -1,11 +1,5 @@
 %h1.logo coreon
-%form.login
-  %label{for: "coreon-login-email"}= I18n.t "account.login.email"
-  %input#coreon-login-email{type: "text", name: "login[email]", required: true}
-
-  %label{for: "coreon-login-password"}= I18n.t "account.login.password"
-  %input#coreon-login-password{type: "password", name: "login[password]", required: true}
-
-  %input{type: "submit", name: "login", value: I18n.t "account.login.submit", disabled: true}
-
+!= @form_for 'session', null, noCancel: on, ->
+  != @form.input 'email'   , required: on
+  != @form.input 'password', required: on
 != @action_for 'sessions.login_as_guest'
