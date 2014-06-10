@@ -5,11 +5,11 @@
     color: $label-color;
   }
   
-  .login {
+  form {
     background:image-url("layout/separator.png") repeat-x bottom;
     @include retina-separator;
 
-    input[type="submit"] {
+    button[type="submit"] {
       color: $text-color;
       
       &:not(:disabled) {

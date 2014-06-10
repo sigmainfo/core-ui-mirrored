@@ -41,15 +41,16 @@
 
   }
   
-  .login {
+  form {
     width: 520px;
     padding-bottom: 50px;
     margin-left: 380px;
 
-    input[type="submit"] {
+    button[type="submit"] {
       position: relative;
-      left: 50px;
-      top: 2px;
+      float: right;
+      left: -120px;
+      top: -30px;
       height:30px;
       padding-left:30px;
       border: none;
@@ -68,10 +69,6 @@
        &:disabled {
          @include opacity(0.5);
        }
-    }
-
-    div.input {
-      padding-bottom: 36px;
     }
   }
 }
