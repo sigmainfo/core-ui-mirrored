@@ -6,8 +6,16 @@
   }
   
   form {
-    background:image-url("layout/separator.png") repeat-x bottom;
+    background: image-url("layout/separator.png") repeat-x bottom;
     @include retina-separator;
+    
+    &:before {
+      content:"";
+      display: block;
+      width: 520px;
+      height: 8px;
+      @include retina-separator;
+    };
 
     button[type="submit"] {
       color: $text-color;
