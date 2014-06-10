@@ -2,7 +2,7 @@
   position: relative;
   width: 900px;
   margin: 30px auto;
-  
+
   .logo {
     display: block;
     text-indent: -1000px;
@@ -13,11 +13,11 @@
     position: relative;
     top: 160px;
   }
-  
+
   h3 {
     font: 1.6em $serif;
   }
-  
+
   label {
     display: block;
     color: $label-color;
@@ -27,8 +27,8 @@
       border: none;
     }
   }
-  
-  .login-as-guest {
+
+  .create-guest-session {
     display: inline-block;
     margin-left: 380px;
     margin-top: 16px;
@@ -40,7 +40,7 @@
     background-position: -3px -1250px;
 
   }
-  
+
   form {
     width: 520px;
     padding-bottom: 50px;
@@ -59,13 +59,13 @@
       background-position: -3px -1250px;
       outline:0;
       font: 1.5em $serif;
-      
+
       &:not(:disabled) {
         &:hover {
           color: $secondary-color;
         }
       }
-      
+
        &:disabled {
          @include opacity(0.5);
        }
