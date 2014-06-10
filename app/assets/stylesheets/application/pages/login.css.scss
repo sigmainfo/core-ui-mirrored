@@ -28,6 +28,19 @@
     }
   }
   
+  .login-as-guest {
+    display: inline-block;
+    margin-left: 380px;
+    margin-top: 16px;
+    text-transform: uppercase;
+    padding-left:30px;
+    padding-top: 6px;
+    height:20px;
+    @include svg-icons;
+    background-position: -3px -1250px;
+
+  }
+  
   .login {
     width: 520px;
     padding-bottom: 50px;
