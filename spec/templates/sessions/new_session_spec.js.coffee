@@ -73,9 +73,9 @@ describe 'Coreon.Templates[sessions/new_session]', ->
 
     it 'renders action', ->
       action_for
-        .withArgs('sessions.login_as_guest')
+        .withArgs('session.create_guest_session')
         .returns '''
-          <a class="login-as-guest" href="#">Log in as guest</a>
+          <a class="create-guest-session" href="#">Log in as guest</a>
         '''
       el = render()
-      expect(el).to.have 'a.login-as-guest'
+      expect(el).to.have 'a.create-guest-session'

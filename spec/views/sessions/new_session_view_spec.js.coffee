@@ -4,16 +4,21 @@
 describe "Coreon.Views.Sessions.NewSessionView", ->
 
   view = null
+  model = null
+  startLoop = null
+  stopLoop = null
+
+  fakeModel = ->
+    new Backbone.Model
 
   beforeEach ->
-    sinon.stub I18n, "t"
-    sinon.stub Coreon.Views.Sessions.NewSessionView::, 'startLoop'
-    sinon.stub Coreon.Views.Sessions.NewSessionView::, 'stopLoop'
+    sinon.stub I18n, 't'
+    startLoop = sinon.stub Coreon.Views.Sessions.NewSessionView::, 'startLoop'
+    stopLoop  = sinon.stub Coreon.Views.Sessions.NewSessionView::, 'stopLoop'
+    model = fakeModel()
     view = new Coreon.Views.Sessions.NewSessionView
-      model: new Backbone.Model
+      model: model
       template: -> ''
-    Coreon.Views.Sessions.NewSessionView::startLoop.reset()
-    Coreon.Views.Sessions.NewSessionView::stopLoop.reset()
 
   afterEach ->
     I18n.t.restore()
@@ -29,8 +34,8 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
   describe '#initialize()', ->
 
     it 'starts update loop', ->
+      startLoop.reset()
       view.initialize()
-      startLoop = view.startLoop
       expect(startLoop).to.have.been.calledOnce
       expect(startLoop).to.have.been.calledWith view.updateState
 
@@ -70,8 +75,6 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
 
     it 'inserts markup from template', ->
       template.returns '<div class="new"></div>'
-
-
 
   describe "#updateState()", ->
 
@@ -114,14 +117,12 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
       view.updateState()
       view.$(submit view).should.be.disabled
 
-  describe "#create()", ->
+  describe "#createSession()", ->
 
     request = null
     event = null
 
     beforeEach ->
-      sinon.stub Coreon.Models.Session, 'authenticate', => request = $.Deferred()
-      event = $.Event 'submit'
       view.$el.html '''
         <form action="#">
           <input type="email">
@@ -139,87 +140,180 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
     submit = (view) ->
       view.$ '*[type="submit"]'
 
+    context 'trigger', ->
+
+      createSession = null
+
+      beforeEach ->
+        createSession = sinon.stub view, 'createSession'
+        view.delegateEvents()
+
+      it "is triggered on submit", ->
+        view.$('form').submit()
+        expect(createSession).to.have.been.calledOnce
+
+    context 'authenticate', ->
+
+      authenticate = null
+
+      beforeEach ->
+        authenticate = sinon.stub view, 'authenticate'
+
+      email = (view) -> view.$ 'input[type="email"]'
+
+      password = (view) -> view.$ 'input[type="password"]'
+
+      it 'requests session for credentials', ->
+        email(view).val 'nobody@blake.com'
+        password(view).val 'se7en!'
+        view.createSession()
+        expect(authenticate).to.have.been.calledOnce
+        expect(authenticate).to.have.been.calledWith 'nobody@blake.com'
+                                                   , 'se7en!'
+
+  describe '#createGuestSession()', ->
+
+    context 'trigger', ->
+
+      createGuestSession = null
+
+      beforeEach ->
+        createGuestSession = sinon.stub view, 'createGuestSession'
+
+      it 'is triggered by click on action', ->
+        trigger = $ '<a class="create-guest-session" href="#">Guest</a>'
+        view.$el.append trigger
+        view.delegateEvents()
+        trigger.click()
+        expect(createGuestSession).to.have.been.calledOnce
+
+    context 'authenticate', ->
+
+      authenticate = null
+
+      beforeEach ->
+        authenticate = sinon.stub view, 'authenticate'
+
+      {GUEST_EMAIL, GUEST_PASSWORD} = Coreon.Views.Sessions.NewSessionView
+
+      it 'authenticates with guest credentials', ->
+        view.createGuestSession()
+        expect(authenticate).to.have.been.calledOnce
+        expect(authenticate).to.have.been.calledWith GUEST_EMAIL
+                                                   , GUEST_PASSWORD
+
+  describe '#authenticate()', ->
+
+    authenticate = null
+    promise = null
+
+    fakePromise = ->
+      done: ->
+
+    fakeSubmit = ->
+      submit = $ '<button type="submit">Log in</button>'
+      view.$el.append submit
+      submit
+
+    fakeInput = (type = 'text', value = '')->
+      input = $ "<input type=\"#{type}\">"
+      input.val value
+      view.$el.append input
+      input
+
+    beforeEach ->
+      promise = fakePromise()
+      authenticate = sinon.stub(Coreon.Models.Session, 'authenticate')
+        .returns promise
+
     afterEach ->
       Coreon.Models.Session.authenticate.restore()
 
-    it "is triggered on submit", ->
-      view.create = sinon.spy()
-      view.delegateEvents()
-      view.$('form').trigger event
-      view.create.should.have.been.calledOnce
-      view.create.should.have.been.calledWith event
+    it 'remotely requests a new session', ->
+      view.authenticate 'nobody@blake.com', 'xxx'
+      expect(authenticate).to.have.been.calledOnce
+      expect(authenticate).to.have.been.calledWith 'nobody@blake.com', 'xxx'
 
-    it "prevents default", ->
-      event.preventDefault = sinon.spy()
-      view.create event
-      event.preventDefault.should.have.been.calledOnce
+    it 'disables submit button', ->
+      submit = fakeSubmit()
+      view.authenticate 'nobody@blake.com', 'xxx'
+      expect(submit).to.be.disabled
 
-    it "disables button to prevent second click", ->
-      view.$(":disabled").prop "disabled", no
-      view.create event
-      view.$(submit view).should.be.disabled
+    it 'disables text inputs', ->
+      input = fakeInput()
+      view.authenticate 'nobody@blake.com', 'xxx'
+      expect(input).to.be.disabled
 
-    it 'stops update loop', ->
-      view.create event
-      stopLoop = view.stopLoop
+    it 'halts update loop', ->
+      view.authenticate 'nobody@blake.com', 'xxx'
       expect(stopLoop).to.have.been.calledOnce
 
-    context "session request", ->
+    context 'done', ->
 
-      session = null
+      done = null
 
       beforeEach ->
-        view.$(email view).val "nobody@login.me"
-        view.$(password view).val "xxx"
-        session = new Backbone.Model user: name: "William Blake"
+        promise.done = (callback) -> done = callback
+        view.authenticate 'nobody@blake.com', 'xxx'
 
-      it "creates session from form", ->
-        view.create event
-        Coreon.Models.Session.authenticate.should.have.been.calledOnce
-        Coreon.Models.Session.authenticate.should.have.been.calledWith "nobody@login.me", "xxx"
+      fakeSession = (name = 'Nobody') ->
+        new Backbone.Model user: name: name
 
-      context "no session", ->
+      resolve = (session) ->
+        done session
 
-        it "clears password field on failure", ->
-          view.create event
-          request.resolve null
-          view.$(password view).should.have.value ""
+      context 'with session', ->
 
-        it "reenable form", ->
-          view.create event
-          request.resolve null
-          view.$(":disabled").should.have.lengthOf 0
-
-        it 'restarts update loop', ->
-          view.create event
-          request.resolve null
-          startLoop = view.startLoop
-          expect(startLoop).to.have.been.calledOnce
-          expect(startLoop).to.have.been.calledWith view.updateState
-
-      context "with session", ->
+        session = null
+        info = null
 
         beforeEach ->
-          sinon.stub Coreon.Models.Notification, "info"
+          info = sinon.stub Coreon.Models.Notification, 'info'
+          session = fakeSession()
 
         afterEach ->
           Coreon.Models.Notification.info.restore()
 
-        it "updates session on application", ->
-          session.set 'token', 'you-are-in-123', silent: yes
-          view.create event
-          request.resolve session
-          view.model.get("session").should.equal session
+        it 'updates session on model', ->
+          resolve session
+          expect(model.get 'session').to.equal session
 
-        it "creates notification message", ->
+        it 'notifies user', ->
+          session.set 'user', name: 'William', silent: yes
           I18n.t
-            .withArgs('notifications.account.login', name: 'William Blake')
-            .returns 'Successfully logged in as William Blake.'
-          session.set 'user', name: 'William Blake', silent: yes
-          view.create event
-          request.resolve session
-          Coreon.Models.Notification.info.should.have.been.calledOnce
-          Coreon.Models.Notification.info.should.have.been.calledWith "Successfully logged in as William Blake."
+            .withArgs('notifications.account.login', name: 'William')
+            .returns 'welcome back, Nobody'
+          resolve session
+          expect(info).to.have.been.calledOnce
+          expect(info).to.have.been.calledWith 'welcome back, Nobody'
+
+      context 'without session', ->
+
+        it 'clears session', ->
+          model.set 'session', fakeSession(), silent: yes
+          resolve null
+          expect(model.get 'session').to.equal null
+
+        it 'reenables submit button', ->
+          submit = fakeSubmit()
+          resolve null
+          expect(submit).to.not.be.disabled
+
+        it 'reenables text inputs', ->
+          input = fakeInput()
+          resolve null
+          expect(input).to.not.be.disabled
+
+        it 'clears password', ->
+          input = fakeInput 'password', 'xxx'
+          resolve null
+          expect(input.val()).to.be.empty
+
+        it 'restarts update loop', ->
+          startLoop.reset()
+          resolve null
+          expect(startLoop).to.have.been.calledOnce
+          expect(startLoop).to.have.been.calledWith view.updateState
 
   describe '#remove()', ->
 
@@ -235,6 +329,5 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
       expect(superImplementation).to.have.been.calledOnce
 
     it 'stops update loop', ->
-      stopLoop = view.stopLoop
       view.remove()
       expect(stopLoop).to.have.been.calledOnce
