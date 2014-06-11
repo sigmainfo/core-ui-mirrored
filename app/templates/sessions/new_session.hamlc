@@ -2,4 +2,4 @@
 != @form_for 'session', null, noCancel: on, ->
   != @form.input 'email'   , required: on
   != @form.input 'password', required: on
-!= @action_for 'sessions.login_as_guest'
+!= @action_for 'session.create_guest_session'

@@ -9,12 +9,16 @@
 
 class Coreon.Views.Sessions.NewSessionView extends Backbone.View
 
+  @GUEST_EMAIL    = 'guest@coreon.com'
+  @GUEST_PASSWORD = 'TaiD@?mkPVWmh7hj&HgguBom647i&A'
+
   Coreon.Modules.include @, Coreon.Modules.Loop
 
-  id: "coreon-login"
+  id: 'coreon-login'
 
   events:
-    "submit form"  : "create"
+    'submit form'                  : 'createSession'
+    'click a.create-guest-session' : 'createGuestSession'
 
   initialize: (options = {}) ->
     @template = options.template or Coreon.Templates['sessions/new_session']
@@ -24,27 +28,40 @@ class Coreon.Views.Sessions.NewSessionView extends Backbone.View
     @$el.html @template()
     @
 
-  updateState: (event) ->
-    valid = @$('input[type="email"]').val().length and
-      @$('input[type="password"]').val().length
-    @$('*[type="submit"]').prop "disabled", not valid
+  $email: ->
+    @$ 'input[type="email"]'
 
-  create: (event) ->
-    event.preventDefault()
+  $password: ->
+    @$ 'input[type="password"]'
+
+  $submit: ->
+    @$ '*[type="submit"]'
+
+  updateState: ->
+    valid = @$email().val().length and @$password().val().length
+    @$submit().prop 'disabled', not valid
+
+  createSession: ->
+    @authenticate @$email().val(), @$password().val()
+
+  createGuestSession: ->
+    {GUEST_EMAIL, GUEST_PASSWORD} = @constructor
+    @authenticate GUEST_EMAIL, GUEST_PASSWORD
+
+  authenticate: (email, password) ->
     @stopLoop()
-    @$("input,button").prop "disabled", yes
-    Coreon.Models.Session.authenticate(@$('input[type="email"]').val()
-                                     , @$('input[type="password"]').val()
-    )
+    @$('input,button').prop 'disabled', yes
+    Coreon.Models.Session.authenticate(email, password)
       .done (session) =>
-        @model.set "session", session
+        @model.set 'session', session
         if session?
           Coreon.Models.Notification.info I18n.t 'notifications.account.login'
                                         , name: session.get('user').name
         else
-          @$('input[type="password"]').val ""
-          @$("input,button").prop "disabled", no
+          @$password().val ''
+          @$('input,button').prop 'disabled', no
           @startLoop @updateState
+
 
   remove: ->
     @stopLoop()

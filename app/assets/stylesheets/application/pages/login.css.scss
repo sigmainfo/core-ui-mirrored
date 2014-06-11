@@ -2,7 +2,7 @@
   position: relative;
   width: 900px;
   margin: 30px auto;
-  
+
   .logo {
     display: block;
     text-indent: -1000px;
@@ -11,13 +11,13 @@
     width: 240px;
     height: 100px;
     position: relative;
-    top: 115px;
+    top: 160px;
   }
-  
+
   h3 {
     font: 1.6em $serif;
   }
-  
+
   label {
     display: block;
     color: $label-color;
@@ -27,10 +27,10 @@
       border: none;
     }
   }
-  
-  .login-as-guest {
+
+  .create-guest-session {
     display: inline-block;
-    margin-left: 350px;
+    margin-left: 380px;
     margin-top: 16px;
     text-transform: uppercase;
     padding-left:30px;
@@ -40,35 +40,34 @@
     background-position: -3px -1250px;
 
   }
-  
+
   form {
     width: 520px;
     padding-bottom: 50px;
-    margin-left: 350px;
+    margin-left: 380px;
 
     button[type="submit"] {
       position: relative;
       float: right;
       left: -120px;
-      top: -28px;
+      top: -30px;
       height:30px;
       padding-left:30px;
       border: none;
       background:image-url("layout/icons.svg") no-repeat 0 3px;
       @include svg-icons;
-      background-position: -3px -1251px;
+      background-position: -3px -1250px;
       outline:0;
-      font: 1.8em $serif;
-      
+      font: 1.5em $serif;
+
       &:not(:disabled) {
         &:hover {
           color: $secondary-color;
-          cursor: pointer;
         }
       }
-      
+
        &:disabled {
-         @include opacity(0.7);
+         @include opacity(0.5);
        }
     }
   }
