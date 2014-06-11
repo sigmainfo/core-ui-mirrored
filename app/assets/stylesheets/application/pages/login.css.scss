@@ -56,18 +56,19 @@
       border: none;
       background:image-url("layout/icons.svg") no-repeat 0 3px;
       @include svg-icons;
-      background-position: -3px -1252px;
+      background-position: -3px -1251px;
       outline:0;
-      font: 1.6em $serif;
+      font: 1.8em $serif;
       
       &:not(:disabled) {
         &:hover {
           color: $secondary-color;
+          cursor: pointer;
         }
       }
       
        &:disabled {
-         @include opacity(0.5);
+         @include opacity(0.7);
        }
     }
   }
