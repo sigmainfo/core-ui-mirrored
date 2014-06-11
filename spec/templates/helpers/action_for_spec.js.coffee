@@ -15,10 +15,13 @@ describe 'Coreon.Templates[helpers/action_for]', ->
       el = $ template()
       expect(el).to.have.attr 'href', 'javascript:void(0)'
 
-    it 'renders title as text and tooltip', ->
-      el = $ template title: 'Toggle me'
+    it 'renders label as text', ->
+      el = $ template label: 'Toggle me'
       expect(el).to.have.text 'Toggle me'
-      expect(el).to.have.attr 'title', 'Toggle me'
+
+    it 'renders hint as tooltip', ->
+      el = $ template hint: 'Click here to toggle'
+      expect(el).to.have.attr 'title', 'Click here to toggle'
 
     it 'adds class name to link', ->
       el = $ template name: 'toggle-me'

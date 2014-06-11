@@ -1,3 +1,4 @@
+#= require environment
 #= require jquery
 #= require sinon
 #= require sinon-chai

@@ -208,7 +208,9 @@ en:
       title: "Concept Map"
       zoom_in: "Zoom in"
       zoom_out: "Zoom out"
-      toggle_orientation: "Toggle orientation"
+      toggle_orientation:
+        label: "Toggle orientation"
+        hint: "Click to toggle rendering in landscape or tree layout"
       placeholder:
         title:
           one: '1 more concept for {{label}}'
