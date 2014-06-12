@@ -1,4 +1,9 @@
 %h1.logo coreon
+%h2 Knowledge meets language.
+.welcome
+  %h3 = I18n.t('session.welcome.headline')
+  != I18n.t('session.welcome.html')
+
 != @form_for 'session', null, noCancel: on, ->
   != @form.input 'email'   , required: on
   != @form.input 'password', required: on

@@ -5,6 +5,10 @@
     color: $label-color;
   }
   
+  .welcome {
+      @include retina-separator;
+  }
+  
   form {
     background: image-url("layout/separator.png") repeat-x bottom;
     @include retina-separator;
@@ -12,7 +16,7 @@
     &:before {
       content:"";
       display: block;
-      width: 520px;
+      width: 500px;
       height: 8px;
       @include retina-separator;
     };

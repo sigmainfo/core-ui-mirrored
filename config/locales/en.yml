@@ -14,6 +14,26 @@ en:
     password: 'Password'
     create: 'Log in'
     create_guest_session: 'Log in as guest'
+    welcome: 
+      headline: 'Welcome'
+      html:
+        <p>
+          Visually explore terminology and taxonomies with Coreon!
+        </p> 
+        <p>
+          Log in to access your organization's repositories.
+        </p>
+        <p>
+          Sign up to get your own account and start managing your own multilingual knowledge bases.
+        </p>
+        <p>
+          Or log in as Guest and discover right now Coreon's concept maps.
+        </p>
+        <p>
+          visit also
+          <a href="http://coreon.com">coreon.com</a>.
+        </p>
+        
 
   themes:
     caption: "Theme"
