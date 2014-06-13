@@ -1,5 +1,9 @@
 class Spinach::Features::VisitorBrowsesRepositoryAsGuest < Spinach::FeatureSteps
   include Authentication
+  include Api::Graph::Factory
+  include Navigation
+
+  attr :concept
 
   step 'a public repository "Coreon Demo" exists' do
     @current_repository = create_repository 'Coreon Demo'
@@ -29,5 +33,13 @@ class Spinach::Features::VisitorBrowsesRepositoryAsGuest < Spinach::FeatureSteps
   step 'I am on the repository root page of "Coreon Demo"' do
     expect(page).to have_content('Coreon Demo')
     expect(current_path).to eql("/#{current_repository.id}")
+  end
+
+  step 'a concept "Example" exists' do
+    @concept = create_concept_with_label 'Example'
+  end
+
+  step 'I follow a public link to this concept' do
+    visit_concept_details_page concept, guest: 1
   end
 end
