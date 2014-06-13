@@ -14,9 +14,8 @@ Feature: visitor browses repository as guest
     Then I see "Logged in as guest"
     And I am on the repository root page of "Coreon Demo"
 
-  @wip
   Scenario: follow link
     Given a concept "Example" exists
     When I follow a public link to this concept
     Then I see "Logged in as guest"
-    And I see the concept details page for "Example"
+    And I see the concept details for "Example"

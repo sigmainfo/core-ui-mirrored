@@ -42,4 +42,10 @@ class Spinach::Features::VisitorBrowsesRepositoryAsGuest < Spinach::FeatureSteps
   step 'I follow a public link to this concept' do
     visit_concept_details_page concept, guest: 1
   end
+
+  step 'I see the concept details for "Example"' do
+    within '.concept-head' do
+      expect(page).to have_selector('.concept-label', text: 'Example')
+    end
+  end
 end

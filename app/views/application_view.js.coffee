@@ -68,8 +68,12 @@ class Coreon.Views.ApplicationView extends Backbone.View
     else
       Backbone.history.stop()
       login = new Coreon.Views.Sessions.NewSessionView model: @model
-      @$('#coreon-main').append login.render().$el
       @subviews.push login
+      if location.search.match /[?&]guest=/
+        login.createGuestSession()
+      else
+        @$('#coreon-main').append login.render().$el
+      history.replaceState {}, '', location.href.replace(/\?.*$/, '')
 
   notify: (notification) ->
     view = new Coreon.Views.Notifications.NotificationView model: notification
