@@ -19,9 +19,9 @@ class Coreon.Views.ApplicationView extends Backbone.View
   template: Coreon.Templates["application"]
 
   events:
-    "click a[href^='/']": "navigate"
-    "click #coreon-footer .toggle": "toggle"
-    'click .themes a[data-name]': 'switchTheme'
+    "click a[href^='/']"           : "navigate"
+    "click #coreon-footer .toggle" : "toggle"
+    'click .themes a[data-name]'   : 'switchTheme'
 
   initialize: ->
     @session = null
@@ -44,7 +44,6 @@ class Coreon.Views.ApplicationView extends Backbone.View
     session = @updateSession()
     @$el.html @template session: session
     if session?
-
       widgets = new Coreon.Views.Widgets.WidgetsView
         model: @model
       @$("#coreon-modal").after widgets.render().$el

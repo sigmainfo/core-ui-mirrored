@@ -7,7 +7,14 @@ describe 'Coreon.Application', ->
   request = null
   view = null
 
+  fakeSession = (user = {}) ->
+    _(user).defaults
+      name: ''
+      email: ''
+    new Backbone.Model user: user
+
   beforeEach ->
+    sinon.stub I18n, 't'
     request = $.Deferred()
     sinon.stub Backbone.history, 'start'
     sinon.stub Coreon.Routers, 'SessionsRouter'
@@ -20,6 +27,7 @@ describe 'Coreon.Application', ->
     app = new Coreon.Application auth_root: 'https://auth.coreon.com'
 
   afterEach ->
+    I18n.t.restore()
     Backbone.history.start.restore()
     Coreon.Routers.SessionsRouter.restore()
     Coreon.Routers.RepositoriesRouter.restore()
@@ -125,7 +133,7 @@ describe 'Coreon.Application', ->
       expect(load).to.have.been.calledOnce
 
     it 'assigns session on success', ->
-      session = new Backbone.Model
+      session = fakeSession()
       app.start()
       request.resolve session
       current = app.get('session')
@@ -174,6 +182,7 @@ describe 'Coreon.Application', ->
       updateRepository = null
 
       beforeEach ->
+        session = fakeSession()
         updateRepository = sinon.spy()
         app.updateRepository = updateRepository
         app.start()
@@ -242,6 +251,47 @@ describe 'Coreon.Application', ->
     it 'returns null when no session exists', ->
       app.set 'session', null, silent: yes
       should.equal app.repository(), null
+
+  describe '#watchSession()', ->
+
+    info = null
+
+    beforeEach ->
+      info = sinon.stub Coreon.Models.Notification, 'info'
+
+    afterEach ->
+      Coreon.Models.Notification.info.restore()
+
+    context 'trigger', ->
+
+      watchSession = null
+
+      beforeEach ->
+        watchSession = sinon.stub app, 'watchSession'
+        app.start()
+
+      it 'is triggered on sessiojn changes', ->
+        app.trigger 'change:session'
+        expect(watchSession).to.have.been.calledOnce
+
+    context 'notifications', ->
+
+      it 'creates personalized notification', ->
+        session = fakeSession name: 'Nobody'
+        I18n.t
+          .withArgs('notifications.account.login', name: 'Nobody')
+          .returns 'Hello Nobody'
+        app.set 'session', session, silent: yes
+        app.watchSession()
+        expect(info).to.have.been.calledWith 'Hello Nobody'
+
+      it 'does not notify if user has not changed', ->
+        previous = fakeSession email: 'me@coreon.com'
+        app.set 'session', previous, silent: yes
+        current = fakeSession email: 'me@coreon.com'
+        app.set 'session', current, silent: yes
+        app.watchSession()
+        expect(info).to.not.have.been.called
 
   describe '#langs()', ->
 
