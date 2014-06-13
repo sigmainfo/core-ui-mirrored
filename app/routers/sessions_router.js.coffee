@@ -10,7 +10,7 @@ class Coreon.Routers.SessionsRouter extends Backbone.Router
 
   navigate: (path, options = {}) ->
     if options.reload? and not konacha?
-      location.replace '/#{path}'
+      location.replace "/#{path}"
     else
       super
 
