@@ -3,7 +3,7 @@ class Spinach::Features::UserSeesEmptyTermList < Spinach::FeatureSteps
   include LanguageSelectSteps
 
   step 'I visit the repository root' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I should see a widget "Term List"' do

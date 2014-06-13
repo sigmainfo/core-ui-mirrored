@@ -4,7 +4,7 @@ class Spinach::Features::UserSelectsSourceLanguage < Spinach::FeatureSteps
   include LanguageSelectSteps
 
   step 'I visit the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I should see a widget "Languages"' do

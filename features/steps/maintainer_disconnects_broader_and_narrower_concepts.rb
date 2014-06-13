@@ -15,7 +15,7 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
   end
 
   step 'I am on the show concept page of "panopticum"' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I click "Edit broader & narrower concepts"' do

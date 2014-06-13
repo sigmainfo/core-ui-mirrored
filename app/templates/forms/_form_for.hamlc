@@ -8,6 +8,7 @@
   != @form.yield()
   .submit
     - unless @form.model.isNew()
-      %a.reset{href: "javascript:void(0)"}= I18n.t "form.reset" 
-    %a.cancel{href: "javascript:void(0)"}= I18n.t "form.cancel"
+      %a.reset{href: "javascript:void(0)"}= I18n.t "form.reset"
+    - unless @form.noCancel
+      %a.cancel{href: "javascript:void(0)"}= I18n.t "form.cancel"
     %button{type: "submit"}= I18n.t "#{@form.name}.#{@form.action}"

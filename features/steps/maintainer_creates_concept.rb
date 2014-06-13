@@ -6,7 +6,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
 
   step 'I visit the start page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I click on "New concept"' do
@@ -14,15 +14,15 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the new concept page' do
-    page.current_path.should == "/#{@repository.id}/concepts/new"
+    page.current_path.should == "/#{current_repository.id}/concepts/new"
   end
 
   step 'I should be on the start page' do
-    page.current_path.should == "/#{@repository.id}"
+    page.current_path.should == "/#{current_repository.id}"
   end
 
   step 'I should be on the new concept with english term "corpse" page' do
-    page.current_path.should == "/#{@repository.id}/concepts/new/terms/en/corpse"
+    page.current_path.should == "/#{current_repository.id}/concepts/new/terms/en/corpse"
   end
 
   step 'I should see "<New concept>" within the title' do
@@ -37,8 +37,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.should have_css(".broader-and-narrower .self", text: "<New concept>")
   end
 
-  step 'I should see "Nobody\'s Repository" within the list of broader concepts' do
-    page.should have_css(".broader-and-narrower .broader li", text: "Nobody's Repository")
+  step 'I should see "Test Repository" within the list of broader concepts' do
+    page.should have_css(".broader-and-narrower .broader li", text: "Test Repository")
   end
 
   step 'I should see a new concept node "<New concept>" within the concept map' do
@@ -51,7 +51,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I should be on the show concept page' do
     page.should have_no_css(".concept.new")
-    page.current_path.should =~ %r|^/#{@repository.id}/concepts/[0-9a-f]{24}$|
+    page.current_path.should =~ %r|^/#{current_repository.id}/concepts/[0-9a-f]{24}$|
     @id = current_path.split("/").last
   end
 
@@ -243,7 +243,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the start page again' do
-    page.current_path.should == "/#{@repository.id}"
+    page.current_path.should == "/#{current_repository.id}"
   end
 
   step 'I should not see "<New concept>"' do
@@ -286,10 +286,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I visit "concepts/new"' do
-    visit "/#{@repository.id}/concepts/new"
+    visit "/#{current_repository.id}/concepts/new"
   end
 
   step 'I should be on the repository start page' do
-    page.current_path.should == "/#{@repository.id}"
+    page.current_path.should == "/#{current_repository.id}"
   end
 end

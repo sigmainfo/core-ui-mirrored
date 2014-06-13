@@ -33,7 +33,7 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
   end
 
   step 'I am on this concept\'s page' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I should see the languages in alphabetic order: "DE", "EN", "KO", "RU"' do

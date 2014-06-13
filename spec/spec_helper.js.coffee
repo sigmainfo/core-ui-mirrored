@@ -2,6 +2,7 @@
 #= require sinon
 #= require sinon-chai
 #= require chai-jquery
+#= require environment
 
 jQuery.fx.off = true
 

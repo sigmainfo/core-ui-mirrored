@@ -9,6 +9,9 @@ repository = null
 
 class Coreon.Models.Session extends Backbone.Model
 
+  @GUEST_EMAIL    = 'guest@coreon.com'
+  @GUEST_PASSWORD = 'TaiD@?mkPVWmh7hj&HgguBom647i&A'
+
   @authRoot = null
 
   @load = ->
@@ -23,12 +26,18 @@ class Coreon.Models.Session extends Backbone.Model
     request.promise()
 
   @authenticate = (email, password) ->
+    unless email?
+      email = @GUEST_EMAIL
+      password = @GUEST_PASSWORD
     request = $.Deferred()
     session = new @
     session.save({}, data: $.param email: email, password: password)
       .done( -> request.resolve session )
       .fail( -> request.resolve null )
     request.promise()
+
+  @guest = ->
+    @authenticate @GUEST_EMAIL, @GUEST_PASSWORD
 
   defaults: ->
     repositories: []

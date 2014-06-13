@@ -18,81 +18,111 @@ describe 'Coreon.Models.Session', ->
     Coreon.Models.Session.authRoot = @authRoot
     Backbone.history.navigate.restore()
 
-  describe 'class', ->
+  describe '.load()', ->
 
-    describe '#load()', ->
-
-      context 'without local session', ->
-
-        beforeEach ->
-          localStorage.getItem.withArgs('coreon-session').returns null
-
-        it 'passes null to callbacks', ->
-          Coreon.Models.Session.load().always (@session) =>
-          should.equal @session, null
-
-      context 'with local session', ->
-
-        beforeEach ->
-          localStorage.getItem.withArgs('coreon-session').returns '0457-a33a403-f562fb6f'
-          @request = $.Deferred()
-          @session = fetch: sinon.stub().returns @request
-          sinon.stub Coreon.Models, 'Session', => @session
-
-        afterEach ->
-          Coreon.Models.Session.restore()
-
-        it 'creates session object', ->
-          Coreon.Models.Session.load()
-          Coreon.Models.Session.should.have.been.calledOnce
-          Coreon.Models.Session.should.have.been.calledWithNew
-          Coreon.Models.Session.should.have.been.calledWith
-            auth_token: '0457-a33a403-f562fb6f'
-
-        it 'loads session from auth service', ->
-          Coreon.Models.Session.load()
-          @session.fetch.should.have.been.calledOnce
-
-        it 'resolves callbacks with session instance when done', ->
-          Coreon.Models.Session.load().always (@arg) =>
-          @request.resolve()
-          @arg.should.equal @session
-
-        it 'resolves callbacks with null on failure', ->
-          Coreon.Models.Session.load().always (@arg) =>
-          @request.reject()
-          should.equal @arg, null
-
-    describe '#authenticate()', ->
+    context 'without local session', ->
 
       beforeEach ->
-        sinon.stub Coreon.Models, 'Session', =>
-          @session = new Backbone.Model
-          @request = $.Deferred()
-          @session.save = sinon.stub().returns @request
-          @session
+        localStorage.getItem.withArgs('coreon-session').returns null
+
+      it 'passes null to callbacks', ->
+        Coreon.Models.Session.load().always (@session) =>
+        should.equal @session, null
+
+    context 'with local session', ->
+
+      beforeEach ->
+        localStorage.getItem.withArgs('coreon-session').returns '0457-a33a403-f562fb6f'
+        @request = $.Deferred()
+        @session = fetch: sinon.stub().returns @request
+        sinon.stub Coreon.Models, 'Session', => @session
 
       afterEach ->
         Coreon.Models.Session.restore()
 
-      it 'creates pristine session', ->
-        Coreon.Models.Session.authenticate 'nobody@blake.com', 'se7en!'
+      it 'creates session object', ->
+        Coreon.Models.Session.load()
         Coreon.Models.Session.should.have.been.calledOnce
         Coreon.Models.Session.should.have.been.calledWithNew
+        Coreon.Models.Session.should.have.been.calledWith
+          auth_token: '0457-a33a403-f562fb6f'
 
-      it 'saves session overiding data with credentials', ->
-        Coreon.Models.Session.authenticate 'nobody@blake.com', 'se7en!'
-        @session.save.should.have.been.calledWith {}, data: 'email=nobody%40blake.com&password=se7en!'
+      it 'loads session from auth service', ->
+        Coreon.Models.Session.load()
+        @session.fetch.should.have.been.calledOnce
 
-      it 'resolves promise with session instance when done', ->
-        Coreon.Models.Session.authenticate('nobody@blake.com', 'se7en!').always (@arg) =>
+      it 'resolves callbacks with session instance when done', ->
+        Coreon.Models.Session.load().always (@arg) =>
         @request.resolve()
         @arg.should.equal @session
 
-      it 'resolves promise with null on failure', ->
-        Coreon.Models.Session.authenticate('nobody@blake.com', 'se7en!').always (@arg) =>
+      it 'resolves callbacks with null on failure', ->
+        Coreon.Models.Session.load().always (@arg) =>
         @request.reject()
         should.equal @arg, null
+
+  describe '.authenticate()', ->
+
+    beforeEach ->
+      sinon.stub Coreon.Models, 'Session', =>
+        @session = new Backbone.Model
+        @request = $.Deferred()
+        @session.save = sinon.stub().returns @request
+        @session
+
+    afterEach ->
+      Coreon.Models.Session.restore()
+
+    data = (save) ->
+      save.firstCall.args[1].data
+
+    it 'creates pristine session', ->
+      Coreon.Models.Session.authenticate 'nobody@blake.com', 'se7en!'
+      Coreon.Models.Session.should.have.been.calledOnce
+      Coreon.Models.Session.should.have.been.calledWithNew
+
+    it 'saves session overiding data with credentials', ->
+      Coreon.Models.Session.authenticate 'nobody@blake.com', 'se7en!'
+      expect(data @session.save).to.match /email=nobody%40blake.com/
+      expect(data @session.save).to.match /password=se7en!/
+
+    it 'defaults data to guest credentials', ->
+      Coreon.Models.Session.authenticate null
+      expect(data @session.save).to.match /email=guest%40coreon.com/
+
+    it 'resolves promise with session instance when done', ->
+      Coreon.Models.Session.authenticate('nobody@blake.com', 'se7en!').always (@arg) =>
+      @request.resolve()
+      @arg.should.equal @session
+
+    it 'resolves promise with null on failure', ->
+      Coreon.Models.Session.authenticate('nobody@blake.com', 'se7en!').always (@arg) =>
+      @request.reject()
+      should.equal @arg, null
+
+  # describe '.guest()', ->
+  #
+  #   {GUEST_EMAIL, GUEST_PASSWORD} = Coreon.Models.Session
+  #
+  #   authenticate = null
+  #
+  #   beforeEach ->
+  #     authenticate = sinon.stub Coreon.Models.Session, 'authenticate'
+  #
+  #   afterEach ->
+  #     Coreon.Models.Session.authenticate.restore()
+  #
+  #   fakePromise = ->
+  #     done: ->
+  #     fail: ->
+  #
+  #   it 'authenticates with guest credentials', ->
+  #     promise = fakePromise()
+  #     authenticate
+  #       .withArgs(GUEST_EMAIL, GUEST_PASSWORD)
+  #       .returns(promise)
+  #     result = Coreon.Models.Session.guest()
+  #     expect(result).to.equal promise
 
   describe 'instance', ->
 

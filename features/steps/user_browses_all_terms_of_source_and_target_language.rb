@@ -51,7 +51,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
   end
 
   step 'I visit the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
 

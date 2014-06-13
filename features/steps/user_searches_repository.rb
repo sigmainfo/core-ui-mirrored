@@ -14,7 +14,7 @@ class UserSearchesRepository < Spinach::FeatureSteps
   end
 
   Then 'I should be on the search results page for query "poet"' do
-    current_path.should == "/#{@repository.id}/concepts/search/poet"
+    current_path.should == "/#{current_repository.id}/concepts/search/poet"
   end
 
   And 'I should see a listing of the search results' do

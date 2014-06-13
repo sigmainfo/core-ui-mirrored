@@ -41,10 +41,10 @@ describe "Coreon.Views.Account.PasswordPromptView", ->
       @view.$("input[type='submit']").should.have.attr "value", "Proceed"
 
     it "renders input for password", ->
-      I18n.t.withArgs("account.login.password").returns "Password:"
+      I18n.t.withArgs("session.password").returns "Password:"
       @view.render()
       @view.$el.should.have "label[for='coreon-password-password']"
-      @view.$("label[for='coreon-password-password']").should.contain I18n.t "account.login.password"
+      @view.$("label[for='coreon-password-password']").should.contain 'Password:'
       @view.$el.should.have "input#coreon-password-password"
       @view.$("input#coreon-password-password").should.have.attr "type", "password"
       @view.$("input#coreon-password-password").should.have.attr "name", "login[password]"

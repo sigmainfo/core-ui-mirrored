@@ -36,7 +36,7 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   step 'I have selected a repository "Billiards"' do
-    @repository.update_attributes name: 'Billiards'
+    current_repository.update_attributes name: 'Billiards'
   end
 
   step 'a concept "pocket billiards" exists' do
@@ -69,7 +69,7 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   step 'I visit the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I should see the repository node being vertically centered' do

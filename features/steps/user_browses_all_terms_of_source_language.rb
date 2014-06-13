@@ -38,7 +38,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   end
 
   step 'I visit the repository root page' do
-    visit "/#{@repository.id}"
+    visit "/#{current_repository.id}"
   end
 
   step 'I should see "ball", "billiards", "chalk", "cue" inside the Term List' do

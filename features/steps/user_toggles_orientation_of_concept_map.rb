@@ -13,7 +13,7 @@ class Spinach::Features::UserTogglesOrientationOfConceptMap < Spinach::FeatureSt
   end
 
   step 'I visit the single concept page for "handgun"' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I should see "handgun" being selected in the concept map' do

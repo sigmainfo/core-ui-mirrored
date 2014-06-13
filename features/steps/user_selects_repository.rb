@@ -3,9 +3,9 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
   include AuthSteps
 
   step 'I have access to the repositories "Wild West" and "Branch of Service"' do
-    @repository.update_attributes name: "Wild West"
-    @repository2 = CoreClient::Auth::Repository.create! name: "Branch of Service", account_id: @account.id, graph_uri: "http://localhost:3336/", active: true
-    @repo_user2 = CoreClient::Auth::RepositoryUser.create! repository: @repository2, user: @me, email: "nobody@blake.com", roles: [:user]
+    current_repository.update_attributes name: "Wild West"
+    @repository2 = CoreClient::Auth::Repository.create! name: "Branch of Service", account_id: default_account.id, graph_uri: "http://localhost:3336/", active: true
+    @repo_user2 = CoreClient::Auth::RepositoryUser.create! repository: @repository2, user: current_user, email: "nobody@blake.com", roles: [:user]
   end
 
   step 'I visit the application root' do
@@ -17,7 +17,7 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
   end
 
   step 'I should be on the root page of "Wild West"' do
-    current_path.should == "/#{@repository.id}"
+    current_path.should == "/#{current_repository.id}"
   end
 
   step 'I click the repository selector' do
@@ -66,7 +66,7 @@ class Spinach::Features::UserSelectsRepository < Spinach::FeatureSteps
   end
 
   step 'I have access to a single repository "Gunnery"' do
-    @repository.update_attributes name: "Gunnery"
+    current_repository.update_attributes name: "Gunnery"
   end
 
   step 'I should see the repository "Gunnery" within the filters bar' do

@@ -99,7 +99,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'I should be on the show concept page for "handgun"' do
-    current_path.should == "/#{@repository.id}/concepts/#{@handgun['id']}"
+    current_path.should == "/#{current_repository.id}/concepts/#{@handgun['id']}"
   end
 
   And 'I should see the label "handgun"' do
@@ -190,6 +190,7 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
   end
 
   Then 'the locale should be hidden' do
+    sleep 0.5
     section_for("EN").should_not be_visible
   end
 

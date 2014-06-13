@@ -37,23 +37,30 @@ class Coreon.Application extends Backbone.Model
 
     @stopListening()
 
-    # @listenTo Backbone.history
-    #         , 'route'
-    #         , @clearQuery
-
     @listenTo @, 'change:session', @watchSession
     @set 'session', null
+
     Coreon.Models.Session.load().always (session) =>
       @set 'session', session, silent: yes
       @trigger 'change:session', @, session
-
     @
+
+  email = (session) ->
+    session.get('user').email
+
+  name = (session) ->
+    session.get('user').name
+
+  greet = (session) ->
+    info = I18n.t 'notifications.account.login', name: name(session)
+    Coreon.Models.Notification.info info
 
   watchSession: ->
     if previous = @previous('session')
       @stopListening previous
     if current = @get('session')
       @listenTo current, 'change:repository', @updateRepository
+      greet(current) unless previous? and email(current) is email(previous)
     @updateRepository()
 
   updateRepository: ->

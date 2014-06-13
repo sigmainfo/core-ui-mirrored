@@ -5,16 +5,28 @@
     color: $label-color;
   }
   
-  .login {
-    background:image-url("layout/separator.png") repeat-x bottom;
+  .welcome {
+      @include retina-separator;
+  }
+  
+  form {
+    background: image-url("layout/separator.png") repeat-x bottom;
     @include retina-separator;
+    
+    &:before {
+      content:"";
+      display: block;
+      width: 500px;
+      height: 8px;
+      @include retina-separator;
+    };
 
-    input[type="submit"] {
+    button[type="submit"] {
       color: $text-color;
       
       &:not(:disabled) {
         &:hover {
-          color: $secondary-color;
+          color: $link-color;
         }
       }
     }

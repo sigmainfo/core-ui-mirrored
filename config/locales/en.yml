@@ -4,14 +4,33 @@
 en:
   account:
     logout: "Log out"
-    login:
-      email: "Email"
-      password: "Password"
-      submit: "Log in"
     status: "Logged in as {{name}}"
     password_prompt:
       message: "Please enter your password to proceed:"
       submit: "Proceed"
+
+  session:
+    email: 'Email'
+    password: 'Password'
+    create: 'Log in'
+    create_guest_session: 'Log in as guest'
+    welcome: 
+      headline: 'Welcome'
+      html:
+        <p>
+          Visually explore terminology and taxonomies with Coreon!
+        </p> 
+        <p>
+          Log in to access your organization's repositories.
+        </p>
+        <p>
+          <a href="http://www.coreon.com/signup">Sign up </a>
+          to get your own account and start managing your own multilingual knowledge bases.
+        </p>
+        <p>
+          Or log in as Guest and discover right now Coreon's concept maps.
+        </p>
+        
 
   themes:
     caption: "Theme"
