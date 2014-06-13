@@ -194,13 +194,11 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
       beforeEach ->
         authenticate = sinon.stub view, 'authenticate'
 
-      {GUEST_EMAIL, GUEST_PASSWORD} = Coreon.Views.Sessions.NewSessionView
 
       it 'authenticates with guest credentials', ->
         view.createGuestSession()
         expect(authenticate).to.have.been.calledOnce
-        expect(authenticate).to.have.been.calledWith GUEST_EMAIL
-                                                   , GUEST_PASSWORD
+        expect(authenticate).to.have.been.calledWithExactly null
 
   describe '#authenticate()', ->
 
@@ -229,11 +227,6 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
     afterEach ->
       Coreon.Models.Session.authenticate.restore()
 
-    it 'remotely requests a new session', ->
-      view.authenticate 'nobody@blake.com', 'xxx'
-      expect(authenticate).to.have.been.calledOnce
-      expect(authenticate).to.have.been.calledWith 'nobody@blake.com', 'xxx'
-
     it 'disables submit button', ->
       submit = fakeSubmit()
       view.authenticate 'nobody@blake.com', 'xxx'
@@ -247,6 +240,11 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
     it 'halts update loop', ->
       view.authenticate 'nobody@blake.com', 'xxx'
       expect(stopLoop).to.have.been.calledOnce
+
+    it 'remotely requests a new session', ->
+      view.authenticate 'nobody@blake.com', 'xxx'
+      expect(authenticate).to.have.been.calledOnce
+      expect(authenticate).to.have.been.calledWith 'nobody@blake.com', 'xxx'
 
     context 'done', ->
 
@@ -277,15 +275,6 @@ describe "Coreon.Views.Sessions.NewSessionView", ->
         it 'updates session on model', ->
           resolve session
           expect(model.get 'session').to.equal session
-
-        it 'notifies user', ->
-          session.set 'user', name: 'William', silent: yes
-          I18n.t
-            .withArgs('notifications.account.login', name: 'William')
-            .returns 'welcome back, Nobody'
-          resolve session
-          expect(info).to.have.been.calledOnce
-          expect(info).to.have.been.calledWith 'welcome back, Nobody'
 
       context 'without session', ->
 

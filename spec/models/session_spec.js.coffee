@@ -73,6 +73,9 @@ describe 'Coreon.Models.Session', ->
     afterEach ->
       Coreon.Models.Session.restore()
 
+    data = (save) ->
+      save.firstCall.args[1].data
+
     it 'creates pristine session', ->
       Coreon.Models.Session.authenticate 'nobody@blake.com', 'se7en!'
       Coreon.Models.Session.should.have.been.calledOnce
@@ -80,7 +83,12 @@ describe 'Coreon.Models.Session', ->
 
     it 'saves session overiding data with credentials', ->
       Coreon.Models.Session.authenticate 'nobody@blake.com', 'se7en!'
-      @session.save.should.have.been.calledWith {}, data: 'email=nobody%40blake.com&password=se7en!'
+      expect(data @session.save).to.match /email=nobody%40blake.com/
+      expect(data @session.save).to.match /password=se7en!/
+
+    it 'defaults data to guest credentials', ->
+      Coreon.Models.Session.authenticate null
+      expect(data @session.save).to.match /email=guest%40coreon.com/
 
     it 'resolves promise with session instance when done', ->
       Coreon.Models.Session.authenticate('nobody@blake.com', 'se7en!').always (@arg) =>
@@ -92,29 +100,29 @@ describe 'Coreon.Models.Session', ->
       @request.reject()
       should.equal @arg, null
 
-  describe '.guest()', ->
-
-    {GUEST_EMAIL, GUEST_PASSWORD} = Coreon.Models.Session
-
-    authenticate = null
-
-    beforeEach ->
-      authenticate = sinon.stub Coreon.Models.Session, 'authenticate'
-
-    afterEach ->
-      Coreon.Models.Session.authenticate.restore()
-
-    fakePromise = ->
-      done: ->
-      fail: ->
-
-    it 'authenticates with guest credentials', ->
-      promise = fakePromise()
-      authenticate
-        .withArgs(GUEST_EMAIL, GUEST_PASSWORD)
-        .returns(promise)
-      result = Coreon.Models.Session.guest()
-      expect(result).to.equal promise
+  # describe '.guest()', ->
+  #
+  #   {GUEST_EMAIL, GUEST_PASSWORD} = Coreon.Models.Session
+  #
+  #   authenticate = null
+  #
+  #   beforeEach ->
+  #     authenticate = sinon.stub Coreon.Models.Session, 'authenticate'
+  #
+  #   afterEach ->
+  #     Coreon.Models.Session.authenticate.restore()
+  #
+  #   fakePromise = ->
+  #     done: ->
+  #     fail: ->
+  #
+  #   it 'authenticates with guest credentials', ->
+  #     promise = fakePromise()
+  #     authenticate
+  #       .withArgs(GUEST_EMAIL, GUEST_PASSWORD)
+  #       .returns(promise)
+  #     result = Coreon.Models.Session.guest()
+  #     expect(result).to.equal promise
 
   describe 'instance', ->
 

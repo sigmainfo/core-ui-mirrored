@@ -26,6 +26,9 @@ class Coreon.Models.Session extends Backbone.Model
     request.promise()
 
   @authenticate = (email, password) ->
+    unless email?
+      email = @GUEST_EMAIL
+      password = @GUEST_PASSWORD
     request = $.Deferred()
     session = new @
     session.save({}, data: $.param email: email, password: password)
