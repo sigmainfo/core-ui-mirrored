@@ -1,6 +1,6 @@
 - if @repositories?.length > 0
   %form{action: 'javascript:void(0)'}
-    %select.filters-select{title: I18n.t "repositories.select"}
+    %select.filters-select{title: I18n.t 'repositories.select'}
       - for repository in @repositories
         %option{value: repository.id}= repository.name
 

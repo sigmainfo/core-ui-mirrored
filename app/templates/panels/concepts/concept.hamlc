@@ -1,11 +1,11 @@
 .concept-head
   .actions
     - if @can "edit", Coreon.Models.Concept
-      %a.edit-concept.button( href="javascript:void(0)" )= I18n.t "concept.edit"
+      %a.edit-concept.button{href: 'javascript:void(0)', title: I18n.t('concept.edit.hint')}= I18n.t('concept.edit.label')
 
     %a.concept-to-clipboard.remove{ href: "javascript: void(0)", title: I18n.t "concept.remove_from_clipboard" }= I18n.t "concept.remove_from_clipboard"
     %a.concept-to-clipboard.add{ href: "javascript: void(0)", title: I18n.t "concept.add_to_clipboard" }= I18n.t "concept.add_to_clipboard"
-    %h4.system-info-toggle{title: I18n.t "concept.info"}= I18n.t "concept.info"
+    %h4.system-info-toggle{title: I18n.t('concept.info.hint')}= I18n.t('concept.info.label')
 
     .edit
       - if @can "delete", Coreon.Models.Concept
@@ -22,7 +22,7 @@
 
 .terms
   - if @hasTermProperties
-    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle-all' }= I18n.t 'terms.properties.toggle-all'
+    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle_all.hint' }= I18n.t 'terms.properties.toggle_all.label'
   - if @can 'create', Coreon.Models.Term
     .add
       .edit

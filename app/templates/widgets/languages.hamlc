@@ -1,6 +1,6 @@
 != @titlebar I18n.t('widgets.languages.title')
 .content
   %form.languages{action: 'javascript:void(0)'}
-    != @select name: 'source_language', options: @langs, selected: @source
+    != @select name: 'source_language', options: @langs, selected: @source, hint: I18n.t('widgets.languages.select.source')
     %span.arrow
-    != @select name: 'target_language', options: @langs, selected: @target
+    != @select name: 'target_language', options: @langs, selected: @target, hint: I18n.t('widgets.languages.select.target')

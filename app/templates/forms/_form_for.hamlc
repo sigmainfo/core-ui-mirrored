@@ -11,4 +11,4 @@
       %a.reset{href: "javascript:void(0)"}= I18n.t "form.reset"
     - unless @form.noCancel
       %a.cancel{href: "javascript:void(0)"}= I18n.t "form.cancel"
-    %button{type: "submit"}= I18n.t "#{@form.name}.#{@form.action}"
+    %button{type: 'submit', title: @form.submitHint}= @form.submit
