@@ -3,10 +3,10 @@
     - if @can "delete", Coreon.Models.Term
       %a.remove-term{href: "javascript:void(0)", "data-id": @term.id, title: I18n.t "term.delete"}= I18n.t "term.delete"
     - if @can "edit", Coreon.Models.Term
-      %a.edit-term{href: "javascript:void(0)", "data-id": @term.id, title: I18n.t "term.edit"}= I18n.t "term.edit"
-      
+      %a.edit-term{href: "javascript:void(0)", "data-id": @term.id, title: I18n.t('term.edit.hint')}= I18n.t('term.edit.label')
+
   %h4.value= @term.get "value"
-    
+
   != @render "concepts/info", data: @term.info()
   - if @term.get("properties")?.length > 0
     != @render "concepts/properties", properties: @term.propertiesByKeyAndLang(), collapsed: true, noEditButton: true

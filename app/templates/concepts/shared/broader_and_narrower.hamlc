@@ -2,24 +2,24 @@
 
 
 -if @editing
-  != @form_for "concept", @model, ->
+  != @form_for 'concept', @model, submit: I18n.t('concept.save_connections.label'), submitHint: I18n.t('concept.save_connections.hint'), ->
     .list
       .left
-        .broader
+        .broader{title: I18n.t('concept.drag_connections.broader')}
           %ul
       .center
         .concept-label.hit.self
       .right
-        .narrower
+        .narrower{title: I18n.t('concept.drag_connections.narrower')}
           %ul
 
 -else
 
   -if @editable
     .edit
-      %a.edit-connections( href="javascript:void(0)" title="#{I18n.t('concept.edit_concept_connections')}" )= I18n.t('concept.edit_concept_connections')
+      %a.edit-connections( href="javascript:void(0)" title="#{I18n.t('concept.edit_concept_connections.hint')}" )= I18n.t('concept.edit_concept_connections.label')
       - if @can "create", Coreon.Models.Concept
-        %a.add-narrower{ href: @repositoryPath("concepts/new/broader/#{@model.id}"), title:I18n.t('concept.add_narrower') }= I18n.t "concept.add_narrower"
+        %a.add-narrower{ href: @repositoryPath("concepts/new/broader/#{@model.id}"), title:I18n.t('concept.add.hint') }= I18n.t 'concept.add.label'
   .list
     .left
       .broader

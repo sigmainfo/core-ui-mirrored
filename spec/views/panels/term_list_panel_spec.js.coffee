@@ -70,13 +70,12 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       expect( view.$ '.titlebar h3 span.langs' ).to.have.text '(EN, HU)'
 
     it 'renders toggle button', ->
-      I18n.t.withArgs('panels.term_list.toggle_scope').returns 'Toggle scope'
+      I18n.t.withArgs('panels.term_list.toggle_scope.label').returns 'Toggle scope'
       view.initialize panel: panel
       toggle = view.$('.toggle-scope')
       expect( toggle ).to.exist
       expect( toggle ).to.have.attr 'href', 'javascript:void(0)'
       expect( toggle ).to.have.text 'Toggle scope'
-      expect( toggle ).to.have.attr 'title', 'Toggle scope'
 
   describe '#render()', ->
 

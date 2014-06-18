@@ -1,6 +1,8 @@
 .edit
-  - if @can "create", Coreon.Models.Concept
-    %a.button.create-concept{href: @repositoryPath("concepts/new")}= I18n.t "concept.new"
+  - if @can 'create', Coreon.Models.Concept
+    %a.button.create-concept{href: @repositoryPath("concepts/new")
+                           , title: I18n.t('concept.new.hint.root')}
+      = I18n.t('concept.new.label')
 %h2.name= @repository.get "name"
 %p.description= @repository.get "description"
 %table.meta

@@ -14,12 +14,12 @@ en:
     password: 'Password'
     create: 'Log in'
     create_guest_session: 'Log in as guest'
-    welcome: 
+    welcome:
       headline: 'Welcome'
       html:
         <p>
           Visually explore terminology and taxonomies with Coreon!
-        </p> 
+        </p>
         <p>
           Log in to access your organization's repositories.
         </p>
@@ -30,7 +30,6 @@ en:
         <p>
           Or log in as Guest and discover right now Coreon's concept maps.
         </p>
-        
 
   themes:
     caption: "Theme"
@@ -49,7 +48,9 @@ en:
       terms:
         hint: "Search concepts by terms"
         label: "Concepts by Terms"
-    submit: "Search"
+    submit:
+      label: 'Search'
+      hint: 'Locate concepts and terms'
     concepts:
       create: "Create Concept"
 
@@ -80,13 +81,23 @@ en:
         definition: 'Definition'
 
   concept:
-    info: "System Info"
+    info:
+      label: 'System Info'
+      hint: 'Show/hide system info'
     tree: "Broader & Narrower"
     broader_and_narrower: "Broader & Narrower"
     new_concept: "<New concept>"
-    new: "New concept"
-    add_narrower: "Add narrower concept"
-    edit: "Edit mode"
+    new:
+      label: 'New concept'
+      hint:
+        root: 'Add a new top level concept to this repository'
+        term: 'Add a new top level concept to the repository using the current search term'
+    add:
+      label: 'Add narrower concept'
+      hint: 'Add a new narrower concept'
+    edit:
+      label: 'Edit mode'
+      hint: 'Enter/leave edit mode'
     create: "Create concept"
     delete: "Delete concept"
     confirm_delete: "This concept including all terms will be deleted permanently!"
@@ -94,15 +105,24 @@ en:
     update: "Save concept"
     add_to_clipboard: "Add to clipboard"
     remove_from_clipboard: "Remove from clipboard"
-    edit_concept_connections: "Edit broader & narrower concepts"
+    edit_concept_connections:
+      label: 'Edit connections'
+      hint: 'Edit connections to broader and narrower concepts'
+    save_connections:
+      label: 'Save'
+      hint: 'Save all modified connections'
+    drag_connections:
+      broader: 'Drag/drop broader concepts'
+      narrower: 'Drag/drop narrower concepts'
 
   term:
-    info: "System Info"
     value: "Value"
     lang: "Language"
     new: "Add term"
     create: "Create term"
-    edit: "Edit term"
+    edit:
+      label: 'Edit term'
+      hint: 'Edit this term an its properties'
     update: "Save term"
     delete: "Remove term"
     confirm_delete: "This term will be deleted permanently."
@@ -113,8 +133,11 @@ en:
     add: "Add term"
     empty: "No terms for this language"
     properties:
-      toggle-all: "Toggle all properties"
-      toggle: "Toggle properties"
+      toggle_all:
+        label: 'Toggle all properties'
+        hint: 'Show/hide all term properties'
+      toggle:
+        hint: 'Show/hide properties of this term'
 
   properties:
     title: "Properties"
@@ -136,7 +159,7 @@ en:
     languages: "Languages"
 
   repositories:
-    select: "Select repository"
+    select: 'Select another repository'
 
   form:
     reset: "Reset"
@@ -195,11 +218,16 @@ en:
 
   widgets:
     languages:
+      select:
+        source: 'Select preferred language for browsing'
+        target: 'Select secondary language'
       title: "Languages"
       no-selection: '-- None'
     clipboard:
       title: "Clipboard"
-      clear: "Clear"
+      clear:
+        label: 'Clear'
+        hint: 'Clear clipboard'
 
   panels:
     concepts:
@@ -208,7 +236,9 @@ en:
       title: "Concept Map"
       zoom_in: "Zoom in"
       zoom_out: "Zoom out"
-      toggle_orientation: "Toggle orientation"
+      toggle_orientation:
+        label: "Toggle orientation"
+        hint: "Click to toggle rendering in landscape or tree layout"
       placeholder:
         title:
           one: '1 more concept for {{label}}'
@@ -217,7 +247,9 @@ en:
       title: 'Term List'
       empty: 'No language selected'
       placeholder: 'loading additional terms...'
-      toggle_scope: 'Toggle scope'
+      toggle_scope:
+        label: 'Toggle scope'
+        hint: 'Toggle scope: display all terms or display only terms from selected concepts'
 
   user:
     name: "Name"

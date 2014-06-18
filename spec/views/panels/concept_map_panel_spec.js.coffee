@@ -127,21 +127,18 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         view.$('.titlebar').size().should.equal 1
 
       it 'renders zoom buttons', ->
-        I18n.t.withArgs('panels.concept_map.zoom_in').returns 'Zoom in'
-        I18n.t.withArgs('panels.concept_map.zoom_out').returns 'Zoom out'
+        I18n.t.withArgs('panels.concept_map.zoom_in.label').returns 'Zoom in'
+        I18n.t.withArgs('panels.concept_map.zoom_out.label').returns 'Zoom out'
         view.initialize hits: view.hits, panel: panel
         view.$el.should.have '.zoom-in'
         view.$('.zoom-in').should.have.text 'Zoom in'
-        view.$('.zoom-in').should.have.attr 'title', 'Zoom in'
         view.$('.zoom-out').should.have.text 'Zoom out'
-        view.$('.zoom-out').should.have.attr 'title', 'Zoom out'
 
       it 'renders toggle button', ->
-        I18n.t.withArgs('panels.concept_map.toggle_orientation').returns 'Toggle orientation'
+        I18n.t.withArgs('panels.concept_map.toggle_orientation.label').returns 'Toggle orientation'
         view.initialize hits: view.hits, panel: panel
         view.$el.should.have '.toggle-orientation'
         view.$('.toggle-orientation').should.have.text 'Toggle orientation'
-        view.$('.toggle-orientation').should.have.attr 'title', 'Toggle orientation'
         view.$('.toggle-orientation').should.have.attr 'href', 'javascript:void(0)'
 
   describe '#render()', ->

@@ -1,4 +1,4 @@
-%select.widget-select.blue{name: @name}
+%select.widget-select.blue{name: @name, title: @hint}
   %option{value: ''}= I18n.t('widgets.languages.no-selection')
   - for lang in @options
     %option{value: lang.id, selected: lang.id is @selected}= lang.label

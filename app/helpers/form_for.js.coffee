@@ -36,6 +36,8 @@ class Form extends Coreon.Lib.FormContext
     @errors = @model.errors?()
     @errorCounts = errorCounts @errors if @errors?
     @noCancel = options.noCancel or off
+    @submit = options.submit or I18n.t("#{@name}.#{@action}")
+    @submitHint = options.submitHint or @submit
 
   input: (attr, options = {}) ->
     Coreon.Helpers.input @name, attr, @model, options
