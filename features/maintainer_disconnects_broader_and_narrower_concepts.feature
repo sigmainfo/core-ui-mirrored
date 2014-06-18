@@ -11,7 +11,7 @@ Feature: maintainer disconnects broader and narrower concepts
     And a concept with label "panopticum", superconcept "surveillance" and subconcept "camera" exists
     And I am on the show concept page of "panopticum"
     And I toggle "EDIT MODE"
-    And I click "Edit broader & narrower concepts"
+    And I click "Edit connections"
 
   @firefox
   Scenario: disconnect broader and narrower concepts

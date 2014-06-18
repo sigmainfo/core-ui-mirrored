@@ -18,8 +18,8 @@ class MaintainerDisconnectsBroaderAndNarrowerConcepts < Spinach::FeatureSteps
     visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
-  step 'I click "Edit broader & narrower concepts"' do
-    click_link_or_button "Edit broader & narrower concepts"
+  step 'I click "Edit connections"' do
+    click_link_or_button "Edit connections"
   end
 
   step 'I drag "surveillance" out of the super concept list' do
