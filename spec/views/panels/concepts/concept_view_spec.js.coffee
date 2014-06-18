@@ -67,7 +67,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       expect( @view.$('h2.label') ).to.have.text 'Handgun'
 
     it 'renders system info', ->
-      I18n.t.withArgs('concept.info').returns 'System Info'
+      I18n.t.withArgs('concept.info.label').returns 'System Info'
       @concept.info = ->
         id: '123'
         legacy_id: '543'
@@ -119,7 +119,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         expect( @view.$('a.delete-concept') ).to.have.text 'Delete concept'
 
       it 'renders edit concept link', ->
-        I18n.t.withArgs('concept.edit').returns 'Edit concept'
+        I18n.t.withArgs('concept.edit.label').returns 'Edit concept'
         @view.render()
         expect( @view.$el ).to.have 'a.edit-concept'
         expect( @view.$('a.edit-concept') ).to.have.text 'Edit concept'
@@ -355,7 +355,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
 
         it 'renders toggle for properties', ->
-          I18n.t.withArgs('terms.properties.toggle').returns 'Toggle properties'
+          I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
           @term.set 'properties', [ source: 'Wikipedia' ], silent: true
           property = new Backbone.Model source: 'Wikipedia'
           property.info = -> {}
@@ -364,7 +364,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
 
         it 'renders toggle all button', ->
-          I18n.t.withArgs('terms.properties.toggle-all').returns 'Toggle all properties'
+          I18n.t.withArgs('terms.properties.toggle_all.hint').returns 'Toggle all properties'
           @concept.terms = -> [ properties: -> [ new Backbone.Model ] ]
           @view.render()
           expect( @view.$('.terms') ).to.have '> .properties-toggle'
@@ -395,7 +395,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           expect( @view.$('.term a.remove-term') ).to.have.data 'id', '56789fghj'
 
         it 'renders edit term links', ->
-          I18n.t.withArgs('term.edit').returns 'Edit term'
+          I18n.t.withArgs('term.edit.label').returns 'Edit term'
           @term.id = '56789fghj'
           @view.render()
           expect( @view.$('.term') ).to.have '.edit a.edit-term'

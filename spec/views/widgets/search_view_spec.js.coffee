@@ -44,7 +44,7 @@ describe "Coreon.Views.Widgets.SearchView", ->
       @view.$("#coreon-search-query").should.have.attr "name", "q"
 
     it "renders submit button", ->
-      I18n.t.withArgs("search.submit").returns "Search"
+      I18n.t.withArgs('search.submit.label').returns "Search"
       @view.render()
       @view.$("form").should.have 'input[type="submit"]'
       @view.$('input[type="submit"]').val().should.equal "Search"

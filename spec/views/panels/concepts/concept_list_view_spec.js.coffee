@@ -116,13 +116,11 @@ describe 'Coreon.Views.Panels.Concepts.ConceptListView', ->
           repository.path = -> '/repo-1'
           app.set 'query', 'März', silent: yes
           app.lang = -> 'de'
-          I18n.t.withArgs('concept.new').returns 'New concept'
           view.render()
           button = view.$('.edit a.create-concept')
           expect(button).to.exist
           expect(button).to.have.attr 'href'
                                     , '/repo-1/concepts/new/terms/de/M%C3%A4rz'
-          expect(button).to.have.text 'New concept'
 
       context 'without maintainer privileges', ->
 
