@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <%- if Rails.env.production? %>
+    <!-- pingdom -->
+    <script>
+      var _prum = [['id', '53a2b641abe53d102616c83f']
+                , ['mark', 'firstbyte', (new Date()).getTime()]];
+      (function() {
+        var s = document.getElementsByTagName('script')[0]
+          , p = document.createElement('script');
+        p.async = 'async';
+        p.src = '//rum-static.pingdom.net/prum.min.js';
+        s.parentNode.insertBefore(p, s);
+      })();
+    </script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-51816049-1', 'coreon.com');
+      ga('send', 'pageview');
+    </script>
+  <%- end %>
   <title>Coreon - Knowledge meets language.</title>
 
   <%= stylesheet_link_tag "application", :media => "all" %>
@@ -11,17 +36,6 @@
   <%- if Rails.env.test? %>
     <%= javascript_include_tag "jquery.simulate.js", charset: "utf-8" %>
   <%- end %>
-<%- if Rails.env.production? %>
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-51816049-1', 'coreon.com');
-    ga('send', 'pageview');
-  </script>
-<%- end %>
 </head>
 <body>
 <%= yield %>
