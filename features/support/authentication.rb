@@ -16,7 +16,7 @@ module Authentication
     )
   end
 
-  def create_user(name, email, password: 'UV3J#OxSN5]l8')
+  def create_user(name, email, password: 'se7en!')
     CoreClient::Auth::User.create!(
       name: name,
       emails: [email],
@@ -60,7 +60,7 @@ module Authentication
     )
   end
 
-  def login(email: current_user.emails.first, password: 'UV3J#OxSN5]l8')
+  def login(email: current_user.emails.first, password: 'se7en!')
     visit '/'
     within '#coreon-login' do
       fill_in 'Email', with: email

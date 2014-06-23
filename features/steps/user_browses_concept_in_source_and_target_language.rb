@@ -103,7 +103,7 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
   end
 
   step 'the following languages are available: "German", "English", "French"' do
-    @repository.update_attributes languages: %w|de en fr|
+    current_repository.update_attributes languages: %w|de en fr|
   end
 
   step 'a concept with a multilingual property "description" exists' do
@@ -119,7 +119,7 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
   end
 
   step 'I visit the concept details page' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'no source or target language is selected' do
@@ -171,7 +171,7 @@ class Spinach::Features::UserBrowsesConceptInSourceAndTargetLanguage < Spinach::
   end
 
   step 'I visit the details page of this concept' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I click "Toggle properties" on the term' do

@@ -14,7 +14,7 @@ module AuthSteps
   end
 
   step 'I am a user of the repository' do
-    @repository_user = repository_user
+    @repository_user = create_repository_user
   end
 
   step 'I am logged in as user of the repository' do
@@ -24,6 +24,7 @@ module AuthSteps
 
   step 'I am logged in as maintainer of the repository' do
     @repository_user = create_repository_user(:maintainer)
+    login
   end
 
   step 'I am no maintainer of the repository' do
@@ -37,7 +38,7 @@ module AuthSteps
   end
 
   step 'I am logged in' do
-    login email: 'nobody@blake.com', password: 'se7en!'
+    login
   end
 
   step 'I am logged out' do

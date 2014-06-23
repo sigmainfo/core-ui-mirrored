@@ -67,7 +67,7 @@ module LanguageSelectSteps
   end
 
   step 'the repository provides the languages "English", "German", and "French"' do
-    @repository.update_attributes languages: %w{en de fr}
+    current_repository.update_attributes languages: %w{en de fr}
 
     create_concept terms: [
       {lang: 'en', value: 'English'},

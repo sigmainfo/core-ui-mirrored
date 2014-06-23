@@ -16,7 +16,7 @@ class Spinach::Features::UserBrowsesConceptMapInSourceAndTargetLanguage < Spinac
   end
 
   step 'I visit the concept details page' do
-    visit "/#{@repository.id}/concepts/#{@concept['id']}"
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'no source or target language is selected' do

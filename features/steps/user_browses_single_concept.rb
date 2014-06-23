@@ -255,8 +255,8 @@ class UserBrowsesSingleConcept < Spinach::FeatureSteps
     section_for("PROPERTIES").should_not be_visible
   end
 
-  When 'I click on "Toggle system info"' do
-    page.find(".concept a", text: "Toggle system info").click
+  When 'I click on "System Info"' do
+    page.find(".concept a", text: "System Info").click
   end
 
   Then 'I should see "id" of the "handgun" concept' do

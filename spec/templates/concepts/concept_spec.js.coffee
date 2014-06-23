@@ -114,7 +114,7 @@ describe 'Coreon.Templates[concepts/concept]', ->
 
       it 'renders toggle-system-info action', ->
         action_for.withArgs('concept.toggle_system_info')
-          .returns '<a class="toggle-system-info">Toggle system info</a>'
+          .returns '<a class="toggle-system-info">System Info</a>'
         el = render()
         expect(actions el).to.have 'a.toggle-system-info'
 

@@ -95,7 +95,7 @@ en:
     add:
       label: 'Add narrower concept'
       hint: 'Add a new narrower concept'
-    edit:
+    toggle_edit_mode:
       label: 'Edit mode'
       hint: 'Enter/leave edit mode'
     create: "Create concept"
@@ -125,6 +125,7 @@ en:
       hint: 'Edit this term an its properties'
     update: "Save term"
     remove_term: "Remove term"
+    delete: "Remove term"
     confirm_update: "Saving the term will delete {{count}} properties permanently!"
     confirm:
       remove_term: "This term will be deleted permanently."
