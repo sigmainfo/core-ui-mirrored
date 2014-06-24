@@ -25,11 +25,11 @@ describe 'Coreon.Collections.Panels', ->
 
       it 'creates default set of panels', ->
         types = instance.pluck 'type'
-        expect(types).to.eql ['concepts', 'clipboard', 'conceptMap', 'termList']
+        expect(types).to.eql ['clipboard', 'concepts', 'conceptMap', 'termList']
 
-      it 'widgetizes all panes execept the first one', ->
+      it 'widgetizes all panes execept one', ->
         widgetized = instance.pluck 'widget'
-        expect(widgetized).to.eql [off, on, on, on]
+        expect(widgetized).to.eql [on, off, on, on]
 
       it 'sets clipboard height', ->
         clipboard = instance.findWhere type: 'clipboard'

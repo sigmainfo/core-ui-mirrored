@@ -5,8 +5,8 @@ class Coreon.Collections.Panels extends Backbone.Collection
 
   @defaults:
     [
-      {type: 'concepts', widget: off}
       {type: 'clipboard', height: 80}
+      {type: 'concepts', widget: off}
       {type: 'conceptMap'}
       {type: 'termList'}
     ]
