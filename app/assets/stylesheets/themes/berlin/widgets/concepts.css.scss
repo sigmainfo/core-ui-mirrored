@@ -1,4 +1,5 @@
 #coreon-concepts.widget {
+@include background(linear-gradient(lighten($darker-bg-color, 8), lighten($darker-bg-color, 5)));
   
   .concept-list {
     &>table {

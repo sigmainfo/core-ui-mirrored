@@ -34,7 +34,7 @@
      button {
        background-color: $button-hover-color;
        @include box-shadow(rgba(white, 0.2) 0px 1px 1px inset, rgba(black, 0.2) -1px -1px 1px inset);
-       @include retina-stripes(white);
+       @include retina-stripes("white");
 
         &:hover {
           background-color: saturate($button-hover-color, 10);

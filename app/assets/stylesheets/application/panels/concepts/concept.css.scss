@@ -258,7 +258,7 @@ div.concept {
    
 }
 
-.medi {
+#coreon-concepts:not(.widget).medi {
   div.concept {
     font-size: 0.9em;
     
@@ -312,7 +312,7 @@ div.concept {
   }
 }
 
-.mini {
+.mini, .widget.medi, .widget.maxi {
   div.concept {
     font-size: 0.9em;
     
@@ -360,9 +360,9 @@ div.concept {
   div.concept.show, div.concept.edit {
     section.language {
       margin-top: 0px;
-    }
-    section h3 {
-      margin-top: 2px;
+      >h3 {
+        margin-top: 2px;
+      }
     }
     
     .submit {
@@ -393,7 +393,7 @@ div.concept {
         }
         
         &>div {
-          margin-left: 16px;
+          margin-left: 0px;
           background: none;
           border-top: 1px solid white;
           
