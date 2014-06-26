@@ -10,22 +10,31 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
   conceptView = null
   newConceptView = null
 
+  fakeView = ->
+    $el = $('<div>')
+    $el: $el
+    el: $el[0]
+    render: -> @
+    remove: ->
+    widgetize: ->
+    maximize: ->
+
   beforeEach ->
     sinon.stub I18n, 't'
 
-    repositoryView = new Backbone.View
+    repositoryView = fakeView()
     sinon.stub Coreon.Views.Panels.Concepts, 'RepositoryView', ->
       repositoryView
 
-    conceptListView = new Backbone.View
+    conceptListView = fakeView()
     sinon.stub Coreon.Views.Panels.Concepts, 'ConceptListView', ->
       conceptListView
 
-    conceptView = new Backbone.View
+    conceptView = fakeView()
     sinon.stub Coreon.Views.Panels.Concepts, 'ConceptView', ->
       conceptView
 
-    newConceptView = new Backbone.View
+    newConceptView = fakeView()
     sinon.stub Coreon.Views.Panels.Concepts, 'NewConceptView', ->
       newConceptView
 
@@ -42,7 +51,7 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
 
   it 'is a panel view', ->
     expect(view).to.be.an.instanceOf Coreon.Views.Panels.PanelView
-    
+
   it 'creates container', ->
     el = view.$el
     expect(el).to.have.attr 'id', 'coreon-concepts'
@@ -279,3 +288,47 @@ describe 'Coreon.Views.Panels.ConceptsPanel', ->
       view.currentView = render: render
       view.render()
       expect(render).to.have.been.calledOnce
+
+  describe '#widgetize()', ->
+
+    current = null
+
+    beforeEach ->
+      current = fakeView()
+      view.currentView = current
+
+    it 'calls super implementation', ->
+      widgetize = sinon.stub Coreon.Views.Panels.PanelView::, 'widgetize'
+      view.widgetize()
+      expect(widgetize).to.have.been.calledOnce
+
+    it 'calls widgetize on subviews', ->
+      widgetize = sinon.stub current, 'widgetize'
+      view.widgetize()
+      expect(widgetize).to.have.been.calledOnce
+
+    it 'fails silently when not defined', ->
+      current.widgetize = null
+      expect( -> view.widgetize() ).to.not.throw(Error)
+
+  describe '#maximize()', ->
+
+    current = null
+
+    beforeEach ->
+      current = fakeView()
+      view.currentView = current
+
+    it 'calls super implementation', ->
+      maximize = sinon.stub Coreon.Views.Panels.PanelView::, 'maximize'
+      view.maximize()
+      expect(maximize).to.have.been.calledOnce
+
+    it 'calls maximize on subviews', ->
+      maximize = sinon.stub current, 'maximize'
+      view.maximize()
+      expect(maximize).to.have.been.calledOnce
+
+    it 'fails silently when not defined', ->
+      current.maximize = null
+      expect( -> view.maximize() ).to.not.throw(Error)

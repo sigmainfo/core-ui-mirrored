@@ -53,3 +53,11 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
   render: ->
     @currentView?.render()
     @
+
+  widgetize: ->
+    super
+    @currentView?.widgetize?()
+
+  maximize: ->
+    super
+    @currentView?.maximize?()
