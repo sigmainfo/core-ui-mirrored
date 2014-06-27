@@ -497,44 +497,44 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       expect( @view.$(".term:last .properties div") ).to.be.hidden
       expect( @view.$(".term:last .properties") ).to.have.class "collapsed"
 
-  describe "toggleSection()", ->
+  describe "#toggleSurroundingSection()", ->
+
+    section = null
 
     beforeEach ->
-      @view.$el.append """
+      section = $ """
         <section>
           <h3>PROPERTIES</h3>
           <div>foo</div>
         </section>
-        """
+      """
+      @view.$el.append section
       @event = $.Event()
 
-    it 'is triggered by click on caption for section', ->
-      @view.toggleSection = sinon.stub().returns false
-      @view.delegateEvents()
-      @view.$('section *:first-child').first().click()
-      expect( @view.toggleSection ).to.have.been.calledOnce
+    context 'triggers', ->
 
-    it 'is not triggered for section within a form', ->
-      @view.toggleSection = sinon.stub().returns false
-      @view.delegateEvents()
-      @view.$('section').wrap '<form>'
-      @view.$('section *:first-child').first().click()
-      expect( @view.toggleSection ).to.not.have.been.called
+      toggleSurroundingSection = null
 
-    it 'toggles visibility of section content', ->
-      $('#konacha').append @view.$el
+      beforeEach ->
+        toggleSurroundingSection = sinon.stub @view, 'toggleSurroundingSection'
+        @view.delegateEvents()
+
+      it 'is triggered by click on caption for section', ->
+        @view.$('section h3').click()
+        expect(toggleSurroundingSection).to.have.been.calledOnce
+
+      it 'is not triggered for section within a form', ->
+        @view.$('section').wrap '<form>'
+        @view.$('section h3').click()
+        expect(toggleSurroundingSection).to.not.have.been.called
+
+    it 'toggles section by name', ->
+      section.addClass 'broader-and-narrower'
+      toggleSection = sinon.stub @view, 'toggleSection'
       @event.target = @view.$('h3').get(0)
-      @view.toggleSection @event
-      expect( @view.$('section div') ).to.be.hidden
-      @view.toggleSection @event
-      expect( @view.$('section div') ).to.be.visible
-
-    it 'toggles state of section', ->
-      @event.target = @view.$('h3').get(0)
-      @view.toggleSection @event
-      expect( @view.$('section') ).to.have.class 'collapsed'
-      @view.toggleSection @event
-      expect( @view.$('section') ).to.not.have.class 'collapsed'
+      @view.toggleSurroundingSection @event
+      expect(toggleSection).to.have.been.calledOnce
+      expect(toggleSection).to.have.been.calledWith 'broader-and-narrower'
 
   describe '#selectProperty()', ->
 
@@ -1143,3 +1143,19 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       @collection.add @concept
       @collection.reset []
       expect( @view.setClipboardButton ).to.have.been.calledTwice
+
+  describe '#widgetize()', ->
+
+    it 'collapses broader and narrower section', ->
+      collapseSection = sinon.stub @view, 'collapseSection'
+      @view.widgetize()
+      expect(collapseSection).to.have.been.calledOnce
+      expect(collapseSection).to.have.been.calledWith 'broader-and-narrower'
+
+  describe '#maximize()', ->
+
+    it 'collapses broader and narrower section', ->
+      expandSection = sinon.stub @view, 'expandSection'
+      @view.maximize()
+      expect(expandSection).to.have.been.calledOnce
+      expect(expandSection).to.have.been.calledWith 'broader-and-narrower'

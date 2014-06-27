@@ -21,12 +21,17 @@
 #= require modules/confirmation
 #= require jquery.serializeJSON
 #= require modules/draggable
+#= require modules/collapsable_sections
 
 class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable
+
+  _(@::).extend Coreon.Modules.CollapsableSections
+  sectionHeading: 'h3,.edit'
+  findSection: (name) -> @$ "section.#{name}:not(form,.terms *)"
 
   className: 'concept'
   editProperties: no
@@ -43,7 +48,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  .edit-concept"                       : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
-    "click  section:not(form *) > *:first-child" : "toggleSection"
+    "click  section:not(form,.terms *) > h3"     : "toggleSurroundingSection"
     "click  .properties-toggle"                  : "toggleProperties"
     "click  .properties .index li"               : "selectProperty"
     "click  .add-property"                       : "addProperty"
@@ -124,14 +129,20 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.add").show()
     @
 
+  widgetize: ->
+    @collapseSection 'broader-and-narrower', duration: 0
+
+  maximize: ->
+    @expandSection 'broader-and-narrower', duration: 0
+
   toggleInfo: (evt) ->
     @$(".system-info")
       .slideToggle()
 
-  toggleSection: (evt) ->
-    target = $(evt.target)
-    target.closest("section").toggleClass "collapsed"
-    target.siblings().not(".edit").slideToggle()
+  toggleSurroundingSection: (evt) ->
+    section = $(evt.target).closest('section')
+    name = section.attr('class').split(' ')[0]
+    @toggleSection name
 
   toggleProperties: (evt) ->
     target = @$(".term .properties")
