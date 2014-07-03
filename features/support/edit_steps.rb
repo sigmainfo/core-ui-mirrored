@@ -31,6 +31,7 @@ module EditSteps
   end
 
   step 'I toggle "EDIT MODE"' do
+    expect(page).to have_selector(:link, 'Edit mode')
     click_link "Edit mode"
   end
 
