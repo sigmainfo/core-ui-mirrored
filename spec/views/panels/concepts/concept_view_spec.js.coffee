@@ -1099,6 +1099,11 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
     context 'confirm', ->
 
+      fakeHits = (attrs) ->
+        new Backbone.Collection attrs
+
+      fakeConcept = -> {}
+
       beforeEach ->
         Coreon.application = repository: -> id: '8765jhgf'
         sinon.stub Backbone.history, 'navigate'
@@ -1114,6 +1119,15 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         @action()
         expect( Backbone.history.navigate ).to.have.been.calledOnce
         expect( Backbone.history.navigate ).to.have.been.calledWith '/8765jhgf', trigger: true
+
+      it 'clears hits', ->
+        hits = fakeHits [result: fakeConcept()]
+        try
+          sinon.stub Coreon.Collections.Hits, 'collection', -> hits
+          @action()
+          expect(hits).to.have.property 'length', 0
+        finally
+          Coreon.Collections.Hits.collection.restore()
 
       it 'destroys model', ->
         @view.model.destroy = sinon.spy()
