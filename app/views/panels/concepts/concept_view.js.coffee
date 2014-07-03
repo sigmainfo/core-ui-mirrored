@@ -13,6 +13,7 @@
 #= require templates/properties/new_property
 #= require views/concepts/shared/broader_and_narrower_view
 #= require collections/clips
+#= require collections/hits
 #= require models/broader_and_narrower_form
 #= require models/term
 #= require models/notification
@@ -282,6 +283,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       container: trigger.closest ".concept"
       message: I18n.t "concept.confirm_delete"
       action: =>
+        Coreon.Collections.Hits.collection().reset []
         @model.destroy()
         Coreon.Models.Notification.info I18n.t("notifications.concept.deleted", label: label)
         Backbone.history.navigate "/#{Coreon.application.repository().id}", trigger: true
