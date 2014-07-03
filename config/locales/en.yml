@@ -132,7 +132,9 @@ en:
 
   terms:
     title: "Terms"
-    add: "Add term"
+    add_term:
+      label: "Add term"
+      hint: "Add a new term to this concept"
     empty: "No terms for this language"
     toggle_all_properties: "Toggle all properties"
     properties:
