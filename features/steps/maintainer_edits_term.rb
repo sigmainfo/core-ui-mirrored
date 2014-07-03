@@ -1,6 +1,7 @@
 class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
+  include NavigationSteps
   include Api::Graph::Factory
 
   step 'a concept with an English term "ten-gallon hat" exists' do

@@ -4,61 +4,29 @@ Feature: maintainer adds term
   I want to add a term to an existing concept
 
   Background:
-    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
-    And I am a maintainer of the repository
-    And I am logged in
-    And a concept "top hat" exists
-    And I visit the page of this concept
+    Given a concept exists
+    And I am logged in as maintainer of the repository
+    And I am on the edit concept details page
 
+  @wip
   Scenario: add term
-    When I toggle "EDIT MODE"
-    And I click "Add term"
-    Then I should see a set of term inputs with labels "Value", "Language"
-    When I fill in "Value" with "high hat" within term inputs
-    And I fill in "Language" with "en" within term inputs
-    And I click "Add property" within term inputs
-    Then I should see a set of property inputs with labels "Key", "Value", "Language"
-    When I fill in "Key" with "status" within property inputs
-    And I fill in "Value" with "pending" within property inputs
-    When I click "Create term"
-    Then I should see a term "high hat" within language "EN"
-    When I click "PROPERTIES" within term
-    Then I should see a property "STATUS" for the term with value "pending"
-    And I should see a message 'Successfully created term "high hat".'
-    And I should not see "Create term"
-
-  Scenario: validation errors
-    When I toggle "EDIT MODE"
-    And I click "Add term"
-    And client-side validation is turned off
-    And I fill in "Value" with "high hat" within term inputs
-    And I click "Add property" within term inputs
-    And I fill in "Value" with "pending" within property inputs
-    And I click "Create term"
-    Then I should see an error summary
-    And this summary should contain "Failed to create term:"
-    And this summary should contain "1 error on properties"
-    And I should see error "can't be blank" for term input "Language"
-    And I should see error "can't be blank" for property input "Key" within term inputs
-    When I click "Remove property" within term inputs
-    And I fill in "Language" with "en" within term inputs
-    And I click "Create term"
-    Then I should see a term "high hat" within language "EN"
-    And I should not see an error summary
-    But I should see a message 'Successfully created term "high hat".'
-
-  Scenario: cancel adding term
-    When I toggle "EDIT MODE"
-    And I click "Add term"
-    And I fill in "Value" with "high hat" within term inputs
-    And I fill in "Language" with "en" within term inputs
-    And I click "Add property" within term inputs
-    When I fill in "Key" with "status" within property inputs
-    And I fill in "Value" with "pending" within property inputs
-    When I click "Cancel"
-    Then I should not see "Create term"
-    And I should not see "high hat"
     When I click "Add term"
-    Then I should see a set of term inputs with labels "Value", "Language"
-    And these term inputs should be empty
-    And I should not see property inputs
+    And I fill in "Value" with "Dead Man"
+    And I fill in "Language" with "en"
+    And I click button "Add term"
+    Then I see a term "Dead Man" inside the language section "EN"
+
+  # Scenario: add term with property
+  #   When I click "Add term"
+  #   And I fill in the form
+  #   And I click "Add property" inside the form
+  #   And I fill in "Key" with "director"
+  #   And I fill in "Value" with "Jim Jarmusch"
+  #   And I click button "Add term"
+  #   Then I see a term inside the language section "EN"
+  #   When I click "Toggle properties" inside this term
+  #   Then I see a property "director" with value "Jim Jarmusch"
+
+  # Scenario: errors
+
+  # Scenario: cancel

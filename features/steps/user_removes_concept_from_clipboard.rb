@@ -3,6 +3,7 @@
 class UserRemovesConceptFromClipboard < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
+  include NavigationSteps
   include SearchSteps
   include Api::Graph::Factory
 

@@ -1,5 +1,8 @@
+require_relative 'editing'
+
 module EditSteps
   include Spinach::DSL
+  include Editing
 
   step 'I have maintainer privileges' do
     page.execute_script 'Coreon.application.get("session").currentRepository().set("user_roles", ["maintainer"])'
@@ -26,7 +29,7 @@ module EditSteps
     click_link "Edit mode"
   end
 
-  step 'I visit the page of this concept' do
-    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
+  step 'I am on the edit concept details page' do
+    edit_concept_details @concept
   end
 end

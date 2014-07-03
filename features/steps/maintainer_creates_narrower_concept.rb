@@ -2,6 +2,7 @@
 class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
+  include NavigationSteps
   include Api::Graph::Factory
 
 
