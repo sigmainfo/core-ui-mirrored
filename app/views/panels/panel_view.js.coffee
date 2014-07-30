@@ -14,8 +14,8 @@ class Coreon.Views.Panels.PanelView extends Backbone.View
 
   sizes:
     mini: [0, 400]
-    medi: [401, 600]
-    maxi: [601]
+    medi: [399, 600]
+    maxi: [599]
 
   initialize: (options = {}) ->
     @panel = options.panel
