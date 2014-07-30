@@ -1,7 +1,7 @@
 .widget {
   background: $darker-bg-color;
   .titlebar {
-    background: rgba($button-color, 0.13);
+    background: rgba($button-color, 0.18);
     border-bottom: 1px solid white;
     border-top: 1px solid white;
   } 
@@ -10,7 +10,7 @@
     background: $secondary-color;
     
     .titlebar {
-      background: darken($secondary-color, 4);
+      background: darken($secondary-color, 5);
     }
   }
   

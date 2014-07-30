@@ -4,6 +4,20 @@
     .edit-concept {
       height: 14px;
     }   
+    
+    .terms {
+      
+      section.language {  
+  
+        &>h3 {
+          &:after {
+            background-color: lighten($button-color, 34);      
+          }   
+        }    
+      }
+    }
+    
+    
   }
   .concept-list {
 
@@ -11,5 +25,6 @@
       border:none;
     }
   }
+  
 }
 
