@@ -11,7 +11,9 @@
     li.term {
       @include single-box-shadow(none);
       margin-bottom: 0px;
-      border-bottom: 1px solid rgba($secondary-color, 0.2);
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba($secondary-color, 0.2);
+      }
       background: none;
     }  
   }
