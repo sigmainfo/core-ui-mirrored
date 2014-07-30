@@ -3,7 +3,7 @@
     .actions {
 
       a {
-        background: $button-color;
+        background: darken($button-color, 20);
         border-left: 1px solid rgba(white, 0.9);
         @include box-shadow(rgba(black, 0.2) -1px -1px 1px inset);
         &:hover {

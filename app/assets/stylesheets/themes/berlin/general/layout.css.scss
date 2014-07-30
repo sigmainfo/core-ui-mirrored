@@ -89,7 +89,12 @@ table.managers, .concept-list>table {
   background-color: $darker-bg-color;
 
   &:after {
+    content:"";
+    display: block;
+    width: auto;
+    height: 12px;
     @include background(linear-gradient(rgba(white, 0.3), rgba(white, 0)));
+    @include box-shadow(rgba(white, 0.4) 0px 1px 1px inset, rgba(black, 0.1) -1px -1px 1px inset);
   }
 }
 

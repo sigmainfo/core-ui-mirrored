@@ -1,12 +1,18 @@
 #coreon-concepts.widget {
+  background-color: white;
 
   div.concept {
     .edit-concept {
       height: 14px;
-    }   
+    }  
     
-    .terms {
-      
+    li.term {    
+      &:not(:last-child) {
+        border-bottom: 1px solid lighten($button-color, 20);
+      }
+    } 
+    
+    .terms {      
       section.language {  
   
         &>h3 {
@@ -15,9 +21,7 @@
           }   
         }    
       }
-    }
-    
-    
+    }   
   }
   .concept-list {
 

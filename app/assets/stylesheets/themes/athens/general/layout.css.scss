@@ -89,7 +89,11 @@ table.managers, .concept-list>table {
   background-color: $darker-bg-color;
 
   &:after {
-    background: rgba(30,80,80, 0.06);
+    content:"";
+    display: block;
+    width: auto;
+    height: 6px;
+     background: rgba(30,80,80, 0.06);
   }
 }
 

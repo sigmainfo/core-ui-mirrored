@@ -1,13 +1,16 @@
 .widget {
+  border:1px solid white;
+  border-top: none;
   background: $darker-bg-color;
+  
   .titlebar {
-    background: rgba($button-color, 0.18);
+    background: rgba($button-color, 0.2);    
     border-bottom: 1px solid white;
-    border-top: 1px solid white;
   } 
   
   &.blue-widget {
     background: $secondary-color;
+    border-top :1px solid white;
     
     .titlebar {
       background: darken($secondary-color, 5);
