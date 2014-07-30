@@ -6,9 +6,6 @@
     @include retina-stripes("white");
     
     li {
-      list-style: none;
-      padding: 1px;
-      position: relative;
 
       .concept-label {
         @include single-box-shadow(desaturate(lighten($text-color, 50%), 20%), 1px, 1px, 2px);

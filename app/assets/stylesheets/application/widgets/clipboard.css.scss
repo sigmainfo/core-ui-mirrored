@@ -9,9 +9,13 @@
     padding: 8px 20px;
     position: absolute;
     top: 20px;
-    bottom: 0;
+    bottom: 1px;
     left: 0;
     right: 0;
     overflow: auto;
+    
+    li {
+      padding: 1px 10px 3px 0px;
+    }
   }
 }
