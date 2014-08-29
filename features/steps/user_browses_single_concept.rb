@@ -2,7 +2,7 @@
 class UserBrowsesSingleConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
   include Selectors
 
   def click_on_toggle(name)

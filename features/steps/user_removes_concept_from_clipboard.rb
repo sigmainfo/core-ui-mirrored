@@ -4,7 +4,7 @@ class UserRemovesConceptFromClipboard < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept with label "panopticum" exists' do
     @concept = create_concept_with_label "panopticum"

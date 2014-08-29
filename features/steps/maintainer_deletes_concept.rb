@@ -2,7 +2,7 @@ class Spinach::Features::MaintainerDeletesConcept < Spinach::FeatureSteps
 
   include AuthSteps
   include EditSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept with an English term "beaver hat" exists' do
     @concept = create_concept terms: [

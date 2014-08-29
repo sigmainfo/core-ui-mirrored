@@ -1,6 +1,6 @@
 class Spinach::Features::UserBrowsesSiblings < Spinach::FeatureSteps
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
   include LanguageSelectSteps
   include EdgesHelpers
 

@@ -1,6 +1,6 @@
 class Spinach::Features::UserTogglesOrientationOfConceptMap < Spinach::FeatureSteps
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
   include EdgesHelpers
 
   step 'a concept "handgun"' do

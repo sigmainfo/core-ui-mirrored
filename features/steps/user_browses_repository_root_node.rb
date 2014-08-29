@@ -1,7 +1,7 @@
 class Spinach::Features::UserBrowsesRepositoryRootNode < Spinach::FeatureSteps
 
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a top level concept "Top Gun" exists' do
     @concept = create_concept_with_label "Top Gun"

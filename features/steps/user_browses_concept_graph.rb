@@ -4,7 +4,7 @@ class UserBrowsesConceptGraph < Spinach::FeatureSteps
 
   include AuthSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
   include EdgesHelpers
 
   step 'a concept "handgun"' do

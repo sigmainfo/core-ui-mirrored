@@ -1,12 +1,12 @@
 class Spinach::Features::UserSearchesInSourceAndTargetLanguage < Spinach::FeatureSteps
-  
+
   include AuthSteps
   include LanguageSelectSteps
-  include Api::Graph::Factory
-  
-  
+  include Factory
+
+
   step 'a concept defined as "A portable firearm"' do
-    @concept = create_concept properties: [{key: 'definition', value: 'A portable firearm'}] 
+    @concept = create_concept properties: [{key: 'definition', value: 'A portable firearm'}]
   end
 
   step 'this concept has the English term "gun"' do
@@ -30,7 +30,7 @@ class Spinach::Features::UserSearchesInSourceAndTargetLanguage < Spinach::Featur
       fill_in "coreon-search-query", with: "пистолет"
     end
   end
-  
+
   step 'I enter "Schusswaffe" in the search field' do
     within "#coreon-search" do
       fill_in "coreon-search-query", with: "Schusswaffe"
@@ -42,21 +42,21 @@ class Spinach::Features::UserSearchesInSourceAndTargetLanguage < Spinach::Featur
       find('input[type="submit"]').click
     end
   end
-  
+
   step 'I should see 1 term hit' do
     page.find('.search-results table.terms td.term')
     page.all('.search-results table.terms td.term').count.should == 1
   end
-  
+
   step 'I should see 1 concept hit' do
     page.all('.search-results table.concepts td.concept.label').count.should == 1
   end
-  
-  
+
+
   step 'I should see no term hit' do
     page.should_not have_css('.search-results table.terms td.term')
   end
-  
+
   step 'I should see no concept hit' do
     page.should_not have_css('.search-results table.concepts td.concept.label')
   end

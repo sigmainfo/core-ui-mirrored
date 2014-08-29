@@ -1,6 +1,6 @@
 class Spinach::Features::VisitorBrowsesRepositoryAsGuest < Spinach::FeatureSteps
   include Authentication
-  include Api::Graph::Factory
+  include Factory
   include Navigation
 
   attr :concept

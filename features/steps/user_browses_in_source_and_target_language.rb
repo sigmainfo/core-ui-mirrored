@@ -1,7 +1,7 @@
 class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::FeatureSteps
   include AuthSteps
   include LanguageSelectSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept' do
     @concept = create_concept nil

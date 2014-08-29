@@ -2,7 +2,7 @@ class Spinach::Features::UserBrowsesConceptsWithLabelsInSourceLanguage < Spinach
   include AuthSteps
   include LanguageSelectSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept' do
     @concept = create_concept nil

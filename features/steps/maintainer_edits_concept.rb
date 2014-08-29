@@ -3,7 +3,7 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
 
 
   step 'a concept with property "label" of "handgun" exists' do

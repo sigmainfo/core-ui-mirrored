@@ -1,7 +1,7 @@
 class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
 
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'I am browsing a repository called "Games"' do
     current_repository.update_attributes name: "Games"

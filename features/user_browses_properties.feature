@@ -28,7 +28,7 @@ Feature: user browses properties
     And a concept with term "vampire" exists
     And that term has the property "status" set to "accepted"
     When I visit the concept details page for that concept
-    When I click on toggle "PROPERTIES" inside the term "vampire"
+    And I click on toggle "PROPERTIES" inside the term "vampire"
     Then I see a list of properties inside that term
     And I see a property "STATUS" with value "accepted"
 
