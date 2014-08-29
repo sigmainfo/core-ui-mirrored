@@ -30,6 +30,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 gem 'rack-cors', require: 'rack/cors'
+gem 'rest-client'
 
 group :development do
   gem 'thin'
