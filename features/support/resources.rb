@@ -1,3 +1,5 @@
+require_relative 'authentication'
+
 module Resources
   include Authentication
 
