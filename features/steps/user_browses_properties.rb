@@ -7,37 +7,37 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'that blueprint defines a property "dangerous" of type "boolean"' do
-    @blueprint['properties'].post properties: {
-      key: 'dangerous',
-      type: 'boolean',
-    }
+    @blueprint['properties'].post property: { key: 'dangerous', type: 'boolean' }
   end
 
   step 'that blueprint defines a property "definition" of type "text"' do
-    pending 'step not implemented'
+    @blueprint['properties'].post property: { key: 'definition', type: 'text' }
   end
 
   step 'a concept "Vampire" exists' do
-    pending 'step not implemented'
+    #concepts.post concept: { properties: { "" => [{ key: 'label', value: 'Vampire' }] } }
+    @concept = JSON.parse concepts.post concept: { 'properties[]' => [{ key: 'label', value: 'Vampire' }] }
   end
 
   step 'that concept has the property "dangerous" set to be true' do
-    pending 'step not implemented'
+    concepts["#{@concept['id']}/properties"].post property: { key: 'dangerous', value: true }
   end
 
   step 'that concept has the property "alias" set to "Lamia"' do
-    pending 'step not implemented'
+    concepts["#{@concept['id']}/properties"].post property: { key: 'alias', value: 'Lamia' }
   end
 
   step 'I visit the concept details page for that concept' do
-    pending 'step not implemented'
+    visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
   step 'I look at the properties inside the concept header' do
-    pending 'step not implemented'
+    page.should have_css(".concept .properties")
   end
 
   step 'I see a property "DANGEROUS" that is checked' do
+    page.should have_css(".concept > .properties table tr th", text: 'DANGEROUS')
+    #page.should have_css(".concept > .properties table tr td div.value", )
     pending 'step not implemented'
   end
 
