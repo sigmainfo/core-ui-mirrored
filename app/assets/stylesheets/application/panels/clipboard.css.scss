@@ -15,9 +15,11 @@
 
   ul {
     padding: 8px 20px;
+    overflow:hidden;
     li {
       list-style: none;
-      padding: 1px;
+      float:left;
+      padding: 3px 14px 3px 0px;
       position: relative;
       &:after {
         @include before-icon;
