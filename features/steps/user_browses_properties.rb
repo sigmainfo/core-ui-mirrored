@@ -36,9 +36,8 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'I see a property "DANGEROUS" that is checked' do
-    page.should have_css(".concept > .properties table tr th", text: 'DANGEROUS')
-    #page.should have_css(".concept > .properties table tr td div.value", )
-    pending 'step not implemented'
+    page.should have_css(".concept > .properties table tr.boolean[data-value=true]")
+    page.should have_css(".concept > .properties table tr.boolean th", text: 'DANGEROUS')
   end
 
   step 'I see a property "DEFINITION" that is empty' do
