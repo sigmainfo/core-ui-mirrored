@@ -4,6 +4,7 @@
 #= require models/ability
 #= require collections/clips
 #= require collections/hits
+#= require models/repository_settings
 
 repository = null
 
@@ -42,6 +43,7 @@ class Coreon.Models.Session extends Backbone.Model
   defaults: ->
     repositories: []
     current_repository_id: null
+    repository_settings: null
 
   idAttribute: "auth_token"
 
@@ -51,6 +53,9 @@ class Coreon.Models.Session extends Backbone.Model
     @off()
     @on "change:auth_token", @onChangeToken, @
     @on "change:current_repository_id", @updateRepository, @
+
+    @set 'repository_settings', new Coreon.Models.RepositorySettings
+
 
   reauthenticate: (password) ->
     @unset "auth_token"

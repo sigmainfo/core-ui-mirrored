@@ -104,6 +104,9 @@ class Coreon.Application extends Backbone.Model
     else
       cache
 
+  repoSettings: ->
+    @get("session")?.get('repository_settings') or null
+
   basicSort = (a, b) ->
     a.toLowerCase().localeCompare b.toLowerCase()
 
