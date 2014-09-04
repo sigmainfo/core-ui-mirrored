@@ -43,7 +43,6 @@ class Coreon.Models.Session extends Backbone.Model
   defaults: ->
     repositories: []
     current_repository_id: null
-    repository_settings: null
 
   idAttribute: "auth_token"
 
@@ -53,9 +52,6 @@ class Coreon.Models.Session extends Backbone.Model
     @off()
     @on "change:auth_token", @onChangeToken, @
     @on "change:current_repository_id", @updateRepository, @
-
-    @set 'repository_settings', new Coreon.Models.RepositorySettings
-
 
   reauthenticate: (password) ->
     @unset "auth_token"
@@ -122,6 +118,7 @@ class Coreon.Models.Session extends Backbone.Model
     Coreon.Collections.Clips.collection().reset []
     Coreon.Collections.Hits.collection().reset []
     @set 'repository', @currentRepository()
+    Coreon.Models.RepositorySettings.current(true)
 
   destroy: (options) ->
     localStorage.removeItem "coreon-session"

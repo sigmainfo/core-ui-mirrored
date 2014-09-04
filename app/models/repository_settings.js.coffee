@@ -2,37 +2,39 @@
 
 class Coreon.Models.RepositorySettings extends Backbone.Model
 
-  getSettings: ->
-    deferred = $.Deferred()
+  url: ->
+    "/repository/settings"
 
-    if @_settings? && @_id == Coreon.application.repository().get('id')
-      deferred.resolve @_settings
+  instance = null
+
+  @current: (force = false) ->
+    instance = if (force || !instance) then new Coreon.Models.RepositorySettings() else instance
+
+  @resetCurrent: ->
+    instance = null
+
+  defaults:
+    blueprints: null
+
+  sync: ( method, model, options )->
+    Coreon.Modules.CoreAPI.sync method, model, options
+
+  blueprints_for: (type) ->
+    deferred = $.Deferred()
+    if @get('blueprints')?
+      deferred.resolve _.findWhere @get('blueprints'), { for: type }
     else
-      @_settings = null
-      @_id = Coreon.application.repository().get('id')
-      graphUri = Coreon.application.graphUri().replace /\/$/, ''
-      url = "#{graphUri}/repository/settings"
-      options =
-        type:     'GET'
-        dataType: 'json'
-
-      request = Coreon.Modules.CoreAPI.ajax url, options
-
-      request.success (data, textStatus, jqXHR) =>
-        @_settings = data
-        deferred.resolve @_settings
-
+      @fetch
+        success: =>
+          deferred.resolve _.findWhere @get('blueprints'), { for: type }
     deferred.promise()
 
-  blueprints_for: (type, fo) ->
-    deferred = $.Deferred()
-    @getSettings().done (settings) ->
-      deferred.resolve _.findWhere settings['blueprints'], { for: type }
-    deferred.promise()
 
   properties_for: (type) ->
     deferred = $.Deferred()
     @blueprints_for(type).done (blueprints) ->
       deferred.resolve blueprints['properties']
     deferred.promise()
+
+
 
