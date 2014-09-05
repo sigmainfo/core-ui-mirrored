@@ -7,7 +7,7 @@
   %div{style: "display: none" if @collapsed}
     %table
       - for key, properties of @properties
-        %tr
+        %tr{class: Coreon.Models.RepositorySettings.propertyFor('concept', key)?.type}
           %th= key
           %td
             - if properties.length is 1 and not properties[0].get("lang")
