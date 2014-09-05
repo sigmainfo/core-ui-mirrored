@@ -7,11 +7,25 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
 
   instance = null
 
-  @current: (force = false) ->
-    instance = if (force || !instance) then new Coreon.Models.RepositorySettings() else instance
-
-  @resetCurrent: ->
+  @reset: ->
     instance = null
+
+  @refresh: (force = false) ->
+    deferred = $.Deferred()
+    if (force || !instance)
+      instance = new Coreon.Models.RepositorySettings()
+      instance.fetch
+        success: =>
+          deferred.resolve instance
+    else
+      deferred.resolve instance
+    deferred.promise()
+
+  @blueprintsFor: (type) ->
+    instance.blueprintsFor type
+
+  @propertiesFor: (type) ->
+    instance.propertiesFor type
 
   defaults:
     blueprints: null
@@ -19,22 +33,11 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
   sync: ( method, model, options )->
     Coreon.Modules.CoreAPI.sync method, model, options
 
-  blueprints_for: (type) ->
-    deferred = $.Deferred()
-    if @get('blueprints')?
-      deferred.resolve _.findWhere @get('blueprints'), { for: type }
-    else
-      @fetch
-        success: =>
-          deferred.resolve _.findWhere @get('blueprints'), { for: type }
-    deferred.promise()
+  blueprintsFor: (type) ->
+    _.findWhere @get('blueprints'), { for: type }
 
-
-  properties_for: (type) ->
-    deferred = $.Deferred()
-    @blueprints_for(type).done (blueprints) ->
-      deferred.resolve blueprints['properties']
-    deferred.promise()
+  propertiesFor: (type) ->
+    @blueprintsFor(type)['properties']
 
 
 

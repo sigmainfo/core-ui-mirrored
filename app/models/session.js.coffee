@@ -118,7 +118,6 @@ class Coreon.Models.Session extends Backbone.Model
     Coreon.Collections.Clips.collection().reset []
     Coreon.Collections.Hits.collection().reset []
     @set 'repository', @currentRepository()
-    Coreon.Models.RepositorySettings.current(true)
 
   destroy: (options) ->
     localStorage.removeItem "coreon-session"

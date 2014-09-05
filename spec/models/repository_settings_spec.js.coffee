@@ -4,7 +4,7 @@
 
 describe 'Coreon.Models.RepositorySettings', ->
 
-  fetch_spy = sinon.spy Coreon.Models.RepositorySettings.prototype, 'fetch'
+  fetchStub = null
 
   beforeEach ->
     Coreon.application =
@@ -13,72 +13,66 @@ describe 'Coreon.Models.RepositorySettings', ->
           '111' if arg == 'id'
       graphUri: ->
         'some_uri'
+    fetchStub = sinon.stub(Coreon.Models.RepositorySettings.prototype, 'fetch').yieldsTo('success', some: 'data');
 
   afterEach ->
-    fetch_spy.reset()
+    fetchStub.restore()
     delete Coreon.application
-    Coreon.Models.RepositorySettings.resetCurrent()
+    Coreon.Models.RepositorySettings.reset()
 
-  describe ".current", ->
+  context "model class", ->
 
-    it "creates a singleton instance of the repository settings", ->
-      settings = Coreon.Models.RepositorySettings.current()
-      othersettings = Coreon.Models.RepositorySettings.current()
+    describe ".refresh", ->
 
-      expect(settings).to.be.instanceof(Coreon.Models.RepositorySettings)
-      expect(othersettings).to.be.equal(settings)
+      it "creates a singleton instance of the repository settings", ->
+        settings = null
+        Coreon.Models.RepositorySettings.refresh().done (response) ->
+          settings = response
+        othersettings = null
+        Coreon.Models.RepositorySettings.refresh().done (response) ->
+          othersettings = response
 
-    it 'creates a new singleton instance when forced even if it exists', ->
-      settings = Coreon.Models.RepositorySettings.current()
-      othersettings = Coreon.Models.RepositorySettings.current(true)
+        expect(settings).to.be.instanceof(Coreon.Models.RepositorySettings)
+        expect(settings).to.be.equal(othersettings)
 
-      expect(othersettings).to.not.be.equal(settings)
+      it 'creates a new singleton instance when forced even if it exists', ->
+        settings = null
+        Coreon.Models.RepositorySettings.refresh().done (response) ->
+          settings = response
+        othersettings = null
+        Coreon.Models.RepositorySettings.refresh(true).done (response) ->
+          othersettings = response
 
-  describe "#blueprints_for", ->
+        expect(othersettings).to.not.be.equal(settings)
 
-    xit "returns an array of blueprints for a given type, when model is synched", ->
+  context 'model instance', ->
 
-    xit "returns an array of blueprints for a given type, when model is NOT synched", ->
+    model = null
 
-  describe "#properties_for", ->
+    beforeEach ->
+      model = new Coreon.Models.RepositorySettings()
+      model.set 'blueprints', [
+        {
+          for: 'concept',
+          properties: [
+            {key: 'label', type: 'boolean'}
+          ]
+        }
+      ]
 
-    xit "returns an array of blueprints for a given type, when model is synched", ->
+    describe "#blueprintsFor", ->
 
-    xit "returns an array of blueprints for a given type, when model is NOT synched", ->
+      it "returns an array of blueprints for a given type", ->
+        expect(model.blueprintsFor('concept')).to.be.eql {
+            for: 'concept',
+            properties: [
+              {key: 'label', type: 'boolean'}
+            ]
+          }
 
+    describe "#propertiesFor", ->
 
-  # describe "#settings", ->
-
-  #   beforeEach ->
-  #     Coreon.application =
-  #       repository: ->
-  #         get: (arg) ->
-  #           '111' if arg == 'id'
-  #       graphUri: ->
-  #         'some_uri'
-
-  #   afterEach ->
-  #     delete Coreon.application
-  #     Coreon.Modules.CoreAPI.ajax.restore()
-
-  #   it 'requests settings from API', ->
-  #     model.
-
-  #     ajax = Coreon.Modules.CoreAPI.ajax
-  #     expect(ajax).to.have.been.calledOnce
-  #     expect(ajax).to.have.been.calledWith "some_uri/repository/settings", {type: 'GET', dataType: 'json'}
-
-  #   xit 'sets the remote settings when fetched', ->
-  #     model.settings()
-  #     success some: 'data'
-
-  #     # expect(model._settings).to.not.be.equal some: 'data'
-  #     # expect(model._id).to.be.equal '111'
-
-  #   xit 'should not make an ajax call if the settings are already fetched', ->
-  #     model.getSettings()
-  #     model.getSettings()
-
-  #     expect(Coreon.Modules.CoreAPI.ajax).to.have.been.calledOnce
-  #     expect(model._settings).to.not.beNull
-  #     expect(model._id).to.be.equal '111'
+      it "returns an array of properties for a given type", ->
+        expect(model.propertiesFor('concept')).to.be.eql [
+            {key: 'label', type: 'boolean'}
+          ]
