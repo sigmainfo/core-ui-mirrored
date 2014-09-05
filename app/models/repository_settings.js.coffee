@@ -21,11 +21,14 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
       deferred.resolve instance
     deferred.promise()
 
-  @blueprintsFor: (type) ->
-    instance.blueprintsFor type
+  @blueprintsFor: (entity) ->
+    instance.blueprintsFor entity
 
-  @propertiesFor: (type) ->
-    instance.propertiesFor type
+  @propertiesFor: (entity) ->
+    instance.propertiesFor entity
+
+  @propertyFor: (entity, key) ->
+    instance.propertyFor entity, key
 
   defaults:
     blueprints: null
@@ -33,11 +36,14 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
   sync: ( method, model, options )->
     Coreon.Modules.CoreAPI.sync method, model, options
 
-  blueprintsFor: (type) ->
-    _.findWhere @get('blueprints'), for: type
+  blueprintsFor: (entity) ->
+    _.findWhere @get('blueprints'), for: entity
 
-  propertiesFor: (type) ->
-    @blueprintsFor(type)?['properties']
+  propertiesFor: (entity) ->
+    @blueprintsFor(entity)?['properties']
+
+  propertyFor: (entity, key) ->
+    _.findWhere @propertiesFor(entity), key: key
 
 
 
