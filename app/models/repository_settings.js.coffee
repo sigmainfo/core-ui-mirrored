@@ -12,7 +12,7 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
 
   @refresh: (force = false) ->
     deferred = $.Deferred()
-    if (force || !instance)
+    if force || !instance
       instance = new Coreon.Models.RepositorySettings()
       instance.fetch
         success: =>
@@ -34,10 +34,10 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
     Coreon.Modules.CoreAPI.sync method, model, options
 
   blueprintsFor: (type) ->
-    _.findWhere @get('blueprints'), { for: type }
+    _.findWhere @get('blueprints'), for: type
 
   propertiesFor: (type) ->
-    @blueprintsFor(type)['properties']
+    @blueprintsFor(type)?['properties']
 
 
 
