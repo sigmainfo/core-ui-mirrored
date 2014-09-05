@@ -73,7 +73,7 @@ class Coreon.Application extends Backbone.Model
         @listenTo current
                 , 'remoteSettingChange'
                 , @broadcastRepositoryChange
-      Coreon.Models.RepositorySettings.current(true)
+      Coreon.Models.RepositorySettings.refresh(true)
     else
       @set 'repository', null
 
