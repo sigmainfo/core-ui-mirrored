@@ -69,6 +69,12 @@ describe 'Coreon.Models.RepositorySettings', ->
 
           expect(propertiesFor_spy).to.have.been.calledOnce
 
+        it 'delegates to the singleton\'s instance #propertyFor', ->
+          propertyFor_spy = sinon.spy(Coreon.Models.RepositorySettings.prototype, 'propertyFor')
+          Coreon.Models.RepositorySettings.propertyFor('concept', 'lala')
+
+          expect(propertyFor_spy).to.have.been.calledOnce
+
 
   context 'model instance', ->
 
@@ -80,7 +86,7 @@ describe 'Coreon.Models.RepositorySettings', ->
 
     describe '#blueprintsFor', ->
 
-      it 'returns an array of blueprints for a given type', ->
+      it 'returns an array of blueprints for a given entity', ->
         expect(model.blueprintsFor('concept')).to.be.eql {
             for: 'concept',
             properties: [
@@ -90,7 +96,12 @@ describe 'Coreon.Models.RepositorySettings', ->
 
     describe '#propertiesFor', ->
 
-      it 'returns an array of properties for a given type', ->
+      it 'returns an array of properties for a given entity', ->
         expect(model.propertiesFor('concept')).to.be.eql [
             {key: 'label', type: 'boolean'}
           ]
+
+    describe '#propertyFor', ->
+
+      it 'returns a property for a given entity and type', ->
+        expect(model.propertyFor('concept', 'label')).to.be.eql key: 'label', type: 'boolean'
