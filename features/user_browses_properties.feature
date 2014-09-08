@@ -21,6 +21,9 @@ Feature: user browses properties
     And I see a property "ALIAS" with value "Lamia"
 
   # @wip
+  # Scenario: change repository
+
+  # @wip
   # Scenario: browse term properties
   #   Given the repository defines a blueprint for term
   #   And that blueprint defines a property "status" of type "option"
