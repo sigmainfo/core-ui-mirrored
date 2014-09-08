@@ -7,15 +7,19 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
 
   instance = null
 
+  @current: ->
+    instance
+
   @reset: ->
     instance = null
 
   @refresh: (force = false) ->
     deferred = $.Deferred()
     if force || !instance
-      instance = new Coreon.Models.RepositorySettings()
-      instance.fetch
+      new_instance = new Coreon.Models.RepositorySettings()
+      new_instance.fetch
         success: =>
+          instance = new_instance
           deferred.resolve instance
     else
       deferred.resolve instance
