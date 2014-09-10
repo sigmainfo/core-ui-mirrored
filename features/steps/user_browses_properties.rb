@@ -3,6 +3,7 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   include Resources
 
   step 'the repository defines a blueprint for concept' do
+    blueprints['/concept/properties/destroy_all'].delete
     @blueprint = blueprint(:concept)
   end
 
@@ -36,15 +37,20 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'I see a property "DANGEROUS" that is checked' do
-    page.should have_css(".concept > .properties table tr.boolean[data-value=true]")
+    page.should have_css(".concept > .properties table tr.boolean")
     page.should have_css(".concept > .properties table tr.boolean th", text: 'DANGEROUS')
+    page.should have_css(".concept > .properties table td .value", text: 'true')
   end
 
   step 'I see a property "DEFINITION" that is empty' do
-    pending 'step not implemented'
+    page.should have_css(".concept > .properties table tr.text")
+    page.should have_css(".concept > .properties table tr.text th", text: 'DEFINITION')
+    page.should have_css(".concept > .properties table td .value[data-empty]")
   end
 
   step 'I see a property "ALIAS" with value "Lamia"' do
-    pending 'step not implemented'
+    page.should have_css(".concept > .properties table tr")
+    page.should have_css(".concept > .properties table tr th", text: 'ALIAS')
+    page.should have_css(".concept > .properties table td", text: 'Lamia')
   end
 end

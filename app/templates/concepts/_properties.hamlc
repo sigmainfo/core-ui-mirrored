@@ -1,3 +1,5 @@
+- console.log @properties
+
 %section.properties{class: "collapsed" if @collapsed}
   %h3{ title: I18n.t 'terms.properties.toggle.hint' }= I18n.t "properties.title"
   -unless @noEditButton
@@ -6,19 +8,25 @@
 
   %div{style: "display: none" if @collapsed}
     %table
-      - for key, properties of @properties
-        %tr{class: Coreon.Models.RepositorySettings.propertyFor('concept', key)?.type}
-          %th= key
-          %td
-            - if properties.length is 1 and not properties[0].get("lang")
-              .value= properties[0].get "value"
-              != @render "concepts/info", data: properties[0].info()
-            - else
-              %ul.index
-                - for property, index in properties
-                  %li{class: "selected" if index is 0, "data-index": index }= property.get("lang") or index + 1
-              %ul.values
-                - for property, index in properties
-                  %li{class: "selected" if index is 0}
-                    .value= property.get "value"
-                    != @render "concepts/info", data: property.info()
+      - for key, types of @properties
+        - for type, properties of types
+          %tr{ class: type }
+            %th= key
+            %td
+              - if properties.length is 1 and not properties[0].get("lang")
+                - if properties[0].get("value")?
+                  .value= properties[0].get "value"
+                - else
+                  .value{ data: { empty: true } }
+                != @render "concepts/info", data: properties[0].info()
+              - else if properties.length is 0
+                .value{ data: { empty: true } }
+              - else
+                %ul.index
+                  - for property, index in properties
+                    %li{class: "selected" if index is 0, "data-index": index }= property.get("lang") or index + 1
+                %ul.values
+                  - for property, index in properties
+                    %li{class: "selected" if index is 0}
+                      .value= property.get "value"
+                      != @render "concepts/info", data: property.info()
