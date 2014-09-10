@@ -45,13 +45,12 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   step 'I see a property "DEFINITION" that is empty' do
     th = find(".concept > .properties table tr.text th", text: 'DEFINITION')
     tr = th.find(:xpath, "..")
-    binding.pry
-    tr.should have_css("td .value[data-empty]")
+    tr.should have_css("td .value[data-empty]", visible: false)
   end
 
   step 'I see a property "ALIAS" with value "Lamia"' do
-    page.should have_css(".concept > .properties table tr")
-    page.should have_css(".concept > .properties table tr th", text: 'ALIAS')
-    page.should have_css(".concept > .properties table td", text: 'Lamia')
+    th = find(".concept > .properties table tr th", text: 'ALIAS')
+    tr = th.find(:xpath, "..")
+    tr.should have_css("td .value", text: 'Lamia')
   end
 end
