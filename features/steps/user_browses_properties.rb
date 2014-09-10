@@ -3,8 +3,8 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   include Resources
 
   step 'the repository defines a blueprint for concept' do
-    blueprints['/concept/properties/destroy_all'].delete
     @blueprint = blueprint(:concept)
+    @blueprint['clear'].delete
   end
 
   step 'that blueprint defines a property "dangerous" of type "boolean"' do
@@ -37,15 +37,16 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'I see a property "DANGEROUS" that is checked' do
-    page.should have_css(".concept > .properties table tr.boolean")
-    page.should have_css(".concept > .properties table tr.boolean th", text: 'DANGEROUS')
-    page.should have_css(".concept > .properties table td .value", text: 'true')
+    th = find(".concept > .properties table tr.boolean th", text: 'DANGEROUS')
+    tr = th.find(:xpath, "..")
+    tr.should have_css("td .value", text: 'true')
   end
 
   step 'I see a property "DEFINITION" that is empty' do
-    page.should have_css(".concept > .properties table tr.text")
-    page.should have_css(".concept > .properties table tr.text th", text: 'DEFINITION')
-    page.should have_css(".concept > .properties table td .value[data-empty]")
+    th = find(".concept > .properties table tr.text th", text: 'DEFINITION')
+    tr = th.find(:xpath, "..")
+    binding.pry
+    tr.should have_css("td .value[data-empty]")
   end
 
   step 'I see a property "ALIAS" with value "Lamia"' do
