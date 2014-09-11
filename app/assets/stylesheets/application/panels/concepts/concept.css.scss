@@ -126,6 +126,15 @@ div.concept {
       cursor: pointer;
     }
   }
+  .properties {
+    tr {
+      div[data-empty] {
+       &:before {
+         content: "–";
+       }
+      } 
+    }
+  }
   
   .terms {
     margin-top: 50px; 
