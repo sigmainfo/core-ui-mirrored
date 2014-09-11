@@ -116,9 +116,12 @@ describe "Coreon.Views.ApplicationView", ->
         sinon.stub Backbone.history, "start"
         view.model.set "session", @session, silent: on
         @session.set "repositories", [], silent: on
+        sinon.stub Coreon.Models.RepositorySettings, 'refresh', ->
+          always: (callback) -> callback()
 
       afterEach ->
         Backbone.history.start.restore()
+        Coreon.Models.RepositorySettings.refresh.restore()
 
       it "creates widgets", ->
         view.render()
@@ -379,7 +382,7 @@ describe "Coreon.Views.ApplicationView", ->
       Backbone.history.navigate.should.have.been.calledOnce
       Backbone.history.navigate.should.have.been.calledWith "foo", trigger: yes
 
-  describe "reauthenticate()", ->
+  describe "#reauthenticate()", ->
 
     beforeEach ->
       Coreon.application.cacheId = -> "coffee23"
@@ -390,7 +393,7 @@ describe "Coreon.Views.ApplicationView", ->
         user:
           name: "Nobody"
       @session.currentRepository = ->
-      view.model.set "session", @session
+      view.model.set "session", @session, silent: yes
 
     afterEach ->
       Coreon.application.cacheId = null
@@ -490,7 +493,7 @@ describe "Coreon.Views.ApplicationView", ->
       view.updateQuery()
       expect(hint).to.be.visible
 
-  describe "toggle()", ->
+  describe "#toggle()", ->
 
     beforeEach ->
       $("#konacha").append view.$el

@@ -22,6 +22,7 @@
 #= require modules/confirmation
 #= require jquery.serializeJSON
 #= require modules/draggable
+#= require models/repository_settings
 
 class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 

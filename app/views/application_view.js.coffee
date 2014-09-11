@@ -10,6 +10,7 @@
 #= require modules/helpers
 #= require modules/prompt
 #= require modules/xhr_forms
+#= require models/repository_settings
 
 class Coreon.Views.ApplicationView extends Backbone.View
 

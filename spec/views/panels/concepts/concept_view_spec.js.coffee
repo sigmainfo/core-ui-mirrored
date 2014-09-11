@@ -9,6 +9,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     Coreon.application.langs = -> []
     Coreon.application.sourceLang = -> 'none'
     Coreon.application.targetLang = -> 'none'
+    sinon.stub(Coreon.Models.RepositorySettings, 'propertiesFor').returns []
     sinon.stub I18n, 't'
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
@@ -23,7 +24,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     @concept.termsByLang = -> {}
     terms = new Backbone.Collection
     @concept.terms = -> terms
-    @concept.propertiesByKeyAndLang = => label: [ @property ]
+    @concept.propertiesByKeyTypeAndLang = => label: [ @property ]
 
     @view = new Coreon.Views.Panels.Concepts.ConceptView
       model: @concept
@@ -35,6 +36,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
     Coreon.application = null
     Coreon.Helpers.can.restore()
+    Coreon.Models.RepositorySettings.propertiesFor.restore()
 
   it 'is a Backbone view', ->
     expect( @view ).to.be.an.instanceof Backbone.View
