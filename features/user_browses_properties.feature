@@ -6,7 +6,6 @@ Feature: user browses properties
   Background:
     Given I am logged in as user of the repository
 
-  @wip
   Scenario: browse concept properties
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "dangerous" of type "boolean"
@@ -20,20 +19,17 @@ Feature: user browses properties
     And I see a property "DEFINITION" that is empty
     And I see a property "ALIAS" with value "Lamia"
 
-  # @wip
-  # Scenario: change repository
-
-  # @wip
-  # Scenario: browse term properties
-  #   Given the repository defines a blueprint for term
-  #   And that blueprint defines a property "status" of type "option"
-  #   And that property allows options: "accepted", "forbidden", "deprecated"
-  #   And a concept with term "vampire" exists
-  #   And that term has the property "status" set to "accepted"
-  #   When I visit the concept details page for that concept
-  #   And I click on toggle "PROPERTIES" inside the term "vampire"
-  #   Then I see a list of properties inside that term
-  #   And I see a property "STATUS" with value "accepted"
+  @wip
+  Scenario: browse term properties
+    Given the repository defines a blueprint for term
+    And that blueprint defines a property "status" of type "picklist"
+    And that property allows values: "accepted", "forbidden", "deprecated"
+    And a concept with term "vampire" exists
+    And that term has the property "status" set to "accepted"
+    When I visit the concept details page for that concept
+    And I click on toggle "PROPERTIES" inside the term "vampire"
+    Then I see a listing of properties inside that term
+    And this listing contains a picklist "STATUS" with value "accepted"
 
   # @wip
   # Scenario: browse multilang property
