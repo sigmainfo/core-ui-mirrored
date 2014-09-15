@@ -108,6 +108,7 @@
   .button.edit-concept {
     background-color: $editmode-color;
     color: $button-color;
+    @include box-shadow(rgba(black, 0.2) 1px 1px 1px inset);
     &:before {
        @include opacity(0.7);
     }
