@@ -1,1 +1,7 @@
-.value
+.value{'data-empty': @value?}
+  - if @type is 'picklist'
+    %ul
+    - for value in @value
+      %li.picklist-item= value
+  - else
+    = @value
