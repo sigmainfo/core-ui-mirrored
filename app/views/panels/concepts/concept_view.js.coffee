@@ -11,6 +11,7 @@
 #= require templates/concepts/_term
 #= require templates/terms/new_term
 #= require templates/properties/new_property
+#= require templates/properties/value
 #= require views/concepts/shared/broader_and_narrower_view
 #= require collections/clips
 #= require collections/hits

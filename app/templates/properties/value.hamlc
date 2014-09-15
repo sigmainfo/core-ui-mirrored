@@ -1,7 +1,9 @@
-.value{'data-empty': @value?}
-  - if @type is 'picklist'
-    %ul
-    - for value in @value
-      %li.picklist-item= value
-  - else
-    = @value
+- if @value?
+  .value
+    - if @type is 'picklist'
+      %ul
+        %li.picklist-item= @value
+    - else
+      = @value
+- else
+  .value{data: {empty: true}}

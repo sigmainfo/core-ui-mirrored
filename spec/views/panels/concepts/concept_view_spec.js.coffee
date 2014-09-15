@@ -171,7 +171,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         @property.set 'value', 'top hat', silent: true
         @view.render()
         expect( @view.$('.properties') ).to.have 'table tr td .value'
-        expect( @view.$('.properties table td .value') ).to.have.text 'top hat'
+        expect( @view.$('.properties table td .value') ).to.contain 'top hat'
 
       it 'renders system info', ->
         Coreon.Templates['concepts/info'].withArgs(data: id: '1234567890')
@@ -191,8 +191,8 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         expect( @view.$('.properties') ).to.have 'table tr td ul.values'
         expect( @view.$('.properties ul.values') ).to.have 'li .value'
         expect( @view.$('.properties ul.values li .value') ).to.have.lengthOf 2
-        expect( @view.$('.properties ul.values li .value').eq(0) ).to.have.text 'top hat'
-        expect( @view.$('.properties ul.values li .value').eq(1) ).to.have.text 'cylinder'
+        expect( @view.$('.properties ul.values li .value').eq(0) ).to.contain 'top hat'
+        expect( @view.$('.properties ul.values li .value').eq(1) ).to.contain 'cylinder'
 
       it 'renders index for list', ->
         prop1 = new Backbone.Model value: 'top hat'

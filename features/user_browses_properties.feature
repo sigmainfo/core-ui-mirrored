@@ -19,7 +19,6 @@ Feature: user browses properties
     And I see a property "DEFINITION" that is empty
     And I see a property "ALIAS" with value "Lamia"
 
-  @wip
   Scenario: browse term properties
     Given the repository defines a blueprint for term
     And that blueprint defines a property "status" of type "picklist"

@@ -33,7 +33,6 @@ describe 'Coreon.Templates[properties/value]', ->
       el.find '.picklist-item'
 
     beforeEach ->
-      data.value = ['foo']
       data.type = 'picklist'
 
     it 'renders picklist items', ->
@@ -41,11 +40,6 @@ describe 'Coreon.Templates[properties/value]', ->
       expect(values el).to.exist
 
     it 'renders value inside item', ->
-      data.value = ['dangerous']
+      data.value = 'dangerous'
       el = render()
       expect(values el).to.have.text 'dangerous'
-
-    it 'renders a list of values', ->
-      data.value = ['foo', 'bar', 'baz']
-      el = render()
-      expect(values el).to.have.lengthOf 3

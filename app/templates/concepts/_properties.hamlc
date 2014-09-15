@@ -12,13 +12,10 @@
             %th= key
             %td
               - if properties.length is 1 and not properties[0].get("lang")
-                - if properties[0].get("value")?
-                  .value= properties[0].get "value"
-                - else
-                  .value{ data: { empty: true } }
+                != @render "properties/value", value: properties[0].get('value'), type: type
                 != @render "concepts/info", data: properties[0].info()
               - else if properties.length is 0
-                .value{ data: { empty: true } }
+                != @render "properties/value", value: null, type: type
               - else
                 %ul.index
                   - for property, index in properties
@@ -26,5 +23,5 @@
                 %ul.values
                   - for property, index in properties
                     %li{class: "selected" if index is 0}
-                      .value= property.get "value"
+                      != @render "properties/value", value: property.get('value'), type: type
                       != @render "concepts/info", data: property.info()
