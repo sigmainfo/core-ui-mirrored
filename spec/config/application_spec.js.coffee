@@ -172,10 +172,16 @@ describe 'Coreon.Application', ->
 
     repository = null
     session = null
+    refresh = null
 
     beforeEach ->
       session = new Backbone.Model
       repository = new Backbone.Model
+      sinon.stub Coreon.Models.RepositorySettings, 'refresh', ->
+        always: (callback) -> callback some: 'data'
+
+    afterEach ->
+      Coreon.Models.RepositorySettings.refresh.restore()
 
     context 'triggers', ->
 

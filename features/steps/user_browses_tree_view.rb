@@ -1,7 +1,7 @@
 class Spinach::Features::UserBrowsesTreeView < Spinach::FeatureSteps
 
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
   include EdgesHelpers
 
   def get_position(label)

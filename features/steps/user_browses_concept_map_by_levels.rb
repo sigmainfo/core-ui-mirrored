@@ -1,7 +1,7 @@
 class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
 
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'I am browsing a repository called "Games"' do
     current_repository.update_attributes name: "Games"
@@ -70,6 +70,9 @@ class Spinach::Features::UserBrowsesConceptMapByLevels < Spinach::FeatureSteps
   end
 
   step 'I should see "billiards" at level 1' do
+    within "#coreon-concept-map" do
+      page.should have_css(".concept-node", text: "billiards")
+    end
     @levels = collect_node_levels
     @levels[1].should == ["billiards"]
   end

@@ -20,6 +20,7 @@ Feature: maintainer disconnects broader and narrower concepts
     Given I drag "camera" out of the sub concept list
     Then I should see no sub concept anymore
 
+  @firefox
   Scenario: reset and cancel
     Given I drag "surveillance" out of the super concept list
     And I drag "camera" out of the sub concept list
@@ -40,6 +41,7 @@ Feature: maintainer disconnects broader and narrower concepts
     Then I should not be in edit mode anymore
     And I should see no broader and narrower concepts anymore
 
+  @firefox
   Scenario: edge cases
     Given I drag "camera" to the clipboard
     And I drag "camera" out of the sub concept list

@@ -26,10 +26,6 @@ class UserSignsIn < Spinach::FeatureSteps
     page.should have_no_css("#coreon-login")
   end
 
-  step 'I should be on the repository root page' do
-    current_path.should =~ %r|[0-9a-f]{24}/?$|
-  end
-
   Then 'I should see the widgets' do
     page.should have_css("#coreon-widgets")
   end

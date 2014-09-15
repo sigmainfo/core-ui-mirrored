@@ -1,6 +1,8 @@
+require_relative 'factory'
+
 module LanguageSelectSteps
   include Spinach::DSL
-  include Api::Graph::Factory
+  include Factory
 
   def source_language_css
     "#coreon-languages .coreon-select[data-select-name=source_language]"

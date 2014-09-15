@@ -2,7 +2,7 @@
 class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
-  include Api::Graph::Factory
+  include Factory
 
 
   step 'a concept with label "panopticum" exists' do

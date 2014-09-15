@@ -4,6 +4,7 @@
 #= require models/ability
 #= require collections/clips
 #= require collections/hits
+#= require models/repository_settings
 
 repository = null
 

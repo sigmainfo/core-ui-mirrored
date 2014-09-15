@@ -1,6 +1,6 @@
 class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
 
   def transform(selector, options = {})
     page.should have_css(selector)

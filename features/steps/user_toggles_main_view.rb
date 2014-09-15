@@ -2,7 +2,7 @@ class Spinach::Features::UserTogglesMainView < Spinach::FeatureSteps
 
   include AuthSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
 
   def main_view
     find '#coreon-main'

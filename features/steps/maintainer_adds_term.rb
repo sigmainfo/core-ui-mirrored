@@ -2,7 +2,7 @@
 class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept "top hat" exists' do
     @concept = create_concept properties: [

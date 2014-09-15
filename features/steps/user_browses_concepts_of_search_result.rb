@@ -1,6 +1,6 @@
 class Spinach::Features::UserBrowsesConceptsOfSearchResult < Spinach::FeatureSteps
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
   include SearchSteps
   include LanguageSelectSteps
 

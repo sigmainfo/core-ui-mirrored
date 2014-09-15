@@ -46,6 +46,6 @@ class Spinach::Features::UserAdjustsLayout < Spinach::FeatureSteps
   end
 
   step 'I should see the widgets column having a minimal width of 240px' do
-    page.evaluate_script('$("#coreon-widgets").width();').should == 240
+    page.evaluate_script('$("#coreon-widgets .ui-resizable").width();').should == 240
   end
 end

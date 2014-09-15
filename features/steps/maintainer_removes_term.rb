@@ -1,7 +1,7 @@
 class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
 
   include AuthSteps
-  include Api::Graph::Factory
+  include Factory
   include EditSteps
 
   step 'a concept with an English term "beaver hat" exists' do

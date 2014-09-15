@@ -2,7 +2,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
   include AuthSteps
   include LanguageSelectSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
 
   def term_list_title
     find( '.widget h3', text: 'Term List' )

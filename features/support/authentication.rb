@@ -75,4 +75,31 @@ module Authentication
   def logout
     visit '/logout'
   end
+
+  FACTORY_GIRL_PASSWORD = 'Q|wcSXIjEU9J3aOAvdFFBPrR61h-D2'
+
+  def factory_girl_session
+    @factory_girl_session || create_factory_girl_session
+  end
+
+  def create_factory_girl_session
+    CoreClient::Auth.get_session(
+      factory_girl.emails.first,
+      FACTORY_GIRL_PASSWORD
+    )[:auth_token]
+  end
+
+  def factory_girl
+    @factory_girl ||= create_factory_girl
+  end
+
+  def create_factory_girl
+    create_user(
+      'Edie Sedgwick',
+      'edie@warhol.net',
+      password: FACTORY_GIRL_PASSWORD
+    ).tap do |u|
+      create_repository_user :manager, user: u
+    end
+  end
 end

@@ -2,7 +2,7 @@
 class UserDragsConceptLabelToClipboard < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
-  include Api::Graph::Factory
+  include Factory
 
 
   step 'I visit the home page' do

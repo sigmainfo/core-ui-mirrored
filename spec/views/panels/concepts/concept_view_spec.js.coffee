@@ -9,6 +9,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     Coreon.application.langs = -> []
     Coreon.application.sourceLang = -> 'none'
     Coreon.application.targetLang = -> 'none'
+    sinon.stub(Coreon.Models.RepositorySettings, 'propertiesFor').returns []
     sinon.stub I18n, 't'
     @broaderAndNarrower = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
@@ -23,7 +24,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     @concept.termsByLang = -> {}
     terms = new Backbone.Collection
     @concept.terms = -> terms
-    @concept.propertiesByKeyAndLang = => label: [ @property ]
+    @concept.propertiesByKeyTypeAndLang = => label: '': [ @property ]
 
     @view = new Coreon.Views.Panels.Concepts.ConceptView
       model: @concept
@@ -35,6 +36,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
     Coreon.application = null
     Coreon.Helpers.can.restore()
+    Coreon.Models.RepositorySettings.propertiesFor.restore()
 
   it 'is a Backbone view', ->
     expect( @view ).to.be.an.instanceof Backbone.View
@@ -159,7 +161,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         expect( @view.$el ).to.not.have '.properties'
 
       it 'renders properties table', ->
-        @concept.propertiesByKeyAndLang = => label: [ @property ]
+        @concept.propertiesByKeyTypeAndLang = => label: '': [ @property ]
         @view.render()
         expect( @view.$('.properties') ).to.have 'table tr'
         expect( @view.$('.properties table tr') ).to.have 'th'
@@ -169,7 +171,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         @property.set 'value', 'top hat', silent: true
         @view.render()
         expect( @view.$('.properties') ).to.have 'table tr td .value'
-        expect( @view.$('.properties table td .value') ).to.have.text 'top hat'
+        expect( @view.$('.properties table td .value') ).to.contain 'top hat'
 
       it 'renders system info', ->
         Coreon.Templates['concepts/info'].withArgs(data: id: '1234567890')
@@ -184,20 +186,20 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         prop1.info = -> {}
         prop2 = new Backbone.Model value: 'cylinder'
         prop2.info = -> {}
-        @concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKeyTypeAndLang = -> label: "": [ prop1, prop2 ]
         @view.render()
         expect( @view.$('.properties') ).to.have 'table tr td ul.values'
         expect( @view.$('.properties ul.values') ).to.have 'li .value'
         expect( @view.$('.properties ul.values li .value') ).to.have.lengthOf 2
-        expect( @view.$('.properties ul.values li .value').eq(0) ).to.have.text 'top hat'
-        expect( @view.$('.properties ul.values li .value').eq(1) ).to.have.text 'cylinder'
+        expect( @view.$('.properties ul.values li .value').eq(0) ).to.contain 'top hat'
+        expect( @view.$('.properties ul.values li .value').eq(1) ).to.contain 'cylinder'
 
       it 'renders index for list', ->
         prop1 = new Backbone.Model value: 'top hat'
         prop1.info = -> {}
         prop2 = new Backbone.Model value: 'cylinder'
         prop2.info = -> {}
-        @concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKeyTypeAndLang = -> label: "": [ prop1, prop2 ]
         @view.render()
         expect( @view.$('.properties') ).to.have 'table tr td ul.index'
         expect( @view.$('.properties ul.index') ).to.have 'li'
@@ -213,7 +215,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         prop2 = new Backbone.Model value: 'Zylinderhut', lang: 'de'
 
         prop2.info = -> {}
-        @concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKeyTypeAndLang = -> label: "": [ prop1, prop2 ]
         @view.render()
         expect( @view.$('.properties ul.index li').eq(0) ).to.have.text 'en'
         expect( @view.$('.properties ul.index li').eq(1) ).to.have.text 'de'
@@ -237,7 +239,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         prop1.info = -> {}
         prop2 = new Backbone.Model value: 'cylinder'
         prop2.info = -> {}
-        @concept.propertiesByKeyAndLang = -> label: [ prop1, prop2 ]
+        @concept.propertiesByKeyTypeAndLang = -> label: "": [ prop1, prop2 ]
         @view.render()
         expect( @view.$('.properties ul.index li').eq(0) ).to.have.class 'selected'
         expect( @view.$('.properties ul.values li').eq(0) ).to.have.class 'selected'
@@ -332,11 +334,11 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
         it 'renders term properties', ->
           @term.set 'properties', [ source: 'Wikipedia' ], silent: true
           property = new Backbone.Model source: 'Wikipedia'
-          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @term.propertiesByKeyTypeAndLang = -> source: "": [ property ]
           sinon.stub Coreon.Templates, 'concepts/properties'
           try
             Coreon.Templates['concepts/properties'].withArgs(
-              properties: @term.propertiesByKeyAndLang(),
+              properties: @term.propertiesByKeyTypeAndLang(),
               collapsed: true,
               noEditButton: true
             ).returns '<ul class="properties collapsed"></ul>'
@@ -349,7 +351,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           @term.set 'properties', [ source: 'Wikipedia' ], silent: true
           property = new Backbone.Model source: 'Wikipedia'
           property.info = -> {}
-          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @term.propertiesByKeyTypeAndLang = -> source: "": [ property ]
           @view.render()
           expect( @view.$('.term .properties') ).to.have.class 'collapsed'
           expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
@@ -359,7 +361,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
           @term.set 'properties', [ source: 'Wikipedia' ], silent: true
           property = new Backbone.Model source: 'Wikipedia'
           property.info = -> {}
-          @term.propertiesByKeyAndLang = -> source: [ property ]
+          @term.propertiesByKeyTypeAndLang = -> source: "": [ property ]
           @view.render()
           expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
 

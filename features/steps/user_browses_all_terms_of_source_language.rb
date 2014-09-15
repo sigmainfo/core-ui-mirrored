@@ -2,7 +2,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   include AuthSteps
   include LanguageSelectSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept with English term "ball" exists' do
     @concept = create_concept terms: [ {lang: 'en', value: 'ball'} ]

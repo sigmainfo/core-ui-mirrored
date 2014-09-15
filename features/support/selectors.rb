@@ -32,7 +32,23 @@ end
 
 Capybara.add_selector(:table_row) do
   xpath do |label|
-    ".//tr/th[normalize-space(.)='#{label}']/.."
+    ".//tr/th[normalize-space()='#{label}']/.."
+  end
+end
+
+Capybara.add_selector(:term) do
+  xpath do |value|
+    """
+      .//li[
+        #{ has_class :term }
+        and
+        .//h4[
+          #{ has_class :value }
+          and
+          normalize-space() = '#{ value }'
+        ]
+      ]
+    """
   end
 end
 

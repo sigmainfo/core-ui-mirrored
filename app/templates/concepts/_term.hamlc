@@ -9,4 +9,4 @@
 
   != @render "concepts/info", data: @term.info()
   - if @term.get("properties")?.length > 0
-    != @render "concepts/properties", properties: @term.propertiesByKeyAndLang(), collapsed: true, noEditButton: true
+    != @render "concepts/properties", properties: @term.propertiesByKeyTypeAndLang(Coreon.Models.RepositorySettings.propertiesFor('term')), collapsed: true, noEditButton: true

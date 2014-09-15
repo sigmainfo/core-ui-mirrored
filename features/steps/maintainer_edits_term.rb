@@ -1,7 +1,7 @@
 class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept with an English term "ten-gallon hat" exists' do
     @concept = create_concept({})

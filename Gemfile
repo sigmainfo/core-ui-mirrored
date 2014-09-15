@@ -30,6 +30,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 gem 'rack-cors', require: 'rack/cors'
+gem 'rest-client'
 
 group :development do
   gem 'thin'
@@ -42,7 +43,7 @@ group :test do
   gem 'poltergeist'
   gem 'rspec', '~> 2.13.0'
   gem 'spinach-rails'
-  gem 'selenium-webdriver', '~> 2.41.0'
+  gem 'selenium-webdriver', '~> 2.43.0'
   gem 'launchy'
 end
 

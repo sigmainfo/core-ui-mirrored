@@ -1,0 +1,18 @@
+- if @value? and not _(@value).isEqual([])
+  .value
+    - switch @type
+      - when 'date'
+        = I18n.l @value
+      - when 'boolean'
+        = if @value then 'true' else 'false'
+      - when 'picklist'
+        %ul
+          %li.picklist-item= @value
+      - when 'multiselect_picklist'
+        %ul
+          - for value in @value
+            %li.picklist-item= value
+      - else
+        = @value
+- else
+  .value{data: {empty: true}}

@@ -1,7 +1,7 @@
 class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::FeatureSteps
   include AuthSteps
   include LanguageSelectSteps
-  include Api::Graph::Factory
+  include Factory
 
   step 'a concept' do
     @concept = create_concept nil
@@ -37,27 +37,27 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
   end
 
   step 'I should see the languages in alphabetic order: "DE", "EN", "KO", "RU"' do
-    sleep 0.2
+    expect(page).to have_css('.concept .terms h3')
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "DE", "EN", "KO", "RU" ]
   end
 
   step 'I should see the languages in following order: "KO", "DE", "EN", "RU"' do
-    sleep 0.2
+    expect(page).to have_css('.concept .terms h3')
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "KO", "DE", "EN", "RU" ]
   end
 
   step 'I should see the languages in following order: "KO", "EN", "DE", "RU"' do
-    sleep 0.2
+    expect(page).to have_css('.concept .terms h3')
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "KO", "EN", "DE", "RU" ]
   end
 
   step 'I should see the languages in following order: "EN", "DE", "KO", "RU"' do
-    sleep 0.2
+    expect(page).to have_css('.concept .terms h3')
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "EN", "DE", "KO", "RU" ]
   end
 
   step 'I should see the languages in following order: "FR", "EN", "DE", "KO", "RU"' do
-    sleep 0.2
+    expect(page).to have_css('.concept .terms h3')
     page.all(".concept .terms h3").map{|n| n.text}.should == [ "FR", "EN", "DE", "KO", "RU" ]
   end
 

@@ -5,7 +5,7 @@ require 'uri'
 class UserBrowsesListOfConcepts < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
-  include Api::Graph::Factory
+  include Factory
   include LanguageSelectSteps
 
   def find_concept(label)
