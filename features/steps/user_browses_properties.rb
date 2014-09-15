@@ -2,6 +2,10 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   include AuthSteps
   include Resources
 
+  def concept
+    @concept ||= JSON.parse concepts.post concept: {}
+  end
+
   step 'the repository defines a blueprint for concept' do
     @blueprint = blueprint(:concept)
     @blueprint['clear'].delete
@@ -30,8 +34,15 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'a concept "Vampire" exists' do
-    response = concepts.post concept: { 'properties[]' => [{ key: 'label', value: 'Vampire' }] }
-    @concept = JSON.parse response
+    concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Vampire' }
+  end
+
+  step 'that concept has a German term "Vampir"' do
+    @term_attrs = { value: 'Vampir', lang: 'de' }
+  end
+
+  step 'that concept has a Greek term "βρυκόλακας"' do
+    @term_attrs = { value: 'βρυκόλακας', lang: 'el' }
   end
 
   step 'a concept with term "vampire" exists' do
@@ -40,16 +51,15 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
 
   step 'that term has the property "status" set to "accepted"' do
     @term_attrs.merge! 'properties[]' => [{key: 'status', value: 'accepted'}]
-    response = concepts.post concept: { 'terms[]' => [@term_attrs] }
-    @concept = JSON.parse response
+    concepts["#{concept['id']}/terms"].post term: @term_attrs
   end
 
   step 'that concept has the property "dangerous" set to be true' do
-    concepts["#{@concept['id']}/properties"].post property: { key: 'dangerous', value: true }
+    concepts["#{concept['id']}/properties"].post property: { key: 'dangerous', value: true }
   end
 
   step 'that concept has the property "alias" set to "Lamia"' do
-    concepts["#{@concept['id']}/properties"].post property: { key: 'alias', value: 'Lamia' }
+    concepts["#{concept['id']}/properties"].post property: { key: 'alias', value: 'Lamia' }
   end
 
   step 'that concept has a property "definition"' do
@@ -57,13 +67,13 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'the English value is set to "corpse that drinks blood of the living"' do
-    concepts["#{@concept['id']}/properties"].post property: @property_attrs.merge({
+    concepts["#{concept['id']}/properties"].post property: @property_attrs.merge({
       value: 'corpse that drinks blood of the living', lang: 'en'
     })
   end
 
   step 'the German value is set to "Untoter Blutsauger, mythische Gestalt"' do
-    concepts["#{@concept['id']}/properties"].post property: @property_attrs.merge({
+    concepts["#{concept['id']}/properties"].post property: @property_attrs.merge({
       value: 'Untoter Blutsauger, mythische Gestalt', lang: 'de'
     })
   end
@@ -115,6 +125,10 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I click on "TOGGLE ALL PROPERTIES"' do
+    page.find('.terms *', text: 'Toggle all properties').click
+  end
+
   step 'I see a property "ALIAS" with value "Lamia"' do
     within :table_row, 'alias' do
       expect(page).to have_css("td .value", text: 'Lamia')
@@ -130,5 +144,9 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
     within @term_properties do
       expect(page).to have_css('tr .value .picklist-item', text: 'accepted')
     end
+  end
+
+  step 'I should see the property "status" for both terms' do
+    expect(page).to have_selector(:table_row, 'status', count: 2)
   end
 end
