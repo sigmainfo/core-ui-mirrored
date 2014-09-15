@@ -30,17 +30,17 @@ Feature: user browses properties
     Then I see a listing of properties inside that term
     And this listing contains a picklist "STATUS" with value "accepted"
 
-  # @wip
-  # Scenario: browse multilang property
-  #   Given a concept "Vampire" exists
-  #   And that concept has a property "definition"
-  #   And the English value is set to "corpse that drinks blood of the living"
-  #   And the German value is set to "Untoter Blutsauger, mythische Gestalt"
-  #   When I visit the concept details page for that concept
-  #   And I look at the properties inside the concept header
-  #   Then I see a property "DEFINITION" with tabs "en", "de"
-  #   When I click on "en" then I see "corpse that drinks blood of the living"
-  #   When I click on "de" then I see "Untoter Blutsauger, mythische Gestalt"
+  @wip
+  Scenario: browse multilang property
+    Given a concept "Vampire" exists
+    And that concept has a property "definition"
+    And the English value is set to "corpse that drinks blood of the living"
+    And the German value is set to "Untoter Blutsauger, mythische Gestalt"
+    When I visit the concept details page for that concept
+    And I look at the properties inside the concept header
+    Then I see a property "DEFINITION" with tabs "EN", "DE"
+    When I click on "EN" then I see "corpse that drinks blood of the living"
+    When I click on "DE" then I see "Untoter Blutsauger, mythische Gestalt"
 
   # @wip
   # Scenario: toggle all term properties

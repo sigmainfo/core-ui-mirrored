@@ -52,6 +52,22 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
     concepts["#{@concept['id']}/properties"].post property: { key: 'alias', value: 'Lamia' }
   end
 
+  step 'that concept has a property "definition"' do
+    @property_attrs = { key: 'definition' }
+  end
+
+  step 'the English value is set to "corpse that drinks blood of the living"' do
+    concepts["#{@concept['id']}/properties"].post property: @property_attrs.merge({
+      value: 'corpse that drinks blood of the living', lang: 'en'
+    })
+  end
+
+  step 'the German value is set to "Untoter Blutsauger, mythische Gestalt"' do
+    concepts["#{@concept['id']}/properties"].post property: @property_attrs.merge({
+      value: 'Untoter Blutsauger, mythische Gestalt', lang: 'de'
+    })
+  end
+
   step 'I visit the concept details page for that concept' do
     visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
@@ -66,21 +82,43 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'I see a property "DANGEROUS" that is checked' do
-    th = find(".concept > .properties table tr.boolean th", text: 'DANGEROUS')
-    tr = th.find(:xpath, "..")
-    tr.should have_css("td .value", text: 'true')
+    within :table_row, 'dangerous' do
+      expect(page).to have_css("td .value", text: 'true')
+    end
   end
 
   step 'I see a property "DEFINITION" that is empty' do
-    th = find(".concept > .properties table tr.text th", text: 'DEFINITION')
-    tr = th.find(:xpath, "..")
-    tr.should have_css("td .value[data-empty]", visible: false)
+    within :table_row, 'definition' do
+      expect(page).to have_css("td .value[data-empty]", visible: false)
+    end
+  end
+
+  step 'I see a property "DEFINITION" with tabs "EN", "DE"' do
+    within :table_row, 'definition' do
+      %w(EN DE).each do |lang|
+        expect(page).to have_css('td ul.index li', text: lang)
+      end
+    end
+  end
+
+  step 'I click on "EN" then I see "corpse that drinks blood of the living"' do
+    within :table_row, 'definition' do
+      page.find("li", text: 'EN').click
+      expect(page).to have_content('corpse that drinks blood of the living')
+    end
+  end
+
+  step 'I click on "DE" then I see "Untoter Blutsauger, mythische Gestalt"' do
+    within :table_row, 'definition' do
+      page.find("li", text: 'DE').click
+      expect(page).to have_content('Untoter Blutsauger, mythische Gestalt')
+    end
   end
 
   step 'I see a property "ALIAS" with value "Lamia"' do
-    th = find(".concept > .properties table tr th", text: 'ALIAS')
-    tr = th.find(:xpath, "..")
-    tr.should have_css("td .value", text: 'Lamia')
+    within :table_row, 'alias' do
+      expect(page).to have_css("td .value", text: 'Lamia')
+    end
   end
 
   step 'I see a listing of properties inside that term' do
