@@ -38,7 +38,7 @@ describe 'Coreon.Templates[properties/value]', ->
 
     it 'renders formated value', ->
       data.value = '2014-01-22 11:33'
-      I18n.l.withArgs('2014-01-22 11:33').returns 'Jan 22, 2014'
+      I18n.l.withArgs('date.formats.default', '2014-01-22 11:33').returns 'Jan 22, 2014'
       el = render()
       expect(el).to.contain 'Jan 22, 2014'
 

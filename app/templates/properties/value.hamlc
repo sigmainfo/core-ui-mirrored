@@ -2,7 +2,7 @@
   .value
     - switch @type
       - when 'date'
-        = I18n.l @value
+        = I18n.l 'date.formats.default', @value
       - when 'boolean'
         - if @value
           %span.true true
