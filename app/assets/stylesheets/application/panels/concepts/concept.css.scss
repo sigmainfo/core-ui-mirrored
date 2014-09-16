@@ -133,6 +133,14 @@ div.concept {
          content: "–";
        }
       } 
+      
+      &.multiselect_picklist, &.picklist {
+        li {
+          list-style: none;
+          display: inline-block;
+          padding: 0px 5px;
+        }
+      }
     }
   }
   

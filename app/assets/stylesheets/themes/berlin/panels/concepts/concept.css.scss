@@ -71,6 +71,18 @@ div.concept {
     }
   }
   
+  .properties {
+    tr {
+      
+      &.multiselect_picklist, &.picklist {
+        li {
+          background-color: rgba($darker-bg-color, 0.6);
+          @include border-radius(4px);
+        }
+      }
+    }
+  }
+  
   .terms {
     @include dottedline;  
       
