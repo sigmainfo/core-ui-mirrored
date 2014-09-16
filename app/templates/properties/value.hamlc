@@ -4,7 +4,10 @@
       - when 'date'
         = I18n.l @value
       - when 'boolean'
-        = if @value then 'true' else 'false'
+        - if @value
+          %span.true true
+        - else
+          %span.false false
       - when 'picklist'
         %ul
           %li.picklist-item= @value

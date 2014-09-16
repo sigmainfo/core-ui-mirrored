@@ -50,7 +50,7 @@ describe 'Coreon.Templates[properties/value]', ->
     it 'renders string representation', ->
       data.value = false
       el = render()
-      expect(el).to.contain 'false'
+      expect(el).to.have '.false'
 
   context 'picklist', ->
 
