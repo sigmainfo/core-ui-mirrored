@@ -141,6 +141,27 @@ div.concept {
           padding: 0px 5px;
         }
       }
+      &.number {
+        .value {
+          font: 1.1em monospace;
+          padding-top: 2px;
+          vertical-align: baseline;
+        }
+      }
+      &.boolean {
+        span {
+          @include opacity(0.8);
+          text-indent: -2000px;
+          overflow: hidden;
+          display: block;
+          width: 16px;
+          height: 16px;
+          background: image-url("layout/icons.svg") no-repeat -200px -499px;
+          &.false {
+            background: image-url("layout/icons.svg") no-repeat -200px -449px;
+          }
+        }
+      }
     }
   }
   

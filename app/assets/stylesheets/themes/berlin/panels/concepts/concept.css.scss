@@ -76,7 +76,7 @@ div.concept {
       
       &.multiselect_picklist, &.picklist {
         li {
-          background-color: rgba($darker-bg-color, 0.6);
+          background-color: rgba($secondary-color, 0.14);
           @include border-radius(4px);
         }
       }
