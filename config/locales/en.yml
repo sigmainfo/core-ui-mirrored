@@ -5,7 +5,7 @@ en:
 
   date:
     formats:
-      default: "%d. %b %Y"
+      default: "%b %d, %Y"
 
   account:
     logout: "Log out"
