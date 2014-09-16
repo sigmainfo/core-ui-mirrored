@@ -94,6 +94,17 @@ div.concept {
     }
   }
   
+  .properties {
+    tr {
+      
+      &.multiselect_picklist, &.picklist {
+        li {
+          background-color: darken($darker-bg-color, 3);
+        }
+      }
+    }
+  }
+  
   .terms {
     @include dottedline;  
       

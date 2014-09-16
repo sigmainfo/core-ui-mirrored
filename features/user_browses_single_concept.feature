@@ -42,20 +42,6 @@ Feature: user browses single concept
     When I click on the toggle "BROADER & NARROWER"
     Then the section "BROADER & NARROWER" should be hidden
 
-  # Scenario: toggle all term properties
-  #   Given a concept with label "handgun"
-  #   And this concept has the following English terms: "gun", "firearm", "shot gun", "musket"
-  #   And this concept has the following German terms: "Schusswaffe", "Flinte", "Pistole", "Schießgewehr", "Geschütz"
-  #   And the term "Schusswaffe" should have property "gender" with value "f"
-  #   And the term "Flinte" should have property "status" with value "pending"
-  #   When I enter "gun" in the search field
-  #   And I click the search button
-  #   And I click on the label "handgun"
-  #   Then I should be on the show concept page for "handgun"
-  #   When I click on toggle "TOGGLE ALL PROPERTIES"
-  #   Then I should see property "GENDER" with value "f"
-  #   Then I should see property "status" with value "pending"
-
   Scenario: browse system info
     Given a concept with label "handgun"
     And this concept has a property "notes" with value "Bitte überprüfen!!!"
