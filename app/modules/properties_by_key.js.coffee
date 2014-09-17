@@ -59,7 +59,6 @@ Coreon.Modules.PropertiesByKey =
       props[key][type] ?= []
       props[key][type].push prop
 
-    console.log "unused: ", properties_settings
     for prop in unused_properties
       props[prop.key] ?= {}
       props[prop.key][prop.type] = []
