@@ -19,7 +19,8 @@ module AuthSteps
   end
 
   step 'I am logged in as maintainer of the repository' do
-    @repository_user = create_repository_user(:maintainer)
+    @repository_user ||= create_repository_user(:maintainer)
+    login
   end
 
   step 'I am no maintainer of the repository' do
