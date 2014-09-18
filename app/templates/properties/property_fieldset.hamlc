@@ -1,2 +1,2 @@
 %fieldset.property
-  != @input 'property', 'key'
+  != @input 'property', 'key', @property.model, @form_options

@@ -85,37 +85,72 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
 
     context 'properties', ->
 
-      it 'renders section with title', ->
+      properties = (el) ->
+        el.find 'section.properties'
+
+      it 'renders container', ->
+        @view.render()
+        expect(properties @view.$el).to.exist
+
+      it 'renders title', ->
         I18n.t.withArgs('properties.title').returns 'Properties'
         @view.render()
-        @view.$el.should.have '.properties'
-        @view.$('.properties').should.match 'section'
-        @view.$el.should.have '.properties h3'
-        @view.$('section.properties h3').should.have.text 'Properties'
+        header = properties(@view.$el).find 'h3'
+        expect(header).to.exist
+        expect(header).to.have.text 'Properties'
 
-      it 'renders link for adding a property', ->
-        I18n.t.withArgs('properties.add').returns 'Add Property'
-        @view.model.set 'properties', [ {}, {}, {} ]
-        @view.render()
-        @view.$el.should.have 'a.add-property'
-        @view.$('a.add-property').should.have.text 'Add Property'
-        @view.$('a.add-property').should.have.data 'scope', 'concept[properties][]'
-        @view.$('a.add-property').should.have.data 'index', 3
+      context 'add property link', ->
 
-      it 'renders inputs for existing properties', ->
-        @view.model.properties = ->
-          models: [
-            new Backbone.Model key: 'label'
-          ]
-        @view.model.errors = ->
-          nested_errors_on_properties: [
-            value: "can't be blank"
-          ]
-        @view.render()
-        @view.$el.should.have 'form .properties .property .key input[type="text"]'
-        @view.$('form .property .key input').should.have.value 'label'
-        @view.$('form .property .value').should.have '.error-message'
-        @view.$('form .property .value .error-message').should.have.text "can't be blank"
+        link = (el) ->
+          properties(el).find '.add-property'
+
+        it 'renders link for adding a property', ->
+          I18n.t.withArgs('properties.add').returns 'Add Property'
+          @view.render()
+          expect(link @view.$el).to.exist
+          expect(link @view.$el).to.have.text 'Add Property'
+          expect(link @view.$el).to.have.data 'scope'
+
+        it 'renders next index on link', ->
+          @view.model.set 'properties', [ {}, {}, {} ], silent: yes
+          @view.render()
+          expect(link @view.$el).to.have.data 'index', 3
+
+      context 'fieldset', ->
+
+        render = null
+
+        beforeEach ->
+          render = sinon.stub Coreon.Helpers, 'render'
+
+        afterEach ->
+          Coreon.Helpers.render.restore()
+
+        it 'renders input for each property', ->
+          render.withArgs(
+              'properties/property_fieldset'
+            , property: property
+            , form_options: form_options
+          ).returns '''
+            <input name="properties[3]"/>
+          '''
+          @view.render()
+          expect(properties @view.$el).to.have 'input[name="properties[3]"]'
+
+      # it 'renders inputs for existing properties', ->
+      #   @view.model.properties = ->
+      #     models: [
+      #       new Backbone.Model key: 'label'
+      #     ]
+      #   @view.model.errors = ->
+      #     nested_errors_on_properties: [
+      #       value: "can't be blank"
+      #     ]
+      #   @view.render()
+      #   @view.$el.should.have 'form .properties .property .key input[type="text"]'
+      #   @view.$('form .property .key input').should.have.value 'label'
+      #   @view.$('form .property .value').should.have '.error-message'
+      #   @view.$('form .property .value .error-message').should.have.text "can't be blank"
 
     context 'terms', ->
 

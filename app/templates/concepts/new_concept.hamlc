@@ -6,6 +6,8 @@
     %h3= I18n.t "properties.title"
     - for property, index in @concept.properties().models
       != @render "properties/new_property", index: index, property: property, errors: @concept.errors()?.nested_errors_on_properties?[index]
+      -# - form_options = index: index, errors: @concept.errors()?.nested_errors_on_properties?[index]
+      -# != @render 'properties/property_fieldset', property: {model: property}, form_options: form_options
     .add
       .edit
         %a.add-property{href: "javascript:void(0)", "data-scope": "concept[properties][]", "data-index": @concept.get("properties").length}= I18n.t "properties.add"

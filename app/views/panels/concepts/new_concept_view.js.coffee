@@ -5,6 +5,7 @@
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
+#= require templates/properties/property_fieldset
 #= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
 #= require models/concept
