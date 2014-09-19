@@ -7,7 +7,6 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'the repository defines a blueprint for concept' do
-    binding.pry
     @blueprint = blueprint(:concept)
     @blueprint['clear'].delete
   end

@@ -15,6 +15,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
+    @view.model.propertiesWithDefaults = -> []
 
   afterEach ->
     I18n.t.restore()
@@ -118,39 +119,30 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
 
       context 'fieldset', ->
 
+        propertiesWithDefaults = null
         render = null
 
         beforeEach ->
           render = sinon.stub Coreon.Helpers, 'render'
+          propertiesWithDefaults = sinon.stub @view.model
+                                            , 'propertiesWithDefaults'
+          propertiesWithDefaults.returns []
 
         afterEach ->
           Coreon.Helpers.render.restore()
 
         it 'renders input for each property', ->
-          render.withArgs(
-              'properties/property_fieldset'
-            , property: property
-            , form_options: form_options
+          property =
+            model: new Backbone.Model
+          propertiesWithDefaults.returns [property]
+          render.withArgs('properties/property_fieldset'
+                        , property: property
+                        , index: 0
           ).returns '''
             <input name="properties[3]"/>
           '''
           @view.render()
           expect(properties @view.$el).to.have 'input[name="properties[3]"]'
-
-      # it 'renders inputs for existing properties', ->
-      #   @view.model.properties = ->
-      #     models: [
-      #       new Backbone.Model key: 'label'
-      #     ]
-      #   @view.model.errors = ->
-      #     nested_errors_on_properties: [
-      #       value: "can't be blank"
-      #     ]
-      #   @view.render()
-      #   @view.$el.should.have 'form .properties .property .key input[type="text"]'
-      #   @view.$('form .property .key input').should.have.value 'label'
-      #   @view.$('form .property .value').should.have '.error-message'
-      #   @view.$('form .property .value .error-message').should.have.text "can't be blank"
 
     context 'terms', ->
 
