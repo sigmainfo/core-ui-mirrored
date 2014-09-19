@@ -13,6 +13,7 @@
 #= require modules/collation
 #= require collections/hits
 #= require collections/concepts
+#= require formatters/property_formatter
 
 class Coreon.Models.Concept extends Backbone.Model
 
@@ -139,3 +140,6 @@ class Coreon.Models.Concept extends Backbone.Model
 
   definition: ->
     @propertiesByKeyAndLang().definition?[0].get('value') or null
+
+  propertiesWithDefaults: ->
+    formatter = new Coreon.Formatters.PropertyFormatter()

@@ -651,5 +651,10 @@ describe 'Coreon.Models.Concept', ->
 
   describe '#propertiesWithDefaults()', ->
 
-    it 'creates a formatter instance', -> fail
+    it 'creates a formatter instance', ->
+      formatter = sinon.spy(Coreon.Formatters, 'PropertyFormatter')
+      @model.propertiesWithDefaults()
+      expect(formatter).to.have.been.calledOnce
+
     it 'returns listing of all properties for display'
+

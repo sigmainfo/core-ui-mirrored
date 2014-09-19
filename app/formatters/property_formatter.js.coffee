@@ -1,0 +1,1 @@
+class Coreon.Formatters.PropertyFormatter
