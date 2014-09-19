@@ -127,6 +127,12 @@ div.concept {
     }
   }
   .properties {
+
+    .value {
+      word-wrap: break-word;
+      width: 98%;
+    }
+    
     tr {
       div[data-empty] {
        &:before {
@@ -299,7 +305,7 @@ div.concept {
 #coreon-concepts:not(.widget).medi {
   div.concept {
     font-size: 0.9em;
-    
+
     h2 {
       font-size: 1.6em;
       min-height: 1em;
@@ -309,14 +315,14 @@ div.concept {
         top: 8px;
       }
     }
-    
+
     table {
       ul.index {
         padding-bottom: 12px;
         height: 9px;
       }
     }
-    
+
     .terms {
       margin-top: 16px;
       .term h4.value {
@@ -324,14 +330,14 @@ div.concept {
         padding: 7px 0 5px 0;
         margin-left: 85px;
       }
-      
+
       .term >.system-info {
         margin-left: 85px;
         table {
           margin-top: 2px;
         }
       }
-      
+
       li.term section.properties {
         h3 {
           top: -1px;
@@ -340,7 +346,7 @@ div.concept {
             right: 6px;
           }
         }
-        
+
         &>div {
           margin-left: 85px;
         }

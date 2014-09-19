@@ -133,23 +133,39 @@
 
 .concept table, table.meta {
   border-spacing: 0;
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 10px 0;
+
+  tr, tbody {
+    display: block;
+  }
+  
+  td {
+    display: block;
+    margin-left: 114px;
+  }
 
   tr {
       vertical-align: top;
+      clear: both;
 
     td, th {
-      padding-top: 10px;
-      padding-bottom: 0.5em;
+      padding-top: 5px;
+      padding-bottom: 0.4em;
     }
 
     th {
+      display: block;
+      float: left;
+      clear: both;
       font-weight: normal;
       text-align: right;
       text-transform: uppercase;
       font-size: 0.8em;
-      padding-top: 11px;
+      padding-top: 6px;
       width: 98px;
-      padding-right: 16px;
     }
   }
 }
@@ -160,6 +176,10 @@
     tr td, tr th {
       padding-top: 2px;
       padding-bottom: 4px;
+    }
+    
+    td {
+      margin-left: 85px;
     }
 
     tr th {
@@ -174,6 +194,7 @@
         display: block;
         padding-top: 2px;
         padding-bottom: 0;
+        margin-left: 0;
       }
       th {
         width: auto;
