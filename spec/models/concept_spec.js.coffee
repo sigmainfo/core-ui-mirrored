@@ -648,3 +648,8 @@ describe 'Coreon.Models.Concept', ->
         new Backbone.Model value: "C'est ne pas un pipe"
        ]
       expect( @model.definition() ).to.equal 'Eine Rose'
+
+  describe '#propertiesWithDefaults()', ->
+
+    it 'creates a formatter instance', -> fail
+    it 'returns listing of all properties for display'
