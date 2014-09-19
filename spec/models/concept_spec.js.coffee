@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require models/concept
+#= require models/repository_settings
 
 describe 'Coreon.Models.Concept', ->
 
@@ -651,10 +652,31 @@ describe 'Coreon.Models.Concept', ->
 
   describe '#propertiesWithDefaults()', ->
 
+    blueprint_properties = null
+
+    beforeEach ->
+      @model.set 'properties', [
+        { 
+          key: "first_key",
+          value: "first_value"
+        },
+        {
+          key: "second_key",
+          value: "second_value"
+        }
+      ]
+      blueprint_properties = sinon.stub(Coreon.Models.RepositorySettings, 'propertiesFor')
+      blueprint_properties.returns []
+
+    afterEach ->
+      blueprint_properties.restore()
+
     it 'creates a formatter instance', ->
       formatter = sinon.spy(Coreon.Formatters, 'PropertyFormatter')
       @model.propertiesWithDefaults()
       expect(formatter).to.have.been.calledOnce
 
-    it 'returns listing of all properties for display'
+    it 'returns listing of all properties for display', ->
+      result = @model.propertiesWithDefaults()
+      expect(result).to.have.length(3)
 
