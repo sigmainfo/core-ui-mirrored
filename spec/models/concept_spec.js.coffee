@@ -678,5 +678,5 @@ describe 'Coreon.Models.Concept', ->
 
     it 'returns listing of all properties for display', ->
       result = @model.propertiesWithDefaults()
-      expect(result).to.have.length(3)
+      expect(result).to.be.instanceOf Array
 
