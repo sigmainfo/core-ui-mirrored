@@ -22,13 +22,10 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     expect(el).to.match 'fieldset.property'
 
   it 'renders a property key', ->
-    data.form_options =
-      scope: 'concept[properties][]'
     data.input.withArgs(
       'property'
       , 'key'
       , model
-      , data.form_options
     )
     .returns '<input name="property[key]"/>'
     el = render()

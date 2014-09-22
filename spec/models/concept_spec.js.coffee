@@ -652,31 +652,45 @@ describe 'Coreon.Models.Concept', ->
 
   describe '#propertiesWithDefaults()', ->
 
-    blueprint_properties = null
+    modelProperties = null
+    propertiesFor = null
+    formatter = null
+
+    fakeBlueprintProperties = ->
+      [key: 'label']
+    
+    fakeProperties = ->
+      [new Backbone.Model]
+
+    fakeFormattedProperties = ->
+      [model: new Backbone.Model]
 
     beforeEach ->
-      @model.set 'properties', [
-        { 
-          key: "first_key",
-          value: "first_value"
-        },
-        {
-          key: "second_key",
-          value: "second_value"
-        }
-      ]
-      blueprint_properties = sinon.stub(Coreon.Models.RepositorySettings, 'propertiesFor')
-      blueprint_properties.returns []
+      formatter = all: ->
+      sinon.stub Coreon.Formatters, 'PropertiesFormatter', -> formatter
+      propertiesFor = sinon.stub Coreon.Models.RepositorySettings, 'propertiesFor'
+      propertiesFor.returns []
+      @model.properties = -> []
 
     afterEach ->
-      blueprint_properties.restore()
+      Coreon.Formatters.PropertiesFormatter.restore()
+      Coreon.Models.RepositorySettings.propertiesFor.restore()
 
     it 'creates a formatter instance', ->
-      formatter = sinon.spy(Coreon.Formatters, 'PropertiesFormatter')
+      blueprintProperties = fakeBlueprintProperties()
+      propertiesFor.withArgs('concept').returns blueprintProperties
+      modelProperties = fakeProperties()
+      @model.properties = -> modelProperties
       @model.propertiesWithDefaults()
-      expect(formatter).to.have.been.calledOnce
+      constructor = Coreon.Formatters.PropertiesFormatter
+      expect(constructor).to.have.been.calledOnce
+      expect(constructor).to.have.been.calledWithNew
+      expect(constructor).to.have.been.calledWith blueprintProperties, modelProperties
 
     it 'returns listing of all properties for display', ->
+      formattedProperties = fakeFormattedProperties()
+      formatter.all = ->
+        formattedProperties
       result = @model.propertiesWithDefaults()
-      expect(result).to.be.instanceOf Array
+      expect(result).to.equal formattedProperties
 
