@@ -5,6 +5,8 @@
 describe "Coreon.Formatters.PropertiesFormatter", ->
 
   formatter = null
+  blueprint_properties = null
+  properties = null
   
   context "#format", ->
 
