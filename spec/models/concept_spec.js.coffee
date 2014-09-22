@@ -672,7 +672,7 @@ describe 'Coreon.Models.Concept', ->
       blueprint_properties.restore()
 
     it 'creates a formatter instance', ->
-      formatter = sinon.spy(Coreon.Formatters, 'PropertyFormatter')
+      formatter = sinon.spy(Coreon.Formatters, 'PropertiesFormatter')
       @model.propertiesWithDefaults()
       expect(formatter).to.have.been.calledOnce
 

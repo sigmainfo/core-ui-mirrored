@@ -1,4 +1,4 @@
-class Coreon.Formatters.PropertyFormatter
+class Coreon.Formatters.PropertiesFormatter
 
   constructor: (blueprint_properties, properties) ->
     @blueprint_properties = blueprint_properties

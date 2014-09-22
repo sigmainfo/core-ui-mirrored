@@ -1,8 +1,8 @@
 #= require spec_helper
-#= require formatters/property_formatter
+#= require formatters/properties_formatter
 #= require models/property
 
-describe "Coreon.Formatters.PropertyFormatter", ->
+describe "Coreon.Formatters.PropertiesFormatter", ->
 
   formatter = null
   
@@ -23,7 +23,7 @@ describe "Coreon.Formatters.PropertyFormatter", ->
         })
       ]
 
-      formatter = new Coreon.Formatters.PropertyFormatter(blueprint_properties, properties)
+      formatter = new Coreon.Formatters.PropertiesFormatter(blueprint_properties, properties)
 
     it 'returns an array', ->
       formatted_properties = formatter.format()
@@ -59,6 +59,6 @@ describe "Coreon.Formatters.PropertyFormatter", ->
         })
       ]
 
-      formatter = new Coreon.Formatters.PropertyFormatter(blueprint_properties, properties)
+      formatter = new Coreon.Formatters.PropertiesFormatter(blueprint_properties, properties)
       formatted_properties = formatter.format()
       expect(formatted_properties).to.have.length(3)
