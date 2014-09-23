@@ -1,31 +1,30 @@
 class Coreon.Formatters.PropertiesFormatter
 
-  constructor: (blueprint_properties, properties) ->
-    @blueprint_properties = if blueprint_properties? then blueprint_properties else []
-    @properties = if properties? then properties else []
+  constructor: (@blueprint_properties = [], @properties = []) ->
 
   all: ->
-    # (model: property for property in @properties)
-    props = []
-    unused_properties = @blueprint_properties.slice 0
 
-    for prop in @properties
-      key = prop.get "key"
-      type = null
-      property_setting = _.findWhere(@blueprint_properties, key: key)
-      if property_setting?
-        type = property_setting.type
-        index = unused_properties.indexOf property_setting
+    props = []
+    unused_properties = @properties.slice 0
+
+    for blue_prop in @blueprint_properties
+      property = _.find(@properties, (p) -> p.get('key') == blue_prop.key)
+      model = null
+      if property
+        model = property
+        index = unused_properties.indexOf property
         unused_properties.splice index, 1
       props.push
-        model: prop
-        type: type
-        key: key
+        model: model
+        type: blue_prop.type
+        key: blue_prop.key
 
     for prop in unused_properties
       props.push
-        model: null
-        type: prop.type
-        key: prop.key
+        model: prop
+        type: 'text'
+        key: prop.get 'key'
 
     props
+
+
