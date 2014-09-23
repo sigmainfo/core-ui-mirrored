@@ -20,7 +20,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     properties = []
     blueprint_properties = []
     formatter = new Coreon.Formatters.PropertiesFormatter null, null
-  
+
   describe "#all()", ->
 
     it 'defaults to empty array', ->
@@ -54,6 +54,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           formatted = all[0]
           expect(formatted).to.have.property 'key', property.get 'key'
 
+        # TODO 140923 [ap, tc] should rather default to 'text'
         it 'fetches null type', ->
           all = formatter.all()
           formatted = all[0]
@@ -105,8 +106,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           all = formatter.all()
           keys = $.map all, (el) -> el.key
           expect(all).to.have.lengthOf 2
-          expect(keys).to.include 'label'  
-          expect(keys).to.include 'definition' 
+          expect(keys).to.include 'label'
+          expect(keys).to.include 'definition'
 
     context 'multiple items', ->
 
@@ -119,8 +120,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           all = formatter.all()
           keys = $.map all, (el) -> el.key
           expect(all).to.have.lengthOf 2
-          expect(keys).to.include 'label'  
-          expect(keys).to.include 'definition' 
+          expect(keys).to.include 'label'
+          expect(keys).to.include 'definition'
 
       context 'only with blueprint defaults', ->
 
@@ -131,8 +132,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           all = formatter.all()
           keys = $.map all, (el) -> el.key
           expect(all).to.have.lengthOf 2
-          expect(keys).to.include 'label'  
-          expect(keys).to.include 'definition' 
+          expect(keys).to.include 'label'
+          expect(keys).to.include 'definition'
 
       context 'combined with blueprint defaults', ->
 
@@ -147,10 +148,10 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           all = formatter.all()
           keys = $.map all, (el) -> el.key
           expect(all).to.have.lengthOf 4
-          expect(keys).to.include 'label'  
-          expect(keys).to.include 'definition' 
-          expect(keys).to.include 'ISBN'  
-          expect(keys).to.include 'author' 
+          expect(keys).to.include 'label'
+          expect(keys).to.include 'definition'
+          expect(keys).to.include 'ISBN'
+          expect(keys).to.include 'author'
 
 
-        # TODO 140922 [ap] What if one property is defined twice in blueprints and property exists once 
+        # TODO 140922 [ap] What if one property is defined twice in blueprints and property exists once

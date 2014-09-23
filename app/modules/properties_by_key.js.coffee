@@ -42,6 +42,7 @@ Coreon.Modules.PropertiesByKey =
           props[key] = sourceLangProps.concat targetLangProps, otherLangProps
     props
 
+  # TODO 140923 [tc, ap] group by key only as different types are not allowed
   propertiesByKeyAndType: (properties_settings) ->
     props = {}
     unused_properties = properties_settings.slice 0
