@@ -8,11 +8,25 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
   blueprint_properties = null
   properties = null
 
+  clear = (properties) ->
+    while properties.length > 0
+      properties.pop
+
+  fakeProperties = (arr, properties_attrs) ->
+    clear(arr)
+    properties_attrs.forEach (attrs) ->
+      arr.push new Backbone.Model(attrs)
+
   fakeProperty =  ->
     new Backbone.Model()
 
   fakeBlueprintProperty =  ->
     {key: 'label', type: 'text'}
+
+  fakeBlueprintProperties = (arr, properties_attrs) ->
+    clear(arr)
+    properties_attrs.forEach (attrs) ->
+      arr.push attrs
 
   propertyKeys = (arr) ->
     $.map arr, (el) -> el.key
@@ -34,6 +48,9 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     context 'single item', ->
 
       context 'with no blueprint defaults', ->
+
+        beforeEach ->
+          clear blueprint_properties
 
         it 'fetches model from property', ->
           property = fakeProperty()
@@ -58,6 +75,9 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           expect(formatted).to.have.property 'type', 'text'
 
       context 'only blueprint defaults', ->
+
+        beforeEach ->
+          clear properties
 
         it 'fetches null model', ->
           blueprint_property = fakeBlueprintProperty()
@@ -93,57 +113,52 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           expect(formatted).to.have.property 'type', 'boolean'
 
         it 'doesn\'t combine properties with different key', ->
-          property = fakeProperty()
-          property.set 'key', 'dangerous'
-          properties.push property
-          blueprint_properties.push {key: 'cool', type: 'boolean'}
+          fakeProperties properties, [
+            {key: 'dangerous'}
+          ]
+          fakeBlueprintProperties blueprint_properties, [
+            {key: 'cool', type: 'boolean'}
+          ]
           all = formatter.all()
-          keys = $.map all, (el) -> el.key
           expect(all).to.have.lengthOf 2
-          expect(keys).to.include 'dangerous'
-          expect(keys).to.include 'cool'
+          expect(propertyKeys all).to.include 'dangerous'
+          expect(propertyKeys all).to.include 'cool'
 
     context 'multiple items', ->
 
-      context 'with no blueprint defaults', ->
+      it 'collects all properties if no blueprint defaults are given', ->
+        fakeProperties properties, [
+          {key: 'label'},
+          {key: 'definition'}
+        ]
+        all = formatter.all()
+        expect(all).to.have.lengthOf 2
+        expect(propertyKeys all).to.include 'label'
+        expect(propertyKeys all).to.include 'definition'
 
-        it 'collects all properties', ->
-          property = fakeProperty()
-          property.set 'key', 'label'
-          properties.push property
-          property = fakeProperty()
-          property.set 'key', 'definition'
-          properties.push property
-          all = formatter.all()
-          expect(all).to.have.lengthOf 2
-          expect(propertyKeys all).to.include 'label'
-          expect(propertyKeys all).to.include 'definition'
+      it 'collects all blueprint properties if no properties are given', ->
+        fakeBlueprintProperties blueprint_properties, [
+          {key: 'label', type: 'text'},
+          {key: 'definition', type: 'text'}
+        ]
+        all = formatter.all()
+        expect(all).to.have.lengthOf 2
+        expect(propertyKeys all).to.include 'label'
+        expect(propertyKeys all).to.include 'definition'
 
-      context 'only with blueprint defaults', ->
-
-        it 'collects all blueprint properties', ->
-          blueprint_properties.push {key: 'label', type: 'text'}
-          blueprint_properties.push {key: 'definition', type: 'text'}
-          all = formatter.all()
-          expect(all).to.have.lengthOf 2
-          expect(propertyKeys all).to.include 'label'
-          expect(propertyKeys all).to.include 'definition'
-
-      context 'combined with blueprint defaults', ->
+      describe 'combined with blueprint defaults', ->
 
         it 'combines properties only with relative default properties', ->
-          property = fakeProperty()
-          property.set 'key', 'label'
-          properties.push property
-          property = fakeProperty()
-          property.set 'key', 'definition'
-          properties.push property
-          property = fakeProperty()
-          property.set 'key', 'ISBN'
-          properties.push property
-          blueprint_properties.push {key: 'label', type: 'text'}
-          blueprint_properties.push {key: 'definition', type: 'text'}
-          blueprint_properties.push {key: 'author', type: 'text'}
+          fakeProperties properties, [
+            {key: 'label'},
+            {key: 'definition'},
+            {key: 'ISBN'}
+          ]
+          fakeBlueprintProperties blueprint_properties, [
+            {key: 'definition', type: 'text'}
+            {key: 'author', type: 'text'},
+            {key: 'label', type: 'text'}
+          ]
           all = formatter.all()
           expect(all).to.have.lengthOf 4
           expect(propertyKeys all).to.include 'label'
@@ -152,19 +167,16 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           expect(propertyKeys all).to.include 'author'
 
         it 'collects properties in the order defined in blueprints', ->
-          property = fakeProperty()
-          property.set 'key', 'label'
-          properties.push property
-          property = fakeProperty()
-          property.set 'key', 'definition'
-          properties.push property
-          property = fakeProperty()
-          property.set 'key', 'ISBN'
-          properties.push property
-          blueprint_properties.push {key: 'definition', type: 'text'}
-          blueprint_properties.push {key: 'author', type: 'text'}
-          blueprint_properties.push {key: 'label', type: 'text'}
+          fakeProperties properties, [
+            {key: 'label'},
+            {key: 'definition'},
+            {key: 'ISBN'}
+          ]
+          fakeBlueprintProperties blueprint_properties, [
+            {key: 'definition', type: 'text'}
+            {key: 'author', type: 'text'},
+            {key: 'label', type: 'text'}
+          ]
           all = formatter.all()
-          expect(all).to.have.lengthOf 4
-          expect((propertyKeys all).slice 0, 3).to.eql ['definition', 'author', 'label']
+          expect(propertyKeys all).to.eql ['definition', 'author', 'label', 'ISBN']
 
