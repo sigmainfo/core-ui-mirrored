@@ -7,8 +7,6 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
   formatter = null
   blueprint_properties = null
   properties = null
-  property = null
-  blueprint_property = null
 
   fakeProperty = (options = {key: 'some_key'}) ->
     new Backbone.Model(options)
@@ -19,7 +17,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
   beforeEach ->
     properties = []
     blueprint_properties = []
-    formatter = new Coreon.Formatters.PropertiesFormatter null, null
+    formatter = new Coreon.Formatters.PropertiesFormatter properties, blueprint_properties
 
   describe "#all()", ->
 
@@ -41,8 +39,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
         beforeEach ->
           property = fakeProperty()
-          properties.push property
-          formatter = new Coreon.Formatters.PropertiesFormatter null, properties
+          formatter.properties = []
 
         it 'fetches model from property', ->
           all = formatter.all()
@@ -153,5 +150,10 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           expect(keys).to.include 'ISBN'
           expect(keys).to.include 'author'
 
+          expect(keys all).t.eql ['label', 'definition', 'ISBN']
+
+
 
         # TODO 140922 [ap] What if one property is defined twice in blueprints and property exists once
+
+      # TODO 140923 [tc] infer order from blueprint; append additional props

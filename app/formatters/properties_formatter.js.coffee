@@ -7,7 +7,7 @@ class Coreon.Formatters.PropertiesFormatter
   all: ->
     # (model: property for property in @properties)
     props = []
-    unused_properties = @blueprint_properties.slice 0 
+    unused_properties = @blueprint_properties.slice 0
 
     for prop in @properties
       key = prop.get "key"
@@ -17,13 +17,13 @@ class Coreon.Formatters.PropertiesFormatter
         type = property_setting.type
         index = unused_properties.indexOf property_setting
         unused_properties.splice index, 1
-      props.push 
+      props.push
         model: prop
         type: type
         key: key
 
     for prop in unused_properties
-      props.push 
+      props.push
         model: null
         type: prop.type
         key: prop.key
