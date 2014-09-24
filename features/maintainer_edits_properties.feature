@@ -29,6 +29,21 @@ Feature: maintainer edits properties
     And I see a property "DANGEROUS" that is checked
 
   # @wip
+  # Scenario: new concept with custom property
+  #   When I visit the repository root page
+  #   And I click on "New concept"
+  #   Then I see a section "PROPERTIES" within the form "Create concept"
+  #   When I click "Add property" within this form
+  #   Then I see a fieldset with input "KEY" that is empty
+  #   When I fill in "quote" for "KEY"
+  #   And I fill in "That certainly was visual." for "VALUE"
+  #   And I select "None" for "LANGUAGE"
+  #   When I click "Add property" within this form
+  #   And I click "Create concept"
+  #   Then I see a listing "PROPERTIES" within the concept header
+  #   And I see a property "QUOTE" with value "That certainly was visual."
+
+  # @wip
   # Scenario: edit existing concept properties
   #   Given the repository defines a blueprint for concepts
   #   And that blueprint defines a property "tags" of type "multiselect picklist"
@@ -55,7 +70,7 @@ Feature: maintainer edits properties
   #   And I click "Add term"
   #   Then I see a section "PROPERTIES" within the form "Add term"
   #   When I fill in "Blutbad" for "VALUE"
-  #   And I fill in "de" for "LANGUAGE"
+  #   And I select "de" for "LANGUAGE"
   #   When I click "Add property" within this form
   #   And I fill in "Author" for "KEY"
   #   And I fill in "Rüdiger von Schlotterstein" for "VALUE"
