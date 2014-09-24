@@ -8,7 +8,7 @@ class Coreon.Formatters.PropertiesFormatter
     unused_properties = @properties.slice 0
 
     for blue_prop in @blueprint_properties
-      property = _.find(@properties, (p) -> p.get('key') == blue_prop.key)
+      property = _.find @properties, (p) -> p.get('key') == blue_prop.key
       model = null
       if property
         model = property

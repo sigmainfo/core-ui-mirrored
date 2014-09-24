@@ -142,5 +142,7 @@ class Coreon.Models.Concept extends Backbone.Model
     @propertiesByKeyAndLang().definition?[0].get('value') or null
 
   propertiesWithDefaults: ->
-    formatter = new Coreon.Formatters.PropertiesFormatter Coreon.Models.RepositorySettings.propertiesFor('concept'), @properties()
+    properties = @properties().map (p) -> p
+    console.log properties
+    formatter = new Coreon.Formatters.PropertiesFormatter Coreon.Models.RepositorySettings.propertiesFor('concept'), properties
     formatter.all()
