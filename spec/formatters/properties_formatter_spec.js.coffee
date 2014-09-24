@@ -5,7 +5,7 @@
 describe "Coreon.Formatters.PropertiesFormatter", ->
 
   formatter = null
-  blueprint_properties = null
+  blueprintProperties = null
   properties = null
 
   clear = (properties) ->
@@ -32,15 +32,15 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     $.map arr, (el) -> el.key
 
   beforeEach ->
-    blueprint_properties = []
+    blueprintProperties = []
     properties = []
-    formatter = new Coreon.Formatters.PropertiesFormatter blueprint_properties, properties
+    formatter = new Coreon.Formatters.PropertiesFormatter blueprintProperties, properties
 
   describe "#all()", ->
 
     it 'defaults to empty array', ->
-      properties = []
-      blueprint_properties = []
+      clear properties
+      clear blueprintProperties
       all = formatter.all()
       expect(all).to.be.instanceOf Array
       expect(all).to.be.empty
@@ -50,7 +50,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
       context 'with no blueprint defaults', ->
 
         beforeEach ->
-          clear blueprint_properties
+          clear blueprintProperties
 
         it 'fetches model from property', ->
           property = fakeProperty()
@@ -81,19 +81,19 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
         it 'fetches null model', ->
           blueprint_property = fakeBlueprintProperty()
-          blueprint_properties.push blueprint_property
+          blueprintProperties.push blueprint_property
           all = formatter.all()
           formatted = all[0]
           expect(formatted).to.have.property 'model', null
 
         it 'fetches key from blueprint property', ->
-          blueprint_properties.push {key: 'test', type: 'boolean'}
+          blueprintProperties.push {key: 'test', type: 'boolean'}
           all = formatter.all()
           formatted = all[0]
           expect(formatted).to.have.property 'key', 'test'
 
         it 'fetches type from blueprint property', ->
-          blueprint_properties.push {key: 'test', type: 'boolean'}
+          blueprintProperties.push {key: 'test', type: 'boolean'}
           all = formatter.all()
           formatted = all[0]
           expect(formatted).to.have.property 'type', 'boolean'
@@ -104,7 +104,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           property = fakeProperty()
           property.set 'key', 'dangerous'
           properties.push property
-          blueprint_properties.push {key: 'dangerous', type: 'boolean'}
+          blueprintProperties.push {key: 'dangerous', type: 'boolean'}
           all = formatter.all()
           formatted = all[0]
           expect(all).to.have.lengthOf 1
@@ -116,7 +116,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           fakeProperties properties, [
             {key: 'dangerous'}
           ]
-          fakeBlueprintProperties blueprint_properties, [
+          fakeBlueprintProperties blueprintProperties, [
             {key: 'cool', type: 'boolean'}
           ]
           all = formatter.all()
@@ -127,6 +127,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     context 'multiple items', ->
 
       it 'collects all properties if no blueprint defaults are given', ->
+        clear blueprintProperties
         fakeProperties properties, [
           {key: 'label'},
           {key: 'definition'}
@@ -137,7 +138,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
         expect(propertyKeys all).to.include 'definition'
 
       it 'collects all blueprint properties if no properties are given', ->
-        fakeBlueprintProperties blueprint_properties, [
+        clear properties
+        fakeBlueprintProperties blueprintProperties, [
           {key: 'label', type: 'text'},
           {key: 'definition', type: 'text'}
         ]
@@ -146,7 +148,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
         expect(propertyKeys all).to.include 'label'
         expect(propertyKeys all).to.include 'definition'
 
-      describe 'combined with blueprint defaults', ->
+      context 'combined with blueprint defaults', ->
 
         it 'combines properties only with relative default properties', ->
           fakeProperties properties, [
@@ -154,7 +156,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             {key: 'definition'},
             {key: 'ISBN'}
           ]
-          fakeBlueprintProperties blueprint_properties, [
+          fakeBlueprintProperties blueprintProperties, [
             {key: 'definition', type: 'text'}
             {key: 'author', type: 'text'},
             {key: 'label', type: 'text'}
@@ -172,7 +174,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             {key: 'definition'},
             {key: 'ISBN'}
           ]
-          fakeBlueprintProperties blueprint_properties, [
+          fakeBlueprintProperties blueprintProperties, [
             {key: 'definition', type: 'text'}
             {key: 'author', type: 'text'},
             {key: 'label', type: 'text'}
