@@ -42,5 +42,16 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     )
     .returns '<input name="property[key]"/><p class="error">is invalid</p>'
     el = render()
-    expect(el).to.have 'input[name="property[key]"]'
     expect(el).to.contain 'is invalid'
+
+  it 'renders a remove property link', ->
+    data.input.withArgs(
+      'property'
+      , 'key'
+      , model
+    )
+    .returns '<a>Remove</a><input name="property[key]"/>'
+    el = render()
+    expect(el).to.contain 'Remove'
+
+
