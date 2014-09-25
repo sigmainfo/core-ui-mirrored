@@ -16,6 +16,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       form_options: {}
       property:
         model: model
+        errors: []
 
   it 'renders container', ->
     el = render()
@@ -30,3 +31,16 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     .returns '<input name="property[key]"/>'
     el = render()
     expect(el).to.have 'input[name="property[key]"]'
+
+  it 'renders property errors', ->
+    data.property.errors = {key: ['is invalid']}
+    data.input.withArgs(
+      'property'
+      , 'key'
+      , model
+      , errors: data.property.errors?.key
+    )
+    .returns '<input name="property[key]"/><p class="error">is invalid</p>'
+    el = render()
+    expect(el).to.have 'input[name="property[key]"]'
+    expect(el).to.contain 'is invalid'

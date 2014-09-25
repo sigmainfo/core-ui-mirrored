@@ -1,2 +1,2 @@
 %fieldset.property
-  != @input 'property', 'key', @property.model
+  != @input 'property', 'key', @property.model, errors: @property.errors?.key
