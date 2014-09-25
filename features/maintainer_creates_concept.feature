@@ -72,7 +72,6 @@ Feature: maintainer creates concept
     And I click "PROPERTIES" within term
     Then I should see a property "source" with value "Wikipedia"
 
-  @wip
   Scenario: validation errors
     When I visit the start page
     And I click on "New concept"

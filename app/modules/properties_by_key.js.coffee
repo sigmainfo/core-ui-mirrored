@@ -66,7 +66,7 @@ Coreon.Modules.PropertiesByKey =
 
     props
 
-  propertiesByKeyTypeAndLang: (properties_settings) ->
+  propertiesByKeyTypeAndLang: (properties_settings = []) ->
     props = {}
 
     if settings = Coreon.application?.repositorySettings()
