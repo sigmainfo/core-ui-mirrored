@@ -15,8 +15,9 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       input: sinon.stub()
       form_options: {}
       property:
-        errors: []
+        key: null
         value: null
+        errors: []
 
   it 'renders container', ->
     el = render()
@@ -38,7 +39,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       , 'key'
       , null
       , errors: data.property.errors?.key
-      , value: data.property.value
+      , value: data.property.key
     )
     .returns '<input name="property[key]"/><p class="error">is invalid</p>'
     el = render()
@@ -61,7 +62,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       , 'key'
       , null
       , errors: data.property.errors?.key
-      , value: data.property.value
+      , value: data.property.key
     )
     .returns '<a>Remove</a><input name="property[key]" value="somevalue"/>'
     el = render()
