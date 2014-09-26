@@ -9,16 +9,16 @@ class Coreon.Formatters.PropertiesFormatter
 
     for blue_prop in @blueprint_properties
       property = _.find @properties, (p) -> p.get('key') == blue_prop.key
-      model = null
+      value = blue_prop.default
       errors = {}
       if property
-        model = property
+        value = property.get 'value'
         unused_index = unused_properties.indexOf property
         unused_properties.splice unused_index, 1
         index = @properties.indexOf property
         errors = @errors[index] || {}
       props.push
-        model: model
+        value: value
         type: blue_prop.type
         key: blue_prop.key
         errors: errors
@@ -26,7 +26,7 @@ class Coreon.Formatters.PropertiesFormatter
     for property in unused_properties
       index = @properties.indexOf property
       props.push
-        model: property
+        value: property.get 'value'
         type: 'text'
         key: property.get 'key'
         errors: @errors[index] || {}

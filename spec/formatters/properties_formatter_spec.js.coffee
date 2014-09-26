@@ -64,12 +64,13 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           beforeEach ->
             clear blueprintProperties
 
-          it 'fetches model from property', ->
+          it 'fetches value from property', ->
             property = fakeProperty()
+            property.set 'value', 'somevalue'
             properties.push property
             all = formatter.all()
             formatted = all[0]
-            expect(formatted).to.have.property 'model', property
+            expect(formatted).to.have.property 'value', 'somevalue'
 
           it 'fetches key from property', ->
             property = fakeProperty()
@@ -79,7 +80,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             formatted = all[0]
             expect(formatted).to.have.property 'key', 'test'
 
-          it 'fetches null type', ->
+          it 'fetches type as text', ->
             property = fakeProperty()
             properties.push property
             all = formatter.all()
@@ -91,12 +92,13 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           beforeEach ->
             clear properties
 
-          it 'fetches null model', ->
+          it 'fetches default value', ->
             blueprint_property = fakeBlueprintProperty()
+            blueprint_property.default = 'somevalue'
             blueprintProperties.push blueprint_property
             all = formatter.all()
             formatted = all[0]
-            expect(formatted).to.have.property 'model', null
+            expect(formatted).to.have.property 'value', 'somevalue'
 
           it 'fetches key from blueprint property', ->
             blueprintProperties.push {key: 'test', type: 'boolean'}
@@ -115,12 +117,13 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
           it 'combines a property with the relative default property', ->
             property = fakeProperty()
             property.set 'key', 'dangerous'
+            property.set 'value', 'somevalue'
             properties.push property
             blueprintProperties.push {key: 'dangerous', type: 'boolean'}
             all = formatter.all()
             formatted = all[0]
             expect(all).to.have.lengthOf 1
-            expect(formatted).to.have.property 'model', property
+            expect(formatted).to.have.property 'value', 'somevalue'
             expect(formatted).to.have.property 'key', 'dangerous'
             expect(formatted).to.have.property 'type', 'boolean'
 
