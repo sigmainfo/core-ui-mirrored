@@ -24,13 +24,31 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     expect(el).to.match 'fieldset.property'
 
   it 'renders a property key', ->
+    data.property.key = 'somekey'
     data.input.withArgs(
       'property'
       , 'key'
+      , null
+      , errors: data.property.errors?.key
+      , value: data.property.key
     )
     .returns '<input name="property[key]"/>'
     el = render()
     expect(el).to.have 'input[name="property[key]"]'
+
+  it 'renders a property value', ->
+    data.property.value = 'somevalue'
+    data.input.withArgs(
+      'property'
+      , 'value'
+      , null
+      , errors: data.property.errors?.key
+      , value: data.property.value
+      , type: 'textarea'
+    )
+    .returns '<input name="property[value]"/>'
+    el = render()
+    expect(el).to.have 'input[name="property[value]"]'
 
   it 'renders property errors', ->
     data.property.errors = {key: ['is invalid']}
@@ -55,17 +73,6 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     el = render()
     expect(el).to.contain 'Remove'
 
-  it 'sets the property\'s value', ->
-    data.property.value = 'somevalue'
-    data.input.withArgs(
-      'property'
-      , 'key'
-      , null
-      , errors: data.property.errors?.key
-      , value: data.property.key
-    )
-    .returns '<a>Remove</a><input name="property[key]" value="somevalue"/>'
-    el = render()
-    expect(el).to.have 'input[value="somevalue"]'
+
 
 

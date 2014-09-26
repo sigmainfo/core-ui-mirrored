@@ -34,4 +34,16 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
       expect(@fieldset).to be_visible
     end
   end
+
+  step 'this fieldset contains a text area "VALUE"' do
+    within @fieldset do
+      expect(page).to have_field 'Value', type: 'textarea'
+    end
+  end
+
+  step 'this fieldset contains a select "LANGUAGE"' do
+    within @fieldset do
+      expect(page).to have_field 'Language', type: 'select'
+    end
+  end
 end

@@ -1,3 +1,5 @@
 %fieldset.property
   %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
   != @input 'property', 'key', null, errors: @property.errors?.key, value: @property.key
+  != @input 'property', 'value', null, errors: @property.errors?.value, value: @property.value, type: 'textarea'
+
