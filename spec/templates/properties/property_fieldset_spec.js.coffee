@@ -15,8 +15,8 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       input: sinon.stub()
       form_options: {}
       property:
-        model: model
         errors: []
+        value: null
 
   it 'renders container', ->
     el = render()
@@ -26,7 +26,6 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     data.input.withArgs(
       'property'
       , 'key'
-      , model
     )
     .returns '<input name="property[key]"/>'
     el = render()
@@ -37,8 +36,9 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     data.input.withArgs(
       'property'
       , 'key'
-      , model
+      , null
       , errors: data.property.errors?.key
+      , value: data.property.value
     )
     .returns '<input name="property[key]"/><p class="error">is invalid</p>'
     el = render()
@@ -48,10 +48,23 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     data.input.withArgs(
       'property'
       , 'key'
-      , model
+      , null
     )
     .returns '<a>Remove</a><input name="property[key]"/>'
     el = render()
     expect(el).to.contain 'Remove'
+
+  it 'sets the property\'s value', ->
+    data.property.value = 'somevalue'
+    data.input.withArgs(
+      'property'
+      , 'key'
+      , null
+      , errors: data.property.errors?.key
+      , value: data.property.value
+    )
+    .returns '<a>Remove</a><input name="property[key]" value="somevalue"/>'
+    el = render()
+    expect(el).to.have 'input[value="somevalue"]'
 
 
