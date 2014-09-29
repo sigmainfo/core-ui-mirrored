@@ -10,6 +10,8 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
   render = -> $ template data
 
   beforeEach ->
+    Coreon.application = new Backbone.Model
+    Coreon.application.langs = -> []
     model = new Backbone.Model
     data =
       input: sinon.stub()
@@ -17,6 +19,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       property:
         key: null
         value: null
+        type: null
         errors: []
 
   it 'renders container', ->
@@ -72,6 +75,50 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     .returns '<a>Remove</a><input name="property[key]"/>'
     el = render()
     expect(el).to.contain 'Remove'
+
+  it 'renders a select language for text properties', ->
+    Coreon.application.langs = -> ['en', 'de']
+    el = render()
+    options = $(el).find('option').map( -> $(@).attr('value') ).get()
+    expect(el).to.have 'select'
+    expect(el).to.have '*[for=property-lang]'
+    expect(options).to.eql ['en', 'de']
+
+  it 'doens\'t render a select language for non-text properties', ->
+    Coreon.application.langs = -> ['en', 'de']
+    data.property.type = 'boolean'
+    el = render()
+    expect(el).to.not.have 'select'
+
+  describe 'renders the proper input for value according to property type', ->
+
+    it 'renders a textarea by default', ->
+      data.property.type = null
+      data.input.withArgs(
+        'property'
+        , 'value'
+        , null
+        , errors: data.property.errors?.key
+        , value: data.property.value
+        , type: 'textarea'
+      ).returns('<textarea></textarea>')
+      el = render()
+      expect(el).to.have 'textarea'
+
+    it 'renders a checkbox for boolean type', ->
+      data.property.type = 'boolean'
+      data.input.withArgs(
+        'property'
+        , 'value'
+        , null
+        , errors: data.property.errors?.key
+        , value: data.property.value
+        , type: 'checkbox'
+      ).returns('<input type="checkbox"/>')
+      el = render()
+      expect(el).to.have 'input[type=checkbox]'
+
+
 
 
 
