@@ -13,6 +13,13 @@ describe 'Coreon.Models.RepositorySettings', ->
                           ]
                         }
                       ]
+  sample_languages = [
+    {
+      key: 'en',
+      short_name: 'en',
+      name: 'English'
+    }
+  ]
 
   beforeEach ->
     Coreon.application =
@@ -75,6 +82,13 @@ describe 'Coreon.Models.RepositorySettings', ->
 
           expect(propertyFor_spy).to.have.been.calledOnce
 
+      describe '.languages', ->
+
+        it 'delegates to the singleton\'s instance #languages', ->
+          languages_spy = sinon.spy(Coreon.Models.RepositorySettings.prototype, 'languages')
+          Coreon.Models.RepositorySettings.languages()
+
+          expect(languages_spy).to.have.been.calledOnce
 
   context 'model instance', ->
 
@@ -83,6 +97,7 @@ describe 'Coreon.Models.RepositorySettings', ->
     beforeEach ->
       model = new Coreon.Models.RepositorySettings()
       model.set 'blueprints', sample_blueprints
+      model.set 'languages', sample_languages
 
     describe '#blueprintsFor', ->
 
@@ -105,3 +120,13 @@ describe 'Coreon.Models.RepositorySettings', ->
 
       it 'returns a property for a given entity and type', ->
         expect(model.propertyFor('concept', 'label')).to.be.eql key: 'label', type: 'boolean'
+
+    describe '#languages', ->
+
+      it 'returns an array of languages', ->
+        langs = model.languages()
+        first_lang = langs[0]
+        expect(langs).to.have.lengthOf 1
+        expect(first_lang).to.have.property 'key', 'en'
+        expect(first_lang).to.have.property 'short_name', 'en'
+        expect(first_lang).to.have.property 'name', 'English'
