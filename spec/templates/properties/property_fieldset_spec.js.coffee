@@ -6,12 +6,30 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
   template = Coreon.Templates['properties/property_fieldset']
   data = null
   model = null
+  defaultLangs = [
+    {
+      key: 'en',
+      short_name: 'en',
+      name: 'English'
+    },
+    {
+      key: 'de',
+      short_name: 'de',
+      name: 'German'
+    },
+    {
+      key: 'fr',
+      short_name: 'fr',
+      name: 'French'
+    }
+  ]
 
   render = -> $ template data
 
   beforeEach ->
     Coreon.application = new Backbone.Model
-    Coreon.application.langs = -> []
+    Coreon.Models.RepositorySettings = sinon.stub
+    Coreon.Models.RepositorySettings.languages = -> defaultLangs
     model = new Backbone.Model
     data =
       input: sinon.stub()
@@ -77,15 +95,13 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     expect(el).to.contain 'Remove'
 
   it 'renders a select language for text properties', ->
-    Coreon.application.langs = -> ['en', 'de']
     el = render()
     options = $(el).find('option').map( -> $(@).attr('value') ).get()
     expect(el).to.have 'select'
     expect(el).to.have '*[for=property-lang]'
-    expect(options).to.eql ['en', 'de']
+    expect(options).to.eql ['en', 'de', 'fr']
 
   it 'doens\'t render a select language for non-text properties', ->
-    Coreon.application.langs = -> ['en', 'de']
     data.property.type = 'boolean'
     el = render()
     expect(el).to.not.have 'select'

@@ -11,6 +11,6 @@
       %label{for: 'property-lang'} Language
       %select#property-lang{title: I18n.t 'property.language'}
         %option
-        - for lang in Coreon.application.langs()
-          %option{value: lang}= lang
+        - for lang in Coreon.Models.RepositorySettings.languages()
+          %option{value: lang.key}= lang.name
 
