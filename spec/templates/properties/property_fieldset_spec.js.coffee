@@ -52,15 +52,24 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     Coreon.application = new Backbone.Model
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languages = -> defaultLangs
+    sinon.stub I18n, 't'
     data =
       input: sinon.stub()
+      selectField: sinon.stub()
       form_options: {}
       scope: null
       property:
         key: null
         value: null
+        lang: null
         type: null
         errors: []
+      index: 0
+      namePrefix: ''
+      selectableLanguages: []
+
+  afterEach ->
+    I18n.t.restore()
 
   it 'renders container', ->
     el = render()
@@ -97,22 +106,41 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     el = render()
     expect(el).to.contain 'is invalid'
 
+  # TODO 140930 [ap, tc] only applicable for custom props, do not render for defaults
+
   it 'renders a remove property link', ->
     stubKey().returns '<a>Remove</a><input name="property[key]"/>'
     el = render()
     expect(el).to.contain 'Remove'
 
-  it 'renders a select language for text properties', ->
+  it 'renders language select', ->
+    I18n.t.withArgs('forms.select.languages').returns 'Language'
+    data.selectableLanguages = [value: 'en', label: 'English']
+    data.index = 3
+    data.namePrefix = 'concept'
+    data.selectField.withArgs( 'Language'
+                        , name: 'concept[properties][3][lang]'
+                        , options: [value: 'en', label: 'English']
+                        )
+      .returns '''
+        <select id="property-3-langs">
+          <option value="en">English</option>
+        </select>
+      '''
     el = render()
-    options = $(el).find('option').map( -> $(@).attr('value') ).get()
-    expect(el).to.have 'select'
-    expect(el).to.have '*[for=property-lang]'
-    expect(options).to.eql ['en', 'de', 'fr']
+    expect(el).to.have 'select#property-3-langs'
 
-  it 'doens\'t render a select language for non-text properties', ->
-    data.property.type = 'boolean'
+  it 'renders select only when applicable', ->
+    I18n.t.withArgs('forms.select.languages').returns 'Language'
+    delete data.property.lang
+    data.selectField.withArgs('Language')
+      .returns '''
+        <select id="property-3-langs">
+          <option value="en">English</option>
+        </select>
+      '''
     el = render()
-    expect(el).to.not.have 'select'
+    expect(el).to.not.have 'select#property-3-langs'
 
   describe 'renders the proper input for value according to property type', ->
 

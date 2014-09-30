@@ -7,7 +7,8 @@
 
   != @input 'property', 'value', null, errors: @property.errors?.value, value: @property.value, scope: @scope, type: type
   - if _(@property).has 'lang'
-    = @select 'Language', name: 'concept[properties][3][lang]', options: @languages
+    != @selectField I18n.t('forms.select.languages'), name: "#{@namePrefix}[properties][#{@index}][lang]", options: @selectableLanguages
+
   / - unless @property.type in ['boolean']
   /   .lang
   /     %label{for: 'property-lang'} Language
