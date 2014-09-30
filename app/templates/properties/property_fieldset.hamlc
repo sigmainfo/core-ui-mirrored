@@ -6,11 +6,13 @@
     - else type = 'textarea'
 
   != @input 'property', 'value', null, errors: @property.errors?.value, value: @property.value, scope: @scope, type: type
-  - unless @property.type in ['boolean']
-    .lang
-      %label{for: 'property-lang'} Language
-      %select#property-lang{title: I18n.t 'property.language'}
-        %option
-        - for lang in Coreon.Models.RepositorySettings.languages()
-          %option{value: lang.key}= lang.name
+  - if _(@property).has 'lang'
+    = @select 'Language', name: 'concept[properties][3][lang]', options: @languages
+  / - unless @property.type in ['boolean']
+  /   .lang
+  /     %label{for: 'property-lang'} Language
+  /     %select#property-lang{title: I18n.t 'property.language'}
+  /       %option
+  /       - for lang in Coreon.Models.RepositorySettings.languages()
+  /         %option{value: lang.key}= lang.name
 
