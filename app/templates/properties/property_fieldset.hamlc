@@ -1,11 +1,11 @@
 %fieldset.property
   %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
-  != @input 'property', 'key', null, errors: @property.errors?.key, value: @property.key
+  != @input 'property', 'key', null, errors: @property.errors?.key, value: @property.key, scope: @scope
   - switch @property.type
     - when 'boolean' then type = 'checkbox'
     - else type = 'textarea'
 
-  != @input 'property', 'value', null, errors: @property.errors?.value, value: @property.value, type: type
+  != @input 'property', 'value', null, errors: @property.errors?.value, value: @property.value, scope: @scope, type: type
   - unless @property.type in ['boolean']
     .lang
       %label{for: 'property-lang'} Language

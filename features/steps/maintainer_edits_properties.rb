@@ -74,8 +74,28 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I select "English" as "LANGUAGE" for "definition"' do
     within @fieldset_definition do
-      binding.pry
       select 'en', from: 'Language'
+    end
+  end
+
+  step 'I uncheck "VALUE" for "dangerous"' do
+    within @fieldset_dangerous do
+      uncheck 'Value'
+    end
+  end
+
+  step 'I click "Create concept"' do
+    click_button "Create concept"
+  end
+
+  step 'I see a listing "PROPERTIES" within the concept header' do
+    binding.pry
+    expect(page).to have_css(".concept .properties")
+  end
+
+  step 'I see a property "DEFINITION" with English value "sucks blood; bat"' do
+    within :table_row, 'definition' do
+      expect(page).to have_css("td .value", text: 'true')
     end
   end
 end

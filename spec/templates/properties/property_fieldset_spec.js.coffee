@@ -5,7 +5,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
 
   template = Coreon.Templates['properties/property_fieldset']
   data = null
-  model = null
+  scope = null
   defaultLangs = [
     {
       key: 'en',
@@ -26,14 +26,36 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
 
   render = -> $ template data
 
+  stubKey = ->
+    data.input.withArgs(
+      'property'
+      , 'key'
+      , null
+      , errors: data.property.errors?.key
+      , value: data.property.key
+      , scope: scope
+    )
+
+
+  stubValue = (type) ->
+    data.input.withArgs(
+      'property'
+      , 'value'
+      , null
+      , errors: data.property.errors?.key
+      , value: data.property.value
+      , scope: scope
+      , type: type
+    )
+
   beforeEach ->
     Coreon.application = new Backbone.Model
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languages = -> defaultLangs
-    model = new Backbone.Model
     data =
       input: sinon.stub()
       form_options: {}
+      scope: null
       property:
         key: null
         value: null
@@ -46,51 +68,37 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
 
   it 'renders a property key', ->
     data.property.key = 'somekey'
-    data.input.withArgs(
-      'property'
-      , 'key'
-      , null
-      , errors: data.property.errors?.key
-      , value: data.property.key
-    )
-    .returns '<input name="property[key]"/>'
+    stubKey().returns '<input name="property[key]"/>'
     el = render()
     expect(el).to.have 'input[name="property[key]"]'
 
   it 'renders a property value', ->
     data.property.value = 'somevalue'
-    data.input.withArgs(
-      'property'
-      , 'value'
-      , null
-      , errors: data.property.errors?.key
-      , value: data.property.value
-      , type: 'textarea'
-    )
-    .returns '<input name="property[value]"/>'
+    stubValue('textarea').returns '<input name="property[value]"/>'
     el = render()
     expect(el).to.have 'input[name="property[value]"]'
 
+  it 'renders the scope for key', ->
+    data.property.scope = 'concept[properties][]'
+    stubKey().returns '<input name="concept[properties][0][key]"/>'
+    el = render()
+    expect(el).to.have 'input[name="concept[properties][0][key]"]'
+
+  it 'renders the scope for value', ->
+    data.property.scope = 'concept[properties][]'
+    stubValue('textarea').returns '<input name="concept[properties][0][value]"/>'
+    el = render()
+    expect(el).to.have 'input[name="concept[properties][0][value]"]'
+
   it 'renders property errors', ->
     data.property.errors = {key: ['is invalid']}
-    data.input.withArgs(
-      'property'
-      , 'key'
-      , null
-      , errors: data.property.errors?.key
-      , value: data.property.key
-    )
-    .returns '<input name="property[key]"/><p class="error">is invalid</p>'
+    stubKey().returns '<input name="property[key]"/><p class="error">is invalid</p>'
+
     el = render()
     expect(el).to.contain 'is invalid'
 
   it 'renders a remove property link', ->
-    data.input.withArgs(
-      'property'
-      , 'key'
-      , null
-    )
-    .returns '<a>Remove</a><input name="property[key]"/>'
+    stubKey().returns '<a>Remove</a><input name="property[key]"/>'
     el = render()
     expect(el).to.contain 'Remove'
 
@@ -110,27 +118,13 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
 
     it 'renders a textarea by default', ->
       data.property.type = null
-      data.input.withArgs(
-        'property'
-        , 'value'
-        , null
-        , errors: data.property.errors?.key
-        , value: data.property.value
-        , type: 'textarea'
-      ).returns('<textarea></textarea>')
+      stubValue('textarea').returns('<textarea></textarea>')
       el = render()
       expect(el).to.have 'textarea'
 
     it 'renders a checkbox for boolean type', ->
       data.property.type = 'boolean'
-      data.input.withArgs(
-        'property'
-        , 'value'
-        , null
-        , errors: data.property.errors?.key
-        , value: data.property.value
-        , type: 'checkbox'
-      ).returns('<input type="checkbox"/>')
+      stubValue('checkbox').returns('<input type="checkbox"/>')
       el = render()
       expect(el).to.have 'input[type=checkbox]'
 
