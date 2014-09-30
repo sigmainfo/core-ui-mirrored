@@ -138,6 +138,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
           render.withArgs('properties/property_fieldset'
                         , property: property
                         , index: 0
+                        , scope: 'concept[properties][]'
           ).returns '''
             <input name="properties[3]"/>
           '''
