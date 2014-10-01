@@ -90,6 +90,14 @@ describe 'Coreon.Models.RepositorySettings', ->
 
           expect(languages_spy).to.have.been.calledOnce
 
+      describe '.languageOptions', ->
+
+        it 'delegates to the singleton\'s instance #languageOptions', ->
+          languageOptions_spy = sinon.spy(Coreon.Models.RepositorySettings.prototype, 'languageOptions')
+          Coreon.Models.RepositorySettings.languageOptions()
+
+          expect(languageOptions_spy).to.have.been.calledOnce
+
   context 'model instance', ->
 
     model = null
@@ -130,3 +138,12 @@ describe 'Coreon.Models.RepositorySettings', ->
         expect(first_lang).to.have.property 'key', 'en'
         expect(first_lang).to.have.property 'short_name', 'en'
         expect(first_lang).to.have.property 'name', 'English'
+
+    describe '#languageOptions', ->
+
+      it 'returns an array of language options for use with select tags', ->
+        langs = model.languageOptions()
+        first_lang = langs[0]
+        expect(langs).to.have.lengthOf 1
+        expect(first_lang).to.have.property 'value', 'en'
+        expect(first_lang).to.have.property 'label', 'English'

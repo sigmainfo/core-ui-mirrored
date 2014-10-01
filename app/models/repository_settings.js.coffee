@@ -37,6 +37,9 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
   @languages: ->
     instance.languages()
 
+  @languageOptions: ->
+    instance.languageOptions()
+
   defaults:
     blueprints: null
 
@@ -54,6 +57,11 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
 
   languages: ->
     @get 'languages'
+
+  languageOptions: ->
+    return [] unless @get('languages')?
+    @get('languages').map (lang) ->
+      {value: lang.key, label: lang.name}
 
 
 
