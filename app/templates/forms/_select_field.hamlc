@@ -1,0 +1,6 @@
+%label{for: @id}= @label
+%select{name: @name, id: @id}
+  - if @allowEmpty
+    %option
+  - for option in @options
+    %option{value: option.value}= option.label
