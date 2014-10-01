@@ -1,8 +1,12 @@
 #= require environment
+#= require helpers/render
+#= require templates/forms/_field
 
 class Coreon.Helpers.Field
 
-  constructor: (@label, @name, @template, options = {}) ->
+  template: Coreon.Templates['forms/field']
+
+  constructor: (@label, @name, @field_template_name, options = {}) ->
     options.id       ?= @name.replace /[\[\]]/g, "_"
     options.required ?= false
     options.errors   ?= []
@@ -15,4 +19,8 @@ class Coreon.Helpers.Field
     @type      = options.type
 
   render: ->
-    @template @
+    data = {}
+    _.pairs(@).map (p) ->
+      data[p[0]] = p[1]
+
+    @template data

@@ -10,25 +10,10 @@ describe "Coreon.Helpers.selectField()", ->
     helper = Coreon.Helpers.selectField
     options = {}
 
-  it 'renders a container', ->
-    markup = helper('Foo', 'bar')
-    fieldset = $(markup)
-    expect(fieldset).to.match 'div'
-
   it 'renders a select tag', ->
     markup = helper('Foo', 'bar')
     fieldset = $(markup)
     expect(fieldset).to.have 'select'
-
-  it 'renders a label', ->
-    markup = helper('Foo', 'bar')
-    fieldset = $(markup)
-    expect(fieldset).to.contain 'Foo'
-
-  it 'renders the given class name', ->
-    markup = helper('Foo', 'bar', class: 'myclass')
-    fieldset = $(markup)
-    expect(fieldset).to.match 'div.myclass'
 
   describe 'select', ->
 
@@ -72,18 +57,6 @@ describe "Coreon.Helpers.selectField()", ->
       select = $(markup).find('select')
       options = select.find('option')
       expect(options).to.have.lengthOf 2
-
-  describe 'errors', ->
-
-    it 'renders errors if any', ->
-      markup = helper('Foo', 'bar', errors: ['an error!'])
-      fieldset = $(markup)
-      expect(fieldset).to.have '.error-message'
-
-    it 'doesn\'t render errors if not any', ->
-      markup = helper('Foo', 'bar')
-      fieldset = $(markup)
-      expect(fieldset).to.not.have '.error-message'
 
 
 

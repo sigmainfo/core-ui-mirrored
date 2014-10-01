@@ -1,0 +1,5 @@
+%div{class: @class}
+  %label{for: @id}= @label
+  != @render @field_template_name, @
+  - for error in @errors
+    %p.error-message= error

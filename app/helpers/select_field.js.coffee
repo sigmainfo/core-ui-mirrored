@@ -11,4 +11,4 @@ class SelectField extends Coreon.Helpers.Field
 
 
 Coreon.Helpers.selectField = (label, name, options) ->
-  (new SelectField label, name, Coreon.Templates['forms/select_field'], options).render()
+  (new SelectField label, name, 'forms/select_field', options).render()

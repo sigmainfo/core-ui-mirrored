@@ -1,9 +1,5 @@
-%div{class: @class}
-  %label{for: @id}= @label
-  %select{name: @name, id: @id, required: @required}
-    - if @allowEmpty
-      %option
-    - for option in @options
-      %option{value: option.value}= option.label
-  - for error in @errors
-    %p.error-message= error
+%select{name: @name, id: @id, required: @required}
+  - if @allowEmpty
+    %option
+  - for option in @options
+    %option{value: option.value}= option.label

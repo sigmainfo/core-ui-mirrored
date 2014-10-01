@@ -9,6 +9,5 @@ class CheckBoxField extends Coreon.Helpers.Field
     @options = options.options || []
     @allowEmpty = options.allowEmpty || false
 
-
 Coreon.Helpers.checkBoxField = (label, name, options) ->
-  (new CheckBoxField label, name, Coreon.Templates['forms/check_box_field'], options).render()
+  (new CheckBoxField label, name, 'forms/check_box_field', options).render()
