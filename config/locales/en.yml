@@ -177,6 +177,10 @@ en:
         one: "1 error on {{name}}"
         other: "{{count}} errors on {{name}}"
 
+  forms:
+    select:
+      language: 'Language'
+
   notification:
     label:
       info: "Info:"

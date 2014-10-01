@@ -7,13 +7,5 @@
 
   != @input 'property', 'value', null, errors: @property.errors?.value, value: @property.value, scope: @scope, type: type
   - if _(@property).has 'lang'
-    != @selectField I18n.t('forms.select.languages'), name: "#{@namePrefix}[properties][#{@index}][lang]", options: @selectableLanguages
-
-  / - unless @property.type in ['boolean']
-  /   .lang
-  /     %label{for: 'property-lang'} Language
-  /     %select#property-lang{title: I18n.t 'property.language'}
-  /       %option
-  /       - for lang in Coreon.Models.RepositorySettings.languages()
-  /         %option{value: lang.key}= lang.name
+    != @selectField I18n.t('forms.select.language'), "#{@namePrefix}[properties][#{@index}][lang]", options: @selectableLanguages
 

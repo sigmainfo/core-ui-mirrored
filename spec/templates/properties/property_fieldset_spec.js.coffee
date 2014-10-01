@@ -114,12 +114,12 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     expect(el).to.contain 'Remove'
 
   it 'renders language select', ->
-    I18n.t.withArgs('forms.select.languages').returns 'Language'
+    I18n.t.withArgs('forms.select.language').returns 'Language'
     data.selectableLanguages = [value: 'en', label: 'English']
     data.index = 3
     data.namePrefix = 'concept'
     data.selectField.withArgs( 'Language'
-                        , name: 'concept[properties][3][lang]'
+                        , 'concept[properties][3][lang]'
                         , options: [value: 'en', label: 'English']
                         )
       .returns '''
@@ -131,7 +131,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     expect(el).to.have 'select#property-3-langs'
 
   it 'renders select only when applicable', ->
-    I18n.t.withArgs('forms.select.languages').returns 'Language'
+    I18n.t.withArgs('forms.select.language').returns 'Language'
     delete data.property.lang
     data.selectField.withArgs('Language')
       .returns '''

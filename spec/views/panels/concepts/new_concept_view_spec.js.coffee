@@ -4,6 +4,8 @@
 describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
 
   beforeEach ->
+    Coreon.Models.RepositorySettings = sinon.stub
+    Coreon.Models.RepositorySettings.languageOptions = -> []
     sinon.stub I18n, 't'
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
       @broaderAndNarrower = new Backbone.View options
@@ -139,6 +141,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
                         , property: property
                         , index: 0
                         , scope: 'concept[properties][]'
+                        , selectableLanguages: Coreon.Models.RepositorySettings.languageOptions()
           ).returns '''
             <input name="properties[3]"/>
           '''
