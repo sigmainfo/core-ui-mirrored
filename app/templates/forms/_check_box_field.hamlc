@@ -1,0 +1,5 @@
+%div{class: @class}
+  %label{for: @id}= @label
+  %input{type: 'checkbox', name: @name, id: @id, required: @required}
+  - for error in @errors
+    %p.error-message= error
