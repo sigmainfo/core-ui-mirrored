@@ -87,6 +87,21 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             formatted = all[0]
             expect(formatted).to.have.property 'type', 'text'
 
+          it 'fetches lang if present', ->
+            property = fakeProperty()
+            property.set 'lang', 'en'
+            properties.push property
+            all = formatter.all()
+            formatted = all[0]
+            expect(formatted).to.have.property 'lang', 'en'
+
+          it 'does not fetch lang if not present', ->
+            property = fakeProperty()
+            properties.push property
+            all = formatter.all()
+            formatted = all[0]
+            expect(formatted).to.not.have.property 'lang'
+
         context 'only blueprint defaults', ->
 
           beforeEach ->
@@ -111,6 +126,18 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             all = formatter.all()
             formatted = all[0]
             expect(formatted).to.have.property 'type', 'boolean'
+
+          it 'fetches lang if applicable', ->
+            blueprintProperties.push {key: 'test', type: 'text'}
+            all = formatter.all()
+            formatted = all[0]
+            expect(formatted).to.have.property 'lang', null
+
+          it 'does not fetch lang if not applicable', ->
+            blueprintProperties.push {key: 'test', type: 'boolean'}
+            all = formatter.all()
+            formatted = all[0]
+            expect(formatted).to.not.have.property 'lang'
 
         context 'combined with blueprint defaults', ->
 
