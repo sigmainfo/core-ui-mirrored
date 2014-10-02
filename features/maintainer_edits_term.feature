@@ -57,16 +57,11 @@ Feature: maintainer edits term
     Given client-side validation is turned off
     When I fill in "Value" with "Stetson" within term inputs
     When I fill in "Language" with "" within term inputs
-    And I click "Add property" within term inputs
-    And I fill in "Key" with "" within property inputs
     And I click "Save term"
     Then I should see an error summary
     And this summary should contain "Failed to save term:"
     And this summary should contain "1 error on lang"
-    And this summary should contain "2 errors on properties"
     And I should see error "can't be blank" for term input "Language"
-    And I should see error "can't be blank" for property input "Key" within term inputs
-    When I click "Remove property"
     And I fill in "Language" with "en" within term inputs
     And I click "Save term"
     Then I should see a term "Stetson" within language "EN"
