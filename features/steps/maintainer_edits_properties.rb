@@ -89,13 +89,18 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I see a listing "PROPERTIES" within the concept header' do
-    binding.pry
     expect(page).to have_css(".concept .properties")
   end
 
   step 'I see a property "DEFINITION" with English value "sucks blood; bat"' do
     within :table_row, 'definition' do
-      expect(page).to have_css("td .value", text: 'true')
+      expect(page).to have_css("td .value", text: 'sucks blood; bat')
+    end
+  end
+
+  step 'I see a property "DANGEROUS" that is unchecked' do
+    within :table_row, 'dangerous' do
+      expect(page).to have_css("td .value", text: 'false')
     end
   end
 end

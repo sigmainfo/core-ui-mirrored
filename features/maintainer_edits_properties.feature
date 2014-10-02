@@ -6,7 +6,6 @@ Feature: maintainer edits properties
   Background:
     Given I am logged in as maintainer of the repository
 
-  @wip
   Scenario: new concept with defaults
     Given the repository defines a blueprint for concepts
     And that blueprint defines a property "definition" of type "multiline text"
@@ -26,7 +25,7 @@ Feature: maintainer edits properties
     And I click "Create concept"
     Then I see a listing "PROPERTIES" within the concept header
     And I see a property "DEFINITION" with English value "sucks blood; bat"
-    And I see a property "DANGEROUS" that is checked
+    And I see a property "DANGEROUS" that is unchecked
 
   # @wip
   # Scenario: new concept with custom property
