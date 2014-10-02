@@ -2,4 +2,4 @@
   - if @allowEmpty
     %option
   - for option in @options
-    %option{value: option.value}= option.label
+    %option{value: option.value, selected: @value == option.value}= option.label
