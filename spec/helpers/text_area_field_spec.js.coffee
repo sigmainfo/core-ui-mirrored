@@ -34,3 +34,8 @@ describe "Coreon.Helpers.textAreaField()", ->
     markup = helper('Foo', 'bar', required: true)
     textarea = $(markup).find('textarea')
     expect(textarea).to.have.attr 'required'
+
+  it 'has content when property value not empty', ->
+    markup = helper('Foo', 'bar', value: 'This is a test.')
+    textarea = $(markup).find('textarea')
+    expect(textarea).to.contain 'This is a test.'

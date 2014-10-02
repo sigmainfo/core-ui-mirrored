@@ -1,1 +1,1 @@
-%textarea{name: @name, id: @id, required: @required}
+%textarea{name: @name, id: @id, required: @required}= @value
