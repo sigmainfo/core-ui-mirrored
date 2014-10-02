@@ -196,8 +196,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.find("form .error-summary").should have_content("1 error on properties")
   end
 
-  step 'this summary should contain "2 errors on terms"' do
-    page.find("form .error-summary").should have_content("2 errors on terms")
+  step 'this summary should contain "1 error on terms"' do
+    page.find("form .error-summary").should have_content("1 error on terms")
   end
 
   step 'I should see error "can\'t be blank" for property input "Key"' do

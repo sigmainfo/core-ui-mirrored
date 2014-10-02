@@ -76,22 +76,13 @@ Feature: maintainer creates concept
     When I visit the start page
     And I click on "New concept"
     And client-side validation is turned off
-    And I click "Add property"
-    And I fill "Value" of property with "corpse"
     And I click "Add term"
     And I fill "Value" of term with "corpse"
-    And I click "Add property" within term set
-    And I fill in "Key" with "source" for term property
     And I click "Create concept"
     Then I should see an error summary
     And this summary should contain "Failed to create concept:"
-    And this summary should contain "1 error on properties"
-    And this summary should contain "2 errors on terms"
-    And I should see error "can't be blank" for property input "Key"
+    And this summary should contain "1 error on terms"
     And I should see error "can't be blank" for term input "Language"
-    And I should see error "can't be blank" for term property input "Value"
-    When I click "Remove property" within properties of concept
-    And I click "Remove property" within properties of term
     And I fill "Language" of term with "en"
     And I click "Create concept"
     Then I should be on the new concept page
