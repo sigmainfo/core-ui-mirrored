@@ -54,12 +54,26 @@ describe 'Coreon.Helpers.Field', ->
       field = new Coreon.Helpers.Field 'foo', 'bar', field_template, options
       expect(field).to.have.property 'value', 'poo'
 
-    it 'set the class property if given', ->
+    it 'sets the default class "input"', ->
+      field = new Coreon.Helpers.Field 'foo', 'bar', field_template, options
+      expect(field).to.have.property 'class', 'input'
+
+    it 'sets the class "error" if there are errors', ->
+      options.errors = ['koo']
+      field = new Coreon.Helpers.Field 'foo', 'bar', field_template, options
+      expect(field).to.have.property 'class', 'input error'
+
+    it 'sets the class "required" if the property is required', ->
+      options.required = true
+      field = new Coreon.Helpers.Field 'foo', 'bar', field_template, options
+      expect(field).to.have.property 'class', 'input required'
+
+    it 'sets the class property if given', ->
       options.class = 'poo'
       field = new Coreon.Helpers.Field 'foo', 'bar', field_template, options
-      expect(field).to.have.property 'class', 'poo'
+      expect(field).to.have.property 'class', 'input poo'
 
-    it 'set the type property if given', ->
+    it 'sets the type property if given', ->
       options.type = 'poo'
       field = new Coreon.Helpers.Field 'foo', 'bar', field_template, options
       expect(field).to.have.property 'type', 'poo'

@@ -6,6 +6,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
   template = Coreon.Templates['properties/property_fieldset']
   data = null
   scope = null
+
   defaultLangs = [
     {
       key: 'en',
@@ -27,25 +28,22 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
   render = -> $ template data
 
   stubKey = ->
-    data.input.withArgs(
-      'property'
-      , 'key'
-      , null
-      , errors: data.property.errors?.key
-      , value: data.property.key
-      , scope: scope
+    data.textField.withArgs(
+      I18n.t('property.key'),
+      data.scope + '[properties][0][key]',
+      value: data.property.key,
+      required: true,
+      errors: data.property.errors?.key
     )
 
 
   stubValue = (type) ->
-    data.input.withArgs(
-      'property'
-      , 'value'
-      , null
-      , errors: data.property.errors?.key
-      , value: data.property.value
-      , scope: scope
-      , type: type
+    data[type].withArgs(
+      I18n.t('property.value'),
+      data.scope + '[properties][0][value]',
+      value: data.property.value,
+      required: true,
+      errors: data.property.errors?.value
     )
 
   beforeEach ->
@@ -54,10 +52,13 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     Coreon.Models.RepositorySettings.languages = -> defaultLangs
     sinon.stub I18n, 't'
     data =
+      index: 0
       input: sinon.stub()
       selectField: sinon.stub()
+      textField: sinon.stub()
+      textAreaField: sinon.stub()
+      checkBoxField: sinon.stub()
       form_options: {}
-      scope: null
       property:
         key: null
         value: null
@@ -65,7 +66,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
         type: null
         errors: []
       index: 0
-      namePrefix: ''
+      scope: 'parent'
       selectableLanguages: []
 
   afterEach ->
@@ -83,21 +84,9 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
 
   it 'renders a property value', ->
     data.property.value = 'somevalue'
-    stubValue('textarea').returns '<input name="property[value]"/>'
+    stubValue('textAreaField').returns '<input name="property[value]"/>'
     el = render()
     expect(el).to.have 'input[name="property[value]"]'
-
-  it 'renders the scope for key', ->
-    data.property.scope = 'concept[properties][]'
-    stubKey().returns '<input name="concept[properties][0][key]"/>'
-    el = render()
-    expect(el).to.have 'input[name="concept[properties][0][key]"]'
-
-  it 'renders the scope for value', ->
-    data.property.scope = 'concept[properties][]'
-    stubValue('textarea').returns '<input name="concept[properties][0][value]"/>'
-    el = render()
-    expect(el).to.have 'input[name="concept[properties][0][value]"]'
 
   it 'renders property errors', ->
     data.property.errors = {key: ['is invalid']}
@@ -117,18 +106,18 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     I18n.t.withArgs('forms.select.language').returns 'Language'
     data.selectableLanguages = [value: 'en', label: 'English']
     data.index = 3
-    data.namePrefix = 'concept'
+    data.scope = 'concept'
     data.selectField.withArgs( 'Language'
                         , 'concept[properties][3][lang]'
                         , options: [value: 'en', label: 'English']
                         )
       .returns '''
-        <select id="property-3-langs">
+        <select id="concept-properties-3-langs">
           <option value="en">English</option>
         </select>
       '''
     el = render()
-    expect(el).to.have 'select#property-3-langs'
+    expect(el).to.have 'select#concept-properties-3-langs'
 
   it 'renders select only when applicable', ->
     I18n.t.withArgs('forms.select.language').returns 'Language'
@@ -146,13 +135,13 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
 
     it 'renders a textarea by default', ->
       data.property.type = null
-      stubValue('textarea').returns('<textarea></textarea>')
+      stubValue('textAreaField').returns('<textarea></textarea>')
       el = render()
       expect(el).to.have 'textarea'
 
     it 'renders a checkbox for boolean type', ->
       data.property.type = 'boolean'
-      stubValue('checkbox').returns('<input type="checkbox"/>')
+      stubValue('checkBoxField').returns('<input type="checkbox"/>')
       el = render()
       expect(el).to.have 'input[type=checkbox]'
 

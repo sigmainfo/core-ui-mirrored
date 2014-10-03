@@ -11,12 +11,18 @@ class Coreon.Helpers.Field
     options.required ?= false
     options.errors   ?= []
 
+
     @id        = options.id
     @required  = options.required
     @errors    = options.errors
     @value     = options.value
-    @class     = options.class
     @type      = options.type
+
+    className        = 'input'
+    className        += " #{options.class}" if options.class
+    className        += ' required' if @required
+    className        += ' error' if @errors.length > 0
+    @class     = className
 
   render: ->
     data = {}
