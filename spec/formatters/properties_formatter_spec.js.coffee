@@ -139,6 +139,16 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             formatted = all[0]
             expect(formatted).to.not.have.property 'lang'
 
+          it 'fetches options from blueprint property if applicable', ->
+            blueprintProperties.push
+              key: 'test',
+              type: 'multiselect_picklist',
+              values: ['one', 'two']
+            all = formatter.all()
+            formatted = all[0]
+            expect(formatted.options[0]).to.equal 'one'
+            expect(formatted.options[1]).to.equal 'two'
+
         context 'combined with blueprint defaults', ->
 
           it 'combines a property with the relative default property', ->

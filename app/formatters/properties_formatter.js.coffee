@@ -30,6 +30,9 @@ class Coreon.Formatters.PropertiesFormatter
       if blue_prop.type in ['text', 'multiline_text']
         new_property.lang = lang
 
+      if blue_prop.type in ['multiselect_picklist']
+        new_property.options = blue_prop.values
+
       props.push new_property
 
 

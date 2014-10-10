@@ -6,6 +6,7 @@
 #= require helpers/text_field
 #= require helpers/text_area_field
 #= require helpers/check_box_field
+#= require helpers/multi_select_field
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property

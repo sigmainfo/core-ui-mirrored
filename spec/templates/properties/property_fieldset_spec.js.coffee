@@ -33,7 +33,8 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       data.scope + '[properties][0][key]',
       value: data.property.key,
       required: true,
-      errors: data.property.errors?.key
+      errors: data.property.errors?.key,
+      class: 'key'
     )
 
 
@@ -43,7 +44,19 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       data.scope + '[properties][0][value]',
       value: data.property.value,
       required: true,
-      errors: data.property.errors?.value
+      errors: data.property.errors?.value,
+      class: 'value'
+    )
+
+  stubMultiValue = (type) ->
+    data[type].withArgs(
+      I18n.t('property.value'),
+      data.scope + '[properties][0][value]',
+      value: data.property.value,
+      required: true,
+      errors: data.property.errors?.value,
+      class: 'value'
+      options: data.property.options
     )
 
   beforeEach ->
@@ -58,6 +71,7 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       textField: sinon.stub()
       textAreaField: sinon.stub()
       checkBoxField: sinon.stub()
+      multiSelectField: sinon.stub()
       form_options: {}
       property:
         key: null
@@ -110,6 +124,8 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
     data.selectField.withArgs( 'Language'
                         , 'concept[properties][3][lang]'
                         , options: [value: 'en', label: 'English']
+                        , allowEmpty: true
+                        , class: 'lang'
                         )
       .returns '''
         <select id="concept-properties-3-langs">
@@ -144,6 +160,15 @@ describe 'Coreon.Templates[properties/property_fieldset]', ->
       stubValue('checkBoxField').returns('<input type="checkbox"/>')
       el = render()
       expect(el).to.have 'input[type=checkbox]'
+
+    it 'renders nultiple checkboxs for multiselect_picklist type', ->
+      data.property.type = 'multiselect_picklist'
+      data.property.options = ['one', 'two']
+      stubMultiValue('multiSelectField').returns('<input type="checkbox" name="one"/><input type="checkbox" name="two"/>')
+      el = render()
+      options = el.find 'input[type=checkbox]'
+      expect(options).to.have.lengthOf 2
+
 
 
 
