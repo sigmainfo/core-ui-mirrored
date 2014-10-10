@@ -43,7 +43,7 @@ Coreon.Modules.PropertiesByKey =
     props
 
   # TODO 140923 [tc, ap] group by key only as different types are not allowed
-  propertiesByKeyAndType: (properties_settings) ->
+  propertiesByKeyAndType: (properties_settings, ignore_custom_properties = false) ->
     props = {}
     unused_properties = properties_settings.slice 0
 
@@ -60,13 +60,14 @@ Coreon.Modules.PropertiesByKey =
       props[key][type] ?= []
       props[key][type].push prop
 
-    for prop in unused_properties
-      props[prop.key] ?= {}
-      props[prop.key][prop.type] = []
+    unless ignore_custom_properties
+      for prop in unused_properties
+        props[prop.key] ?= {}
+        props[prop.key][prop.type] = []
 
     props
 
-  propertiesByKeyTypeAndLang: (properties_settings = []) ->
+  propertiesByKeyTypeAndLang: (properties_settings = [], ignore_custom_properties = false) ->
     props = {}
 
     if settings = Coreon.application?.repositorySettings()
@@ -76,7 +77,7 @@ Coreon.Modules.PropertiesByKey =
       sourceLang = null if sourceLang == 'none'
       targetLang = null if targetLang == 'none'
 
-    for key, types of  @propertiesByKeyAndType(properties_settings)
+    for key, types of  @propertiesByKeyAndType(properties_settings, ignore_custom_properties)
       do (key, types) ->
         for type, list of types
           do (type, list) ->

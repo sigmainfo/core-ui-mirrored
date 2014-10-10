@@ -6,7 +6,6 @@ Feature: user browses properties
   Background:
     Given I am logged in as user of the repository
 
-  @wip
   Scenario: browse concept properties
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "dangerous" of type "boolean"
@@ -23,13 +22,18 @@ Feature: user browses properties
   Scenario: browse term properties
     Given the repository defines a blueprint for term
     And that blueprint defines a property "status" of type "picklist"
+    And that blueprint defines a property "definition" of type "text"
     And that property allows values: "accepted", "forbidden", "deprecated"
     And a concept with term "vampire" exists
-    And that term has the property "status" set to "accepted"
+    And that term has the property "status" set to "pending"
+    And that term has a property "quote" set to "You drank Ian!"
     When I visit the concept details page for that concept
     And I click on toggle "PROPERTIES" inside the term "vampire"
     Then I see a listing of properties inside that term
-    And this listing contains a picklist "STATUS" with value "accepted"
+    And this listing contains a picklist "STATUS" with value "pending"
+    And this listing contains a property "quote"
+    But I do not see a property "DEFINITION"
+
 
   Scenario: browse multilang property
     Given a concept "Vampire" exists
