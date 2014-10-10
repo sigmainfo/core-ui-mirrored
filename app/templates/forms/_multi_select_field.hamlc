@@ -1,0 +1,7 @@
+%ul
+  - for option, index in @options
+    %li
+      %label{for: "#{@id}_#{index}"}= option
+      %input{type: 'checkbox', name: "#{@name}[]", id: "#{@id}_#{index}", value: option}
+
+

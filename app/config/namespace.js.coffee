@@ -23,3 +23,4 @@ Coreon.Views.Concepts                    ?= {}
 Coreon.Views.Concepts.Shared             ?= {}
 Coreon.Views.Properties                  ?= {}
 Coreon.Views.Terms                       ?= {}
+Coreon.Formatters                        ?= {}

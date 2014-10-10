@@ -62,20 +62,6 @@ Feature: maintainer edits concept
     And I click "Remove property" on the new entry
     Then I should see only one property
 
-  Scenario: validation errors
-    When client-side validation is turned off
-    And I toggle "EDIT MODE"
-    And I click "Edit properties"
-    And I change "Key" of property to ""
-    And I click "Add property"
-    And I click "Save concept"
-    Then I should see an error summary
-    And this summary should contain "Failed to save concept:"
-    And this summary should contain "3 errors on properties"
-    And I should see error "can't be blank" for input "Key" of existing property
-    And I should see error "can't be blank" for input "Key" of new property
-    And I should see error "can't be blank" for input "Value" of new property
-
   Scenario: not a maintainer
     Given I am no maintainer of the repository
     And I visit the page of this concept

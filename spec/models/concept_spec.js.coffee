@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require models/concept
+#= require models/repository_settings
 
 describe 'Coreon.Models.Concept', ->
 
@@ -648,3 +649,48 @@ describe 'Coreon.Models.Concept', ->
         new Backbone.Model value: "C'est ne pas un pipe"
        ]
       expect( @model.definition() ).to.equal 'Eine Rose'
+
+  describe '#propertiesWithDefaults()', ->
+
+    modelProperties = null
+    propertiesFor = null
+    formatter = null
+
+    fakeBlueprintProperties = ->
+      [key: 'label']
+    
+    fakeProperties = ->
+      [new Backbone.Model]
+
+    fakeFormattedProperties = ->
+      [model: new Backbone.Model]
+
+    beforeEach ->
+      formatter = all: ->
+      sinon.stub Coreon.Formatters, 'PropertiesFormatter', -> formatter
+      propertiesFor = sinon.stub Coreon.Models.RepositorySettings, 'propertiesFor'
+      propertiesFor.returns []
+      @model.properties = -> []
+
+    afterEach ->
+      Coreon.Formatters.PropertiesFormatter.restore()
+      Coreon.Models.RepositorySettings.propertiesFor.restore()
+
+    it 'creates a formatter instance', ->
+      blueprintProperties = fakeBlueprintProperties()
+      propertiesFor.withArgs('concept').returns blueprintProperties
+      modelProperties = fakeProperties()
+      @model.properties = -> modelProperties
+      @model.propertiesWithDefaults()
+      constructor = Coreon.Formatters.PropertiesFormatter
+      expect(constructor).to.have.been.calledOnce
+      expect(constructor).to.have.been.calledWithNew
+      expect(constructor).to.have.been.calledWith blueprintProperties, modelProperties
+
+    it 'returns listing of all properties for display', ->
+      formattedProperties = fakeFormattedProperties()
+      formatter.all = ->
+        formattedProperties
+      result = @model.propertiesWithDefaults()
+      expect(result).to.equal formattedProperties
+

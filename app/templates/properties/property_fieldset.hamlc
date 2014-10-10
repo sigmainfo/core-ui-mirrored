@@ -1,0 +1,18 @@
+- name = if @scope? then "#{@scope}[properties][#{@index}]" else "properties[#{@index}]"
+%fieldset.property
+  %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
+
+  != @textField I18n.t('property.key'), "#{name}[key]", value: @property?.key, required: true, errors: @property?.errors?.key, class: 'key'
+
+  - switch @property?.type
+    - when 'boolean'
+      != @checkBoxField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value'
+    - when 'multiselect_picklist'
+      != @multiSelectField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value', options: @property?.options
+    - else
+      != @textAreaField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value'
+
+
+  - if (!@property?) || _(@property).has 'lang'
+    != @selectField I18n.t('forms.select.language'), "#{name}[lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
+

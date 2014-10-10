@@ -3,7 +3,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   include AuthSteps
   include SearchSteps
   include EditSteps
-
+  include BlueprintSteps
 
   step 'I visit the start page' do
     visit "/#{current_repository.id}"
@@ -131,6 +131,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should see a property "LABEL" with value "dead man"' do
+    page.execute_script %|$(window).scrollTop(500)|
     page.should have_css(".properties th", text: "LABEL")
     page.find(:xpath, "//th[text() = 'label']/following-sibling::td").text.should == "dead man"
   end
@@ -162,7 +163,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
       fill_in "Value", with: "Wikipedia"
     end
   end
-
 
   step 'I fill "Value" of property with "corpse"' do
     within ".property" do
@@ -196,8 +196,8 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     page.find("form .error-summary").should have_content("1 error on properties")
   end
 
-  step 'this summary should contain "2 errors on terms"' do
-    page.find("form .error-summary").should have_content("2 errors on terms")
+  step 'this summary should contain "1 error on terms"' do
+    page.find("form .error-summary").should have_content("1 error on terms")
   end
 
   step 'I should see error "can\'t be blank" for property input "Key"' do

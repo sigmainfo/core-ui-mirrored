@@ -34,6 +34,12 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
   @propertyFor: (entity, key) ->
     instance.propertyFor entity, key
 
+  @languages: ->
+    instance.languages()
+
+  @languageOptions: ->
+    instance.languageOptions()
+
   defaults:
     blueprints: null
 
@@ -48,6 +54,14 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
 
   propertyFor: (entity, key) ->
     _.findWhere @propertiesFor(entity), key: key
+
+  languages: ->
+    @get 'languages'
+
+  languageOptions: ->
+    return [] unless @get('languages')?
+    @get('languages').map (lang) ->
+      {value: lang.key, label: lang.name}
 
 
 

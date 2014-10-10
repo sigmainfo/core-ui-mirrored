@@ -54,6 +54,16 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
     concepts["#{concept['id']}/terms"].post term: @term_attrs
   end
 
+  step 'that term has the property "status" set to "pending"' do
+    @term_properties = [{key: 'status', value: 'pending'}]
+  end
+
+  step 'that term has a property "quote" set to "You drank Ian!"' do
+    @term_properties << {key: 'quote', value: "You drank Ian!"}
+    @term_attrs['properties'] = { "" => @term_properties }
+    concepts["#{concept['id']}/terms"].post term: @term_attrs
+  end
+
   step 'that concept has the property "dangerous" set to be true' do
     concepts["#{concept['id']}/properties"].post property: { key: 'dangerous', value: true }
   end
@@ -111,6 +121,10 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I do not see a property "DEFINITION"' do
+    expect(page).to_not have_selector :table_row, 'definition'
+  end
+
   step 'I click on "EN" then I see "corpse that drinks blood of the living"' do
     within :table_row, 'definition' do
       page.find("li", text: 'EN').click
@@ -143,6 +157,18 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   step 'this listing contains a picklist "STATUS" with value "accepted"' do
     within @term_properties do
       expect(page).to have_css('tr .value .picklist-item', text: 'accepted')
+    end
+  end
+
+  step 'this listing contains a picklist "STATUS" with value "pending"' do
+    within @term_properties do
+      expect(page).to have_css('tr .value .picklist-item', text: 'pending')
+    end
+  end
+
+  step 'this listing contains a property "quote"' do
+    within :table_row, 'quote' do
+      expect(page).to have_css("td .value", text: 'You drank Ian!')
     end
   end
 

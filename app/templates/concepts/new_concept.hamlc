@@ -3,9 +3,9 @@
   - for scid in @concept.get("superconcept_ids")
     %input( type="hidden" name="concept[superconcept_ids][]" value="#{scid}" )
   %section.properties
-    %h3= I18n.t "properties.title"
-    - for property, index in @concept.properties().models
-      != @render "properties/new_property", index: index, property: property, errors: @concept.errors()?.nested_errors_on_properties?[index]
+    %h3= I18n.t 'properties.title'
+    - for property, index in @concept.propertiesWithDefaults()
+      != @render 'properties/property_fieldset', property: property, index: index, scope: 'concept', selectableLanguages: @selectableLanguages
     .add
       .edit
         %a.add-property{href: "javascript:void(0)", "data-scope": "concept[properties][]", "data-index": @concept.get("properties").length}= I18n.t "properties.add"

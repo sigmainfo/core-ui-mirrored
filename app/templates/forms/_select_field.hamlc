@@ -1,0 +1,5 @@
+%select{name: @name, id: @id, required: @required}
+  - if @allowEmpty
+    %option{value: ''}= I18n.t('languages.none')
+  - for option in @options
+    %option{value: option.value, selected: @value == option.value}= option.label

@@ -17,6 +17,7 @@ class Input
     options.required ?= false
     options.scope    ?= @name
     options.errors   ?= @model?.errors?()?[@attr] or []
+    options.value    ?= if @model? then @model.get @attr else ""
 
     options.scope   = options.scope.replace "[]", "[#{options.index}]" if options.index?
     dasherizedAttr  = @attr.replace /[A-Z]/g, (glyph) -> "-#{glyph.toLowerCase()}"
@@ -32,7 +33,7 @@ class Input
     @required  = options.required
     @inputName = "#{options.scope}[#{@attr}]"
     @inputId   = "#{dasherizedScope}-#{dasherizedAttr}"
-    @value     = if @model? then @model.get @attr else ""
+    @value     = options.value
     @label     = options.label or I18n.t "#{@name}.#{underscoredAttr}"
     @errors    = options.errors
 

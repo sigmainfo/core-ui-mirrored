@@ -3,6 +3,11 @@
 #= require helpers/can
 #= require helpers/form_for
 #= require helpers/input
+#= require helpers/select_field
+#= require helpers/text_field
+#= require helpers/text_area_field
+#= require helpers/check_box_field
+#= require helpers/multi_select_field
 #= require templates/panels/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info

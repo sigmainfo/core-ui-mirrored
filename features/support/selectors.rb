@@ -52,6 +52,38 @@ Capybara.add_selector(:term) do
   end
 end
 
+Capybara.add_selector(:form) do
+  xpath do |submit|
+    """
+    .//form
+      [
+        .//button
+          [
+            @type = 'submit'
+            and
+            normalize-space() = '#{submit}'
+          ]
+      ]
+    """
+  end
+end
+
+Capybara.add_selector(:section) do
+  xpath do |title|
+    """
+      .//section
+        [
+          .//*
+            [
+              translate( local-name(), '123456', '******' ) = 'h*'
+              and
+              normalize-space() = '#{title}'
+            ]
+        ]
+    """
+  end
+end
+
 module Selectors
 
   def concept_properties
@@ -62,5 +94,12 @@ module Selectors
     within concept_properties do
       page.find(:table_row, label.downcase)
     end
+  end
+
+  def fieldset_with(label, value = '')
+    all_fields = page.all :field, label
+    field = all_fields.select { |f| f.value == value }.first
+    expect(field).to have_xpath('ancestor::fieldset')
+    field.find :xpath, 'ancestor::fieldset'
   end
 end
