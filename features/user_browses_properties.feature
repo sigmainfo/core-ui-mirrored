@@ -6,6 +6,7 @@ Feature: user browses properties
   Background:
     Given I am logged in as user of the repository
 
+  @wip
   Scenario: browse concept properties
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "dangerous" of type "boolean"
@@ -16,8 +17,8 @@ Feature: user browses properties
     When I visit the concept details page for that concept
     And I look at the properties inside the concept header
     Then I see a property "DANGEROUS" that is checked
-    And I see a property "DEFINITION" that is empty
     And I see a property "ALIAS" with value "Lamia"
+    But I do not see a property "DEFINITION"
 
   Scenario: browse term properties
     Given the repository defines a blueprint for term
