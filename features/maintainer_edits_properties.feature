@@ -95,17 +95,51 @@ Feature: maintainer edits properties
     And I see a fieldset "SOURCE" within this section
     And I see an input with "bloodbathproject.com"
     When I click on "Add value" inside "SOURCE"
-    And I fill in the empty input with "http://en.wikipedia.org/wiki/Bloodbath"
+    And I fill in the empty input with "wikipedia.org/wiki/Bloodbath"
     And I click "Update term"
     Then I see term "bloodbath" within language section "EN"
     When I toggle "Properties" within this term
     Then I see a property "SOURCE" with 2 values
     When I click "2"
-    Then I see a link "http://en.wikipedia.org/wiki/Bloodbath"
+    Then I see a link "wikipedia.org/wiki/Bloodbath"
 
-  # TODO 141013 [tc] adapt to new functionality
-  # TODO 141013 [tc] delete optional property
-  # TODO 141013 [tc] delete multi-value
+  @wip
+  Scenario: delete optional property
+    Given the repository defines a blueprint for concepts
+    And that blueprint allows a property "status" of type "picklist"
+    And that property allows values: "pending", "accepted", "forbidden"
+    And a concept "Bloodbath" exists
+    And that concept has a property "status" with value "forbidden"
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a form "Save concept"
+    And I see a fieldset "STATUS" within this form
+    And this fieldset contains a dropdown with selection "forbidden"
+    When I click on "Delete property" within "STATUS"
+    And I click "Save concept"
+    Then I see a listing "PROPERTIES" within the concept header
+    But I do not see "STATUS" or "forbidden"
+
+  @wip
+  Scenario: delete value from property
+    Given the repository defines a blueprint for concepts
+    And that blueprint allows a property "quote" of type "multiline text"
+    And a concept "Bloodbath" exists
+    And that concept has a property "quote" with value "That was visual."
+    And that concept has a property "quote" with value "You drank Ian!"
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a form "Save concept"
+    And I see a fieldset "QUOTE" within this form
+    And I see 2 text areas within "QUOTE"
+    When I click on "Delete value" for "You drank Ian!"
+    Then I do not see a button "Delete value" for "That was visual."
+    When I click "Save concept"
+    Then I see a listing "PROPERTIES" within the concept header
+    And I see a property "QUOTE" with "That was visual."
+    But I do not see "You drank Ian!"
 
   @wip
   Scenario: delete deprecated concept property
@@ -114,11 +148,9 @@ Feature: maintainer edits properties
     And a concept "Bloodbath" exists
     And that concept has a property "rating" with value "+++++"
     When I edit that concept
-    And I click on "Edit properties"
-    Then I see a form "Save concept"
-    And I see a fieldset "RATING" that is not editable
-    When I click on "Delete property"
-    And I click "Save concept"
+    Then I see a deprecated property "RATING"
+    When I click on "Delete property" within "RATING"
+    Then I see a confirmation dialog
+    When I click "Delete" to confirm
     Then I see a listing "PROPERTIES" within the concept header
     But I do not see "RATING" or "+++++"
-
