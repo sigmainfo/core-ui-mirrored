@@ -66,7 +66,49 @@ Feature: maintainer edits properties
     And I see a property "TAGS" with values "cool", "night life" only
 
   @wip
-  Scenario: edit deprecated concept property
+  Scenario: ensure non-blank property on new term
+    Given the repository defines a blueprint for terms
+    And that blueprint requires a property "author" of type "text"
+    And a concept "Bloodbath" exists
+    When I edit that concept
+    And I click "Add term"
+    Then I see a section "PROPERTIES" within the form "Add term"
+    When I fill in "Blutbad" for "VALUE"
+    And I select "de" for "LANGUAGE"
+    Then the submit "Add term" is disabled
+    When I fill in "Rüdiger von Schlotterstein" for "AUTHOR"
+    Then the submit "Add term" is enabled
+    When I click "Add term"
+    Then I see term "Blutbad" within language section "DE"
+    When I toggle "Properties" within this term
+    Then I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"
+
+  @wip
+  Scenario: add another value when editing term
+    Given the repository defines a blueprint for terms
+    And that blueprint requires a property "source" of type "text"
+    And a concept with English term "bloodbath" exists
+    And that term has a property "source" of "bloodbathproject.com"
+    When I edit that concept
+    And I click "Edit term" within the term "bloodbath"
+    Then I see a section "PROPERTIES" within the form "Update term"
+    And I see a fieldset "SOURCE" within this section
+    And I see an input with "bloodbathproject.com"
+    When I click on "Add value" inside "SOURCE"
+    And I fill in the empty input with "http://en.wikipedia.org/wiki/Bloodbath"
+    And I click "Update term"
+    Then I see term "bloodbath" within language section "EN"
+    When I toggle "Properties" within this term
+    Then I see a property "SOURCE" with 2 values
+    When I click "2"
+    Then I see a link "http://en.wikipedia.org/wiki/Bloodbath"
+
+  # TODO 141013 [tc] adapt to new functionality
+  # TODO 141013 [tc] delete optional property
+  # TODO 141013 [tc] delete multi-value
+
+  @wip
+  Scenario: delete deprecated concept property
     Given the repository defines a blueprint for concepts
     And that blueprint does not require any properties
     And a concept "Bloodbath" exists
@@ -80,41 +122,3 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     But I do not see "RATING" or "+++++"
 
-  @wip
-  Scenario: ensure non-blank property on new term
-    Given the repository defines a blueprint for terms
-    And that blueprint requires a property "author" of type "text"
-    And a concept "Bloodbath" exists
-    When I edit that concept
-    And I click "Add term"
-    Then I see a section "PROPERTIES" within the form "Add term"
-    When I fill in "Blutbad" for "VALUE"
-    And I select "de" for "LANGUAGE"
-    And I click "Add property" within this form
-    Then the submit "Add term" is disabled
-    When I fill in "Rüdiger von Schlotterstein" for "AUTHOR"
-    Then the submit "Add term" is enabled
-    When I click "Add term"
-    Then I see term "Blutbad" within language section "DE"
-    When I toggle "Properties" within this term
-    Then I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"
-
-  @wip
-  Scenario: add another value when editing term
-    Given the repository defines a blueprint for terms
-    And that blueprint defines a property "source" of type "url"
-    And a concept with English term "bloodbath" exists
-    And that term has a property "source" of "http://bloodbathproject.com"
-    When I edit that concept
-    And I click "Edit term" within the term "bloodbath"
-    Then I see a section "PROPERTIES" within the form "Update term"
-    And I see a fieldset "SOURCE" within this section
-    And I see an input with "bloodbathproject.com"
-    When I click on "Add value" inside "SOURCE"
-    And I fill in the empty input with "http://en.wikipedia.org/wiki/Bloodbath"
-    And I click "Update term"
-    Then I see term "bloodbath" within language section "EN"
-    When I toggle "Properties" within this term
-    Then I see a property "SINCE" with 2 values
-    When I click "2"
-    Then I see a link "http://en.wikipedia.org/wiki/Bloodbath"
