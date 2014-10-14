@@ -43,6 +43,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
+    binding.pry
     within :form, 'Create concept' do
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible

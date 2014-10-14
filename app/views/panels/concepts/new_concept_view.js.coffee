@@ -13,6 +13,7 @@
 #= require templates/properties/property_fieldset
 #= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
+#= require views/properties/edit_properties_view
 #= require models/concept
 #= require models/notification
 #= require jquery.serializeJSON
@@ -42,11 +43,16 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @app = options.app or Coreon.application
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
+    @editProperties = new Coreon.Views.Properties.EditPropertiesView
+      collection: @model.propertiesWithDefaults()
 
   render: ->
     @termCount = if @model.has("terms") then @model.get("terms").length else 0
     @$el.html @template concept: @model, selectableLanguages: Coreon.Models.RepositorySettings.languageOptions()
-    @broaderAndNarrower.render() unless @_wasRendered
+    unless @_wasRendered
+      @broaderAndNarrower.render()
+      @editProperties.setElement(@$('section.properties'))
+      @editProperties.render()
     @$("form").before @broaderAndNarrower.$el
     @_wasRendered = true
     @

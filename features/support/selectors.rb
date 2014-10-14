@@ -84,6 +84,20 @@ Capybara.add_selector(:section) do
   end
 end
 
+Capybara.add_selector(:fieldset_with_name) do
+  xpath do |name|
+    """
+      .//fieldset
+        [
+          translate( local-name(), '123456', '******' ) = 'h*'
+          and
+          normalize-space() = '#{name}'
+        ]
+    """
+  end
+end
+
+
 module Selectors
 
   def concept_properties

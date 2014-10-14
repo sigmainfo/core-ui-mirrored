@@ -9,19 +9,24 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
     sinon.stub I18n, 't'
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
       @broaderAndNarrower = new Backbone.View options
-    @view = new Coreon.Views.Panels.Concepts.NewConceptView
-      model: new Backbone.Model
+    sinon.stub Coreon.Views.Properties, 'EditPropertiesView', (options) =>
+      @editProperties = new Backbone.View options
+    @model = new Backbone.Model
         properties: []
         terms: []
         superconcept_ids: []
+    @propertiesWithDefaults = []
+    @model.propertiesWithDefaults = -> @propertiesWithDefaults
+    @view = new Coreon.Views.Panels.Concepts.NewConceptView
+      model: @model
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
-    @view.model.propertiesWithDefaults = -> []
 
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
+    Coreon.Views.Properties.EditPropertiesView.restore()
 
   it 'is a Backbone view', ->
     @view.should.be.an.instanceof Backbone.View
@@ -42,6 +47,11 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
       should.exist @view.broaderAndNarrower
       @view.broaderAndNarrower.should.equal @broaderAndNarrower
       @view.broaderAndNarrower.should.have.property 'model', @view.model
+
+    it 'creates view for concept properties editing', ->
+      should.exist @view.editProperties
+      @view.editProperties.should.equal @editProperties
+      @view.editProperties.should.have.property 'collection', @view.model.propertiesWithDefaults()
 
   describe '#render()', ->
 
@@ -91,62 +101,73 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
       properties = (el) ->
         el.find 'section.properties'
 
-      it 'renders container', ->
+      it 'renders property edit view', ->
+        @view.editProperties.render = sinon.spy()
         @view.render()
-        expect(properties @view.$el).to.exist
+        expect(@view.editProperties.render).to.have.been.calledOnce
 
-      it 'renders title', ->
-        I18n.t.withArgs('properties.title').returns 'Properties'
+      it 'renders property edit view only once', ->
+        @view.editProperties.render = sinon.spy()
         @view.render()
-        header = properties(@view.$el).find 'h3'
-        expect(header).to.exist
-        expect(header).to.have.text 'Properties'
+        @view.render()
+        expect(@view.editProperties.render).to.have.been.calledOnce
 
-      context 'add property link', ->
+      # it 'renders container', ->
+      #   @view.render()
+      #   expect(properties @view.$el).to.exist
 
-        link = (el) ->
-          properties(el).find '.add-property'
+      # it 'renders title', ->
+      #   I18n.t.withArgs('properties.title').returns 'Properties'
+      #   @view.render()
+      #   header = properties(@view.$el).find 'h3'
+      #   expect(header).to.exist
+      #   expect(header).to.have.text 'Properties'
 
-        it 'renders link for adding a property', ->
-          I18n.t.withArgs('properties.add').returns 'Add Property'
-          @view.render()
-          expect(link @view.$el).to.exist
-          expect(link @view.$el).to.have.text 'Add Property'
-          expect(link @view.$el).to.have.data 'scope'
+      # context 'add property link', ->
 
-        it 'renders next index on link', ->
-          @view.model.set 'properties', [ {}, {}, {} ], silent: yes
-          @view.render()
-          expect(link @view.$el).to.have.data 'index', 3
+      #   link = (el) ->
+      #     properties(el).find '.add-property'
 
-      context 'fieldset', ->
+      #   it 'renders link for adding a property', ->
+      #     I18n.t.withArgs('properties.add').returns 'Add Property'
+      #     @view.render()
+      #     expect(link @view.$el).to.exist
+      #     expect(link @view.$el).to.have.text 'Add Property'
+      #     expect(link @view.$el).to.have.data 'scope'
 
-        propertiesWithDefaults = null
-        render = null
+      #   it 'renders next index on link', ->
+      #     @view.model.set 'properties', [ {}, {}, {} ], silent: yes
+      #     @view.render()
+      #     expect(link @view.$el).to.have.data 'index', 3
 
-        beforeEach ->
-          render = sinon.stub Coreon.Helpers, 'render'
-          propertiesWithDefaults = sinon.stub @view.model
-                                            , 'propertiesWithDefaults'
-          propertiesWithDefaults.returns []
+      # context 'fieldset', ->
 
-        afterEach ->
-          Coreon.Helpers.render.restore()
+      #   propertiesWithDefaults = null
+      #   render = null
 
-        it 'renders input for each property', ->
-          property =
-            model: new Backbone.Model
-          propertiesWithDefaults.returns [property]
-          render.withArgs('properties/property_fieldset'
-                        , property: property
-                        , index: 0
-                        , scope: 'concept'
-                        , selectableLanguages: Coreon.Models.RepositorySettings.languageOptions()
-          ).returns '''
-            <input name="properties[3]"/>
-          '''
-          @view.render()
-          expect(properties @view.$el).to.have 'input[name="properties[3]"]'
+      #   beforeEach ->
+      #     render = sinon.stub Coreon.Helpers, 'render'
+      #     propertiesWithDefaults = sinon.stub @view.model
+      #                                       , 'propertiesWithDefaults'
+      #     propertiesWithDefaults.returns []
+
+      #   afterEach ->
+      #     Coreon.Helpers.render.restore()
+
+      #   it 'renders input for each property', ->
+      #     property =
+      #       model: new Backbone.Model
+      #     propertiesWithDefaults.returns [property]
+      #     render.withArgs('properties/property_fieldset'
+      #                   , property: property
+      #                   , index: 0
+      #                   , scope: 'concept'
+      #                   , selectableLanguages: Coreon.Models.RepositorySettings.languageOptions()
+      #     ).returns '''
+      #       <input name="properties[3]"/>
+      #     '''
+      #     @view.render()
+      #     expect(properties @view.$el).to.have 'input[name="properties[3]"]'
 
     context 'terms', ->
 
