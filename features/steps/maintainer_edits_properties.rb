@@ -17,6 +17,27 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: { key: 'dangerous', type: 'boolean' }
   end
 
+  step 'that blueprint requires a property "short description" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'short description',
+      type: 'text',
+      required: true
+    }
+  end
+
+  step 'that blueprint requires a property "dangerous" of type "boolean"' do
+    @property_attrs = {
+      key: 'dangerous',
+      type: 'boolean',
+      required: true
+    }
+  end
+
+  step 'that property defines labels "yes" and "no"' do
+    @property_attrs[:labels] = ["yes", "no"]
+    @blueprint['properties'].post property: @property_attrs
+  end
+
   step 'I click on "New concept"' do
     click_link "New concept"
   end
@@ -32,6 +53,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     within @section do
       @fieldset_definition = fieldset_with 'Key', 'definition'
       expect(@fieldset_definition).to be_visible
+    end
+  end
+
+  step 'I see a fieldset "SHORT DESCRIPTION" within this section' do
+    within @section do
+      binding.pry
+      @fieldset_short_descr = page.find :fieldset_with_name, "SHORT DESCRIPTION"
+      expect(@fieldset_short_descr).to be_visible
     end
   end
 
