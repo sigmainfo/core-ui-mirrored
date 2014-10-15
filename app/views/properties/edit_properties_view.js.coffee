@@ -6,5 +6,5 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
   template: Coreon.Templates["properties/edit_properties"]
 
   render: ->
-    @$el.html @template()
+    @$el.html @template(properties: collection)
     @

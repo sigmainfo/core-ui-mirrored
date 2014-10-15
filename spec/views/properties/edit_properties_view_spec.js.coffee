@@ -7,7 +7,6 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
   collection  = null
 
   beforeEach ->
-    collection = []
     view = new Coreon.Views.Properties.EditPropertiesView
       collection: collection
 
@@ -16,6 +15,4 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
 
   it 'has a template', ->
     view.should.have.property 'template'
-
-  describe '#render()', ->
 

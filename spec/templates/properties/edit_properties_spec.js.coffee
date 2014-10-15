@@ -12,9 +12,8 @@ describe 'Coreon.Templates[properties/edit_properties]', ->
   beforeEach ->
     i18n = sinon.stub I18n, 't'
     i18n.withArgs('properties.title').returns('Properties')
-  #   data =
-  #     value: 'foo'
-  #     type: 'text'
+    data =
+      properties: []
 
   afterEach ->
     I18n.t.restore()
@@ -22,3 +21,8 @@ describe 'Coreon.Templates[properties/edit_properties]', ->
   it 'renders a title', ->
     el = render()
     expect(el).to.contain I18n.t('properties.title')
+
+  it 'renders property fieldsets', ->
+    data.properties = [{}, {}]
+    el = render()
+    expect(el).to.have 'fieldset'
