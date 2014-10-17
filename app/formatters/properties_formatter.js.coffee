@@ -47,4 +47,13 @@ class Coreon.Formatters.PropertiesFormatter
 
     props
 
+  groupedByKey: ->
+    grouped = {}
+
+    for property in @all()
+      grouped[property.key] ?= []
+      grouped[property.key].push property
+
+    grouped
+
 

@@ -658,15 +658,15 @@ describe 'Coreon.Models.Concept', ->
 
     fakeBlueprintProperties = ->
       [key: 'label']
-    
+
     fakeProperties = ->
       [new Backbone.Model]
 
     fakeFormattedProperties = ->
-      [model: new Backbone.Model]
+      [{}]
 
     beforeEach ->
-      formatter = all: ->
+      formatter = groupedByKey: ->
       sinon.stub Coreon.Formatters, 'PropertiesFormatter', -> formatter
       propertiesFor = sinon.stub Coreon.Models.RepositorySettings, 'propertiesFor'
       propertiesFor.returns []
@@ -689,7 +689,7 @@ describe 'Coreon.Models.Concept', ->
 
     it 'returns listing of all properties for display', ->
       formattedProperties = fakeFormattedProperties()
-      formatter.all = ->
+      formatter.groupedByKey = ->
         formattedProperties
       result = @model.propertiesWithDefaults()
       expect(result).to.equal formattedProperties

@@ -234,6 +234,26 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             all = formatter.all()
             expect(propertyKeys all).to.eql ['definition', 'author', 'label', 'ISBN']
 
+    describe "#groupedByKey()", ->
+
+      it 'groups properties by key', ->
+        fakeProperties properties, [
+          {key: 'label', value: 'first label'},
+          {key: 'label', value: 'second label'},
+          {key: 'definition', value: 'first definition'},
+          {key: 'definition', value: 'second definition'},
+          {key: 'definition', value: 'third definition'},
+        ]
+        fakeBlueprintProperties blueprintProperties, [
+          {key: 'label', type: 'text'},
+          {key: 'definition', type: 'text'}
+        ]
+        grouped = formatter.groupedByKey()
+        expect(grouped).to.have.property 'label'
+        expect(grouped).to.have.property 'definition'
+        expect(grouped.label).to.have.lengthOf 2
+        expect(grouped.definition).to.have.lengthOf 3
+
   context "with errors", ->
 
     describe "#all()", ->
