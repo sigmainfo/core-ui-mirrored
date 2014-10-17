@@ -5,55 +5,38 @@ class Coreon.Formatters.PropertiesFormatter
   all: ->
 
     props = []
-    unused_properties = @properties.slice 0
 
     for blue_prop in @blueprint_properties
-      property = _.find @properties, (p) -> p.get('key') == blue_prop.key
-      value = blue_prop.default
-      errors = {}
-      lang = null
+      found_properties = _.filter @properties, (p) -> p.get('key') == blue_prop.key
+      properties = []
 
-      if property
-        value = property.get 'value'
-        lang = property.get 'lang'
-        unused_index = unused_properties.indexOf property
-        unused_properties.splice unused_index, 1
+      for property in found_properties
         index = @properties.indexOf property
-        errors = @errors[index] || {}
+        new_property =
+          value: property.get 'value'
+          errors: @errors[index] || {}
+        if blue_prop.type in ['text', 'multiline_text']
+          new_property.lang = property.get 'lang'
+        properties.push new_property
 
-      new_property =
-        value: value
-        type: blue_prop.type
+      if _.isEmpty properties
+        new_property =
+          value: blue_prop.default
+          errors: {}
+        if blue_prop.type in ['text', 'multiline_text']
+          new_property.lang = null
+        properties.push new_property
+
+      new_formatted_property =
         key: blue_prop.key
-        errors: errors
-
-      if blue_prop.type in ['text', 'multiline_text']
-        new_property.lang = lang
+        type: blue_prop.type
+        properties: properties
 
       if blue_prop.type in ['multiselect_picklist']
-        new_property.options = blue_prop.values
+        new_formatted_property.values = blue_prop.values
 
-      props.push new_property
-
-
-    for property in unused_properties
-      index = @properties.indexOf property
-      props.push
-        value: property.get 'value'
-        type: 'text'
-        key: property.get 'key'
-        lang: property.get 'lang'
-        errors: @errors[index] || {}
+      props.push new_formatted_property
 
     props
-
-  groupedByKey: ->
-    grouped = {}
-
-    for property in @all()
-      grouped[property.key] ?= []
-      grouped[property.key].push property
-
-    grouped
 
 
