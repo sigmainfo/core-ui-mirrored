@@ -7,6 +7,8 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
   view = null
   el = null
   model = null
+  index = 0
+  scopePrefix = null
 
   beforeEach ->
     sinon.stub I18n, 't'
@@ -22,10 +24,27 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model
     expect(view).to.have.property 'template'
 
+  it 'accepts extra options', ->
+    view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 2, scopePrefix: 'concept'
+    expect(view).to.have.property 'index', 2
+    expect(view).to.have.property 'scopePrefix', 'concept'
+
+  it 'creates a name for the field', ->
+    view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 2
+    expect(view).to.have.property 'name', 'properties[2]'
+
+  it 'creates a name for the field', ->
+    view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 2
+    expect(view).to.have.property 'name', 'properties[2]'
+
+  it 'creates a name for the field using scopePrefix if given', ->
+    view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 3, scopePrefix: 'concept'
+    expect(view).to.have.property 'name', 'concept[properties][3]'
+
   describe '#render()', ->
 
     renderView = ->
-      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
       view.render()
       view.$el
 
@@ -38,16 +57,13 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             lang: 'en'
             errors: {}
           ]
+      options =
+        index: 0
+        scopePrefix: null
 
     it 'renders container', ->
       el = renderView()
       expect(el).to.match 'fieldset.property'
-
-    it 'renders the property key as a title', ->
-      model.key = 'my_key'
-      el = renderView()
-      title = el.find 'h2'
-      expect(title).to.contain 'my_key'
 
     it 'renders the property key as a title', ->
       model.key = 'my_key'
@@ -61,16 +77,79 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       removeLink = el.find 'a.remove-property'
       expect(removeLink).to.contain 'Remove'
 
-    describe 'renders the proper input for value according to property type', ->
-
-      it 'renders a text input field for type text', ->
-        model.type = 'text'
-        fail
-
-
     xit 'renders property errors', ->
       model.errors = {value: ['is invalid']}
       el = renderView()
       expect(el).to.contain 'is invalid'
+
+    describe 'renders the proper input for value according to property type', ->
+
+      context 'text fields', ->
+
+        beforeEach ->
+          Coreon.Models.RepositorySettings = sinon.stub
+          Coreon.Models.RepositorySettings.languageOptions = ->
+            [
+              {value: 'en', label: 'English'},
+              {value: 'de', label: 'German'},
+              {value: 'fr', label: 'French'}
+            ]
+          textFieldStub = sinon.stub(Coreon.Helpers, 'textField')
+          sinon.stub(Coreon.Helpers, 'selectField').returns('select')
+            # '''
+            #   <select>
+            #     <option value="en">English</option>
+            #     <option value="de">German</option>
+            #     <option value="fr">French</option>
+            #   </select>
+            # '''
+
+
+        afterEach ->
+          Coreon.Helpers.textField.restore()
+          Coreon.Helpers.selectField.restore()
+
+        it 'renders a text input field for type text', ->
+          textFieldStub.withArgs(
+            null,
+            'properties[0][0][value]',
+            value: 'car',
+            required: true, errors: {}, class: 'value'
+          ).returns('<input type="text"></input>')
+          model.type = 'text'
+          el = renderView()
+          expect(el).to.have 'input[type=text]'
+          expect(el).to.have 'select'
+
+        it 'renders multiple text input fields when given', ->
+          textFieldStub = sinon.stub(Coreon.Helpers, 'textField')
+          textFieldStub.withArgs(
+            null,
+            'properties[0][0][value]',
+            value: 'car',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<input type="text"></input>')
+          textFieldStub.withArgs(
+            null,
+            'properties[0][1][value]',
+            value: 'auto',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<input type="text"></input>')
+          model.type = 'text'
+          model.properties.push {
+            value: 'auto'
+            lang: 'de'
+            errors: {}
+          }
+          el = renderView()
+          inputs = el.find 'input[type=text]'
+          langSelects = el.find 'select'
+          expect(inputs).to.have.lengthOf 2
+          expect(langSelects).to.have.lengthOf 2
+
 
 

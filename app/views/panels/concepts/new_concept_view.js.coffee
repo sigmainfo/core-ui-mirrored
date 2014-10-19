@@ -2,11 +2,6 @@
 #= require helpers/render
 #= require helpers/form_for
 #= require helpers/input
-#= require helpers/select_field
-#= require helpers/text_field
-#= require helpers/text_area_field
-#= require helpers/check_box_field
-#= require helpers/multi_select_field
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
@@ -48,7 +43,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
 
   render: ->
     @termCount = if @model.has("terms") then @model.get("terms").length else 0
-    @$el.html @template concept: @model, selectableLanguages: Coreon.Models.RepositorySettings.languageOptions()
+    @$el.html @template concept: @model
     unless @_wasRendered
       @broaderAndNarrower.render()
       @editProperties.setElement(@$('section.properties'))

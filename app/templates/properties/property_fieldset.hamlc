@@ -1,5 +1,12 @@
 %h2= @property.key
 %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
+- switch @property.type
+  - else
+    - for property, index in @property.properties
+      != @textField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
+      / != @selectField I18n.t('forms.select.language'), "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
+      %br
+
 
 / - name = if @scope? then "#{@scope}[properties][#{@index}]" else "properties[#{@index}]"
 / %fieldset.property
