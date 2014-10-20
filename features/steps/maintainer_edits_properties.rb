@@ -43,79 +43,75 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
-    binding.pry
     within :form, 'Create concept' do
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible
     end
   end
 
-  step 'I see a fieldset with key "definition" within this section' do
-    within @section do
-      @fieldset_definition = fieldset_with 'Key', 'definition'
-      expect(@fieldset_definition).to be_visible
-    end
-  end
-
   step 'I see a fieldset "SHORT DESCRIPTION" within this section' do
     within @section do
-      binding.pry
-      @fieldset_short_descr = page.find :fieldset_with_name, "SHORT DESCRIPTION"
-      expect(@fieldset_short_descr).to be_visible
+      @fieldset = page.find :fieldset_with_legend, "short description"
+      @short_descr_fieldset = @fieldset
+      expect(@fieldset).to be_visible
     end
   end
 
-  step 'this fieldset contains a text area "VALUE"' do
-    within @fieldset_definition do
-      expect(page).to have_field 'Value', type: 'textarea'
+  step 'I see a fieldset "DANGEROUS" within this section' do
+    within @section do
+      @fieldset = page.find :fieldset_with_legend, "dangerous"
+      @dangerous_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'this fieldset contains a text input' do
+    within @fieldset do
+      expect(page).to have_selector 'input[type=text]'
     end
   end
 
   step 'this fieldset contains a select "LANGUAGE"' do
-    within @fieldset_definition do
-      expect(page).to have_field 'Language', type: 'select'
+    within @fieldset do
+      expect(page).to have_selector 'select'
     end
   end
 
-  step 'I see a fieldset with key "dangerous" within this section' do
-    within @section do
-      @fieldset_dangerous = fieldset_with 'Key', 'dangerous'
-      expect(@fieldset_dangerous).to be_visible
-    end
-  end
-
-  step 'this fieldset contains a checkbox "VALUE"' do
-    within @fieldset_dangerous do
-      expect(page).to have_field 'Value', type: 'checkbox'
+  step 'this fieldset contains radio buttons "yes" and "no"' do
+    within @fieldset do
+      expect(page).to have_field 'yes', type: 'radio'
+      expect(page).to have_field 'no', type: 'radio'
     end
   end
 
   step 'this fieldset does not contain a select "LANGUAGE"' do
-    within @fieldset_dangerous do
-      expect(page).not_to have_field 'Language', type: 'select'
+    within @fieldset do
+      expect(page).not_to have_selector 'select'
     end
   end
 
-  step 'I fill "VALUE" for "definition" with "sucks blood; bat"' do
-    within @fieldset_definition do
-      fill_in 'Value', with: 'sucks blood; bat'
+  step 'I fill in "SHORT DESCRIPTION" with "sucks blood; bat"' do
+    @fieldset = @short_descr_fieldset
+    within @fieldset do
+      fill_in page.find('input')[:id], with: 'sucks blood; bat'
     end
   end
 
-  step 'I select "English" as "LANGUAGE" for "definition"' do
-    within @fieldset_definition do
-      select 'en', from: 'Language'
+  step 'I select "English" for "LANGUAGE"' do
+    within @fieldset do
+      select 'English', from: page.find('select')[:id]
     end
   end
 
-  step 'I uncheck "VALUE" for "dangerous"' do
-    within @fieldset_dangerous do
-      uncheck 'Value'
+  step 'I select "no" for "DANGEROUS"' do
+    within @dangerous_fieldset do
+      choose "no"
     end
   end
 
   step 'I click "Create concept"' do
     click_button "Create concept"
+    binding.pry
   end
 
   step 'I see a listing "PROPERTIES" within the concept header' do

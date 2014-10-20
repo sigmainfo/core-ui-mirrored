@@ -34,6 +34,8 @@ class Coreon.Formatters.PropertiesFormatter
 
       if blue_prop.type in ['multiselect_picklist']
         new_formatted_property.values = blue_prop.values
+      if blue_prop.type in ['boolean']
+        new_formatted_property.labels = blue_prop.labels
 
       props.push new_formatted_property
 

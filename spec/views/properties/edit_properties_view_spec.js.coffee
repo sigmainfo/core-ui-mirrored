@@ -7,8 +7,20 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
   collection = []
 
   beforeEach ->
+    i18n = sinon.stub I18n, 't'
+    i18n.withArgs('properties.title').returns('Properties')
+    Coreon.Models.RepositorySettings = sinon.stub
+    Coreon.Models.RepositorySettings.languageOptions = ->
+    [
+      {value: 'en', label: 'English'},
+      {value: 'de', label: 'German'},
+      {value: 'fr', label: 'French'}
+    ]
     view = new Coreon.Views.Properties.EditPropertiesView
       collection: collection
+
+  afterEach ->
+    I18n.t.restore()
 
   it 'is a Backbone view', ->
     expect(view).to.be.an.instanceof Backbone.View
@@ -31,24 +43,24 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
 
     renderSpy = null
 
-    beforeEach ->
-      collection = [{}, {}, {}]
+    renderView = ->
       view = new Coreon.Views.Properties.EditPropertiesView
         collection: collection
-      sinon.stub view, 'template'
-      renderSpy = sinon.spy Coreon.Views.Properties.PropertyFieldsetView.prototype, 'render'
-
-    afterEach ->
-      view.template.restore()
-      Coreon.Views.Properties.PropertyFieldsetView.prototype.render.restore()
-
-    it 'renders the template', ->
       view.render()
-      expect(view.template).to.have.been.calledOnce
+      view.$el
+
+    beforeEach ->
+      collection = []
+
+    it 'renders a title', ->
+      el = renderView()
+      expect(el).to.contain I18n.t('properties.title')
 
     it 'renders the fieldsets', ->
-      view.render()
-      expect(renderSpy).to.have.been.called.thrice
+      collection = [{}, {}, {}]
+      el = renderView()
+      fieldsets = el.find 'fieldset'
+      expect(fieldsets).to.have.lengthOf 3
 
 
 

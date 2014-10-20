@@ -1,10 +1,15 @@
-%h2= @property.key
-%a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
+%legend= @property.key
 - switch @property.type
-  - else
+  - when 'boolean'
+    - property = _.first @property.properties
+    %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
+    != @booleanField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
+
+  - when 'text'
     - for property, index in @property.properties
+      %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
       != @textField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
-      / != @selectField I18n.t('forms.select.language'), "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
+      != @selectField null, "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
       %br
 
 

@@ -5,6 +5,7 @@
 #= require helpers/text_area_field
 #= require helpers/check_box_field
 #= require helpers/multi_select_field
+#= require helpers/boolean_field
 
 class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 

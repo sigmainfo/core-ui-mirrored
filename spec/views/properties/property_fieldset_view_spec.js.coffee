@@ -12,6 +12,13 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
   beforeEach ->
     sinon.stub I18n, 't'
+    Coreon.Models.RepositorySettings = sinon.stub
+    Coreon.Models.RepositorySettings.languageOptions = ->
+      [
+        {value: 'en', label: 'English'},
+        {value: 'de', label: 'German'},
+        {value: 'fr', label: 'French'}
+      ]
 
   afterEach ->
     I18n.t.restore()
@@ -57,9 +64,6 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             lang: 'en'
             errors: {}
           ]
-      options =
-        index: 0
-        scopePrefix: null
 
     it 'renders container', ->
       el = renderView()
@@ -68,7 +72,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     it 'renders the property key as a title', ->
       model.key = 'my_key'
       el = renderView()
-      title = el.find 'h2'
+      title = el.find 'legend'
       expect(title).to.contain 'my_key'
 
     it 'renders a remove property link', ->
@@ -86,23 +90,17 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
       context 'text fields', ->
 
+        textFieldStub = null
+
         beforeEach ->
-          Coreon.Models.RepositorySettings = sinon.stub
-          Coreon.Models.RepositorySettings.languageOptions = ->
-            [
-              {value: 'en', label: 'English'},
-              {value: 'de', label: 'German'},
-              {value: 'fr', label: 'French'}
-            ]
           textFieldStub = sinon.stub(Coreon.Helpers, 'textField')
-          sinon.stub(Coreon.Helpers, 'selectField').returns('select')
-            # '''
-            #   <select>
-            #     <option value="en">English</option>
-            #     <option value="de">German</option>
-            #     <option value="fr">French</option>
-            #   </select>
-            # '''
+          sinon.stub(Coreon.Helpers, 'selectField').returns '''
+              <select>
+                <option value="en">English</option>
+                <option value="de">German</option>
+                <option value="fr">French</option>
+              </select>
+            '''
 
 
         afterEach ->
@@ -122,7 +120,6 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(el).to.have 'select'
 
         it 'renders multiple text input fields when given', ->
-          textFieldStub = sinon.stub(Coreon.Helpers, 'textField')
           textFieldStub.withArgs(
             null,
             'properties[0][0][value]',
@@ -150,6 +147,33 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           langSelects = el.find 'select'
           expect(inputs).to.have.lengthOf 2
           expect(langSelects).to.have.lengthOf 2
+
+      context 'boolean fields', ->
+
+        booleanFieldStub = null
+
+        beforeEach ->
+          booleanFieldStub = sinon.stub(Coreon.Helpers, 'booleanField')
+
+        afterEach ->
+          Coreon.Helpers.booleanField.restore()
+
+        it 'renders a text input field for type boolean', ->
+          model.type = 'boolean'
+          model.labels = ['Yes', 'No']
+          model.properties[0].value = true
+          booleanFieldStub.withArgs(
+            null,
+            'properties[0][value]',
+            value: true,
+            required: true,
+            errors: {},
+            labels: ['Yes', 'No'],
+            class: 'value'
+          ).returns('<input type="radio">yes</input><input type="radio">no</input>')
+          el = renderView()
+          expect(el).to.have 'input[type=radio]'
+          expect(el).not.to.have 'select'
 
 
 

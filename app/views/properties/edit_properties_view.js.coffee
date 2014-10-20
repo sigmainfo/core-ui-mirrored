@@ -8,11 +8,11 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
 
   initialize: ->
     @fieldsetViews = []
-    for formattedProperty in @collection
-      @fieldsetViews.push new Coreon.Views.Properties.PropertyFieldsetView(model: formattedProperty)
+    for formattedProperty, index in @collection
+      @fieldsetViews.push new Coreon.Views.Properties.PropertyFieldsetView(model: formattedProperty, index: index)
 
   render: ->
     @$el.html @template()
-    _.each @fieldsetViews, (fieldset) =>
-      @$el.append fieldset.render().el
+    _.each @fieldsetViews, (fieldsetView) =>
+      @$el.append fieldsetView.render().el
     @

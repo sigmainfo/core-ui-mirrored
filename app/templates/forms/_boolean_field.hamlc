@@ -1,0 +1,4 @@
+%label{for: "#{@id}[0]"}= @labels[0]
+%input{type: 'radio', name: @name, id: "#{@id}[0]", required: @required, checked: @value?}
+%label{for: "#{@id}[1]"}= @labels[1]
+%input{type: 'radio', name: @name, id: "#{@id}[1]", required: @required, checked: !@value?}
