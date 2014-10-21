@@ -1,16 +1,19 @@
-%legend= @property.key
-- switch @property.type
-  - when 'boolean'
-    - property = _.first @property.properties
-    %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
-    != @booleanField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
+%h4= @property.key
+- if @property.type in ['text']
+  %a.add-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "properties.add"
+- else
+  %a.remove-fieldset{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
 
-  - when 'text'
-    - for property, index in @property.properties
-      %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
-      != @textField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
-      != @selectField null, "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
-      %br
+.group
+  - switch @property.type
+    - when 'boolean'
+      - property = _.first @property.properties
+      != @booleanField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
+    - when 'text'
+      - for property, index in @property.properties
+        %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
+        != @textField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
+        != @selectField null, "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
 
 
 / - name = if @scope? then "#{@scope}[properties][#{@index}]" else "properties[#{@index}]"

@@ -51,7 +51,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I see a fieldset "SHORT DESCRIPTION" within this section' do
     within @section do
-      @fieldset = page.find :fieldset_with_legend, "short description"
+      @fieldset = page.find :fieldset_with_title, "short description"
       @short_descr_fieldset = @fieldset
       expect(@fieldset).to be_visible
     end
@@ -59,7 +59,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I see a fieldset "DANGEROUS" within this section' do
     within @section do
-      @fieldset = page.find :fieldset_with_legend, "dangerous"
+      @fieldset = page.find :fieldset_with_title, "dangerous"
       @dangerous_fieldset = @fieldset
       expect(@fieldset).to be_visible
     end

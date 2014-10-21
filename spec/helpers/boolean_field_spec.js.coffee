@@ -24,5 +24,5 @@ describe "Coreon.Helpers.booleanField()", ->
   it 'has an id attribute', ->
     markup = helper('Foo', 'bar')
     radios = $(markup).find 'input[type=radio]'
-    expect($(radios[0])).to.have.attr 'id', 'bar'
-    expect($(radios[1])).to.have.attr 'id', 'bar'
+    expect($(radios[0])).to.have.attr 'id', 'bar_0'
+    expect($(radios[1])).to.have.attr 'id', 'bar_1'

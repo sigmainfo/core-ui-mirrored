@@ -72,7 +72,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     it 'renders the property key as a title', ->
       model.key = 'my_key'
       el = renderView()
-      title = el.find 'legend'
+      title = el.find 'h4'
       expect(title).to.contain 'my_key'
 
     it 'renders a remove property link', ->

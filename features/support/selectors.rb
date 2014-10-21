@@ -84,14 +84,16 @@ Capybara.add_selector(:section) do
   end
 end
 
-Capybara.add_selector(:fieldset_with_legend) do
-  xpath do |legend_text|
+Capybara.add_selector(:fieldset_with_title) do
+  xpath do |title|
     """
       .//fieldset
         [
-          .//legend
+          .//*
             [
-              normalize-space() = '#{legend_text}'
+              translate( local-name(), '123456', '******' ) = 'h*'
+              and
+              normalize-space() = '#{title}'
             ]
         ]
     """
