@@ -110,8 +110,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I click "Create concept"' do
-    click_button "Create concept"
     binding.pry
+    click_button "Create concept"
   end
 
   step 'I see a listing "PROPERTIES" within the concept header' do

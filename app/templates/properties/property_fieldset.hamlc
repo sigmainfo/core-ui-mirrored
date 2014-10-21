@@ -6,13 +6,14 @@
   - title = I18n.t('property.remove', {property_name: @property.key})
   %a.remove-property{href: "javascript:void(0)", title: title }= title
 
-.group
-  - switch @property.type
-    - when 'boolean'
+- switch @property.type
+  - when 'boolean'
+    .group
       - property = _.first @property.properties
       != @booleanField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
-    - when 'text'
-      - for property, index in @property.properties
+  - when 'text'
+    - for property, index in @property.properties
+      .group
         - title = I18n.t('property.value.remove', {property_name: @property.key})
         %a.remove-value{href: "javascript:void(0)", title: title }= title
         != @textField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'

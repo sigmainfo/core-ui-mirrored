@@ -75,11 +75,23 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       title = el.find 'h4'
       expect(title).to.contain 'my_key'
 
-    it 'renders a remove property link', ->
-      I18n.t.withArgs('property.remove').returns 'Remove'
+    it 'renders a remove value link for multivalued fieldsets', ->
+      I18n.t.withArgs('property.value.remove', {property_name: model.key}).returns 'Remove value'
+      el = renderView()
+      removeLink = el.find 'a.remove-value'
+      expect(removeLink).to.contain 'Remove value'
+
+    it 'does not renders a remove value link for non-multivalued fieldsets', ->
+      model.type = 'boolean'
+      el = renderView()
+      expect(el).to.not.contain 'a.remove-value'
+
+    it 'renders a remove property link for non multivalued fieldsets', ->
+      model.type = 'boolean'
+      I18n.t.withArgs('property.remove', {property_name: model.key}).returns 'Remove property'
       el = renderView()
       removeLink = el.find 'a.remove-property'
-      expect(removeLink).to.contain 'Remove'
+      expect(removeLink).to.contain 'Remove property'
 
     xit 'renders property errors', ->
       model.errors = {value: ['is invalid']}
@@ -174,6 +186,36 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           el = renderView()
           expect(el).to.have 'input[type=radio]'
           expect(el).not.to.have 'select'
+
+    describe '#value()', ->
+
+      context 'for text property', ->
+
+        it 'returns the values of each set property', ->
+          model.type = 'text'
+          model.key = 'car'
+          markup = $ '''
+              <fieldset>
+                <div class="group">
+                  <input type="text">
+                  <select><option value="en" selected="">English</option></select>
+                </div>
+                <div class="group">
+                  <input type="text">
+                  <select><option value="de" selected="">German</option></select>
+                </div>
+              </fieldset>
+            '''
+          view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+          view.$el = markup
+          view.$el.find('input').first().val("Honda")
+          view.$el.find('input').last().val("Mazda")
+          properties = view.serializeArray()
+          expect(properties).to.have.lengthOf 2
+          expect(properties[0]).to.have.property 'value', 'Honda'
+          expect(properties[1]).to.have.property 'value', 'Mazda'
+
+
 
 
 

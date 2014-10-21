@@ -25,3 +25,13 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
   render: ->
     @$el.html @template(property: @model, name: @name, selectableLanguages: @selectableLanguages)
     @
+
+  serializeArray: ->
+    @$el.find('.group').map (index, group) =>
+      switch @model.type
+        when 'text'
+          {
+            key: @model.key
+            value: $(group).find('input').val()
+            lang: $(group).find('select').val()
+          }
