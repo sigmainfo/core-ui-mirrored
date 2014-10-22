@@ -6,22 +6,24 @@
 
   %div{style: "display: none" if @collapsed}
     %table
-      - for key, types of @properties
-        - for type, properties of types
-          %tr{ class: type }
-            %th= key
-            %td
-              - if properties.length is 1 and not properties[0].get("lang")
-                != @render "properties/value", value: properties[0].get('value'), type: type
-                != @render "concepts/info", data: properties[0].info()
-              - else if properties.length is 0
-                != @render "properties/value", value: null, type: type
-              - else
-                %ul.index
-                  - for property, index in properties
-                    %li{class: "selected" if index is 0, "data-index": index }= property.get("lang") or index + 1
-                %ul.values
-                  - for property, index in properties
-                    %li{class: "selected" if index is 0}
-                      != @render "properties/value", value: property.get('value'), type: type
-                      != @render "concepts/info", data: property.info()
+      - for group in @properties
+        - properties = group.properties
+        - switch group.type
+          - when 'boolean' then options = {labels: group.labels}
+        %tr{ class: group.type }
+          %th= group.key
+          %td
+            - if properties.length is 1 and not properties[0].lang
+              != @render "properties/value", value: properties[0].value, type: group.type, options: options
+              != @render "concepts/info", data: properties[0].info
+            - else if properties.length is 0
+              != @render "properties/value", value: null, type: group.type
+            - else
+              %ul.index
+                - for property, index in properties
+                  %li{class: "selected" if index is 0, "data-index": index }= property.lang or index + 1
+              %ul.values
+                - for property, index in properties
+                  %li{class: "selected" if index is 0}
+                    != @render "properties/value", value: property.value, type: group.type
+                    != @render "concepts/info", data: property.info

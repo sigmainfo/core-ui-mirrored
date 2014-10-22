@@ -18,7 +18,7 @@
 - if @editing and @editProperties
   != @render "concepts/edit_properties", concept: @concept, editToggle: yes
 - else if @editing or @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties: @concept.propertiesByKeyTypeAndLang(Coreon.Models.RepositorySettings.propertiesFor('concept'), true), editToggle: yes
+  != @render "concepts/properties", properties: @concept.propertiesWithDefaults(), editToggle: yes
 
 .terms
   - if @hasTermProperties
