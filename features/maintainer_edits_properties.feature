@@ -26,8 +26,8 @@ Feature: maintainer edits properties
     And I select "no" for "DANGEROUS"
     And I click "Create concept"
     Then I see a listing "PROPERTIES" within the concept header
-    And I see a property "DEFINITION" with English value "sucks blood; bat"
-    And I see a property "DANGEROUS" with value "yes"
+    And I see a property "SHORT DESCRIPTION" with English value "sucks blood; bat"
+    And I see a property "DANGEROUS" with value "no"
 
   # @wip
   # Scenario: new concept with optional property

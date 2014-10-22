@@ -56,9 +56,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     event.preventDefault()
     data = @$("form").serializeJSON().concept or {}
     attrs = {}
-    attrs.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
+    attrs.properties = @editProperties.serializeArray()
     attrs.terms = if data.terms?
       term for term in data.terms when term?
     else []

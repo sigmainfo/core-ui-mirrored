@@ -110,7 +110,6 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I click "Create concept"' do
-    binding.pry
     click_button "Create concept"
   end
 
@@ -118,15 +117,15 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     expect(page).to have_css(".concept .properties")
   end
 
-  step 'I see a property "DEFINITION" with English value "sucks blood; bat"' do
-    within :table_row, 'definition' do
+  step 'I see a property "SHORT DESCRIPTION" with English value "sucks blood; bat"' do
+    within :table_row, 'short description' do
       expect(page).to have_css("td .value", text: 'sucks blood; bat')
     end
   end
 
-  step 'I see a property "DANGEROUS" that is unchecked' do
+  step 'I see a property "DANGEROUS" with value "no"' do
     within :table_row, 'dangerous' do
-      expect(page).to have_css("td .value", text: 'false')
+      expect(page).to have_css("td .value", text: 'no')
     end
   end
 end
