@@ -13,6 +13,7 @@ describe 'Coreon.Templates[properties/value]', ->
     data =
       value: 'foo'
       type: 'text'
+      options: {}
 
   afterEach ->
     I18n.l.restore()
@@ -46,11 +47,13 @@ describe 'Coreon.Templates[properties/value]', ->
 
     beforeEach ->
       data.type = 'boolean'
+      data.options.labels = ['yes', 'no']
 
     it 'renders string representation', ->
       data.value = false
       el = render()
       expect(el).to.have '.false'
+      expect(el).to.contain 'no'
 
   context 'picklist', ->
 
