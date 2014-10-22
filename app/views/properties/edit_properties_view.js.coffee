@@ -18,6 +18,10 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @
 
   serializeArray: ->
-    _.map @fieldsetViews, (fieldsetView) =>
-      fieldsetView.serializeArray()
+    properties = []
+    _.each @fieldsetViews, (fieldsetView) ->
+      _.each fieldsetView.serializeArray(), (property) ->
+        properties.push property
+    properties
+
 

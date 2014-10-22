@@ -67,12 +67,16 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
     it 'returns an array of properties', ->
       view = new Coreon.Views.Properties.EditPropertiesView
         collection: collection
-      fieldsetView = sinon.stub()
-      fieldsetView.serializeArray = -> {key: 'value'}
-      view.fieldsetViews = [fieldsetView, fieldsetView, fieldsetView]
+      fieldsetView1 = sinon.stub()
+      fieldsetView1.serializeArray = -> [{key: 'value'}]
+      fieldsetView2 = sinon.stub()
+      fieldsetView2.serializeArray = -> [{key: 'other value'}, {key: 'yet another value'}]
+      view.fieldsetViews = [fieldsetView1, fieldsetView2]
       serializedView = view.serializeArray()
       expect(serializedView).to.have.lengthOf 3
-      expect(serializedView[1]).to.have.property 'key', 'value'
+      expect(serializedView[0]).to.have.property 'key', 'value'
+      expect(serializedView[1]).to.have.property 'key', 'other value'
+      expect(serializedView[2]).to.have.property 'key', 'yet another value'
 
 
 
