@@ -62,6 +62,19 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
       fieldsets = el.find 'fieldset'
       expect(fieldsets).to.have.lengthOf 3
 
+  describe "#serializeArray()", ->
+
+    it 'returns an array of properties', ->
+      view = new Coreon.Views.Properties.EditPropertiesView
+        collection: collection
+      fieldsetView = sinon.stub()
+      fieldsetView.serializeArray = -> {key: 'value'}
+      view.fieldsetViews = [fieldsetView, fieldsetView, fieldsetView]
+      serializedView = view.serializeArray()
+      expect(serializedView).to.have.lengthOf 3
+      expect(serializedView[1]).to.have.property 'key', 'value'
+
+
 
 
 
