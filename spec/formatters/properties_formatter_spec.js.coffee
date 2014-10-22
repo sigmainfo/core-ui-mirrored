@@ -16,10 +16,12 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
   fakeProperties = (arr, properties_attrs) ->
     clear(arr)
     properties_attrs.forEach (attrs) ->
-      arr.push new Backbone.Model(attrs)
+      arr.push fakeProperty(attrs)
 
-  fakeProperty =  ->
-    new Backbone.Model()
+  fakeProperty = (attrs) ->
+    p = new Backbone.Model(attrs)
+    p.info = -> {}
+    p
 
   fakeBlueprintProperty =  ->
     {key: 'label', type: 'text'}

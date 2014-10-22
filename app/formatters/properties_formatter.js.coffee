@@ -15,6 +15,7 @@ class Coreon.Formatters.PropertiesFormatter
         new_property =
           value: property.get 'value'
           errors: @errors[index] || {}
+          info: property.info()
         if blue_prop.type in ['text', 'multiline_text']
           new_property.lang = property.get 'lang'
         properties.push new_property
@@ -23,6 +24,7 @@ class Coreon.Formatters.PropertiesFormatter
         new_property =
           value: blue_prop.default
           errors: {}
+          info: {}
         if blue_prop.type in ['text', 'multiline_text']
           new_property.lang = null
         properties.push new_property
