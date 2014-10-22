@@ -666,7 +666,7 @@ describe 'Coreon.Models.Concept', ->
       [{}]
 
     beforeEach ->
-      formatter = groupedByKey: ->
+      formatter = all: ->
       sinon.stub Coreon.Formatters, 'PropertiesFormatter', -> formatter
       propertiesFor = sinon.stub Coreon.Models.RepositorySettings, 'propertiesFor'
       propertiesFor.returns []
@@ -689,7 +689,7 @@ describe 'Coreon.Models.Concept', ->
 
     it 'returns listing of all properties for display', ->
       formattedProperties = fakeFormattedProperties()
-      formatter.groupedByKey = ->
+      formatter.all = ->
         formattedProperties
       result = @model.propertiesWithDefaults()
       expect(result).to.equal formattedProperties

@@ -215,6 +215,27 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(properties[0]).to.have.property 'value', 'Honda'
           expect(properties[1]).to.have.property 'value', 'Mazda'
 
+      context 'for boolean property', ->
+
+        it 'returns a boolean value of the property', ->
+          model.type = 'boolean'
+          model.key = 'public'
+          markup = $ '''
+              <fieldset>
+                <div class="group">
+                  <label>Yes</label>
+                  <input name="foo" type="radio" value="true">
+                  <label>No</label>
+                  <input name="foo" type="radio" value="false" checked>
+                </div>
+              </fieldset>
+            '''
+          view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+          view.$el = markup
+          properties = view.serializeArray()
+          expect(properties).to.have.lengthOf 1
+          expect(properties[0]).to.have.property 'value', false
+
 
 
 
