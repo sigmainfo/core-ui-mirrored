@@ -30,11 +30,12 @@ class Coreon.Lib.Select
 
   render: ->
     @_buildSelectOptions()
-    selected = $("option[value=#{@$select.val()}]", @$select).first()
+    selected = $("option[value=\"#{@$select.val()}\"]", @$select).first()
     selected = $("option", @$select).first() if selected.length == 0
 
     @$el.text selected.text()
     @$el.attr('data-select-name', @$select.attr('name'))
+    @$el.css('display', 'none') if @options.hidden == true
     @$el.addClass(@$select.attr('class'))
 
     if @selectOptions.length < 2
@@ -68,9 +69,11 @@ class Coreon.Lib.Select
 
     @prompt view
 
+    @options.positionRelativeTo ?= @$el
+
     view.$('ul').position
       my: "left top"
       at: "left bottom"
-      of: $ @$el
+      of: $ @options.positionRelativeTo
 
     @
