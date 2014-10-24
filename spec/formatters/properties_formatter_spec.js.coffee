@@ -8,6 +8,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
   blueprintProperties = null
   properties = null
   errors = null
+  options = null
 
   clear = (properties) ->
     while properties.length > 0
@@ -24,7 +25,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     p
 
   fakeBlueprintProperty =  ->
-    {key: 'label', type: 'text'}
+    {key: 'label', type: 'text', required: true}
 
   fakeBlueprintProperties = (arr, properties_attrs) ->
     clear(arr)
@@ -43,7 +44,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     blueprintProperties = []
     properties = []
     errors = []
-    formatter = new Coreon.Formatters.PropertiesFormatter blueprintProperties, properties, errors
+    options = {}
+    formatter = new Coreon.Formatters.PropertiesFormatter blueprintProperties, properties, errors, options
 
   context "no errors", ->
 
@@ -68,13 +70,13 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             clear properties
 
           it 'fetches key from blueprint property', ->
-            blueprintProperties.push {key: 'test', type: 'boolean'}
+            blueprintProperties.push {key: 'test', type: 'boolean', required: 'true'}
             all = formatter.all()
             formatted = all[0]
             expect(formatted).to.have.property 'key', 'test'
 
           it 'fetches type from blueprint property', ->
-            blueprintProperties.push {key: 'test', type: 'boolean'}
+            blueprintProperties.push {key: 'test', type: 'boolean', required: 'true'}
             all = formatter.all()
             formatted = all[0]
             expect(formatted).to.have.property 'type', 'boolean'
@@ -83,7 +85,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             blueprintProperties.push
               key: 'test',
               type: 'multiselect_picklist',
-              values: ['one', 'two']
+              values: ['one', 'two'],
+              required: 'true'
             all = formatter.all()
             formatted = all[0]
             expect(formatted.values[0]).to.equal 'one'
@@ -98,13 +101,13 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             expect(formatted.properties[0]).to.have.property 'value', 'somevalue'
 
           it 'fetches lang if applicable', ->
-            blueprintProperties.push {key: 'test', type: 'text'}
+            blueprintProperties.push {key: 'test', type: 'text', required: 'true'}
             all = formatter.all()
             formatted = all[0]
             expect(formatted.properties[0]).to.have.property 'lang', null
 
           it 'does not fetch lang if not applicable', ->
-            blueprintProperties.push {key: 'test', type: 'boolean'}
+            blueprintProperties.push {key: 'test', type: 'boolean', required: 'true'}
             all = formatter.all()
             formatted = all[0]
             expect(formatted.properties[0]).to.not.have.property 'lang'
@@ -112,7 +115,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
         context 'both blueprint and property given', ->
 
           it 'combines a property with the relative default property', ->
-            blueprintProperties.push {key: 'dangerous', type: 'boolean'}
+            blueprintProperties.push {key: 'dangerous', type: 'boolean', required: 'true'}
             property = fakeProperty()
             property.set 'key', 'dangerous'
             property.set 'value', 'somevalue'
@@ -126,7 +129,7 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
           it 'doesn\'t combine properties with different key', ->
             fakeBlueprintProperties blueprintProperties, [
-              {key: 'cool', type: 'boolean'}
+              {key: 'cool', type: 'boolean', required: 'true'}
             ]
             fakeProperties properties, [
               {key: 'dangerous'}
@@ -149,8 +152,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
         it 'collects all blueprint properties if no properties are given', ->
           fakeBlueprintProperties blueprintProperties, [
-            {key: 'label', type: 'text'},
-            {key: 'definition', type: 'text'}
+            {key: 'label', type: 'text', required: 'true'},
+            {key: 'definition', type: 'text', required: 'true'}
           ]
           clear properties
           all = formatter.all()
@@ -162,9 +165,9 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
           it 'combines properties only with relative default properties', ->
             fakeBlueprintProperties blueprintProperties, [
-              {key: 'definition', type: 'text'}
-              {key: 'author', type: 'text'},
-              {key: 'label', type: 'text'}
+              {key: 'definition', type: 'text', required: 'true'}
+              {key: 'author', type: 'text', required: 'true'},
+              {key: 'label', type: 'text', required: 'true'}
             ]
             fakeProperties properties, [
               {key: 'label'},
@@ -179,9 +182,9 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
           it 'collects properties in the order defined in blueprints', ->
             fakeBlueprintProperties blueprintProperties, [
-              {key: 'definition', type: 'text'}
-              {key: 'author', type: 'text'},
-              {key: 'label', type: 'text'}
+              {key: 'definition', type: 'text', required: 'true'}
+              {key: 'author', type: 'text', required: 'true'},
+              {key: 'label', type: 'text', required: 'true'}
             ]
             fakeProperties properties, [
               {key: 'label'},
@@ -190,6 +193,38 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             ]
             all = formatter.all()
             expect(propertyKeys all).to.eql ['definition', 'author', 'label']
+
+          it 'does not fetch optional properties if no property exists', ->
+            fakeBlueprintProperties blueprintProperties, [
+              {key: 'definition', type: 'text', required: 'true'}
+              {key: 'author', type: 'text', required: 'true'},
+              {key: 'label', type: 'text'}
+            ]
+            fakeProperties properties, [
+              {key: 'definition'},
+              {key: 'ISBN'}
+            ]
+            all = formatter.all()
+            expect(all).to.have.lengthOf 2
+            expect(propertyKeys all).to.include 'definition'
+            expect(propertyKeys all).to.include 'author'
+
+          it 'fetches optional properties if option includeOptional is set', ->
+            options.includeOptional = true
+            fakeBlueprintProperties blueprintProperties, [
+              {key: 'definition', type: 'text', required: 'true'}
+              {key: 'author', type: 'text', required: 'true'},
+              {key: 'label', type: 'text'}
+            ]
+            fakeProperties properties, [
+              {key: 'definition'},
+              {key: 'ISBN'}
+            ]
+            all = formatter.all()
+            expect(all).to.have.lengthOf 3
+            expect(propertyKeys all).to.include 'definition'
+            expect(propertyKeys all).to.include 'author'
+            expect(propertyKeys all).to.include 'label'
 
         describe "multivalue fields", ->
 
@@ -202,8 +237,8 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
               {key: 'definition', value: 'third definition'},
             ]
             fakeBlueprintProperties blueprintProperties, [
-              {key: 'label', type: 'text'},
-              {key: 'definition', type: 'text'}
+              {key: 'label', type: 'text', required: 'true'},
+              {key: 'definition', type: 'text', required: 'true'}
             ]
             all = formatter.all()
             expect(all[0]).to.have.property 'key', 'label'
@@ -247,9 +282,9 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
       it "collects errors in order defined in blueprints", ->
         fakeBlueprintProperties blueprintProperties, [
-          {key: 'baz', type: 'text'}
-          {key: 'too', type: 'text'},
-          {key: 'koo', type: 'text'}
+          {key: 'baz', type: 'text', required: 'true'}
+          {key: 'too', type: 'text', required: 'true'},
+          {key: 'koo', type: 'text', required: 'true'}
         ]
         fakeProperties properties, [
           {key: 'koo', value: 'bar'}

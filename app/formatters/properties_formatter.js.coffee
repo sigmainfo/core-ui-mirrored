@@ -1,6 +1,6 @@
 class Coreon.Formatters.PropertiesFormatter
 
-  constructor: (@blueprint_properties = [], @properties = [], @errors = []) ->
+  constructor: (@blueprint_properties = [], @properties = [], @errors = [], @options = {}) ->
 
   all: ->
 
@@ -39,7 +39,8 @@ class Coreon.Formatters.PropertiesFormatter
       if blue_prop.type in ['boolean']
         new_formatted_property.labels = blue_prop.labels
 
-      props.push new_formatted_property
+      if !_.isEmpty(found_properties) || blue_prop.required || @options.includeOptional
+        props.push new_formatted_property
 
     props
 
