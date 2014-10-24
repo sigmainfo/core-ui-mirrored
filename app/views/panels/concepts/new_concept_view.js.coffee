@@ -46,9 +46,9 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @$el.html @template concept: @model
     unless @_wasRendered
       @broaderAndNarrower.render()
-      @editProperties.setElement(@$('section.properties'))
       @editProperties.render()
     @$("form").before @broaderAndNarrower.$el
+    @$("form .terms").before @editProperties.$el
     @_wasRendered = true
     @
 

@@ -119,8 +119,16 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
+    @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
+      collection: @model.propertiesWithDefaults()
+      optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('concept')
+      isEdit: true
+      collapsed: true
+
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
+    @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
     @subviews.push broaderAndNarrower
+    @subviews.push @conceptProperties
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 
@@ -191,9 +199,10 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form = $ evt.target
     data = form.serializeJSON().concept or {}
     attrs = {}
-    attrs.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
+    # attrs.properties = if data.properties?
+    #   property for property in data.properties when property?
+    # else []
+    attrs.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
 

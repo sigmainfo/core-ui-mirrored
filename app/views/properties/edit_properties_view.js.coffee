@@ -5,6 +5,10 @@
 
 class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
 
+  tagName: 'section'
+
+  className: 'properties'
+
   template: Coreon.Templates["properties/edit_properties"]
 
   events:
@@ -14,11 +18,15 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
   initialize: (options) ->
     @collection = options.collection
     @optionalProperties = options.optionalProperties || []
+    @isEdit = options.isEdit || false
+    @collapsed = options.collapsed || false
     @fieldsetViews = []
     @index = 0
     for formattedProperty, index in @collection
       @fieldsetViews.push new Coreon.Views.Properties.PropertyFieldsetView(model: formattedProperty, index: index)
       @index = @index++
+    @$el.addClass('collapsed') if @collapsed
+    @$el.addClass('edit') if @isEdit
 
   render: ->
     @$el.html @template(optionalProperties: @optionalProperties)

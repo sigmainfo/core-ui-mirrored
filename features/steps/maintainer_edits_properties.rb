@@ -4,6 +4,10 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   include Resources
   include Selectors
 
+  def concept
+    @concept ||= JSON.parse concepts.post concept: {}
+  end
+
   step 'the repository defines a blueprint for concepts' do
     @blueprint = blueprint(:concept)
     @blueprint['clear'].delete
@@ -25,8 +29,21 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     }
   end
 
+  step 'that blueprint requires a property "tags" of type "multiselect picklist"' do
+    @property_attrs = {
+      key: 'tags',
+      type: 'multiselect_picklist',
+      required: true
+    }
+  end
+
   step 'that property defines labels "yes" and "no"' do
     @property_attrs[:labels] = ["yes", "no"]
+    @blueprint['properties'].post property: @property_attrs
+  end
+
+  step 'that property allows values: "cool", "night life", "diet"' do
+    @property_attrs[:values] = ["cool", "night life", "diet"]
     @blueprint['properties'].post property: @property_attrs
   end
 
@@ -46,8 +63,17 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     }
   end
 
+  step 'a concept "Bloodbath" exists' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Bloodbath' }
+  end
+
   step 'I click on "New concept"' do
     click_link "New concept"
+  end
+
+  step 'I edit that concept' do
+    visit "/#{current_repository.id}/concepts/#{concept['id']}"
+    click_link "Edit mode"
   end
 
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
@@ -56,6 +82,20 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible
     end
+  end
+
+  step 'I see a section "PROPERTIES"' do
+    @section = page.find :section, 'Properties'
+    expect(@section).to be_visible
+  end
+
+  step 'I click on "Edit properties"' do
+    click_link "Edit properties"
+  end
+
+  step 'I see a form "Save concept"' do
+    @form = page.find :form, 'Save concept'
+    expect(@form).to be_visible
   end
 
   step 'I see a fieldset "SHORT DESCRIPTION" within this section' do
@@ -70,6 +110,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     within @section do
       @fieldset = page.find :fieldset_with_title, "dangerous"
       @dangerous_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'I see a fieldset "TAGS" within this form' do
+    within @form do
+      @fieldset = page.find :fieldset_with_title, "tags"
+      @tags_fieldset = @fieldset
       expect(@fieldset).to be_visible
     end
   end
@@ -102,6 +150,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'this fieldset does not contain a select "LANGUAGE"' do
     within @fieldset do
       expect(page).not_to have_selector 'select'
+    end
+  end
+
+  step 'this fieldset contains checkboxes for "cool", "night life", "diet"' do
+    within @fieldset do
+      expect(page).to have_field 'cool', type: 'checkbox'
+      expect(page).to have_field 'night life', type: 'checkbox'
+      expect(page).to have_field 'diet', type: 'checkbox'
     end
   end
 
@@ -159,29 +215,46 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I check "cool" and "night life"' do
+    within @fieldset do
+      check 'cool'
+      check 'night life'
+    end
+  end
+
   step 'I click "Create concept"' do
     click_button "Create concept"
   end
 
+  step 'I click "Save concept"' do
+    click_button "Save concept"
+  end
+
   step 'I see a listing "PROPERTIES" within the concept header' do
-    expect(page).to have_css(".concept .properties")
+    expect(page).to have_css ".concept .properties"
   end
 
   step 'I see a property "SHORT DESCRIPTION" with English value "sucks blood; bat"' do
     within :table_row, 'short description' do
-      expect(page).to have_css("td .value", text: 'sucks blood; bat')
+      expect(page).to have_css "td .value", text: 'sucks blood; bat'
     end
   end
 
   step 'I see a property "DANGEROUS" with value "no"' do
     within :table_row, 'dangerous' do
-      expect(page).to have_css("td .value", text: 'no')
+      expect(page).to have_css "td .value", text: 'no'
     end
   end
 
   step 'I see a "DEFINITION" with "Corpse that drinks blood of the living."' do
-     within :table_row, 'definition' do
-      expect(page).to have_css("td .value", text: 'Corpse that drinks blood of the living.')
+    within :table_row, 'definition' do
+      expect(page).to have_css "td .value", text: 'Corpse that drinks blood of the living.'
     end
+  end
+
+  step 'I see a property "TAGS" with values "cool", "night life" only' do
+    tags_row = page.find :table_row, 'tags'
+    expect(tags_row).to have_css 'ul li', text: 'cool'
+    expect(tags_row).to have_css 'ul li', text: 'night life'
   end
 end

@@ -247,6 +247,38 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(el).to.have 'input[type=radio]'
           expect(el).not.to.have 'select'
 
+      context 'multiselect picklist', ->
+
+        multiSelectFieldStub = null
+
+        beforeEach ->
+          multiSelectFieldStub = sinon.stub(Coreon.Helpers, 'multiSelectField')
+
+        afterEach ->
+          Coreon.Helpers.multiSelectField.restore()
+
+        it 'renders a set of checkboxes', ->
+          model.type = 'multiselect_picklist'
+          model.values = ['Good', 'Bad', 'Ugly']
+          model.properties[0].value = ['Bad', 'Ugly']
+          multiSelectFieldStub.withArgs(
+            null,
+            'properties[0][value]',
+            value: model.properties[0].value,
+            required: true,
+            errors: {},
+            options: model.values,
+            class: 'value'
+          ).returns '''
+            <input type="checkbox">Good</input>
+            <input type="checkbox">Bad</input>
+            <input type="checkbox">Ugly</input>
+          '''
+          el = renderView()
+          checkboxes = el.find 'input[type=checkbox]'
+          expect(checkboxes).to.have.lengthOf 3
+          expect(el).not.to.have 'select'
+
     describe '#serializeArray()', ->
 
       it 'returns the values of each set text property', ->
@@ -315,6 +347,26 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         properties = view.serializeArray()
         expect(properties).to.have.lengthOf 1
         expect(properties[0]).to.have.property 'value', false
+
+      it 'returns the values of each multiselect checkbox', ->
+        model.type = 'multiselect_picklist'
+        model.key = 'personality'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <input type="checkbox" name="properties[0][0][value]" value="good">Good</input>
+                <input type="checkbox" name="properties[0][0][value]" value="bad" checked>Bad</input>
+                <input type="checkbox" name="properties[0][0][value]" value="ugly" checked>Ugly</input>
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.name = "properties[0][0][value]"
+        view.$el = markup
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 1
+        expect(properties[0].value[0]).to.eql 'bad'
+        expect(properties[0].value[1]).to.eql 'ugly'
 
 
 

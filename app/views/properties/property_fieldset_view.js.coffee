@@ -46,3 +46,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             key: @model.key
             value: if $(group).find('input:radio:checked').val() == 'true' then true else false
           }
+        when 'multiselect_picklist'
+          {
+            key: @model.key
+            value: _.map($(group).find("input:checkbox:checked"), (c) -> $(c).val())
+          }

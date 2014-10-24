@@ -47,22 +47,21 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     And I see a "DEFINITION" with "Corpse that drinks blood of the living."
 
-  # @wip
-  # Scenario: edit existing concept property
-  #   Given the repository defines a blueprint for concepts
-  #   And that blueprint requires a property "tags" of type "multiselect picklist"
-  #   And that property allows values: "cool", "night life", "diet"
-  #   And a concept "Bloodbath" exists
-  #   When I edit that concept
-  #   Then I see a section "PROPERTIES"
-  #   When I click on "Edit properties"
-  #   Then I see a form "Save concept"
-  #   And I see a fieldset "TAGS" within this form
-  #   And this fieldset contains checkboxes for "cool", "night life", "diet"
-  #   When I check "cool" and "night life"
-  #   And I click "Save concept"
-  #   Then I see a listing "PROPERTIES" within the concept header
-  #   And I see a property "TAGS" with values "cool", "night life" only
+  Scenario: edit existing concept property
+    Given the repository defines a blueprint for concepts
+    And that blueprint requires a property "tags" of type "multiselect picklist"
+    And that property allows values: "cool", "night life", "diet"
+    And a concept "Bloodbath" exists
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a form "Save concept"
+    And I see a fieldset "TAGS" within this form
+    And this fieldset contains checkboxes for "cool", "night life", "diet"
+    When I check "cool" and "night life"
+    And I click "Save concept"
+    Then I see a listing "PROPERTIES" within the concept header
+    And I see a property "TAGS" with values "cool", "night life" only
 
   # @wip
   # Scenario: ensure non-blank property on new term

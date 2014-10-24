@@ -11,6 +11,10 @@
     .group
       - property = _.first @property.properties
       != @booleanField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
+  - when 'multiselect_picklist'
+    .group
+      - property = _.first @property.properties
+      != @multiSelectField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, options: @property?.values, class: 'value'
   - when 'multiline_text'
     - for property, index in @property.properties
       .group
