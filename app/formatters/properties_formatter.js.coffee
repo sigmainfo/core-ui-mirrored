@@ -5,12 +5,15 @@ class Coreon.Formatters.PropertiesFormatter
   all: ->
 
     props = []
+    not_in_blueprints = @properties.map (p) -> p
 
     for blue_prop in @blueprint_properties
       found_properties = _.filter @properties, (p) -> p.get('key') == blue_prop.key
       properties = []
 
       for property in found_properties
+        index = _.indexOf not_in_blueprints, property
+        not_in_blueprints.splice index, 1
         index = @properties.indexOf property
         new_property =
           value: property.get 'value'
@@ -40,6 +43,20 @@ class Coreon.Formatters.PropertiesFormatter
         new_formatted_property.labels = blue_prop.labels
 
       if !_.isEmpty(found_properties) || blue_prop.required || @options.includeOptional
+        props.push new_formatted_property
+
+
+    if @options.includeUndefined
+      for property in not_in_blueprints
+        new_property =
+          value: property.get 'value'
+          lang: property.get 'lang'
+          errors: {}
+          info: property.info()
+        new_formatted_property =
+          key: property.get 'key'
+          type: 'text'
+          properties: [new_property]
         props.push new_formatted_property
 
     props

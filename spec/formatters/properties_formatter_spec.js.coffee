@@ -226,6 +226,23 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
             expect(propertyKeys all).to.include 'author'
             expect(propertyKeys all).to.include 'label'
 
+          it 'does fetches undefined properties if includeUndefined is set', ->
+            options.includeUndefined = true
+            fakeBlueprintProperties blueprintProperties, [
+              {key: 'definition', type: 'text', required: 'true'}
+              {key: 'author', type: 'text', required: 'true'},
+              {key: 'label', type: 'text'}
+            ]
+            fakeProperties properties, [
+              {key: 'definition'},
+              {key: 'ISBN'}
+            ]
+            all = formatter.all()
+            expect(all).to.have.lengthOf 3
+            expect(propertyKeys all).to.include 'definition'
+            expect(propertyKeys all).to.include 'author'
+            expect(propertyKeys all).to.include 'ISBN'
+
         describe "multivalue fields", ->
 
           it 'groups properties with the same key', ->

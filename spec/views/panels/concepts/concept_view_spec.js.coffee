@@ -337,14 +337,18 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
 
       context 'term properties', ->
 
-        it 'renders term properties', ->
+        beforeEach ->
           @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-          property = new Backbone.Model source: 'Wikipedia'
-          @term.propertiesByKeyTypeAndLang = -> source: "": [ property ]
+          property = {lang: null, value: 'Wikipedia', errors: {}}
+          property.info = -> {}
+          property_group = {key: 'source', type: 'text', properties: [property]}
+          @term.propertiesWithDefaults = -> [ property_group ]
+
+        it 'renders term properties', ->
           sinon.stub Coreon.Templates, 'concepts/properties'
           try
             Coreon.Templates['concepts/properties'].withArgs(
-              properties: @term.propertiesByKeyTypeAndLang(),
+              properties: @term.propertiesWithDefaults(includeUndefined: true),
               collapsed: true,
               noEditButton: true
             ).returns '<ul class="properties collapsed"></ul>'
@@ -354,20 +358,12 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
             Coreon.Templates['concepts/properties'].restore()
 
         it 'collapses properties by default', ->
-          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-          property = new Backbone.Model source: 'Wikipedia'
-          property.info = -> {}
-          @term.propertiesByKeyTypeAndLang = -> source: "": [ property ]
           @view.render()
           expect( @view.$('.term .properties') ).to.have.class 'collapsed'
           expect( @view.$('.term .properties > *:nth-child(2)') ).to.have.css 'display', 'none'
 
         it 'renders toggle for properties', ->
           I18n.t.withArgs('terms.properties.toggle.hint').returns 'Toggle properties'
-          @term.set 'properties', [ source: 'Wikipedia' ], silent: true
-          property = new Backbone.Model source: 'Wikipedia'
-          property.info = -> {}
-          @term.propertiesByKeyTypeAndLang = -> source: "": [ property ]
           @view.render()
           expect( @view.$('.term .properties h3') ).to.have.attr 'title', 'Toggle properties'
 

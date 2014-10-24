@@ -141,6 +141,11 @@ class Coreon.Models.Concept extends Backbone.Model
   definition: ->
     @propertiesByKeyAndLang().definition?[0].get('value') or null
 
-  propertiesWithDefaults: ->
-    formatter = new Coreon.Formatters.PropertiesFormatter Coreon.Models.RepositorySettings.propertiesFor('concept'), @properties().map((p) -> p), @errors()?.nested_errors_on_properties
+  propertiesWithDefaults: (options) ->
+    formatter = new Coreon.Formatters.PropertiesFormatter(
+      Coreon.Models.RepositorySettings.propertiesFor('concept'),
+      @properties().map((p) -> p),
+      @errors()?.nested_errors_on_properties,
+      options
+    )
     formatter.all()
