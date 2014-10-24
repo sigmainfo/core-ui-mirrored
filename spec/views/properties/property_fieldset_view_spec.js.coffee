@@ -160,6 +160,66 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(inputs).to.have.lengthOf 2
           expect(langSelects).to.have.lengthOf 2
 
+      context 'multiline text fields', ->
+
+        textAreaFieldStub = null
+
+        beforeEach ->
+          textAreaFieldStub = sinon.stub(Coreon.Helpers, 'textAreaField')
+          sinon.stub(Coreon.Helpers, 'selectField').returns '''
+              <select>
+                <option value="en">English</option>
+                <option value="de">German</option>
+                <option value="fr">French</option>
+              </select>
+            '''
+
+
+        afterEach ->
+          Coreon.Helpers.textAreaField.restore()
+          Coreon.Helpers.selectField.restore()
+
+        it 'renders a text area field', ->
+          textAreaFieldStub.withArgs(
+            null,
+            'properties[0][0][value]',
+            value: 'car',
+            required: true, errors: {}, class: 'value'
+          ).returns('<textarea></textarea>')
+          model.type = 'multiline_text'
+          el = renderView()
+          expect(el).to.have 'textarea'
+          expect(el).to.have 'select'
+
+        it 'renders multiple text area fields when given', ->
+          textAreaFieldStub.withArgs(
+            null,
+            'properties[0][0][value]',
+            value: 'car',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<textarea></textarea>')
+          textAreaFieldStub.withArgs(
+            null,
+            'properties[0][1][value]',
+            value: 'auto',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<textarea></textarea>')
+          model.type = 'multiline_text'
+          model.properties.push {
+            value: 'auto'
+            lang: 'de'
+            errors: {}
+          }
+          el = renderView()
+          inputs = el.find 'textarea'
+          langSelects = el.find 'select'
+          expect(inputs).to.have.lengthOf 2
+          expect(langSelects).to.have.lengthOf 2
+
       context 'boolean fields', ->
 
         booleanFieldStub = null
@@ -187,54 +247,74 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(el).to.have 'input[type=radio]'
           expect(el).not.to.have 'select'
 
-    describe '#value()', ->
+    describe '#serializeArray()', ->
 
-      context 'for text property', ->
+      it 'returns the values of each set text property', ->
+        model.type = 'text'
+        model.key = 'car'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <input type="text">
+                <select><option value="en" selected="">English</option></select>
+              </div>
+              <div class="group">
+                <input type="text">
+                <select><option value="de" selected="">German</option></select>
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.$el = markup
+        view.$el.find('input').first().val("Honda")
+        view.$el.find('input').last().val("Mazda")
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 2
+        expect(properties[0]).to.have.property 'value', 'Honda'
+        expect(properties[1]).to.have.property 'value', 'Mazda'
 
-        it 'returns the values of each set property', ->
-          model.type = 'text'
-          model.key = 'car'
-          markup = $ '''
-              <fieldset>
-                <div class="group">
-                  <input type="text">
-                  <select><option value="en" selected="">English</option></select>
-                </div>
-                <div class="group">
-                  <input type="text">
-                  <select><option value="de" selected="">German</option></select>
-                </div>
-              </fieldset>
-            '''
-          view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
-          view.$el = markup
-          view.$el.find('input').first().val("Honda")
-          view.$el.find('input').last().val("Mazda")
-          properties = view.serializeArray()
-          expect(properties).to.have.lengthOf 2
-          expect(properties[0]).to.have.property 'value', 'Honda'
-          expect(properties[1]).to.have.property 'value', 'Mazda'
+      it 'returns the values of each set multiline_text property', ->
+        model.type = 'multiline_text'
+        model.key = 'car'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <textarea></textarea>
+                <select><option value="en" selected="">English</option></select>
+              </div>
+              <div class="group">
+                <textarea></textarea>
+                <select><option value="de" selected="">German</option></select>
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.$el = markup
+        view.$el.find('textarea').first().val("Honda")
+        view.$el.find('textarea').last().val("Mazda")
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 2
+        expect(properties[0]).to.have.property 'value', 'Honda'
+        expect(properties[1]).to.have.property 'value', 'Mazda'
 
-      context 'for boolean property', ->
-
-        it 'returns a boolean value of the property', ->
-          model.type = 'boolean'
-          model.key = 'public'
-          markup = $ '''
-              <fieldset>
-                <div class="group">
-                  <label>Yes</label>
-                  <input name="foo" type="radio" value="true">
-                  <label>No</label>
-                  <input name="foo" type="radio" value="false" checked>
-                </div>
-              </fieldset>
-            '''
-          view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
-          view.$el = markup
-          properties = view.serializeArray()
-          expect(properties).to.have.lengthOf 1
-          expect(properties[0]).to.have.property 'value', false
+      it 'returns the values of each set boolean property', ->
+        model.type = 'boolean'
+        model.key = 'public'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <label>Yes</label>
+                <input name="foo" type="radio" value="true">
+                <label>No</label>
+                <input name="foo" type="radio" value="false" checked>
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.$el = markup
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 1
+        expect(properties[0]).to.have.property 'value', false
 
 
 

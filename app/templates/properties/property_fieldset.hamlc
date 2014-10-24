@@ -1,5 +1,5 @@
 %h4= @property.key
-- if @property.type in ['text']
+- if @property.type in ['text', 'multiline_text']
   - title = I18n.t('property.value.add', {property_name: @property.key})
   %a.add-value{href: "javascript:void(0)", title: title}= title
 - else
@@ -11,6 +11,13 @@
     .group
       - property = _.first @property.properties
       != @booleanField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
+  - when 'multiline_text'
+    - for property, index in @property.properties
+      .group
+        - title = I18n.t('property.value.remove', {property_name: @property.key})
+        %a.remove-value{href: "javascript:void(0)", title: title }= title
+        != @textAreaField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
+        != @selectField null, "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
   - when 'text'
     - for property, index in @property.properties
       .group
