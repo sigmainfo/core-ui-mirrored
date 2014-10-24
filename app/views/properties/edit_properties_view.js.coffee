@@ -25,7 +25,6 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @$el.find('select.widget-select').coreonSelect(positionRelativeTo: 'a.add-property', hidden: true)
     _.each @fieldsetViews, (fieldsetView) =>
       @$el.find('.add').before fieldsetView.render().el
-    debugger
     @
 
   serializeArray: ->
