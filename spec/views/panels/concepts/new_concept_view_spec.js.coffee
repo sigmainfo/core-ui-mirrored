@@ -6,6 +6,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
   beforeEach ->
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languageOptions = -> []
+    Coreon.Models.RepositorySettings.propertiesFor = (model) -> []
     sinon.stub I18n, 't'
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', (options) =>
       @broaderAndNarrower = new Backbone.View options
@@ -230,83 +231,6 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
         @view.$('form .term .property .key input').should.have.attr 'name', 'concept[terms][0][properties][0][key]'
         @view.$('form .term .property .value').should.have '.error-message'
         @view.$('form .term .property .value .error-message').should.have.text "can't be blank"
-
-  describe '#addProperty()', ->
-
-    beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) ->
-        "<input id='#{name}-#{options.index}-#{attr}' name='#{options.scope}[#{attr}]' #{'required' if options.required}/>"
-      @event = $.Event 'click'
-      @view.render()
-      $('#konacha').append @view.$el
-      @event.target = @view.$('.add-property').get(0)
-
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
-    it 'is triggered by click on action', ->
-      @view.addProperty = sinon.stub().returns false
-      @view.delegateEvents()
-      @view.$('a.add-property').trigger @event
-      @view.addProperty.should.have.been.calledOnce
-      @view.addProperty.should.have.been.calledWith @event
-
-    it 'appends property input set', ->
-      @view.addProperty @event
-      @view.$el.should.have '.properties .property input[id="property-0-key"]'
-      @view.$el.should.have '.properties .property input[id="property-0-value"]'
-      @view.$el.should.have '.properties .property input[id="property-0-lang"]'
-
-    it 'enumerates appended property input sets', ->
-      @view.$('a.add-property').attr 'data-index', 5
-      @view.addProperty @event
-      @view.addProperty @event
-      @view.$el.should.have '.properties .property input[id="property-5-key"]'
-      @view.$el.should.have '.properties .property input[id="property-6-key"]'
-
-    it 'uses nested scope', ->
-      @view.addProperty @event
-      @view.$el.should.have '.properties .property input[name="concept[properties][][key]"]'
-      @view.$el.should.have '.properties .property input[name="concept[properties][][value]"]'
-      @view.$el.should.have '.properties .property input[name="concept[properties][][lang]"]'
-
-    it 'requires key and value inputs', ->
-      @view.addProperty @event
-      @view.$('.properties .property input[id="property-0-key"]').should.have.attr 'required'
-      @view.$('.properties .property input[id="property-0-value"]').should.have.attr 'required'
-      @view.$('.properties .property input[id="property-0-lang"]').should.not.have.attr 'required'
-
-    it 'renders remove link', ->
-      I18n.t.withArgs('property.remove').returns 'Remove property'
-      @view.addProperty @event
-      @view.$el.should.have '.property a.remove-property'
-      @view.$('.property a.remove-property').should.have.text 'Remove property'
-
-  describe '#removeProperty()', ->
-
-    beforeEach ->
-      sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
-      @event = $.Event 'click'
-      @view.render()
-      @view.$('.properties').append '''
-        <fieldset class='property not-persisted'>
-          <a class='remove-property'>Remove property</a>
-        </fieldset>
-        '''
-
-    afterEach ->
-      Coreon.Helpers.input.restore()
-
-    it 'is triggered by click on remove action', ->
-      @view.removeProperty = sinon.stub().returns false
-      @view.delegateEvents()
-      @view.$('.property a.remove-property').trigger @event
-      @view.removeProperty.should.have.been.calledOnce
-
-    it 'removes property input set', ->
-      @event.target = @view.$('.remove-property').get(0)
-      @view.removeProperty @event
-      @view.$el.should.not.have '.property'
 
   describe '#addTerm()', ->
 

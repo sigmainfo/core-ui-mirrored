@@ -1,1 +1,7 @@
-%h3= I18n.t 'properties.title'
+%h3.title= I18n.t 'properties.title'
+.add
+  .edit
+    %a.add-property{href: "javascript:void(0)"}= I18n.t "properties.add"
+    %select.widget-select{name: 'chooseProperty', style: {display: 'none'}}
+      - for optional in @optionalProperties
+        %option{value: optional.key}= optional.key

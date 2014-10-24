@@ -6,7 +6,7 @@ Feature: maintainer edits properties
   Background:
     Given I am logged in as maintainer of the repository
 
-  @wip
+
   Scenario: new concept with required properties
     Given the repository defines a blueprint for concepts
     And that blueprint requires a property "short description" of type "text"
@@ -29,24 +29,23 @@ Feature: maintainer edits properties
     And I see a property "SHORT DESCRIPTION" with English value "sucks blood; bat"
     And I see a property "DANGEROUS" with value "no"
 
-  # @wip
-  # Scenario: new concept with optional property
-  #   Given the repository defines a blueprint for concepts
-  #   And that blueprint allows a property "alias" of type "text"
-  #   And that blueprint allows a property "definition" of type "multiline text"
-  #   When I visit the repository root page
-  #   And I click on "New concept"
-  #   Then I see a section "PROPERTIES" within the form "Create concept"
-  #   And I do not see a fieldset "ALIAS" or "DEFINITION"
-  #   When I click on "Add property" within this form
-  #   Then I see a dropdown with options "ALIAS", "DEFINITION"
-  #   When I click on "DEFINITION"
-  #   Then I see a fieldset "DEFINITION"
-  #   When I fill in "Corpse that drinks blood of the living." for "DEFINITION"
-  #   And I select "None" for "LANGUAGE"
-  #   And I click "Create concept"
-  #   Then I see a listing "PROPERTIES" within the concept header
-  #   And I see a "DEFINITION" with "Corpse that drinks blood of the living."
+  Scenario: new concept with optional property
+    Given the repository defines a blueprint for concepts
+    And that blueprint allows a property "alias" of type "text"
+    And that blueprint allows a property "definition" of type "multiline text"
+    When I visit the repository root page
+    And I click on "New concept"
+    Then I see a section "PROPERTIES" within the form "Create concept"
+    And I do not see a fieldset "ALIAS" or "DEFINITION"
+    When I click on "Add property" within this form
+    Then I see a dropdown with options "ALIAS", "DEFINITION"
+    When I click on "DEFINITION"
+    Then I see a fieldset "DEFINITION"
+    When I fill in "Corpse that drinks blood of the living." for "DEFINITION"
+    And I select "None" for "LANGUAGE"
+    And I click "Create concept"
+    Then I see a listing "PROPERTIES" within the concept header
+    And I see a "DEFINITION" with "Corpse that drinks blood of the living."
 
   # @wip
   # Scenario: edit existing concept property

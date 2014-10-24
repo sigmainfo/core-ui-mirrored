@@ -27,7 +27,6 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   @nestedFieldsFor "terms", template: Coreon.Templates["concepts/new_term"]
 
   events:
-    "click  a.add-property"    : "addProperty"
     "click  a.remove-property" : "removeProperty"
     "click  a.add-term"        : "addTerm"
     "click  a.remove-term"     : "removeTerm"
@@ -40,6 +39,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
       model: @model
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults()
+      optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('concept')
 
   render: ->
     @termCount = if @model.has("terms") then @model.get("terms").length else 0

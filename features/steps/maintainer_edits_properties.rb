@@ -9,14 +9,6 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['clear'].delete
   end
 
-  step 'that blueprint defines a property "definition" of type "multiline text"' do
-    @blueprint['properties'].post property: { key: 'definition', type: 'multiline_text' }
-  end
-
-  step 'that blueprint defines a property "dangerous" of type "boolean"' do
-    @blueprint['properties'].post property: { key: 'dangerous', type: 'boolean' }
-  end
-
   step 'that blueprint requires a property "short description" of type "text"' do
     @blueprint['properties'].post property: {
       key: 'short description',
@@ -38,12 +30,29 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: @property_attrs
   end
 
+  step 'that blueprint allows a property "alias" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'alias',
+      type: 'text',
+      required: false
+    }
+  end
+
+  step 'that blueprint allows a property "definition" of type "multiline text"' do
+    @blueprint['properties'].post property: {
+      key: 'definition',
+      type: 'multiline_text',
+      required: false
+    }
+  end
+
   step 'I click on "New concept"' do
     click_link "New concept"
   end
 
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
-    within :form, 'Create concept' do
+    @form = page.find :form, 'Create concept'
+    within @form do
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible
     end
@@ -62,6 +71,12 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
       @fieldset = page.find :fieldset_with_title, "dangerous"
       @dangerous_fieldset = @fieldset
       expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'I do not see a fieldset "ALIAS" or "DEFINITION"' do
+    within @section do
+      expect(page).to_not have_selector :fieldset_with_title, "definition"
     end
   end
 
@@ -109,6 +124,41 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I click on "Add property" within this form' do
+    within @form do
+      click_link "Add property"
+    end
+  end
+
+  step 'I see a dropdown with options "ALIAS", "DEFINITION"' do
+    @dropdown = page.find 'ul.options'
+    @new_alias = @dropdown.find 'li.option', text: 'alias'
+    expect(@new_alias).to be_visible
+    @new_definition = @dropdown.find 'li.option', text: 'definition'
+    expect(@new_definition).to be_visible
+  end
+
+  step 'I click on "DEFINITION"' do
+    @new_definition.click
+  end
+
+  step 'I see a fieldset "DEFINITION"' do
+    @fieldset = page.find :fieldset_with_title, "definition"
+    expect(@fieldset).to be_visible
+  end
+
+  step 'I fill in "Corpse that drinks blood of the living." for "DEFINITION"' do
+    within @fieldset do
+      fill_in page.find('textarea')[:id], with: 'Corpse that drinks blood of the living.'
+    end
+  end
+
+  step 'I select "None" for "LANGUAGE"' do
+    within @fieldset do
+      select 'None', from: page.find('select')[:id]
+    end
+  end
+
   step 'I click "Create concept"' do
     click_button "Create concept"
   end
@@ -126,6 +176,12 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'I see a property "DANGEROUS" with value "no"' do
     within :table_row, 'dangerous' do
       expect(page).to have_css("td .value", text: 'no')
+    end
+  end
+
+  step 'I see a "DEFINITION" with "Corpse that drinks blood of the living."' do
+     within :table_row, 'definition' do
+      expect(page).to have_css("td .value", text: 'Corpse that drinks blood of the living.')
     end
   end
 end

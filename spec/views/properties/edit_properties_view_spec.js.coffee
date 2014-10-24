@@ -62,6 +62,10 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
       fieldsets = el.find 'fieldset'
       expect(fieldsets).to.have.lengthOf 3
 
+    it 'renders a button to add new properties', ->
+      el = renderView()
+      expect(el).to.have 'a.add-property'
+
   describe "#serializeArray()", ->
 
     it 'returns an array of properties', ->

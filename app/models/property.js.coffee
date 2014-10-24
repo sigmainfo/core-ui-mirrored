@@ -8,5 +8,5 @@ class Coreon.Models.Property extends Backbone.Model
 
   defaults: ->
     key: ""
-    value: ""
-    lang: ""
+    value: null
+    lang: null
