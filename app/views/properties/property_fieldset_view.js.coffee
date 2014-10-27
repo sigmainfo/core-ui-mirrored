@@ -15,6 +15,10 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   template: Coreon.Templates["properties/property_fieldset"]
 
+  events:
+    'change select': 'inputChanged'
+    'input input': 'inputChanged'
+
   initialize: (options) ->
     @model = options.model
     @index = options.index
@@ -25,6 +29,17 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
   render: ->
     @$el.html @template(property: @model, name: @name, selectableLanguages: @selectableLanguages)
     @
+
+  isValid: ->
+    for result in @serializeArray()
+      unless !!result.key && !!result.value
+        console.log "is not valid"
+        return false
+    console.log "is valid"
+    true
+
+  markInvalid: ->
+    @$el.find('.key').after $ '<div class="invalid">Property required</div>'
 
   serializeArray: ->
     @$el.find('.group').map (index, group) =>
@@ -51,3 +66,6 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             key: @model.key
             value: _.map($(group).find("input:checkbox:checked"), (c) -> $(c).val())
           }
+
+  inputChanged: (evt) ->
+    @trigger 'inputChanged'

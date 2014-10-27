@@ -23,10 +23,13 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @fieldsetViews = []
     @index = 0
     for formattedProperty, index in @collection
-      @fieldsetViews.push new Coreon.Views.Properties.PropertyFieldsetView(model: formattedProperty, index: index)
+      newFieldsetView = new Coreon.Views.Properties.PropertyFieldsetView(model: formattedProperty, index: index)
+      @fieldsetViews.push newFieldsetView
+      @listenTo newFieldsetView, 'inputChanged', @updateValid
       @index = @index++
     @$el.addClass('collapsed') if @collapsed
     @$el.addClass('edit') if @isEdit
+    @valid = false
 
   render: ->
     @$el.html @template(optionalProperties: @optionalProperties)
@@ -34,6 +37,20 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     _.each @fieldsetViews, (fieldsetView) =>
       @$el.find('.add').before fieldsetView.render().el
     @
+
+  isValid: ->
+    for fieldsetView in @fieldsetViews
+      unless fieldsetView.isValid()
+        return false
+    true
+
+  updateValid: ->
+    @trigger 'updateValid'
+    @valid = @isValid()
+
+  markInvalid: ->
+    for fieldsetView in @fieldsetViews
+      fieldsetView.markInvalid() unless fieldsetView.isValid()
 
   serializeArray: ->
     properties = []
@@ -52,12 +69,13 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
       [new Coreon.Models.Property(key: selectedKey)],
       []
     newFormattedProperty = newPropertyFormatter.all()[0]
-    newFieldset = new Coreon.Views.Properties.PropertyFieldsetView
+    newFieldsetView = new Coreon.Views.Properties.PropertyFieldsetView
       model: newFormattedProperty
       index: @index
+    @listenTo newFieldsetView, 'inputChanged'
     @index = @index++
-    @fieldsetViews.push newFieldset
-    @$el.find('.add').before newFieldset.render().el
+    @fieldsetViews.push newFieldsetView
+    @$el.find('.add').before newFieldsetView.render().el
 
 
 

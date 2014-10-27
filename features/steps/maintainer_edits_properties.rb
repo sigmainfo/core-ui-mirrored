@@ -13,6 +13,11 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['clear'].delete
   end
 
+  step 'the repository defines a blueprint for terms' do
+    @blueprint = blueprint(:term)
+    @blueprint['clear'].delete
+  end
+
   step 'that blueprint requires a property "short description" of type "text"' do
     @blueprint['properties'].post property: {
       key: 'short description',
@@ -63,6 +68,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     }
   end
 
+  step 'that blueprint requires a property "author" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'author',
+      type: 'text',
+      required: true
+    }
+  end
+
   step 'a concept "Bloodbath" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Bloodbath' }
   end
@@ -76,8 +89,20 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     click_link "Edit mode"
   end
 
+  step 'I click "Add term"' do
+    click_link "Add term"
+  end
+
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
     @form = page.find :form, 'Create concept'
+    within @form do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
+  end
+
+  step 'I see a section "PROPERTIES" within the form "Create term"' do
+    @form = page.find :form, 'Create term'
     within @form do
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible
@@ -222,12 +247,51 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I fill in "Blutbad" for "VALUE"' do
+    within @form do
+      fill_in 'Value', with: 'Blutbad'
+    end
+  end
+
+  step 'I fill in "de" for "LANGUAGE"' do
+    within @form do
+      fill_in 'Language', with: 'de'
+    end
+  end
+
+  step 'the submit "Create term" is disabled' do
+    within @form do
+      submit = page.find :button, text: 'Create term', disabled: true
+    end
+  end
+
+  step 'I fill in "Rüdiger von Schlotterstein" for "AUTHOR"' do
+    within @form do
+      @fieldset = page.find :fieldset_with_title, "author"
+      @author_fieldset = @fieldset
+      within @fieldset do
+        fill_in page.find('input[type=text]')[:id], with: 'Rüdiger von Schlotterstein'
+      end
+    end
+  end
+
+  step 'the submit "Create term" is enabled' do
+    within @form do
+      submit = page.find :button, text: 'Create term'
+      expect(submit).to be_visible
+    end
+  end
+
   step 'I click "Create concept"' do
     click_button "Create concept"
   end
 
   step 'I click "Save concept"' do
     click_button "Save concept"
+  end
+
+  step 'I click "Create term"' do
+    click_button 'Create term'
   end
 
   step 'I see a listing "PROPERTIES" within the concept header' do
@@ -256,5 +320,19 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     tags_row = page.find :table_row, 'tags'
     expect(tags_row).to have_css 'ul li', text: 'cool'
     expect(tags_row).to have_css 'ul li', text: 'night life'
+  end
+
+  step 'I see term "Blutbad" within language section "DE"' do
+    language_section = page.find :section, 'de'
+    within language_section do
+      @term = page.find :term, 'Blutbad'
+      expect(@term).to be_visible
+    end
+  end
+
+  step 'I toggle "Properties" within this term' do
+    within @term do
+      @term.find('h3', text: 'Properties')
+    end
   end
 end

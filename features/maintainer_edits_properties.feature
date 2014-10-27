@@ -63,23 +63,23 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     And I see a property "TAGS" with values "cool", "night life" only
 
-  # @wip
-  # Scenario: ensure non-blank property on new term
-  #   Given the repository defines a blueprint for terms
-  #   And that blueprint requires a property "author" of type "text"
-  #   And a concept "Bloodbath" exists
-  #   When I edit that concept
-  #   And I click "Add term"
-  #   Then I see a section "PROPERTIES" within the form "Add term"
-  #   When I fill in "Blutbad" for "VALUE"
-  #   And I select "de" for "LANGUAGE"
-  #   Then the submit "Add term" is disabled
-  #   When I fill in "Rüdiger von Schlotterstein" for "AUTHOR"
-  #   Then the submit "Add term" is enabled
-  #   When I click "Add term"
-  #   Then I see term "Blutbad" within language section "DE"
-  #   When I toggle "Properties" within this term
-  #   Then I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"
+  @wip
+  Scenario: ensure non-blank property on new term
+    Given the repository defines a blueprint for terms
+    And that blueprint requires a property "author" of type "text"
+    And a concept "Bloodbath" exists
+    When I edit that concept
+    And I click "Add term"
+    Then I see a section "PROPERTIES" within the form "Create term"
+    When I fill in "Blutbad" for "VALUE"
+    And I fill in "de" for "LANGUAGE"
+    Then the submit "Create term" is disabled
+    When I fill in "Rüdiger von Schlotterstein" for "AUTHOR"
+    Then the submit "Create term" is enabled
+    When I click "Create term"
+    Then I see term "Blutbad" within language section "DE"
+    When I toggle "Properties" within this term
+    Then I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"
 
   # @wip
   # Scenario: add another value when editing term
