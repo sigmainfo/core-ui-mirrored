@@ -63,7 +63,6 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     And I see a property "TAGS" with values "cool", "night life" only
 
-  @wip
   Scenario: ensure non-blank property on new term
     Given the repository defines a blueprint for terms
     And that blueprint requires a property "author" of type "text"

@@ -332,7 +332,16 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I toggle "Properties" within this term' do
     within @term do
-      @term.find('h3', text: 'Properties')
+      properties_link = @term.find 'h3', text: 'Properties', visible: false
+      properties_link.click
+    end
+  end
+
+  step 'I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"' do
+    within @term do
+      within :table_row, 'author' do
+        expect(page).to have_css "td .value", text: 'Rüdiger von Schlotterstein'
+      end
     end
   end
 end

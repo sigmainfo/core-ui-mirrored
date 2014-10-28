@@ -253,7 +253,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     data.properties = if data.properties?
       property for property in data.properties when property?
     else []
-
+    # data.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
     model = @model.terms().get data.id
@@ -281,9 +281,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     target = $ evt.target
     data = target.serializeJSON().term or {}
     data.concept_id = @model.id
-    data.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
+    data.properties = @termProperties[0].serializeArray()
 
     term = new Coreon.Models.Term data
     request = term.save null, wait: yes
