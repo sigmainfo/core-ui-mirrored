@@ -142,6 +142,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
         optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('term')
         isEdit: true
         collapsed: true
+        ownerId: term.id
       @termProperties.push termProperty
       @$el.find(".terms form.term.update input[name=id][value=#{term.id}]").parent('form').find('.submit').before termProperty.render().$el
 
@@ -230,9 +231,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form = $ evt.target
     data = form.serializeJSON().concept or {}
     attrs = {}
-    # attrs.properties = if data.properties?
-    #   property for property in data.properties when property?
-    # else []
     attrs.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
@@ -250,10 +248,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form = $ evt.target
     data = form.serializeJSON()?.term or {}
     data.id = form.find("input[name=id]").val()
-    data.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
-    # data.properties = @conceptProperties.serializeArray()
+    termPropertiesView = _.find @termProperties, (pView) -> pView.ownerId == data.id
+    data.properties = termPropertiesView.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
     model = @model.terms().get data.id

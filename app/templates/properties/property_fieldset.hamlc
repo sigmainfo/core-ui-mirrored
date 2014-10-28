@@ -17,35 +17,8 @@
       != @multiSelectField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, options: @property?.values, class: 'value'
   - when 'multiline_text'
     - for property, index in @property.properties
-      .group
-        - title = I18n.t('property.value.remove', {property_name: @property.key})
-        %a.remove-value{href: "javascript:void(0)", title: title }= title
-        != @textAreaField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
-        != @selectField null, "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
+      != @render "properties/multiline_text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages
   - when 'text'
     - for property, index in @property.properties
-      .group
-        - title = I18n.t('property.value.remove', {property_name: @property.key})
-        %a.remove-value{href: "javascript:void(0)", title: title }= title
-        != @textField null, "#{@name}[#{index}][value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
-        != @selectField null, "#{@name}[#{index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
-
-
-/ - name = if @scope? then "#{@scope}[properties][#{@index}]" else "properties[#{@index}]"
-/ %fieldset.property
-/   %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
-
-/   != @textField I18n.t('property.key'), "#{name}[key]", value: @property?.key, required: true, errors: @property?.errors?.key, class: 'key'
-
-/   - switch @property?.type
-/     - when 'boolean'
-/       != @checkBoxField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value'
-/     - when 'multiselect_picklist'
-/       != @multiSelectField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value', options: @property?.options
-/     - else
-/       != @textAreaField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value'
-
-
-/   - if (!@property?) || _(@property).has 'lang'
-/     != @selectField I18n.t('forms.select.language'), "#{name}[lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
+      != @render "properties/text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages
 

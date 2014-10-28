@@ -76,8 +76,25 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     }
   end
 
+  step 'that blueprint requires a property "source" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'source',
+      type: 'text',
+      required: true
+    }
+  end
+
   step 'a concept "Bloodbath" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Bloodbath' }
+  end
+
+  step 'a concept with English term "bloodbath" exists' do
+    @term_attrs = { value: 'bloodbath', lang: 'en' }
+  end
+
+  step 'that term has a property "source" of "bloodbathproject.com"' do
+    @term_attrs.merge! 'properties[]' => [{key: 'source', value: 'bloodbathproject.com'}]
+    concepts["#{concept['id']}/terms"].post term: @term_attrs
   end
 
   step 'I click on "New concept"' do
@@ -93,6 +110,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     click_link "Add term"
   end
 
+  step 'I click "Edit term" within the term "bloodbath"' do
+    @term = page.find :term, 'bloodbath'
+    within @term do
+      click_link 'Edit term'
+    end
+  end
+
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
     @form = page.find :form, 'Create concept'
     within @form do
@@ -103,6 +127,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I see a section "PROPERTIES" within the form "Create term"' do
     @form = page.find :form, 'Create term'
+    within @form do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
+  end
+
+  step 'I see a section "PROPERTIES" within the form "Save term"' do
+    @form = page.find :form, 'Save term'
     within @form do
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible
@@ -153,6 +185,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a fieldset "SOURCE" within this section' do
+    within @section do
+      @fieldset = page.find :fieldset_with_title, "source"
+      @source_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
   step 'this fieldset contains a text input' do
     within @fieldset do
       expect(page).to have_selector 'input[type=text]'
@@ -186,6 +226,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see an input with "bloodbathproject.com"' do
+    within @fieldset do
+      input = page.find 'input[type=text]'
+      expect(input[:value]).to eql 'bloodbathproject.com'
+    end
+  end
+
   step 'I fill in "SHORT DESCRIPTION" with "sucks blood; bat"' do
     @fieldset = @short_descr_fieldset
     within @fieldset do
@@ -208,6 +255,20 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'I click on "Add property" within this form' do
     within @form do
       click_link "Add property"
+    end
+  end
+
+  step 'I click on "Add another source" inside "SOURCE"' do
+    within @fieldset do
+      click_link "Add another source"
+    end
+  end
+
+  step 'I fill in the empty input with "wikipedia.org/wiki/Bloodbath"' do
+    within @fieldset do
+      inputs = page.all 'input[type=text]'
+      input = inputs.select{|i| i[:value] == ''}.first
+      fill_in input[:id], with: 'wikipedia.org/wiki/Bloodbath'
     end
   end
 
@@ -294,6 +355,10 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     click_button 'Create term'
   end
 
+  step 'I click "Save term"' do
+    click_button 'Save term'
+  end
+
   step 'I see a listing "PROPERTIES" within the concept header' do
     expect(page).to have_css ".concept .properties"
   end
@@ -330,6 +395,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see term "bloodbath" within language section "EN"' do
+    language_section = page.find :section, 'en'
+    within language_section do
+      @term = page.find :term, 'bloodbath'
+      expect(@term).to be_visible
+    end
+  end
+
   step 'I toggle "Properties" within this term' do
     within @term do
       properties_link = @term.find 'h3', text: 'Properties', visible: false
@@ -341,6 +414,33 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     within @term do
       within :table_row, 'author' do
         expect(page).to have_css "td .value", text: 'Rüdiger von Schlotterstein'
+      end
+    end
+  end
+
+  step 'I see a property "SOURCE" with 2 values' do
+    within @term do
+      within :table_row, 'source' do
+        values = page.all 'td .value', visible: false
+        expect(values.size).to eql 2
+      end
+    end
+  end
+
+  step 'I click "2"' do
+    within @term do
+      within :table_row, 'source' do
+        second_tab = page.find 'ul.index li', text: '2'
+        second_tab.click
+      end
+    end
+  end
+
+  step 'I see a link "wikipedia.org/wiki/Bloodbath"' do
+    within @term do
+      within :table_row, 'source' do
+        link = page.find 'td .value', text: 'wikipedia.org/wiki/Bloodbath'
+        expect(link).to be_visible
       end
     end
   end

@@ -80,25 +80,24 @@ Feature: maintainer edits properties
     When I toggle "Properties" within this term
     Then I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"
 
-  # @wip
-  # Scenario: add another value when editing term
-  #   Given the repository defines a blueprint for terms
-  #   And that blueprint requires a property "source" of type "text"
-  #   And a concept with English term "bloodbath" exists
-  #   And that term has a property "source" of "bloodbathproject.com"
-  #   When I edit that concept
-  #   And I click "Edit term" within the term "bloodbath"
-  #   Then I see a section "PROPERTIES" within the form "Update term"
-  #   And I see a fieldset "SOURCE" within this section
-  #   And I see an input with "bloodbathproject.com"
-  #   When I click on "Add value" inside "SOURCE"
-  #   And I fill in the empty input with "wikipedia.org/wiki/Bloodbath"
-  #   And I click "Update term"
-  #   Then I see term "bloodbath" within language section "EN"
-  #   When I toggle "Properties" within this term
-  #   Then I see a property "SOURCE" with 2 values
-  #   When I click "2"
-  #   Then I see a link "wikipedia.org/wiki/Bloodbath"
+  Scenario: add another value when editing term
+    Given the repository defines a blueprint for terms
+    And that blueprint requires a property "source" of type "text"
+    And a concept with English term "bloodbath" exists
+    And that term has a property "source" of "bloodbathproject.com"
+    When I edit that concept
+    And I click "Edit term" within the term "bloodbath"
+    Then I see a section "PROPERTIES" within the form "Save term"
+    And I see a fieldset "SOURCE" within this section
+    And I see an input with "bloodbathproject.com"
+    When I click on "Add another source" inside "SOURCE"
+    And I fill in the empty input with "wikipedia.org/wiki/Bloodbath"
+    And I click "Save term"
+    Then I see term "bloodbath" within language section "EN"
+    When I toggle "Properties" within this term
+    Then I see a property "SOURCE" with 2 values
+    When I click "2"
+    Then I see a link "wikipedia.org/wiki/Bloodbath"
 
   # @wip
   # Scenario: delete optional property

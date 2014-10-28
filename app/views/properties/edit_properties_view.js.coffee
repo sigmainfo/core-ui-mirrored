@@ -20,6 +20,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @optionalProperties = options.optionalProperties || []
     @isEdit = options.isEdit || false
     @collapsed = options.collapsed || false
+    @ownerId = options.ownerId
     @fieldsetViews = []
     @index = 0
     for formattedProperty, index in @collection

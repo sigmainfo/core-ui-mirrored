@@ -1,5 +1,8 @@
 #= require environment
 #= require templates/properties/property_fieldset
+#= require templates/properties/text_property_fieldset_value
+#= require templates/properties/multiline_text_property_fieldset_value
+#= require helpers/render
 #= require helpers/select_field
 #= require helpers/text_field
 #= require helpers/text_area_field
@@ -18,6 +21,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
   events:
     'change select': 'inputChanged'
     'input input': 'inputChanged'
+    'click a.add-value': 'addValue'
 
   initialize: (options) ->
     @model = options.model
@@ -25,6 +29,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @scopePrefix = options.scopePrefix
     @name = if @scopePrefix? then "#{@scopePrefix}[properties][#{@index}]" else "properties[#{@index}]"
     @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
+    @values_index = @model?.properties.length || 0
 
   render: ->
     @$el.html @template(property: @model, name: @name, selectableLanguages: @selectableLanguages)
@@ -67,3 +72,10 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   inputChanged: (evt) ->
     @trigger 'inputChanged'
+
+  addValue: ->
+    return unless @model.type in ['text', 'multiline_text']
+    newValueTemplate = Coreon.Templates["properties/#{@model.type}_property_fieldset_value"]
+    newValueMarkup = newValueTemplate(propertyKey: @model.key, name: @name, property: {}, index: @values_index, selectableLanguages: @selectableLanguages)
+    @$el.append newValueMarkup
+    @values_index++

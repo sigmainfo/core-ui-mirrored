@@ -1,0 +1,5 @@
+.group
+  - title = I18n.t('property.value.remove', {property_name: @propertyKey})
+  %a.remove-value{href: "javascript:void(0)", title: title }= title
+  != @textField null, "#{@name}[#{@index}][value]", value: @property?.value, required: true, errors: @property?.errors?.value || {}, class: 'value'
+  != @selectField null, "#{@name}[#{@index}][lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
