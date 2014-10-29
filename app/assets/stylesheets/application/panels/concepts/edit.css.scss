@@ -42,14 +42,10 @@
 
 .concept form {
   position: relative;
-
-
-   &.term, fieldset {
-     position: relative;
-     padding-top: 16px;
-   }
    
    fieldset {
+     position: relative;
+     padding-top: 6px;
      border: 0;    
      border-top: 1px solid white;
     
@@ -61,47 +57,20 @@
      .group {
        padding: 10px 4px 10px 60px;
        overflow: hidden;
+       
+       div.input {
+         padding: 0;
+       }
      }
-   }
-   
-   &.term {
-     margin-bottom: 4px;
-   }
-   
-   &.concept {
-     &>.properties fieldset {
-       padding-top: 6px;
-       margin-bottom: 0;
-     }
-   }
-   
-   &.concept section div.edit, &.term .properties .edit {
-     position: relative;
-     background: none;
-     margin: 0;
-     width: auto;
-     height: 16px;
-     padding: 7px 8px;
-     border-top: 1px solid white;
-   }
-
-   div.input {
-     padding-bottom: 18px;
-     padding-left: 60px;
-   }
-
-// inside group to not mess up older forms
-   .group {
+     
      input[type="text"] {
        height:24px;
        width: 40%;
        float: left;
      }
+     
      input[type="radio"] {
        margin: 0 30px 0 5px;
-     }
-     div.input {
-       padding: 0;
      }
      
      label {
@@ -113,6 +82,16 @@
        padding:0;
        float: none;
      }
+   }
+   
+   &.concept section div.edit, &.term .properties .edit {
+     position: relative;
+     background: none;
+     margin: 0;
+     width: auto;
+     height: 16px;
+     padding: 7px 8px;
+     border-top: 1px solid white;
    }
    
    select {
@@ -174,7 +153,14 @@
      @include opacity(0.5);
    }
    
-   &.term, .term {
+   &.term, .term {   
+     position: relative;
+     padding-top: 16px;
+     
+     div.input {
+       padding-bottom: 18px;
+       padding-left: 60px;
+     }
 
      .submit {
        margin-top: 1px;
@@ -187,15 +173,12 @@
 
        fieldset {
          border-top: 1px solid white;
-         margin:0;
-         padding-left: 100px;
          background-color: rgba(white, 0.3);
        }
      
        h3 {
          padding: 1px 7px 0 5px;
          margin: 0;
-         margin-top: 5px;
          background: rgba(white, 0.3);
          &:before {
            content: none;
@@ -212,7 +195,7 @@
 
 form.create.term {
   clear: both;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 
