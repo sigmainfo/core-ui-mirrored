@@ -118,25 +118,24 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     But I do not see "STATUS" or "forbidden"
 
-  # @wip
-  # Scenario: delete value from property
-  #   Given the repository defines a blueprint for concepts
-  #   And that blueprint allows a property "quote" of type "multiline text"
-  #   And a concept "Bloodbath" exists
-  #   And that concept has a property "quote" with value "That was visual."
-  #   And that concept has a property "quote" with value "You drank Ian!"
-  #   When I edit that concept
-  #   Then I see a section "PROPERTIES"
-  #   When I click on "Edit properties"
-  #   Then I see a form "Save concept"
-  #   And I see a fieldset "QUOTE" within this form
-  #   And I see 2 text areas within "QUOTE"
-  #   When I click on "Delete value" for "You drank Ian!"
-  #   Then I do not see a button "Delete value" for "That was visual."
-  #   When I click "Save concept"
-  #   Then I see a listing "PROPERTIES" within the concept header
-  #   And I see a property "QUOTE" with "That was visual."
-  #   But I do not see "You drank Ian!"
+  Scenario: delete value from property
+    Given the repository defines a blueprint for concepts
+    And that blueprint allows a property "quote" of type "multiline text"
+    And a concept "Bloodbath" exists
+    And that concept has a property "quote" with value "That was visual."
+    And that concept has a property "quote" with value "You drank Ian!"
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a form "Save concept"
+    And I see a fieldset "QUOTE" within this form
+    And I see 2 text areas within "QUOTE"
+    When I click on "Delete value" for "You drank Ian!"
+    Then I do not see a button "Delete value" for "That was visual."
+    When I click "Save concept"
+    Then I see a listing "PROPERTIES" within the concept header
+    And I see a property "QUOTE" with "That was visual."
+    But I do not see "You drank Ian!"
 
   # @wip
   # Scenario: delete deprecated concept property

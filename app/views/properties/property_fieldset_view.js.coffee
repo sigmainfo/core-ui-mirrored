@@ -22,6 +22,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     'change select': 'inputChanged'
     'input input': 'inputChanged'
     'click a.add-value': 'addValue'
+    'click a.remove-value': 'removeValue'
     'click a.remove-property': 'removeProperty'
 
   initialize: (options) ->
@@ -47,7 +48,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   serializeArray: ->
     return [] if !@model.multivalue && @checkDelete() == 1
-    @$el.find('.group').map (index, group) =>
+    @$el.find('.group').not('.delete').map (index, group) =>
       switch @model.type
         when 'text'
           {
@@ -79,7 +80,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   checkDelete: ->
     if @model.multivalue
-      #
+      return @$el.find('.group .delete').length
     else
       return 1 if @$el.hasClass 'delete'
     0
@@ -93,6 +94,23 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     newValueMarkup = newValueTemplate(propertyKey: @model.key, name: @name, property: {}, index: @values_index, selectableLanguages: @selectableLanguages)
     @$el.append newValueMarkup
     @values_index++
+    @updateRemoveLinks()
+
+  removeValue: (event) ->
+    propertyGroup = $(event.target).parent()
+    index = propertyGroup.attr('data-index')
+    if @model.properties[index]
+      propertyGroup.addClass('delete')
+    else
+      propertyGroup.remove()
+    @updateRemoveLinks()
+
+  updateRemoveLinks: ->
+    if @model.multivalue
+      if @$el.find('.group').not('.delete').length > 1
+        @$el.find('a.remove-value').show()
+      else
+        @$el.find('a.remove-value').hide()
 
   removeProperty: ->
     if !@model.multivalue && !@model.properties[0].persisted

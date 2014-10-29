@@ -97,6 +97,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: @property_attrs
   end
 
+  step 'that blueprint allows a property "quote" of type "multiline text"' do
+    @blueprint['properties'].post property: {
+      key: 'quote',
+      type: 'multiline_text',
+      required: false
+    }
+  end
+
   step 'a concept "Bloodbath" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Bloodbath' }
   end
@@ -112,6 +120,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'that term has a property "source" of "bloodbathproject.com"' do
     @term_attrs.merge! 'properties[]' => [{key: 'source', value: 'bloodbathproject.com'}]
     concepts["#{concept['id']}/terms"].post term: @term_attrs
+  end
+
+  step 'that concept has a property "quote" with value "That was visual."' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'quote', value: 'That was visual.' }
+  end
+
+  step 'that concept has a property "quote" with value "You drank Ian!"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'quote', value: 'You drank Ian!' }
   end
 
   step 'I click on "New concept"' do
@@ -218,6 +234,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a fieldset "QUOTE" within this form' do
+    within @form do
+      @fieldset = page.find :fieldset_with_title, "quote"
+      @status_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
   step 'this fieldset contains a text input' do
     within @fieldset do
       expect(page).to have_selector 'input[type=text]'
@@ -271,6 +295,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see 2 text areas within "QUOTE"' do
+    within @fieldset do
+      @quote_textareas = page.all('textarea')
+      expect(@quote_textareas.size).to eql 2
+    end
+  end
+
   step 'I fill in "SHORT DESCRIPTION" with "sucks blood; bat"' do
     @fieldset = @short_descr_fieldset
     within @fieldset do
@@ -299,6 +330,22 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'I click on "Add another source" inside "SOURCE"' do
     within @fieldset do
       click_link "Add another source"
+    end
+  end
+
+  step 'I click on "Delete value" for "You drank Ian!"' do
+    within @fieldset do
+      text_area = @quote_textareas.select{|t| t[:value] == "You drank Ian!"}.first
+      remove_link = text_area.find(:xpath, './../../a[@class="remove-value"]')
+      remove_link.click
+    end
+  end
+
+  step 'I do not see a button "Delete value" for "That was visual."' do
+    within @fieldset do
+      text_area = @quote_textareas.select{|t| t[:value] == "That was visual."}.first
+      remove_link = text_area.find(:xpath, './../../a[@class="remove-value"]', visible: false)
+      expect(remove_link).to_not be_visible
     end
   end
 
@@ -435,6 +482,18 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     tags_row = page.find :table_row, 'tags'
     expect(tags_row).to have_css 'ul li', text: 'cool'
     expect(tags_row).to have_css 'ul li', text: 'night life'
+  end
+
+  step 'I see a property "QUOTE" with "That was visual."' do
+    within :table_row, 'quote' do
+      expect(page).to have_css "td .value", text: 'That was visual.', visible: false
+    end
+  end
+
+  step 'I do not see "You drank Ian!"' do
+    within :table_row, 'quote' do
+      expect(page).to_not have_css "td .value", text: 'You drank Ian!', visible: false
+    end
   end
 
   step 'I see term "Blutbad" within language section "DE"' do
