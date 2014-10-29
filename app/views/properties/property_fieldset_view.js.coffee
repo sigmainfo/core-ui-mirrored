@@ -22,6 +22,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     'change select': 'inputChanged'
     'input input': 'inputChanged'
     'click a.add-value': 'addValue'
+    'click a.remove-property': 'removeProperty'
 
   initialize: (options) ->
     @model = options.model
@@ -45,6 +46,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @$el.find('.key').after $ '<div class="invalid">Property required</div>'
 
   serializeArray: ->
+    return [] if !@model.multivalue && @checkDelete() == 1
     @$el.find('.group').map (index, group) =>
       switch @model.type
         when 'text'
@@ -69,6 +71,18 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             key: @model.key
             value: _.map($(group).find("input:checkbox:checked"), (c) -> $(c).val())
           }
+        when 'picklist'
+          {
+            key: @model.key
+            value: $(group).find('select').val()
+          }
+
+  checkDelete: ->
+    if @model.multivalue
+      #
+    else
+      return 1 if @$el.hasClass 'delete'
+    0
 
   inputChanged: (evt) ->
     @trigger 'inputChanged'
@@ -79,3 +93,10 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     newValueMarkup = newValueTemplate(propertyKey: @model.key, name: @name, property: {}, index: @values_index, selectableLanguages: @selectableLanguages)
     @$el.append newValueMarkup
     @values_index++
+
+  removeProperty: ->
+    if !@model.multivalue && !@model.properties[0].persisted
+      @trigger 'removeProperty', @
+
+
+

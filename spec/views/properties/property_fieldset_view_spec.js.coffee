@@ -279,6 +279,44 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(checkboxes).to.have.lengthOf 3
           expect(el).not.to.have 'select'
 
+      context 'picklist', ->
+
+        selectFieldStub = null
+
+        beforeEach ->
+          selectFieldStub = sinon.stub(Coreon.Helpers, 'selectField')
+
+        afterEach ->
+          Coreon.Helpers.selectField.restore()
+
+        it 'renders a dropdown select', ->
+          model.type = 'picklist'
+          model.values = [{value: 'Good', label: 'Good'},
+                          {value: 'Bad', label: 'Bad'},
+                          {value: 'Ugly', label: 'Ugly'}
+                         ]
+          model.properties[0].value = 'Bad'
+          selectFieldStub.withArgs(
+            null,
+            'properties[0][value]',
+            value: model.properties[0].value,
+            required: true,
+            errors: {},
+            options: model.values,
+            class: 'value'
+          ).returns '''
+            <select name='bar'>
+              <option value="Good">Good</option>
+              <option value="Bad" selected>Good</option>
+              <option value="Ugly">Ugly</option>
+            </select>
+          '''
+          el = renderView()
+          select = el.find 'select'
+          select_options = select.find 'option'
+          expect(select_options).to.have.lengthOf 3
+          expect(select.val()).to.eql 'Bad'
+
     describe '#serializeArray()', ->
 
       it 'returns the values of each set text property', ->
@@ -368,6 +406,26 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         expect(properties[0].value[0]).to.eql 'bad'
         expect(properties[0].value[1]).to.eql 'ugly'
 
+      it 'returns the value a picklist', ->
+        model.type = 'picklist'
+        model.key = 'personality'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <select name="properties[0][0][value]">
+                  <option value="Good">Good</option>
+                  <option value="Bad" selected>Bad</option>
+                  <option value="Ugly">Ugly</option>
+                </select>
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.name = "properties[0][0][value]"
+        view.$el = markup
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 1
+        expect(properties[0].value).to.eql 'Bad'
 
 
 

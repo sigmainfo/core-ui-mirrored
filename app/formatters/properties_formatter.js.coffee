@@ -10,6 +10,7 @@ class Coreon.Formatters.PropertiesFormatter
     for blue_prop in @blueprint_properties
       found_properties = _.filter @properties, (p) -> p.get('key') == blue_prop.key
       properties = []
+      multivalue = if blue_prop.type in ['text', 'multiline_text'] then true else false
 
       for property in found_properties
         index = _.indexOf not_in_blueprints, property
@@ -19,7 +20,8 @@ class Coreon.Formatters.PropertiesFormatter
           value: property.get 'value'
           errors: @errors[index] || {}
           info: property.info()
-        if blue_prop.type in ['text', 'multiline_text']
+          persisted: true
+        if multivalue
           new_property.lang = property.get 'lang'
         properties.push new_property
 
@@ -28,7 +30,8 @@ class Coreon.Formatters.PropertiesFormatter
           value: blue_prop.default
           errors: {}
           info: {}
-        if blue_prop.type in ['text', 'multiline_text']
+          persisted: false
+        if multivalue
           new_property.lang = null
         properties.push new_property
 
@@ -36,8 +39,10 @@ class Coreon.Formatters.PropertiesFormatter
         key: blue_prop.key
         type: blue_prop.type
         properties: properties
+        required: blue_prop.required
+        multivalue: multivalue
 
-      if blue_prop.type in ['multiselect_picklist']
+      if blue_prop.type in ['picklist', 'multiselect_picklist']
         new_formatted_property.values = blue_prop.values
       if blue_prop.type in ['boolean']
         new_formatted_property.labels = blue_prop.labels
@@ -53,6 +58,7 @@ class Coreon.Formatters.PropertiesFormatter
           lang: property.get 'lang'
           errors: {}
           info: property.info()
+          persisted: true
         new_formatted_property =
           key: property.get 'key'
           type: 'text'

@@ -84,12 +84,29 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     }
   end
 
+  step 'that blueprint allows a property "status" of type "picklist"' do
+    @property_attrs = {
+      key: 'status',
+      type: 'picklist',
+      required: false
+    }
+  end
+
+  step 'that property allows values: "pending", "accepted", "forbidden"' do
+    @property_attrs[:values] = ["pending", "accepted", "forbidden"]
+    @blueprint['properties'].post property: @property_attrs
+  end
+
   step 'a concept "Bloodbath" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Bloodbath' }
   end
 
   step 'a concept with English term "bloodbath" exists' do
     @term_attrs = { value: 'bloodbath', lang: 'en' }
+  end
+
+  step 'that concept has a property "status" with value "forbidden"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'status', value: 'forbidden' }
   end
 
   step 'that term has a property "source" of "bloodbathproject.com"' do
@@ -193,6 +210,14 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a fieldset "STATUS" within this form' do
+    within @form do
+      @fieldset = page.find :fieldset_with_title, "status"
+      @status_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
   step 'this fieldset contains a text input' do
     within @fieldset do
       expect(page).to have_selector 'input[type=text]'
@@ -223,6 +248,19 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
       expect(page).to have_field 'cool', type: 'checkbox'
       expect(page).to have_field 'night life', type: 'checkbox'
       expect(page).to have_field 'diet', type: 'checkbox'
+    end
+  end
+
+  step 'this fieldset contains a dropdown with selection "forbidden"' do
+    within @fieldset do
+      status_dropdown = find 'select'
+      expect(status_dropdown[:value]).to eql 'forbidden'
+    end
+  end
+
+  step 'I click on "Remove status" within "STATUS"' do
+    within @fieldset do
+      click_link "Remove status"
     end
   end
 
@@ -359,6 +397,18 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     click_button 'Save term'
   end
 
+  step 'I see warning popup' do
+    @popup = page.find 'div[id=coreon-modal]'
+    expect(@popup).to be_visible
+  end
+
+  step 'I click "OK" on the warning popup' do
+    within @popup do
+      ok_link = @popup.find "a", text: "OK"
+      ok_link.click
+    end
+  end
+
   step 'I see a listing "PROPERTIES" within the concept header' do
     expect(page).to have_css ".concept .properties"
   end
@@ -425,6 +475,10 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
         expect(values.size).to eql 2
       end
     end
+  end
+
+  step 'I do not see "STATUS" or "forbidden"' do
+    expect(page).to_not have_selector :table_row, 'status'
   end
 
   step 'I click "2"' do

@@ -15,6 +15,11 @@
     .group
       - property = _.first @property.properties
       != @multiSelectField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, options: @property?.values, class: 'value'
+  - when 'picklist'
+    .group
+      - property = _.first @property.properties
+      - labeled_values = _.map @property?.values, (value) -> {value: value, label: value}
+      != @selectField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, options: labeled_values, class: 'value'
   - when 'multiline_text'
     - for property, index in @property.properties
       != @render "properties/multiline_text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages

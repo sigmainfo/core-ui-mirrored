@@ -233,12 +233,12 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     attrs = {}
     attrs.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
-    elements_to_delete = form.find(".property.delete")
+    elements_to_delete = @conceptProperties.countDeleted()
 
-    if elements_to_delete.length > 0
+    if elements_to_delete > 0
       @confirm
         trigger: trigger
-        message: I18n.t "concept.confirm_update", count: elements_to_delete.length
+        message: I18n.t "concept.confirm_update", count: elements_to_delete
         action: => @saveConceptProperties attrs
     else
       @saveConceptProperties attrs

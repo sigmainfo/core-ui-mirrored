@@ -99,23 +99,24 @@ Feature: maintainer edits properties
     When I click "2"
     Then I see a link "wikipedia.org/wiki/Bloodbath"
 
-  # @wip
-  # Scenario: delete optional property
-  #   Given the repository defines a blueprint for concepts
-  #   And that blueprint allows a property "status" of type "picklist"
-  #   And that property allows values: "pending", "accepted", "forbidden"
-  #   And a concept "Bloodbath" exists
-  #   And that concept has a property "status" with value "forbidden"
-  #   When I edit that concept
-  #   Then I see a section "PROPERTIES"
-  #   When I click on "Edit properties"
-  #   Then I see a form "Save concept"
-  #   And I see a fieldset "STATUS" within this form
-  #   And this fieldset contains a dropdown with selection "forbidden"
-  #   When I click on "Delete property" within "STATUS"
-  #   And I click "Save concept"
-  #   Then I see a listing "PROPERTIES" within the concept header
-  #   But I do not see "STATUS" or "forbidden"
+  Scenario: delete optional property
+    Given the repository defines a blueprint for concepts
+    And that blueprint allows a property "status" of type "picklist"
+    And that property allows values: "pending", "accepted", "forbidden"
+    And a concept "Bloodbath" exists
+    And that concept has a property "status" with value "forbidden"
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a form "Save concept"
+    And I see a fieldset "STATUS" within this form
+    And this fieldset contains a dropdown with selection "forbidden"
+    When I click on "Remove status" within "STATUS"
+    And I click "Save concept"
+    Then I see warning popup
+    Then I click "OK" on the warning popup
+    Then I see a listing "PROPERTIES" within the concept header
+    But I do not see "STATUS" or "forbidden"
 
   # @wip
   # Scenario: delete value from property

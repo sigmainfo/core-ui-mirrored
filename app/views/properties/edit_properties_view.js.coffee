@@ -14,6 +14,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
   events:
     'change select[name=chooseProperty]': 'addProperty'
     'click a.add-property': 'selectProperty'
+    'click a.add-property': 'selectProperty'
 
   initialize: (options) ->
     @collection = options.collection
@@ -27,6 +28,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
       newFieldsetView = new Coreon.Views.Properties.PropertyFieldsetView(model: formattedProperty, index: index)
       @fieldsetViews.push newFieldsetView
       @listenTo newFieldsetView, 'inputChanged', @updateValid
+      @listenTo newFieldsetView, 'removeProperty', @removeProperty
       @index = @index++
     @$el.addClass('collapsed') if @collapsed
     @$el.addClass('edit') if @isEdit
@@ -60,6 +62,12 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
         properties.push property
     properties
 
+  countDeleted: ->
+    count = 0
+    _.each @fieldsetViews, (fieldsetView) ->
+      count = count + fieldsetView.checkDelete()
+    count
+
   selectProperty: ->
     $('.coreon-select[data-select-name=chooseProperty]').click()
 
@@ -73,10 +81,17 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     newFieldsetView = new Coreon.Views.Properties.PropertyFieldsetView
       model: newFormattedProperty
       index: @index
-    @listenTo newFieldsetView, 'inputChanged'
+    @listenTo newFieldsetView, 'inputChanged', @updateValid
+    @listenTo newFieldsetView, 'removeProperty', @removeProperty
     @index = @index++
     @fieldsetViews.push newFieldsetView
     @$el.find('.add').before newFieldsetView.render().el
+
+  removeProperty: (fieldsetView) ->
+    index = _.indexOf @fieldsetViews, fieldsetView
+    @fieldsetViews.splice index, 1
+    fieldsetView.remove()
+
 
 
 
