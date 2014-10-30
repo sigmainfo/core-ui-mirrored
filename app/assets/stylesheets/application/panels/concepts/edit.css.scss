@@ -21,7 +21,7 @@
       background-position: -151px -304px;
     }
   }
-  
+
   &.create-concept {
     @extend .big;
   }
@@ -42,13 +42,13 @@
 
 .concept form {
   position: relative;
-   
-   fieldset {
+
+   .properties fieldset {
      position: relative;
      padding-top: 6px;
      border: 0;    
      border-top: 1px solid white;
-    
+
      h4 {
        padding-left: 40px;
        text-transform: uppercase;
@@ -57,22 +57,22 @@
      .group {
        padding: 10px 4px 10px 60px;
        overflow: hidden;
-       
+
        div.input {
          padding: 0;
        }
      }
-     
+
      input[type="text"] {
        height:24px;
        width: 40%;
        float: left;
      }
-     
+
      input[type="radio"] {
        margin: 0 30px 0 5px;
      }
-     
+
      label {
        display: inline-block;
        text-transform: capitalize;
@@ -83,7 +83,7 @@
        float: none;
      }
    }
-   
+
    &.concept section div.edit, &.term .properties .edit {
      position: relative;
      background: none;
@@ -93,25 +93,14 @@
      padding: 7px 8px;
      border-top: 1px solid white;
    }
-   
+
    select {
      margin: 3px 0 0 16px;
    }
-   
+
    textarea {
      width: 65%;
      height: 50px;
-   }
-
-   label {
-     display: inline-block;
-     text-transform: uppercase;
-     text-align: right;
-     font-size: 0.8em;
-     float: left;
-     width: 100px;
-     padding-right: 20px;
-     padding-top: 5px;
    }
 
    .submit {
@@ -146,17 +135,30 @@
           }
         }
       }
-
    }
+
    .disabled, button:disabled {
      cursor: default;
      @include opacity(0.5);
    }
-   
+
    &.term, .term {   
      position: relative;
      padding-top: 16px;
-     
+     border: none;
+     margin-bottom: 20px;
+
+     label {
+       display: inline-block;
+       text-transform: uppercase;
+       text-align: right;
+       font-size: 0.8em;
+       float: left;
+       width: 100px;
+       padding-right: 20px;
+       padding-top: 5px;
+     }
+
      div.input {
        padding-bottom: 18px;
        padding-left: 60px;
@@ -165,7 +167,7 @@
      .submit {
        margin-top: 1px;
      }
-     
+
      .properties {
        padding:0;
        position: relative;
@@ -175,7 +177,7 @@
          border-top: 1px solid white;
          background-color: rgba(white, 0.3);
        }
-     
+
        h3 {
          padding: 1px 7px 0 5px;
          margin: 0;
@@ -183,7 +185,7 @@
          &:before {
            content: none;
          }
-       
+
          position: relative;
          left: 34px;
          top: 1px;
@@ -201,33 +203,32 @@ form.create.term {
 
 .concept.edit .broader-and-narrower {
   min-height: 44px;
-  
+
   form {
     overflow: hidden;
 //    background-color: darken(rgba($button-hover-color, 0.12), 4);
-    
+
     >div {
       margin-left: 32px;
     }
-    
+
     .broader {
       padding-left: 5px;
     }
-    
+
     .narrower {
       padding-right: 5px;
     }
-    
+
     .submit {
       margin-top: 1px;
     }
-    
+
     &.disabled {
       @include opacity(0.4);
     }
-    
+
     ul .concept-label:hover {
-//      color: $text-color-light;
       @include single-box-shadow(rgba($text-color, 0.4), 2px, 2px, 2px);
     }
   }
@@ -398,20 +399,19 @@ form.create.term {
       padding-right: 10px;
     }
     
-    // inside group to not mess up older forms
-       .group {
-         input[type="text"] {
-           width: 60%;
-         }
-         div.input {
-           padding: 0;
-         }
-     
-         label {
-           width: auto;
-           padding:0;
-         }
-       }
+    .properties fieldset {
+      input[type="text"] {
+        width: 60%;
+      }
+      div.input {
+        padding: 0;
+      }
+  
+      label {
+        width: auto;
+        padding:0;
+      }
+    }
 
     .error-message {
       padding-left: 100px;
@@ -419,14 +419,6 @@ form.create.term {
 
     .submit {
       font-size: 1.1em;
-    }
-
-    .terms {
-      .properties {
-        fieldset {
-          padding-left: 40px;
-        }
-      }
     }
   }
 }
@@ -441,44 +433,29 @@ form.create.term {
       float: none;
     }
     
-    // inside group to not mess up older forms
-       .group {
+    form .properties {
+      .group {
          padding-left: 40px;
-         select {
-           margin: 8px 0;
-         }
-         div.input {
-           padding: 0;
-         }
-     
-         label {
-           width: auto;
-           padding:0;
-         }
+       }
+       select {
+         margin: 8px 0;
+       }
+       div.input {
+         padding: 0;
+       }
+ 
+       label {
+         width: auto;
+         padding:0;
        }
 
-    .create, .update {
-      &.term .properties, .term .properties {
-        padding-top: 10px;
+     }
 
-        fieldset {
-          padding-left: 30px;
-        }
+    form {
+      input[type="text"], textarea {
+        width: 86%;
       }
-      
-      fieldset, &.term {
-        div.input {
-//          padding-left: 40px;
-//          padding-bottom: 10px;
-          &:last-child {
-            padding-bottom: 18px;
-          }
-        }
 
-        input[type="text"], textarea {
-          width: 86%;
-        }
-      }
     }
 
     .submit {
