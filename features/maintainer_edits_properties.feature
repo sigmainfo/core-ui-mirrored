@@ -118,10 +118,9 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     But I do not see "STATUS" or "forbidden"
 
-  @wip
   Scenario: delete value from property
     Given the repository defines a blueprint for concepts
-    And that blueprint allows a property "quote" of type "multiline text"
+    And that blueprint requires a property "quote" of type "multiline text"
     And a concept "Bloodbath" exists
     And that concept has a property "quote" with value "That was visual."
     And that concept has a property "quote" with value "You drank Ian!"

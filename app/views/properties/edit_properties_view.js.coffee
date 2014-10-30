@@ -14,7 +14,6 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
   events:
     'change select[name=chooseProperty]': 'addProperty'
     'click a.add-property': 'selectProperty'
-    'click a.add-property': 'selectProperty'
 
   initialize: (options) ->
     @collection = options.collection
@@ -36,7 +35,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
 
   render: ->
     @$el.html @template(optionalProperties: @optionalProperties)
-    @$el.find('select.widget-select').coreonSelect(positionRelativeTo: 'a.add-property', hidden: true)
+    @$el.find('select.widget-select').coreonSelect(positionRelativeTo: @$el.find('a.add-property'), hidden: true)
     _.each @fieldsetViews, (fieldsetView) =>
       @$el.find('.add').before fieldsetView.render().el
     @
@@ -69,7 +68,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     count
 
   selectProperty: ->
-    $('.coreon-select[data-select-name=chooseProperty]').click()
+    @$el.find('.coreon-select[data-select-name=chooseProperty]').click()
 
   addProperty: (event) ->
     selectedKey = $(event.target).val()

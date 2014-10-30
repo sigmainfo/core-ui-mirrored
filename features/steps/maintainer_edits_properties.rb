@@ -97,11 +97,11 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: @property_attrs
   end
 
-  step 'that blueprint allows a property "quote" of type "multiline text"' do
+  step 'that blueprint requires a property "quote" of type "multiline text"' do
     @blueprint['properties'].post property: {
       key: 'quote',
       type: 'multiline_text',
-      required: false
+      required: true
     }
   end
 
@@ -364,7 +364,6 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I do not see a button "Delete value" for "That was visual."' do
     within @fieldset do
-      binding.pry
       text_area = @quote_textareas.select{|t| t[:value] == "That was visual."}.first
       remove_link = text_area.find(:xpath, './../../a[@class="remove-value"]', visible: false)
       expect(remove_link).to_not be_visible
