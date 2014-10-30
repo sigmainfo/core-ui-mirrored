@@ -88,9 +88,12 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @$el.find('.add').before newFieldsetView.render().el
 
   removeProperty: (fieldsetView) ->
-    index = _.indexOf @fieldsetViews, fieldsetView
-    @fieldsetViews.splice index, 1
-    fieldsetView.remove()
+    if fieldsetView.containsPersisted()
+      fieldsetView.markDelete()
+    else
+      index = _.indexOf @fieldsetViews, fieldsetView
+      @fieldsetViews.splice index, 1
+      fieldsetView.remove()
 
 
 

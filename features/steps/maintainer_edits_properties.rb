@@ -105,6 +105,10 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     }
   end
 
+  step 'that blueprint does not require any properties' do
+    @blueprint['clear'].delete
+  end
+
   step 'a concept "Bloodbath" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Bloodbath' }
   end
@@ -128,6 +132,10 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'that concept has a property "quote" with value "You drank Ian!"' do
     concepts["#{concept['id']}/properties"].post property: { key: 'quote', value: 'You drank Ian!' }
+  end
+
+  step 'that concept has a property "rating" with value "+++++"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'rating', value: '+++++' }
   end
 
   step 'I click on "New concept"' do
@@ -177,6 +185,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'I see a section "PROPERTIES"' do
     @section = page.find :section, 'Properties'
     expect(@section).to be_visible
+  end
+
+  step 'I see a deprecated property "RATING"' do
+    within :section, 'Properties' do
+      @fieldset = page.find :fieldset_with_title, "rating"
+      expect(@fieldset).to be_visible
+    end
   end
 
   step 'I click on "Edit properties"' do
@@ -333,6 +348,12 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I click on "Remove this rating" within "RATING"' do
+    within @fieldset do
+      click_link 'Remove this rating'
+    end
+  end
+
   step 'I click on "Delete value" for "You drank Ian!"' do
     within @fieldset do
       text_area = @quote_textareas.select{|t| t[:value] == "You drank Ian!"}.first
@@ -343,6 +364,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I do not see a button "Delete value" for "That was visual."' do
     within @fieldset do
+      binding.pry
       text_area = @quote_textareas.select{|t| t[:value] == "That was visual."}.first
       remove_link = text_area.find(:xpath, './../../a[@class="remove-value"]', visible: false)
       expect(remove_link).to_not be_visible
@@ -444,12 +466,12 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     click_button 'Save term'
   end
 
-  step 'I see warning popup' do
+  step 'I see a confirmation dialog' do
     @popup = page.find 'div[id=coreon-modal]'
     expect(@popup).to be_visible
   end
 
-  step 'I click "OK" on the warning popup' do
+  step 'I click "OK" on the confirmation dialog' do
     within @popup do
       ok_link = @popup.find "a", text: "OK"
       ok_link.click
@@ -538,6 +560,12 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'I do not see "STATUS" or "forbidden"' do
     expect(page).to_not have_selector :table_row, 'status'
+    expect(page).to_not have_text 'forbidden'
+  end
+
+  step 'I do not see "RATING" or "+++++"' do
+    expect(page).to_not have_selector :table_row, 'rating'
+    expect(page).to_not have_text '+++++'
   end
 
   step 'I click "2"' do

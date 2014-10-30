@@ -126,7 +126,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       model: @model
 
     @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
-      collection: @model.propertiesWithDefaults()
+      collection: @model.propertiesWithDefaults(includeUndefined: true)
       optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('concept')
       isEdit: true
       collapsed: true

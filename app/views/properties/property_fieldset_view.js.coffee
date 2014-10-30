@@ -85,6 +85,9 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       return 1 if @$el.hasClass 'delete'
     0
 
+  markDelete: ->
+    @$el.addClass 'delete'
+
   inputChanged: (evt) ->
     @trigger 'inputChanged'
 
@@ -103,18 +106,28 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       propertyGroup.addClass('delete')
     else
       propertyGroup.remove()
-    @updateRemoveLinks()
+    if @$el.find('.group').not('.delete').length > 0
+      @updateRemoveLinks()
+    else
+      @removeProperty()
+
 
   updateRemoveLinks: ->
     if @model.multivalue
-      if @$el.find('.group').not('.delete').length > 1
-        @$el.find('a.remove-value').show()
+      if @model.required
+        if @$el.find('.group').not('.delete').length > 1
+          @$el.find('a.remove-value').show()
+        else
+          @$el.find('a.remove-value').hide()
       else
-        @$el.find('a.remove-value').hide()
+        @$el.find('a.remove-value').show()
 
   removeProperty: ->
-    if !@model.multivalue && !@model.properties[0].persisted
-      @trigger 'removeProperty', @
+    #if !@model.multivalue && !@model.properties[0].persisted
+    @trigger 'removeProperty', @
+
+  containsPersisted: ->
+    true if _.find(@model.properties, (p) -> p.persisted)
 
 
 

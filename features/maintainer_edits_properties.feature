@@ -113,11 +113,12 @@ Feature: maintainer edits properties
     And this fieldset contains a dropdown with selection "forbidden"
     When I click on "Remove status" within "STATUS"
     And I click "Save concept"
-    Then I see warning popup
-    Then I click "OK" on the warning popup
+    Then I see a confirmation dialog
+    Then I click "OK" on the confirmation dialog
     Then I see a listing "PROPERTIES" within the concept header
     But I do not see "STATUS" or "forbidden"
 
+  @wip
   Scenario: delete value from property
     Given the repository defines a blueprint for concepts
     And that blueprint allows a property "quote" of type "multiline text"
@@ -137,16 +138,18 @@ Feature: maintainer edits properties
     And I see a property "QUOTE" with "That was visual."
     But I do not see "You drank Ian!"
 
-  # @wip
-  # Scenario: delete deprecated concept property
-  #   Given the repository defines a blueprint for concepts
-  #   And that blueprint does not require any properties
-  #   And a concept "Bloodbath" exists
-  #   And that concept has a property "rating" with value "+++++"
-  #   When I edit that concept
-  #   Then I see a deprecated property "RATING"
-  #   When I click on "Delete property" within "RATING"
-  #   Then I see a confirmation dialog
-  #   When I click "Delete" to confirm
-  #   Then I see a listing "PROPERTIES" within the concept header
-  #   But I do not see "RATING" or "+++++"
+  Scenario: delete deprecated concept property
+    Given the repository defines a blueprint for concepts
+    And that blueprint does not require any properties
+    And a concept "Bloodbath" exists
+    And that concept has a property "rating" with value "+++++"
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a deprecated property "RATING"
+    When I click on "Remove this rating" within "RATING"
+    When I click "Save concept"
+    Then I see a confirmation dialog
+    Then I click "OK" on the confirmation dialog
+    Then I see a listing "PROPERTIES" within the concept header
+    But I do not see "RATING" or "+++++"
