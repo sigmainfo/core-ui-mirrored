@@ -1,4 +1,3 @@
-%fieldset.term
-  %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.delete"
-  != @input "term", "value", @term, scope: "terms[]", index: @index, required: true, errors: @errors?.value
-  != @input "term", "lang", @term, scope: "terms[]", index: @index, required: true, errors: @errors?.lang
+%a.remove-term{href: "javascript:void(0)"}= I18n.t "term.delete"
+!= @textField I18n.t('term.value'), "#{@name}[value]", required: true, class: 'value'
+!= @textField I18n.t('term.lang'), "#{@name}[lang]", required: true, class: 'value'

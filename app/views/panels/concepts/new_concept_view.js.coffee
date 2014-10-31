@@ -8,6 +8,7 @@
 #= require templates/properties/property_fieldset
 #= require templates/concepts/_new_term
 #= require views/concepts/shared/broader_and_narrower_view
+#= require views/panels/terms/new_term_view
 #= require views/properties/edit_properties_view
 #= require models/concept
 #= require models/notification
@@ -39,9 +40,8 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
       model: @model
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults()
-      optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('concept')
-    @termProperties = []
-    @termIndex = 0
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('concept')
+    @termViews = []
 
   render: ->
     @termCount = if @model.has("terms") then @model.get("terms").length else 0
@@ -59,12 +59,11 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
 
   create: (event) ->
     event.preventDefault()
-    data = @$("form").serializeJSON() or {}
     attrs = {}
     attrs.properties = @editProperties.serializeArray()
     attrs.terms = []
-    for term in data.terms
-      attrs.terms.push term
+    _.each @termViews, (termView) ->
+      attrs.terms.push termView.serializeArray()
 
     request = @model.save attrs
 
@@ -88,21 +87,8 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   addTerm: ->
     terms = @$("form .terms")
     term = new Coreon.Models.Term
-    termNode = $ @term term: term, index: @termIndex
-    @$('form .terms>.add').before termNode
-    @newTermPropertiesView(term, termNode, @termIndex)
-    @termIndex++
+    index = @termViews.length
+    newTermView = new Coreon.Views.Panels.Terms.NewTermView(model: term, index: index)
+    @termViews.push newTermView
+    @$('form .terms>.add').before newTermView.render().$el
 
-  newTermPropertiesView: (term, termNode, termIndex) ->
-    @termProperties = []
-    termProperty = new Coreon.Views.Properties.EditPropertiesView
-      collection: term.propertiesWithDefaults()
-      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
-      isEdit: true
-      collapsed: true
-      ownerId: termIndex
-    @termProperties.push termProperty
-    termNode.append termProperty.render().$el
-    # @$el.find("form .submit button[type=submit]").prop('disabled', !termProperty.isValid())
-    # @listenTo termProperty, 'updateValid', ->
-    #   @$el.find("form .submit button[type=submit]").prop('disabled', !termProperty.isValid())
