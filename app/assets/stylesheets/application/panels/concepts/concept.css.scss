@@ -157,15 +157,19 @@ div.concept {
       }
       &.boolean {
         span {
-          @include opacity(0.8);
-          text-indent: -2000px;
-          overflow: hidden;
-          display: block;
-          width: 16px;
-          height: 16px;
-          background: image-url("layout/icons.svg") no-repeat -200px -499px;
+          padding-left: 18px;
+//          text-indent: -2000px;
+//          overflow: hidden;
+//          display: block;
+//          width: 16px;
+//          height: 16px;
+          background: image-url("layout/icons.svg") no-repeat 0px -502px;
           &.false {
-            background: image-url("layout/icons.svg") no-repeat -200px -449px;
+            @include opacity(0.6);
+            text-indent: 0px;
+            background: none;
+            padding: 0;
+            //background: image-url("layout/icons.svg") no-repeat -200px -449px;
           }
         }
       }

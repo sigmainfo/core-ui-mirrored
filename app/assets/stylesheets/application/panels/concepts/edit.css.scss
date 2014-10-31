@@ -64,8 +64,6 @@
      }
 
      input[type="text"] {
-       height:24px;
-       width: 40%;
        float: left;
      }
 
@@ -101,6 +99,11 @@
    textarea {
      width: 65%;
      height: 50px;
+   }
+   
+   input[type="text"] {
+     height:24px;
+     width: 40%;
    }
 
    .submit {
@@ -428,7 +431,7 @@ form.create.term {
   div.concept {
 
     label {
-      padding-top: 0;
+      padding: 0;
       text-align: left;
       float: none;
     }
@@ -443,11 +446,6 @@ form.create.term {
        div.input {
          padding: 0;
        }
- 
-       label {
-         width: auto;
-         padding:0;
-       }
 
      }
 
@@ -456,6 +454,12 @@ form.create.term {
         width: 86%;
       }
 
+    }
+    
+    .term {
+      div.input {
+        padding-left: 40px;
+      }
     }
 
     .submit {
