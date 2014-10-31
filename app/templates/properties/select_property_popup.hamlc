@@ -1,0 +1,3 @@
+%select.widget-select{name: 'chooseProperty', style: {display: 'none'}}
+  - for optional in @optionalProperties
+    %option{value: optional.key}= optional.key

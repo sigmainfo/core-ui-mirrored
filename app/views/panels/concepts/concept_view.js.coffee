@@ -127,7 +127,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults(includeUndefined: true)
-      optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('concept')
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('concept')
       isEdit: true
       collapsed: true
 
@@ -139,7 +139,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     for term in @terms
       termProperty = new Coreon.Views.Properties.EditPropertiesView
         collection: term.propertiesWithDefaults()
-        optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('term')
+        optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
         isEdit: true
         collapsed: true
         ownerId: term.id
@@ -211,7 +211,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @termProperties = []
     termProperty = new Coreon.Views.Properties.EditPropertiesView
       collection: term.propertiesWithDefaults()
-      optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('term')
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
       isEdit: true
       collapsed: true
     @termProperties.push termProperty

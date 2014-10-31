@@ -31,6 +31,9 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
   @propertiesFor: (entity) ->
     instance.propertiesFor entity
 
+  @optionalPropertiesFor: (entity) ->
+    instance.optionalPropertiesFor entity
+
   @propertyFor: (entity, key) ->
     instance.propertyFor entity, key
 
@@ -51,6 +54,10 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
 
   propertiesFor: (entity) ->
     @blueprintsFor(entity)?['properties']
+
+  optionalPropertiesFor: (entity) ->
+    _.filter @propertiesFor(entity), (property) ->
+      property.required == false
 
   propertyFor: (entity, key) ->
     _.findWhere @propertiesFor(entity), key: key

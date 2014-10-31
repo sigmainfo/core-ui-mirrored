@@ -24,6 +24,7 @@ class Coreon.Lib.Select
   Coreon.Modules.include @, Coreon.Modules.Prompt
 
   constructor: (@$select, @options={}) ->
+    @options.allowSingle ?= false
     @$el = $ "<div class='coreon-select'>"
     @$el.attr 'title', @$select.attr('title')
     @render()
@@ -38,7 +39,7 @@ class Coreon.Lib.Select
     @$el.css('display', 'none') if @options.hidden == true
     @$el.addClass(@$select.attr('class'))
 
-    if @selectOptions.length < 2
+    if @selectOptions.length < 2 && @options.allowSingle == false
       @$el.addClass('single')
     else
       @$el.click @showDropdown
