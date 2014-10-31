@@ -35,6 +35,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   render: ->
     @$el.html @template(property: @model, name: @name, selectableLanguages: @selectableLanguages)
+    @updateRemoveLinks()
     @
 
   isValid: ->
@@ -80,7 +81,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   checkDelete: ->
     if @model.multivalue
-      return @$el.find('.group .delete').length
+      return @$el.find('.group.delete').length
     else
       return 1 if @$el.hasClass 'delete'
     0
@@ -123,8 +124,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
         @$el.find('a.remove-value').show()
 
   removeProperty: ->
-    #if !@model.multivalue && !@model.properties[0].persisted
-    @trigger 'removeProperty', @
+    unless @model.multivalue && !@model.required && @containsPersisted()
+      @trigger 'removeProperty', @
 
   containsPersisted: ->
     true if _.find(@model.properties, (p) -> p.persisted)
