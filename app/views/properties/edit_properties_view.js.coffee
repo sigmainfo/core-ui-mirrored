@@ -54,9 +54,6 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     else
       link.addClass("disabled")
 
-
-
-
   isValid: ->
     for fieldsetView in @fieldsetViews
       unless fieldsetView.isValid()

@@ -39,7 +39,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   isValid: ->
     for result in @serializeArray()
-      unless !!result.key && !!result.value
+      if !result.key? || !result.value? || (result.value is '')
         return false
     true
 

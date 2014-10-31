@@ -6,7 +6,6 @@ Feature: maintainer edits properties
   Background:
     Given I am logged in as maintainer of the repository
 
-
   Scenario: new concept with required properties
     Given the repository defines a blueprint for concepts
     And that blueprint requires a property "short description" of type "text"
