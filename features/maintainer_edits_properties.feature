@@ -132,6 +132,8 @@ Feature: maintainer edits properties
     When I click on "Delete value" for "You drank Ian!"
     Then I do not see a button "Delete value" for "That was visual."
     When I click "Save concept"
+    Then I see a confirmation dialog
+    Then I click "OK" on the confirmation dialog
     Then I see a listing "PROPERTIES" within the concept header
     And I see a property "QUOTE" with "That was visual."
     But I do not see "You drank Ian!"
