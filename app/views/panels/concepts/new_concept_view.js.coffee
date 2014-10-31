@@ -22,12 +22,12 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   className: "concept new"
 
   template: Coreon.Templates["concepts/new_concept"]
+  term: Coreon.Templates["concepts/new_term"]
 
   @nestedFieldsFor "properties", name: "property"
-  @nestedFieldsFor "terms", template: Coreon.Templates["concepts/new_term"]
 
   events:
-    "click  a.remove-property" : "removeProperty"
+    #"click  a.remove-property" : "removeProperty"
     "click  a.add-term"        : "addTerm"
     "click  a.remove-term"     : "removeTerm"
     "submit form"              : "create"
@@ -40,6 +40,8 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults()
       optionalProperties: Coreon.Models.RepositorySettings.propertiesFor('concept')
+    @termProperties = []
+    @termIndex = 0
 
   render: ->
     @termCount = if @model.has("terms") then @model.get("terms").length else 0
@@ -49,17 +51,20 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
       @editProperties.render()
     @$("form").before @broaderAndNarrower.$el
     @$("form .terms").before @editProperties.$el
+    @$el.find("form .submit button[type=submit]").prop('disabled', !@editProperties.isValid())
+    @listenTo @editProperties, 'updateValid', =>
+      @$el.find("form .submit button[type=submit]").prop('disabled', !@editProperties.isValid())
     @_wasRendered = true
     @
 
   create: (event) ->
     event.preventDefault()
-    data = @$("form").serializeJSON().concept or {}
+    data = @$("form").serializeJSON() or {}
     attrs = {}
     attrs.properties = @editProperties.serializeArray()
-    attrs.terms = if data.terms?
-      term for term in data.terms when term?
-    else []
+    attrs.terms = []
+    for term in data.terms
+      attrs.terms.push term
 
     request = @model.save attrs
 
@@ -79,3 +84,25 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   remove: ->
     @broaderAndNarrower.remove()
     super
+
+  addTerm: ->
+    terms = @$("form .terms")
+    term = new Coreon.Models.Term
+    termNode = $ @term term: term, index: @termIndex
+    @$('form .terms>.add').before termNode
+    @newTermPropertiesView(term, termNode, @termIndex)
+    @termIndex++
+
+  newTermPropertiesView: (term, termNode, termIndex) ->
+    @termProperties = []
+    termProperty = new Coreon.Views.Properties.EditPropertiesView
+      collection: term.propertiesWithDefaults()
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
+      isEdit: true
+      collapsed: true
+      ownerId: termIndex
+    @termProperties.push termProperty
+    termNode.append termProperty.render().$el
+    # @$el.find("form .submit button[type=submit]").prop('disabled', !termProperty.isValid())
+    # @listenTo termProperty, 'updateValid', ->
+    #   @$el.find("form .submit button[type=submit]").prop('disabled', !termProperty.isValid())

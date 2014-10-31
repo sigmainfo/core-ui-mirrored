@@ -3,12 +3,3 @@
     %input( type="hidden" name="id" value="#{@term.id}" )
   != @form.input "value", required: true
   != @form.input "lang", required: true
-  / %section.properties
-  /   %h3= I18n.t "properties.title"
-  /   - if @term?.get("properties")?.length > 0
-  /     - persisted = @term.persistedAttributes().properties?.length or 0
-  /     - for property, index in @term.properties().models
-  /       != @render "properties/new_property", index: index, property: property, scope: "term[properties][]", errors: @term.errors()?.nested_errors_on_properties?[index], notPersisted: index > persisted - 1
-  /   .add
-  /     .edit
-  /       %a.add-property{href: "javascript:void(0)", "data-scope": "term[properties][]", "data-index": @term?.get("properties")?.length}= I18n.t "properties.add"
