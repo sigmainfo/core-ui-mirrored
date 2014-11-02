@@ -153,3 +153,17 @@ Feature: maintainer edits properties
     Then I click "OK" on the confirmation dialog
     Then I see a listing "PROPERTIES" within the concept header
     But I do not see "RATING" or "+++++"
+
+  # TODO 141102 [ap] Followig pending scenario moved here from 'maintainer edits conccept"
+
+  # Scenario: reset properties form
+  #   When I toggle "EDIT MODE"
+  #   And I click "Edit properties"
+  #   And I change "Value" of property to "obsolescense"
+  #   And I click "reset"
+  #   Then I should see the key "label" and value "handgun"
+  #   When I click "Remove property"
+  #   And I click "Add property"
+  #   And I click "reset"
+  #   Then I should see only one property
+  #   But I should see no property marked as deleted

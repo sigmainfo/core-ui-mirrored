@@ -6,6 +6,8 @@ Feature: maintainer edits concept
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am a maintainer of the repository
+    And the repository defines a blueprint for concepts
+    And that blueprint requires a property "label" of type "text"
     And I am logged in
     And a concept with property "label" of "handgun" exists
     And I visit the page of this concept
@@ -25,42 +27,12 @@ Feature: maintainer edits concept
     When I toggle "EDIT MODE"
     Then I should see a properties form
 
-  Scenario: reset properties form
-    When I toggle "EDIT MODE"
-    And I click "Edit properties"
-    And I change "Value" of property to "obsolescense"
-    And I click "reset"
-    Then I should see the key "label" and value "handgun"
-    When I click "Remove property"
-    And I click "Add property"
-    And I click "reset"
-    Then I should see only one property
-    But I should see no property marked as deleted
-
+  @wip
   Scenario: cancel properties form
     When I toggle "EDIT MODE"
     And I click "Edit properties"
     And I click "cancel"
     Then I should see no properties form
-
-  Scenario: mark existing property as deleted
-    When I toggle "EDIT MODE"
-    And I click "Edit properties"
-    And I click "Remove property"
-    Then I should see the property marked as deleted
-
-  Scenario: create new property
-    When I toggle "EDIT MODE"
-    And I click "Edit properties"
-    And I click "Add property"
-    Then I should see a new property
-
-  Scenario: remove a new property
-    When I toggle "EDIT MODE"
-    And I click "Edit properties"
-    And I click "Add property"
-    And I click "Remove property" on the new entry
-    Then I should see only one property
 
   Scenario: not a maintainer
     Given I am no maintainer of the repository
@@ -70,15 +42,8 @@ Feature: maintainer edits concept
   Scenario: change existing properties
     When I toggle "EDIT MODE"
     And I click "Edit properties"
-    And I change "Value" of property to "obsolescense"
+    And I change property "label" to "obsolescense"
     And I click "Save concept"
     Then I should see no properties form
     But I should see a property "LABEL" with value "obsolescense"
-
-  Scenario: change existing properties
-    When I toggle "EDIT MODE"
-    And I click "Edit properties"
-    And I click "Remove property"
-    When I click "Save concept"
-    Then I should see a confirmation dialog warning that one property will be deleted
 
