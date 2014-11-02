@@ -24,54 +24,6 @@ Feature: maintainer creates concept
     And I should see the id of the newly created concept within the title
     And I should see a new concept node with the id of the newly created concept within the concept map
 
-  # TODO  140924 [ap,tc] Remove. Replaced by scenario "new concept with custom
-  #                      property" in feature "maintainer edits properties"
-
-  # Scenario: add property
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   And I click "Add property"
-  #   Then I should see a set of property inputs with labels "Key", "Value", "Language"
-  #   When I click "Remove property" within the set
-  #   Then I should not see a set of property inputs anymore
-  #   When I click "Add property"
-  #   And I fill "Key" with "label"
-  #   And I fill "Value" with "dead man"
-  #   And I click "Create concept"
-  #   Then I should see "dead man" within the title
-  #   And I should see a property "label" with value "dead man"
-
-  # Scenario: add term
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   And I click "Add term"
-  #   Then I should see a set of term inputs with labels "Value", "Language"
-  #   When I click "Remove term" within the set
-  #   Then I should not see a set of term inputs anymore
-  #   When I click "Add term"
-  #   And I fill "Value" with "corpse"
-  #   And I fill "Language" with "en"
-  #   And I click "Create concept"
-  #   Then I should see "corpse" within the title
-  #   Then I should see an English term "corpse"
-
-  Scenario: add term with property
-    When I visit the start page
-    And I click on "New concept"
-    And I click "Add term"
-    And I fill "Value" with "corpse"
-    And I fill "Language" with "en"
-    And I click "Add property" within the term input set
-    Then I should see a set of property inputs with labels "Key", "Value", "Language"
-    When I click "Remove property"
-    Then I should not see a set of property inputs anymore
-    When I click "Add property" within the term input set
-    And I fill "Key" with "source" within the term property input set
-    And I fill "Value" with "Wikipedia" within the term property input set
-    And I click "Create concept"
-    And I click "PROPERTIES" within term
-    Then I should see a property "source" with value "Wikipedia"
-
   Scenario: validation errors
     When I visit the start page
     And I click on "New concept"

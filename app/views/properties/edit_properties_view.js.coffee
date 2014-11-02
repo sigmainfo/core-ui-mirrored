@@ -38,6 +38,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @$el.html @template(optionalProperties: @optionalProperties)
     @renderAddPropertyPopUp()
     _.each @fieldsetViews, (fieldsetView) =>
+      fieldsetView.delegateEvents()
       @$el.find('.add').before fieldsetView.render().el
     @
 

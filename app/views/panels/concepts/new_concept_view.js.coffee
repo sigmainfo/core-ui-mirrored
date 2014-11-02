@@ -38,22 +38,26 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @app = options.app or Coreon.application
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
-    @editProperties = new Coreon.Views.Properties.EditPropertiesView
-      collection: @model.propertiesWithDefaults()
-      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('concept')
     @termViews = []
 
   render: ->
-    @termCount = if @model.has("terms") then @model.get("terms").length else 0
+    termView.remove() for termView in @termViews
+    @termViews = []
+    @editProperties = new Coreon.Views.Properties.EditPropertiesView
+      collection: @model.propertiesWithDefaults()
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('concept')
     @$el.html @template concept: @model
     unless @_wasRendered
       @broaderAndNarrower.render()
-      @editProperties.render()
+    @editProperties.render()
     @$("form").before @broaderAndNarrower.$el
     @$("form .terms").before @editProperties.$el
     @$el.find("form .submit button[type=submit]").prop('disabled', !@editProperties.isValid())
     @listenTo @editProperties, 'updateValid', =>
       @$el.find("form .submit button[type=submit]").prop('disabled', !@editProperties.isValid())
+    if @model.terms().length > 0
+      _.each @model.terms().models, (term) =>
+        @renderTerm(term)
     @_wasRendered = true
     @
 
@@ -84,11 +88,15 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @broaderAndNarrower.remove()
     super
 
-  addTerm: ->
+  renderTerm: (term) ->
     terms = @$("form .terms")
-    term = new Coreon.Models.Term
     index = @termViews.length
-    newTermView = new Coreon.Views.Panels.Terms.NewTermView(model: term, index: index)
+    errors = @model.errors()?.nested_errors_on_terms?[index]
+    newTermView = new Coreon.Views.Panels.Terms.NewTermView(model: term, index: index, errors: errors)
     @termViews.push newTermView
     @$('form .terms>.add').before newTermView.render().$el
+
+  addTerm: ->
+    term = new Coreon.Models.Term
+    @renderTerm(term)
 

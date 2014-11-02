@@ -14,6 +14,7 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @index = options.index || 0
+    @errors = options.errors
     @scopePrefix = options.scopePrefix || null
     @name = if @scopePrefix? then "#{@scopePrefix}[terms][#{@index}]" else "terms[#{@index}]"
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
@@ -22,7 +23,7 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
       isEdit: true
 
   render: ->
-    @$el.html @template(term: @model, name: @name)
+    @$el.html @template(term: @model, name: @name, errors: @errors)
     @$el.append @editProperties.render().$el
     @
 
