@@ -138,7 +138,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     for term in @terms
       termProperty = new Coreon.Views.Properties.EditPropertiesView
-        collection: term.propertiesWithDefaults()
+        collection: term.propertiesWithDefaults(includeUndefined: true)
         optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
         isEdit: true
         collapsed: true

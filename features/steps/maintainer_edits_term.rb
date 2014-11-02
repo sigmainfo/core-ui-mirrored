@@ -2,6 +2,30 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
   include Factory
+  include Selectors
+  include Resources
+
+  step 'the repository defines a blueprint for terms' do
+    @blueprint = blueprint(:term)
+    @blueprint['clear'].delete
+  end
+
+  step 'that blueprint requires a property "status" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'status',
+      type: 'text',
+      required: true
+    }
+  end
+
+  step 'that blueprint allows a property "public" of type "boolean"' do
+    @blueprint['properties'].post property: {
+      key: 'public',
+      type: 'boolean',
+      required: false,
+      labels: ['yes', 'no']
+    }
+  end
 
   step 'a concept with an English term "ten-gallon hat" exists' do
     @concept = create_concept({})
@@ -12,8 +36,27 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     @prop = create_concept_term_property @concept, @term, key: "notice", value: "TODO: translate"
   end
 
+  step 'this term has a property "public" set to false' do
+    @prop = create_concept_term_property @concept, @term, key: "public", value: false
+  end
+
+  step 'this term has a property "status" set to "pending"' do
+    @prop = create_concept_term_property @concept, @term, key: 'status', value: 'pending'
+  end
+
   step 'I click "Edit term" within term "ten-gallon hat"' do
     page.find(".term .value", text: "ten-gallon hat").find(:xpath, './parent::*').find(".edit a", text: "Edit term").click
+  end
+
+  step 'I see a form "Save term"' do
+    @form = page.find :form, 'Save term'
+  end
+
+  step 'I see a section "PROPERTIES" with this form' do
+    within @form do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
   end
 
   step 'I should see a set of term inputs with labels "Value", "Language"' do
@@ -44,6 +87,56 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   step 'I fill in "Language" with "de" within term inputs' do
     within(".terms") do
       fill_in "Language", with: "de"
+    end
+  end
+
+  step 'I see a fieldset "STATUS" within this section' do
+    within @section do
+      @fieldset = page.find :fieldset_with_title, "status"
+      @status_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'I see a fieldset "PUBLIC" within this section' do
+     within @section do
+      @fieldset = page.find :fieldset_with_title, "public"
+      @public_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'I see a fieldset "NOTICE" within this section' do
+     within @section do
+      @fieldset = page.find :fieldset_with_title, "notice"
+      @public_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'I fill in "STATUS" with "pending"' do
+    within @fieldset do
+      fill_in page.find('input')[:id], with: 'pending'
+    end
+  end
+
+  step 'this fieldset has a checked radio option "no"' do
+    within @fieldset do
+      expect(@fieldset).to have_field 'no', checked: true
+    end
+  end
+
+  step 'this fieldset has a value "TODO: translate"' do
+    within @fieldset do
+      input = find 'input[type=text]'
+      expect(input[:value]).to eql 'TODO: translate'
+    end
+  end
+
+  step 'this fieldset is empty' do
+    within @fieldset do
+      input = page.find('input')
+      expect(input[:value]).to eql ''
     end
   end
 
@@ -122,6 +215,18 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   step 'I click "Remove property"' do
     within ".terms" do
       click_link "Remove property"
+    end
+  end
+
+  step 'I click "Remove public"' do
+    within @fieldset do
+      click_link "Remove public"
+    end
+  end
+
+  step 'I click "Remove this notice"' do
+    within @fieldset do
+      click_link "Remove this notice"
     end
   end
 
@@ -225,6 +330,11 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
 
   step 'I should see exactly one set of property inputs' do
     page.find(".terms .term .properties .property")
+  end
+
+  step 'I should see exactly two sets of property inputs' do
+    properties = page.all(".terms .term .properties .property")
+    expect(properties.size).to eql 2
   end
 
   step 'I should see "Save term"' do
