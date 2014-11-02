@@ -92,6 +92,13 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     end
   end
 
+  step 'this fieldset is empty' do
+    within @fieldset do
+      input = page.find('input')
+      expect(input[:value]).to eql ''
+    end
+  end
+
   step 'I click "Add property" within term inputs' do
     within ".term.create" do
       click_link "Add property"

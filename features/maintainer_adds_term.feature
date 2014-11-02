@@ -42,35 +42,40 @@ Feature: maintainer adds term
   Scenario: validation errors
     When I toggle "EDIT MODE"
     And I click "Add term"
+    Then I see a form "Create term"
     And client-side validation is turned off
     And I fill in "Value" with "high hat" within term inputs
-    And I click "Add property" within term inputs
-    And I fill in "Value" with "pending" within property inputs
+    And I see a section "PROPERTIES" with this form
+    And I see a fieldset "STATUS" within this section
+    Then I fill in "STATUS" with "pending"
     And I click "Create term"
     Then I should see an error summary
     And this summary should contain "Failed to create term:"
-    And this summary should contain "1 error on properties"
     And I should see error "can't be blank" for term input "Language"
-    And I should see error "can't be blank" for property input "Key" within term inputs
-    When I click "Remove property" within term inputs
     And I fill in "Language" with "en" within term inputs
     And I click "Create term"
     Then I should see a term "high hat" within language "EN"
     And I should not see an error summary
     But I should see a message 'Successfully created term "high hat".'
 
+  # TODO 141002 [ap] Add validation scenario for term properties
+
   Scenario: cancel adding term
     When I toggle "EDIT MODE"
     And I click "Add term"
+    Then I see a form "Create term"
     And I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs
-    And I click "Add property" within term inputs
-    When I fill in "Key" with "status" within property inputs
-    And I fill in "Value" with "pending" within property inputs
+    And I see a section "PROPERTIES" with this form
+    And I see a fieldset "STATUS" within this section
+    Then I fill in "STATUS" with "pending"
     When I click "Cancel"
     Then I should not see "Create term"
     And I should not see "high hat"
     When I click "Add term"
+    Then I see a form "Create term"
     Then I should see a set of term inputs with labels "Value", "Language"
     And these term inputs should be empty
-    And I should not see property inputs
+    And I see a section "PROPERTIES" with this form
+    And I see a fieldset "STATUS" within this section
+    And this fieldset is empty
