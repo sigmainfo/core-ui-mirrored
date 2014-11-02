@@ -167,22 +167,3 @@ Feature: maintainer edits properties
   #   And I click "reset"
   #   Then I should see only one property
   #   But I should see no property marked as deleted
-
-  # TODO 141102 [ap] Followig pending scenario moved here from 'maintainer creates conccept"
-
-  # Scenario: add term with property
-  #   When I visit the start page
-  #   And I click on "New concept"
-  #   And I click "Add term"
-  #   And I fill "Value" with "corpse"
-  #   And I fill "Language" with "en"
-  #   And I click "Add property" within the term input set
-  #   Then I should see a set of property inputs with labels "Key", "Value", "Language"
-  #   When I click "Remove property"
-  #   Then I should not see a set of property inputs anymore
-  #   When I click "Add property" within the term input set
-  #   And I fill "Key" with "source" within the term property input set
-  #   And I fill "Value" with "Wikipedia" within the term property input set
-  #   And I click "Create concept"
-  #   And I click "PROPERTIES" within term
-  #   Then I should see a property "source" with value "Wikipedia"
