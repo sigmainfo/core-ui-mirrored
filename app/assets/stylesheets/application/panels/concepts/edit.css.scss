@@ -281,13 +281,13 @@ form.create.term {
     top: 8px;
     left: 8px;
   }
-  
-  a.remove-property, a.remove-value {
-    position: absolute;
-    left: 8px;
-  }
+  a.remove-property, a.add-value {
+    top: 5px;
+    }
   
   a.remove-value {
+    position: absolute;
+    left: 8px;
     margin-top: 3px;
   }
 }
@@ -373,13 +373,34 @@ form.create.term {
   }
   
   .property.delete {
-    @include opacity(0.4);
+     @include opacity(0.6);
+    >* {
+      @include opacity(0.7);
+    }
+
     &:before {
       @include before-icon;
       background-position: 0px -552px;
       position: absolute;
       left: 8px;
       top: 6px;
+    }
+  }
+  .group.delete {
+     @include opacity(0.6);
+    >* {
+      @include opacity(0.7);
+    }
+    border-top: 1px solid white;
+    .remove-value {
+      display: none;
+    }
+    &:before {
+      @include before-icon;
+      background-position: 0px -552px;
+      position: absolute;
+      left: 8px;
+      margin-top: 3px;
     }
   }
 }
