@@ -291,10 +291,8 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
         it 'renders a dropdown select', ->
           model.type = 'picklist'
-          model.values = [{value: 'Good', label: 'Good'},
-                          {value: 'Bad', label: 'Bad'},
-                          {value: 'Ugly', label: 'Ugly'}
-                         ]
+          model.values = ['Good', 'Bad', 'Ugly']
+          model.labeled_values = [{value: 'Good', label: 'Good'}, {value: 'Bad', label: 'Bad'}, {value: 'Ugly', label: 'Ugly'}]
           model.properties[0].value = 'Bad'
           selectFieldStub.withArgs(
             null,
@@ -302,7 +300,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             value: model.properties[0].value,
             required: true,
             errors: {},
-            options: model.values,
+            options: model.labeled_values,
             class: 'value'
           ).returns '''
             <select name='bar'>
