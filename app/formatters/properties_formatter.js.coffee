@@ -35,10 +35,26 @@ class Coreon.Formatters.PropertiesFormatter
           new_property.lang = null
         properties.push new_property
 
+      source_lang = []
+      target_lang = []
+      other_lang = []
+      sourceLang = Coreon.application?.repositorySettings().get('sourceLanguage')
+      targetLang = Coreon.application?.repositorySettings().get('targetLanguage')
+
+      for property in properties
+        if property.lang == sourceLang
+          source_lang.push property
+        else if property.lang == targetLang
+          target_lang.push property
+        else
+          other_lang.push property
+
+      sorted_properties = source_lang.concat target_lang, other_lang
+
       new_formatted_property =
         key: blue_prop.key
         type: blue_prop.type
-        properties: properties
+        properties: sorted_properties
         required: blue_prop.required
         multivalue: multivalue
 

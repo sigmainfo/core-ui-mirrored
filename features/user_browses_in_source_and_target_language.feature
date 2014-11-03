@@ -4,7 +4,11 @@ Feature: user browses in source and target language
   I want to see the terms in source and target language first
 
   Background:
-    Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
+    Given the repository defines a blueprint for concepts
+    And that blueprint requires a property "description" of type "text"
+    And the repository defines a blueprint for terms
+    And that blueprint requires a property "description" of type "text"
+    And my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
 
   Scenario: change label of concept by selected languages
     Given the languages "English", "German", "Russian", "Korean", and "French" are available
@@ -45,8 +49,6 @@ Feature: user browses in source and target language
 
     Then I should see the languages in following order: "FR", "EN", "DE", "KO", "RU"
     And I should see "No terms for this language" in the French section
-
-
 
   Scenario: change properties of concept by selected languages
     Given the languages "English", "German", and "French" are available
@@ -97,8 +99,6 @@ Feature: user browses in source and target language
 
     Then I should see "Schusswaffe" displayed as property "description" of concept
     And I should see the property "description" of concept in following language order: "German", "Russian", "English", "Korean"
-
-
 
   Scenario: change properties of term by selected languages
     Given the languages "English", "German", and "French" are available
