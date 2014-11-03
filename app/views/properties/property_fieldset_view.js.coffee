@@ -117,11 +117,11 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     if @model.multivalue
       if @model.required
         if @$el.find('.group').not('.delete').length > 1
-          @$el.find('a.remove-value').show()
+          @$el.find('.group').not('.delete').find('a.remove-value').css('display', '')
         else
-          @$el.find('a.remove-value').hide()
+          @$el.find('.group').not('.delete').find('a.remove-value').css('display', 'none')
       else
-        @$el.find('a.remove-value').show()
+        @$el.find('.group').not('.delete').find('a.remove-value').css('display', '')
 
   removeProperty: ->
     unless @model.multivalue && !@model.required && @containsPersisted()
