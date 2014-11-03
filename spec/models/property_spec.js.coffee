@@ -16,6 +16,7 @@ describe "Coreon.Models.Property", ->
         key: ""
         value: null
         lang: null
+        persisted: true
 
   describe "info()", ->
 
@@ -24,6 +25,7 @@ describe "Coreon.Models.Property", ->
         key: ""
         value: null
         lang: null
+        persisted: true
       @model.set {
         id: "abcd1234"
         admin: {author: "Nobody"}
