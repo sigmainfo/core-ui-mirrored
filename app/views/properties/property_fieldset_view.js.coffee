@@ -63,6 +63,11 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             value: $(group).find('textarea').val()
             lang: $(group).find('select').val()
           }
+        when 'number'
+          {
+            key: @model.key
+            value: Number($(group).find('input').val())
+          }
         when 'boolean'
           {
             key: @model.key

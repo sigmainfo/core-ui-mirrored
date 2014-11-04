@@ -247,6 +247,31 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(el).to.have 'input[type=radio]'
           expect(el).not.to.have 'select'
 
+      context 'number fields', ->
+
+        textFieldStub = null
+
+        beforeEach ->
+          textFieldStub = sinon.stub(Coreon.Helpers, 'textField')
+
+        afterEach ->
+          Coreon.Helpers.textField.restore()
+
+        it 'renders a text input field for type boolean', ->
+          model.type = 'number'
+          model.properties[0].value = 0.23
+          textFieldStub.withArgs(
+            null,
+            'properties[0][value]',
+            value: 0.23,
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<input type="text"></input>')
+          el = renderView()
+          expect(el).to.have 'input[type=text]'
+          expect(el).not.to.have 'select'
+
       context 'multiselect picklist', ->
 
         multiSelectFieldStub = null
@@ -383,6 +408,22 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         properties = view.serializeArray()
         expect(properties).to.have.lengthOf 1
         expect(properties[0]).to.have.property 'value', false
+
+      it 'returns the values of each numerical property', ->
+        model.type = 'number'
+        model.key = 'vat'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <input name="vat" type="text" value="0.23">
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.$el = markup
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 1
+        expect(properties[0]).to.have.property 'value', 0.23
 
       it 'returns the values of each multiselect checkbox', ->
         model.type = 'multiselect_picklist'
