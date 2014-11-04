@@ -243,6 +243,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
         trigger: trigger
         message: I18n.t "concept.confirm_update", count: elements_to_delete
         action: => @saveConceptProperties attrs
+        restore: => @$el.trigger('restore', [form])
     else
       @saveConceptProperties attrs
 
