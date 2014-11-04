@@ -86,8 +86,9 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @$el.find('.coreon-select[data-select-name=chooseProperty]').click()
 
   nonMultivaluedExists: (property)->
-    _.find @fieldsetViews, (view) ->
-      !view.model.multivalue && view.model.key = property.key
+    found = _.find @fieldsetViews, (view) ->
+      view.model.key == property.key
+    found
 
   addProperty: (event) ->
     selectedKey = $(event.target).val()

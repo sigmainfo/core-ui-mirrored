@@ -36,6 +36,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
   render: ->
     @$el.html @template(property: @model, name: @name, selectableLanguages: @selectableLanguages)
     @updateRemoveLinks()
+    @$el.find('select').coreonSelect()
     @
 
   isValid: ->
