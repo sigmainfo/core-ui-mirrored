@@ -2,6 +2,17 @@ class Coreon.Formatters.PropertiesFormatter
 
   constructor: (@blueprint_properties = [], @properties = [], @errors = [], @options = {}) ->
 
+  calculateDefault: (blue_prop) ->
+    switch blue_prop.type
+      when 'date'
+        if blue_prop.default is 'now'
+          today = new Date()
+          today.toDateString()
+        else
+          blue_prop.default
+      else
+        blue_prop.default
+
   all: ->
 
     props = []
@@ -17,7 +28,7 @@ class Coreon.Formatters.PropertiesFormatter
         not_in_blueprints.splice index, 1
         index = @properties.indexOf property
         new_property =
-          value: property.get('value') || blue_prop.default
+          value: property.get('value') || @calculateDefault(blue_prop)
           errors: @errors[index] || {}
           info: property.info()
           persisted: if property.has('persisted') then property.get('persisted') else true
@@ -27,7 +38,7 @@ class Coreon.Formatters.PropertiesFormatter
 
       if _.isEmpty properties
         new_property =
-          value: blue_prop.default
+          value: @calculateDefault(blue_prop)
           errors: {}
           info: {}
           persisted: false

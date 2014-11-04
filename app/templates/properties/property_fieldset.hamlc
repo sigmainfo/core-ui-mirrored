@@ -15,6 +15,10 @@
     .group
       - property = _.first @property.properties
       != @textField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
+  - when 'date'
+    .group
+      - property = _.first @property.properties
+      != @textField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
   - when 'multiselect_picklist'
     .group
       - property = _.first @property.properties

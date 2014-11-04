@@ -68,6 +68,11 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             key: @model.key
             value: Number($(group).find('input').val())
           }
+        when 'date'
+          {
+            key: @model.key
+            value: $(group).find('input').val()
+          }
         when 'boolean'
           {
             key: @model.key

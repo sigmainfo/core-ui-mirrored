@@ -257,7 +257,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         afterEach ->
           Coreon.Helpers.textField.restore()
 
-        it 'renders a text input field for type boolean', ->
+        it 'renders a text input field for type number', ->
           model.type = 'number'
           model.properties[0].value = 0.23
           textFieldStub.withArgs(
@@ -271,6 +271,30 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           el = renderView()
           expect(el).to.have 'input[type=text]'
           expect(el).not.to.have 'select'
+
+      context 'date fields', ->
+
+        textFieldStub = null
+
+        beforeEach ->
+          textFieldStub = sinon.stub(Coreon.Helpers, 'textField')
+
+        afterEach ->
+          Coreon.Helpers.textField.restore()
+
+        it 'renders a text input field for type date', ->
+          model.type = 'date'
+          model.properties[0].value = '2014-03-14 12:30:00'
+          textFieldStub.withArgs(
+            null,
+            'properties[0][value]',
+            value: '2014-03-14 12:30:00',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<input type="text"></input>')
+          el = renderView()
+          expect(el).to.have 'input[type=text]'
 
       context 'multiselect picklist', ->
 
@@ -424,6 +448,22 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         properties = view.serializeArray()
         expect(properties).to.have.lengthOf 1
         expect(properties[0]).to.have.property 'value', 0.23
+
+      it 'returns the values of each date property', ->
+        model.type = 'date'
+        model.key = 'birthday'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <input name="birthday" type="text" value="2014-03-01 00:00:00">
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.$el = markup
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 1
+        expect(properties[0]).to.have.property 'value', '2014-03-01 00:00:00'
 
       it 'returns the values of each multiselect checkbox', ->
         model.type = 'multiselect_picklist'
