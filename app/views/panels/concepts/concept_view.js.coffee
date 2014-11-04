@@ -135,6 +135,9 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
     @subviews.push broaderAndNarrower
     @subviews.push @conceptProperties
+    @$el.find("form .submit button[type=submit]").prop('disabled', !@conceptProperties.isValid())
+    @listenTo @conceptProperties, 'updateValid', =>
+      @$el.find("form .submit button[type=submit]").prop('disabled', !@conceptProperties.isValid())
 
     for term in @terms
       termProperty = new Coreon.Views.Properties.EditPropertiesView
