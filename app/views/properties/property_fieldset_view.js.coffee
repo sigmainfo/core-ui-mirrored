@@ -65,9 +65,14 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             lang: $(group).find('select').val()
           }
         when 'number'
+          if $(group).find('input').val() != null && $(group).find('input').val() != ''
+            value = Number($(group).find('input').val())
+            value = null if isNaN(value)
+          else
+            value = null
           {
             key: @model.key
-            value: Number($(group).find('input').val())
+            value: value
           }
         when 'date'
           {
