@@ -17,7 +17,7 @@ class Coreon.Formatters.PropertiesFormatter
         not_in_blueprints.splice index, 1
         index = @properties.indexOf property
         new_property =
-          value: property.get 'value'
+          value: property.get 'value' || blue_prop.default
           errors: @errors[index] || {}
           info: property.info()
           persisted: if property.has('persisted') then property.get('persisted') else true

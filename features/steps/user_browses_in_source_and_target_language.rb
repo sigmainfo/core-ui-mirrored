@@ -18,7 +18,8 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
     @blueprint['properties'].post property: {
       key: 'description',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 

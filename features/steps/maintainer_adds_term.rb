@@ -22,7 +22,8 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'status',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 
@@ -30,7 +31,8 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'description',
       type: 'text',
-      required: false
+      required: false,
+      default: ''
     }
   end
 
@@ -38,7 +40,8 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'notes',
       type: 'text',
-      required: false
+      required: false,
+      default: ''
     }
   end
 

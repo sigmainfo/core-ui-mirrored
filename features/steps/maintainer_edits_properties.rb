@@ -22,7 +22,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'short description',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 
@@ -30,7 +31,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @property_attrs = {
       key: 'dangerous',
       type: 'boolean',
-      required: true
+      required: true,
+      default: false
     }
   end
 
@@ -49,6 +51,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'that property allows values: "cool", "night life", "diet"' do
     @property_attrs[:values] = ["cool", "night life", "diet"]
+    @property_attrs[:default] = ["cool", "night life"]
     @blueprint['properties'].post property: @property_attrs
   end
 
@@ -56,7 +59,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'alias',
       type: 'text',
-      required: false
+      required: false,
+      default: ''
     }
   end
 
@@ -64,7 +68,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'definition',
       type: 'multiline_text',
-      required: false
+      required: false,
+      default: ''
     }
   end
 
@@ -72,7 +77,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'author',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 
@@ -80,7 +86,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'source',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 
@@ -94,6 +101,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'that property allows values: "pending", "accepted", "forbidden"' do
     @property_attrs[:values] = ["pending", "accepted", "forbidden"]
+    @property_attrs[:default] = "pending"
     @blueprint['properties'].post property: @property_attrs
   end
 
@@ -101,7 +109,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'quote',
       type: 'multiline_text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 

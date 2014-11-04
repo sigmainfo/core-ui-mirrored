@@ -15,7 +15,8 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'label',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 

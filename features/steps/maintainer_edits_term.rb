@@ -14,7 +14,8 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     @blueprint['properties'].post property: {
       key: 'status',
       type: 'text',
-      required: true
+      required: true,
+      default: ''
     }
   end
 
@@ -23,6 +24,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
       key: 'public',
       type: 'boolean',
       required: false,
+      default: false,
       labels: ['yes', 'no']
     }
   end
