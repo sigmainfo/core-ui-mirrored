@@ -35,6 +35,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @values_index = @model?.properties.length || 0
 
   render: ->
+    @$el.addClass 'required' if @model.required
+    @$el.addClass @model.type
     @$el.html @template(property: @model, name: @name, selectableLanguages: @selectableLanguages)
     @updateRemoveLinks()
     @$el.find('select').coreonSelect()
