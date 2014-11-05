@@ -6,14 +6,14 @@ Feature: maintainer edits term
   Background:
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am a maintainer of the repository
-    And the repository defines a blueprint for terms
-    And that blueprint requires a property "status" of type "text"
-    And that blueprint allows a property "public" of type "boolean"
     And I am logged in
     And a concept with an English term "ten-gallon hat" exists
 
   Scenario: edit term
     Given I am a maintainer of the repository
+    And the repository defines a blueprint for terms
+    And that blueprint requires a property "status" of type "text"
+    #And that blueprint allows a property "public" of type "boolean"
     And I visit the page of this concept
     When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
@@ -37,6 +37,9 @@ Feature: maintainer edits term
   Scenario: removing existing properties
     Given this term has a property "public" set to false
     And I am a maintainer of the repository
+    And the repository defines a blueprint for terms
+    #And that blueprint requires a property "status" of type "text"
+    And that blueprint allows a property "public" of type "boolean"
     And I visit the page of this concept
     When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
@@ -55,6 +58,8 @@ Feature: maintainer edits term
 
   Scenario: validation errors
     Given I am a maintainer of the repository
+    And I am a maintainer of the repository
+    And the repository defines a blueprint for terms
     And I visit the page of this concept
     When I toggle "EDIT MODE"
     When I click "Edit term"
@@ -75,6 +80,8 @@ Feature: maintainer edits term
   Scenario: reset and cancel
     Given this term has a property "notice" of "TODO: translate"
     And I am a maintainer of the repository
+    And the repository defines a blueprint for terms
+    And that blueprint requires a property "status" of type "text"
     And I visit the page of this concept
     When I toggle "EDIT MODE"
     When I click "Edit term"
@@ -88,6 +95,8 @@ Feature: maintainer edits term
     When I click "Reset"
     Then I should see "ten-gallon hat" for input "Value"
     And I should see exactly two sets of property inputs
+    And I see a fieldset "STATUS" within this section
+    And I fill in "STATUS" with "ready"
     And I see a fieldset "NOTICE" within this section
     And this fieldset has a value "TODO: translate"
     And I should see "Save term"
@@ -103,5 +112,7 @@ Feature: maintainer edits term
     And this fieldset is empty
     And I see a fieldset "NOTICE" within this section
     And this fieldset has a value "TODO: translate"
+    And I see a fieldset "STATUS" within this section
+    And I fill in "STATUS" with "ready"
     And I should see "Save term"
 

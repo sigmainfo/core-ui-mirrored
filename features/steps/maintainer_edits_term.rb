@@ -122,9 +122,22 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     end
   end
 
+  step 'I fill in "STATUS" with "ready"' do
+    within @fieldset do
+      fill_in page.find('input')[:id], with: 'ready'
+    end
+  end
+
   step 'this fieldset has a checked radio option "no"' do
     within @fieldset do
       expect(@fieldset).to have_field 'no', checked: true
+    end
+  end
+
+  step 'this fieldset has a value "ready"' do
+    within @fieldset do
+      input = find 'input[type=text]'
+      expect(input[:value]).to eql 'ready'
     end
   end
 
