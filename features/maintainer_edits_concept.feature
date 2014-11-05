@@ -27,7 +27,6 @@ Feature: maintainer edits concept
     When I toggle "EDIT MODE"
     Then I should see a properties form
 
-  @wip
   Scenario: cancel properties form
     When I toggle "EDIT MODE"
     And I click "Edit properties"
