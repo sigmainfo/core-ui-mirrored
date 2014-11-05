@@ -141,9 +141,7 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I select "English" for "LANGUAGE"' do
-    within @fieldset do
-      select 'English', from: page.find('select')[:id]
-    end
+    select_from_coreon_dropdown @fieldset, 'English'
   end
 
   step 'I see a dropdown with options "DESCRIPTION", "NOTES"' do

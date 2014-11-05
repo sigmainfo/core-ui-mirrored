@@ -274,7 +274,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
 
   step 'this fieldset contains a select "LANGUAGE"' do
     within @fieldset do
-      expect(page).to have_selector 'select'
+      expect(page).to have_selector '.input.lang .coreon-select'
     end
   end
 
@@ -300,10 +300,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'this fieldset contains a dropdown with selection "forbidden"' do
-    within @fieldset do
-      status_dropdown = find 'select'
-      expect(status_dropdown[:value]).to eql 'forbidden'
-    end
+    find_coreon_dropdown(@fieldset, 'forbidden')
   end
 
   step 'I click on "Remove status" within "STATUS"' do
@@ -334,9 +331,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I select "English" for "LANGUAGE"' do
-    within @fieldset do
-      select 'English', from: page.find('select')[:id]
-    end
+    select_from_coreon_dropdown @fieldset, 'English'
   end
 
   step 'I select "no" for "DANGEROUS"' do
@@ -411,9 +406,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I select "None" for "LANGUAGE"' do
-    within @fieldset do
-      select 'None', from: page.find('select')[:id]
-    end
+    select_from_coreon_dropdown @fieldset, 'None'
   end
 
   step 'I check "cool" and "night life"' do

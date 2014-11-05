@@ -119,4 +119,20 @@ module Selectors
     expect(field).to have_xpath('ancestor::fieldset')
     field.find :xpath, 'ancestor::fieldset'
   end
+
+  def select_from_coreon_dropdown(fieldset, value)
+    within fieldset do
+      page.find('.coreon-select').click
+    end
+    dropdown = page.find ".coreon-select-dropdown"
+    within dropdown do
+      page.find("li", text: value).click
+    end
+  end
+
+  def find_coreon_dropdown(fieldset, value)
+    within fieldset do
+      expect(page).to have_css '.coreon-select', text: value
+    end
+  end
 end
