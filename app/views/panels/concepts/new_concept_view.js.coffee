@@ -52,14 +52,17 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @editProperties.render()
     @$("form").before @broaderAndNarrower.$el
     @$("form .terms").before @editProperties.$el
-    @$el.find("form .submit button[type=submit]").prop('disabled', !@editProperties.isValid())
-    @listenTo @editProperties, 'updateValid', =>
-      @$el.find("form .submit button[type=submit]").prop('disabled', !@editProperties.isValid())
+    @refreshPropertiesValidation @editProperties
     if @model.terms().length > 0
       _.each @model.terms().models, (term) =>
         @renderTerm(term)
     @_wasRendered = true
     @
+
+  refreshPropertiesValidation: (propertiesView) ->
+    propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
+    @listenTo propertiesView, 'updateValid', ->
+      propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
 
   create: (event) ->
     event.preventDefault()

@@ -135,9 +135,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
     @subviews.push broaderAndNarrower
     @subviews.push @conceptProperties
-    @$el.find("form .submit button[type=submit]").prop('disabled', !@conceptProperties.isValid())
-    @listenTo @conceptProperties, 'updateValid', =>
-      @$el.find("form .submit button[type=submit]").prop('disabled', !@conceptProperties.isValid())
+    @refreshPropertiesValidation @conceptProperties
 
     for term in @terms
       termProperty = new Coreon.Views.Properties.EditPropertiesView
@@ -146,8 +144,9 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
         isEdit: true
         collapsed: true
         ownerId: term.id
-      @termProperties.push termProperty
       @$el.find(".terms form.term.update input[name=id][value=#{term.id}]").parent('form').find('.submit').before termProperty.render().$el
+      @refreshPropertiesValidation termProperty
+      @termProperties.push termProperty
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 
@@ -158,6 +157,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
     @
+
+  refreshPropertiesValidation: (propertiesView) ->
+    propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
+    @listenTo propertiesView, 'updateValid', ->
+      propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
 
   toggleInfo: (evt) ->
     @$(".system-info")
@@ -217,11 +221,9 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
       isEdit: true
       collapsed: true
-    @termProperties.push termProperty
     @$el.find(".terms form.term.create .submit").before termProperty.render().$el
-    @$el.find(".terms form.term.create .submit button[type=submit]").prop('disabled', !termProperty.isValid())
-    @listenTo termProperty, 'updateValid', ->
-      @$el.find(".terms form.term.create .submit button[type=submit]").prop('disabled', !termProperty.isValid())
+    @refreshPropertiesValidation termProperty
+    @termProperties.push termProperty
 
 
   saveConceptProperties: (attrs) ->
