@@ -21,6 +21,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
   events:
     'change select': 'inputChanged'
     'input input': 'inputChanged'
+    'input textarea': 'inputChanged'
     'click a.add-value': 'addValue'
     'click a.remove-value': 'removeValue'
     'click a.remove-property': 'removeProperty'
