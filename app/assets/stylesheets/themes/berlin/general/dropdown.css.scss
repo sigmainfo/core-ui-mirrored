@@ -18,3 +18,9 @@
     @include border-radius(8px);
   }
 }
+
+.concept form {
+  .coreon-select {
+    background-color: rgba($editmode-color, 0.8);
+  }
+}
