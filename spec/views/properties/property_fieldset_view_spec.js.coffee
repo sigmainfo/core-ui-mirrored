@@ -9,16 +9,17 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
   model = null
   index = 0
   scopePrefix = null
-
-  beforeEach ->
-    sinon.stub I18n, 't'
-    Coreon.Models.RepositorySettings = sinon.stub
-    Coreon.Models.RepositorySettings.languageOptions = ->
-      [
+  langs = [
         {value: 'en', label: 'English'},
         {value: 'de', label: 'German'},
         {value: 'fr', label: 'French'}
       ]
+
+  beforeEach ->
+    sinon.stub I18n, 't'
+    Coreon.Models.RepositorySettings = sinon.stub
+    Coreon.Models.RepositorySettings.languageOptions = -> langs
+
 
   afterEach ->
     I18n.t.restore()
@@ -40,58 +41,85 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 2
     expect(view).to.have.property 'name', 'properties[2]'
 
-  it 'creates a name for the field', ->
-    view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 2
-    expect(view).to.have.property 'name', 'properties[2]'
-
   it 'creates a name for the field using scopePrefix if given', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: 3, scopePrefix: 'concept'
     expect(view).to.have.property 'name', 'concept[properties][3]'
+
+  it 'gets the language settings from the repo config', ->
+    view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+    expect(view).to.have.property 'selectableLanguages'
+    expect(view.selectableLanguages).to.eql langs
 
   describe '#render()', ->
 
     renderView = ->
       view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
       view.render()
-      view.$el
+      view
 
     beforeEach ->
+      sinon.stub jQuery.fn, 'coreonSelect'
       model =
         key: 'label'
         type: 'text'
+        required: true
+        multivalue: true
         properties: [
             value: 'car'
             lang: 'en'
             errors: {}
           ]
 
+    afterEach ->
+      jQuery.fn.coreonSelect.restore()
+
     it 'renders container', ->
-      el = renderView()
+      el = renderView().$el
       expect(el).to.match 'fieldset.property'
+
+    it 'adds class "required" in the container if property is not optional', ->
+      model.required = true
+      el = renderView().$el
+      expect(el).to.match 'fieldset.property.required'
+
+    it 'does not add class "required" in the container if property is optional', ->
+      model.required = false
+      el = renderView().$el
+      expect(el).to.not.match 'fieldset.property.required'
 
     it 'renders the property key as a title', ->
       model.key = 'my_key'
-      el = renderView()
+      el = renderView().$el
       title = el.find 'h4'
       expect(title).to.contain 'my_key'
 
     it 'renders a remove value link for multivalued fieldsets', ->
       I18n.t.withArgs('property.value.remove', {property_name: model.key}).returns 'Remove value'
-      el = renderView()
+      el = renderView().$el
       removeLink = el.find 'a.remove-value'
       expect(removeLink).to.contain 'Remove value'
 
     it 'does not renders a remove value link for non-multivalued fieldsets', ->
       model.type = 'boolean'
-      el = renderView()
+      el = renderView().$el
       expect(el).to.not.contain 'a.remove-value'
 
     it 'renders a remove property link for non multivalued fieldsets', ->
       model.type = 'boolean'
       I18n.t.withArgs('property.remove', {property_name: model.key}).returns 'Remove property'
-      el = renderView()
+      el = renderView().$el
       removeLink = el.find 'a.remove-property'
       expect(removeLink).to.contain 'Remove property'
+
+    it 'updates remove links', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+      sinon.stub view, 'updateRemoveLinks'
+      view.render()
+      expect(view.updateRemoveLinks).to.have.been.calledOnce
+
+    it 'tranforms all select fields to their Coreon equivalent', ->
+      renderView()
+      expect(jQuery.fn.coreonSelect).to.have.been.calledOnce
 
     xit 'renders property errors', ->
       model.errors = {value: ['is invalid']}
@@ -127,7 +155,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             required: true, errors: {}, class: 'value'
           ).returns('<input type="text"></input>')
           model.type = 'text'
-          el = renderView()
+          el = renderView().$el
           expect(el).to.have 'input[type=text]'
           expect(el).to.have 'select'
 
@@ -154,7 +182,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             lang: 'de'
             errors: {}
           }
-          el = renderView()
+          el = renderView().$el
           inputs = el.find 'input[type=text]'
           langSelects = el.find 'select'
           expect(inputs).to.have.lengthOf 2
@@ -187,7 +215,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             required: true, errors: {}, class: 'value'
           ).returns('<textarea></textarea>')
           model.type = 'multiline_text'
-          el = renderView()
+          el = renderView().$el
           expect(el).to.have 'textarea'
           expect(el).to.have 'select'
 
@@ -214,7 +242,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             lang: 'de'
             errors: {}
           }
-          el = renderView()
+          el = renderView().$el
           inputs = el.find 'textarea'
           langSelects = el.find 'select'
           expect(inputs).to.have.lengthOf 2
@@ -238,12 +266,12 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             null,
             'properties[0][value]',
             value: true,
-            required: true,
+            required: false,
             errors: {},
             labels: ['Yes', 'No'],
             class: 'value'
           ).returns('<input type="radio">yes</input><input type="radio">no</input>')
-          el = renderView()
+          el = renderView().$el
           expect(el).to.have 'input[type=radio]'
           expect(el).not.to.have 'select'
 
@@ -268,7 +296,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             errors: {},
             class: 'value'
           ).returns('<input type="text"></input>')
-          el = renderView()
+          el = renderView().$el
           expect(el).to.have 'input[type=text]'
           expect(el).not.to.have 'select'
 
@@ -293,7 +321,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             errors: {},
             class: 'value'
           ).returns('<input type="text"></input>')
-          el = renderView()
+          el = renderView().$el
           expect(el).to.have 'input[type=text]'
 
       context 'multiselect picklist', ->
@@ -314,7 +342,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             null,
             'properties[0][value]',
             value: model.properties[0].value,
-            required: true,
+            required: false,
             errors: {},
             options: model.values,
             class: 'value'
@@ -323,7 +351,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             <input type="checkbox">Bad</input>
             <input type="checkbox">Ugly</input>
           '''
-          el = renderView()
+          el = renderView().$el
           checkboxes = el.find 'input[type=checkbox]'
           expect(checkboxes).to.have.lengthOf 3
           expect(el).not.to.have 'select'
@@ -347,7 +375,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             null,
             'properties[0][value]',
             value: model.properties[0].value,
-            required: true,
+            required: false,
             errors: {},
             options: model.labeled_values,
             class: 'value'
@@ -358,7 +386,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
               <option value="Ugly">Ugly</option>
             </select>
           '''
-          el = renderView()
+          el = renderView().$el
           select = el.find 'select'
           select_options = select.find 'option'
           expect(select_options).to.have.lengthOf 3
@@ -366,7 +394,14 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
     describe '#serializeArray()', ->
 
-      it 'returns the values of each set text property', ->
+      it 'returns and empty array if property not multivalued and marked for deletion', ->
+        model.multivalue = false
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        sinon.stub(view, 'checkDelete').returns 1
+        properties = view.serializeArray()
+        expect(properties).to.be.empty
+
+      it 'returns the values of each set of a text property', ->
         model.type = 'text'
         model.key = 'car'
         markup = $ '''
@@ -390,7 +425,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         expect(properties[0]).to.have.property 'value', 'Honda'
         expect(properties[1]).to.have.property 'value', 'Mazda'
 
-      it 'returns the values of each set multiline_text property', ->
+      it 'returns the values of each set of a multiline_text property', ->
         model.type = 'multiline_text'
         model.key = 'car'
         markup = $ '''
@@ -414,7 +449,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         expect(properties[0]).to.have.property 'value', 'Honda'
         expect(properties[1]).to.have.property 'value', 'Mazda'
 
-      it 'returns the values of each set boolean property', ->
+      it 'returns the value of a boolean property', ->
         model.type = 'boolean'
         model.key = 'public'
         markup = $ '''
@@ -433,7 +468,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         expect(properties).to.have.lengthOf 1
         expect(properties[0]).to.have.property 'value', false
 
-      it 'returns the values of each numerical property', ->
+      it 'returns the value of a numerical property', ->
         model.type = 'number'
         model.key = 'vat'
         markup = $ '''
@@ -449,7 +484,23 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         expect(properties).to.have.lengthOf 1
         expect(properties[0]).to.have.property 'value', 0.23
 
-      it 'returns the values of each date property', ->
+      it 'returns null if an ivalid value is given for a numerical property', ->
+        model.type = 'number'
+        model.key = 'vat'
+        markup = $ '''
+            <fieldset>
+              <div class="group">
+                <input name="vat" type="text" value="0.2.3">
+              </div>
+            </fieldset>
+          '''
+        view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
+        view.$el = markup
+        properties = view.serializeArray()
+        expect(properties).to.have.lengthOf 1
+        expect(properties[0]).to.have.property 'value', null
+
+      it 'returns the value of a date property', ->
         model.type = 'date'
         model.key = 'birthday'
         markup = $ '''
@@ -485,7 +536,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         expect(properties[0].value[0]).to.eql 'bad'
         expect(properties[0].value[1]).to.eql 'ugly'
 
-      it 'returns the value a picklist', ->
+      it 'returns the value of a picklist', ->
         model.type = 'picklist'
         model.key = 'personality'
         markup = $ '''
@@ -505,6 +556,115 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         properties = view.serializeArray()
         expect(properties).to.have.lengthOf 1
         expect(properties[0].value).to.eql 'Bad'
+
+  describe '#isValid()', ->
+
+    view = null
+    props = null
+
+    beforeEach ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'serializeArray', -> props
+
+    afterEach ->
+      view.serializeArray.restore()
+
+    it 'returns true when all values of all inputs are valid', ->
+      props = [
+        {key: 'label', value: 'Canteen'},
+        {key: 'public', value: false},
+      ]
+      result = view.isValid()
+      expect(result).to.be.true
+
+    it 'returns false when even one of the values of all inputs is invalid', ->
+      props = [
+        {key: 'label', value: null},
+        {key: 'public', value: false},
+      ]
+      result = view.isValid()
+      expect(result).to.be.false
+
+    it 'returns false when even one of the keys of all inputs is invalid', ->
+      props = [
+        {value: 'Canteen'},
+        {key: 'public', value: false},
+      ]
+      result = view.isValid()
+      expect(result).to.be.false
+
+    it 'returns false when even one of the values of all inputs is empty', ->
+      props = [
+        {key: 'label', value: ''},
+        {key: 'public', value: false},
+      ]
+      result = view.isValid()
+      expect(result).to.be.false
+
+  describe '#checkDelete()', ->
+
+    markup = null
+    view = null
+
+    renderView = ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      view.$el = markup
+
+    context 'for multi-valued properties', ->
+
+      beforeEach ->
+        model.multivalue = true
+
+      it 'returns the number of values that were marked for deletion', ->
+        markup = $ '''
+            <fieldset>
+              <div class='group delete'></div>
+              <div class='delete'></div>
+              <div class='group delete'></div>
+            </fieldset>
+          '''
+        renderView()
+        deleted = view.checkDelete()
+        expect(deleted).to.equal 2
+
+      it 'returns the 0 if no values were marked for deletion', ->
+        markup = $ '''
+            <fieldset>
+              <div class='group'></div>
+              <div class='delete'></div>
+              <div class='group'></div>
+            </fieldset>
+          '''
+        renderView()
+        deleted = view.checkDelete()
+        expect(deleted).to.equal 0
+
+    context 'for single valued properties', ->
+
+      beforeEach ->
+        model.multivalue = false
+
+      it 'returns the number of values that were marked for deletion', ->
+        markup = $ '''
+            <fieldset>
+              <div class='group delete'></div>
+            </fieldset>
+          '''
+        renderView()
+        deleted = view.checkDelete()
+        expect(deleted).to.equal 0
+
+      it 'returns the 0 if no values were marked for deletion', ->
+        markup = $ '''
+            <fieldset>
+              <div class='group'></div>
+            </fieldset>
+          '''
+        renderView()
+        deleted = view.checkDelete()
+        expect(deleted).to.equal 0
+
+
 
 
 

@@ -9,6 +9,7 @@
 #= require helpers/check_box_field
 #= require helpers/multi_select_field
 #= require helpers/boolean_field
+#= require lib/select
 
 class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
@@ -32,7 +33,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @scopePrefix = options.scopePrefix
     @name = if @scopePrefix? then "#{@scopePrefix}[properties][#{@index}]" else "properties[#{@index}]"
     @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
-    @values_index = @model?.properties.length || 0
+    @values_index = @model?.properties?.length || 0
 
   render: ->
     @$el.addClass 'required' if @model.required
@@ -41,15 +42,6 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @updateRemoveLinks()
     @$el.find('select').coreonSelect()
     @
-
-  isValid: ->
-    for result in @serializeArray()
-      if !result.key? || !result.value? || (result.value is '')
-        return false
-    true
-
-  markInvalid: ->
-    @$el.find('.key').after $ '<div class="invalid">Property required</div>'
 
   serializeArray: ->
     return [] if !@model.multivalue && @checkDelete() == 1
@@ -98,12 +90,19 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             value: $(group).find('select').val()
           }
 
+  isValid: ->
+    for result in @serializeArray()
+      if !result.key? || !result.value? || (result.value is '')
+        return false
+    true
+
   checkDelete: ->
     if @model.multivalue
-      return @$el.find('.group.delete').length
+      @$el.find('.group.delete').length
+    else if @$el.hasClass 'delete'
+      1
     else
-      return 1 if @$el.hasClass 'delete'
-    0
+      0
 
   markDelete: ->
     @$el.addClass 'delete'

@@ -300,7 +300,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     for tp in @termProperties
       unless tp.isValid()
         all_valid = false
-        # tp.markInvalid()
     all_valid
 
   cancelForm: (evt) ->

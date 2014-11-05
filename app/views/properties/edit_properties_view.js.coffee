@@ -65,10 +65,6 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @trigger 'updateValid'
     @valid = @isValid()
 
-  markInvalid: ->
-    for fieldsetView in @fieldsetViews
-      fieldsetView.markInvalid() unless fieldsetView.isValid()
-
   serializeArray: ->
     properties = []
     _.each @fieldsetViews, (fieldsetView) ->
