@@ -114,6 +114,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     return unless @model.multivalue
     newValueTemplate = Coreon.Templates["properties/#{@model.type}_property_fieldset_value"]
     newValueMarkup = newValueTemplate(propertyKey: @model.key, name: @name, property: {}, index: @values_index, selectableLanguages: @selectableLanguages)
+    newValueMarkup = $ newValueMarkup
+    newValueMarkup.find('select').coreonSelect()
     @$el.append newValueMarkup
     @values_index++
     @updateRemoveLinks()
