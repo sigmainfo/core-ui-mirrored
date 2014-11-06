@@ -79,17 +79,23 @@ class Coreon.Formatters.PropertiesFormatter
 
 
     if @options.includeUndefined
+      undefinedByKey = {}
       for property in not_in_blueprints
+        key = property.get 'key'
         new_property =
           value: property.get 'value'
           lang: property.get 'lang'
           errors: {}
           info: property.info()
           persisted: true
+        undefinedByKey[key] ?= []
+        undefinedByKey[key].push new_property
+
+      for key, properties of undefinedByKey
         new_formatted_property =
-          key: property.get 'key'
+          key: key
           type: 'text'
-          properties: [new_property]
+          properties: properties
         props.push new_formatted_property
 
     props
