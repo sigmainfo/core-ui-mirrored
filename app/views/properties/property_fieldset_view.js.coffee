@@ -23,6 +23,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     'change select': 'inputChanged'
     'input input': 'inputChanged'
     'input textarea': 'inputChanged'
+    'click [type="checkbox"]': 'inputChanged'
+    'click [type="radio"]': 'inputChanged'
     'click a.add-value': 'addValue'
     'click a.remove-value': 'removeValue'
     'click a.remove-property': 'removeProperty'
@@ -92,7 +94,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   isValid: ->
     for result in @serializeArray()
-      if !result.key? || !result.value? || (result.value is '')
+      if !result.key? || !result.value? || (result.value is '') || ((typeof result.value == 'object') && _.isEmpty(result.value))
         return false
     true
 
