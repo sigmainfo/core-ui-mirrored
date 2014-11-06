@@ -701,6 +701,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     it 'appends a new value to a multivalue property', ->
       view = new Coreon.Views.Properties.PropertyFieldsetView model: model
       sinon.stub view, 'updateRemoveLinks'
+      sinon.stub view, 'inputChanged'
       view.values_index = 1
       view.$el = $ '''
         <fieldset>
@@ -712,6 +713,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       expect(groups.length).to.equal 2
       expect(view.values_index).to.equal 2
       expect(view.updateRemoveLinks).to.have.been.calledOnce
+      expect(view.inputChanged).to.have.been.calledOnce
 
     it 'does not work for non multivalue properties', ->
       model.multivalue = false

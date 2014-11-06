@@ -121,6 +121,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @$el.append newValueMarkup
     @values_index++
     @updateRemoveLinks()
+    @inputChanged()
 
   removeValue: (event) ->
     propertyGroup = $(event.target).parent()
