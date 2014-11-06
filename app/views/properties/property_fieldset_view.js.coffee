@@ -126,7 +126,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
   removeValue: (event) ->
     propertyGroup = $(event.target).parent()
     index = propertyGroup.attr('data-index')
-    if @model.properties[index]
+    if @model.properties[index] && @model.properties[index].persisted
       propertyGroup.addClass('delete')
     else
       propertyGroup.remove()

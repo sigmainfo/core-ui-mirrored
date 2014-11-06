@@ -67,7 +67,6 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @listenTo propertiesView, 'updateValid', =>
       invalid = _.filter @allPropertyViews, (view) ->
         !view.isValid()
-      console.log invalid
       if invalid.length > 0
         formButton.prop('disabled', true)
       else
