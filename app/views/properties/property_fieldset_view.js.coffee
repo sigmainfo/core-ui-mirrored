@@ -111,7 +111,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @trigger 'inputChanged'
 
   addValue: ->
-    return unless @model.type in ['text', 'multiline_text']
+    return unless @model.multivalue
     newValueTemplate = Coreon.Templates["properties/#{@model.type}_property_fieldset_value"]
     newValueMarkup = newValueTemplate(propertyKey: @model.key, name: @name, property: {}, index: @values_index, selectableLanguages: @selectableLanguages)
     @$el.append newValueMarkup

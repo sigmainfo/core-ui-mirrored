@@ -664,6 +664,69 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         deleted = view.checkDelete()
         expect(deleted).to.equal 0
 
+  describe '#markDelete()', ->
+
+    it 'adds class "delete" to a fieldset to mark it ready for deletion', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      view.$el = $ '''
+        <fieldset>
+        </fidelset>
+      '''
+      view.markDelete()
+      expect(view.$el).to.have.class 'delete'
+
+  describe '#inputChanged()', ->
+
+    it 'triggers an "inputChanged" event when called', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      eventSpy = sinon.spy()
+      view.on 'inputChanged', eventSpy
+      view.inputChanged()
+      expect(eventSpy).to.have.been.calledOnce
+
+  describe '#addValue()', ->
+
+    beforeEach ->
+      model =
+        key: 'label'
+        type: 'text'
+        required: true
+        multivalue: true
+        properties: [
+            value: 'car'
+            lang: 'en'
+            errors: {}
+        ]
+
+    it 'appends a new value to a multivalue property', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'updateRemoveLinks'
+      view.values_index = 1
+      view.$el = $ '''
+        <fieldset>
+          <div class="group"><input type='text'></input></div>
+        </fieldset>
+      '''
+      view.addValue()
+      groups = view.$el.find('.group')
+      expect(groups.length).to.equal 2
+      expect(view.values_index).to.equal 2
+      expect(view.updateRemoveLinks).to.have.been.calledOnce
+
+    it 'does not work for non multivalue properties', ->
+      model.multivalue = false
+      Coreon.Templates = sinon.spy
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      view.values_index = 1
+      view.addValue()
+      expect(Coreon.Templates).to.not.have.been.called
+      expect(view.values_index).to.equal 1
+
+
+
+
+
+
 
 
 
