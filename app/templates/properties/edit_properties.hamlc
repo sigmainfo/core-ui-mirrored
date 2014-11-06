@@ -1,0 +1,4 @@
+%h3.title= I18n.t 'properties.title'
+.add
+  .edit
+    %a.add-property{href: "javascript:void(0)"}= I18n.t "properties.add"

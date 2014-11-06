@@ -1,18 +1,37 @@
-- name = if @scope? then "#{@scope}[properties][#{@index}]" else "properties[#{@index}]"
-%fieldset.property
-  %a.remove-property{href: "javascript:void(0)", title: I18n.t 'property.remove' }= I18n.t "property.remove"
+%h4.key= @property.key
+- if @property.type in ['text', 'multiline_text']
+  - title = I18n.t('property.value.add', {property_name: @property.key})
+  %a.add-value{href: "javascript:void(0)", title: title}= title
+- else
+  - title = I18n.t('property.remove', {property_name: @property.key})
+  %a.remove-property{href: "javascript:void(0)", title: title }= title
 
-  != @textField I18n.t('property.key'), "#{name}[key]", value: @property?.key, required: true, errors: @property?.errors?.key, class: 'key'
-
-  - switch @property?.type
-    - when 'boolean'
-      != @checkBoxField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value'
-    - when 'multiselect_picklist'
-      != @multiSelectField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value', options: @property?.options
-    - else
-      != @textAreaField I18n.t('property.value'), "#{name}[value]", value: @property?.value, required: true, errors: @property?.errors?.value, class: 'value'
-
-
-  - if (!@property?) || _(@property).has 'lang'
-    != @selectField I18n.t('forms.select.language'), "#{name}[lang]", options: @selectableLanguages, allowEmpty: true, class: 'lang'
+- switch @property.type
+  - when 'boolean'
+    .group
+      - property = _.first @property.properties
+      != @booleanField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
+  - when 'number'
+    .group
+      - property = _.first @property.properties
+      != @textField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
+  - when 'date'
+    .group
+      - property = _.first @property.properties
+      != @textField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
+  - when 'multiselect_picklist'
+    .group
+      - property = _.first @property.properties
+      != @multiSelectField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, options: @property?.values, class: 'value'
+  - when 'picklist'
+    .group
+      - property = _.first @property.properties
+      - labeled_values = _.map @property?.values, (value) -> {value: value, label: value}
+      != @selectField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, options: labeled_values, class: 'value'
+  - when 'multiline_text'
+    - for property, index in @property.properties
+      != @render "properties/multiline_text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages
+  - when 'text'
+    - for property, index in @property.properties
+      != @render "properties/text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages
 

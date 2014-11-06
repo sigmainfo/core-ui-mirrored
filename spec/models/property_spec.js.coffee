@@ -5,25 +5,27 @@ describe "Coreon.Models.Property", ->
 
   beforeEach ->
     @model = new Coreon.Models.Property
-  
+
   it "is a Backbone model", ->
     @model.should.been.an.instanceof Backbone.Model
 
   describe "defaults()", ->
-  
+
     it "returns a hash of standard attrs", ->
       @model.defaults().should.eql
         key: ""
-        value: ""
-        lang: ""
+        value: null
+        lang: null
+        persisted: true
 
   describe "info()", ->
 
     it "returns hash with system info attributes", ->
       @model.defaults = ->
         key: ""
-        value: ""
-        lang: ""
+        value: null
+        lang: null
+        persisted: true
       @model.set {
         id: "abcd1234"
         admin: {author: "Nobody"}

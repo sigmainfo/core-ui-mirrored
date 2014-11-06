@@ -59,6 +59,11 @@ class Coreon.Models.Term extends Backbone.Model
   conceptPath: ->
     new FakeConcept( id: @get 'concept_id' ).path()
 
-  propertiesWithDefaults: ->
-    formatter = new Coreon.Formatters.PropertiesFormatter Coreon.Models.RepositorySettings.propertiesFor('term'), @properties().map((p) -> p), @errors()?.nested_errors_on_properties
+  propertiesWithDefaults: (options) ->
+    formatter = new Coreon.Formatters.PropertiesFormatter(
+      Coreon.Models.RepositorySettings.propertiesFor('term'),
+      @properties().map((p) -> p),
+      @errors()?.nested_errors_on_properties,
+      options
+    )
     formatter.all()

@@ -141,7 +141,7 @@
   tr, tbody {
     display: block;
   }
-  
+
   td {
     display: block;
     margin-left: 114px;
@@ -199,6 +199,7 @@
       th {
         width: auto;
         padding-top: 3px;
+        padding-right: 8px;
         text-align:left;
         float: left;
       }
@@ -216,7 +217,6 @@ table.managers, .concept-list>table {
   thead th {
     position: relative;
   }
-
   tr {
     vertical-align: baseline;
     text-align: left;

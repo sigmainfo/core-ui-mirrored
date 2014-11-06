@@ -153,7 +153,10 @@ en:
     key: "Key"
     value: "Value"
     lang: "Language"
-    remove: "Remove property"
+    remove: "Remove {{property_name}}"
+    value:
+      add: 'Add another {{property_name}}'
+      remove: 'Remove this {{property_name}}'
 
   repository:
     label: "Repository"

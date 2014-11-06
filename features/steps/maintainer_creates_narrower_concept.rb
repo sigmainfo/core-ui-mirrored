@@ -3,7 +3,13 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
   include Factory
+  include Resources
+  include Selectors
 
+  step 'the repository defines an empty blueprint for concepts' do
+    @blueprint = blueprint(:concept)
+    @blueprint['clear'].delete
+  end
 
   step 'a concept with label "panopticum" exists' do
     @concept = create_concept_with_label "panopticum"

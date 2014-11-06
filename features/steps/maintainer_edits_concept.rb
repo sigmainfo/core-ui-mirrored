@@ -4,7 +4,21 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
   include EditSteps
   include SearchSteps
   include Factory
+  include Resources
 
+  step 'the repository defines a blueprint for concepts' do
+    @blueprint = blueprint(:concept)
+    @blueprint['clear'].delete
+  end
+
+  step 'that blueprint requires a property "label" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'label',
+      type: 'text',
+      required: true,
+      default: ''
+    }
+  end
 
   step 'a concept with property "label" of "handgun" exists' do
     @concept = create_concept properties: [{key: 'label', value: 'handgun'}]
@@ -126,8 +140,11 @@ class MaintainerEditsConcept < Spinach::FeatureSteps
     page.find("form .error-summary").should have_content("3 errors on properties")
   end
 
-  step 'I change "Value" of property to "obsolescense"' do
-    fill_in "Value", with: "obsolescense"
+  step 'I change property "label" to "obsolescense"' do
+    within :fieldset_with_title, 'label' do
+      input = find 'input[type=text]'
+      fill_in input[:id], with: "obsolescense"
+    end
   end
 
   step 'I should see a confirmation dialog warning that one property will be deleted' do

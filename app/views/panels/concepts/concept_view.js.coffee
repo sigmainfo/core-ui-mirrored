@@ -54,7 +54,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  section:not(form *) > *:first-child" : "toggleSection"
     "click  .properties-toggle"                  : "toggleProperties"
     "click  .properties .index li"               : "selectProperty"
-    "click  .add-property"                       : "addProperty"
     "click  .remove-property"                    : "removeProperty"
     "click  .add-term"                           : "addTerm"
     "click  .remove-term"                        : "removeTerm"
@@ -78,12 +77,17 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
     @subviews = []
+    @termProperties = []
+    @terms = []
     @
 
   render: (model, options = {}) ->
     return @ if options.internal
     subview.remove() for subview in @subviews
+    termProperty.remove() for termProperty in @termProperties
     @subviews = []
+    @termProperties = []
+    @terms = []
 
     termsByLang = @model.termsByLang()
     sourceLang = Coreon.application.sourceLang()
@@ -101,6 +105,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     for lang, terms of termsByLang
       sortedTermsByLang.push [lang, terms] unless lang in langs
+      for term in terms
+        @terms.push term
 
     hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
     editing = Coreon.application.get 'editing'
@@ -119,8 +125,28 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
+    @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
+      collection: @model.propertiesWithDefaults(includeUndefined: true)
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('concept')
+      isEdit: true
+      collapsed: true
+
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
+    @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
     @subviews.push broaderAndNarrower
+    @subviews.push @conceptProperties
+    @refreshPropertiesValidation @conceptProperties
+
+    for term in @terms
+      termProperty = new Coreon.Views.Properties.EditPropertiesView
+        collection: term.propertiesWithDefaults(includeUndefined: true)
+        optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
+        isEdit: true
+        collapsed: true
+        ownerId: term.id
+      @$el.find(".terms form.term.update input[name=id][value=#{term.id}]").parent('form').find('.submit').before termProperty.render().$el
+      @refreshPropertiesValidation termProperty
+      @termProperties.push termProperty
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 
@@ -131,6 +157,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
     @
+
+  refreshPropertiesValidation: (propertiesView) ->
+    propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
+    @listenTo propertiesView, 'updateValid', ->
+      propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
 
   toggleInfo: (evt) ->
     @$(".system-info")
@@ -179,7 +210,21 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   addTerm: ->
     terms = @$(".terms")
     terms.children(".add").hide()
-    @$('.terms .add').after @term term: new Coreon.Models.Term
+    term = new Coreon.Models.Term
+    @$('.terms .add').after @term term: term
+    @newTermPropertiesView(term)
+
+  newTermPropertiesView: (term) ->
+    @termProperties = []
+    termProperty = new Coreon.Views.Properties.EditPropertiesView
+      collection: term.propertiesWithDefaults()
+      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
+      isEdit: true
+      collapsed: true
+    @$el.find(".terms form.term.create .submit").before termProperty.render().$el
+    @refreshPropertiesValidation termProperty
+    @termProperties.push termProperty
+
 
   saveConceptProperties: (attrs) ->
     request = @model.save attrs, wait: yes, attrs: concept: attrs
@@ -191,17 +236,16 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form = $ evt.target
     data = form.serializeJSON().concept or {}
     attrs = {}
-    attrs.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
+    attrs.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
-    elements_to_delete = form.find(".property.delete")
+    elements_to_delete = @conceptProperties.countDeleted()
 
-    if elements_to_delete.length > 0
+    if elements_to_delete > 0
       @confirm
         trigger: trigger
-        message: I18n.t "concept.confirm_update", count: elements_to_delete.length
+        message: I18n.t "concept.confirm_update", count: elements_to_delete
         action: => @saveConceptProperties attrs
+        restore: => @$el.trigger('restore', [form])
     else
       @saveConceptProperties attrs
 
@@ -210,10 +254,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form = $ evt.target
     data = form.serializeJSON()?.term or {}
     data.id = form.find("input[name=id]").val()
-    data.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
-
+    termPropertiesView = _.find @termProperties, (pView) -> pView.ownerId == data.id
+    data.properties = termPropertiesView.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = form.find(".property.delete")
     model = @model.terms().get data.id
@@ -241,9 +283,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     target = $ evt.target
     data = target.serializeJSON().term or {}
     data.concept_id = @model.id
-    data.properties = if data.properties?
-      property for property in data.properties when property?
-    else []
+    data.properties = @termProperties[0].serializeArray()
 
     term = new Coreon.Models.Term data
     request = term.save null, wait: yes
@@ -253,6 +293,14 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @toggleEditTerm()
     request.fail =>
       @$("form.term.create").replaceWith @term term: term
+      @newTermPropertiesView(term)
+
+  termPropertiesValid: ->
+    all_valid = true
+    for tp in @termProperties
+      unless tp.isValid()
+        all_valid = false
+    all_valid
 
   cancelForm: (evt) ->
     evt.preventDefault()

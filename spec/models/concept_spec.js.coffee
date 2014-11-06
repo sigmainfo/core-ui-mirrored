@@ -658,12 +658,12 @@ describe 'Coreon.Models.Concept', ->
 
     fakeBlueprintProperties = ->
       [key: 'label']
-    
+
     fakeProperties = ->
       [new Backbone.Model]
 
     fakeFormattedProperties = ->
-      [model: new Backbone.Model]
+      [{}]
 
     beforeEach ->
       formatter = all: ->

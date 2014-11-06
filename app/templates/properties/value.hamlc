@@ -5,9 +5,9 @@
         = I18n.l 'date.formats.default', @value
       - when 'boolean'
         - if @value
-          %span.true true
+          %span.true= @options.labels[0]
         - else
-          %span.false false
+          %span.false= @options.labels[1]
       - when 'picklist'
         %ul
           %li.picklist-item= @value

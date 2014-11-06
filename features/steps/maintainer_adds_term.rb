@@ -3,11 +3,46 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   include AuthSteps
   include EditSteps
   include Factory
+  include Selectors
+  include Resources
+
 
   step 'a concept "top hat" exists' do
     @concept = create_concept properties: [
       { key: "label", value: "top hat" }
     ]
+  end
+
+  step 'the repository defines a blueprint for terms' do
+    @blueprint = blueprint(:term)
+    @blueprint['clear'].delete
+  end
+
+  step 'that blueprint requires a property "status" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'status',
+      type: 'text',
+      required: true,
+      default: ''
+    }
+  end
+
+  step 'that blueprint allows a property "description" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'description',
+      type: 'text',
+      required: false,
+      default: ''
+    }
+  end
+
+  step 'that blueprint allows a property "notes" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'notes',
+      type: 'text',
+      required: false,
+      default: ''
+    }
   end
 
   step 'I click "Add term"' do
@@ -30,6 +65,40 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   step 'I fill in "Language" with "en" within term inputs' do
     within ".term.create" do
       fill_in "Language", with: "en"
+    end
+  end
+
+  step 'I see a form "Create term"' do
+    @form = page.find :form, 'Create term'
+  end
+
+  step 'I see a section "PROPERTIES" with this form' do
+    within @form do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
+  end
+
+  step 'I see a fieldset "STATUS" within this section' do
+    within @section do
+      @fieldset = page.find :fieldset_with_title, "status"
+      @status_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'I see a fieldset "DESCRIPTION"' do
+    within @section do
+      @fieldset = page.find :fieldset_with_title, "description"
+      @description_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
+  step 'this fieldset is empty' do
+    within @fieldset do
+      input = page.find('input')
+      expect(input[:value]).to eql ''
     end
   end
 
@@ -59,6 +128,34 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     end
   end
 
+  step 'I fill in "STATUS" with "pending"' do
+    within @fieldset do
+      fill_in page.find('input')[:id], with: 'pending'
+    end
+  end
+
+  step 'I fill in "DESCRIPTION" with "this is it"' do
+    within @fieldset do
+      fill_in page.find('input')[:id], with: 'this is it'
+    end
+  end
+
+  step 'I select "English" for "LANGUAGE"' do
+    select_from_coreon_dropdown @fieldset, 'English'
+  end
+
+  step 'I see a dropdown with options "DESCRIPTION", "NOTES"' do
+    @dropdown = page.find 'ul.options'
+    @new_description = @dropdown.find 'li.option', text: 'description'
+    expect(@new_description).to be_visible
+    @new_notes = @dropdown.find 'li.option', text: 'notes'
+      expect(@new_notes).to be_visible
+  end
+
+  step 'I click on "DESCRIPTION"' do
+    @new_description.click
+  end
+
   step 'I click "Create term"' do
     click_button "Create term"
   end
@@ -78,6 +175,14 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
       sleep 1
       page.should have_css('th', text: 'STATUS')
       find('th', text: 'STATUS').find(:xpath, './following-sibling::td[1]').should have_text('pending')
+    end
+  end
+
+  step 'I should see a property "DESCRIPTION" for the term with value "this is it"' do
+    within '.language.en .term .properties' do
+      sleep 1
+      page.should have_css('th', text: 'DESCRIPTION')
+      find('th', text: 'DESCRIPTION').find(:xpath, './following-sibling::td[1]').should have_text('this is it')
     end
   end
 

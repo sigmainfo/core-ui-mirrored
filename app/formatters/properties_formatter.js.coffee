@@ -1,49 +1,96 @@
 class Coreon.Formatters.PropertiesFormatter
 
-  constructor: (@blueprint_properties = [], @properties = [], @errors = []) ->
+  constructor: (@blueprint_properties = [], @properties = [], @errors = [], @options = {}) ->
+
+  calculateDefault: (blue_prop) ->
+    switch blue_prop.type
+      when 'date'
+        if blue_prop.default is 'now'
+          today = new Date()
+          today.toDateString()
+        else
+          blue_prop.default
+      else
+        blue_prop.default
 
   all: ->
 
     props = []
-    unused_properties = @properties.slice 0
+    not_in_blueprints = @properties.map (p) -> p
 
     for blue_prop in @blueprint_properties
-      property = _.find @properties, (p) -> p.get('key') == blue_prop.key
-      value = blue_prop.default
-      errors = {}
-      lang = null
+      found_properties = _.filter @properties, (p) -> p.get('key') == blue_prop.key
+      properties = []
+      multivalue = if blue_prop.type in ['text', 'multiline_text'] then true else false
 
-      if property
-        value = property.get 'value'
-        lang = property.get 'lang'
-        unused_index = unused_properties.indexOf property
-        unused_properties.splice unused_index, 1
+      for property in found_properties
+        index = _.indexOf not_in_blueprints, property
+        not_in_blueprints.splice index, 1
         index = @properties.indexOf property
-        errors = @errors[index] || {}
+        new_property =
+          value: if property.has('value') then  property.get('value') else @calculateDefault(blue_prop)
+          errors: @errors[index] || {}
+          info: property.info()
+          persisted: if property.has('persisted') then property.get('persisted') else true
+        if multivalue
+          new_property.lang = property.get 'lang'
+        properties.push new_property
 
-      new_property =
-        value: value
-        type: blue_prop.type
+      if _.isEmpty properties
+        new_property =
+          value: @calculateDefault(blue_prop)
+          errors: {}
+          info: {}
+          persisted: false
+        if multivalue
+          new_property.lang = null
+        properties.push new_property
+
+      source_lang = []
+      target_lang = []
+      other_lang = []
+      sourceLang = Coreon.application?.repositorySettings().get('sourceLanguage')
+      targetLang = Coreon.application?.repositorySettings().get('targetLanguage')
+
+      for property in properties
+        if property.lang == sourceLang
+          source_lang.push property
+        else if property.lang == targetLang
+          target_lang.push property
+        else
+          other_lang.push property
+
+      sorted_properties = source_lang.concat target_lang, other_lang
+
+      new_formatted_property =
         key: blue_prop.key
-        errors: errors
+        type: blue_prop.type
+        properties: sorted_properties
+        required: blue_prop.required
+        multivalue: multivalue
 
-      if blue_prop.type in ['text', 'multiline_text']
-        new_property.lang = lang
+      if blue_prop.type in ['picklist', 'multiselect_picklist']
+        new_formatted_property.values = blue_prop.values
+      if blue_prop.type in ['boolean']
+        new_formatted_property.labels = blue_prop.labels
 
-      if blue_prop.type in ['multiselect_picklist']
-        new_property.options = blue_prop.values
-
-      props.push new_property
+      if !_.isEmpty(found_properties) || blue_prop.required || @options.includeOptional
+        props.push new_formatted_property
 
 
-    for property in unused_properties
-      index = @properties.indexOf property
-      props.push
-        value: property.get 'value'
-        type: 'text'
-        key: property.get 'key'
-        lang: property.get 'lang'
-        errors: @errors[index] || {}
+    if @options.includeUndefined
+      for property in not_in_blueprints
+        new_property =
+          value: property.get 'value'
+          lang: property.get 'lang'
+          errors: {}
+          info: property.info()
+          persisted: true
+        new_formatted_property =
+          key: property.get 'key'
+          type: 'text'
+          properties: [new_property]
+        props.push new_formatted_property
 
     props
 

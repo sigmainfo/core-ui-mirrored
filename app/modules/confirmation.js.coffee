@@ -33,6 +33,7 @@ Coreon.Modules.Confirmation =
       $(window).off ".coreonConfirm"
       options.container?.removeClass "delete"
       modal.empty()
+      options.restore?()
 
     destroy = (event) ->
       event.stopPropagation()

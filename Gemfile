@@ -40,7 +40,7 @@ group :development do
 end
 
 group :test do
-  gem 'poltergeist'
+  gem 'poltergeist', '~> 1.5.1'
   gem 'rspec', '~> 2.13.0'
   gem 'spinach-rails'
   gem 'selenium-webdriver', '~> 2.43.0'

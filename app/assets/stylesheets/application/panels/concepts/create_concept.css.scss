@@ -15,11 +15,6 @@ div.concept.new {
     position: relative;
     padding-top: 10px;
     margin-top: 0;
-
-    .term {
-      margin-bottom: 20px;
-    }
-
   }
   
   .create >.properties fieldset, .terms >fieldset {
@@ -43,7 +38,6 @@ div.concept.new {
     @include editmode;
     position: relative;
     clear: both;
-//    background-color: rgba($button-color, 0.05);
 
     .edit {
       min-height: 16px;

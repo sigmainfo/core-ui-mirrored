@@ -39,11 +39,11 @@ describe "Coreon.Modules.Confirmation", ->
         container: @view.$ ".concept"
         message: "Are you sure?"
         action: ->
-      $("#coreon-modal").should.have ".modal-shim .confirm" 
+      $("#coreon-modal").should.have ".modal-shim .confirm"
       $("#coreon-modal .confirm .message").should.have.text "Are you sure?"
       $("#coreon-modal .confirm .ok").should.have.text "OK"
 
-    it "marks container for deletetion", ->
+    it "marks container for deletion", ->
       @view.confirm
         trigger: @trigger
         container: @view.$ ".concept"
@@ -58,19 +58,23 @@ describe "Coreon.Modules.Confirmation", ->
           container: null
           message: "Are you sure?"
           action: ->
-      confirm.should.not.throw Error 
-      
+      confirm.should.not.throw Error
+
 
     context "cancel", ->
 
       context "with container", ->
 
+        testRestore = null
+
         beforeEach ->
+          testRestore = sinon.spy()
           @view.confirm
             trigger: @trigger
             container: @view.$ ".concept"
             message: "Are you sure?"
             action: ->
+            restore: testRestore
 
         it "removes dialog", ->
           $(".modal-shim").click()
@@ -80,6 +84,9 @@ describe "Coreon.Modules.Confirmation", ->
           $(".modal-shim").click()
           @view.$(".concept").should.not.have.class "delete"
 
+        it "cleanups with a restore callback", ->
+          $(".modal-shim").click()
+          expect(testRestore).to.have.been.calledOnce
 
         it "cancels on escape key", ->
           keypress= $.Event "keydown"
@@ -89,7 +96,7 @@ describe "Coreon.Modules.Confirmation", ->
           @view.$(".concept").should.not.have.class "delete"
 
       context "without container", ->
-        
+
         beforeEach ->
           @view.confirm
             trigger: @trigger
@@ -100,7 +107,7 @@ describe "Coreon.Modules.Confirmation", ->
         it "does not throw an error", ->
           cancel = ->
             $(".modal-shim").click()
-          cancel.should.not.throw Error 
+          cancel.should.not.throw Error
 
     context "destroy", ->
 
@@ -117,11 +124,11 @@ describe "Coreon.Modules.Confirmation", ->
         event.stopPropagation = sinon.spy()
         $(".confirm").trigger event
         event.stopPropagation.should.have.been.calledOnce
-        
+
       it "removes dialog", ->
         $(".confirm").click()
         $("#coreon-modal").should.be.empty
-      
+
       it "calls action", ->
         $(".confirm").click()
         @action.should.have.been.calledOnce

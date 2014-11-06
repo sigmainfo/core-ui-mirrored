@@ -17,19 +17,20 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
   end
 
   step 'that blueprint defines a property "dangerous" of type "boolean"' do
-    @blueprint['properties'].post property: { key: 'dangerous', type: 'boolean' }
+    @blueprint['properties'].post property: { key: 'dangerous', type: 'boolean', required: false, default: false, labels: ['true', 'false'] }
   end
 
   step 'that blueprint defines a property "definition" of type "text"' do
-    @blueprint['properties'].post property: { key: 'definition', type: 'text' }
+    @blueprint['properties'].post property: { key: 'definition', type: 'text', default: '', required: false }
   end
 
   step 'that blueprint defines a property "status" of type "picklist"' do
-    @property_attrs = { key: 'status', type: 'picklist' }
+    @property_attrs = { key: 'status', type: 'picklist', required: true }
   end
 
   step 'that property allows values: "accepted", "forbidden", "deprecated"' do
     @property_attrs.merge! values: ["accepted", "forbidden", "deprecated"]
+    @property_attrs.merge! default: "accepted"
     @blueprint['properties'].post property: @property_attrs
   end
 

@@ -12,6 +12,7 @@ Coreon.Views                             ?= {}
 Coreon.Views.Layout                      ?= {}
 Coreon.Views.Panels                      ?= {}
 Coreon.Views.Panels.Concepts             ?= {}
+Coreon.Views.Panels.Terms                ?= {}
 Coreon.Views.Panels.Concepts.ConceptList ?= {}
 Coreon.Views.Widgets                     ?= {}
 Coreon.Views.Account                     ?= {}

@@ -2,6 +2,26 @@ class Spinach::Features::UserBrowsesInSourceAndTargetLanguage < Spinach::Feature
   include AuthSteps
   include LanguageSelectSteps
   include Factory
+  include Resources
+
+  step 'the repository defines a blueprint for concepts' do
+    @blueprint = blueprint(:concept)
+    @blueprint['clear'].delete
+  end
+
+  step 'the repository defines a blueprint for terms' do
+    @blueprint = blueprint(:term)
+    @blueprint['clear'].delete
+  end
+
+  step 'that blueprint requires a property "description" of type "text"' do
+    @blueprint['properties'].post property: {
+      key: 'description',
+      type: 'text',
+      required: true,
+      default: ''
+    }
+  end
 
   step 'a concept' do
     @concept = create_concept nil

@@ -84,6 +84,23 @@ Capybara.add_selector(:section) do
   end
 end
 
+Capybara.add_selector(:fieldset_with_title) do
+  xpath do |title|
+    """
+      .//fieldset
+        [
+          .//*
+            [
+              translate( local-name(), '123456', '******' ) = 'h*'
+              and
+              normalize-space() = '#{title}'
+            ]
+        ]
+    """
+  end
+end
+
+
 module Selectors
 
   def concept_properties
@@ -101,5 +118,21 @@ module Selectors
     field = all_fields.select { |f| f.value == value }.first
     expect(field).to have_xpath('ancestor::fieldset')
     field.find :xpath, 'ancestor::fieldset'
+  end
+
+  def select_from_coreon_dropdown(fieldset, value)
+    within fieldset do
+      page.find('.coreon-select').click
+    end
+    dropdown = page.find ".coreon-select-dropdown"
+    within dropdown do
+      page.find("li", text: value).click
+    end
+  end
+
+  def find_coreon_dropdown(fieldset, value)
+    within fieldset do
+      expect(page).to have_css '.coreon-select', text: value
+    end
   end
 end

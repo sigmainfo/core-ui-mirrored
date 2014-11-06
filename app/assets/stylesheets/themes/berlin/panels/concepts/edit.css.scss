@@ -5,23 +5,18 @@
 .concept form {
 
    &.term, fieldset {
-     background-color: darken(rgba($button-hover-color, 0.12), 4);
+     background-color: darken(rgba($button-hover-color, 0.1), 4);
+     &.required {
+       background-color: darken(rgba($button-hover-color, 0.2), 4);
+     }
    }
    
    &.term {
      @include single-box-shadow(rgba($button-color, 0.8), 0px, 1px, 1px, false);
    }
 
-   div.input {
-     &.required  {
-       label {
-         color: $label-color;
-       }
-     }
-   }
-
    label {
-     color: $text-color-light;
+     color: $label-color;
    }
 
    .submit {
@@ -124,7 +119,7 @@
     }
   }
   
-  .property.delete {
+  .property.delete, .group.delete {
     background-color:$darker-bg-color;
   }
 }

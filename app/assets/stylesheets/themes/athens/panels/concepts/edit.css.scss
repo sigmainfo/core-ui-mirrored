@@ -6,8 +6,10 @@
 
    &.term, fieldset {
      background-color: darken(rgba($button-hover-color, 0.12), 0);
+     &.required {
+       background-color: darken(rgba($button-hover-color, 0.2), 0);
+     }
    }
-   
     &.term, .term {
       .properties h3 {
         color: $label-color;
@@ -118,7 +120,7 @@
   }
   
   
-  .property.delete {
+  .property.delete, .group.delete {
     background-color: $darker-bg-color;
   }
 }
