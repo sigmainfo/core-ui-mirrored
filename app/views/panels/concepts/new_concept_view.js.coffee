@@ -39,9 +39,11 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
     @termViews = []
+    @allPropertyViews = []
 
   render: ->
     termView.remove() for termView in @termViews
+    @allPropertyViews = []
     @termViews = []
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults()
@@ -60,9 +62,19 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @
 
   refreshPropertiesValidation: (propertiesView) ->
-    propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
-    @listenTo propertiesView, 'updateValid', ->
-      propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
+    formButton = @$el.find("form .submit button[type=submit]")
+    @allPropertyViews.push propertiesView
+    @listenTo propertiesView, 'updateValid', =>
+      invalid = _.filter @allPropertyViews, (view) ->
+        !view.isValid()
+      console.log invalid
+      if invalid.length > 0
+        formButton.prop('disabled', true)
+      else
+        formButton.prop('disabled', false)
+    propertiesView.updateValid()
+
+
 
   create: (event) ->
     event.preventDefault()
@@ -98,6 +110,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     newTermView = new Coreon.Views.Panels.Terms.NewTermView(model: term, index: index, errors: errors)
     @termViews.push newTermView
     @$('form .terms>.add').before newTermView.render().$el
+    @refreshPropertiesValidation newTermView.editProperties
 
   addTerm: ->
     term = new Coreon.Models.Term
