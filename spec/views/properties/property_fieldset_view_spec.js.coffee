@@ -107,6 +107,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
     it 'renders a remove property link for optional non multivalued fieldsets', ->
       model.type = 'boolean'
+      model.multivalue = false
       model.required = false
       I18n.t.withArgs('property.remove', {property_name: model.key}).returns 'Remove property'
       el = renderView().$el
