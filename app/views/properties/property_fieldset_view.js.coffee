@@ -108,6 +108,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   markDelete: ->
     @$el.addClass 'delete'
+    @inputChanged()
 
   inputChanged: (evt) ->
     @trigger 'inputChanged'
@@ -134,6 +135,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       @updateRemoveLinks()
     else
       @removeProperty()
+    @inputChanged()
 
 
   updateRemoveLinks: ->
