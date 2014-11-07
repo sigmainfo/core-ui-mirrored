@@ -20,6 +20,8 @@ class Coreon.Lib.TreeGraph
     @meta = {}
     for model in @models
       node = model.toJSON()
+      if !node.label? && model._label?
+        node.label = model._label()
       node.children = []
       @nodes[model.id] = node
       @meta[model.id] =
