@@ -138,6 +138,7 @@ Feature: maintainer edits properties
     And I see a property "QUOTE" with "That was visual."
     But I do not see "You drank Ian!"
 
+  @wip
   Scenario: delete deprecated concept property
     Given the repository defines a blueprint for concepts
     And that blueprint does not require any properties
@@ -147,7 +148,7 @@ Feature: maintainer edits properties
     Then I see a section "PROPERTIES"
     When I click on "Edit properties"
     Then I see a deprecated property "RATING"
-    When I click on "Remove this rating" within "RATING"
+    When I click on "Remove rating" within "RATING"
     When I click "Save concept"
     Then I see a confirmation dialog
     Then I click "OK" on the confirmation dialog

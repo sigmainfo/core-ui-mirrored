@@ -239,9 +239,9 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     end
   end
 
-  step 'I click "Remove this notice"' do
+  step 'I click "Remove notice"' do
     within @fieldset do
-      click_link "Remove this notice"
+      click_link "Remove notice"
     end
   end
 

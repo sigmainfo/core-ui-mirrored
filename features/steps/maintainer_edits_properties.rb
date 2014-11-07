@@ -352,9 +352,9 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
-  step 'I click on "Remove this rating" within "RATING"' do
+  step 'I click on "Remove rating" within "RATING"' do
     within @fieldset do
-      click_link 'Remove this rating'
+      click_link 'Remove rating'
     end
   end
 
