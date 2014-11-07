@@ -1,8 +1,8 @@
 %h4.key= @property.key
-- if @property.type in ['text', 'multiline_text']
+- if @property.multivalue && !@property.nonDefined
   - title = I18n.t('property.value.add', {property_name: @property.key})
   %a.add-value{href: "javascript:void(0)", title: title}= title
-- else unless @property.required
+- else if @property.nonDefined || (!@property.nonDefined && !@property.multivalue)
   - title = I18n.t('property.remove', {property_name: @property.key})
   %a.remove-property{href: "javascript:void(0)", title: title }= title
 
@@ -30,8 +30,8 @@
       != @selectField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, options: labeled_values, class: 'value'
   - when 'multiline_text'
     - for property, index in @property.properties
-      != @render "properties/multiline_text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages
+      != @render "properties/multiline_text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages, nonDefined: @property.nonDefined
   - when 'text'
     - for property, index in @property.properties
-      != @render "properties/text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages
+      != @render "properties/text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages, nonDefined: @property.nonDefined
 

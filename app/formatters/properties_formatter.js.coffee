@@ -96,6 +96,7 @@ class Coreon.Formatters.PropertiesFormatter
           key: key
           type: 'text'
           properties: properties
+          nonDefined: true
         props.push new_formatted_property
 
     props
