@@ -93,19 +93,21 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       title = el.find 'h4'
       expect(title).to.contain 'my_key'
 
-    it 'renders a remove value link for multivalued fieldsets', ->
+    it 'renders a remove value link for multivalued fieldsets value groups', ->
       I18n.t.withArgs('property.value.remove', {property_name: model.key}).returns 'Remove value'
       el = renderView().$el
       removeLink = el.find 'a.remove-value'
       expect(removeLink).to.contain 'Remove value'
 
-    it 'does not renders a remove value link for non-multivalued fieldsets', ->
+    it 'does not render a remove value link for required non-multivalued fieldsets', ->
       model.type = 'boolean'
+      model.required = true
       el = renderView().$el
       expect(el).to.not.contain 'a.remove-value'
 
-    it 'renders a remove property link for non multivalued fieldsets', ->
+    it 'renders a remove property link for optional non multivalued fieldsets', ->
       model.type = 'boolean'
+      model.required = false
       I18n.t.withArgs('property.remove', {property_name: model.key}).returns 'Remove property'
       el = renderView().$el
       removeLink = el.find 'a.remove-property'

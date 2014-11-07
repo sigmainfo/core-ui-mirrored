@@ -2,7 +2,7 @@
 - if @property.type in ['text', 'multiline_text']
   - title = I18n.t('property.value.add', {property_name: @property.key})
   %a.add-value{href: "javascript:void(0)", title: title}= title
-- else
+- else unless @property.required
   - title = I18n.t('property.remove', {property_name: @property.key})
   %a.remove-property{href: "javascript:void(0)", title: title }= title
 
