@@ -89,7 +89,7 @@ Feature: maintainer edits term
     And I see a section "PROPERTIES" with this form
     And I fill in "Value" with "high hat" within term inputs
     And I see a fieldset "NOTICE" within this section
-    And I click "Remove this notice"
+    And I click "Remove notice"
     And I see a fieldset "STATUS" within this section
     And I fill in "STATUS" with "pending"
     When I click "Reset"
@@ -101,7 +101,7 @@ Feature: maintainer edits term
     And this fieldset has a value "TODO: translate"
     And I should see "Save term"
     And I fill in "Value" with "high hat" within term inputs
-    And I click "Remove this notice"
+    And I click "Remove notice"
     And I click "Cancel"
     Then I should not see "Save term"
     And I should not see "high hat"
