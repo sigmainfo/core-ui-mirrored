@@ -138,7 +138,6 @@ Feature: maintainer edits properties
     And I see a property "QUOTE" with "That was visual."
     But I do not see "You drank Ian!"
 
-  @wip
   Scenario: delete deprecated concept property
     Given the repository defines a blueprint for concepts
     And that blueprint does not require any properties
