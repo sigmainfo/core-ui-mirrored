@@ -20,8 +20,6 @@ class Coreon.Lib.TreeGraph
     @meta = {}
     for model in @models
       node = model.toJSON()
-      if !node.label? && model._label?
-        node.label = model._label()
       node.children = []
       @nodes[model.id] = node
       @meta[model.id] =
@@ -73,7 +71,8 @@ class Coreon.Lib.TreeGraph
   sortChildren: ->
     for id, node of @nodes
       node.children.sort (a, b) ->
-        a.label.toLowerCase().localeCompare b.label.toLowerCase()
+        [labelA, labelB] = [a, b].map (child) -> child.label or ""
+        labelA.toLowerCase().localeCompare labelB.toLowerCase()
 
   collectSiblings: ->
     @siblings = []
