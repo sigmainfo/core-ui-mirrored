@@ -73,6 +73,7 @@ class Coreon.Lib.TreeGraph
   sortChildren: ->
     for id, node of @nodes
       node.children.sort (a, b) ->
+        debugger unless a.label? and b.label?
         a.label.toLowerCase().localeCompare b.label.toLowerCase()
 
   collectSiblings: ->
