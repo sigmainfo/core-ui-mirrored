@@ -63,7 +63,7 @@ div.concept {
   
   .system-info {
     line-height: 12px;
-    padding: 8px 0 4px 0;
+    padding: 0;
     
     table {
       
@@ -127,7 +127,7 @@ div.concept {
       float: left;
       text-transform: uppercase;
       font-size: 0.8em;
-      line-height: 1.2em;
+      line-height: 1.3em;
       padding: 0 10px;
       cursor: pointer;
     }
@@ -147,6 +147,9 @@ div.concept {
       } 
       
       &.multiselect_picklist, &.picklist {
+        td {
+          padding-bottom: 0;
+        }
         li {
           list-style: none;
           display: inline-block;
@@ -339,11 +342,11 @@ div.concept {
       .term h4.value {
         font-size: 1.3em;
         padding: 7px 0 5px 0;
-        margin-left: 85px;
+        margin-left: 65px;
       }
 
       .term >.system-info {
-        margin-left: 85px;
+        margin-left: 65px;
         table {
           margin-top: 2px;
         }
@@ -359,7 +362,7 @@ div.concept {
         }
 
         &>div {
-          margin-left: 85px;
+          margin-left: 65px;
         }
       }
     }
@@ -403,6 +406,7 @@ div.concept {
       }
       ul.index {
         padding-bottom: 0px;
+        padding-top: 1px;
       }
     }
     .properties-toggle {
