@@ -153,7 +153,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       @trigger 'removeProperty', @
 
   containsPersisted: ->
-    true if _.find(@model.properties, (p) -> p.persisted)
+    if _.find(@model.properties, (p) -> p.persisted) then true else false
 
 
 
