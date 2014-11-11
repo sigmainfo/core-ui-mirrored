@@ -279,36 +279,6 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
 
     describe "#all()", ->
 
-      # it "collects errors from parent object", ->
-      #   clear blueprintProperties
-      #   fakeProperties properties, [
-      #     {value: 'foo'},
-      #     {key: 'baz', value: 'invalid chars in here, YOLO'},
-      #   ]
-      #   fakeErrors errors, [
-      #     {key: ["can't be blank"]},
-      #     {value: ["invalid characters"]}
-      #   ]
-      #   all = formatter.all()
-      #   expect(all[0]['errors']).to.eql {key: ["can't be blank"]}
-      #   expect(all[1]['errors']).to.eql {value: ["invalid characters"]}
-
-      # it "collects errors only for invalid properties", ->
-      #   fakeProperties properties, [
-      #     {value: 'foo'},
-      #     {key: 'koo', value: 'bar'}
-      #     {key: 'baz', value: 'invalid chars in here, YOLO'},
-      #   ]
-      #   fakeErrors errors, [
-      #     {key: ["can't be blank"]},
-      #     null,
-      #     {value: ["invalid characters"]}
-      #   ]
-      #   all = formatter.all()
-      #   expect(all[0]['errors']).to.eql {key: ["can't be blank"]}
-      #   expect(all[1]['errors']).to.eql {}
-      #   expect(all[2]['errors']).to.eql {value: ["invalid characters"]}
-
       it "collects errors in order defined in blueprints", ->
         fakeBlueprintProperties blueprintProperties, [
           {key: 'baz', type: 'text', required: 'true'}
