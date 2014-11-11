@@ -47,6 +47,18 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     options = {}
     formatter = new Coreon.Formatters.PropertiesFormatter blueprintProperties, properties, errors, options
 
+  describe "#calculateDefault()", ->
+
+    it "returns the current date for date property when 'now' is the default", ->
+      now = new Date
+      clock = sinon.useFakeTimers(now.getTime());
+      def = formatter.calculateDefault({type: 'date', default: 'now'})
+      expect(def).to.equal now.toDateString()
+
+    it "returns the default value for other properties", ->
+      def = formatter.calculateDefault({type: 'text', default: 'The default'})
+      expect(def).to.equal 'The default'
+
   context "no errors", ->
 
     beforeEach ->
