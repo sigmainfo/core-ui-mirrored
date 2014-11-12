@@ -29,7 +29,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
       @fieldsetViews.push newFieldsetView
       @listenTo newFieldsetView, 'inputChanged', @updateValid
       @listenTo newFieldsetView, 'removeProperty', @removeProperty
-      @index = @index++
+      @index++
     @$el.addClass('collapsed') if @collapsed
     @$el.addClass('edit') if @isEdit
 
@@ -45,14 +45,17 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @$el.find('.coreon-select.widget-select[data-select-name=chooseProperty]').remove()
     @$el.find('select.widget-select').remove()
     link = @$el.find('.add .edit a.add-property')
-    remainingOptionalProperties = _.filter @optionalProperties, (p) =>
-      !_.find @fieldsetViews, (v) -> v.model.key == p.key
+    remainingOptionalProperties = @remainingOptionalProperties()
     if remainingOptionalProperties.length > 0
       link.removeClass("disabled")
       link.after Coreon.Templates['properties/select_property_popup'](optionalProperties: remainingOptionalProperties)
       @$el.find('select.widget-select').coreonSelect(positionRelativeTo: @$el.find('a.add-property'), hidden: true, allowSingle: true)
     else
       link.addClass("disabled")
+
+  remainingOptionalProperties: ->
+    _.filter @optionalProperties, (p) =>
+      !_.find @fieldsetViews, (v) -> v.model.key == p.key
 
   isValid: ->
     for fieldsetView in @fieldsetViews
@@ -97,7 +100,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
       index: @index
     @listenTo newFieldsetView, 'inputChanged', @updateValid
     @listenTo newFieldsetView, 'removeProperty', @removeProperty
-    @index = @index++
+    @index++
     @fieldsetViews.push newFieldsetView
     @$el.find('.add').before newFieldsetView.render().el
     @renderAddPropertyPopUp()
