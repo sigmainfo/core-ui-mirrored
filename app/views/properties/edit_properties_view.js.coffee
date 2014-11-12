@@ -32,7 +32,6 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
       @index = @index++
     @$el.addClass('collapsed') if @collapsed
     @$el.addClass('edit') if @isEdit
-    @valid = false
 
   render: ->
     @$el.html @template(optionalProperties: @optionalProperties)
@@ -63,7 +62,6 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
 
   updateValid: ->
     @trigger 'updateValid'
-    @valid = @isValid()
 
   serializeArray: ->
     properties = []

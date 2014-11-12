@@ -5,6 +5,16 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
 
   view = null
   collection = []
+  optionalProperties = []
+  isEdit = null
+  collapsed = null
+
+  newEditProperties = ->
+    new Coreon.Views.Properties.EditPropertiesView
+      collection: collection
+      optionalProperties: optionalProperties
+      isEdit: isEdit
+      collapsed: collapsed
 
   beforeEach ->
     i18n = sinon.stub I18n, 't'
@@ -16,28 +26,40 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
       {value: 'de', label: 'German'},
       {value: 'fr', label: 'French'}
     ]
-    view = new Coreon.Views.Properties.EditPropertiesView
-      collection: collection
 
   afterEach ->
     I18n.t.restore()
 
   it 'is a Backbone view', ->
+    view = newEditProperties()
     expect(view).to.be.an.instanceof Backbone.View
 
   it 'has a template', ->
+    view = newEditProperties()
     expect(view).to.have.property 'template'
 
   describe '#initialize()', ->
 
-    it 'creates a collection of fieldset views', ->
-      expect(view).to.have.property 'fieldsetViews'
-
-    it 'populates the fiedlset view collection with fieldset views', ->
-      collection = [{}, {}, {}]
-      view = new Coreon.Views.Properties.EditPropertiesView
-        collection: collection
+    it 'initializes the view by passing an options hash', ->
+      collection = [{key: 'description'}, {key: 'definition'}, {key: 'public'}]
+      optionalProperties.push {key: 'label'}
+      isEdit = true
+      collapsed = false
+      view = newEditProperties()
+      expect(view).to.have.property 'collection'
+      expect(view.collection[0]).to.have.property 'key', 'description'
       expect(view.fieldsetViews).to.have.lengthOf 3
+      expect(view).to.have.property 'optionalProperties'
+      expect(view.optionalProperties[0]).to.have.property 'key', 'label'
+      expect(view).to.have.property 'isEdit', true
+      expect(view).to.have.property 'collapsed', false
+
+    it 'adds the apropriate classes to the view', ->
+      isEdit = true
+      collapsed = true
+      view = newEditProperties()
+      expect(view.$el).to.have.class 'edit'
+      expect(view.$el).to.have.class 'collapsed'
 
   describe '#render()', ->
 
