@@ -103,6 +103,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
     @fieldsetViews.push newFieldsetView
     @$el.find('.add').before newFieldsetView.render().el
     @renderAddPropertyPopUp()
+    @updateValid()
 
   removeProperty: (fieldsetView) ->
     if fieldsetView.containsPersisted()
