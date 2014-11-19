@@ -14,8 +14,9 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
     @editProperties = null
     sinon.stub Coreon.Views.Properties, 'EditPropertiesView', (options) =>
       @editProperties = new Backbone.View options
-      @editProperties.updateValid = ->
+      @editProperties.updateValid = sinon.spy()
       @editProperties.render = sinon.spy()
+      @editProperties.serializeArray = sinon.spy()
       @editProperties
     @model = new Backbone.Model
         properties: []
@@ -115,61 +116,19 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
         @term = new Backbone.Model
         @term.properties = -> models: []
         @term.errors = -> null
+        @term.propertiesWithDefaults = -> []
         @view.model.terms = => models: []
+        @view.listenTo = sinon.spy()
+        termView = sinon.stub Coreon.Views.Panels.Terms, 'NewTermView', ->
+          render: -> { $el: $ '' }
+          updateValid: ->
+          editProperties: new Coreon.Views.Properties.EditPropertiesView
 
-      it 'renders section with title', ->
-        I18n.t.withArgs('terms.title').returns 'Terms'
-        @view.render()
-        @view.$el.should.have '.terms'
-        @view.$el.should.have '.terms h3'
-        @view.$('.terms h3').should.have.text 'Terms'
-
-      it 'renders link for adding a term', ->
-        I18n.t.withArgs('terms.add').returns 'Add term'
-        @view.render()
-        @view.$el.should.have 'a.add-term'
-        @view.$('a.add-term').should.have.text 'Add term'
-
-      it 'renders inputs for existing terms', ->
+      it 'renders term views', ->
         @term.set lang: 'de', silent: true
         @view.model.terms = => models: [ @term ]
-        @view.model.errors = ->
-          nested_errors_on_terms: [
-            value: "can't be blank"
-          ]
         @view.render()
-        @view.$el.should.have 'form .terms .term .lang input[type="text"]'
-        @view.$('form .term .lang input').should.have.value 'de'
-        @view.$('form .term .value').should.have '.error-message'
-        @view.$('form .term .value .error-message').should.have.text "can't be blank"
-
-      it 'renders link for adding property', ->
-        I18n.t.withArgs('properties.add').returns 'Add property'
-        @view.model.terms = => models: [ @term ]
-        @term.set 'properties', [ key: 'status' ], silent: true
-        @view.model.errors = ->
-        @view.render()
-        @view.$el.should.have 'form .term a.add-property'
-        @view.$('form .term a.add-property').should.have.text 'Add property'
-        @view.$('form .term a.add-property').should.have.data 'scope', 'concept[terms][0][properties][]'
-        @view.$('form .term a.add-property').should.have.data 'index', 1
-
-      it 'renders inputs for term properties', ->
-        @term.set 'properties', [ key: 'label' ], silent: true
-        @term.properties = -> models: [ new Backbone.Model key: 'label' ]
-        @view.model.terms = => models: [ @term ]
-        @view.model.errors = ->
-          nested_errors_on_terms: [
-            nested_errors_on_properties: [
-              value: [ "can't be blank" ]
-            ]
-          ]
-        @view.render()
-        @view.$el.should.have 'form .terms .term .property .key input[type="text"]'
-        @view.$('form .term .property .key input').should.have.value 'label'
-        @view.$('form .term .property .key input').should.have.attr 'name', 'concept[terms][0][properties][0][key]'
-        @view.$('form .term .property .value').should.have '.error-message'
-        @view.$('form .term .property .value .error-message').should.have.text "can't be blank"
+        expect(Coreon.Views.Panels.Terms.NewTermView).to.have.been.calledWithNew
 
   describe '#addTerm()', ->
 
@@ -183,49 +142,25 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
     afterEach ->
       Coreon.Helpers.input.restore()
 
-    it 'is triggered by click on action', ->
-      @view.addTerm = sinon.stub().returns false
-      @view.delegateEvents()
+    it 'it adds a new term view', ->
+      sinon.stub @view, 'renderTerm'
+      sinon.stub Coreon.Models, 'Term'
       @view.$('a.add-term').trigger @event
-      @view.addTerm.should.have.been.calledOnce
-      @view.addTerm.should.have.been.calledWith @event
-
-    it 'appends term input set', ->
-      @view.addTerm @event
-      @view.$el.should.have '.terms .term input[id="term-0-value"]'
-      @view.$el.should.have '.terms .term input[id="term-0-lang"]'
-
-    it 'enumerates appended term input sets', ->
-      @view.model.set 'terms', [{}, {}], silent: true
-      @view.render()
-      @event.target = @view.$('a.add-term')[0]
-      @view.addTerm @event
-      @view.addTerm @event
-      @view.$el.should.have '.terms .term input[id="term-2-value"]'
-      @view.$el.should.have '.terms .term input[id="term-3-value"]'
-
-    it 'uses nested scope', ->
-      @view.addTerm @event
-      @view.$el.should.have '.terms .term input[name="concept[terms][][value]"]'
-      @view.$el.should.have '.terms .term input[name="concept[terms][][lang]"]'
-
-    it 'requires key and value inputs', ->
-      @view.addTerm @event
-      @view.$('.terms .term input[id="term-0-value"]').should.have.attr 'required'
-      @view.$('.terms .term input[id="term-0-lang"]').should.have.attr 'required'
-
-    it 'renders remove link', ->
-      I18n.t.withArgs('term.delete').returns 'Remove term'
-      @view.addTerm @event
-      @view.$el.should.have '.term a.remove-term'
-      @view.$('.term a.remove-term').should.have.text 'Remove term'
+      expect(Coreon.Models.Term).to.have.been.calledWithNew
+      expect(@view.renderTerm).to.have.been.calledOnce
 
   describe '#removeTerm()', ->
 
+    termView = null
+
     beforeEach ->
       sinon.stub Coreon.Helpers, 'input', (name, attr, model, options) -> '<input />'
+      termView =
+        index: 0
+        remove: sinon.spy()
+      @view.termViews = [termView]
       @view.$el.append '''
-        <fieldset class='term not-persisted'>
+        <fieldset class='term not-persisted' data-index="0">
           <a class='remove-term'>Remove term</a>
         </fieldset
       '''
@@ -241,10 +176,10 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
       @view.$('.term a.remove-term').trigger @event
       @view.removeTerm.should.have.been.calledOnce
 
-    it 'removes term input set', ->
+    it 'removes term', ->
       @event.target = @view.$('.remove-term').get(0)
       @view.removeTerm @event
-      @view.$el.should.not.have '.term'
+      expect(termView.remove).to.have.been.calledOnce
 
   describe '#create()', ->
 
@@ -271,25 +206,32 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
       @event.preventDefault.should.have.been.calledOnce
 
     it 'updates model from form', ->
-      @view.$('.properties').append '<input name="concept[properties][0][key]" value="label"/>'
-      @view.$('.terms').append '<input name="concept[terms][0][value]" value="foo"/>'
+      termView =
+        index: 0
+        serializeArray: ->
+          {value: 'foo'}
+      @view.termViews = [termView]
+      @view.editProperties.serializeArray = -> [
+        key: 'label'
+      ]
       @view.create @event
       @view.model.save.should.have.been.calledWith properties: [ key: 'label' ], terms: [ value: 'foo' ]
 
     it 'deletes empty properties and terms', ->
+      @view.termViews = []
+      @view.editProperties.serializeArray = -> []
       @view.create @event
       @view.model.save.should.have.been.calledWith properties: [], terms: []
 
     it 'updates nested properties on terms', ->
-      @view.$('.terms').append '<input name="concept[terms][0][properties][0][key]" value="source"/>'
+      @view.editProperties.serializeArray = -> []
+      termView =
+        index: 0
+        serializeArray: ->
+          {properties: [key: 'source']}
+      @view.termViews = [termView]
       @view.create @event
       @view.model.save.should.have.been.calledWith properties: [], terms: [ properties: [ key: 'source' ] ]
-
-    it 'does not set deleted properties', ->
-      @view.$('.properties').append '<input name="concept[properties][2][key]" value="label"/>'
-      @view.$('.terms').append '<input name="concept[terms][1][value]" value="foo"/>'
-      @view.create @event
-      @view.model.save.should.have.been.calledWith properties: [ key: 'label' ], terms: [ value: 'foo' ]
 
     context 'success', ->
 
