@@ -51,6 +51,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I see a form "Save term"' do
+    binding.pry
     @form = page.find :form, 'Save term'
   end
 

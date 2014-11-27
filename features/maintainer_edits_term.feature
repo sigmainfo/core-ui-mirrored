@@ -9,6 +9,7 @@ Feature: maintainer edits term
     And I am logged in
     And a concept with an English term "ten-gallon hat" exists
 
+  @wip
   Scenario: edit term
     Given I am a maintainer of the repository
     And the repository defines a blueprint for terms

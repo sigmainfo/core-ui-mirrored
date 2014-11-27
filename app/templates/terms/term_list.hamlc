@@ -1,0 +1,12 @@
+- if @hasTermProperties
+  %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle_all.hint' }= I18n.t 'terms.properties.toggle_all.label'
+- if @can 'create', Coreon.Models.Term
+  .add
+    .edit
+      %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
+- for lang, terms of @groupedTerms
+  %section.language{ class: lang }
+    %h3= lang
+    %ul
+      - unless terms.length > 0
+        .no-terms= I18n.t 'terms.empty'

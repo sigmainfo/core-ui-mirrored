@@ -18,6 +18,7 @@
 #= require templates/properties/new_property
 #= require templates/properties/value
 #= require views/concepts/shared/broader_and_narrower_view
+#= require views/panels/terms/term_list_view
 #= require collections/clips
 #= require collections/hits
 #= require models/broader_and_narrower_form
@@ -89,24 +90,24 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @termProperties = []
     @terms = []
 
-    termsByLang = @model.termsByLang()
-    sourceLang = Coreon.application.sourceLang()
-    targetLang = Coreon.application.targetLang()
-    langs = Coreon.application.langs()
+    # termsByLang = @model.termsByLang()
+    # sourceLang = Coreon.application.sourceLang()
+    # targetLang = Coreon.application.targetLang()
+    # langs = Coreon.application.langs()
 
-    sortedTermsByLang = langs
-      .map (lang) ->
-        [ lang, termsByLang[lang] or [] ]
-      .filter (tuple) ->
-        [lang, terms] = tuple
-        terms.length > 0 or
-        lang is sourceLang or
-        lang is targetLang
+    # sortedTermsByLang = langs
+    #   .map (lang) ->
+    #     [ lang, termsByLang[lang] or [] ]
+    #   .filter (tuple) ->
+    #     [lang, terms] = tuple
+    #     terms.length > 0 or
+    #     lang is sourceLang or
+    #     lang is targetLang
 
-    for lang, terms of termsByLang
-      sortedTermsByLang.push [lang, terms] unless lang in langs
-      for term in terms
-        @terms.push term
+    # for lang, terms of termsByLang
+    #   sortedTermsByLang.push [lang, terms] unless lang in langs
+    #   for term in terms
+    #     @terms.push term
 
     hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
     editing = Coreon.application.get 'editing'
@@ -116,7 +117,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @$el.html @template
       concept: @model
-      langs: sortedTermsByLang
       hasTermProperties: hasTermProperties
       editing: editing
       editProperties: @editProperties
@@ -131,22 +131,26 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       isEdit: true
       collapsed: true
 
+    @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model.termsByLang()
+    @termListView.setEditMode(editing, @editTerm)
+
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
+    @$el.append @termListView.render().$el
     @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
     @subviews.push broaderAndNarrower
     @subviews.push @conceptProperties
     @refreshPropertiesValidation @conceptProperties
 
-    for term in @terms
-      termProperty = new Coreon.Views.Properties.EditPropertiesView
-        collection: term.propertiesWithDefaults(includeUndefined: true)
-        optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
-        isEdit: true
-        collapsed: true
-        ownerId: term.id
-      @$el.find(".terms form.term.update input[name=id][value=#{term.id}]").parent('form').find('.submit').before termProperty.render().$el
-      @refreshPropertiesValidation termProperty
-      @termProperties.push termProperty
+    # for term in @terms
+    #   termProperty = new Coreon.Views.Properties.EditPropertiesView
+    #     collection: term.propertiesWithDefaults(includeUndefined: true)
+    #     optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
+    #     isEdit: true
+    #     collapsed: true
+    #     ownerId: term.id
+    #   @$el.find(".terms form.term.update input[name=id][value=#{term.id}]").parent('form').find('.submit').before termProperty.render().$el
+    #   @refreshPropertiesValidation termProperty
+    #   @termProperties.push termProperty
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 

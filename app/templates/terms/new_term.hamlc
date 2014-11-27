@@ -1,5 +1,5 @@
 != @form_for "term", @term, ->
   -if @term and not @term.isNew()
     %input( type="hidden" name="id" value="#{@term.id}" )
-  != @form.input "value", required: true
-  != @form.input "lang", required: true
+  != @form.input "value", required: true, value: @term.get('value')
+  != @form.input "lang", required: true, value: @term.get('lang')

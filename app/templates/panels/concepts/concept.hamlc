@@ -20,23 +20,23 @@
 - else if @editing or @concept.get("properties")?.length > 0
   != @render "concepts/properties", properties: @concept.propertiesWithDefaults(includeUndefined: true), editToggle: yes
 
-.terms
-  - if @hasTermProperties
-    %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle_all.hint' }= I18n.t 'terms.properties.toggle_all.label'
-  - if @can 'create', Coreon.Models.Term
-    .add
-      .edit
-        %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
-  - for tuple in @langs
-    - [lang, terms] = tuple
-    %section.language{ class: lang }
-      %h3= lang
-      %ul
-        - if terms.length > 0
-          - for term in terms
-            - if @editing and @editTerm is term.id
-              != @render 'terms/new_term', term: term, reset: true
-            - else
-              != @render 'concepts/term', term: term
-        - else
-          .no-terms= I18n.t 'terms.empty'
+/ .terms
+/   - if @hasTermProperties
+/     %h4.properties-toggle{ title: I18n.t 'terms.properties.toggle_all.hint' }= I18n.t 'terms.properties.toggle_all.label'
+/   - if @can 'create', Coreon.Models.Term
+/     .add
+/       .edit
+/         %a.add-term{ href: 'javascript:void(0)' }= I18n.t 'term.new'
+/   - for tuple in @langs
+/     - [lang, terms] = tuple
+/     %section.language{ class: lang }
+/       %h3= lang
+/       %ul
+/         - if terms.length > 0
+/           - for term in terms
+/             - if @editing and @editTerm is term.id
+/               != @render 'terms/new_term', term: term, reset: true
+/             - else
+/               != @render 'concepts/term', term: term
+/         - else
+/           .no-terms= I18n.t 'terms.empty'

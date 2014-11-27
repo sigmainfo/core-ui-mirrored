@@ -1,3 +1,0 @@
-%h4.value= @term.get "value"
-%h5.system-info-toggle(title="System Info")= I18n.t "term.info"
-!= @render "shared/info", data: @term.info()
