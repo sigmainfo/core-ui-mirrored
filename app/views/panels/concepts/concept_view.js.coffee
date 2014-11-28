@@ -39,7 +39,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   className: 'concept'
   editProperties: no
-  editTerm: no
+  termToEdit: no
 
   template: Coreon.Templates["panels/concepts/concept"]
   term:     Coreon.Templates["terms/new_term"]
@@ -57,16 +57,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  .properties .index li"               : "selectProperty"
     "click  .remove-property"                    : "removeProperty"
     "click  .add-term"                           : "addTerm"
-    "click  .remove-term"                        : "removeTerm"
     "submit form.concept.update"                 : "updateConceptProperties"
-    "submit form.term.create"                    : "createTerm"
-    "submit form.term.update"                    : "updateTerm"
     "click  form a.cancel:not(.disabled)"        : "cancelForm"
-    "click  form a.reset:not(.disabled)"         : "reset"
-    "click  .edit-term"                          : "toggleEditTerm"
+    # "click  form a.reset:not(.disabled)"         : "reset"
     "click  .delete-concept"                     : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
-    "click  form.term.update .submit .cancel"    : "toggleEditTerm"
 
   initialize: ->
     @stopListening()
@@ -90,25 +85,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @termProperties = []
     @terms = []
 
-    # termsByLang = @model.termsByLang()
-    # sourceLang = Coreon.application.sourceLang()
-    # targetLang = Coreon.application.targetLang()
-    # langs = Coreon.application.langs()
-
-    # sortedTermsByLang = langs
-    #   .map (lang) ->
-    #     [ lang, termsByLang[lang] or [] ]
-    #   .filter (tuple) ->
-    #     [lang, terms] = tuple
-    #     terms.length > 0 or
-    #     lang is sourceLang or
-    #     lang is targetLang
-
-    # for lang, terms of termsByLang
-    #   sortedTermsByLang.push [lang, terms] unless lang in langs
-    #   for term in terms
-    #     @terms.push term
-
     hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
     editing = Coreon.application.get 'editing'
 
@@ -120,7 +96,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       hasTermProperties: hasTermProperties
       editing: editing
       editProperties: @editProperties
-      editTerm: @editTerm
 
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
@@ -131,8 +106,10 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       isEdit: true
       collapsed: true
 
-    @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model.termsByLang()
-    @termListView.setEditMode(editing, @editTerm)
+    @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
+    @termListView.setEditMode(editing)
+    @listenTo @termListView, 'termsChanged', =>
+      @render()
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @$el.append @termListView.render().$el
@@ -201,16 +178,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @editProperties = !@editProperties
     @render()
 
-  toggleEditTerm: (evt) ->
-    if evt?
-      evt.preventDefault()
-      term_id = $(evt.target).data("id")
-      @editTerm = if @editTerm == term_id then no else term_id
-    else
-      @editTerm = !@editTerm
-
-    @render()
-
   addTerm: ->
     terms = @$(".terms")
     terms.children(".add").hide()
@@ -253,51 +220,34 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     else
       @saveConceptProperties attrs
 
-  updateTerm: (evt) ->
-    evt.preventDefault()
-    form = $ evt.target
-    data = form.serializeJSON()?.term or {}
-    data.id = form.find("input[name=id]").val()
-    termPropertiesView = _.find @termProperties, (pView) -> pView.ownerId == data.id
-    data.properties = termPropertiesView.serializeArray()
-    trigger = form.find('[type=submit]')
-    elements_to_delete = form.find(".property.delete")
-    model = @model.terms().get data.id
+  # updateTerm: (evt) ->
+  #   evt.preventDefault()
+  #   form = $ evt.target
+  #   data = form.serializeJSON()?.term or {}
+  #   data.id = form.find("input[name=id]").val()
+  #   termPropertiesView = _.find @termProperties, (pView) -> pView.ownerId == data.id
+  #   data.properties = termPropertiesView.serializeArray()
+  #   trigger = form.find('[type=submit]')
+  #   elements_to_delete = form.find(".property.delete")
+  #   model = @model.terms().get data.id
 
-    if elements_to_delete.length > 0
-      @confirm
-        trigger: trigger
-        message: I18n.t "term.confirm_update", count: elements_to_delete.length
-        action: =>
-          @saveTerm(model, data)
-    else
-      @saveTerm(model, data)
+  #   if elements_to_delete.length > 0
+  #     @confirm
+  #       trigger: trigger
+  #       message: I18n.t "term.confirm_update", count: elements_to_delete.length
+  #       action: =>
+  #         @saveTerm(model, data)
+  #   else
+  #     @saveTerm(model, data)
 
-  saveTerm: (model, attrs) ->
-    request = model.save attrs, wait: yes, attrs: term: attrs
-    request.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: model.get "value")
-      @toggleEditTerm()
-    request.fail =>
-      model.set attrs
-      @render()
-
-  createTerm: (evt) ->
-    evt.preventDefault()
-    target = $ evt.target
-    data = target.serializeJSON().term or {}
-    data.concept_id = @model.id
-    data.properties = @termProperties[0].serializeArray()
-
-    term = new Coreon.Models.Term data
-    request = term.save null, wait: yes
-    request.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.term.created", value: term.get("value"))
-      @model.terms().add term
-      @toggleEditTerm()
-    request.fail =>
-      @$("form.term.create").replaceWith @term term: term
-      @newTermPropertiesView(term)
+  # saveTerm: (model, attrs) ->
+  #   request = model.save attrs, wait: yes, attrs: term: attrs
+  #   request.done =>
+  #     Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: model.get "value")
+  #     @toggleEditTerm()
+  #   request.fail =>
+  #     model.set attrs
+  #     @render()
 
   termPropertiesValid: ->
     all_valid = true
@@ -314,25 +264,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form.siblings(".edit").show()
     form.remove()
 
-  reset: (evt) ->
-    evt.preventDefault()
-    @model.revert()
-    @model.remoteError = null
-    @render()
-
-  removeTerm: (evt) =>
-    trigger = $ evt.target
-    container = trigger.closest ".term"
-    model = @model.terms().get trigger.data "id"
-    @confirm
-      trigger: trigger
-      container: container
-      message: I18n.t "term.confirm_delete"
-      action: =>
-        value = model.get "value"
-        model.destroy()
-        Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value:value)
-        @render()
+  # reset: (evt) ->
+  #   evt.preventDefault()
+  #   @model.revert()
+  #   @model.remoteError = null
+  #   @render()
 
   delete: (evt) ->
     trigger = $ evt.target

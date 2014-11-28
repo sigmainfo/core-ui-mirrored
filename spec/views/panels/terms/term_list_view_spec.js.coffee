@@ -5,6 +5,7 @@
 describe 'Coreon.Views.Panels.Terms.TermListView', ->
 
   view = null
+  model = null
   terms = null
 
   createTerm = (attrs) ->
@@ -19,8 +20,9 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
     Coreon.application.sourceLang = -> 'none'
     Coreon.application.targetLang = -> 'none'
     sinon.stub Coreon.Helpers, 'can', -> true
-    terms = {}
-    view = new Coreon.Views.Panels.Terms.TermListView model: terms
+    model =
+      terms: -> terms
+    view = new Coreon.Views.Panels.Terms.TermListView model: model
 
   afterEach ->
     Coreon.Helpers.can.restore()
@@ -31,9 +33,6 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
   it 'has a container', ->
     el = view.$el
     expect(el).to.have.class 'terms'
-
-  it 'accepts a collection of terms grouped by language', ->
-    expect(view.model).to.be.instanceof Object
 
   describe '#render()', ->
 
@@ -52,7 +51,7 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       Coreon.Views.Panels.Terms.EditTermView.restore()
 
     it 'renders a "toggle all properties link" even if one term has properties', ->
-      terms.en = [createTerm({value: 'test', properties: [{}]})]
+      terms = [createTerm({lang: 'en', value: 'test', properties: [{}]})]
       el = view.render().$el
       expect(el).to.have 'h4.properties-toggle'
 
@@ -61,31 +60,40 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       expect(el).to.have 'a.add-term'
 
     it 'renders sections of grouped terms', ->
-      terms.en = [createTerm({value: 'car'})]
-      terms.de = [createTerm({value: 'auto'})]
+      terms = [
+        createTerm({lang: 'en', value: 'car'}),
+        createTerm({lang: 'de', value: 'auto'})
+      ]
       el = view.render().$el
       sections = view.$('section.language')
       expect(sections).to.have.lengthOf 2
       expect(sections.first()).to.contain 'en'
       expect(sections.last()).to.contain 'de'
 
-    it 'renders "terms empty" message for group with no terms', ->
-      sinon.stub(I18n, 't').withArgs('terms.empty').returns 'empty'
-      terms.de = []
-      el = view.render().$el
-      section = view.$('section.language').first()
-      expect(section).to.contain 'empty'
+    # it 'renders "terms empty" message for group with no terms', ->
+    #   sinon.stub(I18n, 't').withArgs('terms.empty').returns 'empty'
+    #   terms = [
+    #     createTerm({lang: 'de'})
+    #   ]
+    #   el = view.render().$el
+    #   section = view.$('section.language').first()
+    #   expect(section).to.contain 'empty'
 
     it 'renders terms for each language group', ->
-      terms.en = [createTerm({value: 'car'})]
-      terms.de = [createTerm({value: 'auto'})]
+      terms = [
+        createTerm({lang: 'en', value: 'car'}),
+        createTerm({lang: 'de', value: 'auto'})
+      ]
       el = view.render().$el
       expect(Coreon.Views.Panels.Terms.TermView).to.have.been.calledTwice
 
     it 'renders terms in edit mode if term is being edited', ->
-      terms.en = [createTerm({id: 1, value: 'car'})]
-      terms.de = [createTerm({id: 2, value: 'auto'})]
-      view.setEditMode true, 2
+      terms = [
+        createTerm({lang: 'en', id: 1, value: 'car'}),
+        createTerm({lang: 'de', id: 2, value: 'auto'})
+      ]
+      view.setEditMode true
+      view.setEditTerm 2
       el = view.render().$el
       expect(Coreon.Views.Panels.Terms.TermView).to.have.been.calledOnce
       expect(Coreon.Views.Panels.Terms.EditTermView).to.have.been.calledOnce
@@ -98,7 +106,10 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       expect(result).to.be.false
 
     it 'returns true if even one term has a property', ->
-      terms.en = [createTerm(value: 'car'), createTerm(value: 'bus', properties: [{}])]
+      terms = [
+        createTerm({lang: 'en', value: 'car'}),
+        createTerm({lang: 'en', value: 'bus', properties: [{}]})
+      ]
       result = view.hasTermProperties()
       expect(result).to.be.true
 
@@ -109,9 +120,8 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       expect(view.editMode).to.be.true
 
     it 'sets editMode for view and edit view for specific term', ->
-      view.setEditMode true, 1
+      view.setEditMode true
       expect(view.editMode).to.be.true
-      expect(view.termToEdit).to.be.equal 1
 
 
 
