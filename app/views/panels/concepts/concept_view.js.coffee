@@ -108,7 +108,9 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
     @termListView.setEditMode(editing)
-    @listenTo @termListView, 'termsChanged', =>
+    @termListView.setEditTerm(@termToEdit)
+    @listenTo @termListView, 'termsChanged', (termToEdit) =>
+      @termToEdit = termToEdit
       @render()
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el

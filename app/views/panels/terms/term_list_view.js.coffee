@@ -48,11 +48,7 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
       @termToEdit = if @termToEdit == term_id then no else term_id
     else
       @termToEdit = !@termToEdit
-    # if @termToEdit
-    #   @render()
-    # else
-    #   @trigger 'termsChanged'
-    @trigger 'termsChanged'
+    @trigger 'termsChanged', @termToEdit
 
   hasTermProperties: ->
     @model.terms().some (term) -> term.properties().length > 0
