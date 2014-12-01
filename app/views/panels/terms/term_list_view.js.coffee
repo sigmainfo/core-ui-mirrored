@@ -28,8 +28,6 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
       for term, index in terms
         @listenTo term, 'sync', =>
           @toggleEditTerm()
-        @listenTo term, 'destroy', =>
-          @trigger 'termsChanged'
         termView = null
         if @editMode && @termToEdit is term.id
           termView = new Coreon.Views.Panels.Terms.EditTermView model: term
@@ -50,10 +48,11 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
       @termToEdit = if @termToEdit == term_id then no else term_id
     else
       @termToEdit = !@termToEdit
-    if @termToEdit
-      @render()
-    else
-      @trigger 'termsChanged'
+    # if @termToEdit
+    #   @render()
+    # else
+    #   @trigger 'termsChanged'
+    @trigger 'termsChanged'
 
   hasTermProperties: ->
     @model.terms().some (term) -> term.properties().length > 0

@@ -11,7 +11,6 @@ class Spinach::Features::MaintainerRemovesTerm < Spinach::FeatureSteps
   end
 
   step 'I click "Remove term" within term "beaver hat"' do
-    binding.pry
     page.find(".term .value", text: "beaver hat").find(:xpath, './parent::*').find(".edit a", text: "Remove term").click
   end
 
