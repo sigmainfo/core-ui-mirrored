@@ -14,7 +14,6 @@
 #= require templates/concepts/_properties
 #= require templates/concepts/_edit_properties
 #= require templates/concepts/_term
-#= require templates/terms/new_term
 #= require templates/properties/new_property
 #= require templates/properties/value
 #= require views/concepts/shared/broader_and_narrower_view
@@ -42,7 +41,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   termToEdit: no
 
   template: Coreon.Templates["panels/concepts/concept"]
-  term:     Coreon.Templates["terms/new_term"]
 
   @nestedFieldsFor "properties", name: "property"
 
@@ -56,7 +54,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  .properties-toggle"                  : "toggleProperties"
     "click  .properties .index li"               : "selectProperty"
     "click  .remove-property"                    : "removeProperty"
-    "click  .add-term"                           : "addTerm"
+    # "click  .add-term"                           : "addTerm"
     "submit form.concept.update"                 : "updateConceptProperties"
     "click  form a.cancel:not(.disabled)"        : "cancelForm"
     # "click  form a.reset:not(.disabled)"         : "reset"
@@ -73,17 +71,12 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
     @subviews = []
-    @termProperties = []
-    @terms = []
     @
 
   render: (model, options = {}) ->
     return @ if options.internal
     subview.remove() for subview in @subviews
-    termProperty.remove() for termProperty in @termProperties
     @subviews = []
-    @termProperties = []
-    @terms = []
 
     hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
     editing = Coreon.application.get 'editing'
@@ -109,6 +102,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
     @termListView.setEditMode(editing)
     @termListView.setEditTerm(@termToEdit)
+    @termListView.setConcept(@model)
     @listenTo @termListView, 'termsChanged', (termToEdit) =>
       @termToEdit = termToEdit
       @render()
@@ -118,18 +112,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
     @subviews.push broaderAndNarrower
     @subviews.push @conceptProperties
-    @refreshPropertiesValidation @conceptProperties
 
-    # for term in @terms
-    #   termProperty = new Coreon.Views.Properties.EditPropertiesView
-    #     collection: term.propertiesWithDefaults(includeUndefined: true)
-    #     optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
-    #     isEdit: true
-    #     collapsed: true
-    #     ownerId: term.id
-    #   @$el.find(".terms form.term.update input[name=id][value=#{term.id}]").parent('form').find('.submit').before termProperty.render().$el
-    #   @refreshPropertiesValidation termProperty
-    #   @termProperties.push termProperty
+    @refreshPropertiesValidation @conceptProperties
 
     @draggableOn(el) for el in @$('[data-drag-ident]')
 
@@ -141,10 +125,10 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.add").show()
     @
 
-  refreshPropertiesValidation: (propertiesView) ->
-    propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
-    @listenTo propertiesView, 'updateValid', ->
-      propertiesView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !propertiesView.isValid())
+  refreshPropertiesValidation: (subView) ->
+    subView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !subView.isValid())
+    @listenTo subView, 'updateValid', ->
+      subView.$el.closest('form').find(".submit button[type=submit]").prop('disabled', !subView.isValid())
 
   toggleInfo: (evt) ->
     @$(".system-info")
@@ -180,24 +164,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @editProperties = !@editProperties
     @render()
 
-  addTerm: ->
-    terms = @$(".terms")
-    terms.children(".add").hide()
-    term = new Coreon.Models.Term
-    @$('.terms .add').after @term term: term
-    @newTermPropertiesView(term)
-
-  newTermPropertiesView: (term) ->
-    @termProperties = []
-    termProperty = new Coreon.Views.Properties.EditPropertiesView
-      collection: term.propertiesWithDefaults()
-      optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
-      isEdit: true
-      collapsed: true
-    @$el.find(".terms form.term.create .submit").before termProperty.render().$el
-    @refreshPropertiesValidation termProperty
-    @termProperties.push termProperty
-
 
   saveConceptProperties: (attrs) ->
     request = @model.save attrs, wait: yes, attrs: concept: attrs
@@ -221,42 +187,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
         restore: => @$el.trigger('restore', [form])
     else
       @saveConceptProperties attrs
-
-  # updateTerm: (evt) ->
-  #   evt.preventDefault()
-  #   form = $ evt.target
-  #   data = form.serializeJSON()?.term or {}
-  #   data.id = form.find("input[name=id]").val()
-  #   termPropertiesView = _.find @termProperties, (pView) -> pView.ownerId == data.id
-  #   data.properties = termPropertiesView.serializeArray()
-  #   trigger = form.find('[type=submit]')
-  #   elements_to_delete = form.find(".property.delete")
-  #   model = @model.terms().get data.id
-
-  #   if elements_to_delete.length > 0
-  #     @confirm
-  #       trigger: trigger
-  #       message: I18n.t "term.confirm_update", count: elements_to_delete.length
-  #       action: =>
-  #         @saveTerm(model, data)
-  #   else
-  #     @saveTerm(model, data)
-
-  # saveTerm: (model, attrs) ->
-  #   request = model.save attrs, wait: yes, attrs: term: attrs
-  #   request.done =>
-  #     Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: model.get "value")
-  #     @toggleEditTerm()
-  #   request.fail =>
-  #     model.set attrs
-  #     @render()
-
-  termPropertiesValid: ->
-    all_valid = true
-    for tp in @termProperties
-      unless tp.isValid()
-        all_valid = false
-    all_valid
 
   cancelForm: (evt) ->
     evt.preventDefault()

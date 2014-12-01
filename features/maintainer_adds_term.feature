@@ -39,6 +39,7 @@ Feature: maintainer adds term
     And I should see a message 'Successfully created term "high hat".'
     And I should not see "Create term"
 
+  @wip
   Scenario: validation errors
     When I toggle "EDIT MODE"
     And I click "Add term"

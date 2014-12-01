@@ -17,7 +17,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
     model = new Backbone.Model
     model.info = ->
     model.propertiesWithDefaults = ->
-    view = new Coreon.Views.Panels.Terms.EditTermView model: model
+    view = new Coreon.Views.Panels.Terms.EditTermView model: model, isEdit: true
 
   afterEach ->
     Coreon.Views.Properties.EditPropertiesView.restore()

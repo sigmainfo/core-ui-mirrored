@@ -12,27 +12,50 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
   template: Coreon.Templates['terms/new_term']
 
   events:
+    'input input#term-value'            : 'inputChanged'
+    'input input#term-lang'             : 'inputChanged'
     "submit form.term.update"           : "updateTerm"
+    "submit form.term.create"           : "createTerm"
     "click form a.reset:not(.disabled)" : "reset"
 
-  initialize: ->
+  initialize: (options) ->
+    @model = options.model
+    @concept = options.concept
+    @isEdit = options.isEdit
+
+  render: ->
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults(includeUndefined: true)
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
-      isEdit: true
+      isEdit: @isEdit
+    @validateForm()
+    @listenTo @editProperties, 'updateValid', =>
+      @validateForm()
 
-  render: ->
     @$el.html @template term: @model
     @$el.find('.submit').before @editProperties.render().$el
     @
 
   serializeArray: ->
     {
+      concept_id: @concept?.get('id')
       id: @$el.find("input[name=\"id\"]").val(),
       value: @$el.find("input[name=\"term[value]\"]").val(),
       lang: @$el.find("input[name=\"term[lang]\"]").val(),
       properties: @editProperties.serializeArray()
     }
+
+  isValid: ->
+    # TODO 20141201 [ap] Re-enable if we want term inputs validation on front end
+    #result = @serializeArray()
+    # if !result.value? || (result.value is '') || !result.lang? || (result.lang is '') || !@editProperties.isValid()
+    #   false
+    # else
+    #   true
+    @editProperties.isValid()
+
+  inputChanged: ->
+    @validateForm()
 
   updateTerm: (event) ->
     event.preventDefault()
@@ -50,6 +73,19 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     else
       @saveTerm(data)
 
+  createTerm: (evt) ->
+    evt.preventDefault()
+    form = $ evt.target
+    data = @serializeArray()
+    @model = new Coreon.Models.Term data
+    request = @model.save null, wait: yes
+    request.done =>
+      Coreon.Models.Notification.info I18n.t("notifications.term.created", value: @model.get("value"))
+      @concept.terms().add @model
+      @trigger 'created'
+    request.fail =>
+      @render()
+
   saveTerm: (attrs) ->
     request = @model.save attrs, wait: yes, attrs: term: attrs
     request.done =>
@@ -64,3 +100,6 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     @model.remoteError = null
     @$el.find(".property").removeClass("delete")
     @render()
+
+  validateForm: ->
+    @$el.find('form').find(".submit button[type=submit]").prop('disabled', !@isValid())
