@@ -7,17 +7,24 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
   model = null
   propertiesStub = null
   propertiesView = null
+  serializedProperties = []
 
   beforeEach ->
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.optionalPropertiesFor = ->
     propertiesView = new Backbone.View
     propertiesView.serializeArray = ->
+    propertiesView =
+      isValid: -> true
+      render: ->
+        $el: $ ''
+      serializeArray: -> serializedProperties
     propertiesStub = sinon.stub Coreon.Views.Properties, 'EditPropertiesView', -> propertiesView
     model = new Backbone.Model
     model.info = ->
     model.propertiesWithDefaults = ->
     view = new Coreon.Views.Panels.Terms.EditTermView model: model, isEdit: true
+    sinon.stub(view, 'listenTo').withArgs(propertiesView, 'updateValid')
 
   afterEach ->
     Coreon.Views.Properties.EditPropertiesView.restore()
@@ -28,11 +35,6 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
   it 'has a container', ->
     el = view.$el
     expect(el).to.match 'div'
-
-  describe '#initialize()', ->
-
-    it 'creates an edit properties view', ->
-      expect(Coreon.Views.Properties.EditPropertiesView).to.have.been.calledOnce
 
   describe '#render()', ->
 
@@ -62,15 +64,14 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
     it 'renders editable properties', ->
       sinon.spy propertiesView, 'render'
       view.render()
+      expect(Coreon.Views.Properties.EditPropertiesView).to.have.been.calledOnce
       expect(propertiesView.render).to.have.been.calledOnce
 
   describe '#serializeArray()', ->
 
     it 'returns a structure ready for serialization', ->
-      serializedProperties = [
-        {key: 'public', value: true}
-      ]
-      sinon.stub propertiesView, 'serializeArray', -> serializedProperties
+      serializedProperties.push {key: 'public', value: true}
+      view.render()
       view.$el = $ '''
         <form>
           <input type="hidden" name="id" value="123"/>

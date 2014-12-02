@@ -11,9 +11,6 @@ describe 'Coreon.Views.Panels.Terms.TermView', ->
     model.info = ->
     view = new Coreon.Views.Panels.Terms.TermView model: model
 
-  afterEach ->
-    #Coreon.Helpers.can.restore()
-
   it 'is a backbone view', ->
     expect(view).to.be.an.instanceOf Backbone.View
 
@@ -75,3 +72,33 @@ describe 'Coreon.Views.Panels.Terms.TermView', ->
       canStub.returns false
       el = view.render().$el
       expect(el).to.not.have 'a.edit-term'
+
+  describe '#removeTerm()', ->
+
+    canStub = null
+
+    beforeEach ->
+      model.set 'value', 'test'
+      sinon.stub Coreon.Templates, 'concepts/info'
+      canStub = sinon.stub Coreon.Helpers, 'can'
+      canStub.returns true
+
+    afterEach ->
+      Coreon.Templates['concepts/info'].restore()
+      Coreon.Helpers.can.restore()
+
+    it 'is triggered by clicking on remove link', ->
+      sinon.stub view, 'removeTerm'
+      $('#konacha').append view.render().$el
+      view.delegateEvents()
+      view.$('a.remove-term').click()
+      expect(view.removeTerm).to.have.been.calledOnce
+
+    it 'renders a confirm dialog', ->
+      sinon.stub view, 'confirm'
+      view.render()
+      evt = $.Event
+      evt.target = $('.remove-term')
+      view.removeTerm(evt)
+      expect(view.confirm).to.have.been.calledOnce
+

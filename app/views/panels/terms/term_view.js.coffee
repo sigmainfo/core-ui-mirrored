@@ -23,7 +23,7 @@ class Coreon.Views.Panels.Terms.TermView extends Backbone.View
     @$el.html @template term: @model
     @
 
-  removeTerm: (evt) =>
+  removeTerm: (evt) ->
     trigger = $ evt.target
     @confirm
       trigger: trigger
