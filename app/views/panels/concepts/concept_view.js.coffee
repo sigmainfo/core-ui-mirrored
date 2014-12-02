@@ -50,16 +50,12 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  .edit-concept"                       : "toggleEditMode"
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
-    "click  section:not(form *) > *:first-child" : "toggleSection"
-    "click  .properties-toggle"                  : "toggleProperties"
     "click  .properties .index li"               : "selectProperty"
-    "click  .remove-property"                    : "removeProperty"
-    # "click  .add-term"                           : "addTerm"
     "submit form.concept.update"                 : "updateConceptProperties"
     "click  form a.cancel:not(.disabled)"        : "cancelForm"
-    # "click  form a.reset:not(.disabled)"         : "reset"
     "click  .delete-concept"                     : "delete"
     "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
+    "click  form a.reset:not(.disabled)"         : "reset"
 
   initialize: ->
     @stopListening()
@@ -70,15 +66,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @listenTo settings, 'change:sourceLanguage change:targetLanguage', @render, @
 
     @listenTo Coreon.Collections.Clips.collection(), "add remove reset", @setClipboardButton
-    @subviews = []
     @
 
   render: (model, options = {}) ->
     return @ if options.internal
-    subview.remove() for subview in @subviews
-    @subviews = []
 
-    hasTermProperties = @model.terms().some (term) -> term.properties().length > 0
     editing = Coreon.application.get 'editing'
 
     @$el.toggleClass 'edit', editing
@@ -86,7 +78,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @$el.html @template
       concept: @model
-      hasTermProperties: hasTermProperties
       editing: editing
       editProperties: @editProperties
 
@@ -99,19 +90,17 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       isEdit: true
       collapsed: true
 
-    @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
-    @termListView.setEditMode(editing)
-    @termListView.setEditTerm(@termToEdit)
-    @termListView.setConcept(@model)
-    @listenTo @termListView, 'termsChanged', (termToEdit) =>
+    termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
+    termListView.setEditMode(editing)
+    termListView.setEditTerm(@termToEdit)
+    termListView.setConcept(@model)
+    @listenTo termListView, 'termsChanged', (termToEdit) =>
       @termToEdit = termToEdit
       @render()
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
-    @$el.append @termListView.render().$el
+    @$el.append termListView.render().$el
     @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
-    @subviews.push broaderAndNarrower
-    @subviews.push @conceptProperties
 
     @refreshPropertiesValidation @conceptProperties
 
@@ -133,20 +122,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   toggleInfo: (evt) ->
     @$(".system-info")
       .slideToggle()
-
-  toggleSection: (evt) ->
-    target = $(evt.target)
-    target.closest("section").toggleClass "collapsed"
-    target.siblings().not(".edit").slideToggle()
-
-  toggleProperties: (evt) ->
-    target = @$(".term .properties")
-    if @$(".term .properties.collapsed").length > 0
-      target.removeClass "collapsed"
-      target.children("div").not(".edit").slideDown()
-    else
-      target.addClass "collapsed"
-      target.children("div").not(".edit").slideUp()
 
   selectProperty: (evt) ->
     target = $(evt.target)
@@ -196,11 +171,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     form.siblings(".edit").show()
     form.remove()
 
-  # reset: (evt) ->
-  #   evt.preventDefault()
-  #   @model.revert()
-  #   @model.remoteError = null
-  #   @render()
+  reset: (evt) ->
+    evt.preventDefault()
+    @model.revert()
+    @model.remoteError = null
+    @render()
 
   delete: (evt) ->
     trigger = $ evt.target

@@ -10,13 +10,14 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
   className: 'terms'
 
   template: Coreon.Templates['terms/term_list']
-  term:     Coreon.Templates["terms/new_term"]
 
   events:
-    "click .edit-term"                        : "toggleEditTerm"
-    "click  form.term.update .submit .cancel" : "toggleEditTerm"
-    "submit form.term.create"                 : "createTerm"
-    "click  .add-term"                        : "addTerm"
+    "click .edit-term"                           : "toggleEditTerm"
+    "click  form.term.update .submit .cancel"    : "toggleEditTerm"
+    "submit form.term.create"                    : "createTerm"
+    "click  .add-term"                           : "addTerm"
+    "click  .properties-toggle"                  : "toggleProperties"
+    "click  section:not(form *) > *:first-child" : "toggleSection"
 
   initialize: ->
     @editMode = false
@@ -104,19 +105,16 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     markup = termView.render().$el
     @$('.add').after markup
 
-  # createTerm: (evt) ->
-  #   evt.preventDefault()
-  #   target = $ evt.target
-  #   data = target.serializeJSON().term or {}
-  #   data.concept_id = @model.id
-  #   data.properties = @termProperties[0].serializeArray()
+  toggleProperties: () ->
+    target = @$(".properties")
+    if @$(".properties.collapsed").length > 0
+      target.removeClass "collapsed"
+      target.children("div").not(".edit").slideDown()
+    else
+      target.addClass "collapsed"
+      target.children("div").not(".edit").slideUp()
 
-  #   term = new Coreon.Models.Term data
-  #   request = term.save null, wait: yes
-  #   request.done =>
-  #     Coreon.Models.Notification.info I18n.t("notifications.term.created", value: term.get("value"))
-  #     @model.terms().add term
-  #     @toggleEditTerm()
-  #   request.fail =>
-  #     @$("form.term.create").replaceWith @term term: term
-  #     @newTermPropertiesView(term)
+  toggleSection: (evt) ->
+    target = $(evt.target)
+    target.closest("section").toggleClass "collapsed"
+    target.siblings().not(".edit").slideToggle()
