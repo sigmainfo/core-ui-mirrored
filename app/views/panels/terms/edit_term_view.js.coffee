@@ -4,6 +4,7 @@
 #= require helpers/input
 #= require views/properties/edit_properties_view
 #= require modules/confirmation
+#= require models/term
 
 class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
 
@@ -28,12 +29,12 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
       collection: @model.propertiesWithDefaults(includeUndefined: true)
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
       isEdit: @isEdit
-    @validateForm()
     @listenTo @editProperties, 'updateValid', =>
       @validateForm()
 
     @$el.html @template term: @model
     @$el.find('.submit').before @editProperties.render().$el
+    @validateForm()
     @
 
   serializeArray: ->
@@ -57,6 +58,9 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
   inputChanged: ->
     @validateForm()
 
+  validateForm: ->
+    @$el.find('form .submit button[type=submit]').prop('disabled', !@isValid())
+
   updateTerm: (event) ->
     event.preventDefault()
     form = $ event.target
@@ -73,9 +77,9 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     else
       @saveTerm(data)
 
-  createTerm: (evt) ->
-    evt.preventDefault()
-    form = $ evt.target
+  createTerm: ->
+    # evt.preventDefault()
+    # form = $ evt.target
     data = @serializeArray()
     @model = new Coreon.Models.Term data
     request = @model.save null, wait: yes
@@ -101,5 +105,4 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     @$el.find(".property").removeClass("delete")
     @render()
 
-  validateForm: ->
-    @$el.find('form').find(".submit button[type=submit]").prop('disabled', !@isValid())
+

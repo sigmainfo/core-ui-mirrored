@@ -8,6 +8,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
   propertiesStub = null
   propertiesView = null
   serializedProperties = []
+  listenToStub = null
 
   beforeEach ->
     Coreon.Models.RepositorySettings = sinon.stub
@@ -23,8 +24,13 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
     model = new Backbone.Model
     model.info = ->
     model.propertiesWithDefaults = ->
-    view = new Coreon.Views.Panels.Terms.EditTermView model: model, isEdit: true
-    sinon.stub(view, 'listenTo').withArgs(propertiesView, 'updateValid')
+    concept = new Backbone.Model
+    concept_terms = new Backbone.Collection
+    sinon.stub concept_terms, 'add'
+    concept.terms = ->
+      concept_terms
+    view = new Coreon.Views.Panels.Terms.EditTermView model: model, isEdit: true, concept: concept
+    listenToStub = sinon.stub(view, 'listenTo').withArgs(propertiesView, 'updateValid')
 
   afterEach ->
     Coreon.Views.Properties.EditPropertiesView.restore()
@@ -67,6 +73,16 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
       expect(Coreon.Views.Properties.EditPropertiesView).to.have.been.calledOnce
       expect(propertiesView.render).to.have.been.calledOnce
 
+    it 'validates enclosing form when properties change', ->
+      view.render()
+      expect(listenToStub).to.have.been.calledOnce
+
+    it 'validates enclosing form when properties change', ->
+      sinon.stub view, 'validateForm'
+      view.render()
+      expect(view.validateForm).to.have.been.calledOnce
+
+
   describe '#serializeArray()', ->
 
     it 'returns a structure ready for serialization', ->
@@ -84,6 +100,39 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
       expect(array).to.have.property 'value', 'car'
       expect(array).to.have.property 'lang', 'de'
       expect(array).to.have.property 'properties', serializedProperties
+
+  describe '#isValid()', ->
+
+    it 'returns true if all properties are valid', ->
+      view.render()
+      propertiesView.isValid = -> true
+      expect(view.isValid()).to.be.true
+
+    it 'returns false if one property is invalid', ->
+      view.render()
+      propertiesView.isValid = -> false
+      expect(view.isValid()).to.be.false
+
+  describe '#validateForm()', ->
+
+    it 'disables/enables the submit button if term data are invalid/valid', ->
+      view.render()
+      view.$el = $ '''
+        <div>
+          <form>
+            <div class="submit">
+              <button type="submit"></submit>
+            </div>
+          </form>
+        </div>
+      '''
+      propertiesView.isValid = -> false
+      view.validateForm()
+      expect(view.$el.find('form .submit button[type=submit]').prop('disabled')).to.be.true
+      propertiesView.isValid = -> true
+      view.validateForm()
+      expect(view.$el.find('form .submit button[type=submit]').prop('disabled')).to.be.false
+
 
   describe '#updateTerm()', ->
 
@@ -134,6 +183,61 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
         view.updateTerm(event)
         expect(confirmStub).to.have.been.calledOnce
 
+  describe '#createTerm()', ->
+
+    request = null
+    formData = null
+    saveStub = null
+    noteStub = null
+    renderStub = null
+    triggerStub = null
+
+    beforeEach ->
+      request = $.Deferred()
+      formData = [
+        value: 'car',
+        lang: 'en',
+        properties: [
+          {key: 'public', value: true}
+        ]
+      ]
+      sinon.stub view, 'serializeArray', -> formData
+      sinon.stub Coreon.Models, 'Term', ->
+        term = new Backbone.Model
+        saveStub = sinon.stub(term, 'save').withArgs(
+          null,
+          wait: yes,
+        ).returns request
+        term
+      renderStub = sinon.stub view, 'render'
+      sinon.stub I18n, 't'
+      Coreon.Models.Notification =
+        info: ->
+      noteStub = sinon.stub Coreon.Models.Notification, 'info'
+      triggerStub = sinon.stub(view, 'trigger').withArgs 'created'
+      view.createTerm()
+
+    afterEach ->
+      view.model.save.restore()
+      view.render.restore()
+      view.trigger.restore()
+      Coreon.Models.Notification.info.restore()
+      Coreon.Models.Term.restore()
+      I18n.t.restore()
+
+    it 'attempts to save the model', ->
+      request.resolve()
+      expect(saveStub).to.have.been.calledOnce
+
+    it 're-renders on failure', ->
+      request.reject()
+      expect(renderStub).to.have.been.calledOnce
+
+    it 'add new term to concept and triggers created event', ->
+      request.resolve()
+      expect(view.concept.terms().add).to.have.been.calledOnce
+      expect(triggerStub).to.have.been.calledOnce
+
   describe '#saveTerm()', ->
 
     request = null
@@ -164,6 +268,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
     afterEach ->
       view.model.save.restore()
       view.render.restore()
+      view.model.set.restore()
       Coreon.Models.Notification.info.restore()
       I18n.t.restore()
 
@@ -171,11 +276,12 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
       request.resolve()
       expect(saveStub).to.have.been.calledOnce
 
-    it 'notifies the user on failure', ->
-      request.resolve()
-      expect(noteStub).to.have.been.calledOnce
-
-    it 'resets the term and re-renders', ->
+    it 'resets the term and re-renders on failure', ->
       request.reject()
       expect(setStub).to.have.been.calledOnce
       expect(renderStub).to.have.been.calledOnce
+
+    it 'notifies the user on success', ->
+      request.resolve()
+      expect(noteStub).to.have.been.calledOnce
+
