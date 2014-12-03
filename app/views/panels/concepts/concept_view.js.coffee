@@ -100,7 +100,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @$el.append termListView.render().$el
-    @$el.find("form.concept.update .submit").before @conceptProperties.render().$el
+    @$el.find("form.concept .submit").before @conceptProperties.render().$el
 
     @refreshPropertiesValidation @conceptProperties
 

@@ -8,7 +8,7 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
 
   tagName: 'section'
 
-  className: 'properties'
+  className: 'properties edit'
 
   template: Coreon.Templates["properties/edit_properties"]
 

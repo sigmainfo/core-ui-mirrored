@@ -675,15 +675,19 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
   describe '#markDelete()', ->
 
-    it 'adds class "delete" to a fieldset to mark it ready for deletion', ->
+    it 'mark fieldset as "to delete", disable all inputs within it', ->
       view = new Coreon.Views.Properties.PropertyFieldsetView model: model
       sinon.stub view, 'inputChanged'
       view.$el = $ '''
         <fieldset>
+          <input></input>
+          <textarea></textarea>
         </fidelset>
       '''
       view.markDelete()
       expect(view.$el).to.have.class 'delete'
+      expect(view.$el.find('input').prop 'disabled').to.be.true
+      expect(view.$el.find('textarea').prop 'disabled').to.be.true
       expect(view.inputChanged).to.have.been.calledOnce
 
   describe '#inputChanged()', ->
