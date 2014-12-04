@@ -32,7 +32,7 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     for lang, terms of groupedTerms
       for term, index in terms
         termView = @createTermView(term).render().$el
-        @$("section.language.#{lang} ul").append termView
+        @$("section.language.#{lang}>ul").append termView
     @
 
   createTermView: (term) ->
