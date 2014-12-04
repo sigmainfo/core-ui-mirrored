@@ -103,7 +103,7 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     @listenTo termView, 'created', =>
       @trigger 'termsChanged'
     markup = termView.render().$el
-    @$('.add').after markup
+    @$('>.add').after markup
 
   toggleProperties: () ->
     target = @$(".properties")
