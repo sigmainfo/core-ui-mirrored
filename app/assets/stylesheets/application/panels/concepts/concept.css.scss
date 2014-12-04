@@ -167,18 +167,12 @@ div.concept {
       &.boolean {
         span {
           padding-left: 18px;
-//          text-indent: -2000px;
-//          overflow: hidden;
-//          display: block;
-//          width: 16px;
-//          height: 16px;
           background: image-url("layout/icons.svg") no-repeat 0px -502px;
           &.false {
             @include opacity(0.6);
             text-indent: 0px;
             background: none;
             padding: 0;
-            //background: image-url("layout/icons.svg") no-repeat -200px -449px;
           }
         }
       }
@@ -403,7 +397,14 @@ div.concept {
           clear: both;
           padding-bottom: 6px;
         }
+        
+        &.multiselect_picklist, &.picklist {
+          .value {
+            padding-top: 4px;
+          }
+        }
       }
+
       ul.index {
         padding-bottom: 0px;
         padding-top: 1px;
@@ -411,11 +412,10 @@ div.concept {
     }
     .properties-toggle {
       margin: 4px 2px 2px 0;  
-    }
+    }    
   }
   
 
-  
   div.concept.show, div.concept.edit {
     section.language {
       margin-top: 0px;
