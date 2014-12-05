@@ -265,7 +265,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       @view.render()
       expect( @view.$el ).to.have('section.properties.edit')
 
-  describe '#cancel()', ->
+  describe '#cancelForm()', ->
 
     beforeEach ->
       @view.$el.append '''

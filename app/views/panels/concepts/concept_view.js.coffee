@@ -84,6 +84,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
+    @conceptProperties?.remove()
     @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults(includeUndefined: true)
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('concept')
@@ -97,6 +98,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @listenTo termListView, 'termsChanged', (termToEdit) =>
       @termToEdit = termToEdit
       @render()
+    @listenTo termListView, 'termToEditChanged', (termToEdit) =>
+      @termToEdit = termToEdit
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @$el.append termListView.render().$el

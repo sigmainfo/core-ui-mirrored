@@ -197,12 +197,13 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
 
     newTerm = null
     termView = null
+    termsChangedEvent = null
 
     beforeEach ->
       view.$el = $ '''
         <div class="terms">
           <div class="add">
-            <a>Add ne term</a>
+            <a>Add new term</a>
           /div>
         </div>
       '''
@@ -214,14 +215,19 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
         sinon.stub termView, 'render', ->
           $el: $ '<div class="term"></div>'
         termView
+      termsChangedEvent = sinon.stub(view, 'trigger').withArgs 'termToEditChanged'
       view.addTerm()
 
     afterEach ->
       Coreon.Models.Term.restore()
       view.createTermView.restore()
+      view.trigger.restore()
 
     it 'hides the add term button', ->
       expect(view.$el.find('.add')).to.not.be.visible
+
+    it 'notifies the parent view that editing of terms stops', ->
+      expect(termsChangedEvent).to.have.been.calledOnce
 
     it 'creates a new term model', ->
       expect(Coreon.Models.Term).to.have.been.calledOnce
@@ -230,12 +236,13 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       expect(view.termToEdit).to.equal newTerm.id
 
     it 'creates a new view for the new term', ->
-      expect(view.createTermView).to.have.been.calledOnce
+      expect(view.createTermView).to.have.been.called
 
     it 'listens to this views changes and triggers an event', ->
-      termsChangedEvent = sinon.stub(view, 'trigger').withArgs 'termsChanged'
+      view.trigger.restore()
+      termsChanged = sinon.stub(view, 'trigger').withArgs 'termsChanged'
       termView.trigger 'created'
-      expect(termsChangedEvent).to.have.been.calledOnce
+      expect(termsChanged).to.have.been.calledOnce
 
     it 'renders this term view', ->
       expect(view.$el).to.have '.term'

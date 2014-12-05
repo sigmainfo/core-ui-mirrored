@@ -25,6 +25,8 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     @termViews = {}
 
   render: ->
+    view.remove() for view in @termViews
+    @termViews = {}
     terms = @model.terms()
     termsByLang = @termsByLang(terms)
     groupedTerms = @sortTermsByLang(termsByLang)
@@ -96,6 +98,9 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     sortedTermsByLang
 
   addTerm: ->
+    @termToEdit = no
+    @trigger 'termToEditChanged', @termToEdit
+    @render()
     @$el.children(".add").hide()
     term = new Coreon.Models.Term
     @termToEdit = term.id
