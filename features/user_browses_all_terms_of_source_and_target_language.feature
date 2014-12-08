@@ -18,7 +18,7 @@ Feature: user browses all terms of source and target language
     And I select "English" as source language
     When I select "German" as target language
     Then I should see a target language column inside the "Term List"
-    And I should see "Ball", "Kugel" as translations for "ball"
+    And I should see "Ball" as translation for "ball"
     And I should see "Kreide" as translation for "chalk"
     And I should see terms "vegetarian", "meal"
     And they should not have a translation
@@ -28,7 +28,7 @@ Feature: user browses all terms of source and target language
     When I select "German" as source language
     And I select "English" as target language
     Then I should see a target language column inside the "Term List"
-    And I should see "Ball", "Kugel" with translation "ball"
+    And I should see "Ball" with translation "ball"
     And I should see "Kreide" with translation "chalk"
     And I should see terms "Asiatisches Essen", "Pilz"
     And they should not have a translation
