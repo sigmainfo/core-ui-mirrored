@@ -85,6 +85,7 @@ class Coreon.Application extends Backbone.Model
            , @repositorySettings()
 
   selectRepository: (id) ->
+    localStorage.setItem "last-repo", @get('session').repositoryById(id)?.cache_id
     @get('session').set 'current_repository_id', id
 
   graphUri: ->
