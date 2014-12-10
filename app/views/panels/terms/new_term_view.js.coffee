@@ -24,6 +24,7 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
 
   render: ->
     @$el.html @template(term: @model, name: @name, errors: @errors)
+    @$el.attr('data-index', @index)
     @$el.append @editProperties.render().$el
     @
 

@@ -161,6 +161,7 @@ describe 'Coreon.Application', ->
 
     beforeEach ->
       session = new Backbone.Model
+      session.repositoryById = ->
       app.set 'session', session, silent: yes
 
     it 'selects repository on session', ->

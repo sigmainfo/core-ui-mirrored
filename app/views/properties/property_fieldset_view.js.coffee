@@ -108,6 +108,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   markDelete: ->
     @$el.addClass 'delete'
+    @$el.find('input,textarea,button').prop 'disabled', true
     @inputChanged()
 
   inputChanged: (evt) ->
@@ -153,7 +154,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       @trigger 'removeProperty', @
 
   containsPersisted: ->
-    true if _.find(@model.properties, (p) -> p.persisted)
+    if _.find(@model.properties, (p) -> p.persisted) then true else false
 
 
 

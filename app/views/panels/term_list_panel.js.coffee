@@ -106,9 +106,8 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
   translations: ( term ) ->
     if @model.has( 'target' )
       concept = Coreon.Models.Concept.find term.get( 'concept_id' )
-      values = concept.terms().lang( @model.get 'target' ).map ( term ) ->
-        term.get 'value'
-      @targetTerms terms: values
+      value = concept.terms().lang( @model.get 'target' )[0]?.get 'value'
+      @targetTerms translation: value
     else
       null
 

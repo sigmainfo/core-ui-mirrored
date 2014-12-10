@@ -10,10 +10,8 @@ Feature: maintainer edits term
     And a concept with an English term "ten-gallon hat" exists
 
   Scenario: edit term
-    Given I am a maintainer of the repository
-    And the repository defines a blueprint for terms
+    Given the repository defines a blueprint for terms
     And that blueprint requires a property "status" of type "text"
-    #And that blueprint allows a property "public" of type "boolean"
     And I visit the page of this concept
     When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
@@ -38,7 +36,6 @@ Feature: maintainer edits term
     Given this term has a property "public" set to false
     And I am a maintainer of the repository
     And the repository defines a blueprint for terms
-    #And that blueprint requires a property "status" of type "text"
     And that blueprint allows a property "public" of type "boolean"
     And I visit the page of this concept
     When I toggle "EDIT MODE"

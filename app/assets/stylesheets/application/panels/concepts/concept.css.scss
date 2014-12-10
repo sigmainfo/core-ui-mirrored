@@ -63,7 +63,7 @@ div.concept {
   
   .system-info {
     line-height: 12px;
-    padding: 8px 0 4px 0;
+    padding: 0;
     
     table {
       
@@ -127,7 +127,7 @@ div.concept {
       float: left;
       text-transform: uppercase;
       font-size: 0.8em;
-      line-height: 1.2em;
+      line-height: 1.3em;
       padding: 0 10px;
       cursor: pointer;
     }
@@ -147,6 +147,9 @@ div.concept {
       } 
       
       &.multiselect_picklist, &.picklist {
+        td {
+          padding-bottom: 0;
+        }
         li {
           list-style: none;
           display: inline-block;
@@ -164,18 +167,12 @@ div.concept {
       &.boolean {
         span {
           padding-left: 18px;
-//          text-indent: -2000px;
-//          overflow: hidden;
-//          display: block;
-//          width: 16px;
-//          height: 16px;
           background: image-url("layout/icons.svg") no-repeat 0px -502px;
           &.false {
             @include opacity(0.6);
             text-indent: 0px;
             background: none;
             padding: 0;
-            //background: image-url("layout/icons.svg") no-repeat -200px -449px;
           }
         }
       }
@@ -339,11 +336,11 @@ div.concept {
       .term h4.value {
         font-size: 1.3em;
         padding: 7px 0 5px 0;
-        margin-left: 85px;
+        margin-left: 65px;
       }
 
       .term >.system-info {
-        margin-left: 85px;
+        margin-left: 65px;
         table {
           margin-top: 2px;
         }
@@ -359,7 +356,7 @@ div.concept {
         }
 
         &>div {
-          margin-left: 85px;
+          margin-left: 65px;
         }
       }
     }
@@ -400,18 +397,25 @@ div.concept {
           clear: both;
           padding-bottom: 6px;
         }
+        
+        &.multiselect_picklist, &.picklist {
+          .value {
+            padding-top: 4px;
+          }
+        }
       }
+
       ul.index {
         padding-bottom: 0px;
+        padding-top: 1px;
       }
     }
     .properties-toggle {
       margin: 4px 2px 2px 0;  
-    }
+    }    
   }
   
 
-  
   div.concept.show, div.concept.edit {
     section.language {
       margin-top: 0px;

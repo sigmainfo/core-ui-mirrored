@@ -51,7 +51,7 @@
      &.required {
        h4:after {
          content: "*";
-       };
+       }
      }
 
      h4 {
@@ -221,7 +221,6 @@ form.create.term {
 
   form {
     overflow: hidden;
-//    background-color: darken(rgba($button-hover-color, 0.12), 4);
 
     >div {
       margin-left: 32px;
@@ -270,6 +269,8 @@ form.create.term {
    
   }
   
+  // all the buttons:
+  
   a.remove-term, a.remove-property, a.delete-concept, a.remove-fieldset, a.remove-value {
    &:before {
      background-position: -149px -751px;
@@ -315,9 +316,10 @@ form.create.term {
   form, .broader-and-narrower {
     @include editmode;
   }
-  
+
+
+  // div.edit is for the left vertical block with all the edit buttons
   div.edit {
-//    background-color: $editmode-color;
     width: 16px;
     padding: 5px 8px;  
     
@@ -396,6 +398,9 @@ form.create.term {
       position: absolute;
       left: 8px;
       top: 6px;
+    }
+    .remove-property {
+      display: none;
     }
   }
   .group.delete {

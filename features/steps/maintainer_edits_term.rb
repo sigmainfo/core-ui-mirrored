@@ -109,7 +109,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I see a fieldset "NOTICE" within this section' do
-     within @section do
+    within @section do
       @fieldset = page.find :fieldset_with_title, "notice"
       @public_fieldset = @fieldset
       expect(@fieldset).to be_visible

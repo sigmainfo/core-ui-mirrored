@@ -103,6 +103,20 @@ class Coreon.Models.Session extends Backbone.Model
       repository = null
     repository
 
+  repositoryById: (id) ->
+    r = null
+    for repo in @get('repositories') when repo.id is id
+      r = repo
+      break
+    r
+
+  repositoryByCacheId: (cacheId) ->
+    r = null
+    for repo in @get('repositories') when repo.cache_id is cacheId
+      r = repo
+      break
+    r
+
   ability: ->
     @_ability ?= new Coreon.Models.Ability @
 

@@ -15,8 +15,13 @@ class Coreon.Routers.RepositoriesRouter extends Backbone.Router
     @app.get('session')
 
   index: ->
-    if repository = @session().get('repositories')?[0]
-      @navigate repository.id, trigger: yes, replace: yes
+    repo_id = null
+    if last_repo = localStorage.getItem('last-repo')
+      repo_id = @session().repositoryByCacheId(last_repo)?.id
+    else
+      repo_id = @session().get('repositories')?[0]?.id
+    if repo_id?
+      @navigate repo_id, trigger: yes, replace: yes
     else
       @navigate 'logout'
 

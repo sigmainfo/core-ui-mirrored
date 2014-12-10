@@ -78,9 +78,24 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
     beforeEach ->
       navigate = sinon.spy()
       router.navigate = navigate
+      sinon.stub localStorage, 'getItem'
 
-    it 'redirects to default repository', ->
-      session.set 'repositories', [id: 'my-repo-123'], silent: yes
+    afterEach ->
+      localStorage.getItem.restore()
+
+    it 'redirects to client stored repository', ->
+      session.set 'repositories', [{id: 'my-repo-123'}, {id: 'my-other-repo-456'}], silent: yes
+      session.repositoryByCacheId = -> {id: 'my-other-repo-456'}
+      localStorage.getItem.returns 'some-cache-id'
+      router.index()
+      expect(navigate).to.have.been.calledOnce
+      expect(navigate).to.have.been.calledWith 'my-other-repo-456'
+                                             , trigger: yes
+                                             , replace: yes
+
+    it 'redirects to first repository', ->
+      session.set 'repositories', [{id: 'my-repo-123'}, {id: 'my-other-repo-456'}], silent: yes
+      localStorage.getItem.returns null
       router.index()
       expect(navigate).to.have.been.calledOnce
       expect(navigate).to.have.been.calledWith 'my-repo-123'
@@ -89,6 +104,7 @@ describe 'Coreon.Routers.RepositoriesRouter', ->
 
     it 'kills session when there is no repository available', ->
       session.set 'repositories', [], silent: yes
+      session.repositoryByCacheId = -> null
       router.index()
       expect(navigate).to.have.been.calledOnce
       expect(navigate).to.have.been.calledWith 'logout'

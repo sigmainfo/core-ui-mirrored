@@ -47,6 +47,18 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
     options = {}
     formatter = new Coreon.Formatters.PropertiesFormatter blueprintProperties, properties, errors, options
 
+  describe "#calculateDefault()", ->
+
+    it "returns the current date for date property when 'now' is the default", ->
+      now = new Date
+      clock = sinon.useFakeTimers(now.getTime());
+      def = formatter.calculateDefault({type: 'date', default: 'now'})
+      expect(def).to.equal now.toDateString()
+
+    it "returns the default value for other properties", ->
+      def = formatter.calculateDefault({type: 'text', default: 'The default'})
+      expect(def).to.equal 'The default'
+
   context "no errors", ->
 
     beforeEach ->
@@ -266,36 +278,6 @@ describe "Coreon.Formatters.PropertiesFormatter", ->
   context "with errors", ->
 
     describe "#all()", ->
-
-      # it "collects errors from parent object", ->
-      #   clear blueprintProperties
-      #   fakeProperties properties, [
-      #     {value: 'foo'},
-      #     {key: 'baz', value: 'invalid chars in here, YOLO'},
-      #   ]
-      #   fakeErrors errors, [
-      #     {key: ["can't be blank"]},
-      #     {value: ["invalid characters"]}
-      #   ]
-      #   all = formatter.all()
-      #   expect(all[0]['errors']).to.eql {key: ["can't be blank"]}
-      #   expect(all[1]['errors']).to.eql {value: ["invalid characters"]}
-
-      # it "collects errors only for invalid properties", ->
-      #   fakeProperties properties, [
-      #     {value: 'foo'},
-      #     {key: 'koo', value: 'bar'}
-      #     {key: 'baz', value: 'invalid chars in here, YOLO'},
-      #   ]
-      #   fakeErrors errors, [
-      #     {key: ["can't be blank"]},
-      #     null,
-      #     {value: ["invalid characters"]}
-      #   ]
-      #   all = formatter.all()
-      #   expect(all[0]['errors']).to.eql {key: ["can't be blank"]}
-      #   expect(all[1]['errors']).to.eql {}
-      #   expect(all[2]['errors']).to.eql {value: ["invalid characters"]}
 
       it "collects errors in order defined in blueprints", ->
         fakeBlueprintProperties blueprintProperties, [

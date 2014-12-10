@@ -171,7 +171,7 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
         expect( view.$ 'tbody tr.term' ).to.have.attr 'data-id'
                                                      , '52fe4156ec4d'
 
-      it 'renders translations', ->
+      it 'renders only first translation', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
         term.conceptPath = -> ''
         terms = lang: sinon.stub()
@@ -187,9 +187,8 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
         translation = view.$( 'tbody tr.term td.target ul' )
         expect( translation ).to.exist
         terms = translation.find 'li'
-        expect( terms ).to.have.lengthOf 2
+        expect( terms ).to.have.lengthOf 1
         expect( terms.eq 0 ).to.have.text 'Ball'
-        expect( terms.eq 1 ).to.have.text 'Kugel'
 
       it 'renders empty target column when translations are empty', ->
         term = new Backbone.Model concept_id: '52fe4156ec4d'
@@ -738,9 +737,8 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       view.model.terms.reset [ term ], silent: yes
       view.updateTargetLang()
       target = view.$( 'td.target li' )
-      expect( target ).to.have.lengthOf 2
+      expect( target ).to.have.lengthOf 1
       expect( target.eq 0 ).to.have.text 'Ball'
-      expect( target.eq 1 ).to.have.text 'Kugel'
 
   describe '#updateTranslations()', ->
 
@@ -773,9 +771,8 @@ describe 'Coreon.Views.Panels.TermListPanel', ->
       view.model.set 'target', 'de', silent: yes
       view.updateTranslations terms
       target = view.$( 'td.target li' )
-      expect( target ).to.have.lengthOf 2
+      expect( target ).to.have.lengthOf 1
       expect( target.eq 0 ).to.have.text 'Ball'
-      expect( target.eq 1 ).to.have.text 'Kugel'
 
   describe '#updateLangs()', ->
 

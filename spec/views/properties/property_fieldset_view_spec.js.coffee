@@ -16,6 +16,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       ]
 
   beforeEach ->
+    sinon.stub jQuery.fn, 'coreonSelect'
     sinon.stub I18n, 't'
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languageOptions = -> langs
@@ -23,6 +24,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
   afterEach ->
     I18n.t.restore()
+    jQuery.fn.coreonSelect.restore()
 
   it 'is a Backbone view', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model
@@ -58,7 +60,6 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       view
 
     beforeEach ->
-      sinon.stub jQuery.fn, 'coreonSelect'
       model =
         key: 'label'
         type: 'text'
@@ -69,9 +70,6 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             lang: 'en'
             errors: {}
           ]
-
-    afterEach ->
-      jQuery.fn.coreonSelect.restore()
 
     it 'renders container', ->
       el = renderView().$el
@@ -604,6 +602,14 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       result = view.isValid()
       expect(result).to.be.false
 
+    it 'returns false when even one of the values of all inputs is an empty array', ->
+      props = [
+        {key: 'label', value: []},
+        {key: 'public', value: false},
+      ]
+      result = view.isValid()
+      expect(result).to.be.false
+
   describe '#checkDelete()', ->
 
     markup = null
@@ -669,14 +675,20 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
   describe '#markDelete()', ->
 
-    it 'adds class "delete" to a fieldset to mark it ready for deletion', ->
+    it 'mark fieldset as "to delete", disable all inputs within it', ->
       view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'inputChanged'
       view.$el = $ '''
         <fieldset>
+          <input></input>
+          <textarea></textarea>
         </fidelset>
       '''
       view.markDelete()
       expect(view.$el).to.have.class 'delete'
+      expect(view.$el.find('input').prop 'disabled').to.be.true
+      expect(view.$el.find('textarea').prop 'disabled').to.be.true
+      expect(view.inputChanged).to.have.been.calledOnce
 
   describe '#inputChanged()', ->
 
@@ -717,6 +729,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       expect(view.values_index).to.equal 2
       expect(view.updateRemoveLinks).to.have.been.calledOnce
       expect(view.inputChanged).to.have.been.calledOnce
+      expect(jQuery.fn.coreonSelect).to.have.been.calledOnce
 
     it 'does not work for non multivalue properties', ->
       model.multivalue = false
@@ -726,6 +739,209 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
       view.addValue()
       expect(Coreon.Templates).to.not.have.been.called
       expect(view.values_index).to.equal 1
+
+  describe '#removeValue()', ->
+
+    beforeEach ->
+      model =
+        key: 'label'
+        type: 'text'
+        required: true
+        multivalue: true
+        properties: [
+          {
+            value: 'car'
+            lang: 'en'
+            errors: {}
+            persisted: true
+          },
+          {
+            value: 'boat'
+            lang: 'en'
+            errors: {}
+            persisted: false
+          }
+        ]
+
+    it 'removes the value inputs for non-required, non-peristed values', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'inputChanged'
+      view.$el = $ '''
+        <fieldset>
+          <div class="group" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      event = $.Event 'click'
+      event.target = view.$('a.remove-value')[1]
+      view.delegateEvents()
+      $(view.$('a.remove-value')[1]).trigger event
+      groups = view.$el.find('.group')
+      expect(groups.length).to.equal 1
+      expect(view.inputChanged).to.have.been.calledOnce
+
+    it 'marks as deleted the value inputs for non-required, peristed values', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'inputChanged'
+      view.$el = $ '''
+        <fieldset>
+          <div class="group" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      event = $.Event 'click'
+      event.target = view.$('a.remove-value')[0]
+      view.delegateEvents()
+      $(view.$('a.remove-value')[0]).trigger event
+      groups = view.$el.find('.group')
+      expect(groups.length).to.equal 2
+      expect($(groups[0])).to.have.class 'delete'
+      expect(view.inputChanged).to.have.been.calledOnce
+
+    it 'updates remove links after deletion/removal if more - undeleted - values remain', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'inputChanged'
+      sinon.stub view, 'updateRemoveLinks'
+      view.$el = $ '''
+        <fieldset>
+          <div class="group" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      event = $.Event 'click'
+      event.target = view.$('a.remove-value')[0]
+      view.delegateEvents()
+      $(view.$('a.remove-value')[0]).trigger event
+      groups = view.$el.find('.group')
+      expect(groups.length).to.equal 2
+      expect($(groups[0])).to.have.class 'delete'
+      expect(view.inputChanged).to.have.been.calledOnce
+      expect(view.updateRemoveLinks).to.have.been.calledOnce
+
+    it 'updates remove links after deletion/removal if no - undeleted - values remain', ->
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'inputChanged'
+      sinon.stub view, 'updateRemoveLinks'
+      sinon.stub view, 'removeProperty'
+      view.$el = $ '''
+        <fieldset>
+          <div class="group" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      event = $.Event 'click'
+      event.target = view.$('a.remove-value')[1]
+      view.delegateEvents()
+      $(view.$('a.remove-value')[1]).trigger event
+      event = $.Event 'click'
+      event.target = view.$('a.remove-value')[0]
+      view.delegateEvents()
+      $(view.$('a.remove-value')[0]).trigger event
+      groups = view.$el.find('.group')
+      expect(groups.length).to.equal 1
+      expect($(groups[0])).to.have.class 'delete'
+      expect(view.inputChanged).to.have.been.calledTwice
+      expect(view.updateRemoveLinks).to.have.been.calledOnce
+      expect(view.removeProperty).to.have.been.calledOnce
+
+  describe '#updateRemoveLinks()', ->
+
+    beforeEach ->
+      model =
+        key: 'label'
+        type: 'text'
+        required: true
+        multivalue: true
+        properties: [
+        ]
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+
+    it 'shows links for multivalued required non-deleted values if more than one', ->
+      view.$el = $ '''
+        <fieldset>
+          <div class="group" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      view.updateRemoveLinks()
+      links = view.$el.find('a.remove-value')
+      expect($(links[0])).to.not.have.css 'display', 'none'
+      expect($(links[1])).to.not.have.css 'display', 'none'
+
+    it 'hides links for multivalued required non-deleted values if one left', ->
+      view.$el = $ '''
+        <fieldset>
+          <div class="group delete" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      view.updateRemoveLinks()
+      links = view.$el.find('a.remove-value')
+      expect($(links[0])).to.not.have.css 'display', 'none'
+      expect($(links[1])).to.have.css 'display', 'none'
+
+    it 'shows links for multivalued non-required non-deleted values if one left', ->
+      model.required = false
+      view.$el = $ '''
+        <fieldset>
+          <div class="group delete" data-index="0"><a class="remove-value"><input type='text'></input></a></div>
+          <div class="group" data-index="1"><a class="remove-value"><input type='text'></input></a></div>
+        </fieldset>
+      '''
+      view.updateRemoveLinks()
+      links = view.$el.find('a.remove-value')
+      expect($(links[0])).to.not.have.css 'display', 'none'
+      expect($(links[1])).to.not.have.css 'display', 'none'
+
+  describe '#removeProperty()', ->
+
+    it 'does not trigger a "removeProperty" event if model is multivalued, optional and contains a persisted value', ->
+      model =
+        key: 'label'
+        type: 'text'
+        required: false
+        multivalue: true
+        properties: [
+        ]
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'containsPersisted', -> true
+      sinon.stub view, 'trigger'
+      view.removeProperty()
+      expect(view.trigger).to.not.have.been.called
+
+    it 'trigger a "removeProperty" event if model by default', ->
+      model =
+        key: 'label'
+        type: 'text'
+        required: true
+        multivalue: true
+        properties: [
+        ]
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      sinon.stub view, 'containsPersisted', -> true
+      sinon.stub view, 'trigger'
+      view.removeProperty()
+      expect(view.trigger).to.have.been.called
+
+  describe '#containsPersisted', ->
+
+    it 'returns true if at least one value of the property is persisted', ->
+      model =
+        properties: [{persisted: true}, {persisted: false}]
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      expect(view.containsPersisted()).to.be.true
+
+    it 'returns false if all values of the property are not persisted', ->
+      model =
+        properties: [{persisted: false}, {persisted: false}]
+      view = new Coreon.Views.Properties.PropertyFieldsetView model: model
+      expect(view.containsPersisted()).to.be.false
+
+
+
+
+
+
 
 
 

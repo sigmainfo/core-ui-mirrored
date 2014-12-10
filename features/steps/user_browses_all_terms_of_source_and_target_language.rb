@@ -61,8 +61,8 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
     end
   end
 
-  step 'I should see "Ball", "Kugel" as translations for "ball"' do
-    translations_for( 'ball' ).should include( 'Ball', 'Kugel' )
+  step 'I should see "Ball" as translation for "ball"' do
+    translations_for( 'ball' ).should == ['Ball']
   end
 
   step 'I should see "Kreide" as translation for "chalk"' do
@@ -98,10 +98,8 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceAndTargetLanguage < Spinach:
     end
   end
 
-  step 'I should see "Ball", "Kugel" with translation "ball"' do
-    %w(Ball Kugel).each do |term|
-      translations_for( term ).should == [ 'ball' ]
-    end
+  step 'I should see "Ball" with translation "ball"' do
+    translations_for( 'Ball' ).should == [ 'ball' ]
   end
 
   step 'I should see "Kreide" with translation "chalk"' do

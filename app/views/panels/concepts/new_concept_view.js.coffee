@@ -28,7 +28,6 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    #"click  a.remove-property" : "removeProperty"
     "click  a.add-term"        : "addTerm"
     "click  a.remove-term"     : "removeTerm"
     "submit form"              : "create"
@@ -55,7 +54,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     @$("form").before @broaderAndNarrower.$el
     @$("form .terms").before @editProperties.$el
     @refreshPropertiesValidation @editProperties
-    if @model.terms().length > 0
+    if @model.terms()
       _.each @model.terms().models, (term) =>
         @renderTerm(term)
     @_wasRendered = true
@@ -72,8 +71,6 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
       else
         formButton.prop('disabled', false)
     propertiesView.updateValid()
-
-
 
   create: (event) ->
     event.preventDefault()
@@ -103,7 +100,6 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     super
 
   renderTerm: (term) ->
-    terms = @$("form .terms")
     index = @termViews.length
     errors = @model.errors()?.nested_errors_on_terms?[index]
     newTermView = new Coreon.Views.Panels.Terms.NewTermView(model: term, index: index, errors: errors)
@@ -114,4 +110,12 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   addTerm: ->
     term = new Coreon.Models.Term
     @renderTerm(term)
+
+  removeTerm: (evt) ->
+    trigger = $ evt.target
+    container = trigger.closest ".term"
+    termView = _.find @termViews, (view) -> container.attr('data-index') == "#{view.index}"
+    @termViews = _.without @termViews, termView
+    termView.remove()
+
 
