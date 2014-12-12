@@ -74,12 +74,11 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
         message: I18n.t "term.confirm_update", count: elements_to_delete.length
         action: =>
           @saveTerm(data)
+        restore: => @$el.trigger('restore', [form])
     else
       @saveTerm(data)
 
   createTerm: ->
-    # evt.preventDefault()
-    # form = $ evt.target
     data = @serializeArray()
     @model = new Coreon.Models.Term data
     request = @model.save null, wait: yes

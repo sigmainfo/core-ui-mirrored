@@ -3,7 +3,8 @@
 submit = (event) ->
   form = $ event.target
   if form.data("xhrForm")?.match /disable/i
-    form.find("input,textarea,button").prop "disabled", on
+    form.find("input,textarea,button,select").prop "disabled", on
+    form.find(".coreon-select").addClass "disabled"
     form.find("a")
       .addClass("disabled")
       .on "click.xhrForms", (event) ->
@@ -12,7 +13,8 @@ submit = (event) ->
 
 cancel = (eventm, form) ->
   if form.data("xhrForm")?.match /disable/i
-    form.find("input,textarea,button").prop "disabled", off
+    form.find("input,textarea,button,select").prop "disabled", off
+    form.find(".coreon-select").removeClass "disabled"
     form.find("a")
       .removeClass("disabled")
       .unbind "click.xhrForms"
