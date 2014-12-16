@@ -20,7 +20,8 @@ class Coreon.Views.Panels.Terms.TermView extends Backbone.View
     "click .remove-term": "removeTerm"
 
   render: ->
-    @$el.html @template term: @model
+    collapsed = if Coreon.application.repositorySettings().get('propertiesCollapsed') == false then false else true
+    @$el.html @template term: @model, collapsed: collapsed
     @
 
   removeTerm: (evt) ->

@@ -7,6 +7,11 @@ describe 'Coreon.Views.Panels.Terms.TermView', ->
   model = null
 
   beforeEach ->
+    Coreon.application = sinon.stub
+    Coreon.application.repositorySettings = ->
+      new Backbone.Model(
+        propertiesCollapsed: true
+      )
     model = new Backbone.Model
     model.info = ->
     view = new Coreon.Views.Panels.Terms.TermView model: model
@@ -21,16 +26,17 @@ describe 'Coreon.Views.Panels.Terms.TermView', ->
   describe '#render()', ->
 
     canStub = null
+    renderStub = null
 
     beforeEach ->
       model.set 'value', 'test'
-      sinon.stub Coreon.Templates, 'concepts/info'
       canStub = sinon.stub Coreon.Helpers, 'can'
       canStub.returns true
+      renderStub = sinon.stub(Coreon.Helpers, 'render')
 
     afterEach ->
-      Coreon.Templates['concepts/info'].restore()
       Coreon.Helpers.can.restore()
+      Coreon.Helpers.render.restore()
 
     it "renders the term's value", ->
       el = view.render().$el
@@ -39,7 +45,7 @@ describe 'Coreon.Views.Panels.Terms.TermView', ->
 
     it "renders the term's info", ->
       model.info = -> {id: '#1234'}
-      Coreon.Templates['concepts/info'].withArgs(data: id: '#1234')
+      renderStub.withArgs("concepts/info", data: id: '#1234')
         .returns '<div class="system-info">id: #1234</div>'
       el = view.render().$el
       info = view.$('.system-info')
@@ -48,12 +54,26 @@ describe 'Coreon.Views.Panels.Terms.TermView', ->
     it "renders the term's properties", ->
       model.set 'properties', [{}, {}]
       model.propertiesWithDefaults = -> [{}, {}]
-      renderPropertiesStub = sinon.stub(Coreon.Helpers, 'render').withArgs "concepts/properties",
+      propertiesStub = renderStub.withArgs "concepts/properties",
         properties: model.propertiesWithDefaults(),
         collapsed: true,
         noEditButton: true
       el = view.render().$el
-      expect(renderPropertiesStub).to.have.been.calledOnce
+      expect(propertiesStub).to.have.been.calledOnce
+
+    it "renders the term's properties expanded if repository setting exists", ->
+      Coreon.application.repositorySettings = ->
+        new Backbone.Model(
+          propertiesCollapsed: false
+        )
+      model.set 'properties', [{}, {}]
+      model.propertiesWithDefaults = -> [{}, {}]
+      propertiesStub = renderStub.withArgs "concepts/properties",
+        properties: model.propertiesWithDefaults(),
+        collapsed: false,
+        noEditButton: true
+      el = view.render().$el
+      expect(propertiesStub).to.have.been.calledOnce
 
     it "renders a delete button for term if user is allowed to delete the term", ->
       el = view.render().$el

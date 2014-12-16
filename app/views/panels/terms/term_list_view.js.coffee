@@ -115,9 +115,11 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     if @$(".properties.collapsed").length > 0
       target.removeClass "collapsed"
       target.children("div").not(".edit").slideDown()
+      Coreon.application.repositorySettings('propertiesCollapsed', off)
     else
       target.addClass "collapsed"
       target.children("div").not(".edit").slideUp()
+      Coreon.application.repositorySettings('propertiesCollapsed', on)
 
   toggleSection: (evt) ->
     target = $(evt.target)
