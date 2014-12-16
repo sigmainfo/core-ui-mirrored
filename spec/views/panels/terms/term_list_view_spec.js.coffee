@@ -155,7 +155,10 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
 
   describe '#toggleProperties()', ->
 
+    settingsStub = null
+
     beforeEach ->
+      settingsStub = sinon.stub Coreon.application, 'repositorySettings'
       view.$el = $ '''
         <div class="terms">
           <div class="term">
@@ -168,12 +171,16 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
           </div>
         </div>
       '''
+    afterEach ->
+      Coreon.application.repositorySettings.restore
 
     it 'toggles the terms properties div up and down', ->
       view.toggleProperties()
       expect(view.$('.term .properties.collapsed')).to.have.lengthOf 2
+      expect(settingsStub).to.have.been.calledWith('propertiesCollapsed', on)
       view.toggleProperties()
       expect(view.$('.term .properties.collapsed')).to.have.lengthOf 0
+      expect(settingsStub).to.have.been.calledWith('propertiesCollapsed', off)
 
   describe '#toggleSection()', ->
 
