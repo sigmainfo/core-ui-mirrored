@@ -228,9 +228,9 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     end
   end
 
-  step 'I fill "Language" of term with "en"' do
+  step 'I fill "Language" of term with "English"' do
     within ".term > .lang" do
-      fill_in "Language", with: "en"
+      select "English", from: "Language"
     end
   end
 

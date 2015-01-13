@@ -21,9 +21,10 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
       collection: @model.propertiesWithDefaults()
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
       isEdit: true
+    @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
 
   render: ->
-    @$el.html @template(term: @model, name: @name, errors: @errors)
+    @$el.html @template(term: @model, name: @name, errors: @errors, selectableLanguages: @selectableLanguages)
     @$el.attr('data-index', @index)
     @$el.append @editProperties.render().$el
     @
@@ -31,7 +32,7 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
   serializeArray: ->
     {
       value: @$el.find("input[name=\"#{@name}[value]\"]").val(),
-      lang: @$el.find("input[name=\"#{@name}[lang]\"]").val(),
+      lang: @$el.find("select[name=\"#{@name}[lang]\"]").val(),
       properties: @editProperties.serializeArray()
     }
 
