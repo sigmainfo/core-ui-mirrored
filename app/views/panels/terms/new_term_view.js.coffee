@@ -27,6 +27,7 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
     @$el.html @template(term: @model, name: @name, errors: @errors, selectableLanguages: @selectableLanguages)
     @$el.attr('data-index', @index)
     @$el.append @editProperties.render().$el
+    @$el.find('select').coreonSelect()
     @
 
   serializeArray: ->
