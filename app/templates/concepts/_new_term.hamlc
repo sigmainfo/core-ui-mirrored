@@ -1,3 +1,3 @@
 %a.remove-term{href: "javascript:void(0)"}= I18n.t "term.delete"
 != @textField I18n.t('term.value'), "#{@name}[value]", required: true, class: 'value', errors: @errors?.value, value: @term.get('value')
-!= @textField I18n.t('term.lang'), "#{@name}[lang]", required: true, class: 'lang', errors: @errors?.lang, value: @term.get('lang')
+!= @selectField I18n.t('term.lang'), "#{@name}[lang]", required: true, class: 'lang',  errors: @errors?.lang, value: @term.get('lang'), options: @selectableLanguages, allowEmpty: true

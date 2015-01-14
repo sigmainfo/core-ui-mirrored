@@ -423,9 +423,8 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I fill in "de" for "LANGUAGE"' do
-    within @form do
-      fill_in 'Language', with: 'de'
-    end
+    fieldset = page.find '.term.create > .lang'
+    select_from_coreon_dropdown fieldset, 'German'
   end
 
   step 'the submit "Create term" is disabled' do
