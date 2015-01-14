@@ -70,6 +70,7 @@
 
      input[type="text"], textarea {
        float: left;
+       margin-right: 16px;
      }
 
      input[type="radio"] {
@@ -105,7 +106,7 @@
    }
 
    select, .coreon-select {
-     margin: 3px 0 0 16px;
+     margin: 3px 0 0 0px;
    }
 
    textarea {
