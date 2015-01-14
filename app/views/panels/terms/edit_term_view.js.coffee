@@ -23,6 +23,7 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     @model = options.model
     @concept = options.concept
     @isEdit = options.isEdit
+    @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
 
   render: ->
     @editProperties = new Coreon.Views.Properties.EditPropertiesView
@@ -32,9 +33,10 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     @listenTo @editProperties, 'updateValid', =>
       @validateForm()
 
-    @$el.html @template term: @model
+    @$el.html @template term: @model, selectableLanguages: @selectableLanguages
     @$el.find('.submit').before @editProperties.render().$el
     @validateForm()
+    @$el.find('select').coreonSelect()
     @
 
   serializeArray: ->
@@ -42,7 +44,7 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
       concept_id: @concept?.get('id')
       id: @$el.find("input[name=\"id\"]").val(),
       value: @$el.find("input[name=\"term[value]\"]").val(),
-      lang: @$el.find("input[name=\"term[lang]\"]").val(),
+      lang: @$el.find("select[name=\"term[lang]\"]").val(),
       properties: @editProperties.serializeArray()
     }
 

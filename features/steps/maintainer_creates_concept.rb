@@ -230,9 +230,6 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I fill "Language" of term with "English"' do
-    # within ".term > .lang" do
-    #   select "English", from: "Language"
-    # end
     fieldset = page.find ".term > .lang"
     select_from_coreon_dropdown fieldset, 'English'
   end

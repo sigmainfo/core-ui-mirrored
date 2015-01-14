@@ -51,8 +51,8 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
 
   step 'I should see a set of term inputs with labels "Value", "Language"' do
     within ".term.create" do
-      page.should have_field("Value")
-      page.should have_field("Language")
+      expect(page).to have_field("Value")
+      expect(page).to have_select("Language", visible: false)
     end
   end
 
@@ -63,9 +63,8 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Language" with "en" within term inputs' do
-    within ".term.create" do
-      fill_in "Language", with: "en"
-    end
+    fieldset = page.find ".term > .lang"
+    select_from_coreon_dropdown fieldset, 'English'
   end
 
   step 'I see a form "Create term"' do
@@ -207,9 +206,7 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
   end
 
   step 'I should see error "can\'t be blank" for term input "Language"' do
-    within "form.create.term > .lang" do
-      page.find_field("Language").find(:xpath, './following-sibling::*[contains(@class, "error-message")]').should have_content("can't be blank")
-    end
+    page.should have_css(".term .lang .error-message", text: "can\'t be blank")
   end
 
   step 'I should see error "can\'t be blank" for property input "Key" within term inputs' do

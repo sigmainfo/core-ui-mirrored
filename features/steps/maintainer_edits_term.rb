@@ -64,7 +64,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   step 'I should see a set of term inputs with labels "Value", "Language"' do
     within(".terms") do
       page.should have_field("Value")
-      page.should have_field("Language")
+      expect(page).to have_select("Language", visible: false)
     end
   end
 
@@ -76,7 +76,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
 
   step 'I should see "en" for input "Language"' do
     within(".terms") do
-      page.find_field("Language").value.should == "en"
+      page.find_field("Language", visible: false).value.should == "en"
     end
   end
 
@@ -87,9 +87,8 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Language" with "de" within term inputs' do
-    within(".terms") do
-      fill_in "Language", with: "de"
-    end
+    fieldset = page.find '.term.update > .lang'
+    select_from_coreon_dropdown fieldset, 'German'
   end
 
   step 'I see a fieldset "STATUS" within this section' do
@@ -282,9 +281,8 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Language" with "" within term inputs' do
-    within(".terms") do
-      fill_in "Language", with: ""
-    end
+    fieldset = page.find '.term.update > .lang'
+    select_from_coreon_dropdown fieldset, 'None'
   end
 
   step 'I fill in "Key" with "" within property inputs' do
@@ -314,9 +312,8 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Language" with "en" within term inputs' do
-    within(".terms") do
-      fill_in "Language", with: "en"
-    end
+    fieldset = page.find '.term.update > .lang'
+    select_from_coreon_dropdown fieldset, 'English'
   end
 
   step 'I should see a term "Stetson" within language "EN"' do

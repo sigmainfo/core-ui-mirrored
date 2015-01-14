@@ -13,6 +13,11 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
   beforeEach ->
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.optionalPropertiesFor = ->
+    Coreon.Models.RepositorySettings.languageOptions = -> [
+      {value: 'en', label: 'English'},
+      {value: 'de', label: 'German'},
+      {value: 'fr', label: 'French'}
+    ]
     propertiesView = new Backbone.View
     propertiesView.serializeArray = ->
     propertiesView =
@@ -24,6 +29,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
     model = new Backbone.Model
     model.info = ->
     model.propertiesWithDefaults = ->
+    model.errors = ->
     concept = new Backbone.Model
     concept_terms = new Backbone.Collection
     sinon.stub concept_terms, 'add'
@@ -64,8 +70,8 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
     it 'renders an input for the lang value', ->
       model.set 'lang', 'en'
       view.render()
-      input = view.$('input[type=text][name="term[lang]"]')
-      expect(input).to.have.attr 'value', 'en'
+      input = view.$('select[name="term[lang]"]')
+      expect(input).to.have.value 'en'
 
     it 'renders editable properties', ->
       sinon.spy propertiesView, 'render'
@@ -92,7 +98,10 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
         <form>
           <input type="hidden" name="id" value="123"/>
           <input type="text" name="term[value]" value="car"/>
-          <input type="text" name="term[lang]" value="de"/>
+          <select name="term[lang]">
+            <option value="de" selected>German</option>
+            <option value="en">English</option>
+          </select>
         </form>
       '''
       array = view.serializeArray()
