@@ -35,7 +35,7 @@ Feature: maintainer creates concept
     And this summary should contain "Failed to create concept:"
     And this summary should contain "1 error on terms"
     And I should see error "can't be blank" for term input "Language"
-    And I fill "Language" of term with "en"
+    And I fill "Language" of term with "English"
     And I click "Create concept"
     Then I should be on the new concept page
     And I should not see an error summary

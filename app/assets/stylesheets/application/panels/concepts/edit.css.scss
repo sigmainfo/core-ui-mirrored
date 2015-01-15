@@ -70,6 +70,7 @@
 
      input[type="text"], textarea {
        float: left;
+       margin-right: 16px;
      }
 
      input[type="radio"] {
@@ -105,7 +106,7 @@
    }
 
    select, .coreon-select {
-     margin: 3px 0 0 16px;
+     margin: 3px 0 0 0px;
    }
 
    textarea {
@@ -472,6 +473,7 @@ form.create.term {
       padding: 0;
       text-align: left;
       float: none;
+      display: block;
     }
     
     form .properties {
@@ -479,7 +481,7 @@ form.create.term {
          padding-left: 40px;
        }
        select, .coreon-select {
-         margin: 8px 0;
+         margin-left: 0;
        }
        div.input {
          padding: 0;
@@ -490,6 +492,7 @@ form.create.term {
     form {
       input[type="text"], textarea {
         width: 86%;
+        margin-bottom: 6px;
       }
       
       ul li{

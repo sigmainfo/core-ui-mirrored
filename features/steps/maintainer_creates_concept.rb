@@ -4,6 +4,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   include SearchSteps
   include EditSteps
   include BlueprintSteps
+  include Selectors
 
   step 'I visit the start page' do
     visit "/#{current_repository.id}"
@@ -228,10 +229,9 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
     end
   end
 
-  step 'I fill "Language" of term with "en"' do
-    within ".term > .lang" do
-      fill_in "Language", with: "en"
-    end
+  step 'I fill "Language" of term with "English"' do
+    fieldset = page.find ".term > .lang"
+    select_from_coreon_dropdown fieldset, 'English'
   end
 
   step 'I should not see an error summary' do
