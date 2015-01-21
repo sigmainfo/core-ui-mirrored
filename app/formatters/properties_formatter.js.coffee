@@ -21,7 +21,7 @@ class Coreon.Formatters.PropertiesFormatter
     for blue_prop in @blueprint_properties
       found_properties = _.filter @properties, (p) -> p.get('key') == blue_prop.key
       properties = []
-      multivalue = if blue_prop.type in ['text', 'multiline_text'] then true else false
+      multivalue = if blue_prop.type in ['text', 'multiline_text', 'asset'] then true else false
 
       for property in found_properties
         index = _.indexOf not_in_blueprints, property

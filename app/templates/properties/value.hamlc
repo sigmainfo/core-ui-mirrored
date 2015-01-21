@@ -15,6 +15,10 @@
         %ul
           - for value in @value
             %li.picklist-item= value
+      - when 'asset'
+        %figure
+          %img{ :src => @value.versions.thumbnail_uri }
+          %figcaption= @value.caption
       - else
         = @value
 - else

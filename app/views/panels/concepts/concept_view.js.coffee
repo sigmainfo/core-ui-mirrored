@@ -1,4 +1,5 @@
 #= require environment
+#= require lib/sort
 #= require helpers/render
 #= require helpers/can
 #= require helpers/form_for

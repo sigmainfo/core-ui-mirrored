@@ -6,21 +6,33 @@ Feature: user browses asset properties
   Background:
     Given I am logged in as user of the repository
 
-  @wip
   Scenario: browse concept's asset properties thumbnails
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "image" of type "asset"
     And a concept "Crane" exists
-    And that concept has a property "image" with caption "front view"
-    And that concept has a property "image" with caption "side view"
+    And it has a property "image" with caption "Crane: front view"
+    And it has a property "image" with caption "Crane: side view"
     When I visit the concept details page for that concept
     And I look at the properties inside the concept header
-    Then I see a property "IMAGE" that has two labels
-    When I click on label "1"
-    Then I see a thumbnail captioned "front view"
-    When I click on label "2"
-    Then I see a thumbnail captioned "side view"
+    Then I see a property "IMAGE" that has two thumbnails
+    And I see a thumbnail captioned "Crane: front view"
+    And I see a thumbnail captioned "Crane: side view"
 
+  Scenario: browse concept's multilingual asset properties thumbnails
+    Given the repository defines a blueprint for concept
+    And that blueprint defines a property "image" of type "asset"
+    And a concept "Crane" exists
+    And it has a property "image" with caption "Crane: front view" and language "EN"
+    And it has a property "image" with caption "Kran: Vorderansicht" and language "DE"
+    When I visit the concept details page for that concept
+    And I look at the properties inside the concept header
+    Then I see a property "IMAGE" with tabs "EN", "DE"
+    Then I click on "EN"
+    And I see a thumbnail captioned "Crane: front view"
+    Then I click on "DE"
+    And I see a thumbnail captioned "Kran: Vorderansicht"
+
+  @wip
   Scenario: browse term's asset property in asset viewer
     Given the repository defines a blueprint for term
     And that blueprint defines a property "image" of type "asset"

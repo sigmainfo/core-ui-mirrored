@@ -24,12 +24,20 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Crane' }
   end
 
-  step 'that concept has a property "image" with caption "front view"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpeg', caption: 'front view', uri: '/assets/fron_view.jpeg', versions: { thumbnail_uri: '/assets/fron_view_thumb.jpeg' } } }
+  step 'it has a property "image" with caption "Crane: front view"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpeg', caption: 'Crane: front view', uri: '/assets/fron_view.jpeg', versions: { thumbnail_uri: 'http://placehold.it/100x100' } } }
   end
 
-  step 'that concept has a property "image" with caption "side view"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpeg', caption: 'side view', uri: '/assets/side_view.jpeg' } }
+  step 'it has a property "image" with caption "Crane: front view" and language "EN"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', lang: 'EN', value: { mime_type: 'image/jpeg', caption: 'Crane: front view', uri: '/assets/fron_view.jpeg', versions: { thumbnail_uri: 'http://placehold.it/100x100' } } }
+  end
+
+  step 'it has a property "image" with caption "Crane: side view"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpeg', caption: 'Crane: side view', uri: '/assets/side_view.jpeg', versions: { thumbnail_uri: 'http://placehold.it/100x100' } } }
+  end
+
+  step 'it has a property "image" with caption "Kran: Vorderansicht" and language "DE"' do
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', lang: 'DE', value: { mime_type: 'image/jpeg', caption: 'Kran: Vorderansicht', uri: '/assets/side_view.jpeg', versions: { thumbnail_uri: 'http://placehold.it/100x100' } } }
   end
 
   step 'I visit the concept details page for that concept' do
@@ -40,25 +48,48 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     page.should have_css(".concept .properties")
   end
 
-  step 'I see a property "IMAGE" that has two labels' do
+  step 'I see a property "IMAGE" that has two thumbnails' do
     within :table_row, 'image' do
-      %w(1 2).each do |lang|
-        expect(page).to have_css('td ul.index li')
+      images = page.all 'img', visible: false
+      expect(images.size).to eq 2
+    end
+  end
+
+  step 'I see a property "IMAGE" with tabs "EN", "DE"' do
+    within :table_row, 'image' do
+      %w(EN DE).each do |lang|
+        expect(page).to have_css('td ul.index li', text: lang)
       end
     end
   end
 
-  step 'I click on label "1"' do
+  step 'I click on "EN"' do
     within :table_row, 'image' do
-      @label = page.find("li", text: '1')
-      expect(@label).to be_visible
+      page.find("li", text: 'EN').click
     end
   end
 
-  step 'I see a thumbnail captioned "front view"' do
+  step 'I click on "DE"' do
     within :table_row, 'image' do
-      image = page.find 'img'
-      expect(page['src']).to eql '/assets/fron_view_thumb.jpeg'
+      page.find("li", text: 'DE').click
+    end
+  end
+
+  step 'I see a thumbnail captioned "Crane: front view"' do
+    within :table_row, 'image' do
+      expect(page).to have_xpath '//figure/figcaption', text: 'Crane: front view'
+    end
+  end
+
+  step 'I see a thumbnail captioned "Crane: side view"' do
+    within :table_row, 'image' do
+      expect(page).to have_xpath '//figure/figcaption', text: 'Crane: side view'
+    end
+  end
+
+  step 'I see a thumbnail captioned "Kran: Vorderansicht"' do
+    within :table_row, 'image' do
+      expect(page).to have_xpath '//figure/figcaption', text: 'Kran: Vorderansicht'
     end
   end
 
