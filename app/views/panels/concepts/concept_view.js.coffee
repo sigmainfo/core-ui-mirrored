@@ -27,6 +27,7 @@
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
+#= require modules/prompt
 #= require jquery.serializeJSON
 #= require modules/draggable
 #= require models/repository_settings
@@ -36,6 +37,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable
+  Coreon.Modules.include @, Coreon.Modules.Prompt
 
   className: 'concept'
   editProperties: no
@@ -52,6 +54,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  .properties .index li"               : "selectProperty"
+    "click  .properties .asset img"              : "launchAssetViewer"
     "submit form.concept.update"                 : "updateConceptProperties"
     "click  form a.cancel:not(.disabled)"        : "cancelForm"
     "click  .delete-concept"                     : "delete"
@@ -207,4 +210,15 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     else
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
+
+  launchAssetViewer: ->
+    console.log "ASSET VIEWER"
+    widget =
+      render: ->
+        $el: $ '<div class="modal-shim"><div class="asset-viewer coreon-modal">Helllo</div></div>'
+      remove: ->
+        $('asset-viewer').remove()
+
+    @prompt widget
+
 

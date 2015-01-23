@@ -37,25 +37,25 @@ Feature: user browses asset properties
     Given the repository defines a blueprint for term
     And that blueprint defines a property "image" of type "asset"
     And a term "Crane" exists
-    And that term has a property "image" with caption "front view"
-    When I visit the term details page for that term
-    And I look at the properties inside the term header
+    And this term has a property "image" with caption "Crane: front view"
+    When I visit the concept details page for that concept
+    And I click on toggle "PROPERTIES" inside the term "Crane"
     Then I see a property "IMAGE"
     And there is a thumbnail captioned "front view"
     When I click on the thumbnail
     Then I see a large view of the asset
 
-  Scenario: download term's asset property
-    Given the repository defines a blueprint for term
-    And that blueprint defines a property "image" of type "asset"
-    And a term "Crane" exists
-    And that term has a property "image" with caption "front view"
-    Then I visit the term details page for that term
-    And I look at the properties inside the term header
-    Then I see a property "IMAGE"
-    And there is a thumbnail captioned "front view"
-    Then I click on the thumbnail
-    Then I see a large view of the asset
-    And there is a download button on the asset viewer
-    Then I click on the download button
-    And I get a save file dialog box
+  # Scenario: download term's asset property
+  #   Given the repository defines a blueprint for term
+  #   And that blueprint defines a property "image" of type "asset"
+  #   And a term "Crane" exists
+  #   And that term has a property "image" with caption "front view"
+  #   Then I visit the term details page for that term
+  #   And I look at the properties inside the term header
+  #   Then I see a property "IMAGE"
+  #   And there is a thumbnail captioned "front view"
+  #   Then I click on the thumbnail
+  #   Then I see a large view of the asset
+  #   And there is a download button on the asset viewer
+  #   Then I click on the download button
+  #   And I get a save file dialog box
