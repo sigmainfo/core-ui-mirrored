@@ -14,11 +14,11 @@
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
 #= require templates/concepts/_edit_properties
-#= require templates/concepts/_term
 #= require templates/properties/new_property
 #= require templates/properties/value
 #= require views/concepts/shared/broader_and_narrower_view
 #= require views/panels/terms/term_list_view
+#= require views/widgets/asset_view
 #= require collections/clips
 #= require collections/hits
 #= require models/broader_and_narrower_form
@@ -212,13 +212,18 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.add").show()
 
   launchAssetViewer: ->
-    console.log "ASSET VIEWER"
-    widget =
-      render: ->
-        $el: $ '<div class="modal-shim"><div class="asset-viewer coreon-modal">Helllo</div></div>'
-      remove: ->
-        $('asset-viewer').remove()
+    collection = new Backbone.Collection [
+        {uri: 'http://placehold.it/800x600', preview_uri: 'http://placehold.it/800x600', info: 'caption 1'},
+        {uri: 'http://placehold.it/800x400', preview_uri: 'http://placehold.it/800x400', info: 'caption 2'},
+        {uri: 'http://placehold.it/800x200', preview_uri: 'http://placehold.it/800x200', info: 'caption 3'}
+      ]
+    assetView = new Coreon.Views.Widgets.AssetView
+      collection: collection
+      current: 1
+    assetView.on 'remove', @closeAssetViewer
+    @prompt assetView
 
-    @prompt widget
+  closeAssetViewer: ->
+    @unprompt
 
 

@@ -118,13 +118,13 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
   end
 
   step 'I click on the thumbnail' do
+    binding.pry
     within @image_property do
       page.find('img').click
     end
   end
 
   step 'I see a large view of the asset' do
-    binding.pry
     expect(page).to have_css '.asset-viewer'
   end
 
