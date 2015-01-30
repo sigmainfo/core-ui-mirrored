@@ -6,6 +6,10 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     @concept ||= JSON.parse concepts.post concept: {}
   end
 
+  def host_uri
+    "http://#{::Capybara.current_session.server.host}:#{::Capybara.current_session.server.port}"
+  end
+
   step 'the repository defines a blueprint for concept' do
     @blueprint = blueprint(:concept)
     @blueprint['clear'].delete
@@ -29,24 +33,24 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
   end
 
   step 'it has a property "image" with caption "Crane: front view"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpg', caption: 'Crane: front view', uri: '/assets/front_view.jpg', versions: { preview_uri: '/assets/front_view_preview.jpg', thumbnail_uri: '/assets/front_view_thumbnail.jpg' } } }
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpg', caption: 'Crane: front view', uri: "#{host_uri}/assets/front_view.jpg", versions: { preview_uri: "#{host_uri}/assets/front_view_preview.jpg", thumbnail_uri: "#{host_uri}/assets/front_view_thumbnail.jpg" } } }
   end
 
   step 'it has a property "image" with caption "Crane: front view" and language "EN"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'image', lang: 'EN', value: { mime_type: 'image/jpg', caption: 'Crane: front view', uri: '/assets/front_view.jpg', versions: { preview_uri: '/assets/front_view_preview.jpg', thumbnail_uri: '/assets/front_view_thumbnail.jpg' } } }
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', lang: 'EN', value: { mime_type: 'image/jpg', caption: 'Crane: front view', uri: "#{host_uri}/assets/front_view.jpg", versions: { preview_uri: "#{host_uri}/assets/front_view_preview.jpg", thumbnail_uri: "#{host_uri}/assets/front_view_thumbnail.jpg" } } }
   end
 
   step 'this term has a property "image" with caption "Crane: front view"' do
-    @term_attrs.merge! 'properties[]' => [{ key: 'image', value: { mime_type: 'image/jpg', caption: 'Crane: front view', uri: '/assets/front_view.jpg', versions: { preview_uri: '/assets/front_view_preview.jpg', thumbnail_uri: '/assets/front_view_thumbnail.jpg' } } }]
+    @term_attrs.merge! 'properties[]' => [{ key: 'image', value: { mime_type: 'image/jpg', caption: 'Crane: front view', uri: "#{host_uri}/assets/front_view.jpg", versions: { preview_uri: "#{host_uri}/assets/front_view_preview.jpg", thumbnail_uri: "#{host_uri}/assets/front_view_thumbnail.jpg" } } }]
     concepts["#{concept['id']}/terms"].post term: @term_attrs
   end
 
   step 'it has a property "image" with caption "Crane: side view"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpg', caption: 'Crane: side view', uri: '/assets/side_view.jpg', versions: { preview_uri: '/assets/side_view_preview.jpg', thumbnail_uri: '/assets/side_view_thumbnail.jpg' } } }
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', value: { mime_type: 'image/jpg', caption: 'Crane: side view', uri: "#{host_uri}/assets/side_view.jpg", versions: { preview_uri: "#{host_uri}/assets/side_view_preview.jpg", thumbnail_uri: "#{host_uri}/assets/side_view_thumbnail.jpg" } } }
   end
 
   step 'it has a property "image" with caption "Kran: Vorderansicht" and language "DE"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'image', lang: 'DE', value: { mime_type: 'image/jpg', caption: 'Kran: Vorderansicht', uri: '/assets/side_view.jpg', versions: { preview_uri: '/assets/side_view_preview.jpg', thumbnail_uri: '/assets/side_view_thumbnail.jpg' } } }
+    concepts["#{concept['id']}/properties"].post property: { key: 'image', lang: 'DE', value: { mime_type: 'image/jpg', caption: 'Kran: Vorderansicht', uri: "#{host_uri}/assets/side_view.jpg", versions: { preview_uri: "#{host_uri}/assets/side_view_preview.jpg", thumbnail_uri: "#{host_uri}/assets/side_view_thumbnail.jpg" } } }
   end
 
   step 'I visit the concept details page for that concept' do
@@ -125,8 +129,15 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
 
   step 'I see a large view of the asset' do
     within '#asset-view' do
-      expect(page).to have_css 'img[src="/assets/front_view_preview.jpg"]'
+      expect(page).to have_css "img[src=\"#{host_uri}/assets/front_view_preview.jpg\"]"
     end
   end
+
+  step 'I see a download link' do
+    within '#asset-view' do
+      expect(page).to have_css ".download a[href=\"#{host_uri}/assets/front_view.jpg\"]"
+    end
+  end
+
 
 end
