@@ -16,6 +16,7 @@
       margin-right: auto;
       margin-top: 100px;
       width: 60%;
+      max-width: 800px;
       background: #fff;
 
       .form {
@@ -65,6 +66,7 @@
         .preview {
           display: inline-block;
           width: 80%;
+          max-width: 600px;
 
           img {
 
@@ -79,6 +81,7 @@
           display: inline-block;
           float: right;
           width: 20%;
+          max-width: 200px;
           padding-top: 20px;
         }
 
