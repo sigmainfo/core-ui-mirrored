@@ -36,9 +36,11 @@ CoreUi::Application.configure do
   config.middleware.use Rack::Cors do |requests|
     requests.allow do |allow|
       allow.origins 'localhost:4000', '127.0.0.1:4000'
-      allow.resource '*', 
+      allow.resource '*',
         headers: :any,
         methods: [:get, :post, :put, :update, :delete]
     end
   end
+
+  config.assets.paths << "#{Rails.root}/features/assets"
 end

@@ -32,7 +32,6 @@ Feature: user browses asset properties
     Then I click on "DE"
     And I see a thumbnail captioned "Kran: Vorderansicht"
 
-  @wip
   Scenario: browse term's asset property in asset viewer
     Given the repository defines a blueprint for term
     And that blueprint defines a property "image" of type "asset"

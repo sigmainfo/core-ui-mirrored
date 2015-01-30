@@ -1,12 +1,16 @@
-.actions
-  .navigation
-    %a.previous{href: 'javascript:void(0)'} Previous
-    %a.next{href: 'javascript:void(0)'} Next
-  .download
-    %a{href: @asset.get 'uri', download: true} Download
-  .close
-    %a{href: 'javascript:void(0)'} Close
-.preview
-  %img{src: @asset.get 'preview_uri'}
-.info
-  %p= @asset.get 'info'
+.pane
+  .form
+    .actions
+      .navigation
+        %a.previous{href: 'javascript:void(0)'} Previous
+        %a.next{href: 'javascript:void(0)'} Next
+      .download-close
+        .download
+          %a{href: @asset.get 'uri', download: true} Download
+        .close
+          %a{href: 'javascript:void(0)'} Close
+      %hr
+    .preview
+      %img{src: @asset.get 'preview_uri'}
+    .info
+      %p= @asset.get 'info'

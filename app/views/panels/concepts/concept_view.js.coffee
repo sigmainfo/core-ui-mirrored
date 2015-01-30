@@ -211,15 +211,14 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
 
-  launchAssetViewer: ->
-    collection = new Backbone.Collection [
-        {uri: 'http://placehold.it/800x600', preview_uri: 'http://placehold.it/800x600', info: 'caption 1'},
-        {uri: 'http://placehold.it/800x400', preview_uri: 'http://placehold.it/800x400', info: 'caption 2'},
-        {uri: 'http://placehold.it/800x200', preview_uri: 'http://placehold.it/800x200', info: 'caption 3'}
-      ]
+  launchAssetViewer: (event) ->
+    imageClicked = event.target
+    images = $(imageClicked).closest("tr.asset td > ul.values > li.selected > .asset img").map ->
+      { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
+    collection = new Backbone.Collection images.get()
     assetView = new Coreon.Views.Widgets.AssetView
       collection: collection
-      current: 1
+      current: $(imageClicked).attr('data-index') || 0
     assetView.on 'remove', @closeAssetViewer
     @prompt assetView
 
