@@ -213,12 +213,14 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   launchAssetViewer: (event) ->
     imageClicked = event.target
-    images = $(imageClicked).closest("tr.asset td > ul.values > li.selected > .asset img").map ->
+    imageIndex = $(imageClicked).attr('data-index') || 0
+    console.log imageClicked
+    images = $(imageClicked).closest("tr.asset td > ul.values > li.selected").find('img').map ->
       { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
     collection = new Backbone.Collection images.get()
     assetView = new Coreon.Views.Widgets.AssetView
       collection: collection
-      current: $(imageClicked).attr('data-index') || 0
+      current: imageIndex
     assetView.on 'remove', @closeAssetViewer
     @prompt assetView
 
