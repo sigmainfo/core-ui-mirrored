@@ -39,6 +39,6 @@
                   - index = _(groupedByLang).keys().indexOf lang
                   %li{class: "selected" if index is 0}
                     - for property, assetIndex in groupedProperties
-                      .asset{ style: 'display: inline-block; float: left; padding-right: 10px;'}
+                      .asset
                         != @render "properties/value", value: property.value, type: group.type, index: assetIndex
                         != @render "concepts/info", data: property.info
