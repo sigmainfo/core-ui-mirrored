@@ -9,6 +9,7 @@
 #= require helpers/text_area_field
 #= require helpers/check_box_field
 #= require helpers/multi_select_field
+#= require helpers/graph_uri
 #= require templates/panels/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
@@ -54,7 +55,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
     "click  .system-info-toggle"                 : "toggleInfo"
     "click  .properties .index li"               : "selectProperty"
-    "click  .properties .asset img"              : "launchAssetViewer"
+    "click  .properties .asset figure"              : "launchAssetViewer"
     "submit form.concept.update"                 : "updateConceptProperties"
     "click  form a.cancel:not(.disabled)"        : "cancelForm"
     "click  .delete-concept"                     : "delete"

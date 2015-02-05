@@ -153,6 +153,7 @@ en:
     key: "Key"
     value: "Value"
     lang: "Language"
+    caption: "Caption"
     remove: "Remove {{property_name}}"
     value:
       add: 'Add another {{property_name}}'

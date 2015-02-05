@@ -2,6 +2,7 @@
 #= require helpers/render
 #= require helpers/form_for
 #= require helpers/input
+#= require helpers/graph_uri
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
@@ -73,6 +74,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     propertiesView.updateValid()
 
   create: (event) ->
+    view = @
     event.preventDefault()
     attrs = {}
     attrs.properties = @editProperties.serializeArray()
@@ -83,11 +85,36 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     request = @model.save attrs
 
     request.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
-      Coreon.Models.Concept.collection().add @model
-      Backbone.history.navigate @model.path(), trigger: true
+      $.when(
+        view.saveAssets('concept', view.model.id, view.editProperties.serializeAssetsArray())
+        # @saveAssets('term', @editProperties.serializeAssetsArray()),
+      ).done =>
+        Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: view.model.get "label")
+        Coreon.Models.Concept.collection().add view.model
+        Backbone.history.navigate view.model.path(), trigger: true
 
     request.fail => @render()
+
+  saveAssets: (type, id, assets) ->
+    d = new $.Deferred()
+    if type is 'concept'
+      url = Coreon.Helpers.graphUri("/concepts/#{id}/properties")
+    deferredArr = $.map assets, (asset) ->
+      formData = new FormData()
+      formData.append 'property[key]', asset.key
+      formData.append 'property[type]', asset.type
+      formData.append 'property[lang]', asset.lang
+      formData.append 'property[value]', asset.value
+      formData.append 'property[asset]', asset.asset
+      Coreon.Modules.CoreAPI.ajax url,
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: 'POST'
+
+    $.when.apply(@, deferredArr).then ->
+      d.resolve()
+    d
 
   cancel: ->
     path = @app.get('repository').path()

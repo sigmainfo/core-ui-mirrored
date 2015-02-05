@@ -249,6 +249,66 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(inputs).to.have.lengthOf 2
           expect(langSelects).to.have.lengthOf 2
 
+      context 'asset fields', ->
+
+        fileFieldStub = null
+
+        beforeEach ->
+          fileFieldStub = sinon.stub(Coreon.Helpers, 'fileField')
+          sinon.stub(Coreon.Helpers, 'selectField').returns '''
+              <select>
+                <option value="en">English</option>
+                <option value="de">German</option>
+                <option value="fr">French</option>
+              </select>
+            '''
+
+
+        afterEach ->
+          Coreon.Helpers.fileField.restore()
+          Coreon.Helpers.selectField.restore()
+
+        it 'renders a file input field for type asset', ->
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][0][value]',
+            value: 'car',
+            required: true, errors: {}, class: 'value'
+          ).returns('<input type="file"></input>')
+          model.type = 'asset'
+          el = renderView().$el
+          expect(el).to.have 'input[type=file]'
+          expect(el).to.have 'select'
+
+        it 'renders multiple file input fields when given', ->
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][0][value]',
+            value: 'car',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<input type="file"></input>')
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][1][value]',
+            value: 'auto',
+            required: true,
+            errors: {},
+            class: 'value'
+          ).returns('<input type="file"></input>')
+          model.type = 'asset'
+          model.properties.push {
+            value: 'auto'
+            lang: 'de'
+            errors: {}
+          }
+          el = renderView().$el
+          inputs = el.find 'input[type=file]'
+          langSelects = el.find 'select'
+          expect(inputs).to.have.lengthOf 2
+          expect(langSelects).to.have.lengthOf 2
+
       context 'boolean fields', ->
 
         booleanFieldStub = null

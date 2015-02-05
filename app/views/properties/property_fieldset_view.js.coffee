@@ -2,6 +2,7 @@
 #= require templates/properties/property_fieldset
 #= require templates/properties/text_property_fieldset_value
 #= require templates/properties/multiline_text_property_fieldset_value
+#= require templates/properties/asset_property_fieldset_value
 #= require helpers/render
 #= require helpers/select_field
 #= require helpers/text_field
@@ -9,6 +10,7 @@
 #= require helpers/check_box_field
 #= require helpers/multi_select_field
 #= require helpers/boolean_field
+#= require helpers/file_field
 #= require lib/select
 
 class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
@@ -23,6 +25,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     'change select': 'inputChanged'
     'input input': 'inputChanged'
     'input textarea': 'inputChanged'
+    'change input[type=file]': 'assetChanged',
     'click [type="checkbox"]': 'inputChanged'
     'click [type="radio"]': 'inputChanged'
     'click a.add-value': 'addValue'
@@ -52,12 +55,14 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
         when 'text'
           {
             key: @model.key
+            type: @model.type
             value: $(group).find('input').val()
             lang: $(group).find('select').val()
           }
         when 'multiline_text'
           {
             key: @model.key
+            type: @model.type
             value: $(group).find('textarea').val()
             lang: $(group).find('select').val()
           }
@@ -69,32 +74,49 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
             value = null
           {
             key: @model.key
+            type: @model.type
             value: value
           }
         when 'date'
           {
             key: @model.key
+            type: @model.type
             value: $(group).find('input').val()
           }
         when 'boolean'
           {
             key: @model.key
+            type: @model.type
             value: if $(group).find('input:radio:checked').val() == 'true' then true else false
           }
         when 'multiselect_picklist'
           {
             key: @model.key
+            type: @model.type
             value: _.map($(group).find("input:checkbox:checked"), (c) -> $(c).val())
           }
         when 'picklist'
           {
             key: @model.key
+            type: @model.type
             value: $(group).find('select').val()
           }
 
+  serializeAssetsArray: ->
+    return [] if !@model.multivalue && @checkDelete() == 1
+    @$el.find('.group').not('.delete').map (index, group) =>
+      if @model.type is 'asset'
+        {
+          key: @model.key
+          type: @model.type
+          lang: $(group).find('select').val()
+          value: if $(group).find('input:text').val()? then $(group).find('input:text').val() else $(group).find('input:file').get(0).files[0].name
+          asset: $(group).find('input:file').get(0).files[0]
+        }
+
   isValid: ->
     for result in @serializeArray()
-      if !result.key? || !result.value? || (result.value is '') || ((typeof result.value == 'object') && _.isEmpty(result.value))
+      if !result.key? || !result.value? || ((result.type != 'asset') && (result.value is '')) || ((typeof result.value == 'object') && _.isEmpty(result.value))
         return false
     true
 
@@ -110,6 +132,10 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @$el.addClass 'delete'
     @$el.find('input,textarea,button').prop 'disabled', true
     @inputChanged()
+
+  assetChanged: (evt) ->
+    if @model.type is 'asset'
+      @previewAsset(evt)
 
   inputChanged: (evt) ->
     @trigger 'inputChanged'
@@ -155,6 +181,19 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   containsPersisted: ->
     if _.find(@model.properties, (p) -> p.persisted) then true else false
+
+  previewAsset: (evt) ->
+    file = evt.target.files[0]
+    if file.type.match /^image/i
+      reader = new FileReader();
+      reader.onload = (event) =>
+        theUrl = event.target.result
+        $(evt.target).closest('.group').find('.asset-preview').html "<img src='" + theUrl + "' />"
+        @trigger 'inputChanged'
+      reader.readAsDataURL file
+    else
+      @trigger 'inputChanged'
+
 
 
 

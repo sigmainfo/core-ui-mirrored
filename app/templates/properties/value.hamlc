@@ -17,7 +17,7 @@
             %li.picklist-item= value
       - when 'asset'
         %figure
-          %img{ :src => @value.versions.thumbnail_uri, data: { uri: @value.uri, preview_uri: @value.versions.preview_uri, info: @value.caption, index: @index } }
+          %img{ :src => Coreon.Helpers.graphUri(@value.versions.thumbnail_uri), data: { uri: Coreon.Helpers.graphUri(@value.uri), preview_uri: Coreon.Helpers.graphUri(@value.versions.preview_uri), info: @value.caption, index: @index } }
           %figcaption= @value.caption
       - else
         = @value

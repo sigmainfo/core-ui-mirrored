@@ -34,4 +34,7 @@
   - when 'text'
     - for property, index in @property.properties
       != @render "properties/text_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages, nonDefined: @property.nonDefined
+  - when 'asset'
+    - for property, index in @property.properties
+      != @render "properties/asset_property_fieldset_value", propertyKey: @property.key, name: @name, property: property, index: index, selectableLanguages: @selectableLanguages, nonDefined: @property.nonDefined
 
