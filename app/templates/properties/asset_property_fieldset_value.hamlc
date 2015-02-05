@@ -1,4 +1,5 @@
 .group{data: {index: @index}}
+  %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
   - title = I18n.t('property.value.remove', {property_name: @propertyKey})
   - unless @nonDefined
     %a.remove-value{href: "javascript:void(0)", title: title}= title
@@ -7,7 +8,7 @@
       %figure
         %img{ :src => Coreon.Helpers.graphUri(@property.value.versions.thumbnail_uri) }
         %figcaption= @property.value.caption
-    - else
-      != @textField I18n.t('property.caption'), "#{@name}[#{@index}][value]", value: @property?.value?.caption, required: true, errors: @property?.errors?.value || {}, class: 'value'
-      != @fileField null, "#{@name}[#{@index}][file]", required: true, errors: @property?.errors?.file || {}, class: 'file'
-      != @selectField null, "#{@name}[#{@index}][lang]", value: @property?.lang, options: @selectableLanguages, allowEmpty: true, class: 'lang'
+  - unless @property.persisted
+    != @textField I18n.t('property.caption'), "#{@name}[#{@index}][value]", value: @property?.value?.caption, required: true, errors: @property?.errors?.value || {}, class: 'value'
+    != @fileField null, "#{@name}[#{@index}][file]", required: true, errors: @property?.errors?.file || {}, class: 'file'
+    != @selectField null, "#{@name}[#{@index}][lang]", value: @property?.lang, options: @selectableLanguages, allowEmpty: true, class: 'lang'

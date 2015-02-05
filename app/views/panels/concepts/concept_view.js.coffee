@@ -149,6 +149,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
 
   saveConceptProperties: (attrs) ->
+    console.log attrs
     request = @model.save attrs, wait: yes, attrs: concept: attrs
     request.done => @toggleEditConceptProperties()
     request.fail => @model.set attrs

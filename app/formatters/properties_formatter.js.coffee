@@ -32,6 +32,7 @@ class Coreon.Formatters.PropertiesFormatter
           errors: @errors[index] || {}
           info: property.info()
           persisted: if property.has('persisted') then property.get('persisted') else true
+          id: if property.has('id') then property.get('id') else null
         if multivalue
           new_property.lang = property.get 'lang'
         properties.push new_property
