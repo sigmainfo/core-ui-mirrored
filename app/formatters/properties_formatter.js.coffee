@@ -89,6 +89,7 @@ class Coreon.Formatters.PropertiesFormatter
           errors: {}
           info: property.info()
           persisted: true
+          id: if property.has('id') then property.get('id') else null
         undefinedByKey[key] ?= []
         undefinedByKey[key].push new_property
 

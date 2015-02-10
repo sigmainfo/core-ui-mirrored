@@ -96,18 +96,19 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       isEdit: true
       collapsed: true
 
-    termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
-    termListView.setEditMode(editing)
-    termListView.setEditTerm(@termToEdit)
-    termListView.setConcept(@model)
-    @listenTo termListView, 'termsChanged', (termToEdit) =>
+    @termListView.close() if @termListView
+    @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
+    @termListView.setEditMode(editing)
+    @termListView.setEditTerm(@termToEdit)
+    @termListView.setConcept(@model)
+    @listenTo @termListView, 'termsChanged', (termToEdit) =>
       @termToEdit = termToEdit
       @render()
-    @listenTo termListView, 'termToEditChanged', (termToEdit) =>
+    @listenTo @termListView, 'termToEditChanged', (termToEdit) =>
       @termToEdit = termToEdit
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
-    @$el.append termListView.render().$el
+    @$el.append @termListView.render().$el
     @$el.find("form.concept .submit").before @conceptProperties.render().$el
 
     @refreshPropertiesValidation @conceptProperties
@@ -149,7 +150,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
 
   saveConceptProperties: (attrs) ->
-    console.log attrs
     request = @model.save attrs, wait: yes, attrs: concept: attrs
     request.done => @toggleEditConceptProperties()
     request.fail => @model.set attrs
@@ -216,7 +216,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   launchAssetViewer: (event) ->
     imageClicked = event.target
     imageIndex = $(imageClicked).attr('data-index') || 0
-    console.log imageClicked
     images = $(imageClicked).closest("tr.asset td > ul.values > li.selected").find('img').map ->
       { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
     collection = new Backbone.Collection images.get()

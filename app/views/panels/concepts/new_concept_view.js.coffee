@@ -20,6 +20,7 @@
 class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
+  Coreon.Modules.include @, Coreon.Modules.Assets
 
   className: "concept new"
 
@@ -82,12 +83,15 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     _.each @termViews, (termView) ->
       attrs.terms.push termView.serializeArray()
 
+    termAssets = _.map @termViews, (termView) ->
+      termView.serializeAssetsArray()
+
     request = @model.save attrs
 
     request.done =>
       $.when(
-        view.saveAssets('concept', view.model.id, view.editProperties.serializeAssetsArray())
-        # @saveAssets('term', @editProperties.serializeAssetsArray()),
+        view.saveAssets('concept', view.model, view.editProperties.serializeAssetsArray()),
+        view.saveTermAssets(view.model, termAssets)
       ).done =>
         Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: view.model.get "label")
         Coreon.Models.Concept.collection().add view.model
@@ -95,23 +99,11 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
 
     request.fail => @render()
 
-  saveAssets: (type, id, assets) ->
+  saveTermAssets: (concept, termAssets) =>
     d = new $.Deferred()
-    if type is 'concept'
-      url = Coreon.Helpers.graphUri("/concepts/#{id}/properties")
-    deferredArr = $.map assets, (asset) ->
-      formData = new FormData()
-      formData.append 'property[key]', asset.key
-      formData.append 'property[type]', asset.type
-      formData.append 'property[lang]', asset.lang
-      formData.append 'property[value]', asset.value
-      formData.append 'property[asset]', asset.asset
-      Coreon.Modules.CoreAPI.ajax url,
-        data: formData,
-        processData: false,
-        contentType: false,
-        type: 'POST'
-
+    deferredArr = concept.terms().map (term) =>
+      matched = _.filter termAssets, (t) -> (term.get('value') == t.value) && (term.get('lang') == t.lang)
+      @saveAssets('term', term, matched[0].properties)
     $.when.apply(@, deferredArr).then ->
       d.resolve()
     d

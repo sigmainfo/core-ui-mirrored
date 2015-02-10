@@ -50,54 +50,60 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   serializeArray: ->
     return [] if !@model.multivalue && @checkDelete() == 1
-    @$el.find('.group').not('.delete').map (index, group) =>
-      property = switch @model.type
-        when 'text'
-          {
-
-            value: $(group).find('input').val()
-            lang: $(group).find('select').val()
-          }
-        when 'multiline_text'
-          {
-            value: $(group).find('textarea').val()
-            lang: $(group).find('select').val()
-          }
-        when 'number'
-          if $(group).find('input').val() != null && $(group).find('input').val() != ''
-            value = Number($(group).find('input').val())
-            value = null if isNaN(value)
-          else
-            value = null
-          {
-            value: value
-          }
-        when 'date'
-          {
-            value: $(group).find('input').val()
-          }
-        when 'boolean'
-          {
-            value: if $(group).find('input:radio:checked').val() == 'true' then true else false
-          }
-        when 'multiselect_picklist'
-          {
-            value: _.map($(group).find("input:checkbox:checked"), (c) -> $(c).val())
-          }
-        when 'picklist'
-          {
-            value: $(group).find('select').val()
-          }
+    @$el.find('.group').map (index, group) =>
+      property = null
+      if $(group).hasClass 'delete'
+        property = {
+          _destroy: "1"
+        }
+      else
+        property = switch @model.type
+          when 'text'
+            {
+              value: $(group).find('input:text').val()
+              lang: $(group).find('select').val()
+            }
+          when 'multiline_text'
+            {
+              value: $(group).find('textarea').val()
+              lang: $(group).find('select').val()
+            }
+          when 'number'
+            if $(group).find('input:text').val() != null && $(group).find('input:text').val() != ''
+              value = Number($(group).find('input:text').val())
+              value = null if isNaN(value)
+            else
+              value = null
+            {
+              value: value
+            }
+          when 'date'
+            {
+              value: $(group).find('input:text').val()
+            }
+          when 'boolean'
+            {
+              value: if $(group).find('input:radio:checked').val() == 'true' then true else false
+            }
+          when 'multiselect_picklist'
+            {
+              value: _.map($(group).find("input:checkbox:checked"), (c) -> $(c).val())
+            }
+          when 'picklist'
+            {
+              value: $(group).find('select').val()
+            }
       if property?
         property.key = @model.key
         property.type = @model.type
-        property.id = $(group).find('input:hidden').val()
+        if !!$(group).find('input:hidden').val()
+          property.id = $(group).find('input:hidden').val()
       property
 
   serializeAssetsArray: ->
     return [] if !@model.multivalue && @checkDelete() == 1
     @$el.find('.group').not('.delete').map (index, group) =>
-      if @model.type is 'asset'
+      if (@model.type is 'asset') && $(group).find('input:file').length > 0
         {
           key: @model.key
           type: @model.type
@@ -108,7 +114,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   isValid: ->
     for result in @serializeArray()
-      if !result.key? || !result.value? || ((result.type != 'asset') && (result.value is '')) || ((typeof result.value == 'object') && _.isEmpty(result.value))
+      if result._destroy != "1" && (!result.key? || !result.value? || ((typeof result.value == 'object') && _.isEmpty(result.value)))
         return false
     true
 

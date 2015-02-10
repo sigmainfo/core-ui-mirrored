@@ -26,6 +26,10 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: { key: 'image', type: 'asset', required: false, default: { mime_type: 'unknown' } }
   end
 
+  step 'that blueprint defines a property "description" of type "text"' do
+      @blueprint['properties'].post property: { key: 'description', type: 'text', required: true, default: '' }
+    end
+
   step 'a concept "Crane" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Crane', type: :text }
   end
@@ -36,14 +40,21 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
 
   step 'that term has a property "image" with caption "Crane photo"' do
     @term_attrs.merge! 'properties[]' => [{
-        key: 'image',
-        value: 'Crane photo',
-        type: :asset,
-        asset:  File.new(File.join(Rails.root, 'features', 'assets', 'front_view.jpg'), 'rb')
-      }]
-    concepts["#{concept['id']}/terms"].post term: @term_attrs
+      key: 'image',
+      value: 'Crane photo',
+      type: :asset,
+      asset:  File.new(File.join(Rails.root, 'features', 'assets', 'LTM1750.jpg'), 'rb')
+    }]
+    @term = JSON.parse concepts["#{concept['id']}/terms"].post term: @term_attrs
   end
 
+  step 'that term has a property "description" with caption "Crane"' do
+    concepts["#{concept['id']}/terms/#{@term['id']}/properties"].post property: {
+        key: 'description',
+        value: 'Crane',
+        type: :text
+      }
+  end
 
   step 'that concept has a property "image" with caption "Crane photo"' do
     concepts["#{concept['id']}/properties"].post property: {
@@ -58,6 +69,10 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     click_link "New concept"
   end
 
+  step 'I click "Add term"' do
+    click_link "Add term"
+  end
+
   step 'I click "Edit term" within the term "Crane"' do
     @term = page.find :term, 'Crane'
     within @term do
@@ -67,6 +82,14 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
 
   step 'I see a section "PROPERTIES" within the form "Save term"' do
     @form = page.find :form, 'Save term'
+    within @form do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
+  end
+
+  step 'I see a section "PROPERTIES" within the form "Create term"' do
+    @form = page.find :form, 'Create term'
     within @form do
       @section = page.find :section, 'Properties'
       expect(@section).to be_visible
@@ -99,6 +122,25 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
       expect(@section).to be_visible
     end
   end
+
+  step 'I see a section "PROPERTIES" under "TERMS" within the form "Create concept"' do
+    @form = page.find :form, 'Create concept'
+    within @form do
+      within '.terms' do
+        @section = page.find :section, 'Properties'
+        expect(@section).to be_visible
+      end
+    end
+  end
+
+  step 'I see a section "PROPERTIES" under "TERMS" within the form "Create term"' do
+    @form = page.find :form, 'Create term'
+    within @form do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
+  end
+
 
   step 'I see a fieldset "IMAGE" within this section' do
     within @section do
@@ -140,6 +182,17 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
       expect(page).to have_xpath '//figure/img'
       expect(page).to have_xpath '//figure/figcaption', text: 'Crane photo'
     end
+  end
+
+  step 'I fill in "Crane" for "VALUE"' do
+    within @form do
+      fill_in 'Value', with: 'Crane'
+    end
+  end
+
+  step 'I fill in "en" for "LANGUAGE"' do
+    fieldset = page.find '.terms .term > .lang'
+    select_from_coreon_dropdown fieldset, 'English'
   end
 
   step 'I fill in "CAPTION" with "Crane photo"' do
@@ -198,8 +251,11 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
   end
 
   step 'I click "Save term"' do
-    binding.pry
     click_button 'Save term'
+  end
+
+  step 'I click "Create term"' do
+    click_button 'Create term'
   end
 
   step 'I see a confirmation dialog' do
@@ -211,6 +267,21 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     within @popup do
       ok_link = @popup.find "a", text: "OK"
       ok_link.click
+    end
+  end
+
+  step 'I see term "Crane" within language section "EN"' do
+    language_section = page.find :section, 'en'
+    within language_section do
+      @term = page.find :term, 'Crane'
+      expect(@term).to be_visible
+    end
+  end
+
+  step 'I toggle "Properties" within this term' do
+    within @term do
+      properties_link = @term.find 'h3', text: 'Properties', visible: false
+      properties_link.click
     end
   end
 
@@ -230,6 +301,12 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
   step 'there is a thumbnail captioned "Crane photo"' do
     within :table_row, 'image' do
       expect(page).to have_xpath '//figure/figcaption', text: 'Crane photo'
+    end
+  end
+
+  step 'there is a thumbnail captioned "Front view"' do
+    within :table_row, 'image' do
+      expect(page).to have_xpath '//figure/figcaption', text: 'Front view'
     end
   end
 

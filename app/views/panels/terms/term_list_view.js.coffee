@@ -38,7 +38,7 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     @
 
   createTermView: (term) ->
-    @listenTo term, 'sync', =>
+    @listenTo term, 'termSaved', =>
       @toggleEditTerm()
     termView = null
     if @editMode && @termToEdit is term.id
@@ -125,3 +125,8 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     target = $(evt.target)
     target.closest("section").toggleClass "collapsed"
     target.siblings().not(".edit").slideToggle()
+
+  close: ->
+    view.remove() for view in @termViews
+    @remove()
+

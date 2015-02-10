@@ -10,8 +10,8 @@ Feature: user browses asset properties
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "image" of type "asset"
     And a concept "Crane" exists
-    And it has a property "image" with caption "Crane: front view"
-    And it has a property "image" with caption "Crane: side view"
+    And that concept has a property "image" with caption "Crane: front view"
+    And that concept has a property "image" with caption "Crane: side view"
     When I visit the concept details page for that concept
     And I look at the properties inside the concept header
     Then I see a property "IMAGE" that has two thumbnails
@@ -22,8 +22,8 @@ Feature: user browses asset properties
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "image" of type "asset"
     And a concept "Crane" exists
-    And it has a property "image" with caption "Crane: front view" and language "EN"
-    And it has a property "image" with caption "Kran: Vorderansicht" and language "DE"
+    And that concept has a property "image" with caption "Crane: front view" and language "EN"
+    And that concept has a property "image" with caption "Kran: Vorderansicht" and language "DE"
     When I visit the concept details page for that concept
     And I look at the properties inside the concept header
     Then I see a property "IMAGE" with tabs "EN", "DE"
