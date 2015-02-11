@@ -10,28 +10,28 @@
   - when 'boolean'
     .group
       - property = _.first @property.properties
-      %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
+      %input{type: 'hidden', name: "#{@name}[id]", value: property?.id}
       != @booleanField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, labels: @property?.labels, class: 'value'
   - when 'number'
     .group
       - property = _.first @property.properties
-      %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
+      %input{type: 'hidden', name: "#{@name}[id]", value: property?.id}
       != @textField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
   - when 'date'
     .group
       - property = _.first @property.properties
-      %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
+      %input{type: 'hidden', name: "#{@name}[id]", value: property?.id}
       != @textField null, "#{@name}[value]", value: property?.value, required: true, errors: property?.errors?.value || {}, class: 'value'
   - when 'multiselect_picklist'
     .group
       - property = _.first @property.properties
-      %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
+      %input{type: 'hidden', name: "#{@name}[id]", value: property?.id}
       != @multiSelectField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, options: @property?.values, class: 'value'
   - when 'picklist'
     .group
       - property = _.first @property.properties
       - labeled_values = _.map @property?.values, (value) -> {value: value, label: value}
-      %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
+      %input{type: 'hidden', name: "#{@name}[id]", value: property?.id}
       != @selectField null, "#{@name}[value]", value: property?.value, required: false, errors: property?.errors?.value || {}, options: labeled_values, class: 'value'
   - when 'multiline_text'
     - for property, index in @property.properties
