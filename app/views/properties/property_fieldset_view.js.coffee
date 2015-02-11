@@ -49,7 +49,6 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @
 
   serializeArray: ->
-    return [] if !@model.multivalue && @checkDelete() == 1
     @$el.find('.group').map (index, group) =>
       property = null
       if $(group).hasClass 'delete'
@@ -128,6 +127,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   markDelete: ->
     @$el.addClass 'delete'
+    @$el.find('.group').addClass 'delete'
     @$el.find('input,textarea,button').prop 'disabled', true
     @inputChanged()
 
