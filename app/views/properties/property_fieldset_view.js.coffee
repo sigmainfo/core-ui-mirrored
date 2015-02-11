@@ -113,8 +113,13 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   isValid: ->
     for result in @serializeArray()
-      if result._destroy != "1" && (!result.key? || !result.value? || ((typeof result.value == 'object') && _.isEmpty(result.value)))
-        return false
+      valid = switch
+        when result._destroy == "1" then true
+        when !result.key? then false
+        when (typeof result.value == 'object') && _.isEmpty(result.value) then false
+        when (result.type is 'text') && _.isEmpty(result.value) then false
+        else true
+      return false if !valid
     true
 
   checkDelete: ->
