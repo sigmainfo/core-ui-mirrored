@@ -38,7 +38,7 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
     @
 
   createTermView: (term) ->
-    @listenTo term, 'termSaved', =>
+    @listenTo term, 'termChanged', =>
       @toggleEditTerm()
     termView = null
     if @editMode && @termToEdit is term.id

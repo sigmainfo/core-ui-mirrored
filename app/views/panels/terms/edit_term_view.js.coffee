@@ -108,7 +108,7 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
       ).done =>
         view.model.fetch
           success: ->
-            view.model.trigger 'termSaved'
+            view.model.trigger 'termChanged'
             Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: view.model.get "value")
     request.fail =>
       @model.set attrs

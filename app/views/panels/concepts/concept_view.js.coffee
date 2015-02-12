@@ -74,6 +74,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @
 
   render: (model, options = {}) ->
+    console.log "called"
     return @ if options.internal
 
     editing = Coreon.application.get 'editing'
@@ -103,7 +104,9 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @termListView.setConcept(@model)
     @listenTo @termListView, 'termsChanged', (termToEdit) =>
       @termToEdit = termToEdit
-      @render()
+      @model.fetch =>
+        success: =>
+          @render()
     @listenTo @termListView, 'termToEditChanged', (termToEdit) =>
       @termToEdit = termToEdit
 

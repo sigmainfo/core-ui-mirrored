@@ -32,5 +32,7 @@ class Coreon.Views.Panels.Terms.TermView extends Backbone.View
       message: I18n.t "term.confirm_delete"
       action: =>
         value = @model.get "value"
-        @model.destroy()
-        Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value: value)
+        @model.destroy
+          success: =>
+            @model.trigger 'termChanged'
+            Coreon.Models.Notification.info I18n.t("notifications.term.deleted", value: value)
