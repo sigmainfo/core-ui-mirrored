@@ -26,6 +26,7 @@ Feature: maintainer edits asset properties
     And there is a thumbnail captioned "Crane photo"
 
   Scenario: add required asset property to new concept's term
+    Given the repository defines a blueprint for concepts
     Given the repository defines a blueprint for terms
     And that blueprint defines a required property "image" of type "asset"
     When I visit the repository root page
