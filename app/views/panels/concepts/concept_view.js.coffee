@@ -39,6 +39,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable
   Coreon.Modules.include @, Coreon.Modules.Prompt
+  Coreon.Modules.include @, Coreon.Modules.Assets
 
   className: 'concept'
   editProperties: no
@@ -74,7 +75,6 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @
 
   render: (model, options = {}) ->
-    console.log "called"
     return @ if options.internal
 
     editing = Coreon.application.get 'editing'
@@ -152,9 +152,17 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @render()
 
 
-  saveConceptProperties: (attrs) ->
+  saveConceptProperties: (attrs, assets) ->
+    view = @
     request = @model.save attrs, wait: yes, attrs: concept: attrs
-    request.done => @toggleEditConceptProperties()
+
+    request.done =>
+      $.when(
+        view.saveAssets('concept', view.model, assets)
+      ).done =>
+        view.model.fetch
+          success: =>
+            @toggleEditConceptProperties()
     request.fail => @model.set attrs
 
   updateConceptProperties: (evt) ->
@@ -165,15 +173,16 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     attrs.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = @conceptProperties.countDeleted()
+    assets = @conceptProperties.serializeAssetsArray()
 
     if elements_to_delete > 0
       @confirm
         trigger: trigger
         message: I18n.t "concept.confirm_update", count: elements_to_delete
-        action: => @saveConceptProperties attrs
+        action: => @saveConceptProperties attrs, assets
         restore: => @$el.trigger('restore', [form])
     else
-      @saveConceptProperties attrs
+      @saveConceptProperties attrs, assets
 
   cancelForm: (evt) ->
     evt.preventDefault()

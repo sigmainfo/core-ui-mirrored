@@ -49,7 +49,7 @@ Feature: maintainer edits asset properties
     Then I see a property "IMAGE"
     And there is a thumbnail captioned "Crane photo"
 
-  Scenario: add required asset property to concept's new term
+  Scenario: add required asset property to existing concept's new term
     Given the repository defines a blueprint for terms
     And that blueprint defines a required property "image" of type "asset"
     And a concept "Crane" exists
@@ -71,6 +71,27 @@ Feature: maintainer edits asset properties
     When I toggle "Properties" within this term
     Then I see a property "IMAGE"
     And there is a thumbnail captioned "Crane photo"
+
+  Scenario: add optional asset property to existing concept
+    Given the repository defines a blueprint for concepts
+    And that blueprint defines a property "image" of type "asset"
+    And a concept "Crane" exists
+    And that concept has a property "image" with caption "Crane photo"
+    When I edit that concept
+    Then I see a section "PROPERTIES"
+    When I click on "Edit properties"
+    Then I see a form "Save concept"
+    And I see a fieldset "IMAGE" within this form
+    And this fieldset contains an image captioned "Crane photo"
+    Then I click on "Add another image" inside "IMAGE"
+    And I fill in "CAPTION" with "Front view"
+    And I select file "front_view.jpg" for the file input
+    And I click "Save concept"
+    Then I look at the properties inside the concept header
+    And I see a property "IMAGE"
+    And there is a thumbnail captioned "Crane photo"
+    And there is a thumbnail captioned "Front view"
+
 
   Scenario: add optional asset property to existing term
     Given the repository defines a blueprint for terms
