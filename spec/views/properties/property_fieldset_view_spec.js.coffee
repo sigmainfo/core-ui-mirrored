@@ -20,6 +20,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     sinon.stub I18n, 't'
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languageOptions = -> langs
+    Coreon.Helpers.graphUri = (uri) -> "http://#{uri}"
 
 
   afterEach ->
@@ -69,6 +70,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             value: 'car'
             lang: 'en'
             errors: {}
+            persisted: false
           ]
 
     it 'renders container', ->
@@ -254,6 +256,14 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
         fileFieldStub = null
 
         beforeEach ->
+          model.type = 'asset'
+          model.properties = [
+            persisted: false
+            value:
+              versions:
+                thumbnail_uri: '/someuri'
+          ]
+
           fileFieldStub = sinon.stub(Coreon.Helpers, 'fileField')
           sinon.stub(Coreon.Helpers, 'selectField').returns '''
               <select>
@@ -268,41 +278,47 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           Coreon.Helpers.fileField.restore()
           Coreon.Helpers.selectField.restore()
 
-        it 'renders a file input field for type asset', ->
+        it 'renders a file input field for type asset when new asset', ->
           fileFieldStub.withArgs(
             null,
-            'properties[0][0][value]',
-            value: 'car',
-            required: true, errors: {}, class: 'value'
+            'properties[0][0][file]',
+            required: true, errors: {}, class: 'file'
           ).returns('<input type="file"></input>')
-          model.type = 'asset'
           el = renderView().$el
           expect(el).to.have 'input[type=file]'
+          expect(el).to.have 'input[type=hidden]'
           expect(el).to.have 'select'
 
+        it 'renders a preview for type asset when persisted asset', ->
+          model.properties[0].persisted = true
+          el = renderView().$el
+          expect(el).to.not.have 'input[type=file]'
+          expect(el).to.have 'input[type=hidden]'
+          expect(el).to.not.have 'select'
+
         it 'renders multiple file input fields when given', ->
-          fileFieldStub.withArgs(
-            null,
-            'properties[0][0][value]',
-            value: 'car',
-            required: true,
-            errors: {},
-            class: 'value'
-          ).returns('<input type="file"></input>')
-          fileFieldStub.withArgs(
-            null,
-            'properties[0][1][value]',
-            value: 'auto',
-            required: true,
-            errors: {},
-            class: 'value'
-          ).returns('<input type="file"></input>')
           model.type = 'asset'
+          model.properties[0].persisted = false
           model.properties.push {
-            value: 'auto'
-            lang: 'de'
-            errors: {}
+            persisted: false
+            value:
+              versions:
+                thumbnail_uri: '/someotheruri'
           }
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][0][file]',
+            required: true,
+            errors: {},
+            class: 'file'
+          ).returns('<input type="file"></input>')
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][1][file]',
+            required: true,
+            errors: {},
+            class: 'file'
+          ).returns('<input type="file"></input>')
           el = renderView().$el
           inputs = el.find 'input[type=file]'
           langSelects = el.find 'select'
