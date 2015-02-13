@@ -131,7 +131,7 @@ Feature: maintainer edits asset properties
     Then I look at the properties inside the concept header
     But I do not see "IMAGE"
 
-  Scenario: delete optional concept's asset property
+  Scenario: delete optional terms's asset property
     Given the repository defines a blueprint for terms
     And that blueprint defines a property "image" of type "asset"
     And that blueprint defines a property "description" of type "text"
