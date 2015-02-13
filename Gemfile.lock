@@ -57,7 +57,7 @@ GEM
     capybara-webkit (1.0.0)
       capybara (~> 2.0, >= 2.0.2)
       json
-    childprocess (0.5.3)
+    childprocess (0.5.5)
       ffi (~> 1.0, >= 1.0.11)
     chunky_png (1.2.9)
     cliver (0.3.2)
@@ -81,7 +81,7 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
-    ffi (1.9.3)
+    ffi (1.9.6)
     fssm (0.2.10)
     gherkin-ruby (0.2.1)
     haml_coffee_assets (1.15.0)
@@ -187,7 +187,7 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    selenium-webdriver (2.43.0)
+    selenium-webdriver (2.44.0)
       childprocess (~> 0.5)
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
@@ -263,7 +263,7 @@ DEPENDENCIES
   rspec (~> 2.13.0)
   rspec-rails
   sass-rails (~> 3.2.3)
-  selenium-webdriver (~> 2.43.0)
+  selenium-webdriver (~> 2.44.0)
   spinach-rails
   therubyracer
   thin

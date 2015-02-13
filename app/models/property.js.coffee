@@ -11,3 +11,4 @@ class Coreon.Models.Property extends Backbone.Model
     value: null
     lang: null
     persisted: true
+    asset: null

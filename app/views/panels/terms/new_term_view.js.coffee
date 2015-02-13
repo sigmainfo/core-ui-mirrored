@@ -37,3 +37,10 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
       properties: @editProperties.serializeArray()
     }
 
+  serializeAssetsArray: ->
+    {
+      value: @$el.find("input[name=\"#{@name}[value]\"]").val(),
+      lang: @$el.find("select[name=\"#{@name}[lang]\"]").val(),
+      properties: @editProperties.serializeAssetsArray()
+    }
+

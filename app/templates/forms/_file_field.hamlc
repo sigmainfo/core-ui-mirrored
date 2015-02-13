@@ -1,0 +1,1 @@
+%input{type: 'file', name: @name, id: @id, required: @required, value: @value}

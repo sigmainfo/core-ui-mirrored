@@ -176,6 +176,42 @@ div.concept {
           }
         }
       }
+      &.asset {
+        .system-info {
+          width: 200px;
+        }
+        .asset {
+          position: relative;
+          display: inline-block; 
+          float: left;
+          padding-right: 4px;
+        }
+        .value {
+          width: 100%;
+          padding-top: 4px;
+        }
+        .value:hover {
+          position: relative;
+          cursor: pointer;
+          img {
+             @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px, false);
+          }
+          &:before {
+            @include before-icon;
+            position: absolute;
+            top: 8px;
+            right:4px;
+            width: 20px;
+            height: 20px;
+            background-color: $bg-color;
+            background-position: -48px -1150px;
+          };
+         
+        }
+        figcaption {
+          font-size: 0.8em;
+        }
+      }
     }
   }
   

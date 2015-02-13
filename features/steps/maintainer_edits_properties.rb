@@ -127,7 +127,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'that concept has a property "status" with value "forbidden"' do
-    concepts["#{concept['id']}/properties"].post property: { key: 'status', value: 'forbidden' }
+    concepts["#{concept['id']}/properties"].post property: { key: 'status', value: 'forbidden', type: 'picklist' }
   end
 
   step 'that term has a property "source" of "bloodbathproject.com"' do

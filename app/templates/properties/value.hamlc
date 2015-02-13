@@ -15,6 +15,10 @@
         %ul
           - for value in @value
             %li.picklist-item= value
+      - when 'asset'
+        %figure
+          %img{ :src => Coreon.Helpers.graphUri(@value.versions.thumbnail_uri), data: { uri: Coreon.Helpers.graphUri(@value.uri), preview_uri: Coreon.Helpers.graphUri(@value.versions.preview_uri), info: @value.caption, index: @index } }
+          %figcaption= @value.caption
       - else
         = @value
 - else

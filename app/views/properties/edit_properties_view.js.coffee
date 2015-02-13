@@ -73,6 +73,13 @@ class Coreon.Views.Properties.EditPropertiesView extends Backbone.View
         properties.push property
     properties
 
+  serializeAssetsArray: ->
+    assetProperties = []
+    _.each @fieldsetViews, (fieldsetView) ->
+      _.each fieldsetView.serializeAssetsArray(), (assetProperty) ->
+        assetProperties.push assetProperty
+    assetProperties
+
   countDeleted: ->
     count = 0
     _.each @fieldsetViews, (fieldsetView) ->

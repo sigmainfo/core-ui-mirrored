@@ -13,17 +13,32 @@
         %tr{ class: group.type }
           %th= group.key
           %td
-            - if properties.length is 1 and not properties[0].lang
-              != @render "properties/value", value: properties[0].value, type: group.type, options: options
-              != @render "concepts/info", data: properties[0].info
-            - else if properties.length is 0
-              != @render "properties/value", value: null, type: group.type
+            - if group.type not in ['asset']
+              - if properties.length is 1 and not properties[0].lang
+                != @render "properties/value", value: properties[0].value, type: group.type, options: options
+                != @render "concepts/info", data: properties[0].info
+              - else if properties.length is 0
+                != @render "properties/value", value: null, type: group.type
+              - else
+                %ul.index
+                  - for property, index in properties
+                    %li{class: "selected" if index is 0, "data-index": index }= property.lang or index + 1
+                %ul.values
+                  - for property, index in properties
+                    %li{class: "selected" if index is 0}
+                      != @render "properties/value", value: property.value, type: group.type
+                      != @render "concepts/info", data: property.info
             - else
+              - groupedByLang = Coreon.Lib.sortByKey(properties, 'lang', I18n.t('languages.none'))
               %ul.index
-                - for property, index in properties
-                  %li{class: "selected" if index is 0, "data-index": index }= property.lang or index + 1
+                - for lang, groupedProperties of groupedByLang
+                  - index = _(groupedByLang).keys().indexOf lang
+                  %li{class: "selected" if index is 0, "data-index": index }= lang
               %ul.values
-                - for property, index in properties
+                - for lang, groupedProperties of groupedByLang
+                  - index = _(groupedByLang).keys().indexOf lang
                   %li{class: "selected" if index is 0}
-                    != @render "properties/value", value: property.value, type: group.type
-                    != @render "concepts/info", data: property.info
+                    - for property, assetIndex in groupedProperties
+                      .asset
+                        != @render "properties/value", value: property.value, type: group.type, index: assetIndex
+                        != @render "concepts/info", data: property.info

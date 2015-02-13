@@ -1,0 +1,14 @@
+.pane
+  .form
+    .close
+      %a{href: 'javascript:void(0)'} Close
+    .preview
+      .navigation
+        %a.previous{href: 'javascript:void(0)'} Previous
+        %a.next{href: 'javascript:void(0)'} Next
+      %img{src: @asset.get 'preview_uri'}
+    .info
+      .actions
+        .download
+          %a{href: @asset.get 'uri', download: @asset.get 'caption'} Download
+      %p= @asset.get 'info'

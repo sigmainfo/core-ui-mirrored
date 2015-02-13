@@ -21,7 +21,7 @@ class Coreon.Formatters.PropertiesFormatter
     for blue_prop in @blueprint_properties
       found_properties = _.filter @properties, (p) -> p.get('key') == blue_prop.key
       properties = []
-      multivalue = if blue_prop.type in ['text', 'multiline_text'] then true else false
+      multivalue = if blue_prop.type in ['text', 'multiline_text', 'asset'] then true else false
 
       for property in found_properties
         index = _.indexOf not_in_blueprints, property
@@ -32,6 +32,7 @@ class Coreon.Formatters.PropertiesFormatter
           errors: @errors[index] || {}
           info: property.info()
           persisted: if property.has('persisted') then property.get('persisted') else true
+          id: if property.has('id') then property.get('id') else null
         if multivalue
           new_property.lang = property.get 'lang'
         properties.push new_property
@@ -88,6 +89,7 @@ class Coreon.Formatters.PropertiesFormatter
           errors: {}
           info: property.info()
           persisted: true
+          id: if property.has('id') then property.get('id') else null
         undefinedByKey[key] ?= []
         undefinedByKey[key].push new_property
 

@@ -19,6 +19,10 @@ Capybara.register_driver :firefox do |app|
   Capybara::Selenium::Driver.new(app, :browser => :firefox)
 end
 
+Spinach.hooks.on_tag('assets') do
+  ::Capybara.raise_server_errors = false
+end
+
 Spinach.hooks.on_tag('firefox') do
   ::Capybara.current_driver = ::Capybara.javascript_driver = :selenium
 end
