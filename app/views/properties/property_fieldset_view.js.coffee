@@ -194,6 +194,9 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       reader.onload = (event) =>
         theUrl = event.target.result
         $(evt.target).closest('.group').find('.asset-preview').html "<img src='" + theUrl + "' />"
+        $(evt.target).closest('.group').find('input[type=text]').val file.name
+        $(evt.target).closest('.group').find('.input.value').css 'display', 'block'
+        $(evt.target).closest('.group').find('input[type=file]').css 'display', 'none'
         @trigger 'inputChanged'
       reader.readAsDataURL file
     else
