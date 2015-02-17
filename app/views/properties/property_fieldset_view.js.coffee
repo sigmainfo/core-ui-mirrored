@@ -112,6 +112,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
         }
 
   isValid: ->
+    for result in @serializeAssetsArray()
+      return false unless result.asset
     for result in @serializeArray()
       valid = switch
         when result._destroy == "1" then true
