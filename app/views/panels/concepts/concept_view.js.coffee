@@ -50,18 +50,19 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click  .concept-to-clipboard.add"           : "addConceptToClipboard"
-    "click  .concept-to-clipboard.remove"        : "removeConceptFromClipboard"
-    "click  .edit-concept"                       : "toggleEditMode"
-    "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
-    "click  .system-info-toggle"                 : "toggleInfo"
-    "click  .properties .index li"               : "selectProperty"
-    "click  .properties .asset figure"              : "launchAssetViewer"
-    "submit form.concept.update"                 : "updateConceptProperties"
-    "click  form a.cancel:not(.disabled)"        : "cancelForm"
-    "click  .delete-concept"                     : "delete"
-    "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
-    "click  form a.reset:not(.disabled)"         : "reset"
+    "click  .concept-to-clipboard.add"             : "addConceptToClipboard"
+    "click  .concept-to-clipboard.remove"          : "removeConceptFromClipboard"
+    "click  .edit-concept"                         : "toggleEditMode"
+    "click  *:not(.terms) .edit-properties"        : "toggleEditConceptProperties"
+    "click  .system-info-toggle"                   : "toggleInfo"
+    "click  .properties .index li"                 : "selectProperty"
+    "click  .properties .asset figure"             : "launchAssetViewer"
+    "submit form.concept.update"                   : "updateConceptProperties"
+    "click  form a.cancel:not(.disabled)"          : "cancelForm"
+    "click  .delete-concept"                       : "delete"
+    "click  form.concept.update .submit .cancel"   : "toggleEditConceptProperties"
+    "click  form a.reset:not(.disabled)"           : "reset"
+    "click  > section:not(form *) > *:first-child" : "toggleSection"
 
   initialize: ->
     @stopListening()
@@ -150,6 +151,11 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     evt.preventDefault() if evt?
     @editProperties = !@editProperties
     @render()
+
+  toggleSection: (evt) ->
+    target = @$el.find(evt.target)
+    target.closest("section").toggleClass "collapsed"
+    target.siblings().not(".edit").slideToggle()
 
 
   saveConceptProperties: (attrs, assets) ->
