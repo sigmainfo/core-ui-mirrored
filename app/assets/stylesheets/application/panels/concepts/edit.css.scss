@@ -120,7 +120,7 @@
    
    input[type="text"] {
      height:24px;
-     width: 40%;
+     width: 60%;
    }
 
    .submit {
@@ -164,24 +164,24 @@
 
    &.term, .term {   
      position: relative;
-     padding-top: 16px;
+     padding-top: 8px;
      border: none;
      margin-bottom: 20px;
 
      label {
-       display: inline-block;
+       display: block;
        text-transform: uppercase;
-       text-align: right;
        font-size: 0.8em;
-       float: left;
-       width: 100px;
-       padding-right: 20px;
-       padding-top: 5px;
      }
 
      div.input {
        padding-bottom: 18px;
-       padding-left: 60px;
+       padding-left: 40px;
+       &.required {
+         label:after {
+           content: "*";
+         }
+       }
      }
 
      .submit {
