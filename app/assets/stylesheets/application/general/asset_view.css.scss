@@ -4,7 +4,7 @@
   top: 0;
   bottom: 0;
   width: 100%;
-  background-color: rgba($text-color, 0.7);
+  background-color: rgba($text-color, 0.6);
   .pane {
     position: absolute;
     top: 8%;
@@ -85,7 +85,7 @@
         padding: 8px;
         overflow: hidden;
         position: absolute;
-        height: 1000px;
+        height: 600px;
         &:before {
           @include before-icon;
           @include box-shadow(rgba(black, 0.4) 0px 0px 2px);
@@ -94,7 +94,7 @@
           width: 40px;
           height: 40px;
           position: absolute;
-          top: 20%;
+          top: 200px;
           background-color: $bg-color;
           background-position: -44px -1296px;
         }

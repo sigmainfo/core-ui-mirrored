@@ -62,16 +62,29 @@
      .group {
        padding: 10px 4px 10px 60px;
        overflow: hidden;
-
-       div.asset-preview{
-         img {
-           width: 150px;
-           height: auto;
-         }
-       }
-
+       
        div.input {
          padding: 0;
+       }
+     }
+     
+     &.asset {
+       div.asset-preview {
+         img {
+           height: 100px;
+           width: auto;
+         }
+       }
+       figcaption {
+         font-size: 0.9em;
+       }
+       label {
+         text-transform: uppercase;
+         font-size: 0.8em;
+         display:block;
+       }
+       input {
+         margin:0px 0 10px 0;
        }
      }
 
