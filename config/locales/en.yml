@@ -269,6 +269,7 @@ en:
     email: "Email"
 
   languages:
+    no_lang: "No language"
     none: "None"
     aa:  "Afar"
     ab:  "Abkhazian"
