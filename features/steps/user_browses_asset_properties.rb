@@ -24,6 +24,10 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: { key: 'image', type: 'asset', required: false, default: { mime_type: 'unknown' } }
   end
 
+  step 'that blueprint defines a property "manual" of type "asset"' do
+    @blueprint['properties'].post property: { key: 'manual', type: 'asset', required: false, default: { mime_type: 'unknown' } }
+  end
+
   step 'a concept "Crane" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Crane' }
   end
@@ -80,6 +84,15 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     @term_response = JSON.parse concepts["#{concept['id']}/terms"].post term: @term_attrs
   end
 
+  step 'that concept has a property "manual" with caption "Tech manual"' do
+    @concept_response = JSON.parse concepts["#{concept['id']}/properties"].post property: {
+      key: 'manual',
+      value: 'Tech manual',
+      type: :asset,
+      asset:  File.new(File.join(Rails.root, 'features', 'assets', 'manual.pdf'), 'rb')
+    }
+  end
+
   step 'I visit the concept details page for that concept' do
     visit "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
@@ -96,6 +109,13 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     within :table_row, 'image' do
       images = page.all 'img', visible: false
       expect(images.size).to eq 2
+    end
+  end
+
+  step 'I see a property "MANUAL" that has one thumbnail' do
+    within :table_row, 'manual' do
+      images = page.all 'img', visible: false
+      expect(images.size).to eq 1
     end
   end
 
@@ -137,6 +157,13 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a generic thumbnail captioned "Tech manual"' do
+    within :table_row, 'manual' do
+      expect(page).to have_xpath '//figure/img[@src="/assets/generic_asset.gif"]'
+      expect(page).to have_xpath '//figure/figcaption', text: 'Tech manual'
+    end
+  end
+
   step 'there is a thumbnail captioned "front view"' do
     within @image_property do
       expect(page).to have_xpath '//figure/figcaption', text: 'Crane: front view'
@@ -154,6 +181,12 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I click on the generic thumbnail' do
+    within :table_row, 'manual' do
+      page.find('img').click
+    end
+  end
+
   step 'I see a large view of the asset' do
     within '#asset-view' do
       expect(page).to have_css "img[src=\"#{host_uri}#{@term_response['properties'][0]['value']['versions']['preview_uri']}\"]"
@@ -166,5 +199,8 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a download link for the file' do
+    expect(page).to have_css "a[href=\"#{host_uri}#{@concept_response['value']['uri']}\"]", visible: false
+  end
 
 end

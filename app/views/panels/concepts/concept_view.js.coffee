@@ -10,6 +10,7 @@
 #= require helpers/check_box_field
 #= require helpers/multi_select_field
 #= require helpers/graph_uri
+#= require modules/assets
 #= require templates/panels/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
@@ -56,7 +57,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  *:not(.terms) .edit-properties"        : "toggleEditConceptProperties"
     "click  .system-info-toggle"                   : "toggleInfo"
     "click  .properties .index li"                 : "selectProperty"
-    "click  .properties .asset figure"             : "launchAssetViewer"
+    "click  .properties .asset img"                : "launchAssetViewer"
+    "click  .properties .asset figcaption"         : "launchAssetViewer"
     "submit form.concept.update"                   : "updateConceptProperties"
     "click  form a.cancel:not(.disabled)"          : "cancelForm"
     "click  .delete-concept"                       : "delete"
@@ -232,16 +234,27 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.add").show()
 
   launchAssetViewer: (event) ->
-    imageClicked = event.target
-    imageIndex = $(imageClicked).attr('data-index') || 0
-    images = $(imageClicked).closest("tr.asset td > ul.values > li.selected").find('img').map ->
-      { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
-    collection = new Backbone.Collection images.get()
-    assetView = new Coreon.Views.Widgets.AssetView
-      collection: collection
-      current: imageIndex
-    assetView.on 'remove', @closeAssetViewer
-    @prompt assetView
+    if $(event.target).is 'img'
+      imageClicked = $(event.target)
+    else if $(event.target).is 'figcaption'
+      imageClicked = $(event.target).closest('figure').find('img')
+    if imageClicked.attr('data-type') is 'image'
+      imageIndex = imageClicked.attr('data-index') || 0
+      images = imageClicked.closest("tr.asset td > ul.values > li.selected").find('img').map ->
+        { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
+      collection = new Backbone.Collection images.get()
+      assetView = new Coreon.Views.Widgets.AssetView
+        collection: collection
+        current: imageIndex
+      assetView.on 'remove', @closeAssetViewer
+      @prompt assetView
+    else
+      a = $("<a>")
+        .attr("href", imageClicked.attr('data-uri'))
+        .attr("download", imageClicked.attr('data-caption'))
+        .appendTo("body");
+      a[0].click()
+      #a.remove()
 
   closeAssetViewer: ->
     @unprompt

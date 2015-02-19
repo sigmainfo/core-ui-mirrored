@@ -16,9 +16,11 @@
           - for value in @value
             %li.picklist-item= value
       - when 'asset'
+        - asset = Coreon.Modules.Assets.assetRepresenter(@value)
         %figure
-          %img{ :src => Coreon.Helpers.graphUri(@value.versions.thumbnail_uri), data: { uri: Coreon.Helpers.graphUri(@value.uri), preview_uri: Coreon.Helpers.graphUri(@value.versions.preview_uri), info: @value.caption, index: @index } }
-          %figcaption= @value.caption
+          %img{ :src => asset.thumbnail_uri, data: { uri: asset.uri, preview_uri: asset.preview_uri, caption: asset.caption, info: asset.caption, index: @index, type: asset.type } }
+          %figcaption= asset.caption
+
       - else
         = @value
 - else
