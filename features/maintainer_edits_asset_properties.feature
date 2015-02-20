@@ -25,6 +25,26 @@ Feature: maintainer edits asset properties
     And I see a property "IMAGE"
     And there is a thumbnail captioned "Crane photo"
 
+  @wip
+  Scenario: add required non-image asset property to new concept
+    Given the repository defines a blueprint for concepts
+    And that blueprint defines a required property "manual" of type "asset"
+    When I visit the repository root page
+    And I click on "New concept"
+    Then I see a section "PROPERTIES" within the form "Create concept"
+    And I see a fieldset "MANUAL" within this section
+    And this fieldset contains a file input
+    And this fieldset contains a select "LANGUAGE"
+    When I select file "manual.pdf" for the file input
+    Then I see a generic thumbnail
+    And this fieldset contains a text input titled "CAPTION"
+    When I fill in "CAPTION" with "Tech manual"
+    And I select "English" for "LANGUAGE"
+    And I click "Create concept"
+    Then I look at the properties inside the concept header
+    And I see a property "MANUAL"
+    And there is a thumbnail captioned "Tech manual"
+
   Scenario: add required asset property to new concept's term
     Given the repository defines a blueprint for concepts
     Given the repository defines a blueprint for terms

@@ -189,18 +189,19 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   previewAsset: (evt) ->
     file = evt.target.files[0]
-    if file.type.match /^image/i
-      reader = new FileReader();
-      reader.onload = (event) =>
-        theUrl = event.target.result
+    reader = new FileReader();
+    reader.onload = (event) =>
+      theUrl = event.target.result
+      if file.type.match /^image/i
         $(evt.target).closest('.group').find('.asset-preview').html "<img src='" + theUrl + "' />"
-        $(evt.target).closest('.group').find('input[type=text]').val file.name
-        $(evt.target).closest('.group').find('.input.value').css 'display', 'block'
-        $(evt.target).closest('.group').find('input[type=file]').css 'display', 'none'
-        @trigger 'inputChanged'
-      reader.readAsDataURL file
-    else
+      else
+        $(evt.target).closest('.group').find('.asset-preview').html "<img src='/assets/generic_asset.gif' />"
+
+      $(evt.target).closest('.group').find('input[type=text]').val file.name
+      $(evt.target).closest('.group').find('.input.value').css 'display', 'block'
+      $(evt.target).closest('.group').find('input[type=file]').css 'display', 'none'
       @trigger 'inputChanged'
+    reader.readAsDataURL file
 
 
 
