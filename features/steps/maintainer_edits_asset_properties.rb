@@ -27,8 +27,12 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
   end
 
   step 'that blueprint defines a property "description" of type "text"' do
-      @blueprint['properties'].post property: { key: 'description', type: 'text', required: true, default: '' }
-    end
+    @blueprint['properties'].post property: { key: 'description', type: 'text', required: true, default: '' }
+  end
+
+  step 'that blueprint defines a required property "manual" of type "asset"' do
+    @blueprint['properties'].post property: { key: 'manual', type: 'asset', required: true, default: { mime_type: 'unknown' } }
+  end
 
   step 'a concept "Crane" exists' do
     concepts["#{concept['id']}/properties"].post property: { key: 'label', value: 'Crane', type: :text }
@@ -177,6 +181,14 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a fieldset "MANUAL" within this section' do
+    within @form do
+      @fieldset = page.find :fieldset_with_title, "manual"
+      @manual_fieldset = @fieldset
+      expect(@fieldset).to be_visible
+    end
+  end
+
   step 'this fieldset contains an image captioned "Crane photo"' do
     within @fieldset do
       expect(page).to have_xpath '//figure/img'
@@ -207,6 +219,12 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I fill in "CAPTION" with "Tech manual"' do
+    within @fieldset do
+      fill_in 'Caption', with: 'Tech manual'
+    end
+  end
+
   step 'I select file "LTM1750.jpg" for the file input' do
     within @image_fieldset do
       attach_file page.find('input[type=file]')[:id], File.join(Rails.root, 'features', 'assets', 'LTM1750.jpg')
@@ -219,6 +237,12 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I select file "manual.pdf" for the file input' do
+    within @fieldset do
+      attach_file page.find('input[type=file]')[:id], File.join(Rails.root, 'features', 'assets', 'manual.pdf')
+    end
+  end
+
   step 'I click on "Add another image" inside "IMAGE"' do
     within @fieldset do
       click_link "Add another image"
@@ -228,6 +252,13 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
   step 'I see a preview thumbnail of the image' do
     within @image_fieldset do
       thumbnail = page.find '.asset-preview img'
+      expect(thumbnail).to be_visible
+    end
+  end
+
+  step 'I see a generic thumbnail' do
+    within @manual_fieldset do
+      thumbnail = page.find :xpath, '//div[@class="asset-preview"]/figure/img[@src="/assets/generic_asset.gif"]'
       expect(thumbnail).to be_visible
     end
   end
@@ -298,6 +329,10 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     @image_property = page.find :table_row, 'image'
   end
 
+  step 'I see a property "MANUAL"' do
+    @image_property = page.find :table_row, 'manual'
+  end
+
   step 'there is a thumbnail captioned "Crane photo"' do
     within :table_row, 'image' do
       expect(page).to have_xpath '//figure/figcaption', text: 'Crane photo'
@@ -307,6 +342,12 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
   step 'there is a thumbnail captioned "Front view"' do
     within :table_row, 'image' do
       expect(page).to have_xpath '//figure/figcaption', text: 'Front view'
+    end
+  end
+
+  step 'there is a thumbnail captioned "Tech manual"' do
+    within :table_row, 'manual' do
+      expect(page).to have_xpath '//figure/figcaption', text: 'Tech manual'
     end
   end
 

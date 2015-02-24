@@ -5,9 +5,10 @@
     %a.remove-value{href: "javascript:void(0)", title: title}= title
   .asset-preview
     - if @property.persisted
+      - asset = Coreon.Modules.Assets.assetRepresenter(@property.value)
       %figure
-        %img{ :src => Coreon.Helpers.graphUri(@property.value.versions.thumbnail_uri) }
-        %figcaption= @property.value.caption
+        %img{ :src => asset.thumbnail_uri }
+        %figcaption= asset.caption
   - unless @property.persisted
     != @textField I18n.t('property.caption'), "#{@name}[#{@index}][value]", value: @property?.value?.caption, required: true, errors: @property?.errors?.value || {}, class: 'value'
     != @fileField null, "#{@name}[#{@index}][file]", required: true, errors: @property?.errors?.file || {}, class: 'file'

@@ -1,4 +1,5 @@
 #= require environment
+#= require helpers/graph_uri
 
 Coreon.Modules.Assets =
 
@@ -24,3 +25,23 @@ Coreon.Modules.Assets =
     $.when.apply(@, deferredArr).then ->
       d.resolve()
     d
+
+  assetRepresenter: (asset) ->
+    if asset.mime_type.match /^image/i
+      {
+        type: 'image'
+        thumbnail_uri: Coreon.Helpers.graphUri(asset.versions.thumbnail_uri)
+        preview_uri: Coreon.Helpers.graphUri(asset.versions.preview_uri)
+        uri: Coreon.Helpers.graphUri(asset.uri)
+        caption: asset.caption
+      }
+    else
+      {
+        type: 'other'
+        thumbnail_uri: '/assets/generic_asset.gif'
+        preview_uri: '/assets/generic_asset.gif'
+        uri: Coreon.Helpers.graphUri(asset.uri)
+        caption: asset.caption
+      }
+
+

@@ -29,11 +29,12 @@
                       != @render "properties/value", value: property.value, type: group.type
                       != @render "concepts/info", data: property.info
             - else
-              - groupedByLang = Coreon.Lib.sortByKey(properties, 'lang', I18n.t('languages.none'))
-              %ul.index
-                - for lang, groupedProperties of groupedByLang
-                  - index = _(groupedByLang).keys().indexOf lang
-                  %li{class: "selected" if index is 0, "data-index": index }= lang
+              - groupedByLang = Coreon.Lib.sortByKey(properties, 'lang', I18n.t('languages.no_lang'))
+              - if _.keys(groupedByLang).length > 1
+                %ul.index
+                  - for lang, groupedProperties of groupedByLang
+                    - index = _(groupedByLang).keys().indexOf lang
+                    %li{class: "selected" if index is 0, "data-index": index }= lang
               %ul.values
                 - for lang, groupedProperties of groupedByLang
                   - index = _(groupedByLang).keys().indexOf lang

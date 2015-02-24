@@ -44,3 +44,15 @@ Feature: user browses asset properties
     When I click on the thumbnail
     Then I see a large view of the asset
     And I see a download link
+
+  Scenario: view and download non-image asset property
+    Given the repository defines a blueprint for concept
+    And that blueprint defines a property "manual" of type "asset"
+    And a concept "Crane" exists
+    And that concept has a property "manual" with caption "Tech manual"
+    When I visit the concept details page for that concept
+    And I look at the properties inside the concept header
+    Then I see a property "MANUAL" that has one thumbnail
+    And I see a generic thumbnail captioned "Tech manual"
+    When I click on the generic thumbnail
+    Then I see a download link for the file

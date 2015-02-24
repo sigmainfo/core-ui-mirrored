@@ -186,6 +186,10 @@ div.concept {
           float: left;
           padding-right: 4px;
         }
+        img {
+          width: 200px;
+          height: 200px;
+        }
         .value {
           width: 100%;
           padding-top: 4px;
@@ -210,6 +214,7 @@ div.concept {
         }
         figcaption {
           font-size: 0.8em;
+          max-width: 200px;
         }
       }
     }

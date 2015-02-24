@@ -112,6 +112,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
         }
 
   isValid: ->
+    for result in @serializeAssetsArray()
+      return false unless result.asset
     for result in @serializeArray()
       valid = switch
         when result._destroy == "1" then true
@@ -187,15 +189,19 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
   previewAsset: (evt) ->
     file = evt.target.files[0]
-    if file.type.match /^image/i
-      reader = new FileReader();
-      reader.onload = (event) =>
-        theUrl = event.target.result
-        $(evt.target).closest('.group').find('.asset-preview').html "<img src='" + theUrl + "' />"
-        @trigger 'inputChanged'
-      reader.readAsDataURL file
-    else
+    reader = new FileReader();
+    reader.onload = (event) =>
+      theUrl = event.target.result
+      if file.type.match /^image/i
+        $(evt.target).closest('.group').find('.asset-preview').html "<figure class=\"image\"><img src='" + theUrl + "' /></figure>"
+      else
+        $(evt.target).closest('.group').find('.asset-preview').html "<figure class=\"other\"><img src='/assets/generic_asset.gif' /></figure>"
+
+      $(evt.target).closest('.group').find('input[type=text]').val file.name
+      $(evt.target).closest('.group').find('.input.value').css 'display', 'block'
+      $(evt.target).closest('.group').find('input[type=file]').css 'display', 'none'
       @trigger 'inputChanged'
+    reader.readAsDataURL file
 
 
 

@@ -13,17 +13,36 @@ Feature: maintainer edits asset properties
     And I click on "New concept"
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I see a fieldset "IMAGE" within this section
-    And this fieldset contains a text input titled "CAPTION"
     And this fieldset contains a file input
     And this fieldset contains a select "LANGUAGE"
-    When I fill in "CAPTION" with "Crane photo"
     When I select file "LTM1750.jpg" for the file input
     Then I see a preview thumbnail of the image
+    And this fieldset contains a text input titled "CAPTION"
+    When I fill in "CAPTION" with "Crane photo"
     And I select "English" for "LANGUAGE"
     And I click "Create concept"
     Then I look at the properties inside the concept header
     And I see a property "IMAGE"
     And there is a thumbnail captioned "Crane photo"
+
+  Scenario: add required non-image asset property to new concept
+    Given the repository defines a blueprint for concepts
+    And that blueprint defines a required property "manual" of type "asset"
+    When I visit the repository root page
+    And I click on "New concept"
+    Then I see a section "PROPERTIES" within the form "Create concept"
+    And I see a fieldset "MANUAL" within this section
+    And this fieldset contains a file input
+    And this fieldset contains a select "LANGUAGE"
+    When I select file "manual.pdf" for the file input
+    Then I see a generic thumbnail
+    And this fieldset contains a text input titled "CAPTION"
+    When I fill in "CAPTION" with "Tech manual"
+    And I select "English" for "LANGUAGE"
+    And I click "Create concept"
+    Then I look at the properties inside the concept header
+    And I see a property "MANUAL"
+    And there is a thumbnail captioned "Tech manual"
 
   Scenario: add required asset property to new concept's term
     Given the repository defines a blueprint for concepts
@@ -36,11 +55,11 @@ Feature: maintainer edits asset properties
     When I fill in "Crane" for "VALUE"
     And I fill in "en" for "LANGUAGE"
     And I see a fieldset "IMAGE" within this section
-    And this fieldset contains a text input titled "CAPTION"
     And this fieldset contains a file input
     And this fieldset contains a select "LANGUAGE"
-    When I fill in "CAPTION" with "Crane photo"
     When I select file "LTM1750.jpg" for the file input
+    And this fieldset contains a text input titled "CAPTION"
+    When I fill in "CAPTION" with "Crane photo"
     Then I see a preview thumbnail of the image
     And I select "English" for "LANGUAGE"
     And I click "Create concept"
@@ -59,11 +78,11 @@ Feature: maintainer edits asset properties
     When I fill in "Crane" for "VALUE"
     And I fill in "en" for "LANGUAGE"
     And I see a fieldset "IMAGE" within this section
-    And this fieldset contains a text input titled "CAPTION"
     And this fieldset contains a file input
     And this fieldset contains a select "LANGUAGE"
-    When I fill in "CAPTION" with "Crane photo"
     When I select file "LTM1750.jpg" for the file input
+    And this fieldset contains a text input titled "CAPTION"
+    When I fill in "CAPTION" with "Crane photo"
     Then I see a preview thumbnail of the image
     And I select "English" for "LANGUAGE"
     And I click "Create term"
@@ -84,8 +103,8 @@ Feature: maintainer edits asset properties
     And I see a fieldset "IMAGE" within this form
     And this fieldset contains an image captioned "Crane photo"
     Then I click on "Add another image" inside "IMAGE"
-    And I fill in "CAPTION" with "Front view"
     And I select file "front_view.jpg" for the file input
+    And I fill in "CAPTION" with "Front view"
     And I click "Save concept"
     Then I look at the properties inside the concept header
     And I see a property "IMAGE"
@@ -102,10 +121,10 @@ Feature: maintainer edits asset properties
     And I click "Edit term" within the term "Crane"
     Then I see a section "PROPERTIES" within the form "Save term"
     And I see a fieldset "IMAGE" within this form
-    And this fieldset contains an image captioned "Crane photo"
     Then I click on "Add another image" inside "IMAGE"
-    And I fill in "CAPTION" with "Front view"
     And I select file "front_view.jpg" for the file input
+    And this fieldset contains an image captioned "Crane photo"
+    And I fill in "CAPTION" with "Front view"
     And I click "Save term"
     Then I see term "Crane" within language section "EN"
     When I toggle "Properties" within this term
