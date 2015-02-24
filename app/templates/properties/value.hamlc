@@ -17,7 +17,7 @@
             %li.picklist-item= value
       - when 'asset'
         - asset = Coreon.Modules.Assets.assetRepresenter(@value)
-        %figure
+        %figure{ class: asset.type }
           %img{ :src => asset.thumbnail_uri, data: { uri: asset.uri, preview_uri: asset.preview_uri, caption: asset.caption, info: asset.caption, index: @index, type: asset.type } }
           %figcaption= asset.caption
 

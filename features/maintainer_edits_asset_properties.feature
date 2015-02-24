@@ -25,7 +25,6 @@ Feature: maintainer edits asset properties
     And I see a property "IMAGE"
     And there is a thumbnail captioned "Crane photo"
 
-  @wip
   Scenario: add required non-image asset property to new concept
     Given the repository defines a blueprint for concepts
     And that blueprint defines a required property "manual" of type "asset"

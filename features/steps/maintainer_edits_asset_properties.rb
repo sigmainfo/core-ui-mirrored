@@ -258,7 +258,7 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
 
   step 'I see a generic thumbnail' do
     within @manual_fieldset do
-      thumbnail = page.find :xpath, '//div[@class="asset-preview"]/img[@src="/assets/generic_asset.gif"]'
+      thumbnail = page.find :xpath, '//div[@class="asset-preview"]/figure/img[@src="/assets/generic_asset.gif"]'
       expect(thumbnail).to be_visible
     end
   end
