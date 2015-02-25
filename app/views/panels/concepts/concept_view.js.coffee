@@ -237,8 +237,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     imageClicked = figure.children('img')
     if imageClicked.attr('data-type') is 'image'
       imageIndex = imageClicked.attr('data-index') || 0
-      images = imageClicked.closest("tr.asset td > ul.values > li.selected").find('img').map ->
-        { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
+      images = imageClicked.closest("tr.asset td > ul.values > li.selected").find('img[data-type="image"]').map ->
+        { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info'), index: $(@).data('index') }
       collection = new Backbone.Collection images.get()
       assetView = new Coreon.Views.Widgets.AssetView
         collection: collection
