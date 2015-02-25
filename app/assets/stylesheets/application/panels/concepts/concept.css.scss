@@ -189,14 +189,19 @@ div.concept {
 
         .value {
           width: 100%;
-          padding-top: 4px;
+          padding: 4px 0;
         }
+        
+        figcaption {
+          font-size: 0.8em;
+          line-height: 1.4em;
+          max-width: 200px;
+        }
+        
         figure:hover {
           position: relative;
           cursor: pointer;
-          img {
-             @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px, false);
-          }
+
           &:before {
             @include before-icon;
             position: absolute;
@@ -215,29 +220,38 @@ div.concept {
             width: 200px;
             height: 200px;
           }  
+          &:hover {
+            img {
+               @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px, false);
+            }
+          }
         }
         
         .other {
+          min-width: 160px;
           img {
-            width: 100px;
-            height: 100px;
+            width: 40px;
+            height: 50px;
+            float: left;
+            margin-right: 5px;
           }
           figcaption {
-            text-align: center;
-            max-width: 100px;
+            max-width: 155px;
+            height: 44px;
+            padding-top: 6px;
           }
           &:hover {
             &:before {
-              background-position: -48px -148px;
+              background-position: -45px -147px;
+              background-color: none;
                @include rotate(90deg);
-            };
-          };
-        }
-        
-        figcaption {
-          font-size: 0.8em;
-          line-height: 1.4em;
-          max-width: 200px;
+               left: 8px;
+               width: 23px;
+               height: 23px;
+               top: 18px;
+
+            }
+          }
         }
       }
     }
