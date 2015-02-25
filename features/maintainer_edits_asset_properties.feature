@@ -14,10 +14,10 @@ Feature: maintainer edits asset properties
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I see a fieldset "IMAGE" within this section
     And this fieldset contains a file input
-    And this fieldset contains a select "LANGUAGE"
     When I select file "LTM1750.jpg" for the file input
     Then I see a preview thumbnail of the image
     And this fieldset contains a text input titled "CAPTION"
+    And this fieldset contains a select "LANGUAGE"
     When I fill in "CAPTION" with "Crane photo"
     And I select "English" for "LANGUAGE"
     And I click "Create concept"
@@ -33,10 +33,10 @@ Feature: maintainer edits asset properties
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I see a fieldset "MANUAL" within this section
     And this fieldset contains a file input
-    And this fieldset contains a select "LANGUAGE"
     When I select file "manual.pdf" for the file input
     Then I see a generic thumbnail
     And this fieldset contains a text input titled "CAPTION"
+    And this fieldset contains a select "LANGUAGE"
     When I fill in "CAPTION" with "Tech manual"
     And I select "English" for "LANGUAGE"
     And I click "Create concept"
@@ -56,9 +56,9 @@ Feature: maintainer edits asset properties
     And I fill in "en" for "LANGUAGE"
     And I see a fieldset "IMAGE" within this section
     And this fieldset contains a file input
-    And this fieldset contains a select "LANGUAGE"
     When I select file "LTM1750.jpg" for the file input
     And this fieldset contains a text input titled "CAPTION"
+    And this fieldset contains a select "LANGUAGE"
     When I fill in "CAPTION" with "Crane photo"
     Then I see a preview thumbnail of the image
     And I select "English" for "LANGUAGE"
@@ -79,9 +79,9 @@ Feature: maintainer edits asset properties
     And I fill in "en" for "LANGUAGE"
     And I see a fieldset "IMAGE" within this section
     And this fieldset contains a file input
-    And this fieldset contains a select "LANGUAGE"
     When I select file "LTM1750.jpg" for the file input
     And this fieldset contains a text input titled "CAPTION"
+    And this fieldset contains a select "LANGUAGE"
     When I fill in "CAPTION" with "Crane photo"
     Then I see a preview thumbnail of the image
     And I select "English" for "LANGUAGE"

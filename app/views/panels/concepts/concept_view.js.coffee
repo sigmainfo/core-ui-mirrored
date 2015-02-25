@@ -57,8 +57,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     "click  *:not(.terms) .edit-properties"        : "toggleEditConceptProperties"
     "click  .system-info-toggle"                   : "toggleInfo"
     "click  .properties .index li"                 : "selectProperty"
-    "click  .properties .asset img"                : "launchAssetViewer"
-    "click  .properties .asset figcaption"         : "launchAssetViewer"
+    "click  .properties .asset figure"             : "launchAssetViewer"
     "submit form.concept.update"                   : "updateConceptProperties"
     "click  form a.cancel:not(.disabled)"          : "cancelForm"
     "click  .delete-concept"                       : "delete"
@@ -234,14 +233,12 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       @$(".concept-to-clipboard.add").show()
 
   launchAssetViewer: (event) ->
-    if $(event.target).is 'img'
-      imageClicked = $(event.target)
-    else if $(event.target).is 'figcaption'
-      imageClicked = $(event.target).closest('figure').find('img')
+    figure = $(event.target).closest('figure')
+    imageClicked = figure.children('img')
     if imageClicked.attr('data-type') is 'image'
       imageIndex = imageClicked.attr('data-index') || 0
-      images = imageClicked.closest("tr.asset td > ul.values > li.selected").find('img').map ->
-        { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info') }
+      images = imageClicked.closest("tr.asset td > ul.values > li.selected").find('img[data-type="image"]').map ->
+        { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info'), index: $(@).data('index') }
       collection = new Backbone.Collection images.get()
       assetView = new Coreon.Views.Widgets.AssetView
         collection: collection
@@ -258,5 +255,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   closeAssetViewer: ->
     @unprompt
+
+  test: ->
+    console.log "here"
 
 

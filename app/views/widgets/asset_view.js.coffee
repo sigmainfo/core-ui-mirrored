@@ -16,7 +16,8 @@ class Coreon.Views.Widgets.AssetView extends Backbone.View
 
   initialize: (options) ->
     @collection = options.collection
-    @current = options.current
+    current_asset = @collection.find (asset) -> asset.get('index') == parseInt(options.current)
+    @current = options.collection.indexOf current_asset
 
   render: ->
     @$el.html @template asset: @collection.at(@current)

@@ -195,10 +195,11 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
       if file.type.match /^image/i
         $(evt.target).closest('.group').find('.asset-preview').html "<figure class=\"image\"><img src='" + theUrl + "' /></figure>"
       else
-        $(evt.target).closest('.group').find('.asset-preview').html "<figure class=\"other\"><img src='/assets/generic_asset.gif' /></figure>"
+        $(evt.target).closest('.group').find('.asset-preview').html "<figure class=\"other\"><img src='/assets/generic_asset.png' /></figure>"
 
       $(evt.target).closest('.group').find('input[type=text]').val file.name
       $(evt.target).closest('.group').find('.input.value').css 'display', 'block'
+      $(evt.target).closest('.group').find('.input.lang').css 'display', 'block'
       $(evt.target).closest('.group').find('input[type=file]').css 'display', 'none'
       @trigger 'inputChanged'
     reader.readAsDataURL file
