@@ -199,6 +199,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
       $(evt.target).closest('.group').find('input[type=text]').val file.name
       $(evt.target).closest('.group').find('.input.value').css 'display', 'block'
+      $(evt.target).closest('.group').find('.input.lang').css 'display', 'block'
       $(evt.target).closest('.group').find('input[type=file]').css 'display', 'none'
       @trigger 'inputChanged'
     reader.readAsDataURL file

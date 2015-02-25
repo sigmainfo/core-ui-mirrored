@@ -62,12 +62,12 @@
      .group {
        padding: 10px 4px 10px 60px;
        overflow: hidden;
-       
+
        div.input {
          padding: 0;
        }
      }
-     
+
      &.asset {
        div.asset-preview {
          img {
@@ -114,7 +114,7 @@
        float: none;
      }
 
-     &.asset .group .input.value{
+     &.asset .group .input.value, &.asset .group .input.lang{
        display: none;
      }
    }
