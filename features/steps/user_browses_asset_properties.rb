@@ -159,7 +159,7 @@ class Spinach::Features::UserBrowsesAssetProperties < Spinach::FeatureSteps
 
   step 'I see a generic thumbnail captioned "Tech manual"' do
     within :table_row, 'manual' do
-      expect(page).to have_xpath '//figure/img[@src="/assets/generic_asset.gif"]'
+      expect(page).to have_xpath '//figure/img[@src="/assets/generic_asset.png"]'
       expect(page).to have_xpath '//figure/figcaption', text: 'Tech manual'
     end
   end

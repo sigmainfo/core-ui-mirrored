@@ -38,8 +38,8 @@ Coreon.Modules.Assets =
     else
       {
         type: 'other'
-        thumbnail_uri: '/assets/generic_asset.gif'
-        preview_uri: '/assets/generic_asset.gif'
+        thumbnail_uri: '/assets/generic_asset.png'
+        preview_uri: '/assets/generic_asset.png'
         uri: Coreon.Helpers.graphUri(asset.uri)
         caption: asset.caption
       }
