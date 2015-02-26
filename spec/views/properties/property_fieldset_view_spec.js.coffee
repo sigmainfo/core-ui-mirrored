@@ -21,7 +21,8 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languageOptions = -> langs
     Coreon.Helpers.graphUri = (uri) -> "http://#{uri}"
-
+    Coreon.Modules.Assets =
+      assetRepresenter: -> {}
 
   afterEach ->
     I18n.t.restore()
@@ -471,12 +472,16 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
     describe '#serializeArray()', ->
 
-      it 'returns and empty array if property not multivalued and marked for deletion', ->
+      it 'adds _destroy attribute if property not multivalued and marked for deletion', ->
         model.multivalue = false
         view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
-        sinon.stub(view, 'checkDelete').returns 1
+        view.$el = $ '''
+          <fieldset>
+            <div class="group delete"></div>
+          </fieldset>
+        '''
         properties = view.serializeArray()
-        expect(properties).to.be.empty
+        expect(properties[0]).to.have.property '_destroy'
 
       it 'returns the values of each set of a text property', ->
         model.type = 'text'
@@ -665,14 +670,6 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     it 'returns false when even one of the keys of all inputs is invalid', ->
       props = [
         {value: 'Canteen'},
-        {key: 'public', value: false},
-      ]
-      result = view.isValid()
-      expect(result).to.be.false
-
-    it 'returns false when even one of the values of all inputs is empty', ->
-      props = [
-        {key: 'label', value: ''},
         {key: 'public', value: false},
       ]
       result = view.isValid()

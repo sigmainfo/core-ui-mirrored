@@ -19,12 +19,13 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
       {value: 'fr', label: 'French'}
     ]
     propertiesView = new Backbone.View
-    propertiesView.serializeArray = ->
     propertiesView =
       isValid: -> true
       render: ->
         $el: $ ''
       serializeArray: -> serializedProperties
+      serializeAssetsArray: ->
+      countDeleted: -> 0
     propertiesStub = sinon.stub Coreon.Views.Properties, 'EditPropertiesView', -> propertiesView
     model = new Backbone.Model
     model.info = ->
@@ -177,24 +178,29 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
             <input type="submit">
           </form>
         '''
+        view.render()
         view.updateTerm(event)
         expect(saveStub).to.have.been.calledOnce
 
     context 'with deleted properties', ->
 
       it 'waits for user confirmation', ->
+        propertiesView.countDeleted = -> 1
         event.target = '''
           <form>
             <input type="submit">
             <div class="property delete"
           </form>
         '''
+        view.render()
         view.updateTerm(event)
         expect(confirmStub).to.have.been.calledOnce
 
   describe '#createTerm()', ->
 
     request = null
+    saveAssetsRequest = null
+    fetchRequest = null
     formData = null
     saveStub = null
     noteStub = null
@@ -203,6 +209,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
 
     beforeEach ->
       request = $.Deferred()
+      saveAssetsRequest = $.Deferred()
       formData = [
         value: 'car',
         lang: 'en',
@@ -211,12 +218,19 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
         ]
       ]
       sinon.stub view, 'serializeArray', -> formData
+      view.saveAssets = ->
+        saveAssetsRequest = $.Deferred()
       sinon.stub Coreon.Models, 'Term', ->
         term = new Backbone.Model
         saveStub = sinon.stub(term, 'save').withArgs(
           null,
           wait: yes,
         ).returns request
+        sinon.stub term, 'fetch', (options) ->
+          fetchRequest = $.Deferred()
+          fetchRequest.done(options.success) if options.success
+          fetchRequest.success = fetchRequest.done
+          fetchRequest
         term
       renderStub = sinon.stub view, 'render'
       sinon.stub I18n, 't'
@@ -224,6 +238,8 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
         info: ->
       noteStub = sinon.stub Coreon.Models.Notification, 'info'
       triggerStub = sinon.stub(view, 'trigger').withArgs 'created'
+      view.editProperties =
+        serializeAssetsArray: ->
       view.createTerm()
 
     afterEach ->
@@ -236,6 +252,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
 
     it 'attempts to save the model', ->
       request.resolve()
+      saveAssetsRequest.resolve()
       expect(saveStub).to.have.been.calledOnce
 
     it 're-renders on failure', ->
@@ -244,12 +261,16 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
 
     it 'add new term to concept and triggers created event', ->
       request.resolve()
+      saveAssetsRequest.resolve()
+      fetchRequest.resolve()
       expect(view.concept.terms().add).to.have.been.calledOnce
       expect(triggerStub).to.have.been.calledOnce
 
   describe '#saveTerm()', ->
 
     request = null
+    fetchRequest = null
+    saveAssetsRequest = null
     saveStub = null
     noteStub = null
     setStub = null
@@ -271,8 +292,18 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
       sinon.stub I18n, 't'
       Coreon.Models.Notification =
         info: ->
+      sinon.stub view.model, 'fetch', (options) ->
+        fetchRequest = $.Deferred()
+        fetchRequest.done(options.success) if options.success
+        fetchRequest.success = fetchRequest.done
+        fetchRequest
       noteStub = sinon.stub Coreon.Models.Notification, 'info'
+      view.saveAssets = ->
+        saveAssetsRequest = $.Deferred()
+      view.editProperties =
+        serializeAssetsArray: ->
       view.saveTerm(attrs)
+
 
     afterEach ->
       view.model.save.restore()
@@ -292,5 +323,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
 
     it 'notifies the user on success', ->
       request.resolve()
+      saveAssetsRequest.resolve()
+      fetchRequest.resolve()
       expect(noteStub).to.have.been.calledOnce
 
