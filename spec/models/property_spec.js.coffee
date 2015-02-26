@@ -17,6 +17,7 @@ describe "Coreon.Models.Property", ->
         value: null
         lang: null
         persisted: true
+        asset: null
 
   describe "info()", ->
 
