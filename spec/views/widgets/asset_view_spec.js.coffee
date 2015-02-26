@@ -10,6 +10,7 @@ describe 'Coreon.Views.Widgets.AssetView', ->
   describe 'view', ->
 
     beforeEach ->
+      collection = new Backbone.Collection
       view = new Coreon.Views.Widgets.AssetView
         collection: collection
 
@@ -37,9 +38,9 @@ describe 'Coreon.Views.Widgets.AssetView', ->
 
     beforeEach ->
       collection = new Backbone.Collection [
-        {uri: '/first', preview_uri: '/first_preview', info: 'caption 1'},
-        {uri: '/second', preview_uri: '/second_preview', info: 'caption 2'},
-        {uri: '/third', preview_uri: '/third_preview', info: 'caption 3'}
+        {uri: '/first', preview_uri: '/first_preview', info: 'caption 1', index: 0},
+        {uri: '/second', preview_uri: '/second_preview', info: 'caption 2', index: 1},
+        {uri: '/third', preview_uri: '/third_preview', info: 'caption 3', index: 2}
       ]
       view = new Coreon.Views.Widgets.AssetView
         collection: collection
@@ -81,9 +82,9 @@ describe 'Coreon.Views.Widgets.AssetView', ->
 
     beforeEach ->
       collection = new Backbone.Collection [
-        {uri: '/first', preview_uri: '/first_preview'},
-        {uri: '/second', preview_uri: '/second_preview'},
-        {uri: '/third', preview_uri: '/third_preview'}
+        {uri: '/first', preview_uri: '/first_preview', index: 0},
+        {uri: '/second', preview_uri: '/second_preview', index: 1},
+        {uri: '/third', preview_uri: '/third_preview', index: 2}
       ]
       view = new Coreon.Views.Widgets.AssetView
         collection: collection
@@ -109,9 +110,9 @@ describe 'Coreon.Views.Widgets.AssetView', ->
 
     beforeEach ->
       collection = new Backbone.Collection [
-        {uri: '/first', preview_uri: '/first_preview'},
-        {uri: '/second', preview_uri: '/second_preview'},
-        {uri: '/third', preview_uri: '/third_preview'}
+        {uri: '/first', preview_uri: '/first_preview', index: 0},
+        {uri: '/second', preview_uri: '/second_preview', index: 1},
+        {uri: '/third', preview_uri: '/third_preview', index: 2}
       ]
       view = new Coreon.Views.Widgets.AssetView
         collection: collection
