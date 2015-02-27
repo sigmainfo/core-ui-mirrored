@@ -17,6 +17,8 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
   beforeEach ->
     sinon.stub jQuery.fn, 'coreonSelect'
+    sinon.stub jQuery.fn, 'isOnScreen'
+    sinon.stub jQuery.fn, 'scrollToReveal'
     sinon.stub I18n, 't'
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languageOptions = -> langs
@@ -27,6 +29,8 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
   afterEach ->
     I18n.t.restore()
     jQuery.fn.coreonSelect.restore()
+    jQuery.fn.isOnScreen.restore()
+    jQuery.fn.scrollToReveal.restore()
 
   it 'is a Backbone view', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model
