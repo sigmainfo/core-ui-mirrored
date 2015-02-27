@@ -43,7 +43,7 @@ group :test do
   gem 'poltergeist', '~> 1.5.1'
   gem 'rspec', '~> 2.13.0'
   gem 'spinach-rails'
-  gem 'selenium-webdriver', '~> 2.44.0'
+  gem 'selenium-webdriver', '~> 2.45.0.dev3'
   gem 'launchy'
 end
 

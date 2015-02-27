@@ -59,9 +59,9 @@
       .next, .previous {
         padding: 8px;
         overflow: hidden;
+        text-indent: -20000px;
         position: absolute;
         height: 100%;
-        line-height: 20px;
         &:before {
           @include before-icon;
           @include box-shadow(rgba(black, 0.4) 0px 0px 2px);
@@ -82,7 +82,6 @@
       }
 
       .next {
-        text-align: right;
         left: 50%;
         right: 0;
         &:before {

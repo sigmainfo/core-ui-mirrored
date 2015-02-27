@@ -17,6 +17,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
       @editProperties.updateValid = sinon.spy()
       @editProperties.render = sinon.spy()
       @editProperties.serializeArray = sinon.spy()
+      @editProperties.serializeAssetsArray = sinon.spy()
       @editProperties
     @model = new Backbone.Model
         properties: []
@@ -26,6 +27,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
     @model.propertiesWithDefaults = -> @propertiesWithDefaults
     @view = new Coreon.Views.Panels.Concepts.NewConceptView
       model: @model
+    @view.saveAssets = ->
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
@@ -188,6 +190,10 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
       sinon.stub Backbone.history, 'navigate'
       sinon.stub @view.model, 'save', =>
         @request = $.Deferred()
+      sinon.stub @view, 'saveAssets', =>
+        @saveAssetsRequest = $.Deferred()
+      sinon.stub @view, 'saveTermAssets', =>
+        @saveTermAssetsRequest = $.Deferred()
       @view.render()
 
     afterEach ->
@@ -210,6 +216,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
         index: 0
         serializeArray: ->
           {value: 'foo'}
+        serializeAssetsArray: ->
       @view.termViews = [termView]
       @view.editProperties.serializeArray = -> [
         key: 'label'
@@ -229,6 +236,7 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
         index: 0
         serializeArray: ->
           {properties: [key: 'source']}
+        serializeAssetsArray: ->
       @view.termViews = [termView]
       @view.create @event
       @view.model.save.should.have.been.calledWith properties: [], terms: [ properties: [ key: 'source' ] ]
@@ -250,12 +258,16 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
         @view.model.id = 'babe42'
         @view.create @event
         @request.resolve()
+        @saveAssetsRequest.resolve()
+        @saveTermAssetsRequest.resolve()
         Coreon.Models.Concept.collection().get('babe42').should.equal @view.model
 
       it 'redirects to show concept page', ->
         @view.model.id = 'babe42'
         @view.create @event
         @request.resolve()
+        @saveAssetsRequest.resolve()
+        @saveTermAssetsRequest.resolve()
         Backbone.history.navigate.should.have.been.calledWith(
           'my-repo/concepts/my-concept-123'
         , trigger: true)
@@ -265,6 +277,8 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
         Coreon.Models.Notification.info = sinon.spy()
         @view.create @event
         @request.resolve()
+        @saveAssetsRequest.resolve()
+        @saveTermAssetsRequest.resolve()
         Coreon.Models.Notification.info.should.have.been.calledOnce
         Coreon.Models.Notification.info.should.have.been.calledWith 'yay!'
 
