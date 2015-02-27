@@ -12,6 +12,7 @@
 #= require helpers/boolean_field
 #= require helpers/file_field
 #= require lib/select
+#= require lib/dom
 
 class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
 
@@ -153,6 +154,8 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     newValueMarkup.find('select').coreonSelect()
     @$el.append newValueMarkup
     @values_index++
+    unless newValueMarkup.isOnScreen()
+      newValueMarkup.scrollToReveal()
     @updateRemoveLinks()
     @inputChanged()
 
