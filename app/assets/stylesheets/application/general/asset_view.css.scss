@@ -44,16 +44,6 @@
       top: 0;
       bottom: 0;
       width: 100%;
-      &:before {
-        content: "";
-        display: block;
-        width: 100%;
-        border-bottom: 1px solid rgba(black, 0.1);
-        @include box-shadow(rgba(white, 0.4) 0px 1px 1px);
-        background-color: rgba(white, 0.2);
-        height: 35px;
-        margin-bottom: -35px;
-      };
       display: none;
 
       .next, .previous {
