@@ -217,9 +217,10 @@ div.concept {
         }
         
         .image {
+          max-width: 150px;
           img {
-            width: 150px;
-            height: 150px;
+            max-width: 150px;
+            max-height: 150px;
           }  
           &:hover {
             img {
