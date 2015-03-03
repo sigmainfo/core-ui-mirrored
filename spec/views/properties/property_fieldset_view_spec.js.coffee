@@ -17,14 +17,20 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
   beforeEach ->
     sinon.stub jQuery.fn, 'coreonSelect'
+    sinon.stub jQuery.fn, 'isOnScreen'
+    sinon.stub jQuery.fn, 'scrollToReveal'
     sinon.stub I18n, 't'
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.languageOptions = -> langs
-
+    Coreon.Helpers.graphUri = (uri) -> "http://#{uri}"
+    Coreon.Modules.Assets =
+      assetRepresenter: -> {}
 
   afterEach ->
     I18n.t.restore()
     jQuery.fn.coreonSelect.restore()
+    jQuery.fn.isOnScreen.restore()
+    jQuery.fn.scrollToReveal.restore()
 
   it 'is a Backbone view', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model
@@ -69,6 +75,7 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
             value: 'car'
             lang: 'en'
             errors: {}
+            persisted: false
           ]
 
     it 'renders container', ->
@@ -249,6 +256,80 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
           expect(inputs).to.have.lengthOf 2
           expect(langSelects).to.have.lengthOf 2
 
+      context 'asset fields', ->
+
+        fileFieldStub = null
+
+        beforeEach ->
+          model.type = 'asset'
+          model.properties = [
+            persisted: false
+            value:
+              versions:
+                thumbnail_uri: '/someuri'
+          ]
+
+          fileFieldStub = sinon.stub(Coreon.Helpers, 'fileField')
+          sinon.stub(Coreon.Helpers, 'selectField').returns '''
+              <select>
+                <option value="en">English</option>
+                <option value="de">German</option>
+                <option value="fr">French</option>
+              </select>
+            '''
+
+
+        afterEach ->
+          Coreon.Helpers.fileField.restore()
+          Coreon.Helpers.selectField.restore()
+
+        it 'renders a file input field for type asset when new asset', ->
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][0][file]',
+            required: true, errors: {}, class: 'file'
+          ).returns('<input type="file"></input>')
+          el = renderView().$el
+          expect(el).to.have 'input[type=file]'
+          expect(el).to.have 'input[type=hidden]'
+          expect(el).to.have 'select'
+
+        it 'renders a preview for type asset when persisted asset', ->
+          model.properties[0].persisted = true
+          el = renderView().$el
+          expect(el).to.not.have 'input[type=file]'
+          expect(el).to.have 'input[type=hidden]'
+          expect(el).to.not.have 'select'
+
+        it 'renders multiple file input fields when given', ->
+          model.type = 'asset'
+          model.properties[0].persisted = false
+          model.properties.push {
+            persisted: false
+            value:
+              versions:
+                thumbnail_uri: '/someotheruri'
+          }
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][0][file]',
+            required: true,
+            errors: {},
+            class: 'file'
+          ).returns('<input type="file"></input>')
+          fileFieldStub.withArgs(
+            null,
+            'properties[0][1][file]',
+            required: true,
+            errors: {},
+            class: 'file'
+          ).returns('<input type="file"></input>')
+          el = renderView().$el
+          inputs = el.find 'input[type=file]'
+          langSelects = el.find 'select'
+          expect(inputs).to.have.lengthOf 2
+          expect(langSelects).to.have.lengthOf 2
+
       context 'boolean fields', ->
 
         booleanFieldStub = null
@@ -395,12 +476,16 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
 
     describe '#serializeArray()', ->
 
-      it 'returns and empty array if property not multivalued and marked for deletion', ->
+      it 'adds _destroy attribute if property not multivalued and marked for deletion', ->
         model.multivalue = false
         view = new Coreon.Views.Properties.PropertyFieldsetView model: model, index: index, scopePrefix: scopePrefix
-        sinon.stub(view, 'checkDelete').returns 1
+        view.$el = $ '''
+          <fieldset>
+            <div class="group delete"></div>
+          </fieldset>
+        '''
         properties = view.serializeArray()
-        expect(properties).to.be.empty
+        expect(properties[0]).to.have.property '_destroy'
 
       it 'returns the values of each set of a text property', ->
         model.type = 'text'
@@ -589,14 +674,6 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
     it 'returns false when even one of the keys of all inputs is invalid', ->
       props = [
         {value: 'Canteen'},
-        {key: 'public', value: false},
-      ]
-      result = view.isValid()
-      expect(result).to.be.false
-
-    it 'returns false when even one of the values of all inputs is empty', ->
-      props = [
-        {key: 'label', value: ''},
         {key: 'public', value: false},
       ]
       result = view.isValid()

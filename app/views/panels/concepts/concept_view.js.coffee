@@ -1,4 +1,5 @@
 #= require environment
+#= require lib/sort
 #= require helpers/render
 #= require helpers/can
 #= require helpers/form_for
@@ -8,16 +9,18 @@
 #= require helpers/text_area_field
 #= require helpers/check_box_field
 #= require helpers/multi_select_field
+#= require helpers/graph_uri
+#= require modules/assets
 #= require templates/panels/concepts/concept
 #= require templates/concepts/_caption
 #= require templates/concepts/_info
 #= require templates/concepts/_properties
 #= require templates/concepts/_edit_properties
-#= require templates/concepts/_term
 #= require templates/properties/new_property
 #= require templates/properties/value
 #= require views/concepts/shared/broader_and_narrower_view
 #= require views/panels/terms/term_list_view
+#= require views/widgets/asset_view
 #= require collections/clips
 #= require collections/hits
 #= require models/broader_and_narrower_form
@@ -26,6 +29,7 @@
 #= require modules/helpers
 #= require modules/nested_fields_for
 #= require modules/confirmation
+#= require modules/prompt
 #= require jquery.serializeJSON
 #= require modules/draggable
 #= require models/repository_settings
@@ -35,6 +39,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
   Coreon.Modules.include @, Coreon.Modules.Confirmation
   Coreon.Modules.include @, Coreon.Modules.Draggable
+  Coreon.Modules.include @, Coreon.Modules.Prompt
+  Coreon.Modules.include @, Coreon.Modules.Assets
 
   className: 'concept'
   editProperties: no
@@ -45,17 +51,19 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
   @nestedFieldsFor "properties", name: "property"
 
   events:
-    "click  .concept-to-clipboard.add"           : "addConceptToClipboard"
-    "click  .concept-to-clipboard.remove"        : "removeConceptFromClipboard"
-    "click  .edit-concept"                       : "toggleEditMode"
-    "click  *:not(.terms) .edit-properties"      : "toggleEditConceptProperties"
-    "click  .system-info-toggle"                 : "toggleInfo"
-    "click  .properties .index li"               : "selectProperty"
-    "submit form.concept.update"                 : "updateConceptProperties"
-    "click  form a.cancel:not(.disabled)"        : "cancelForm"
-    "click  .delete-concept"                     : "delete"
-    "click  form.concept.update .submit .cancel" : "toggleEditConceptProperties"
-    "click  form a.reset:not(.disabled)"         : "reset"
+    "click  .concept-to-clipboard.add"             : "addConceptToClipboard"
+    "click  .concept-to-clipboard.remove"          : "removeConceptFromClipboard"
+    "click  .edit-concept"                         : "toggleEditMode"
+    "click  *:not(.terms) .edit-properties"        : "toggleEditConceptProperties"
+    "click  .system-info-toggle"                   : "toggleInfo"
+    "click  .properties .index li"                 : "selectProperty"
+    "click  .properties .asset figure"             : "launchAssetViewer"
+    "submit form.concept.update"                   : "updateConceptProperties"
+    "click  form a.cancel:not(.disabled)"          : "cancelForm"
+    "click  .delete-concept"                       : "delete"
+    "click  form.concept.update .submit .cancel"   : "toggleEditConceptProperties"
+    "click  form a.reset:not(.disabled)"           : "reset"
+    "click  > section:not(form *) > *:first-child" : "toggleSection"
 
   initialize: ->
     @stopListening()
@@ -91,18 +99,21 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       isEdit: true
       collapsed: true
 
-    termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
-    termListView.setEditMode(editing)
-    termListView.setEditTerm(@termToEdit)
-    termListView.setConcept(@model)
-    @listenTo termListView, 'termsChanged', (termToEdit) =>
+    @termListView.close() if @termListView
+    @termListView = new Coreon.Views.Panels.Terms.TermListView model: @model
+    @termListView.setEditMode(editing)
+    @termListView.setEditTerm(@termToEdit)
+    @termListView.setConcept(@model)
+    @listenTo @termListView, 'termsChanged', (termToEdit) =>
       @termToEdit = termToEdit
-      @render()
-    @listenTo termListView, 'termToEditChanged', (termToEdit) =>
+      @model.fetch =>
+        success: =>
+          @render()
+    @listenTo @termListView, 'termToEditChanged', (termToEdit) =>
       @termToEdit = termToEdit
 
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
-    @$el.append termListView.render().$el
+    @$el.append @termListView.render().$el
     @$el.find("form.concept .submit").before @conceptProperties.render().$el
 
     @refreshPropertiesValidation @conceptProperties
@@ -142,10 +153,23 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @editProperties = !@editProperties
     @render()
 
+  toggleSection: (evt) ->
+    target = @$el.find(evt.target)
+    target.closest("section").toggleClass "collapsed"
+    target.siblings().not(".edit").slideToggle()
 
-  saveConceptProperties: (attrs) ->
+
+  saveConceptProperties: (attrs, assets) ->
+    view = @
     request = @model.save attrs, wait: yes, attrs: concept: attrs
-    request.done => @toggleEditConceptProperties()
+
+    request.done =>
+      $.when(
+        view.saveAssets('concept', view.model, assets)
+      ).done =>
+        view.model.fetch
+          success: =>
+            @toggleEditConceptProperties()
     request.fail => @model.set attrs
 
   updateConceptProperties: (evt) ->
@@ -156,15 +180,16 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     attrs.properties = @conceptProperties.serializeArray()
     trigger = form.find('[type=submit]')
     elements_to_delete = @conceptProperties.countDeleted()
+    assets = @conceptProperties.serializeAssetsArray()
 
     if elements_to_delete > 0
       @confirm
         trigger: trigger
         message: I18n.t "concept.confirm_update", count: elements_to_delete
-        action: => @saveConceptProperties attrs
+        action: => @saveConceptProperties attrs, assets
         restore: => @$el.trigger('restore', [form])
     else
-      @saveConceptProperties attrs
+      @saveConceptProperties attrs, assets
 
   cancelForm: (evt) ->
     evt.preventDefault()
@@ -206,4 +231,32 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     else
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
+
+  launchAssetViewer: (event) ->
+    figure = $(event.target).closest('figure')
+    imageClicked = figure.children('img')
+    if imageClicked.attr('data-type') is 'image'
+      imageIndex = imageClicked.attr('data-index') || 0
+      images = imageClicked.closest("tr.asset td > ul.values > li.selected").find('img[data-type="image"]').map ->
+        { uri: $(@).data('uri'), preview_uri: $(@).data('previewUri'), info: $(@).data('info'), index: $(@).data('index') }
+      collection = new Backbone.Collection images.get()
+      assetView = new Coreon.Views.Widgets.AssetView
+        collection: collection
+        current: imageIndex
+      assetView.on 'remove', @closeAssetViewer
+      @prompt assetView
+    else
+      a = $("<a>")
+        .attr("href", imageClicked.attr('data-uri'))
+        .attr("download", imageClicked.attr('data-caption'))
+        .appendTo("body");
+      a[0].click()
+      #a.remove()
+
+  closeAssetViewer: ->
+    @unprompt
+
+  test: ->
+    console.log "here"
+
 

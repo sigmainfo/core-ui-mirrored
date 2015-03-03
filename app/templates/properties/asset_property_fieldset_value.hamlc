@@ -1,0 +1,15 @@
+.group{data: {index: @index}}
+  %input{type: 'hidden', name: "#{@name}[id]", value: @property?.id}
+  - title = I18n.t('property.value.remove', {property_name: @propertyKey})
+  - unless @nonDefined
+    %a.remove-value{href: "javascript:void(0)", title: title}= title
+  .asset-preview
+    - if @property.persisted
+      - asset = Coreon.Modules.Assets.assetRepresenter(@property.value)
+      %figure
+        %img{ :src => asset.thumbnail_uri }
+        %figcaption= asset.caption
+  - unless @property.persisted
+    != @textField I18n.t('property.caption'), "#{@name}[#{@index}][value]", value: @property?.value?.caption, required: true, errors: @property?.errors?.value || {}, class: 'value'
+    != @fileField null, "#{@name}[#{@index}][file]", required: true, errors: @property?.errors?.file || {}, class: 'file'
+    != @selectField null, "#{@name}[#{@index}][lang]", value: @property?.lang, options: @selectableLanguages, allowEmpty: true, class: 'lang'

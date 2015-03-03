@@ -6,14 +6,14 @@
   color: white;
   display: inline-block;
   @include edit-button;
-  
+
   &.big {
     padding-left: 2px;
     text-transform: uppercase;
     font-size: 0.8em;
     line-height: 1.5em;
     height: 12px;
-    
+
     &:before {
       @include before-icon;
       float: left;
@@ -32,7 +32,7 @@
     position: absolute;
     left: 0;
     top: -30px;
-    
+
     &:before {
       background-position: -152px -703px;
       margin-right: 3px;
@@ -46,7 +46,7 @@
    .properties fieldset {
      position: relative;
      padding-top: 6px;
-     border: 0;    
+     border: 0;
      border-top: 1px solid white;
      &.required {
        h4:after {
@@ -68,6 +68,26 @@
        }
      }
 
+     &.asset {
+       div.asset-preview {
+         img {
+           height: 80px;
+           width: auto;
+         }
+       }
+       figcaption {
+         font-size: 0.8em;
+       }
+       label {
+         text-transform: uppercase;
+         font-size: 0.8em;
+         display:block;
+       }
+       input {
+         margin:0px 0 10px 0;
+       }
+     }
+
      input[type="text"], textarea {
        float: left;
        margin-right: 16px;
@@ -76,7 +96,7 @@
      input[type="radio"] {
        margin: 0 30px 0 5px;
      }
-     
+
      ul {
        -webkit-column-count: 3;
        -moz-column-count: 3;
@@ -96,6 +116,10 @@
        width: auto;
        padding:0;
        float: none;
+     }
+
+     &.asset .group .input.value, &.asset .group .input.lang{
+       display: none;
      }
    }
 
@@ -117,7 +141,7 @@
      width: 65%;
      height: 50px;
    }
-   
+
    input[type="text"] {
      height:24px;
      width: 60%;
@@ -162,7 +186,7 @@
      @include opacity(0.5);
    }
 
-   &.term, .term {   
+   &.term, .term {
      position: relative;
      padding-top: 8px;
      border: none;
@@ -252,9 +276,9 @@ form.create.term {
     }
   }
 }
- 
+
 .concept  {
-  
+
   .edit a, fieldset a {
    font-size: 0.9em;
    display: inline-block;
@@ -271,11 +295,11 @@ form.create.term {
      background-position: -151px -302px;
      @include edit-button;
    }
-   
+
   }
-  
+
   // all the buttons:
-  
+
   a.remove-term, a.remove-property, a.delete-concept, a.remove-fieldset, a.remove-value {
    &:before {
      background-position: -149px -751px;
@@ -287,13 +311,13 @@ form.create.term {
      background-position: -150px -701px;
    }
   }
-  
+
   a.add-term, a.add-property {
     width: auto;
     overflow: auto;
     text-indent: 10px;
   }
-  
+
   &.new a.remove-term, a.remove-fieldset,  a.remove-property, a.add-value {
     position: absolute;
     top: 8px;
@@ -302,7 +326,7 @@ form.create.term {
   a.remove-property, a.add-value {
     top: 5px;
     }
-  
+
   a.remove-value {
     position: absolute;
     left: 8px;
@@ -326,31 +350,31 @@ form.create.term {
   // div.edit is for the left vertical block with all the edit buttons
   div.edit {
     width: 16px;
-    padding: 5px 8px;  
-    
+    padding: 5px 8px;
+
     a {
       margin-bottom: 1px;
       display: block;
     }
   }
-  
-  
+
+
   .concept-head div.edit, section div.edit {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
   }
-  
+
   .terms >.add {
     clear: both;
     margin-bottom: 20px;
-    
+
     .edit {
       min-height: 16px;
       padding: 8px;
     }
-    
+
     a {
       position: absolute;
     }
@@ -376,21 +400,21 @@ form.create.term {
       background-position: -2px -703px;
     }
   }
-    
+
   .language li.term {
-    min-height: 44px;  
+    min-height: 44px;
     padding-left: 32px;
     h4 {
       padding-top: 14px;
     }
   }
-  
+
   .term.delete {
     .value, .properties {
       @include opacity(0.4);
     }
   }
-  
+
   .property.delete {
      @include opacity(0.6);
     >* {
@@ -444,7 +468,7 @@ form.create.term {
       width: 90px;
       padding-right: 10px;
     }
-    
+
     .properties fieldset {
       input[type="text"] {
         width: 60%;
@@ -452,7 +476,7 @@ form.create.term {
       div.input {
         padding: 0;
       }
-  
+
       label {
         width: auto;
         padding:0;
@@ -485,7 +509,7 @@ form.create.term {
       float: none;
       display: block;
     }
-    
+
     form .properties {
       .group {
          padding-left: 40px;
@@ -512,7 +536,7 @@ form.create.term {
       }
 
     }
-    
+
     .term {
       div.input {
         padding-left: 40px;

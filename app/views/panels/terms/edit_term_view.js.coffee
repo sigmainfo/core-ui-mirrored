@@ -4,11 +4,13 @@
 #= require helpers/input
 #= require views/properties/edit_properties_view
 #= require modules/confirmation
+#= require modules/assets
 #= require models/term
 
 class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
 
   Coreon.Modules.include @, Coreon.Modules.Confirmation
+  Coreon.Modules.include @, Coreon.Modules.Assets
 
   template: Coreon.Templates['terms/new_term']
 
@@ -68,12 +70,12 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     form = $ event.target
     data = @serializeArray()
     trigger = form.find('[type=submit]')
-    elements_to_delete = form.find(".property.delete")
+    elements_to_delete = @editProperties.countDeleted()
 
-    if elements_to_delete.length > 0
+    if elements_to_delete > 0
       @confirm
         trigger: trigger
-        message: I18n.t "term.confirm_update", count: elements_to_delete.length
+        message: I18n.t "term.confirm_update", count: elements_to_delete
         action: =>
           @saveTerm(data)
         restore: => @$el.trigger('restore', [form])
@@ -81,20 +83,33 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
       @saveTerm(data)
 
   createTerm: ->
+    view = @
     data = @serializeArray()
     @model = new Coreon.Models.Term data
     request = @model.save null, wait: yes
     request.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.term.created", value: @model.get("value"))
-      @concept.terms().add @model
-      @trigger 'created'
+      $.when(
+        @saveAssets('term', view.model, view.editProperties.serializeAssetsArray())
+      ).done =>
+        view.model.fetch
+          success: =>
+            Coreon.Models.Notification.info I18n.t("notifications.term.created", value: @model.get("value"))
+            @concept.terms().add @model
+            @trigger 'created'
     request.fail =>
       @render()
 
   saveTerm: (attrs) ->
+    view = @
     request = @model.save attrs, wait: yes, attrs: term: attrs
     request.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: @model.get "value")
+      $.when(
+        @saveAssets('term', view.model, view.editProperties.serializeAssetsArray())
+      ).done =>
+        view.model.fetch
+          success: ->
+            view.model.trigger 'termChanged'
+            Coreon.Models.Notification.info I18n.t("notifications.term.saved", value: view.model.get "value")
     request.fail =>
       @model.set attrs
       @render()

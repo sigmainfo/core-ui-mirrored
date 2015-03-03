@@ -2,6 +2,7 @@
 #= require helpers/render
 #= require helpers/form_for
 #= require helpers/input
+#= require helpers/graph_uri
 #= require templates/concepts/_caption
 #= require templates/concepts/new_concept
 #= require templates/properties/new_property
@@ -19,6 +20,7 @@
 class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
 
   Coreon.Modules.extend @, Coreon.Modules.NestedFieldsFor
+  Coreon.Modules.include @, Coreon.Modules.Assets
 
   className: "concept new"
 
@@ -73,6 +75,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     propertiesView.updateValid()
 
   create: (event) ->
+    view = @
     event.preventDefault()
     attrs = {}
     attrs.properties = @editProperties.serializeArray()
@@ -80,14 +83,30 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
     _.each @termViews, (termView) ->
       attrs.terms.push termView.serializeArray()
 
+    termAssets = _.map @termViews, (termView) ->
+      termView.serializeAssetsArray()
+
     request = @model.save attrs
 
     request.done =>
-      Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: @model.get "label")
-      Coreon.Models.Concept.collection().add @model
-      Backbone.history.navigate @model.path(), trigger: true
+      $.when(
+        view.saveAssets('concept', view.model, view.editProperties.serializeAssetsArray()),
+        view.saveTermAssets(view.model, termAssets)
+      ).done =>
+        Coreon.Models.Notification.info I18n.t("notifications.concept.created", label: view.model.get "label")
+        Coreon.Models.Concept.collection().add view.model
+        Backbone.history.navigate view.model.path(), trigger: true
 
     request.fail => @render()
+
+  saveTermAssets: (concept, termAssets) =>
+    d = new $.Deferred()
+    deferredArr = concept.terms().map (term) =>
+      matched = _.filter termAssets, (t) -> (term.get('value') == t.value) && (term.get('lang') == t.lang)
+      @saveAssets('term', term, matched[0].properties)
+    $.when.apply(@, deferredArr).then ->
+      d.resolve()
+    d
 
   cancel: ->
     path = @app.get('repository').path()
