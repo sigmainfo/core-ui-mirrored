@@ -103,7 +103,7 @@ describe "Coreon.Collections.Terms", ->
 
     it "strips wrapping objects from terms", ->
       @collection.reset [ value: "high hat", lang: "de", properties: [] ]
-      @collection.toJSON().should.eql [ value: "high hat", lang: "de", properties: [] ]
+      @collection.toJSON().should.eql [ value: "high hat", lang: "de", properties: [], concept_id: "" ]
 
   describe '#url()', ->
 

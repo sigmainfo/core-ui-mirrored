@@ -161,7 +161,7 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   saveConceptProperties: (attrs, assets) ->
     view = @
-    request = @model.save attrs, wait: yes, attrs: concept: attrs
+    request = @model.save attrs, silent: yes, wait: yes, attrs: concept: attrs
 
     request.done =>
       $.when(
@@ -255,8 +255,5 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   closeAssetViewer: ->
     @unprompt
-
-  test: ->
-    console.log "here"
 
 

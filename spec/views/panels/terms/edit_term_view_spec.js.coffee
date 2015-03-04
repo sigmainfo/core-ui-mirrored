@@ -283,6 +283,7 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
       ]
       saveStub = sinon.stub(view.model, 'save').withArgs(
         attrs,
+        silent: yes,
         wait: yes,
         attrs:
           term: attrs

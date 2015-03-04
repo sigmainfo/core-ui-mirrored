@@ -38,7 +38,8 @@ class Coreon.Models.Term extends Backbone.Model
 
   toJSON: ->
     json = {}
-    json[attr] = value for attr, value of super when attr isnt "concept_id"
+    #json[attr] = value for attr, value of super when attr isnt "concept_id"
+    json[attr] = value for attr, value of super
     term: json
 
   save: ->

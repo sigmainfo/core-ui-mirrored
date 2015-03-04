@@ -448,7 +448,7 @@ describe 'Coreon.Models.Concept', ->
 
     it 'updates attr from terms', ->
       @model.terms().reset [ value: 'dead', lang: 'en', properties: [] ]
-      expect( @model.get('terms') ).to.eql [ value: 'dead', lang: 'en', properties: [] ]
+      expect( @model.get('terms') ).to.eql [ value: 'dead', lang: 'en', properties: [], concept_id: "" ]
 
   describe '#info()', ->
 

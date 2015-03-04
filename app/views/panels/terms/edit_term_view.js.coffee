@@ -101,7 +101,7 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
 
   saveTerm: (attrs) ->
     view = @
-    request = @model.save attrs, wait: yes, attrs: term: attrs
+    request = @model.save attrs, silent: yes, wait: yes, attrs: term: attrs
     request.done =>
       $.when(
         @saveAssets('term', view.model, view.editProperties.serializeAssetsArray())

@@ -7,6 +7,8 @@ createRelation = (model, attr) ->
   collection = new relation.collection model.get(attr), options
   model.on "change:#{attr}", (model, value, options = {}) ->
     collection.set model.get attr unless options.internal
+  model.on "sync", ->
+    collection.set(model.get(attr), silent: yes) unless options.internal
   collection.on "all", ->
     model.set attr, collection.toJSON(), internal: true
   collection
