@@ -87,6 +87,15 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       el = view.render().$el
       expect(Coreon.Views.Panels.Terms.TermView).to.have.been.calledTwice
 
+    it 'renders an add term link for each language group', ->
+      terms = [
+        createTerm({lang: 'en', value: 'car'}),
+        createTerm({lang: 'de', value: 'auto'})
+      ]
+      el = view.render().$el
+      addTtermLinks = el.find('a.add-term')
+      expect(addTtermLinks).to.have.lengthOf 3
+
     it 'renders terms in edit mode if term is being edited', ->
       terms = [
         createTerm({lang: 'en', id: 1, value: 'car'}),
@@ -214,6 +223,7 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
           /div>
         </div>
       '''
+      sinon.stub view, 'render'
       sinon.stub Coreon.Models, 'Term', ->
         newTerm = new Backbone.Model
         newTerm
@@ -223,7 +233,9 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
           $el: $ '<div class="term"></div>'
         termView
       termsChangedEvent = sinon.stub(view, 'trigger').withArgs 'termToEditChanged'
-      view.addTerm()
+      evt = ->
+        target: view.$el.find('a')
+      view.addTerm(evt)
 
     afterEach ->
       Coreon.Models.Term.restore()

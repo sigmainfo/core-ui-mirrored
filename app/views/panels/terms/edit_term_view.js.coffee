@@ -25,6 +25,7 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     @model = options.model
     @concept = options.concept
     @isEdit = options.isEdit
+    @preselectedLang = options.preselectedLang
     @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
 
   render: ->
@@ -32,10 +33,11 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
       collection: @model.propertiesWithDefaults(includeUndefined: true)
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
       isEdit: @isEdit
+      preselectedLang: @preselectedLang
     @listenTo @editProperties, 'updateValid', =>
       @validateForm()
 
-    @$el.html @template term: @model, selectableLanguages: @selectableLanguages
+    @$el.html @template term: @model, selectableLanguages: @selectableLanguages, preselectedLang: @preselectedLang
     @$el.find('.submit').before @editProperties.render().$el
     @validateForm()
     @$el.find('select').coreonSelect()

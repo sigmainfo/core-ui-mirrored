@@ -1,6 +1,7 @@
 #= require environment
 #= require templates/terms/term_list
 #= require templates/terms/new_term
+#= require templates/terms/_add_term
 #= require views/panels/terms/term_view
 #= require views/panels/terms/edit_term_view
 #= require models/term
@@ -35,14 +36,15 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
       for term, index in terms
         termView = @createTermView(term).render().$el
         @$("section.language.#{lang}>ul").append termView
+      @$("section.language.#{lang}").append Coreon.Templates['terms/add_term'] lang: lang
     @
 
-  createTermView: (term) ->
+  createTermView: (term, language) ->
     @listenTo term, 'termChanged', =>
       @toggleEditTerm()
     termView = null
     if @editMode && @termToEdit is term.id
-      termView = new Coreon.Views.Panels.Terms.EditTermView model: term, isEdit: true, concept: @concept
+      termView = new Coreon.Views.Panels.Terms.EditTermView model: term, isEdit: true, concept: @concept, preselectedLang: language
     else
       termView = new Coreon.Views.Panels.Terms.TermView model: term
     @termViews[term.id] = termView
@@ -97,18 +99,26 @@ class Coreon.Views.Panels.Terms.TermListView extends Backbone.View
 
     sortedTermsByLang
 
-  addTerm: ->
+  addTerm: (evt) ->
+    target = $(evt.target)
+    language = target.data('lang')
+
     @termToEdit = no
     @trigger 'termToEditChanged', @termToEdit
     @render()
-    @$el.children(".add").hide()
+    @$el.find(".add").hide()
     term = new Coreon.Models.Term
     @termToEdit = term.id
-    termView = @createTermView(term)
+    termView = @createTermView(term, language)
     @listenTo termView, 'created', =>
       @trigger 'termsChanged'
     markup = termView.render().$el
-    @$('>.add').after markup
+    languageGroup = @$("section.language.#{language}")
+    if !languageGroup.length
+      @$('>.add').after markup
+    else
+      languageGroup.append markup
+
 
   toggleProperties: () ->
     target = @$(".properties")

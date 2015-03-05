@@ -2,4 +2,4 @@
   -if @term and not @term.isNew()
     %input( type="hidden" name="id" value="#{@term.id}" )
   != @form.input "value", required: true, value: @term.get('value')
-  != @selectField I18n.t('term.lang'), "term[lang]", required: true, class: 'lang',  errors: @term.errors()?.lang, value: @term.get('lang'), options: @selectableLanguages, allowEmpty: true
+  != @selectField I18n.t('term.lang'), "term[lang]", required: true, class: 'lang',  errors: @term.errors()?.lang, value: @term.get('lang') || @preselectedLang, options: @selectableLanguages, allowEmpty: true
