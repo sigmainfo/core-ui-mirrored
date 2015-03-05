@@ -359,16 +359,17 @@ form.create.term {
   }
 
 
-  .concept-head div.edit, section div.edit {
+  .concept-head div.edit, &>section div.edit, section ul div.edit {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
   }
 
-  .terms >.add {
+  .terms >.add, .language-actions .add {
     clear: both;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+    position: relative;
 
     .edit {
       min-height: 16px;

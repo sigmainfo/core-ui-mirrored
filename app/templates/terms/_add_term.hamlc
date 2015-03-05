@@ -1,3 +1,4 @@
 .language-actions
   .add
-    %a.add-term{ href: 'javascript:void(0)', data: { lang: @lang } }= I18n.t('term.new')
+    .edit
+      %a.add-term{ href: 'javascript:void(0)', data: { lang: @lang } }= I18n.t('term.new')

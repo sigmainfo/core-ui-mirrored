@@ -91,7 +91,7 @@
     @include dottedline;
   }
   
-  .terms >.add {
+  .terms >.add, .language-actions .add {
     @include single-box-shadow(rgba($button-color, 0.4), 0px, 1px, 1px, false);
     background-color: rgba($button-color, 0.05);
   }
