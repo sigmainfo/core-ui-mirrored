@@ -100,7 +100,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I see a fieldset "PUBLIC" within this section' do
-     within @section do
+    within @section do
       @fieldset = page.find :fieldset_with_title, "public"
       @public_fieldset = @fieldset
       expect(@fieldset).to be_visible
