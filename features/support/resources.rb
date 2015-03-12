@@ -20,6 +20,32 @@ module Resources
     )
   end
 
+  def relation_types
+    uri = File.join current_repository.graph_uri,
+                    'repository/relation_types'
+    RestClient::Resource.new(
+      uri,
+      headers: {
+        content_type: :json,
+        accept: :json,
+        x_core_session: factory_girl_session
+      }
+    )
+  end
+
+  def edges
+    uri = File.join current_repository.graph_uri,
+                    'edges'
+    RestClient::Resource.new(
+      uri,
+      headers: {
+        content_type: :json,
+        accept: :json,
+        x_core_session: factory_girl_session
+      }
+    )
+  end
+
   def concepts
     uri = File.join current_repository.graph_uri,
                     'concepts'
