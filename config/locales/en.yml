@@ -91,6 +91,7 @@ en:
       hint: 'Show/hide system info'
     tree: "Broader & Narrower"
     broader_and_narrower: "Broader & Narrower"
+    associative_relations: "Associative Relations"
     new_concept: "<New concept>"
     new:
       label: 'New concept'
