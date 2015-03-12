@@ -20,6 +20,18 @@ describe 'Coreon.Models.RepositorySettings', ->
       name: 'English'
     }
   ]
+  sample_relation_types = [
+    {
+      key: 'see also'
+      type: 'associative'
+      icon: 'see_also.png'
+    },
+    {
+      key: 'parent of'
+      type: 'hierarchical'
+      icon: 'parent_of.png'
+    }
+  ]
 
   beforeEach ->
     Coreon.application =
@@ -98,6 +110,14 @@ describe 'Coreon.Models.RepositorySettings', ->
 
           expect(languageOptions_spy).to.have.been.calledOnce
 
+      describe '.relationTypes', ->
+
+        it 'delegates to the singleton\'s instance #relationTypes', ->
+          relations_spy = sinon.spy(Coreon.Models.RepositorySettings.prototype, 'relationTypes')
+          Coreon.Models.RepositorySettings.relationTypes()
+
+          expect(relations_spy).to.have.been.calledOnce
+
   context 'model instance', ->
 
     model = null
@@ -106,6 +126,7 @@ describe 'Coreon.Models.RepositorySettings', ->
       model = new Coreon.Models.RepositorySettings()
       model.set 'blueprints', sample_blueprints
       model.set 'languages', sample_languages
+      model.set 'relation_types', sample_relation_types
 
     describe '#blueprintsFor', ->
 
@@ -147,3 +168,15 @@ describe 'Coreon.Models.RepositorySettings', ->
         expect(langs).to.have.lengthOf 1
         expect(first_lang).to.have.property 'value', 'en'
         expect(first_lang).to.have.property 'label', 'English'
+
+    describe '#relationTypes', ->
+
+      it 'returns an array of relation types', ->
+        relations = model.relationTypes()
+        expect(relations).to.have.lengthOf 2
+        see_also_relation = relations.filter((r) -> r.key is 'see also')[0]
+        parent_of_relation = relations.filter((r) -> r.key is 'parent of')[0]
+        expect(see_also_relation).to.have.property 'type', 'associative'
+        expect(see_also_relation).to.have.property 'icon', 'see_also.png'
+        expect(parent_of_relation).to.have.property 'type', 'hierarchical'
+        expect(parent_of_relation).to.have.property 'icon', 'parent_of.png'
