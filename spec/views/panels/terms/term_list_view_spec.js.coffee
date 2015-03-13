@@ -87,7 +87,7 @@ describe 'Coreon.Views.Panels.Terms.TermListView', ->
       el = view.render().$el
       expect(Coreon.Views.Panels.Terms.TermView).to.have.been.calledTwice
 
-    it 'renders an add term link for each language group', ->
+    it 'renders an add synonym link for each language group', ->
       terms = [
         createTerm({lang: 'en', value: 'car'}),
         createTerm({lang: 'de', value: 'auto'})

@@ -124,6 +124,7 @@ en:
     value: "Value"
     lang: "Language"
     new: "Add term"
+    new_synonym: "Add synonym"
     create: "Create term"
     edit:
       label: 'Edit term'
