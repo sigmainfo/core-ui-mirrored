@@ -1,5 +1,3 @@
-%th= @relation.relationType.key
-%td
-  %ul
-    - for relation in @relation.relations
-      %li.relation
+%th= @title
+%td.icon{ class: "icon-#{@icon}" }
+%td.relations

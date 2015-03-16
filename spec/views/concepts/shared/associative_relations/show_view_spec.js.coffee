@@ -45,15 +45,15 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView", ->
       title = el.find('th')
       expect(title).to.contain 'see also'
 
-    it "renders an empty div when no relations exist", ->
-      createAndRender()
-      relations = el.find('td > ul')
-      expect(relations).to.not.have '.relation'
+    # it "renders an empty div when no relations exist", ->
+    #   createAndRender()
+    #   relations = el.find('td > ul')
+    #   expect(relations).to.not.have '.relation'
 
-    it "renders an relation objects when relations exist", ->
-      relations.push {id: '2'}
-      relations.push {id: '3'}
-      createAndRender()
-      expect(el).to.have 'li.relation'
-      relations = el.find('li.relation')
-      expect(relations).to.have.lengthOf 2
+    # it "renders an relation objects when relations exist", ->
+    #   relations.push {id: '2'}
+    #   relations.push {id: '3'}
+    #   createAndRender()
+    #   expect(el).to.have 'li.relation'
+    #   relations = el.find('li.relation')
+    #   expect(relations).to.have.lengthOf 2
