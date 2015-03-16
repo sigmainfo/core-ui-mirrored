@@ -25,35 +25,27 @@ describe "Coreon.Formatters.RelationsFormatter", ->
       edges_out
     )
 
-  describe "#relationsByKey()", ->
+  describe "#associativeRelations()", ->
 
     it "groups model's relations by key", ->
-      relations = formatter.relationsByKey()
-      expect(relations).to.have.lengthOf 3
+      relations = formatter.associativeRelations()
+      expect(relations).to.have.lengthOf 2
 
     it "accumulates model's relations", ->
       edges_out.push {edge_type: 'see also', source_node_id: '1', target_node_id: '2' }
       edges_out.push {edge_type: 'other', source_node_id: '1', target_node_id: '88' }
       edges_in.push {edge_type: 'see also', source_node_id: '5', target_node_id: '1' }
       edges_in.push {edge_type: 'antonymic', source_node_id: '5', target_node_id: '1' }
-      relations = formatter.relationsByKey()
-      expect(relations).to.have.lengthOf 3
+      relations = formatter.associativeRelations()
+      expect(relations).to.have.lengthOf 2
       seeAlso = relations.filter( (r) -> r.relationType.key == 'see also' )[0]
       expect(seeAlso.relations).to.have.lengthOf 2
       antonymic = relations.filter( (r) -> r.relationType.key == 'antonymic' )[0]
       expect(antonymic.relations).to.have.lengthOf 1
       parentOf = relations.filter( (r) -> r.relationType.key == 'parent of' )[0]
-      expect(parentOf.relations).to.have.lengthOf 0
+      expect(parentOf).to.eql undefined
       other = relations.filter( (r) -> r.relationType.key == 'other' )[0]
       expect(other).to.eql undefined
-
-
-
-  describe "#associativeRelationsByKey()", ->
-
-    it "groups model's associative relations", ->
-      relations = formatter.associativeRelationsByKey()
-      expect(relations).to.have.lengthOf 2
 
 
 

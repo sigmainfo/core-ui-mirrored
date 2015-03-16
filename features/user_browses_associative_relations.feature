@@ -16,6 +16,6 @@ Feature: user browses associative relations
     And "mobile phone" concept has a "see also" relation with concept "cell phone"
     And "mobile phone" concept has an "antonymic" relation with concept "landline phone"
     When I visit the concept details page for "mobile phone"
-    Then I see a section "RELATED CONCEPTS"
+    Then I see a section "ASSOCIATIVE RELATIONS"
     And this sections displays "cell phone" as a "see also" relation
     And this sections displays "landline phone" as an "antonymic" relation

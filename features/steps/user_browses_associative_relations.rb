@@ -52,8 +52,8 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
     visit "/#{current_repository.id}/concepts/#{@concept_mobile['id']}"
   end
 
-  step 'I see a section "RELATED CONCEPTS"' do
-    section = page.find :section, 'RELATED CONCEPTS'
+  step 'I see a section "ASSOCIATIVE RELATIONS"' do
+    section = page.find :section, 'Associative Relations'
     expect(section).to be_visible
   end
 
