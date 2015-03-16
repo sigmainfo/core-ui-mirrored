@@ -20,8 +20,10 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
     @$el.html @template
     _(@collection).each (relation) =>
       if !@editing
-        relationView = @relationViews.push new Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView model: relation
+        relationView = new Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView model: relation
       else
-        relationView = @relationViews.push new Coreon.Views.Concepts.Shared.AssociativeRelations.EditView model: relation
+        relationView = new Coreon.Views.Concepts.Shared.AssociativeRelations.EditView model: relation
+      @relationViews.push relationView
+
       @$el.find('table').append relationView.render().$el
     @
