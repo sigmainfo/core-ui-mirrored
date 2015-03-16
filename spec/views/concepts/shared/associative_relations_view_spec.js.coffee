@@ -37,7 +37,7 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
 
     beforeEach ->
       options =
-        collection: new Backbone.Collection([{},{}])
+        collection: [{},{}]
         editing: false
       showViewStub = sinon.stub Coreon.Views.Concepts.Shared.AssociativeRelations, 'ShowView', ->
         render: ->

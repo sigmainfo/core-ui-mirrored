@@ -33,6 +33,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     terms = new Backbone.Collection
     @concept.terms = -> terms
     @concept.propertiesWithDefaults = -> [ property_group ]
+    @concept.associativeRelations = ->
 
     @view = new Coreon.Views.Panels.Concepts.ConceptView
       model: @concept

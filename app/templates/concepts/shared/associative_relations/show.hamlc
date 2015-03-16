@@ -1,0 +1,5 @@
+%th= @relation.relationType.key
+%td
+  %ul
+    - for relation in @relation.relations
+      %li.relation

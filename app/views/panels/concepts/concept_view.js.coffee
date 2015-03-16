@@ -94,7 +94,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
       model: @model
 
     associativeRelations = new Coreon.Views.Concepts.Shared.AssociativeRelationsView
-      model: @model
+      collection: @model.associativeRelations()
+      editing: editing
 
     @conceptProperties?.remove()
     @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
