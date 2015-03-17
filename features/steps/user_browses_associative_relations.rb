@@ -57,17 +57,32 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
     expect(section).to be_visible
   end
 
-  step 'this sections displays "cell phone" as a "see also" relation' do
+  step 'this section displays "cell phone" as a "see also" relation' do
     relation = page.find :table_row, 'see also'
     within relation do
       expect(page).to have_css("a", text: "cell phone")
     end
   end
 
-  step 'this sections displays "landline phone" as an "antonymic" relation' do
+  step 'this section displays "landline phone" as an "antonymic" relation' do
     relation = page.find :table_row, 'antonymic'
     within relation do
       expect(page).to have_css("a", text: "landline phone")
     end
   end
+
+  step 'this section has an empty "see also" relation' do
+    relation = page.find :table_row, 'see also'
+    within relation do
+      expect(page).not_to have_css("a")
+    end
+  end
+
+  step 'this section has an empty "antonymic" relation' do
+    relation = page.find :table_row, 'antonymic'
+    within relation do
+      expect(page).not_to have_css("a")
+    end
+  end
+
 end
