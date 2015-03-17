@@ -17,5 +17,15 @@ Feature: user browses associative relations
     And "mobile phone" concept has an "antonymic" relation with concept "landline phone"
     When I visit the concept details page for "mobile phone"
     Then I see a section "ASSOCIATIVE RELATIONS"
-    And this sections displays "cell phone" as a "see also" relation
-    And this sections displays "landline phone" as an "antonymic" relation
+    And this section displays "cell phone" as a "see also" relation
+    And this section displays "landline phone" as an "antonymic" relation
+
+  Scenario: show empty relations
+    Given a "see also" defined relation
+    And an "antonymic" defined relation
+    And the repository is configured with these relations
+    And a concept with label "mobile phone" exists
+    When I visit the concept details page for "mobile phone"
+    Then I see a section "ASSOCIATIVE RELATIONS"
+    And this section has an empty "see also" relation
+    And this section has an empty "antonymic" relation
