@@ -1,6 +1,6 @@
 #= require environment
 #= require templates/concepts/shared/associative_relations/show
-#= require views/concepts/concept_label_list_view
+#= require views/concepts/concept_label_view
 
 class Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView extends Backbone.View
 
@@ -15,8 +15,10 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView extends Backbon
 
   render: ->
     @$el.html @template title: @model.relationType.key, icon: @model.relationType.icon
-    relationsList = new Coreon.Views.Concepts.ConceptLabelListView
-      models: @relations
-    relationsList.render()
-    @$el.find('td.relations').append relationsList.$el
+    _(@relations).each (relation) =>
+      @$el.find('td.relations ul').append $("<li>").append @createConceptLabel(relation)
     @
+
+  createConceptLabel: (relation) ->
+    label = new Coreon.Views.Concepts.ConceptLabelView model: relation
+    label.render().$el

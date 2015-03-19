@@ -7,14 +7,15 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
   options = null
   collection = null
   el = null
+  markup = null
 
-  createAndRender = ->
+  createAndRender = (editing) ->
     view = new Coreon.Views.Concepts.Shared.AssociativeRelationsView options
+    view.editing = on if editing
     el = view.render().$el
 
   beforeEach ->
     options =
-      editing: false
       collection: collection
     view = new Coreon.Views.Concepts.Shared.AssociativeRelationsView options
 
@@ -38,7 +39,6 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
     beforeEach ->
       options =
         collection: [{},{}]
-        editing: false
       showViewStub = sinon.stub Coreon.Views.Concepts.Shared.AssociativeRelations, 'ShowView', ->
         render: ->
           $el: $ markup
@@ -53,20 +53,26 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
     it "renders a section title", ->
       createAndRender()
       expect(el).to.have "h3"
-      view.$("h3").should.have.text "Associative Relations"
+      view.$("h3").should.have.text "Associated"
+
+    it "renders a hidden edit section", ->
+      createAndRender()
+      expect(el).to.have ".edit"
 
     context "show", ->
 
       it "renders views for each type of relation", ->
-        options.editing = false
         createAndRender()
         expect(showViewStub).to.have.been.calledTwice
         expect(editViewStub).to.not.have.been.called
+        expect($(view.el)).not.to.have 'form'
 
     context "edit", ->
 
       it "renders edit views for each type of relation", ->
-        options.editing = true
-        createAndRender()
+        sinon.stub Coreon.Helpers, 'form_for', ->
+          '<form></form>'
+        createAndRender(true)
         expect(showViewStub).to.not.have.been.called
         expect(editViewStub).to.have.been.calledTwice
+        expect($(view.el)).to.have 'form'
