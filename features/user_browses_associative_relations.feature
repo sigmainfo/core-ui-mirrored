@@ -16,7 +16,7 @@ Feature: user browses associative relations
     And "mobile phone" concept has a "see also" relation with concept "cell phone"
     And "mobile phone" concept has an "antonymic" relation with concept "landline phone"
     When I visit the concept details page for "mobile phone"
-    Then I see a section "ASSOCIATIVE RELATIONS"
+    Then I see a section "ASSOCIATED"
     And this section displays "cell phone" as a "see also" relation
     And this section displays "landline phone" as an "antonymic" relation
 
@@ -26,6 +26,6 @@ Feature: user browses associative relations
     And the repository is configured with these relations
     And a concept with label "mobile phone" exists
     When I visit the concept details page for "mobile phone"
-    Then I see a section "ASSOCIATIVE RELATIONS"
+    Then I see a section "ASSOCIATED"
     And this section has an empty "see also" relation
     And this section has an empty "antonymic" relation

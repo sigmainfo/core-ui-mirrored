@@ -45,8 +45,8 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     visit "/#{current_repository.id}/concepts/#{@concept_cell['id']}"
   end
 
-  step 'I click "Edit relations" within "ASSOCIATIVE RELATIONS" section' do
-    @section = page.find :section, 'Associative Relations'
+  step 'I click "Edit relations" within "ASSOCIATED" section' do
+    @section = page.find :section, 'Associated'
     within @section do
       page.find('a', text: 'Edit relations').click
     end
