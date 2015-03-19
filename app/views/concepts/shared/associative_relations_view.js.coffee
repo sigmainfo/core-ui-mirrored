@@ -1,4 +1,5 @@
 #= require environment
+#= require helpers/form_for
 #= require templates/concepts/shared/associative_relations
 #= require views/concepts/shared/associative_relations/show_view
 #= require views/concepts/shared/associative_relations/edit_view
@@ -11,13 +12,20 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
 
   template: Coreon.Templates["concepts/shared/associative_relations"]
 
+  events:
+    "click .edit-relations"                 : "toggleEditMode"
+    "click .submit .cancel:not(.disabled)"  : "cancelUpdate"
+    "submit form"                           : "updateRelations"
+    "click .submit .reset:not(.disabled)"   : "resetRelations"
+
   initialize: (options) ->
-    @editing = options.editing || no
+    @editing = no
+    @concept = options.concept
     @collection = options.collection
-    @relationViews = []
 
   render: ->
-    @$el.html @template
+    @relationViews = []
+    @$el.html @template editing: @editing, concept: @concept
     _(@collection).each (relation) =>
       if !@editing
         relationView = new Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView model: relation
@@ -27,3 +35,37 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
 
       @$el.find('table').append relationView.render().$el
     @
+
+  toggleEditMode: ->
+    @editing = !@editing
+    @render()
+
+  cancelUpdate: (evt) ->
+    evt.preventDefault()
+    evt.stopPropagation()
+    @toggleEditMode()
+
+  resetRelations: (evt) ->
+    evt.preventDefault()
+    evt.stopPropagation()
+    @render()
+
+  updateRelations: (evt) ->
+    evt.preventDefault()
+    evt.stopPropagation()
+    data = []
+
+    _(@relationViews).each (relView) ->
+      data.push relView.serializeArray()
+
+    deferred = @concept.save data, attrs: {concept: other_relations: _(data).flatten()}, wait: true
+
+    deferred.done =>
+      @concept.fetch
+        success: =>
+          @toggleEditMode()
+
+    deferred.fail =>
+
+
+

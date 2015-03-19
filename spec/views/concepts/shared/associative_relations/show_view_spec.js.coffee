@@ -12,7 +12,15 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView", ->
     el = view.render().$el
 
   beforeEach ->
+    model =
+      relations: []
+    sinon.stub Coreon.Views.Concepts, 'ConceptLabelView', -> new Backbone.View
+    sinon.stub Coreon.Models.Concept, 'find', -> new Backbone.Model
     view = new Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView model: model
+
+  afterEach ->
+    Coreon.Views.Concepts.ConceptLabelView.restore()
+    Coreon.Models.Concept.find.restore()
 
   it "is a Backbone view", ->
     expect(view).to.be.an.instanceof Backbone.View
@@ -45,15 +53,8 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView", ->
       title = el.find('th')
       expect(title).to.contain 'see also'
 
-    # it "renders an empty div when no relations exist", ->
-    #   createAndRender()
-    #   relations = el.find('td > ul')
-    #   expect(relations).to.not.have '.relation'
-
-    # it "renders an relation objects when relations exist", ->
-    #   relations.push {id: '2'}
-    #   relations.push {id: '3'}
-    #   createAndRender()
-    #   expect(el).to.have 'li.relation'
-    #   relations = el.find('li.relation')
-    #   expect(relations).to.have.lengthOf 2
+    it "renders a list of concept labels", ->
+      relations.push {id: '1'}
+      relations.push {id: '2'}
+      createAndRender()
+      expect(Coreon.Views.Concepts.ConceptLabelView).to.have.been.calledTwice

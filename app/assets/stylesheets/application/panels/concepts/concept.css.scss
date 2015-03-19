@@ -2,11 +2,11 @@ div.concept {
   min-width: 200px;
   position: relative;
   padding-top: 10px;
-  
+
   .concept-head {
     position: relative;
   }
-  
+
   h2 {
     cursor: default;
     font-size: 1.9em;
@@ -16,12 +16,12 @@ div.concept {
     margin-bottom: 12px;
     max-width: 85%;
   }
-  
+
   .actions {
     float: right;
     padding-right: 6px;
   }
-  
+
   .concept-to-clipboard, .system-info-toggle, .properties-toggle {
     text-indent: -2000px;
     overflow: hidden;
@@ -30,15 +30,15 @@ div.concept {
     height: 18px;
     @include svg-icons;
   }
-  
-  .concept-to-clipboard {   
+
+  .concept-to-clipboard {
     background-position: -52px -1002px;
     @include scale(1.1);
     &.remove {
       background-position: -101px -1002px;
     }
   }
-  
+
   .system-info-toggle {
     background-position: -48px -650px;
     &:hover {
@@ -46,7 +46,7 @@ div.concept {
       cursor: pointer;
     }
   }
-  
+
   .properties-toggle {
     float: right;
     background-position: -49px -599px;
@@ -54,27 +54,27 @@ div.concept {
     &:hover {
       background-position: -99px -599px;
       cursor: pointer;
-    }    
+    }
   }
-  
-  .broader-and-narrower, &>.properties, .concept .properties {
+
+  .broader-and-narrower, &>.properties, .concept .properties, .associative-relations {
     position: relative;
   }
-  
+
   .system-info {
     line-height: 12px;
     padding: 0;
-    
+
     table {
-      
+
       td, th, tr, tbody {
         display: inline-block;
       }
-      
+
       td, th {
         font: 11px monospace;
         vertical-align: baseline;
-      }     
+      }
 
       th {
         text-transform: none;
@@ -97,19 +97,19 @@ div.concept {
       }
     }
   }
-  
+
   >.system-info {
     margin-left: 16px;
     padding-bottom: 10px;
   }
-  
+
   ul.index, ul.values {
     overflow: hidden;
     list-style: none;
   }
-  
+
   ul.values {
-    
+
     li {
       display: none;
       &.selected {
@@ -117,11 +117,11 @@ div.concept {
       }
     }
   }
-  
+
   ul.index {
     padding-bottom: 16px;
     padding-top: 4px;
-  
+
     li {
       position: relative;
       float: left;
@@ -138,14 +138,14 @@ div.concept {
       word-wrap: break-word;
       width: 98%;
     }
-    
+
     tr {
       div[data-empty] {
        &:before {
          content: "–";
        }
-      } 
-      
+      }
+
       &.multiselect_picklist, &.picklist {
         td {
           padding-bottom: 0;
@@ -182,7 +182,7 @@ div.concept {
         }
         .asset {
           position: relative;
-          display: inline-block; 
+          display: inline-block;
           float: left;
           padding-right: 4px;
         }
@@ -191,14 +191,14 @@ div.concept {
           width: 100%;
           padding: 4px 0;
         }
-        
+
         figcaption {
           font-size: 0.8em;
           line-height: 1.4em;
           max-width: 150px;
           min-height: 30px;
         }
-        
+
         figure:hover {
           position: relative;
           cursor: pointer;
@@ -213,22 +213,22 @@ div.concept {
             background-color: $bg-color;
             background-position: -48px -1150px;
           };
-         
+
         }
-        
+
         .image {
           max-width: 150px;
           img {
             max-width: 150px;
             max-height: 150px;
-          }  
+          }
           &:hover {
             img {
                @include single-box-shadow(rgba($text-color, 0.3), 1px, 1px, 2px, false);
             }
           }
         }
-        
+
         .other {
           img {
             width: 40px;
@@ -258,33 +258,33 @@ div.concept {
       }
     }
   }
-  
+
   .terms {
-    margin-top: 50px; 
-    
+    margin-top: 50px;
+
     .no-terms {
       padding: 3px 30px;
     }
-      
+
     section.language {
       clear: both;
       margin-top: 14px;
-      min-height: 18px;            
+      min-height: 18px;
       &>h3 {
         margin: 1px 0;
         background: none;
         @include box-sizing(border-box);
         width: 100%;
         z-index: 1;
-      }    
+      }
     }
-    
+
     ul {
       list-style: none;
 //      padding-bottom: 3px;
     }
   }
-  
+
   li.term {
     position: relative;
 
@@ -298,7 +298,7 @@ div.concept {
       width: auto;
       z-index:1;
     }
-    
+
     .edit {
       z-index:1;
     }
@@ -311,7 +311,7 @@ div.concept {
         margin-top: 2px;
       }
     }
-        
+
     section.properties {
 
       h3, .collapsed h3 {
@@ -328,7 +328,7 @@ div.concept {
         right: 0;
         left:0;
         z-index: 0;
-        
+
         &:before {
           position: absolute;
           top: 8px;
@@ -338,9 +338,9 @@ div.concept {
           @include rotate(0deg);
           background-position: -49px -599px;
         }
-        
+
         &:hover {
-          &:before { 
+          &:before {
             background-position: -99px -599px;
           }
         }
@@ -354,12 +354,12 @@ div.concept {
     }
   }
 
-  
+
   &.show, &.edit {
 
     section {
-      
-      &>h3 {        
+
+      &>h3 {
         &:before {
           @include before-icon;
           display: inline-block;
@@ -367,12 +367,12 @@ div.concept {
           @include rotate(0deg);
           background-position: -51px -6px;
         }
-        
+
         &:hover {
           cursor: pointer;
         }
       }
-      
+
       &.collapsed h3 {
         &:before {
           @include rotate(-90deg);
@@ -381,13 +381,13 @@ div.concept {
       }
     }
   }
-  
+
   &.edit {
     section h3 {
       margin-left: 38px;
     }
   }
-   
+
 }
 
 #coreon-concepts:not(.widget).medi {
@@ -447,7 +447,7 @@ div.concept {
 .mini, .widget.medi, .widget.maxi {
   div.concept {
     font-size: 0.9em;
-    
+
     h2 {
       font-size: 1.2em;
       line-height: 1.4em;
@@ -455,29 +455,29 @@ div.concept {
       margin-bottom: 6px;
       max-width: 65%;
     }
-    
+
     .system-info-toggle {
       display: none;
     }
-    
+
     .system-info {
       display: none;
     }
-    
+
     .broader-and-narrower {
       display: none;
     }
-    
+
     table {
       margin-left: 16px;
       width: 90%;
       tr {
-        
+
         .values, .value {
           clear: both;
           padding-bottom: 6px;
         }
-        
+
         &.multiselect_picklist, &.picklist {
           .value {
             padding-top: 4px;
@@ -491,10 +491,10 @@ div.concept {
       }
     }
     .properties-toggle {
-      margin: 4px 2px 2px 0;  
-    }    
+      margin: 4px 2px 2px 0;
+    }
   }
-  
+
 
   div.concept.show, div.concept.edit {
     section.language {
@@ -503,7 +503,7 @@ div.concept {
         margin-top: 2px;
       }
     }
-    
+
     .submit {
       position: relative;
       z-index: 1;
@@ -513,7 +513,7 @@ div.concept {
       .language:before {
         content: none;
       }
-      
+
       .term h4.value {
         font-size: 1.1em;
         padding: 4px 0 3px 0;
@@ -522,7 +522,7 @@ div.concept {
 
       .language .properties {
         background: none;
-        
+
         h3 {
           right: 0px;
           &:before {
@@ -530,28 +530,28 @@ div.concept {
             right: 2px;
           }
         }
-        
+
         &>div {
           margin-left: 0px;
           background: none;
           border-top: 1px solid white;
-          
+
           &.add {
             margin-left: 0px;
-            
+
             .edit {
               border: none;
             }
           }
         }
-      }  
+      }
     }
   }
-  
+
   div.concept.edit {
     .terms .term h4.value{
       padding-top: 12px;
     }
-  }  
+  }
 }
 
