@@ -16,7 +16,7 @@ Background:
     Then I search for "cell phone"
     And I click on the search result
     And I toggle "EDIT MODE"
-    And I click "Edit relations" within "ASSOCIATIVE RELATIONS" section
+    And I click "Edit relations" within "ASSOCIATED" section
     And I drag the clipped concept to the "see also" dropzone
     Then I should see "mobile phone" unsaved as associated relation
     And I should see reset, cancel and save buttons
