@@ -20,6 +20,16 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     @concept_cell = JSON.parse concepts.post concept: { properties: { "": [{key: 'label', value: 'cell phone'}] } }
   end
 
+  step '"mobile phone" concept has a "see also" relation with concept "cell phone"' do
+    edges.post edge: {
+      source_node_type: 'Concept',
+      source_node_id: @concept_mobile['id'],
+      edge_type: 'see also',
+      target_node_type: 'Concept',
+      target_node_id: @concept_cell['id']
+    }
+  end
+
   step 'I visit the concept details page for "mobile phone"' do
     visit "/#{current_repository.id}/concepts/#{@concept_mobile['id']}"
   end
@@ -63,6 +73,22 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     end
   end
 
+  step 'I should see "cell phone" in the "see also" associated relation dropzone' do
+    within @section do
+      @see_also_dropzone = page.find "td.relations ul"
+      @cell_label = find("a", text: "cell phone")
+      expect(@cell_label).to be_visible
+    end
+  end
+
+  step 'I drag the "cell phone" concept label just outside the "see also" dropzone' do
+    @cell_label.drag_to find("tr.relation-type th")
+  end
+
+  step 'the "see also" dropzone should be empty' do
+    expect(@see_also_dropzone).not_to have_css("a")
+  end
+
   step 'I should see reset, cancel and save buttons' do
     @form = page.find ".concept.edit .associative-relations form"
     within @form do
@@ -90,5 +116,13 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
       expect(relation).to have_css("a", text: "mobile phone")
     end
   end
+
+  step 'this section has an empty "see also" relation' do
+    relation = page.find :table_row, 'see also'
+    within relation do
+      expect(relation).not_to have_css("a")
+    end
+  end
+
 
 end

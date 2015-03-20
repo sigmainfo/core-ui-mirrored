@@ -60,7 +60,16 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
   step 'this section displays "cell phone" as a "see also" relation' do
     relation = page.find :table_row, 'see also'
     within relation do
-      expect(page).to have_css("a", text: "cell phone")
+      @cell_phone_label = find "a", text: "cell phone"
+      expect(@cell_phone_label).to be_visible
+    end
+  end
+
+  step 'this section displays "mobile phone" as a "see also" relation' do
+    relation = page.find :table_row, 'see also'
+    within relation do
+      @mobile_phone_label = find "a", text: "mobile phone"
+      expect(@mobile_phone_label).to be_visible
     end
   end
 
@@ -69,6 +78,24 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
     within relation do
       expect(page).to have_css("a", text: "landline phone")
     end
+  end
+
+  step 'I click on the "cell phone" relation label' do
+    @cell_phone_label.click()
+  end
+
+  step 'I click on the "mobile phone" relation label' do
+    @mobile_phone_label.click()
+  end
+
+  step 'I am directed to the "cell phone" concept page' do
+    label = page.find(".concept.show .concept-head h2.concept-label")
+    expect(label).to have_content("cell phone")
+  end
+
+  step 'I am directed to the "mobile phone" concept page' do
+    label = page.find(".concept.show .concept-head h2.concept-label")
+    expect(label).to have_content("mobile phone")
   end
 
   step 'this section has an empty "see also" relation' do

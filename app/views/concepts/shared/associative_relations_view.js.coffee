@@ -53,12 +53,15 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
   updateRelations: (evt) ->
     evt.preventDefault()
     evt.stopPropagation()
-    data = []
+    relations = []
 
     _(@relationViews).each (relView) ->
-      data.push relView.serializeArray()
+      relations.push relView.serializeArray()
 
-    deferred = @concept.save data, attrs: {concept: other_relations: _(data).flatten()}, wait: true
+    data =
+      other_relations: _(relations).flatten()
+
+    deferred = @concept.save data, attrs: {concept: data}, wait: true
 
     deferred.done =>
       @concept.fetch

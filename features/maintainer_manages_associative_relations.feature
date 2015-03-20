@@ -23,3 +23,20 @@ Background:
     When I click save
     Then I am no longer in "edit relations" mode
     Then the concept "cell phone" displays "mobile phone" as a "see also" relation
+
+  Scenario: disconnect associated concepts
+    Given a "see also" defined relation
+    And the repository is configured with these relation(s)
+    And a concept with label "mobile phone" exists
+    And a concept with label "cell phone" exists
+    And "mobile phone" concept has a "see also" relation with concept "cell phone"
+    When I visit the concept details page for "mobile phone"
+    And I toggle "EDIT MODE"
+    And I click "Edit relations" within "ASSOCIATED" section
+    Then I should see "cell phone" in the "see also" associated relation dropzone
+    And I drag the "cell phone" concept label just outside the "see also" dropzone
+    Then the "see also" dropzone should be empty
+    And I should see reset, cancel and save buttons
+    When I click save
+    Then I am no longer in "edit relations" mode
+    And this section has an empty "see also" relation
