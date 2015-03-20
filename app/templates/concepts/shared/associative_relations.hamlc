@@ -2,8 +2,8 @@
 
 -if @editing
   != @form_for 'concept', @concept, submit: I18n.t('concept.save_connections.label'), submitHint: I18n.t('concept.save_connections.hint'), ->
-    %table
+    %table.associative-types
 -else
   .edit
     %a.edit-relations{title: "#{I18n.t('concept.edit_concept_relations.hint')}"}= I18n.t('concept.edit_concept_relations.label')
-  %table
+  %table.associative-types

@@ -19,7 +19,9 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.EditView extends Backbon
   render: ->
     @$el.html @template title: @model.relationType.key, icon: @model.relationType.icon
     _(@relations).each (relation) =>
-      @$el.find('td.relations ul').append $("<li>").append @createConceptLabel(relation)
+      relationElement = $("<li>")
+      relationElement.append @createConceptLabel(relation)
+      @$el.find('td.relations ul').append relationElement
     @droppableOn @$("td.relations ul"), "ui-droppable-connect",
       accept: (item) -> true
       drop: (evt, ui)=> @onDrop("td.relations", ui.draggable)

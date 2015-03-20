@@ -112,4 +112,22 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
     end
   end
 
+  step 'I click the toggle "System Info" on the concept' do
+    page.find(".concept .system-info-toggle", text: "System Info").click
+  end
+
+  step 'I do not see a table with system information about the relation' do
+    relation = page.find :table_row, 'see also'
+    within relation do
+      expect(page).not_to have_css("li .system-info")
+    end
+  end
+
+  step 'I see a table with system information about the relation' do
+    relation = page.find :table_row, 'see also'
+    within relation do
+      expect(page).to have_css("li .system-info")
+    end
+  end
+
 end
