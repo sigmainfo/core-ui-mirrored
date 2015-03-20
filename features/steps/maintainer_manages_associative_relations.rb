@@ -104,6 +104,12 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     end
   end
 
+  step 'I click cancel' do
+    within @form do
+      click_link_or_button "Cancel"
+    end
+  end
+
   step 'I am no longer in "edit relations" mode' do
     within @section do
       expect(page).not_to have_css('form')
@@ -124,5 +130,11 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     end
   end
 
+  step 'the concept "mobile phone" displays "cell phone" as a "see also" relation' do
+    relation = page.find :table_row, 'see also'
+    within relation do
+      expect(relation).to have_css("a", text: "cell phone")
+    end
+  end
 
 end
