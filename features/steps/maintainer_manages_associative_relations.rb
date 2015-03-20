@@ -110,6 +110,12 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     end
   end
 
+  step 'I click reset' do
+    within @form do
+      click_link_or_button "Reset"
+    end
+  end
+
   step 'I am no longer in "edit relations" mode' do
     within @section do
       expect(page).not_to have_css('form')

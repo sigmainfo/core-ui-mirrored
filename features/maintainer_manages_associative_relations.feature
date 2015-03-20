@@ -58,3 +58,19 @@ Background:
     Then I am no longer in "edit relations" mode
     Then the concept "mobile phone" displays "cell phone" as a "see also" relation
 
+  Scenario: reset editing of associated relations
+    Given a "see also" defined relation
+    And the repository is configured with these relation(s)
+    And a concept with label "mobile phone" exists
+    And a concept with label "cell phone" exists
+    And "mobile phone" concept has a "see also" relation with concept "cell phone"
+    When I visit the concept details page for "mobile phone"
+    And I toggle "EDIT MODE"
+    And I click "Edit relations" within "ASSOCIATED" section
+    Then I should see "cell phone" in the "see also" associated relation dropzone
+    And I drag the "cell phone" concept label just outside the "see also" dropzone
+    Then the "see also" dropzone should be empty
+    And I should see reset, cancel and save buttons
+    When I click reset
+    Then I should see "cell phone" in the "see also" associated relation dropzone
+
