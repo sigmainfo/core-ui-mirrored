@@ -1,4 +1,4 @@
-Feature: maintainer creates associative relation
+Feature: maintainer manages associative relations
   In order to relate two concepts based on a predefined associative relation type
   As a maintainer who is adding data to the repository
   I want to create a new associative relation between two existing concepts
@@ -39,7 +39,7 @@ Background:
     And I should see reset, cancel and save buttons
     When I click save
     Then I am no longer in "edit relations" mode
-    And this section has an empty "see also" relation
+    And this section does not have an "see also" relation area
 
   Scenario: cancel editing of associated relations
     Given a "see also" defined relation

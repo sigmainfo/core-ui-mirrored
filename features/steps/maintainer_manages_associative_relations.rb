@@ -1,4 +1,4 @@
-class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::FeatureSteps
+class Spinach::Features::MaintainerManagesAssociativeRelations < Spinach::FeatureSteps
   include AuthSteps
   include Resources
   include EditSteps
@@ -134,6 +134,10 @@ class Spinach::Features::MaintainerCreatesAssociativeRelation < Spinach::Feature
     within relation do
       expect(relation).not_to have_css("a")
     end
+  end
+
+  step 'this section does not have an "see also" relation area' do
+    expect(page).not_to have_selector :table_row, 'see also'
   end
 
   step 'the concept "mobile phone" displays "cell phone" as a "see also" relation' do
