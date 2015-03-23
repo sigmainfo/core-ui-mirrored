@@ -59,6 +59,7 @@ div.concept {
 
   .broader-and-narrower, &>.properties, .concept .properties, .associative-relations {
     position: relative;
+    clear: both;
   }
 
   .system-info {
@@ -132,6 +133,38 @@ div.concept {
       cursor: pointer;
     }
   }
+  
+  .associative-relations {
+    
+    li {
+      list-style: none;
+      float: left;
+      margin-right: 8px;
+    }
+    table {
+      overflow: hidden;
+      td {
+        
+        &.icon {
+          margin-left: 10px;
+          width: 22px;
+          height:18px;
+          float: left;
+          @include svg-icons;
+          background-position: -0px -1352px;
+          @include opacity(0.7);
+          &.icon-antonym {
+            background-position: -50px -1352px;
+          }
+        }
+        &.relations {
+          margin-left: 136px;
+        }
+
+      }
+    }
+  }
+  
   .properties {
 
     .value {
@@ -466,6 +499,23 @@ div.concept {
 
     .broader-and-narrower {
       display: none;
+    }
+    
+    .associative-relations {
+
+      table {
+        th {
+          float: none;
+        }
+        td {
+          margin-left: 24px;
+
+          &.icon {
+            margin-left: 0px;
+            float: left;
+          }
+        }
+      }
     }
 
     table {

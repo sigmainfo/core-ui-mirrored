@@ -17,7 +17,7 @@ div.concept {
     }
   }
   
-  .broader-and-narrower, &>.properties, .concept .properties {
+  .broader-and-narrower, .associative-relations, &>.properties, .concept .properties {
     @include dottedline;
   }
   
