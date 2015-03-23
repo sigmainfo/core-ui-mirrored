@@ -520,8 +520,8 @@ div.concept {
     }
 
     table {
-      margin-left: 16px;
-      width: 90%;
+//      margin-left: 16px;
+      width: auto;
       tr {
 
         .values, .value {
@@ -544,7 +544,13 @@ div.concept {
     .properties-toggle {
       margin: 4px 2px 2px 0;
     }
+    &.show {
+      table {
+        margin-left: 16px;
+      }
+    }
   }
+
 
 
   div.concept.show, div.concept.edit {

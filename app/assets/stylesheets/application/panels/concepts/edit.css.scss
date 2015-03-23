@@ -277,6 +277,13 @@ form.create.term {
   }
 }
 
+.concept.edit .associative-relations {
+  ul.ui-droppable {
+    overflow: hidden;
+    max-width: 90%;
+  }
+}
+
 .concept  {
 
   .edit a, fieldset a {
@@ -382,10 +389,10 @@ form.create.term {
   }
 
   &>section, form>section {
-    &>h3, &>div:not(.add):last-child {
-      margin-left: 32px;
+    &>h3 {
+      margin-left: 38px;
     }
-    .associative-types {
+    table,  .list,  {
       margin-left: 48px;
     }
   }
