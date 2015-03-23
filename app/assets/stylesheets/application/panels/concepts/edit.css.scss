@@ -306,7 +306,7 @@ form.create.term {
    };
   }
 
-  a.edit-properties, a.edit-term, a.edit-connections {
+  a.edit-properties, a.edit-term, a.edit-connections, a.edit-relations {
    &:before {
      background-position: -150px -701px;
    }
@@ -383,9 +383,11 @@ form.create.term {
 
   &>section, form>section {
     &>h3, &>div:not(.add):last-child {
-      margin-left: 38px;
+      margin-left: 32px;
     }
-
+    .associative-types {
+      margin-left: 48px;
+    }
   }
   .concept-head {
     margin-left: 38px;

@@ -45,7 +45,7 @@
    }
 }
 
-.concept.edit .broader-and-narrower {
+.concept.edit .broader-and-narrower, .concept.edit .associative-relations {
   
   form {
     background-color: darken(rgba($button-hover-color, 0.12), 4);
@@ -79,7 +79,7 @@
 }
 
 .concept.edit {
-  form, .broader-and-narrower {
+  form, .broader-and-narrower, .associative-relations {
     @include editmode;
   }
   
