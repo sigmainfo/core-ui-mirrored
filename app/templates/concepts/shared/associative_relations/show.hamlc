@@ -1,4 +1,4 @@
 %th= @title
-%td.icon{ class: "icon-#{@icon}" }
+%td.icon{ class: "#{@icon}" }
 %td.relations
   %ul
