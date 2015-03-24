@@ -21,7 +21,7 @@ class Coreon.Views.Widgets.WidgetsView extends Backbone.View
 
     @droppableOn @$el, "ui-droppable-widgets",
       greedy: false
-      disableForeigners: true
+      disableForeigners: false
       fake: true
 
   render: ->

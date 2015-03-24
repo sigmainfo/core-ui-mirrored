@@ -33,7 +33,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     terms = new Backbone.Collection
     @concept.terms = -> terms
     @concept.propertiesWithDefaults = -> [ property_group ]
-    @concept.associativeRelations = ->
+    @concept.associativeRelations = -> []
 
     @view = new Coreon.Views.Panels.Concepts.ConceptView
       model: @concept
@@ -101,6 +101,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
 
     it 'renders associative relations', ->
+      @concept.associativeRelations = -> [{relations: [{}]}]
       @associativeRelations.render = sinon.stub().returns @associativeRelations
       @view.render()
       expect( @associativeRelations.render ).to.have.been.calledOnce

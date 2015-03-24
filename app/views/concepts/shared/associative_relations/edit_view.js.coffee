@@ -17,6 +17,9 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.EditView extends Backbon
     @relations = _(@model.relations).map (r) -> Coreon.Models.Concept.find r.id
 
   render: ->
+    for el in @$(".ui-droppable")
+      @droppableOff(el)
+    @droppableOff(@$el) if @$el.hasClass('.ui-droppable')
     @$el.html @template title: @model.relationType.key, icon: @model.relationType.icon
     _(@relations).each (relation) =>
       relationElement = $("<li>")
@@ -28,7 +31,7 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.EditView extends Backbon
       out: (evt, ui)=> @onDropOut(evt, ui)
       over: (evt, ui)=> @onDropOver(evt, ui)
     @droppableOn @$el, "ui-droppable-disconnect",
-      accept: (item)-> $(item).hasClass "from-connection-list"
+      accept: (item) => @checkRemoval(item)
       drop: (evt, ui)=> @onDisconnect(ui.draggable)
     @
 
@@ -62,6 +65,9 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.EditView extends Backbon
     @relations = _(@relations).without(found) if found?
     item.remove()
     @render()
+
+  checkRemoval: (item) ->
+    (@$el.has($(item)).length > 0) && $(item).hasClass("from-connection-list")
 
   checkIfExists: (id) ->
     found = _(@relations).find (rel) ->
