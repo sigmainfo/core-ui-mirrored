@@ -20,6 +20,7 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
 
   initialize: (options) ->
     @editing = no
+    @parentEditing = options.parentEditing
     @concept = options.concept
     @collection = options.collection
 
@@ -27,13 +28,15 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
     @relationViews = []
     @$el.html @template editing: @editing, concept: @concept
     _(@collection).each (relation) =>
+      relationView = null
       if !@editing
-        relationView = new Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView model: relation
+        if relation.relations?.length > 0
+          relationView = new Coreon.Views.Concepts.Shared.AssociativeRelations.ShowView model: relation
       else
         relationView = new Coreon.Views.Concepts.Shared.AssociativeRelations.EditView model: relation
-      @relationViews.push relationView
-
-      @$el.find('table.associative-types').append relationView.render().$el
+      if relationView?
+        @relationViews.push relationView
+        @$el.find('table.associative-types').append relationView.render().$el
     @
 
   toggleEditMode: ->

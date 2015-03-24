@@ -57,6 +57,10 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
     expect(section).to be_visible
   end
 
+  step 'I don\'t see a section "ASSOCIATED"' do
+    expect{ page.find(:section, 'Associated') }.to raise_error
+  end
+
   step 'this section displays "cell phone" as a "see also" relation' do
     relation = page.find :table_row, 'see also'
     within relation do
@@ -110,6 +114,10 @@ class Spinach::Features::UserBrowsesAssociativeRelations < Spinach::FeatureSteps
     within relation do
       expect(page).not_to have_css("a")
     end
+  end
+
+  step 'this section does not have an "antonymic" relation area' do
+    expect{ page.find(:table_row, 'antonymic') }.to raise_error
   end
 
   step 'I click the toggle "System Info" on the concept' do

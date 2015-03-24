@@ -38,7 +38,7 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
 
     beforeEach ->
       options =
-        collection: [{},{}]
+        collection: [{relations: [{id: 1}]},{}]
       showViewStub = sinon.stub Coreon.Views.Concepts.Shared.AssociativeRelations, 'ShowView', ->
         render: ->
           $el: $ markup
@@ -63,7 +63,7 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
 
       it "renders views for each type of relation", ->
         createAndRender()
-        expect(showViewStub).to.have.been.calledTwice
+        expect(showViewStub).to.have.been.calledOnce
         expect(editViewStub).to.not.have.been.called
         expect($(view.el)).not.to.have 'form'
 
