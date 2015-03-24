@@ -89,6 +89,12 @@
 .concept.edit {
   form, .broader-and-narrower, .associative-relations {
     @include editmode;
+    
+  }
+  .broader-and-narrower, .associative-relations {
+    &:before {
+      @include dottedline;
+    }
   }
   
   div.edit {
