@@ -6,7 +6,7 @@
 # JQueryUI.droppable.
 #
 # Parameters:
-# 
+#
 #   el: dropzone element
 #   dragElClass: class to add to valid hovering draggables
 #   options: options hash to overwrite defaults for jqueryui.droppable

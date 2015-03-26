@@ -14,6 +14,7 @@
 #= require collections/hits
 #= require collections/concepts
 #= require formatters/properties_formatter
+#= require formatters/relations_formatter
 
 class Coreon.Models.Concept extends Backbone.Model
 
@@ -149,3 +150,11 @@ class Coreon.Models.Concept extends Backbone.Model
       options
     )
     formatter.all()
+
+  associativeRelations: ->
+    formatter = new Coreon.Formatters.RelationsFormatter(
+      Coreon.Models.RepositorySettings.relationTypes(),
+      @get('edges_in'),
+      @get('edges_out')
+    )
+    formatter.associativeRelations()

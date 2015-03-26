@@ -640,4 +640,10 @@
 <g transform="translate(100 50)">
 	<path fill="#43AAA4" d="M-35,1266l-9,9h9l9-9l-9-9h-9L-35,1266z"/>
 </g>
+<circle fill="#797F64" cx="14" cy="1364" r="7"/>
+<g transform="translate(100 50)">
+	<path fill="#FFFFFF" d="M-84.6,1314.1l-3.9,3.9h2.6l3.9-3.9l-3.9-3.899h-2.6L-84.6,1314.1z"/>
+</g>
+<circle fill="#CE8D7B" cx="63" cy="1364" r="7"/>
+<rect x="58" y="1363" transform="matrix(0.7072 -0.7071 0.7071 0.7072 -945.9778 443.9844)" fill="#FFFFFF" width="10" height="2"/>
 </svg>

@@ -19,6 +19,7 @@
 #= require templates/properties/new_property
 #= require templates/properties/value
 #= require views/concepts/shared/broader_and_narrower_view
+#= require views/concepts/shared/associative_relations_view
 #= require views/panels/terms/term_list_view
 #= require views/widgets/asset_view
 #= require collections/clips
@@ -92,6 +93,14 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     broaderAndNarrower = new Coreon.Views.Concepts.Shared.BroaderAndNarrowerView
       model: @model
 
+    associativeRelations = @model.associativeRelations()
+
+    if editing || associativeRelations.filter((r) -> r.relations.length > 0).length > 0
+      associativeRelationsView = new Coreon.Views.Concepts.Shared.AssociativeRelationsView
+        collection: associativeRelations
+        parentEditing: editing
+        concept: @model
+
     @conceptProperties?.remove()
     @conceptProperties = new Coreon.Views.Properties.EditPropertiesView
       collection: @model.propertiesWithDefaults(includeUndefined: true)
@@ -112,6 +121,8 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     @listenTo @termListView, 'termToEditChanged', (termToEdit) =>
       @termToEdit = termToEdit
 
+    if editing || associativeRelations.filter((r) -> r.relations.length > 0).length > 0
+      @$el.children(".concept-head").after associativeRelationsView.render().$el
     @$el.children(".concept-head").after broaderAndNarrower.render().$el
     @$el.append @termListView.render().$el
     @$el.find("form.concept .submit").before @conceptProperties.render().$el

@@ -694,3 +694,38 @@ describe 'Coreon.Models.Concept', ->
       result = @model.propertiesWithDefaults()
       expect(result).to.equal formattedProperties
 
+  describe '#associativeRelations()', ->
+
+    formatter = null
+    edges_in = null
+    edges_out = null
+    relationTypes = null
+
+    beforeEach ->
+      formatter =
+        associativeRelations: sinon.spy()
+      sinon.stub Coreon.Formatters, 'RelationsFormatter', -> formatter
+      relationTypes = sinon.stub
+      Coreon.Models.RepositorySettings.relationTypes = -> relationTypes
+      edges_in = sinon.stub
+      edges_out = sinon.stub
+      @model.set 'edges_in', edges_in
+      @model.set 'edges_out', edges_out
+
+    afterEach ->
+      Coreon.Formatters.RelationsFormatter.restore()
+
+    it 'creates a relations formatter instance', ->
+      @model.associativeRelations()
+      constructor = Coreon.Formatters.RelationsFormatter
+      expect(constructor).to.have.been.calledOnce
+      expect(constructor).to.have.been.calledWithNew
+      expect(constructor).to.have.been.calledWith relationTypes, edges_in, edges_out
+
+    it 'gathers the associative relations from the formatter', ->
+      @model.associativeRelations()
+      expect(formatter.associativeRelations).to.have.been.calledOnce
+
+
+
+

@@ -91,6 +91,7 @@ en:
       hint: 'Show/hide system info'
     tree: "Broader & Narrower"
     broader_and_narrower: "Broader & Narrower"
+    associative_relations: "Associated"
     new_concept: "<New concept>"
     new:
       label: 'New concept'
@@ -113,6 +114,9 @@ en:
     edit_concept_connections:
       label: 'Edit connections'
       hint: 'Edit connections to broader and narrower concepts'
+    edit_concept_relations:
+      label: 'Edit relations'
+      hint: 'Edit associative relations to other concepts'
     save_connections:
       label: 'Save'
       hint: 'Save all modified connections'

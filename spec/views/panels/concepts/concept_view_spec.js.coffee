@@ -14,7 +14,9 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     sinon.stub(Coreon.Models.RepositorySettings, 'optionalPropertiesFor').returns []
     sinon.stub I18n, 't'
     @broaderAndNarrower = new Backbone.View
+    @associativeRelations = new Backbone.View
     sinon.stub Coreon.Views.Concepts.Shared, 'BroaderAndNarrowerView', => @broaderAndNarrower
+    sinon.stub Coreon.Views.Concepts.Shared, 'AssociativeRelationsView', => @associativeRelations
 
     @property = new Backbone.Model
 
@@ -31,6 +33,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
     terms = new Backbone.Collection
     @concept.terms = -> terms
     @concept.propertiesWithDefaults = -> [ property_group ]
+    @concept.associativeRelations = -> []
 
     @view = new Coreon.Views.Panels.Concepts.ConceptView
       model: @concept
@@ -40,6 +43,7 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
+    Coreon.Views.Concepts.Shared.AssociativeRelationsView.restore()
     Coreon.application = null
     Coreon.Helpers.can.restore()
     Coreon.Models.RepositorySettings.propertiesFor.restore()
@@ -90,11 +94,18 @@ describe 'Coreon.Views.Panels.Concepts.ConceptView', ->
       expect( @view.$("> .concept-head .system-info th").eq(1) ).to.have.text "legacy_id"
       expect( @view.$("> .concept-head .system-info td").eq(1) ).to.have.text "543"
 
-    it 'renders tree', ->
+    it 'renders broader narrower tree', ->
       @broaderAndNarrower.render = sinon.stub().returns @broaderAndNarrower
       @view.render()
       expect( @broaderAndNarrower.render ).to.have.been.calledOnce
       expect( $.contains(@view.el, @broaderAndNarrower.el) ).to.be.true
+
+    it 'renders associative relations', ->
+      @concept.associativeRelations = -> [{relations: [{}]}]
+      @associativeRelations.render = sinon.stub().returns @associativeRelations
+      @view.render()
+      expect( @associativeRelations.render ).to.have.been.calledOnce
+      expect( $.contains(@view.el, @associativeRelations.el) ).to.be.true
 
     context 'edit mode off', ->
 
