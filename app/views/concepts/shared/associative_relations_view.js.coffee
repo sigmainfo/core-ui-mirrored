@@ -3,8 +3,11 @@
 #= require templates/concepts/shared/associative_relations
 #= require views/concepts/shared/associative_relations/show_view
 #= require views/concepts/shared/associative_relations/edit_view
+#= require modules/droppable
 
 class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.View
+
+  Coreon.Modules.include @, Coreon.Modules.Droppable
 
   tagName: "section"
 
@@ -37,6 +40,10 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
       if relationView?
         @relationViews.push relationView
         @$el.find('table.associative-types').append relationView.render().$el
+    if @editing
+      @droppableOn @$el, "ui-droppable-disconnect",
+        accept: (item) => @checkRemoval(item)
+        drop: (evt, ui)=> @removeRelation(evt, ui)
     @
 
   toggleEditMode: ->
@@ -72,6 +79,15 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
           @toggleEditMode()
 
     deferred.fail =>
+
+  checkRemoval: (item) ->
+    (@$el.has($(item)).length > 0) && $(item).hasClass("from-connection-list")
+
+  removeRelation: (evt, ui) ->
+    targetView = _(@relationViews).find (v) =>
+      ui.draggable.closest('tr.relation-type')[0] is v.$el[0]
+    targetView.disconnect(ui.draggable) if targetView?
+
 
 
 

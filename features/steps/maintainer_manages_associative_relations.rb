@@ -82,7 +82,7 @@ class Spinach::Features::MaintainerManagesAssociativeRelations < Spinach::Featur
   end
 
   step 'I drag the "cell phone" concept label just outside the "see also" dropzone' do
-    @cell_label.drag_to find("tr.relation-type th")
+    @cell_label.drag_to find("section.associative-relations h3")
   end
 
   step 'the "see also" dropzone should be empty' do

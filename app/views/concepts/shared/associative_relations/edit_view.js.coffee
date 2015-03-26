@@ -30,9 +30,6 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.EditView extends Backbon
       drop: (evt, ui)=> @onDrop("td.relations", ui.draggable)
       out: (evt, ui)=> @onDropOut(evt, ui)
       over: (evt, ui)=> @onDropOver(evt, ui)
-    @droppableOn @$el, "ui-droppable-disconnect",
-      accept: (item) => @checkRemoval(item)
-      drop: (evt, ui)=> @onDisconnect(ui.draggable)
     @
 
   createConceptLabel: (relation) ->
@@ -59,15 +56,12 @@ class Coreon.Views.Concepts.Shared.AssociativeRelations.EditView extends Backbon
     else
       $(ui.helper).addClass "ui-droppable-connect"
 
-  onDisconnect: (item) ->
+  disconnect: (item) ->
     conceptId = item.data "drag-ident"
     found = @checkIfExists(conceptId)
     @relations = _(@relations).without(found) if found?
     item.remove()
     @render()
-
-  checkRemoval: (item) ->
-    (@$el.has($(item)).length > 0) && $(item).hasClass("from-connection-list")
 
   checkIfExists: (id) ->
     found = _(@relations).find (rel) ->

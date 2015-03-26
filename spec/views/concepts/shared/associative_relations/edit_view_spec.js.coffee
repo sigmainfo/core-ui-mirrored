@@ -94,7 +94,7 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelations.EditView", ->
       expect(view.relations).to.have.lengthOf 0
       expect(view.render).to.not.have.been.Called
 
-  describe "#onDisconnect()", ->
+  describe "#disconnect()", ->
 
     it 'removes the dragged concept form the concept list', ->
       label =
@@ -104,7 +104,7 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelations.EditView", ->
       view.relations.push concept
       sinon.stub view, 'checkIfExists', -> concept
       sinon.stub view, 'render'
-      view.onDisconnect(label)
+      view.disconnect(label)
       expect(view.relations).to.have.lengthOf 0
       expect(label.remove).to.have.been.CalledOnce
       expect(view.render).to.have.been.CalledOnce
