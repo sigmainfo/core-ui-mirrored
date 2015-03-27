@@ -278,6 +278,9 @@ form.create.term {
 }
 
 .concept.edit .associative-relations {
+  form .associative-types {
+    margin-left: 32px;
+  }
   ul.ui-droppable {
     overflow: hidden;
     max-width: 90%;
@@ -544,7 +547,6 @@ form.create.term {
         width: 86%;
         margin-bottom: 6px;
       }
-
     }
 
     .term {
@@ -564,6 +566,11 @@ form.create.term {
     .error-message {
       padding-left: 0px;
       width:auto;
+    }
+  }
+  .concept.edit .associative-relations {
+    form .associative-types {
+      margin-left: 40px;
     }
   }
 }

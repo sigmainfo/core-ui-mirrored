@@ -17,6 +17,12 @@
         background-color: rgba($button-hover-color, 0.8);
     }
   }
+  &.ui-state-hovered {
+    table {
+      background-color: rgba($button-hover-color, 0.1);
+    }
+
+  }
 
   .list.ui-state-hovered {
     background-color: rgba($button-hover-color, 0.1);
