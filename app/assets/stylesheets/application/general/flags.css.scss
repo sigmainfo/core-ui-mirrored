@@ -50,6 +50,9 @@
       &.fr:before {
         background-position: -75px -60px;
       }
+      &.hr:before {
+        background-position: -50px -40px;
+      }
       &.hu:before {
         background-position: -25px -80px;
       }
@@ -61,9 +64,6 @@
       }
       &.lv:before {
         background-position: 0px -100px;
-      }
-      &.lt:before {
-        background-position: -50px -100px;
       }
       &.mt:before {
         background-position: 0px -120px;
@@ -88,6 +88,9 @@
       }
       &.sl:before {
         background-position: -75px -160px;
+      }
+      &.sr:before {
+        background-position: -25px -160px;
       }
       &.sv:before {
         background-position: 0px -180px;
