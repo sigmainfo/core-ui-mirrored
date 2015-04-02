@@ -9,50 +9,34 @@ Feature: Maintainer manages connections in concept map
     And the concept "destination of transport" has "intra-EU transport" as a subconcept
     And a concept with label "mode of transport" exists
     And the concept "mode of transport" has "pipeline transport" as a subconcept
-
-  Scenario: I can see the edit mode button only when map is in Main View
-    When I visit the repository root page
-    Then I should see a widget "Concept Map"
-    And in this widget there is no "Edit mode" button
-    When I click on "Maximize" inside the widget "Concept Map"
-    Then I should see a concept map inside the main view
-    And in this view there is an "Edit mode" button
-
-  Scenario: When concept map is in edit view the map is frozen
-    When I visit the repository root page
-    Then I should see a widget "Concept Map"
-    Then I click on "Maximize" inside the widget "Concept Map"
+    And I visit the repository root page
+    And I should see a widget "Concept Map"
+    And I click on "Maximize" inside the widget "Concept Map"
+    And I see a concept map inside the main view
     And I click the "Edit mode" button
-    Then I cannot drag and drop the background of the map
 
-  Scenario: When concept map is in edit view additional actions are enabled
-    When I visit the repository root page
-    Then I should see a widget "Concept Map"
-    Then I click on "Maximize" inside the widget "Concept Map"
-    And I click the "Edit mode" button
-    And in this view there is an "Reset" button
-    And in this view there is an "Cancel" button
-    And in this view there is an "Save" button
+  Scenario: view the map is frozen when concept map is in edit
+    Then I can move the map with drag and drop on empty space
+    And I can zoom in the map
+    When I click on the "intra-EU transport" concept node
+    Then I am still in the root node page
 
-  Scenario: I can change the superconcept of a concept by dragging it on another one
-    When I visit the repository root page
-    Then I should see a widget "Concept Map"
-    Then I click on "Maximize" inside the widget "Concept Map"
-    And I click the "Edit mode" button
+  Scenario: additional actions are enabled when concept map is in edit view
+    And in this view there is a "Reset" button
+    And in this view there is a "Cancel" button
+    And in this view there is a "Save relations" button
+
+  Scenario: I can change the superconcept(s) of a concept by dragging it on another one
     Then I drag concept "pipeline transport" on the "destination of transport" concept
     Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
     Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
-    When I click save
+    When I click "Save relations"
     Then I am not in edit mode
     And I see concept "pipeline transport" connected with concept "destination of transport"
     And I see concept "intra-EU transport" connected with concept "destination of transport"
     And I see concept "mode of transport" does not heave any subconcepts
 
-  Scenario: Reset editing of concept map relations
-    When I visit the repository root page
-    Then I should see a widget "Concept Map"
-    Then I click on "Maximize" inside the widget "Concept Map"
-    And I click the "Edit mode" button
+  Scenario: reset editing of concept map relations
     Then I drag concept "pipeline transport" on the "destination of transport" concept
     Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
     Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
@@ -62,11 +46,7 @@ Feature: Maintainer manages connections in concept map
     And I see concept "mode of transport" connected with concept "pipeline transport"
     Then I see concept "pipeline transport" has no connection with concept "destination of transport"
 
-  Scenario: Cancel editing of concept map relations
-    When I visit the repository root page
-    Then I should see a widget "Concept Map"
-    Then I click on "Maximize" inside the widget "Concept Map"
-    And I click the "Edit mode" button
+  Scenario: cancel editing of concept map relations
     Then I drag concept "pipeline transport" on the "destination of transport" concept
     Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
     Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
