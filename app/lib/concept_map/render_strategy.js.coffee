@@ -7,11 +7,13 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   constructor: (@parent) ->
     @layout = d3.layout.tree()
     @diagonal = d3.svg.diagonal()
+    @dragListener = d3.behavior.drag()
+    @dragStarted = false
 
   resize: (@width, @height) ->
 
   render: (graph) ->
-    deferred = $.Deferred()
+    deferred = $.Deferred()    
     nodes    = @renderNodes graph.tree
     siblings = @renderSiblings graph.siblings
     edges    = @renderEdges graph.edges
@@ -19,6 +21,21 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     all = @parent.selectAll('.concept-node, .sibling-node')
       .data(nodes.data().concat(siblings.data()), (datum) -> datum.id )
     _.defer @updateLayout, all, edges, deferred
+    
+    
+    @dragListener.on 'dragstart', (d) ->
+      console.log 'drag start'
+      d3.event.sourceEvent.stopPropagation()
+  
+    @dragListener.on 'drag', (d) ->
+      if d.type=='repository'
+        console.log 'repo not supported....'
+        return
+      cords1=d3.mouse(this)
+      node.attr("transform", "translate(" + cords[0] + "," + cords[0]+ ")");      
+  
+    @dragListener.on 'dragend', (d) ->
+      console.log 'on end' 
 
     deferred.promise()
 
@@ -28,8 +45,11 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @createNodes nodes.enter()
     @deleteNodes nodes.exit()
     @updateNodes nodes
-    nodes
+    
 
+    nodes
+  
+  
   renderSiblings: (data) ->
     siblings = @parent.selectAll('.sibling-node')
       .data( @layoutSiblings(data), (datum) -> datum.id )
@@ -40,6 +60,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
   createNodes: (enter) ->
     all = enter.append('g')
+      .call(@dragListener)
       .attr('class', (datum) ->
         if datum.sibling then 'sibling-node' else 'concept-node'
       )
