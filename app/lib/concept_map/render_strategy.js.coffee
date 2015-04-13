@@ -25,15 +25,25 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     
     @dragListener.on 'dragstart', (d) ->
       console.log 'drag start'
+      #console.log('001....'+d.x)
+      #console.log('002....'+d3.event.dy)
       d3.event.sourceEvent.stopPropagation()
   
     @dragListener.on 'drag', (d) ->
       if d.type=='repository'
         console.log 'repo not supported....'
         return
+      console.log('001....'+d.x)
+      console.log('001....'+d.y)
+      console.log('002....'+d3.event.dx)  
+      console.log('002....'+d3.event.dy)  
       cords1=d3.mouse(this)
       node=d3.select(this)
-      node.attr("transform", "translate(" + cords1[0] + "," + cords1[1]+ ")");      
+      
+      d.x += d3.event.dx;
+      d.y += d3.event.dy;
+
+      node.attr("transform", "translate(" + d.x + "," + d.y+ ")");      
   
     @dragListener.on 'dragend', (d) ->
       console.log 'on end' 
@@ -48,7 +58,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @deleteNodes nodes.exit()
     @updateNodes nodes
     
-
+    console.log 'nnodes..'+nodes
     nodes
   
   
