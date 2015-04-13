@@ -32,10 +32,12 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         console.log 'repo not supported....'
         return
       cords1=d3.mouse(this)
-      node.attr("transform", "translate(" + cords[0] + "," + cords[0]+ ")");      
+      node=d3.select(this)
+      node.attr("transform", "translate(" + cords1[0] + "," + cords1[1]+ ")");      
   
     @dragListener.on 'dragend', (d) ->
       console.log 'on end' 
+      
 
     deferred.promise()
 
