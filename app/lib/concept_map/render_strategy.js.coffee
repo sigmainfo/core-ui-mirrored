@@ -8,10 +8,23 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @layout = d3.layout.tree()
     @diagonal = d3.svg.diagonal()
     @dragListener = d3.behavior.drag()
-    @dragStarted = false
+    window.dragStarted = null
+    window.selectedNode=null
+    window.draggingNode=null
 
   resize: (@width, @height) ->
 
+  initiateDrag= (d, domNode) ->
+    window.draggingNode=d
+    svgGroup=d3.select('g.concept-map')
+    svgGroup.selectAll("g.concept-node").sort (a, b)->
+      if a.id != draggingNode.id 
+        1
+      else 
+        -1
+    window.dragStarted = null    
+  
+  
   render: (graph) ->
     deferred = $.Deferred()    
     nodes    = @renderNodes graph.tree
@@ -25,44 +38,66 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     
     @dragListener.on 'dragstart', (d) ->
       console.log 'drag start'
-      #console.log('001....'+d.x)
-      #console.log('002....'+d3.event.dy)
+      window.dragStarted= true;
       d3.event.sourceEvent.stopPropagation()
-  
+      
+        
     @dragListener.on 'drag', (d) ->
       if d.type=='repository'
         console.log 'repo not supported....'
         return
-      console.log('001....'+d.x)
-      console.log('001....'+d.y)
-      console.log('002....'+d3.event.dx)  
-      console.log('002....'+d3.event.dy)  
+      if window.dragStarted
+        domNode = this;
+        initiateDrag(d, domNode);  
       cords1=d3.mouse(this)
       node=d3.select(this)
       
       d.x += d3.event.dx;
       d.y += d3.event.dy;
-
+      node.style('z-index',-100)
       node.attr("transform", "translate(" + d.x + "," + d.y+ ")");      
+      #console.log 'd label'+d.label
+      #console.log 'd type'+d.type
+      #console.log 'd path'+d.path
+      #console.log 'd id'+d.id
+      #console.log 'd parent'+d.parent.label
+      #console.log 'd children'+d.children.length      
+      #console.log 'd children'+JSON.stringify(Coreon.Models.Concept.find(d.id))
+      #@con=Coreon.Models.Concept.find(d.id)
+      #data =
+      #  superconcept_ids: []
+      #  subconcept_ids: ['551e6f4973697363de050000','551e6f7f73697363de0c0000']
+      #@con.save data
+      
   
     @dragListener.on 'dragend', (d) ->
+      #Backbone.history.loadUrl
       console.log 'on end' 
-      
+      if d.type=='repository'
+        return
+      console.log 'selectedNode...'+selectedNode.label
+      console.log 'draggingNode...'+draggingNode.label
+        
+
 
     deferred.promise()
 
   renderNodes: (root) ->
+    #console.log 'nodes '+@layout.nodes
+    #console.log 'nodes '+@layout.nodes.length
     nodes = @parent.selectAll('.concept-node')
       .data( @layout.nodes(root), (datum) -> datum.id )
+      
     @createNodes nodes.enter()
     @deleteNodes nodes.exit()
     @updateNodes nodes
     
-    console.log 'nnodes..'+nodes
+    #console.log 'nnodes..'+nodes
     nodes
   
   
   renderSiblings: (data) ->
+    #console.log 'sibling...'+data
     siblings = @parent.selectAll('.sibling-node')
       .data( @layoutSiblings(data), (datum) -> datum.id )
     @createNodes siblings.enter()
@@ -73,6 +108,14 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   createNodes: (enter) ->
     all = enter.append('g')
       .call(@dragListener)
+      .on('mouseover', (d) ->
+        #console.log 'over '+datum.label
+        window.selectedNode=d
+      )
+      .on('mouseout', (d) ->
+        #console.log 'over '+datum.label
+        window.selectedNode=null
+      )
       .attr('class', (datum) ->
         if datum.sibling then 'sibling-node' else 'concept-node'
       )
