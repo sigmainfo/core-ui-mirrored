@@ -167,6 +167,12 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
     end
   end
 
+  step 'I see a section "TERMS" within this form' do
+    @form = page.find :form, 'Create concept'
+    @section = page.find 'div.terms'
+    expect(@section).to be_visible
+  end
+
   step 'I see a section "PROPERTIES" within the form "Create concept"' do
     @form = page.find :form, 'Create concept'
     within @form do
@@ -194,6 +200,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'I see a section "PROPERTIES"' do
     @section = page.find :section, 'Properties'
     expect(@section).to be_visible
+  end
+
+  step 'I see a section "PROPERTIES" within this section' do
+    within @section do
+      @section = page.find :section, 'Properties'
+      expect(@section).to be_visible
+    end
   end
 
   step 'I see a deprecated property "RATING"' do
@@ -423,7 +436,7 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   end
 
   step 'I fill in "de" for "LANGUAGE"' do
-    fieldset = page.find '.term.create > .lang'
+    fieldset = page.find '.term > .lang'
     select_from_coreon_dropdown fieldset, 'German'
   end
 
@@ -432,6 +445,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
       submit = page.find :button, text: 'Create term', disabled: true
     end
   end
+
+  step 'the submit "Create concept" is disabled' do
+    within @form do
+      submit = page.find :button, text: 'Create concept', disabled: true
+    end
+  end
+
 
   step 'I fill in "Rüdiger von Schlotterstein" for "AUTHOR"' do
     within @form do
@@ -446,6 +466,13 @@ class Spinach::Features::MaintainerEditsProperties < Spinach::FeatureSteps
   step 'the submit "Create term" is enabled' do
     within @form do
       submit = page.find :button, text: 'Create term'
+      expect(submit).to be_visible
+    end
+  end
+
+  step 'the submit "Create concept" is enabled' do
+    within @form do
+      submit = page.find :button, text: 'Create concept'
       expect(submit).to be_visible
     end
   end

@@ -89,7 +89,7 @@ Capybara.add_selector(:fieldset_with_title) do
     """
       .//fieldset
         [
-          .//*
+          ./*
             [
               translate( local-name(), '123456', '******' ) = 'h*'
               and

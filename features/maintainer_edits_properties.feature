@@ -62,6 +62,25 @@ Feature: maintainer edits properties
     Then I see a listing "PROPERTIES" within the concept header
     And I see a property "TAGS" with values "cool", "night life" only
 
+  Scenario: ensure non-blank property on new concept's new term
+    Given the repository defines a blueprint for concepts
+    And the repository defines a blueprint for terms
+    And that blueprint requires a property "author" of type "text"
+    When I visit the repository root page
+    And I click on "New concept"
+    And I click "Add term"
+    And I see a section "TERMS" within this form
+    Then I see a section "PROPERTIES" within this section
+    When I fill in "Blutbad" for "VALUE"
+    And I fill in "de" for "LANGUAGE"
+    Then the submit "Create concept" is disabled
+    When I fill in "Rüdiger von Schlotterstein" for "AUTHOR"
+    Then the submit "Create concept" is enabled
+    When I click "Create concept"
+    Then I see term "Blutbad" within language section "DE"
+    When I toggle "Properties" within this term
+    Then I see a property "AUTHOR" with value "Rüdiger von Schlotterstein"
+
   Scenario: ensure non-blank property on new term
     Given the repository defines a blueprint for terms
     And that blueprint requires a property "author" of type "text"
