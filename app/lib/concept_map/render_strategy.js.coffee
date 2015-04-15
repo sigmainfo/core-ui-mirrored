@@ -20,13 +20,29 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     svgGroup=d3.select('g.concept-map')
     that=@
     svgGroup.selectAll("g.concept-node").sort (a, b)->
-      console.log '@draggingNode:'+that.draggingNode.id
       if a.id != that.draggingNode.id 
         1
       else 
         -1
+    nodes1=@layout.nodes(d)    
+    that=@
+    if nodes1.length > 1
+      # remove link paths
+      links = @layout.links(nodes1)
+      nodePaths = svgGroup.selectAll('path.concept-edge').data(links, (d) ->
+        d.target.id
+      ).remove()
+  
+      # remove child nodes
+      nodesExit = svgGroup.selectAll('g.concept-node').data(nodes1, (d) ->
+        d.id
+      ).filter((d, i) ->
+        if d.id == that.draggingNode.id
+          return false
+        true
+      ).remove()    
+    
     #window.treee.nodes(d)    
-    #console.log 'mmm'+that.layout.nodes(d)    
     #console.log 'mmm'+@layout.nodes(@draggingNode)    
     #console.log 'nnn'+d.label    
     #console.log 'ooo'+@draggingNode.label    
@@ -47,7 +63,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragListener.on 'dragstart', (d) ->
       console.log 'drag start'
       that.dragStarted= true;
-      #window.nodes1=window.treee.nodes(d)
+      #console.log 'mmm'+that.layout.nodes(d)    
       d3.event.sourceEvent.stopPropagation()
       
       
@@ -57,14 +73,13 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         console.log 'repo not supported....'
         return
       if that.dragStarted
-        domNode = this;
+        domNode = that;
         that.initiateDrag(d, domNode);  
-      cords1=d3.mouse(this)
-      node=d3.select(this)
-      
-      d.x += d3.event.dx;
-      d.y += d3.event.dy;
-      node.style('z-index',-100)
+      node=d3.select(@)
+      d.x += d3.mouse(this)[0];
+      d.y += d3.mouse(this)[1];
+      #d.x += d3.event.dx;
+      #d.y += d3.event.dy;
       node.attr("transform", "translate(" + d.x + "," + d.y+ ")");      
       #console.log 'd label'+d.label
       #console.log 'd type'+d.type
@@ -85,8 +100,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       console.log 'on end' 
       if d.type=='repository'
         return
-      console.log 'selectedNode...'+that.selectedNode.label
-      console.log 'draggingNode...'+that.draggingNode.label
+      #console.log 'selectedNode...'+that.selectedNode.label
+      #console.log 'draggingNode...'+that.draggingNode.label
       console.log 'Backbone.history.getFragment()'+Backbone.history.getFragment()
         
 
