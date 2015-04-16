@@ -31,11 +31,13 @@ describe 'Coreon.Views.Panels.Concepts.NewConceptView', ->
     @view.model.properties = -> new Backbone.Collection
     @view.model.terms = -> new Backbone.Collection
     @view.model.errors = -> null
+    sinon.stub _, 'defer', ->
 
   afterEach ->
     I18n.t.restore()
     Coreon.Views.Concepts.Shared.BroaderAndNarrowerView.restore()
     Coreon.Views.Properties.EditPropertiesView.restore()
+    _.defer.restore()
 
   it 'is a Backbone view', ->
     @view.should.be.an.instanceof Backbone.View

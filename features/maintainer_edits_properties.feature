@@ -7,12 +7,14 @@ Feature: maintainer edits properties
     Given I am logged in as maintainer of the repository
 
   Scenario: new concept with required properties
-    Given the repository defines a blueprint for concepts
+    Given the repository defines a blueprint for terms
+    And the repository defines a blueprint for concepts
     And that blueprint requires a property "short description" of type "text"
     And that blueprint requires a property "dangerous" of type "boolean"
     And that property defines labels "yes" and "no"
     When I visit the repository root page
     And I click on "New concept"
+    And I click "Remove term"
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I see a fieldset "SHORT DESCRIPTION" within this section
     And this fieldset contains a text input
@@ -29,11 +31,13 @@ Feature: maintainer edits properties
     And I see a property "DANGEROUS" with value "no"
 
   Scenario: new concept with optional property
-    Given the repository defines a blueprint for concepts
+    Given the repository defines a blueprint for terms
+    And the repository defines a blueprint for concepts
     And that blueprint allows a property "alias" of type "text"
     And that blueprint allows a property "definition" of type "multiline text"
     When I visit the repository root page
     And I click on "New concept"
+    And I click "Remove term"
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I do not see a fieldset "ALIAS" or "DEFINITION"
     When I click on "Add property" within this form
@@ -68,7 +72,6 @@ Feature: maintainer edits properties
     And that blueprint requires a property "author" of type "text"
     When I visit the repository root page
     And I click on "New concept"
-    And I click "Add term"
     And I see a section "TERMS" within this form
     Then I see a section "PROPERTIES" within this section
     When I fill in "Blutbad" for "VALUE"

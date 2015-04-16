@@ -7,10 +7,12 @@ Feature: maintainer edits asset properties
     Given I am logged in as maintainer of the repository
 
   Scenario: add required asset property to new concept
-    Given the repository defines a blueprint for concepts
+    Given the repository defines a blueprint for terms
+    And the repository defines a blueprint for concepts
     And that blueprint defines a required property "image" of type "asset"
     When I visit the repository root page
     And I click on "New concept"
+    And I click "Remove term"
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I see a fieldset "IMAGE" within this section
     And this fieldset contains a file input
@@ -26,10 +28,12 @@ Feature: maintainer edits asset properties
     And there is a thumbnail captioned "Crane photo"
 
   Scenario: add required non-image asset property to new concept
-    Given the repository defines a blueprint for concepts
+    Given the repository defines a blueprint for terms
+    And the repository defines a blueprint for concepts
     And that blueprint defines a required property "manual" of type "asset"
     When I visit the repository root page
     And I click on "New concept"
+    And I click "Remove term"
     Then I see a section "PROPERTIES" within the form "Create concept"
     And I see a fieldset "MANUAL" within this section
     And this fieldset contains a file input
@@ -50,7 +54,6 @@ Feature: maintainer edits asset properties
     And that blueprint defines a required property "image" of type "asset"
     When I visit the repository root page
     And I click on "New concept"
-    And I click "Add term"
     Then I see a section "PROPERTIES" under "TERMS" within the form "Create concept"
     When I fill in "Crane" for "VALUE"
     And I fill in "en" for "LANGUAGE"

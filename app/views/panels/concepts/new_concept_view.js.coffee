@@ -60,6 +60,9 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
       _.each @model.terms().models, (term) =>
         @renderTerm(term)
     @_wasRendered = true
+    _(=>
+      _(@termViews).last().$el.find('.value > input').focus() if @termViews.length > 0 && _(@termViews).last().$el
+    ).defer()
     @
 
   refreshPropertiesValidation: (propertiesView) ->
@@ -129,6 +132,7 @@ class Coreon.Views.Panels.Concepts.NewConceptView extends Backbone.View
   addTerm: ->
     term = new Coreon.Models.Term
     @renderTerm(term)
+    _(@termViews).last().$el.find('.value > input').focus() if @termViews.length > 0 && _(@termViews).last().$el
 
   removeTerm: (evt) ->
     trigger = $ evt.target

@@ -19,6 +19,7 @@ Feature: maintainer creates concept
     And I should see "<New concept>" being the current selection
     And I should see "Test Repository" within the list of broader concepts
     And I should see a new concept node "<New concept>" within the concept map
+    And I click "Remove term"
     When I click "Create concept"
     Then I should be on the show concept page
     And I should see the id of the newly created concept within the title
@@ -28,8 +29,8 @@ Feature: maintainer creates concept
     When I visit the start page
     And I click on "New concept"
     And client-side validation is turned off
-    And I click "Add term"
     And I fill "Value" of term with "corpse"
+    And I fill "Language" of term with "None"
     And I click "Create concept"
     Then I should see an error summary
     And this summary should contain "Failed to create concept:"

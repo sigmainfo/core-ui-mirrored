@@ -4,7 +4,12 @@
 describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
 
   beforeEach ->
-    Coreon.Helpers.repositoryPath = -> "/coffee23/concepts/new"
+    Coreon.application = new Backbone.Model
+    Coreon.application.set 'repository',
+      path: -> "/coffee23"
+    Coreon.application.lang = -> 'en'
+
+    # Coreon.Helpers.repositoryPath = -> "/coffee23/concepts/new"
     @view = new Coreon.Views.Panels.Concepts.RepositoryView
       model: new Backbone.Model managers: []
     sinon.stub I18n, "t"
@@ -102,7 +107,7 @@ describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
 
       it "renders link to new concept form", ->
         @view.render()
-        @view.$el.should.have 'a[href="/coffee23/concepts/new"]'
+        @view.$el.should.have 'a[href="/coffee23/concepts/new/terms/en/"]'
 
     context "without maintainer privileges", ->
 
@@ -111,4 +116,4 @@ describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
 
       it "does not render link to new concept form", ->
         @view.render()
-        @view.$el.should.not.have 'a[href="/concepts/new"]'
+        @view.$el.should.not.have 'a[href="/coffee23/concepts/new/terms/en/"]'

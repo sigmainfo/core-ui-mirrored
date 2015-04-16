@@ -1,1 +1,1 @@
-%input{type: 'text', name: @name, id: @id, required: @required, value: @value}
+%input{type: 'text', name: @name, id: @id, required: @required, value: @value, autofocus: @autofocus}

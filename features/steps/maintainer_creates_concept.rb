@@ -15,7 +15,7 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   end
 
   step 'I should be on the new concept page' do
-    page.current_path.should == "/#{current_repository.id}/concepts/new"
+    expect(page.current_path).to match "/#{current_repository.id}/concepts/new"
   end
 
   step 'I should be on the start page' do
@@ -85,6 +85,10 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
 
   step 'I click "Add term"' do
     click_link "Add term"
+  end
+
+  step 'I click "Remove term"' do
+    click_link "Remove term"
   end
 
   step 'I click "Remove property"' do
@@ -232,6 +236,11 @@ class MaintainerCreatesConcept < Spinach::FeatureSteps
   step 'I fill "Language" of term with "English"' do
     fieldset = page.find ".term > .lang"
     select_from_coreon_dropdown fieldset, 'English'
+  end
+
+  step 'I fill "Language" of term with "None"' do
+    fieldset = page.find ".term > .lang"
+    select_from_coreon_dropdown fieldset, 'None'
   end
 
   step 'I should not see an error summary' do

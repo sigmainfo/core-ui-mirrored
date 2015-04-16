@@ -15,7 +15,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     'search/(?:([^/]+)/)?([^/]+)'     : 'search'
     'new\/?'                          : 'new'
     'new/broader/([0-9a-f]{24})'      : 'newWithSuper'
-    'new/terms/([^/]+)/([^/]+)'       : 'newWithTerm'
+    'new/terms/([^/]*)/([^/]*)'       : 'newWithTerm'
 
   route: (route, name, callback) ->
     pattern = "^#{BASE}/#{route}$"
@@ -69,5 +69,5 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
     @new superconcept_ids: [superId]
 
   newWithTerm: (lang, value) ->
-    value = decodeURIComponent(value)
+    value = if value? then decodeURIComponent(value) else ""
     @new terms: [lang: lang, value: value]

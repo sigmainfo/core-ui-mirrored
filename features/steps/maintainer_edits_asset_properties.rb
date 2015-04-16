@@ -77,6 +77,10 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
     click_link "Add term"
   end
 
+  step 'I click "Remove term"' do
+    click_link "Remove term"
+  end
+
   step 'I click "Edit term" within the term "Crane"' do
     @term = page.find :term, 'Crane'
     within @term do
