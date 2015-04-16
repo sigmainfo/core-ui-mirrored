@@ -18,8 +18,11 @@ class Coreon.Lib.TreeGraph
   generateNodes: ->
     @nodes = {}
     @meta = {}
+    #console.log 'modeeelllss'+JSON.stringify(@models)
+    window.mooddeell=JSON.stringify(@models)
     for model in @models
       node = model.toJSON()
+      #console.log 'node inv :'+JSON.stringify(node)
       node.children = []
       @nodes[model.id] = node
       @meta[model.id] =
@@ -38,15 +41,29 @@ class Coreon.Lib.TreeGraph
       target = @nodes[model.id]
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
+      #console.log model.id+' : parentNodeIds :'+parentNodeIds 
       if parentNodeIds.length > 0
         for parentNodeId in parentNodeIds
           @connect @nodes[parentNodeId], target
+          console.log 'window.tmp_nodes :'+window.tmp_nodes
+          if window.tmp_nodes_dragged
+            if window.tmp_nodes_dragged==target.id
+               #console.log  '***'+window.tmp_nodes_dragged
+               #console.log  '***'+window.tmp_nodes_selected
+               @connect @nodes[window.tmp_nodes_selected], target
+               #window.tmp_nodes_selected=null
+               #window.tmp_nodes_dragged=null
       else
         @connect @root, target
 
   connect: (source, target) ->
+    #console.log 'src :'+source
+    #console.log 'tgt :'+target
     source.children.push target
     @meta[target.id].parents += 1
+    if source.id=='551e706a73697363de190000'
+       console.log 'ssss....'+JSON.stringify(source.children) 
+       console.log 'ssss....'+JSON.stringify(@meta[target.id].parents) 
     @edges.push
       source: source
       target: target

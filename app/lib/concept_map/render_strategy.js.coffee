@@ -24,6 +24,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         1
       else 
         -1
+    ###    
     nodes1=@layout.nodes(d)    
     that=@
     if nodes1.length > 1
@@ -41,7 +42,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
           return false
         true
       ).remove()    
-    
+    ###
     #window.treee.nodes(d)    
     #console.log 'mmm'+@layout.nodes(@draggingNode)    
     #console.log 'nnn'+d.label    
@@ -100,12 +101,17 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       console.log 'on end' 
       if d.type=='repository'
         return
-      #console.log 'selectedNode...'+that.selectedNode.label
-      #console.log 'draggingNode...'+that.draggingNode.label
-      console.log 'Backbone.history.getFragment()'+Backbone.history.getFragment()
+      console.log '****111that.selectedNode.type:'+(that.selectedNode)
+      console.log '****111that.selectedNode.type:'+(window.tmp_nodes_selected)
+      console.log '****111that.selectedNode.type:'+(window.tmp_nodes_selected==undefined)
+      if that.selectedNode.type!= 'placeholder' && that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
+          window.tmp_nodes_dragged=that.draggingNode.id
+          window.tmp_nodes_selected=that.selectedNode.id
+          console.log '**window.tmp_nodes_selecetd**'+window.tmp_nodes_selected
+      #551e709373697363de1c0000
+      #console.log 'Backbone.history.getFragment()'+Backbone.history.getFragment()
+      Backbone.history.navigate(Backbone.history.getFragment())
         
-
-
     deferred.promise()
 
   renderNodes: (root) ->
