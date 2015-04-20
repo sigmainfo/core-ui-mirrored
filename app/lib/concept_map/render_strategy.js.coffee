@@ -101,30 +101,22 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       console.log 'on end' 
       if d.type=='repository'
         return
-      console.log '****111that.selectedNode.type:'+(that.selectedNode)
-      console.log '****111that.selectedNode.type:'+(window.tmp_nodes_selected)
-      console.log '****111that.selectedNode.type:'+(window.tmp_nodes_selected==undefined)
       if that.selectedNode.type!= 'placeholder' && that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
-          window.tmp_nodes_dragged=that.draggingNode.id
-          window.tmp_nodes_selected=that.selectedNode.id
-          console.log '**window.tmp_nodes_selecetd**'+window.tmp_nodes_selected
-      #551e709373697363de1c0000
-      #console.log 'Backbone.history.getFragment()'+Backbone.history.getFragment()
-      Backbone.history.navigate(Backbone.history.getFragment())
-        
+        window.tmp_nodes_dragged=that.draggingNode.id
+        window.tmp_nodes_selected=that.selectedNode.id
+        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        that.nodes    = that.renderNodes @graph.tree
+        that.siblings = that.renderSiblings @graph.siblings
+        that.edges    = that.renderEdges @graph.edges
+        #Backbone.history.navigate(Backbone.history.getFragment())        
     deferred.promise()
 
   renderNodes: (root) ->
-    #console.log 'nodes '+@layout.nodes
-    #console.log 'nodes '+@layout.nodes.length
     nodes = @parent.selectAll('.concept-node')
-      .data( @layout.nodes(root), (datum) -> datum.id )
-      
+      .data( @layout.nodes(root), (datum) -> datum.id;  )
     @createNodes nodes.enter()
     @deleteNodes nodes.exit()
     @updateNodes nodes
-    
-    #console.log 'nnodes..'+nodes
     nodes
   
   
