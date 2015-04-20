@@ -56,9 +56,6 @@ class Coreon.Lib.TreeGraph
       return
     source.children.push target
     @meta[target.id].parents += 1
-    if source.id=='551e706a73697363de190000'
-      #console.log 'ssss....'+JSON.stringify(source.children) 
-      #console.log 'ssss....'+JSON.stringify(@meta[target.id].parents) 
     @edges.push
       source: source
       target: target
