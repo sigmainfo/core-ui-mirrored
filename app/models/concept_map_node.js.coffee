@@ -38,8 +38,7 @@ class Coreon.Models.ConceptMapNode extends Backbone.Model
         score: score
       }, silent: yes
       @update model, silent: yes
-      @listenTo model, "change nonblank", =>
-        @update(model)
+      @listenTo model, "change nonblank", @update
 
   update: (model, options) ->
     attrs =

@@ -20,10 +20,11 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
     @add model: Coreon.application.repository()
     repository = @at(0)
-    @rootIds().done (rootIds) =>
+    @rootIds(yes).done (rootIds) =>
       repository.set 'child_node_ids', rootIds
       @updatePlaceholderNode repository, rootIds unless @build.deferred?
-    @add model: model for model in models
+    for model in models
+      @add model: model
 
     @resolveBuild()
     deferred.promise()
