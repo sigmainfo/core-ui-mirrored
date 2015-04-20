@@ -126,7 +126,7 @@ class Coreon.Application extends Backbone.Model
       else basicSort
 
     if repository = @get('repository')
-      repository.usedLanguages()
+      Coreon.Models.RepositorySettings.languageCodes()
         .slice(0)
         .sort comparator
     else
