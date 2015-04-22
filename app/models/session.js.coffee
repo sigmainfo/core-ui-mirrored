@@ -69,6 +69,8 @@ class Coreon.Models.Session extends Backbone.Model
       (attrs = {})[key] = value
     changed = no
     if attrs.hasOwnProperty "repositories"
+      attrs.repositories = attrs.repositories.filter (r) ->
+        (r.user_roles.length > 0) && (!((r.user_roles[0] is "manager") && (r.user_roles.length is 1)))
       repositories = attrs.repositories
       changed = yes
     else

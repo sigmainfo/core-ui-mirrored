@@ -45,28 +45,39 @@ class Coreon.Views.ApplicationView extends Backbone.View
     session = @updateSession()
     @$el.html @template session: session
     if session?
-      Coreon.Models.RepositorySettings.refresh().always =>
-        widgets = new Coreon.Views.Widgets.WidgetsView
-          model: @model
-        @$("#coreon-modal").after widgets.render().$el
-        @subviews.push widgets
+      Coreon.Models.RepositorySettings.refresh()
+        .done =>
+          widgets = new Coreon.Views.Widgets.WidgetsView
+            model: @model
+          @$("#coreon-modal").after widgets.render().$el
+          @subviews.push widgets
 
-        repoSelect = new Coreon.Views.Repositories.RepositorySelectView
-          model: session
-          app: @
-        @$("#coreon-filters").append repoSelect.render().$el
-        @subviews.push repoSelect
+          # repoSelect = new Coreon.Views.Repositories.RepositorySelectView
+          #   model: session
+          #   app: @
+          # @$("#coreon-filters").append repoSelect.render().$el
+          # @subviews.push repoSelect
 
-        progress = new Coreon.Views.Layout.ProgressIndicatorView
-          el: @$("#coreon-progress-indicator")
-        @subviews.push progress
+          progress = new Coreon.Views.Layout.ProgressIndicatorView
+            el: @$("#coreon-progress-indicator")
+          @subviews.push progress
 
-        @panels.createAll()
-        @panels.update()
+          @panels.createAll()
+          @panels.update()
 
-        Backbone.history.start pushState: on unless Backbone.History.started
+          # Backbone.history.start pushState: on unless Backbone.History.started
 
-        @$('#coreon-account').delay(2000).slideUp()
+          # @$('#coreon-account').delay(2000).slideUp()
+        .always =>
+          repoSelect = new Coreon.Views.Repositories.RepositorySelectView
+            model: session
+            app: @
+          @$("#coreon-filters").append repoSelect.render().$el
+          @subviews.push repoSelect
+
+          Backbone.history.start pushState: on unless Backbone.History.started
+
+          @$('#coreon-account').delay(2000).slideUp()
     else
       Backbone.history.stop()
       login = new Coreon.Views.Sessions.NewSessionView model: @model
