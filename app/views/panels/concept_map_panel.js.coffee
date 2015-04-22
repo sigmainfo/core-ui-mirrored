@@ -151,17 +151,26 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @con.save data
     window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
     window.tmp_reset_nodes_selected=window.tmp_nodes_selected
-    window.tmp_nodes_dragged=null
-    window.tmp_nodes_selected=null
+    window.tmp_nodes_dragged=undefined
+    window.tmp_nodes_selected=undefined
     
   resetMap: ->    
-    console.log 'reset clicked'
-    @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
-    data =
-        superconcept_ids: window.tmp_nodes_old_parent
-    @con.save data
-    window.tmp_reset_nodes_dragged=null
-    window.tmp_reset_nodes_selected=null
+    console.log 'reset clicked '+window.tmp_reset_nodes_dragged 
+    if window.tmp_reset_nodes_dragged 
+      @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
+      data =
+          superconcept_ids: window.tmp_nodes_old_parent
+      #@con.save data
+      window.tmp_reset_nodes_dragged=undefined
+      window.tmp_reset_nodes_selected=undefined
+      window.tmp_nodes_old_parent=[]
+    
+  cancelMap: ->    
+    console.log 'cancel clicked'
+    window.tmp_nodes_dragged=undefined
+    window.tmp_nodes_selected=undefined
+    window.tmp_reset_nodes_dragged=undefined
+    window.tmp_reset_nodes_selected=undefined
     window.tmp_nodes_old_parent=[]
     
 
