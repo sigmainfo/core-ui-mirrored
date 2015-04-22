@@ -30,6 +30,20 @@ $edge-color: #bfc5c0;
       }
     }
   }
+  
+  .edit-map {
+
+    &:before {
+      @include before-icon;
+      background-position: 1px -700px;
+    }
+
+    &:hover {
+      &:before {
+        background-position: -49px -700px;
+      }
+    }
+  }
 
   .toggle-orientation {
 

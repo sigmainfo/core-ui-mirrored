@@ -254,6 +254,10 @@ en:
       title: "Concept Map"
       zoom_in: "Zoom in"
       zoom_out: "Zoom out"
+      edit_map: "Edit"
+      reset_map: "Reset"
+      cancel_map: "Cancel"
+      save_map: "Save"
       toggle_orientation:
         label: "Toggle orientation"
         hint: "Click to toggle rendering in landscape or tree layout"

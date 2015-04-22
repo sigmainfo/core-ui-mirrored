@@ -108,7 +108,12 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         that.nodes    = that.renderNodes @graph.tree
         that.siblings = that.renderSiblings @graph.siblings
         that.edges    = that.renderEdges @graph.edges
-        #Backbone.history.navigate(Backbone.history.getFragment())        
+        #@con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
+        #data =
+        #  superconcept_ids: [window.tmp_nodes_selected]
+        #  subconcept_ids: []
+        #@con.save data
+        
     deferred.promise()
 
   renderNodes: (root) ->

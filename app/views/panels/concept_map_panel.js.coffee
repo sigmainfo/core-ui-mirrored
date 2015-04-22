@@ -25,6 +25,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     'click .zoom-in'                : 'zoomIn'
     'click .zoom-out'               : 'zoomOut'
     'click .toggle-orientation'     : 'toggleOrientation'
+    'click .edit-map'               : 'editMap'
+    'click .reset-map'              : 'resetMap'
+    'click .cancel-map'             : 'cancelMap'
+    'click .save-map'               : 'saveMap'
 
   initialize: (options = {}) ->
     super
@@ -136,6 +140,32 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @navigator.scale zoom
     @_panAndZoom()
 
+  editMap: ->    
+    console.log 'editmap clicked'
+
+  saveMap: ->    
+    console.log 'save clicked'
+    @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
+    data =
+        superconcept_ids: [window.tmp_nodes_selected]
+    @con.save data
+    window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
+    window.tmp_reset_nodes_selected=window.tmp_nodes_selected
+    window.tmp_nodes_dragged=null
+    window.tmp_nodes_selected=null
+    
+  resetMap: ->    
+    console.log 'reset clicked'
+    @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
+    data =
+        superconcept_ids: window.tmp_nodes_old_parent
+    @con.save data
+    window.tmp_reset_nodes_dragged=null
+    window.tmp_reset_nodes_selected=null
+    window.tmp_nodes_old_parent=[]
+    
+
+
   dimensions: ->
     width: @$el.innerWidth()
     height: @$el.innerHeight()
@@ -149,7 +179,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       @$el.attr 'style', null
 
     @origin.attr 'transform'
-               , "translate(#{width / 2}, #{height / 2})"
+      , "translate(#{width / 2}, #{height / 2})"
     @renderStrategy.resize width, height
 
   _renderMarkupSkeleton: ->
@@ -157,6 +187,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       'panels.concept_map.toggle_orientation'
       'panels.concept_map.zoom_in'
       'panels.concept_map.zoom_out'
+      'panels.concept_map.edit_map'
+      'panels.concept_map.reset_map'
+      'panels.concept_map.cancel_map'
+      'panels.concept_map.save_map'
     ]
 
   _panAndZoom: (options = {}) =>
@@ -169,7 +203,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     [x, y] = @navigator.translate()
 
     map.attr 'transform'
-           , "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})"
+      , "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})"
 
   toggleOrientation: ->
     @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1
