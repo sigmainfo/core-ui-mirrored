@@ -141,38 +141,44 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @_panAndZoom()
 
   editMap: ->    
-    console.log 'editmap clicked'
+    #console.log 'editmap clicked'
 
   saveMap: ->    
-    console.log 'save clicked'
-    @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
-    data =
-        superconcept_ids: [window.tmp_nodes_selected]
-    @con.save data
-    window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
-    window.tmp_reset_nodes_selected=window.tmp_nodes_selected
-    window.tmp_nodes_dragged=undefined
-    window.tmp_nodes_selected=undefined
-    
-  resetMap: ->    
-    console.log 'reset clicked '+window.tmp_reset_nodes_dragged 
-    if window.tmp_reset_nodes_dragged 
+#    console.log 'save clicked'+window.tmp_nodes_dragged
+    if window.tmp_nodes_dragged
+      @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
+      data =
+          superconcept_ids: [window.tmp_nodes_selected]
+      @con.save data
+      window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
+      window.tmp_reset_nodes_selected=window.tmp_nodes_selected
+      window.tmp_nodes_dragged=undefined
+      window.tmp_nodes_selected=undefined
+
+  resetMap: ->
+    #console.log 'reset clicked '+window.tmp_reset_nodes_dragged
+    if window.tmp_reset_nodes_dragged
       @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
       data =
           superconcept_ids: window.tmp_nodes_old_parent
-      #@con.save data
+      @con.save data
       window.tmp_reset_nodes_dragged=undefined
       window.tmp_reset_nodes_selected=undefined
       window.tmp_nodes_old_parent=[]
     
   cancelMap: ->    
-    console.log 'cancel clicked'
+    #console.log 'cancel clicked'+@renderStrategy
+    window.tmp_nodes_old_parent=[]
     window.tmp_nodes_dragged=undefined
     window.tmp_nodes_selected=undefined
     window.tmp_reset_nodes_dragged=undefined
     window.tmp_reset_nodes_selected=undefined
-    window.tmp_nodes_old_parent=[]
-    
+
+    @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+    @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
+    @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
+    @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
+
 
 
   dimensions: ->

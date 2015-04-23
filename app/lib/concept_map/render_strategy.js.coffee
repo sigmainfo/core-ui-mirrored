@@ -52,7 +52,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   
   
   render: (graph) ->
-    deferred = $.Deferred()    
+    deferred = $.Deferred()
     nodes    = @renderNodes graph.tree
     siblings = @renderSiblings graph.siblings
     edges    = @renderEdges graph.edges
@@ -118,7 +118,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
   renderNodes: (root) ->
     nodes = @parent.selectAll('.concept-node')
-      .data( @layout.nodes(root), (datum) -> datum.id;  )
+      .data( @layout.nodes(root), (datum) -> datum.id  )
     @createNodes nodes.enter()
     @deleteNodes nodes.exit()
     @updateNodes nodes
