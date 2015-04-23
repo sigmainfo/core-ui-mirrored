@@ -142,10 +142,18 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   editMap: ->    
     #console.log 'editmap clicked'
+    if $('#coreon-concept-map').parent().attr('id') == 'coreon-main'
+      if window.edit_mode_selected
+        window.edit_mode_selected = false
+        $("body").removeClass('edit_mode');
+      else
+        window.edit_mode_selected = true
+        #$("body").removeClass('edit_mode');
+        $("body").addClass('edit_mode');
 
   saveMap: ->    
 #    console.log 'save clicked'+window.tmp_nodes_dragged
-    if window.tmp_nodes_dragged
+    if window.edit_mode_selected && window.tmp_nodes_dragged
       @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
       data =
           superconcept_ids: [window.tmp_nodes_selected]
@@ -155,9 +163,12 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       window.tmp_nodes_dragged=undefined
       window.tmp_nodes_selected=undefined
 
+#      $("body").css("background","url('/assets/layout/bg.jpg')");
+#      window.edit_mode_selected = false
+
   resetMap: ->
     #console.log 'reset clicked '+window.tmp_reset_nodes_dragged
-    if window.tmp_reset_nodes_dragged
+    if window.edit_mode_selected && window.tmp_reset_nodes_dragged
       @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
       data =
           superconcept_ids: window.tmp_nodes_old_parent
@@ -168,16 +179,21 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     
   cancelMap: ->    
     #console.log 'cancel clicked'+@renderStrategy
-    window.tmp_nodes_old_parent=[]
-    window.tmp_nodes_dragged=undefined
-    window.tmp_nodes_selected=undefined
-    window.tmp_reset_nodes_dragged=undefined
-    window.tmp_reset_nodes_selected=undefined
+    if window.edit_mode_selected
+      window.tmp_nodes_old_parent=[]
+      window.tmp_nodes_dragged=undefined
+      window.tmp_nodes_selected=undefined
+      window.tmp_reset_nodes_dragged=undefined
+      window.tmp_reset_nodes_selected=undefined
 
-    @graph=(new Coreon.Lib.TreeGraph window.models).generate()
-    @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
-    @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
-    @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
+
+      window.edit_mode_selected = false
+      $("body").removeClass('edit_mode');
+
+      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
+      @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
+      @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
 
 
 

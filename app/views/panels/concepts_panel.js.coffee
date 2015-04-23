@@ -15,6 +15,9 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
   current: null
 
+  events:
+    'click .maximize'               : 'disableEditConcept'
+
   initialize: ->
     super
     @$el.html @layout()
@@ -53,3 +56,7 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
   render: ->
     @currentView?.render()
     @
+
+  disableEditConcept: ->
+    $("body").removeClass('edit_mode');
+    window.edit_mode_selected = false

@@ -73,6 +73,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       if d.type=='repository'
         console.log 'repo not supported....'
         return
+      if window.edit_mode_selected == undefined || window.edit_mode_selected == false
+        #console.log 'Edit mode not yet selected'
+        return
       if that.dragStarted
         domNode = that;
         that.initiateDrag(d, domNode);  
@@ -101,6 +104,10 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       console.log 'on end' 
       if d.type=='repository'
         return
+      if window.edit_mode_selected == undefined || window.edit_mode_selected == false
+        #console.log 'Edit mode not yet selected'
+        return
+
       if that.selectedNode.type!= 'placeholder' && that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
         window.tmp_nodes_dragged=that.draggingNode.id
         window.tmp_nodes_selected=that.selectedNode.id
