@@ -59,4 +59,5 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
   disableEditConcept: ->
     $("body").removeClass('edit_mode');
+    $('.submit_concept').hide();
     window.edit_mode_selected = false

@@ -1,7 +1,7 @@
 #= require environment
 #= require views/panels/panel_view
 #= require templates/panels/concept_map
-#= require helpers/titlebar
+#= require helpers/titlebar_editmap
 #= require d3
 #= require lib/concept_map/left_to_right
 #= require lib/concept_map/top_down
@@ -140,16 +140,20 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @navigator.scale zoom
     @_panAndZoom()
 
+  @hello = true
+
   editMap: ->    
     #console.log 'editmap clicked'
     if $('#coreon-concept-map').parent().attr('id') == 'coreon-main'
       if window.edit_mode_selected
         window.edit_mode_selected = false
         $("body").removeClass('edit_mode');
+        $('.submit_concept').hide();
       else
         window.edit_mode_selected = true
         #$("body").removeClass('edit_mode');
         $("body").addClass('edit_mode');
+        $('.submit_concept').show();
 
   saveMap: ->    
 #    console.log 'save clicked'+window.tmp_nodes_dragged
@@ -189,6 +193,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
       window.edit_mode_selected = false
       $("body").removeClass('edit_mode');
+      $('.submit_concept').hide();
 
       @graph=(new Coreon.Lib.TreeGraph window.models).generate()
       @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
@@ -219,9 +224,9 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       'panels.concept_map.zoom_in'
       'panels.concept_map.zoom_out'
       'panels.concept_map.edit_map'
-      'panels.concept_map.reset_map'
-      'panels.concept_map.cancel_map'
-      'panels.concept_map.save_map'
+#      'panels.concept_map.reset_map'
+#      'panels.concept_map.cancel_map'
+#      'panels.concept_map.save_map'
     ]
 
   _panAndZoom: (options = {}) =>

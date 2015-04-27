@@ -1,0 +1,10 @@
+.titlebar
+  %h3!= @title
+  .actions
+    - for action in @actions
+      != @action_for action
+
+  .submit_concept
+    %a.reset-map{:href => "javascript:void(0)"} = I18n.t('panels.concept_map.reset_map')
+    %a.cancel-map{:href => "javascript:void(0)"} = I18n.t('panels.concept_map.cancel_map')
+    %button.save-map{:title => I18n.t('concept.save_connections.hint'), :type => "submit"} = I18n.t('panels.concept_map.save_map')
