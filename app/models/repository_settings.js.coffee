@@ -21,6 +21,8 @@ class Coreon.Models.RepositorySettings extends Backbone.Model
         success: =>
           instance = new_instance
           deferred.resolve instance
+        error: =>
+          deferred.reject()
     else
       deferred.resolve instance
     deferred.promise()

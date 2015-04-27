@@ -149,6 +149,7 @@ describe 'Coreon.Models.Session', ->
         session.set 'repositories', [
           id: 'nobody-repo-123'
           name: "Nobody's Repository"
+          user_roles: []
         ], silent: yes
         sinon.spy Backbone.Model::, 'set'
 
@@ -165,7 +166,7 @@ describe 'Coreon.Models.Session', ->
         Backbone.Model::set.should.have.been.calledWith { foo: 'bar' }, silent: yes
 
       it 'selects first repo if given is not available', ->
-        session.set 'repositories', [ id: 'nobody-repo-123' ]
+        session.set 'repositories', [ id: 'nobody-repo-123', user_roles: ["user"] ]
         session.set 'current_repository_id', 'hands-off-123'
         Backbone.Model::set.should.have.been.calledWith current_repository_id: 'nobody-repo-123'
 
@@ -177,16 +178,16 @@ describe 'Coreon.Models.Session', ->
       it 'selects first available repo passing in new selection', ->
         session.set
           current_repository_id: 'some-repo-789'
-          repositories: [ id: 'some-repo-789' ]
+          repositories: [ id: 'some-repo-789', user_roles: ["user"] ]
         Backbone.Model::set.should.have.been.calledWith
           current_repository_id: 'some-repo-789'
-          repositories: [ id: 'some-repo-789' ]
+          repositories: [ id: 'some-repo-789', user_roles: ["user"] ]
 
       it 'selects first available repo', ->
         session.set 'current_repository_id', 'nobody-repo-123', silent: yes
-        session.set 'repositories', [ id: 'my-new-repo-678' ]
+        session.set 'repositories', [ id: 'my-new-repo-678', user_roles: ["user"] ]
         Backbone.Model::set.should.have.been.calledWith
-          repositories: [ id: 'my-new-repo-678' ]
+          repositories: [ id: 'my-new-repo-678', user_roles: ["user"] ]
           current_repository_id: 'my-new-repo-678'
 
     describe '#currentRepository()', ->
@@ -196,14 +197,17 @@ describe 'Coreon.Models.Session', ->
           {
             id: 'nobody-repo-123'
             name: "Nobody's Repository"
+            user_roles: ["user"]
           }
           {
             id: 'nobody-repo-124'
             name: "Nobody's Other Repository"
+            user_roles: ["user"]
           }
           {
             id: 'nobody-repo-125'
             name: "Nobody's Repo III"
+            user_roles: ["user"]
           }
         ], silent: yes
         session.set 'current_repository_id', 'nobody-repo-124', silent: true

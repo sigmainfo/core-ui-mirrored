@@ -117,7 +117,9 @@ describe "Coreon.Views.ApplicationView", ->
         view.model.set "session", @session, silent: on
         @session.set "repositories", [], silent: on
         sinon.stub Coreon.Models.RepositorySettings, 'refresh', ->
-          always: (callback) -> callback()
+          done: (callback) ->
+            callback()
+            {always: (another_callback) -> another_callback()}
 
       afterEach ->
         Backbone.history.start.restore()
