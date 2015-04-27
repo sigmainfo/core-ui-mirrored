@@ -13,34 +13,47 @@ class Coreon.Models.Repository extends Backbone.Model
       @_localCache.fetch @get('cache_id')
     @_localCache
 
-  remoteSettings: ->
-    unless @_remoteSettings? or @_remoteSettingsXHR
-      graphUri = Coreon.application.graphUri().replace /\/$/, ''
-      url = "#{graphUri}/repository"
-      options =
-        type:     'GET'
-        dataType: 'json'
+  # remoteSettings: ->
+  #   unless @_remoteSettings? or @_remoteSettingsXHR
+  #     graphUri = Coreon.application.graphUri().replace /\/$/, ''
+  #     url = "#{graphUri}/repository"
+  #     options =
+  #       type:     'GET'
+  #       dataType: 'json'
 
-      @_remoteSettingsXHR = Coreon.Modules.CoreAPI.ajax url, options
+  #     @_remoteSettingsXHR = Coreon.Modules.CoreAPI.ajax url, options
 
-      @_remoteSettingsXHR.success (data, textStatus, jqXHR) =>
-        @_remoteSettings = data
-        @set 'langs', data.used_languages
-        @trigger 'remoteSettingChange', @
+  #     @_remoteSettingsXHR.success (data, textStatus, jqXHR) =>
+  #       @_remoteSettings = data
+  #       @set 'langs', data.used_languages
+  #       @trigger 'remoteSettingChange', @
 
-        delete @_remoteSettingsXHR
+  #       delete @_remoteSettingsXHR
 
-    @_remoteSettings || {}
+  #   @_remoteSettings || {}
+
+  # usedLanguages: ->
+  #   unless @_usedLanguages
+  #     @_usedLanguages = @remoteSettings()['used_languages']
+
+  #   used = (@_usedLanguages || @get 'languages')
+  #     .map (lang) ->
+  #       lang.toLowerCase()
+  #   _(used).uniq()
+
+  getStats: ->
+    graphUri = Coreon.application.graphUri().replace /\/$/, ''
+    url = "#{graphUri}/repository"
+    options =
+      type:     'GET'
+      dataType: 'json'
+    xhr = Coreon.Modules.CoreAPI.ajax url, options
+    xhr.success (data, textStatus, jqXHR) =>
+      @set 'stats', data
+    xhr
 
   usedLanguages: ->
-    unless @_usedLanguages
-      @_usedLanguages = @remoteSettings()['used_languages']
-
-    used = (@_usedLanguages || @get 'languages')
-      .map (lang) ->
-        lang.toLowerCase()
-    _(used).uniq()
-      
+    @get('stats').used_languages || []
 
   path: ->
     "/#{@id}"

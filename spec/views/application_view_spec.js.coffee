@@ -116,6 +116,7 @@ describe "Coreon.Views.ApplicationView", ->
         sinon.stub Backbone.history, "start"
         view.model.set "session", @session, silent: on
         @session.set "repositories", [], silent: on
+        @session.set "repository", {getStats: -> }
         sinon.stub Coreon.Models.RepositorySettings, 'refresh', ->
           done: (callback) ->
             callback()

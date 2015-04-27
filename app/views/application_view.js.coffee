@@ -45,7 +45,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     session = @updateSession()
     @$el.html @template session: session
     if session?
-      Coreon.Models.RepositorySettings.refresh()
+      $.when(Coreon.Models.RepositorySettings.refresh(), session.get('repository').getStats())
         .done =>
           widgets = new Coreon.Views.Widgets.WidgetsView
             model: @model
@@ -77,7 +77,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
           Backbone.history.start pushState: on unless Backbone.History.started
 
-          @$('#coreon-account').delay(2000).slideUp()
+        @$('#coreon-account').delay(2000).slideUp()
     else
       Backbone.history.stop()
       login = new Coreon.Views.Sessions.NewSessionView model: @model

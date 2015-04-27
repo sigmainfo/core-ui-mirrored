@@ -310,9 +310,10 @@ describe 'Coreon.Application', ->
       app.set 'repository', @repository, silent: yes
       app.sourceLang = -> null
       app.targetLang = -> null
+      Coreon.Models.RepositorySettings = sinon.stub
 
     it 'delegates to repository', ->
-      @repository.usedLanguages = -> [ 'en', 'hu', 'fr', 'de' ]
+      Coreon.Models.RepositorySettings.languageCodes = -> [ 'en', 'hu', 'fr', 'de' ]
       langs = app.langs()
       expect( langs ).to.have.lengthOf 4
       expect( langs ).to.have.include 'en'
@@ -321,19 +322,19 @@ describe 'Coreon.Application', ->
       expect( langs ).to.have.include 'de'
 
     it 'sorts languages alphabetically', ->
-      @repository.usedLanguages = -> [ 'en', 'hu', 'fr', 'de' ]
+      Coreon.Models.RepositorySettings.languageCodes = -> [ 'en', 'hu', 'fr', 'de' ]
       langs = app.langs()
       expect( langs ).to.eql [ 'de', 'en', 'fr', 'hu' ]
 
     it 'pushes source and destination langs to top', ->
-      @repository.usedLanguages = -> [ 'en', 'hu', 'fr', 'de' ]
+      Coreon.Models.RepositorySettings.languageCodes = -> [ 'en', 'hu', 'fr', 'de' ]
       app.sourceLang = -> 'fr'
       app.targetLang = -> 'en'
       langs = app.langs()
       expect( langs ).to.eql [ 'fr', 'en', 'de', 'hu' ]
 
     it 'ignores source and target language when sorting is off', ->
-      @repository.usedLanguages = -> [ 'en', 'hu', 'fr', 'de' ]
+      Coreon.Models.RepositorySettings.languageCodes = -> [ 'en', 'hu', 'fr', 'de' ]
       app.sourceLang = -> 'fr'
       app.targetLang = -> 'en'
       langs = app.langs ignoreSelection: on
