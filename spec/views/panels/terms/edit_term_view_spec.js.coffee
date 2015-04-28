@@ -13,11 +13,9 @@ describe 'Coreon.Views.Panels.Terms.EditTermView', ->
   beforeEach ->
     Coreon.Models.RepositorySettings = sinon.stub
     Coreon.Models.RepositorySettings.optionalPropertiesFor = ->
-    Coreon.Models.RepositorySettings.languageOptions = -> [
-      {value: 'en', label: 'English'},
-      {value: 'de', label: 'German'},
-      {value: 'fr', label: 'French'}
-    ]
+    Coreon.application = sinon.stub
+    Coreon.application.langs = ->
+      ['en', 'de', 'fr']
     propertiesView = new Backbone.View
     propertiesView =
       isValid: -> true

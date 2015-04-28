@@ -11,6 +11,7 @@
 #= require helpers/multi_select_field
 #= require helpers/boolean_field
 #= require helpers/file_field
+#= require helpers/languages
 #= require lib/select
 #= require lib/dom
 
@@ -38,7 +39,7 @@ class Coreon.Views.Properties.PropertyFieldsetView extends Backbone.View
     @index = options.index
     @scopePrefix = options.scopePrefix
     @name = if @scopePrefix? then "#{@scopePrefix}[properties][#{@index}]" else "properties[#{@index}]"
-    @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
+    @selectableLanguages = Coreon.Helpers.languageOptions Coreon.application.langs()
     @values_index = @model?.properties?.length || 0
 
   render: ->

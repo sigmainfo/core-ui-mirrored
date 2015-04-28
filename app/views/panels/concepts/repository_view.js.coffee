@@ -19,4 +19,5 @@ class Coreon.Views.Panels.Concepts.RepositoryView extends Backbone.View
     @$el.html @template
       repository: @model
       newConceptPath: @newConceptPath()
+      langs: Coreon.application.langs()
     @

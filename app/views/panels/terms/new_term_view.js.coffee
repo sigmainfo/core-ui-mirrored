@@ -1,6 +1,7 @@
 #= require environment
 #= require templates/concepts/_new_term
 #= require helpers/input
+#= require helpers/languages
 #= require views/properties/edit_properties_view
 
 class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
@@ -21,7 +22,7 @@ class Coreon.Views.Panels.Terms.NewTermView extends Backbone.View
       collection: @model.propertiesWithDefaults()
       optionalProperties: Coreon.Models.RepositorySettings.optionalPropertiesFor('term')
       isEdit: true
-    @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
+    @selectableLanguages = Coreon.Helpers.languageOptions Coreon.application.langs()
 
   render: ->
     @$el.html @template(term: @model, name: @name, errors: @errors, selectableLanguages: @selectableLanguages)

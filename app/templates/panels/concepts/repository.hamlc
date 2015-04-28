@@ -18,7 +18,7 @@
       %td= @repository.get "info"
     %tr
       %th= I18n.t "repository.languages"
-      %td= ((Coreon.Models.RepositorySettings.languageCodes() || []).map (lang) -> " #{I18n.t "languages.#{lang}"} (#{lang})").toString().trim()
+      %td= (@langs.map (lang) -> " #{I18n.t "languages.#{lang}"} (#{lang})").toString().trim()
 %section.contact
   %h3= I18n.t "repository.contact"
   %table.managers

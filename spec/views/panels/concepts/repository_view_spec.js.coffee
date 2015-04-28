@@ -8,8 +8,7 @@ describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
     Coreon.application.set 'repository',
       path: -> "/coffee23"
     Coreon.application.lang = -> 'en'
-    Coreon.Models.RepositorySettings = sinon.stub
-    Coreon.Models.RepositorySettings.languageCodes = -> ['en']
+    Coreon.application.langs = -> []
 
     # Coreon.Helpers.repositoryPath = -> "/coffee23/concepts/new"
     @view = new Coreon.Views.Panels.Concepts.RepositoryView
@@ -56,7 +55,7 @@ describe "Coreon.Views.Panels.Concepts.RepositoryView", ->
         I18n.t.withArgs("languages.en").returns "English"
         I18n.t.withArgs("languages.de").returns "German"
         I18n.t.withArgs("languages.fr").returns "French"
-        Coreon.Models.RepositorySettings.languageCodes = -> ['en', 'de', 'fr']
+        Coreon.application.langs = -> ['en', 'de', 'fr']
 
         @view.model.set
           created_at: "2013-06-17T09:46:52.297Z"

@@ -2,6 +2,7 @@
 #= require templates/terms/new_term
 #= require helpers/form_for
 #= require helpers/input
+#= require helpers/languages
 #= require views/properties/edit_properties_view
 #= require modules/confirmation
 #= require modules/assets
@@ -26,7 +27,7 @@ class Coreon.Views.Panels.Terms.EditTermView extends Backbone.View
     @concept = options.concept
     @isEdit = options.isEdit
     @preselectedLang = options.preselectedLang
-    @selectableLanguages = Coreon.Models.RepositorySettings.languageOptions()
+    @selectableLanguages = Coreon.Helpers.languageOptions Coreon.application.langs()
 
   render: ->
     @editProperties = new Coreon.Views.Properties.EditPropertiesView

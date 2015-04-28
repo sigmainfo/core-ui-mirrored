@@ -9,19 +9,15 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
   model = null
   index = 0
   scopePrefix = null
-  langs = [
-        {value: 'en', label: 'English'},
-        {value: 'de', label: 'German'},
-        {value: 'fr', label: 'French'}
-      ]
+  langs = ['en', 'de', 'fr']
 
   beforeEach ->
     sinon.stub jQuery.fn, 'coreonSelect'
     sinon.stub jQuery.fn, 'isOnScreen'
     sinon.stub jQuery.fn, 'scrollToReveal'
     sinon.stub I18n, 't'
-    Coreon.Models.RepositorySettings = sinon.stub
-    Coreon.Models.RepositorySettings.languageOptions = -> langs
+    Coreon.application = sinon.stub
+    Coreon.application.langs = -> langs
     Coreon.Helpers.graphUri = (uri) -> "http://#{uri}"
     Coreon.Modules.Assets =
       assetRepresenter: -> {}
@@ -56,7 +52,8 @@ describe 'Coreon.Views.Properties.PropertyFieldsetView', ->
   it 'gets the language settings from the repo config', ->
     view = new Coreon.Views.Properties.PropertyFieldsetView model: model
     expect(view).to.have.property 'selectableLanguages'
-    expect(view.selectableLanguages).to.eql langs
+    codes = view.selectableLanguages.map  (l) -> l.value
+    expect(codes).to.eql langs
 
   describe '#render()', ->
 

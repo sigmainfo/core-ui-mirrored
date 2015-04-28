@@ -23,13 +23,8 @@ describe 'Coreon.Views.Properties.EditPropertiesView', ->
   beforeEach ->
     i18n = sinon.stub I18n, 't'
     i18n.withArgs('properties.title').returns('Properties')
-    Coreon.Models.RepositorySettings = sinon.stub
-    Coreon.Models.RepositorySettings.languageOptions = ->
-    [
-      {value: 'en', label: 'English'},
-      {value: 'de', label: 'German'},
-      {value: 'fr', label: 'French'}
-    ]
+    Coreon.application = sinon.stub
+    Coreon.application.langs = -> ['en', 'de', 'fr']
 
   afterEach ->
     I18n.t.restore()
