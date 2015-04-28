@@ -329,20 +329,35 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       .data(edges, (datum) ->
         "#{datum.source.id}|#{datum.target.id}"
       )
+
+    
     @createEdges edges.enter()
     @deleteEdges edges.exit()
     @updateEdges edges
     edges
 
   createEdges: (enter) ->
-    edges = enter.insert('path', '.concept-node')
-      .attr('class', 'concept-edge')
+    console.log 'enterr1 '+enter
+    
+    edges = enter.insert('path', '.concept-node').attr('class', (d) ->
+       console.log 'dd '+d['source'].id
+       'concept-edge '+' path_'+d['source'].id+'_'+d['target'].id
+    )
+    
+    #if window.tmp_nodes_old_parent
+    if window.tmp_nodes_dragged && window.tmp_reset_nodes_dragged==undefined
+        console.log 'called in if'
+        tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
+        console.log d3.select('path.path_'+tmpp).attr('class','concept-edge1 '+tmpp) #window.tmp_nodes_old_parent[0]
+    
+    
     edges
 
   deleteEdges: (exit) ->
     exit.remove()
 
   updateEdges: (edges) ->
+    console.log 'update edges..'+edges
     edges
 
   updateLayout: (nodes, edges, deferred) =>

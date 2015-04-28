@@ -162,10 +162,22 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       data =
           superconcept_ids: [window.tmp_nodes_selected]
       @con.save data
+      
+      ###tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
+      console.log 'tmpp :'+tmpp
+      d3.selectAll('concept-edge1').remove()
+      ###  
       window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
       window.tmp_reset_nodes_selected=window.tmp_nodes_selected
       window.tmp_nodes_dragged=undefined
       window.tmp_nodes_selected=undefined
+      
+      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
+      @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
+      @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
+
+      
 
 #      $("body").css("background","url('/assets/layout/bg.jpg')");
 #      window.edit_mode_selected = false
