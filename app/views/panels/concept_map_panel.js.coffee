@@ -186,14 +186,26 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   resetMap: ->
     #console.log 'reset clicked '+window.tmp_reset_nodes_dragged
-    if window.edit_mode_selected && window.tmp_reset_nodes_dragged
-      @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
-      data =
-          superconcept_ids: window.tmp_nodes_old_parent
-      @con.save data
-      window.tmp_reset_nodes_dragged=undefined
-      window.tmp_reset_nodes_selected=undefined
-      window.tmp_nodes_old_parent=[]
+#    if window.edit_mode_selected && window.tmp_reset_nodes_dragged
+#      @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
+#      data =
+#          superconcept_ids: window.tmp_nodes_old_parent
+#      @con.save data
+#      window.tmp_reset_nodes_dragged=undefined
+#      window.tmp_reset_nodes_selected=undefined
+#      window.tmp_nodes_old_parent=[]
+
+      if window.edit_mode_selected
+        window.tmp_nodes_old_parent=[]
+        window.tmp_nodes_dragged=undefined
+        window.tmp_nodes_selected=undefined
+        window.tmp_reset_nodes_dragged=undefined
+        window.tmp_reset_nodes_selected=undefined
+
+        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
+        @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
+        @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
     
   cancelMap: ->    
     #console.log 'cancel clicked'+@renderStrategy
