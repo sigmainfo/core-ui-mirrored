@@ -66,11 +66,16 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       that.dragStarted= true;
       #console.log 'mmm'+that.layout.nodes(d)    
       d3.event.sourceEvent.stopPropagation()
+
+      if window.tmp_nodes_dragged && window.tmp_nodes_selected
+        alert 'Save/Reset map before continuing'
+        window.need_to_save_first = true
+        return
       
       
         
     @dragListener.on 'drag', (d) ->
-      if d.type=='repository'
+      if d.type=='repository' || window.need_to_save_first
         console.log 'repo not supported....'
         return
       if window.edit_mode_selected == undefined || window.edit_mode_selected == false
@@ -108,6 +113,15 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         #console.log 'Edit mode not yet selected'
         return
 
+
+      if that.selectedNode == null
+        #console.log 'that.selectedNode.type ******* '+that.selectedNode
+        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        that.nodes    = that.renderNodes @graph.tree
+        that.siblings = that.renderSiblings @graph.siblings
+        that.edges    = that.renderEdges @graph.edges
+        return
+
       if that.selectedNode.type!= 'placeholder' && that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
         window.tmp_nodes_dragged=that.draggingNode.id
         window.tmp_nodes_selected=that.selectedNode.id
@@ -115,6 +129,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         that.nodes    = that.renderNodes @graph.tree
         that.siblings = that.renderSiblings @graph.siblings
         that.edges    = that.renderEdges @graph.edges
+        $('.reset-map').removeClass('disable_buttons').removeAttr('disabled');
+        $('.save-map').removeClass('disable_buttons').removeAttr('disabled');
         #@con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
         #data =
         #  superconcept_ids: [window.tmp_nodes_selected]
@@ -147,10 +163,12 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       .call(@dragListener)
       .on('mouseover', (d) ->
         #console.log 'over '+datum.label
-        that.selectedNode=d
+        if !window.need_to_save_first
+         that.selectedNode=d
       )
       .on('mouseout', (d) ->
         #console.log 'over '+datum.label
+       if !window.need_to_save_first
         that.selectedNode=null
       )
       .attr('class', (datum) ->
@@ -359,7 +377,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     exit.remove()
 
   updateEdges: (edges) ->
-    console.log 'update edges..'+edges
+    #console.log 'update edges..'+edges
     edges
 
   updateLayout: (nodes, edges, deferred) =>

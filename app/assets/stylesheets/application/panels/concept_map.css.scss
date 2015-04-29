@@ -278,7 +278,6 @@ $edge-color: #bfc5c0;
   background-color: #717a53;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2) inset, -1px -1px 1px rgba(0, 0, 0, 0.2) inset;
-
   color: white;
   display: inline-block;
   float: left;
@@ -288,6 +287,10 @@ $edge-color: #bfc5c0;
   font-size: 1em;
   margin: 6px;
   padding: 5px 8px 3px;
+}
+
+.disable_buttons {
+  opacity: 0.3;
 }
 
 .submit_concept{

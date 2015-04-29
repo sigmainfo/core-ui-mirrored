@@ -150,14 +150,34 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $("body").removeClass('edit_mode');
         $('.edit-map').removeClass('edit_pressed');
         $('.submit_concept').hide();
+
+        # Resetting all custom variables
+        window.tmp_nodes_old_parent=[]
+        window.tmp_nodes_dragged=undefined
+        window.tmp_nodes_selected=undefined
+        window.tmp_reset_nodes_dragged=undefined
+        window.tmp_reset_nodes_selected=undefined
+        window.need_to_save_first = false
+
+        # Reloading Graph
+        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        console.log 'graph is *** :'+@graph
+        @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
+        @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
+        @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
+
+        # Disabling save/reset buttons
+        $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
+        $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
+
       else
         window.edit_mode_selected = true
-        #$("body").removeClass('edit_mode');
         $('.edit-map').addClass('edit_pressed');
         $("body").addClass('edit_mode');
         $('.submit_concept').show();
 
-  saveMap: ->    
+  saveMap: ->
+    #console.log 'save called ******'
 #    console.log 'save clicked'+window.tmp_nodes_dragged
     if window.edit_mode_selected && window.tmp_nodes_dragged
       @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
@@ -168,11 +188,16 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       ###tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
       console.log 'tmpp :'+tmpp
       d3.selectAll('concept-edge1').remove()
-      ###  
+      ###
+      $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
+      $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
+
       window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
       window.tmp_reset_nodes_selected=window.tmp_nodes_selected
       window.tmp_nodes_dragged=undefined
       window.tmp_nodes_selected=undefined
+      window.need_to_save_first = false
+
       
 #      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
 #      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
@@ -185,6 +210,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 #      window.edit_mode_selected = false
 
   resetMap: ->
+     # console.log 'reset called ******'
     #console.log 'reset clicked '+window.tmp_reset_nodes_dragged
 #    if window.edit_mode_selected && window.tmp_reset_nodes_dragged
 #      @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
@@ -201,6 +227,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         window.tmp_nodes_selected=undefined
         window.tmp_reset_nodes_dragged=undefined
         window.tmp_reset_nodes_selected=undefined
+        window.need_to_save_first = false
+
+        $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
+        $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
         @graph=(new Coreon.Lib.TreeGraph window.models).generate()
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
@@ -215,9 +245,14 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       window.tmp_nodes_selected=undefined
       window.tmp_reset_nodes_dragged=undefined
       window.tmp_reset_nodes_selected=undefined
+      window.need_to_save_first = false
+
+      $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
+      $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
 
       window.edit_mode_selected = false
+      $('.edit-map').removeClass('edit_pressed');
       $("body").removeClass('edit_mode');
       $('.submit_concept').hide();
 
