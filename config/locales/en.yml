@@ -254,7 +254,7 @@ en:
       title: "Concept Map"
       zoom_in: "Zoom in"
       zoom_out: "Zoom out"
-      edit_map: "Edit"
+      edit_map: "Change concept relations"
       reset_map: "Reset"
       cancel_map: "Cancel"
       save_map: "Save"

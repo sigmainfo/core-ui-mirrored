@@ -294,9 +294,11 @@ $edge-color: #bfc5c0;
   float: right;
   //margin-right: 900px;
   display: none;
+  margin: -5px 0 -4px 2px;
 }
 
 .submit_concept button{
+  //background: image-url("/assets/layout/icons.svg") no-repeat scroll -148px -56px rgba(0, 0, 0, 0);
   background: image-url("/assets/layout/stripes-white.svg") no-repeat scroll -148px -56px #73a254;
   border: 0 none;
   border-radius: 4px;
@@ -305,9 +307,27 @@ $edge-color: #bfc5c0;
   content: "";
   display: block;
   float: right;
-  height: 21px;
+  height: 20px;
   margin-left: 3px;
   padding-bottom: 2px;
-  width: 50px;
+  width: 60px;
   margin-top: 4px;
+  color:#ffffff;
+}
+
+.edit_pressed {
+  background: #717a53;
+}
+
+
+
+
+.submit_concept button::after {
+  background: image-url("/assets/layout/icons.svg") no-repeat scroll -154px -55px rgba(0, 0, 0, 0);
+  content: "";
+  display: block;
+  float: right;
+  height: 12px;
+  margin-left: 2px;
+  width: 16px;
 }

@@ -148,10 +148,12 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       if window.edit_mode_selected
         window.edit_mode_selected = false
         $("body").removeClass('edit_mode');
+        $('.edit-map').removeClass('edit_pressed');
         $('.submit_concept').hide();
       else
         window.edit_mode_selected = true
         #$("body").removeClass('edit_mode');
+        $('.edit-map').addClass('edit_pressed');
         $("body").addClass('edit_mode');
         $('.submit_concept').show();
 
@@ -172,10 +174,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       window.tmp_nodes_dragged=undefined
       window.tmp_nodes_selected=undefined
       
-      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
-      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
-      @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
-      @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
+#      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+#      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
+#      @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
+#      @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
 
       
 
