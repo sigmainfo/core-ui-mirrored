@@ -1,4 +1,15 @@
 class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::FeatureSteps
+
+  include AuthSteps
+  include Factory
+  # include EditSteps
+  include Resources
+  include Selectors
+
+  def main_view
+    find '#coreon-main'
+  end
+
   step 'I can move the map with drag and drop on empty space' do
     pending 'step not implemented'
   end
@@ -83,36 +94,36 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
     pending 'step not implemented'
   end
 
-  step 'I am logged in as maintainer of the repository' do
-    pending 'step not implemented'
-  end
 
   step 'a concept with label "destination of transport" exists' do
-    pending 'step not implemented'
+    @superconcept1 = create_concept_with_label "destination of transport"
   end
 
   step 'the concept "destination of transport" has "intra-EU transport" as a subconcept' do
-    pending 'step not implemented'
+    @concept1 = create_concept_with_label "intra-EU transport",
+      superconcept_ids: [@superconcept1['id']]
   end
 
   step 'a concept with label "mode of transport" exists' do
-    pending 'step not implemented'
+    @superconcept2 = create_concept_with_label "mode of transport"
   end
 
   step 'the concept "mode of transport" has "pipeline transport" as a subconcept' do
-    pending 'step not implemented'
-  end
-
-  step 'I visit the repository root page' do
-    pending 'step not implemented'
+    @concept2 = create_concept_with_label "pipeline transport",
+       superconcept_ids: [@superconcept2['id']]
   end
 
   step 'I should see a widget "Concept Map"' do
-    pending 'step not implemented'
+    #page.should have_selector( "#coreon-concept-map h3", text: 'Concept Map' )
+    page.should have_selector( :widget, 'Concept Map' )
+    @current = find( :widget, 'Concept Map' )
   end
 
   step 'I click on "Maximize" inside the widget "Concept Map"' do
-    pending 'step not implemented'
+    within :widget, 'Concept Map' do
+      click_on 'Maximize'
+    end
+
   end
 
   step 'I see a concept map inside the main view' do
@@ -121,5 +132,6 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
 
   step 'I click the "Edit mode" button' do
     pending 'step not implemented'
+
   end
 end
