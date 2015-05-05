@@ -234,6 +234,9 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
         $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
+        if window.delete_node
+         window.delete_node.attr('class','concept-edge-hide')
+
         @graph=(new Coreon.Lib.TreeGraph window.models).generate()
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
         @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
@@ -252,6 +255,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
+      if window.delete_node
+        window.delete_node.attr('class','concept-edge-hide')
 
       window.edit_mode_selected = false
       $('.edit-map').removeClass('edit_pressed');
