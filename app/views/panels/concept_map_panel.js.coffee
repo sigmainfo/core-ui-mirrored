@@ -198,6 +198,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       window.tmp_nodes_dragged=undefined
       window.tmp_nodes_selected=undefined
       window.need_to_save_first = false
+      window.tmp_reset_nodes_dragged=undefined
 
       
 #      @graph=(new Coreon.Lib.TreeGraph window.models).generate()

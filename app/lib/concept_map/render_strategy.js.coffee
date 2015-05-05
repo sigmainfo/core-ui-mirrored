@@ -369,7 +369,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         console.log 'called in if'
         tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
         window.delete_node=d3.select('path.path_'+tmpp)
-        d3.select('path.path_'+tmpp).attr('class','concept-edge1 '+tmpp) #window.tmp_nodes_old_parent[0]
+        d3.select('path.path_'+tmpp).attr('class','concept-edge1') #window.tmp_nodes_old_parent[0]
     
     edges
 
