@@ -35,27 +35,28 @@ Feature: Maintainer manages connections in concept map
 #    Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
 #    Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
     When I click "Save relations"
-    #Then I am not in edit mode
+
     Then I am in edit mode but save is disabled
-    #And I see concept "pipeline transport" connected with concept "destination of transport"
     And I see concept "pipeline transport" connected with concept "intra-EU transport"
     And I see concept "intra-EU transport" connected with concept "destination of transport"
     And I see concept "mode of transport" does not heave any subconcepts
 #
-#  Scenario: reset editing of concept map relations
-#    Then I drag concept "pipeline transport" on the "destination of transport" concept
-#    Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
-#    Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
-#    When I click "Reset"
-#    Then I am in edit mode
-#    Then I see concept "destination of transport" connected with concept "intra-EU transport"
-#    And I see concept "mode of transport" connected with concept "pipeline transport"
-#    Then I see concept "pipeline transport" has no connection with concept "destination of transport"
-#
+  @firefox
+  Scenario: reset editing of concept map relations
+    Then I expanded tree
+    Then I drag concept "pipeline transport" on the "destination of transport" concept
+    #Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
+    #Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
+    When I click "Reset"
+    Then I am in edit mode
+    Then I see concept "destination of transport" connected with concept "intra-EU transport"
+    And I see concept "mode of transport" connected with concept "pipeline transport"
+    Then I see concept "pipeline transport" has no connection with concept "destination of transport"
+
 #  Scenario: cancel editing of concept map relations
 #    Then I drag concept "pipeline transport" on the "destination of transport" concept
-#    Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
-#    Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
+#    #Then I see concept "pipeline transport" connected with a thick line with concept "destination of transport"
+#   # Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
 #    When I click "Cancel"
 #    Then I am not in edit mode
 #    Then I see concept "destination of transport" connected with concept "intra-EU transport"

@@ -84,23 +84,27 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I click "Reset"' do
-    pending 'step not implemented'
+    page.find('#coreon-concept-map .reset-map').click
   end
 
   step 'I am in edit mode' do
-    pending 'step not implemented'
+    page.find('#coreon-concept-map .save-map').should be_disabled
   end
 
   step 'I see concept "destination of transport" connected with concept "intra-EU transport"' do
-    pending 'step not implemented'
+    destination_of_transport_concept = get_concept_details @superconcept1
+    destination_of_transport_concept['subconcept_ids'][0].should eq @concept1['id']
   end
 
   step 'I see concept "mode of transport" connected with concept "pipeline transport"' do
-    pending 'step not implemented'
+    mode_of_transport_concept = get_concept_details @superconcept2
+    mode_of_transport_concept['subconcept_ids'][0].should eq @concept2['id']
   end
 
   step 'I see concept "pipeline transport" has no connection with concept "destination of transport"' do
-    pending 'step not implemented'
+    destination_of_transport_concept = get_concept_details @superconcept1
+    destination_of_transport_concept['subconcept_ids'][0].should_not eq @concept2['id']
+    destination_of_transport_concept['superconcept_ids'][0].should_not eq @concept2['id']
   end
 
   step 'I click "Cancel"' do
