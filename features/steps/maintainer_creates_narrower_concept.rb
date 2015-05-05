@@ -28,7 +28,8 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   end
 
   step 'I should see "panopticum" within the list of broader concepts' do
-    page.should have_css(".broader-and-narrower .broader li", text: "panopticum")
+    broader = find(".broader-and-narrower .broader li", text: "panopticum")
+    expect(broader).to be_visible
   end
 
   step 'I click "Create concept"' do

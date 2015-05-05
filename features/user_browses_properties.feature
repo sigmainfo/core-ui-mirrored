@@ -10,6 +10,7 @@ Feature: user browses properties
     Given the repository defines a blueprint for concept
     And that blueprint defines a property "dangerous" of type "boolean"
     And that blueprint defines a property "definition" of type "text"
+    And that blueprint defines a property "fictional" of type "boolean"
     And a concept "Vampire" exists
     And that concept has the property "dangerous" set to be true
     And that concept has the property "alias" set to "Lamia"
@@ -17,6 +18,7 @@ Feature: user browses properties
     And I look at the properties inside the concept header
     Then I see a property "DANGEROUS" that is checked
     And I see a property "ALIAS" with value "Lamia"
+    And I don't see a property "FICTIONAL"
     But I do not see a property "DEFINITION"
 
   Scenario: browse term properties

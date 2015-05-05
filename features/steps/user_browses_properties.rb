@@ -24,6 +24,10 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
     @blueprint['properties'].post property: { key: 'definition', type: 'text', default: '', required: false }
   end
 
+  step 'that blueprint defines a property "fictional" of type "boolean"' do
+    @blueprint['properties'].post property: { key: 'fictional', type: 'boolean', required: false, default: false, labels: ['true', 'false'] }
+  end
+
   step 'that blueprint defines a property "status" of type "picklist"' do
     @property_attrs = { key: 'status', type: 'picklist', required: true }
   end
@@ -124,6 +128,10 @@ class Spinach::Features::UserBrowsesProperties < Spinach::FeatureSteps
 
   step 'I do not see a property "DEFINITION"' do
     expect(page).to_not have_selector :table_row, 'definition'
+  end
+
+  step 'I don\'t see a property "FICTIONAL"' do
+    expect(page).to_not have_selector :table_row, 'fictional'
   end
 
   step 'I click on "EN" then I see "corpse that drinks blood of the living"' do
