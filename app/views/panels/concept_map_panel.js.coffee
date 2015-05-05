@@ -189,9 +189,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       console.log 'tmpp :'+tmpp
       d3.selectAll('concept-edge1').remove()
       ###
-      $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
-      $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
-
+      $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
+      $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
+      if window.delete_node
+         window.delete_node.attr('class','concept-edge-hide') 
       window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
       window.tmp_reset_nodes_selected=window.tmp_nodes_selected
       window.tmp_nodes_dragged=undefined
