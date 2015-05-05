@@ -26,6 +26,19 @@ module Factory
     create_concept attributes.merge( properties: [{key: "label", value: label}] )
   end
 
+  def get_concept_details concept
+
+    response = CoreAPI.get(
+        "concepts/"+concept['id'],
+        {"X-Core-Session" => maintainer_session}
+    )
+    unless response.success?
+      raise response.body
+    end
+
+    response.json
+  end
+
   def create_concept_property concept, attributes
     response = CoreAPI.post(
       "concepts/#{concept['id']}/properties",
