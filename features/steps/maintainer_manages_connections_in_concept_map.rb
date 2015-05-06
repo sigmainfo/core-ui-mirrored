@@ -15,11 +15,11 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I click on the "intra-EU transport" concept node' do
-    find(".concept-node.placeholder").click
-    sleep 1
+    #find(".concept-node.placeholder").click
+    #sleep 1
     # first(".concept-node.placeholder").click
     # first(".concept-node.placeholder").click
-    all(".concept-node.placeholder").each(&:click)
+    page.find(".concept-node", :text => 'intra-EU transport').click
   end
 
   step 'I am still in the root node page' do
@@ -48,7 +48,7 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"' do
-    pending 'step not implemented'
+    page.find('.concept-map').should have_css('path.concept-edge1')
   end
 
   step 'I click "Save relations"' do
@@ -56,7 +56,7 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I am not in edit mode' do
-    pending 'step not implemented'
+    page.should have_css('div.submit_concept', :visible => false)
   end
 
   step 'I am in edit mode but save is disabled' do
@@ -108,7 +108,7 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I click "Cancel"' do
-    pending 'step not implemented'
+    page.find('#coreon-concept-map .cancel-map').click
   end
 
 
