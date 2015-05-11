@@ -75,7 +75,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       
         
     @dragListener.on 'drag', (d) ->
-      if d.type=='repository' || window.need_to_save_first
+      if d.type=='repository' || d.type=='placeholder' || window.need_to_save_first
         console.log 'repo not supported....'
         return
       if window.edit_mode_selected == undefined || window.edit_mode_selected == false
