@@ -29,6 +29,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     'click .reset-map'              : 'resetMap'
     'click .cancel-map'             : 'cancelMap'
     'click .save-map'               : 'saveMap'
+    'click .maximize'               : 'MaximizeConceptPanel'
 
   initialize: (options = {}) ->
     super
@@ -69,6 +70,11 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @update().done (nodes) =>
           @centerSelection nodes, animate: yes
           @rendering = false
+
+          # Hide/Show edit icons 
+          if $('#coreon-concept-map').parent().attr('id') != 'coreon-main'
+            $('.edit-map').hide();
+
     @
 
   update: ->
@@ -320,3 +326,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   remove: ->
     @map.stopLoop()
     super
+
+  MaximizeConceptPanel: ->
+    $('.edit-map').show();
