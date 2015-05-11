@@ -5,6 +5,6 @@
       != @action_for action
 
   .submit_concept
-    %a.reset-map.disable_buttons{:href => "javascript:void(0)", :disabled => "disabled"} = I18n.t('panels.concept_map.reset_map')
-    %a.cancel-map{:href => "javascript:void(0)"} = I18n.t('panels.concept_map.cancel_map')
-    %button.save-map.disable_buttons{:title => I18n.t('concept.save_connections.hint'), :type => "submit", :disabled => "disabled"} = I18n.t('panels.concept_map.save_map')
+    %a.reset-map.disable_buttons{:href => "javascript:void(0)", :title => I18n.t('concept.reset_edit_concept_map.hint'), :disabled => "disabled"} = I18n.t('panels.concept_map.reset_map')
+    %a.cancel-map{:href => "javascript:void(0)", :title => I18n.t('concept.cancel_edit_concept_map.hint')} = I18n.t('panels.concept_map.cancel_map')
+    %button.save-map.disable_buttons{:title => I18n.t('concept.save_edit_concept_map.hint'), :type => "submit", :disabled => "disabled"} = I18n.t('panels.concept_map.save_map')

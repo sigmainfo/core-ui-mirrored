@@ -71,7 +71,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
           @centerSelection nodes, animate: yes
           @rendering = false
 
-          # Hide/Show edit icons 
+          # Hide/Show edit icons
           if $('#coreon-concept-map').parent().attr('id') != 'coreon-main'
             $('.edit-map').hide();
 
