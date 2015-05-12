@@ -47,7 +47,8 @@ class Coreon.Lib.TreeGraph
       if parentNodeIds.length > 0
         for parentNodeId in parentNodeIds
           if window.tmp_nodes_dragged==target.id
-             window.tmp_nodes_old_parent.push parentNodeId
+             if window.tmp_nodes_old_parent != undefined
+              window.tmp_nodes_old_parent.push parentNodeId
           @connect @nodes[parentNodeId], target
       else
         @connect @root, target
