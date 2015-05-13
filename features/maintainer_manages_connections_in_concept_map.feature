@@ -21,8 +21,7 @@ Feature: Maintainer manages connections in concept map
     Then I can move the map with drag and drop on empty space
     And I can zoom in the map
     When I click on the "intra-EU transport" concept node
-    #Then I am still in the root node page
-
+    
   @firefox
   Scenario: additional actions are enabled when concept map is in edit view
     And in this view there is a "Reset" button
@@ -51,7 +50,7 @@ Feature: Maintainer manages connections in concept map
 
   @firefox
   Scenario: cancel editing of concept map relations
-    Then I drag concept "pipeline  transport" on the "destination of transport" concept
+    Then I drag concept "pipeline transport" on the "destination of transport" concept
     Then I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"
     When I click "Cancel"
     Then I am not in edit mode

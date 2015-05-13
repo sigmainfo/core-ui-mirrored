@@ -24,10 +24,6 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
     page.find(".concept-node", :text => 'intra-EU transport').click
   end
 
-  step 'I am still in the root node page' do
-    pending 'step not implemented'
-  end
-
   step 'in this view there is a "Reset" button' do
     page.find("#coreon-concept-map .reset-map").should have_content("Reset")
   end
