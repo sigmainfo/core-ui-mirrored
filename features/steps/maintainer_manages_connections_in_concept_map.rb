@@ -6,7 +6,9 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   include Selectors
 
   step 'I can move the map with drag and drop on empty space' do
-    pending 'step not implemented'
+    #drop = find(".concept-node", text: "intra-EU transport")
+    drop = first(".concept-edge")
+    find(".concept-node", text: "pipeline transport").drag_to drop
   end
 
   step 'I can zoom in the map' do
@@ -44,7 +46,7 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I see concept "pipeline transport" connected with a thick line with concept "destination of transport"' do
-    pending 'step not implemented'
+    page.find('.concept-map').should have_css('path.concept-edge1')
   end
 
   step 'I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"' do
@@ -144,14 +146,7 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I see a concept map inside the main view' do
-     #page.find('#coreon-concept-map').should have_content("Concept Map")
-#     page.find('#coreon-concept-map').have_content?("Concept Map")
-#      page.find('#coreon-concept-map').should have_css('h3', :text => 'Concept Map')
-#      page.find('#coreon-concept-map').should have_text('Concept Map')
-#    sleep 2
-    #page.find("#coreon-main").should have_content("Concept Map")
-    #page.find('#coreon-concept-map').should have_content("Concept Map")
-   #page.find("#coreon-modal .confirm").should have_content("delete 1 properties")
+     page.find('#coreon-concept-map h3').should have_content("CONCEPT MAP")
   end
 
   step 'I click the "Edit mode" button' do
