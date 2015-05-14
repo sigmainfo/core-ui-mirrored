@@ -7,6 +7,7 @@ Feature: maintainer creates narrower concept
     Given my name is "William Blake" with email "nobody@blake.com" and password "se7en!"
     And I am a maintainer of the repository
     And the repository defines an empty blueprint for concepts
+    And the repository defines an empty blueprint for terms
     And I am logged in
 
   Scenario: create a narrower concept
@@ -17,11 +18,13 @@ Feature: maintainer creates narrower concept
     When I click "Add narrower concept"
     Then I should be on the new concept page
     And I should see "panopticum" within the list of broader concepts
+    And I fill the term value with "test"
+    And I fill "Language" of term with "English"
     When I click "Create concept"
     Then I should be on the show concept page
-    And I should see the id of the newly created concept within the title
+    And I should see the newly created concept with the title "test"
     And I should see "panopticum" within the list of broader concepts
     When I click on "panopticum"
     Then I should be on the show concept page of "panopticum"
-    And I should see the id of the newly created concept within the list of narrower concepts
+    And I should see "test" within the list of narrower concepts
 

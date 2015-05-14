@@ -317,7 +317,7 @@ describe 'Coreon.Routers.ConceptsRouter', ->
     it 'delegates to #new passing superconcept id', ->
       router.newWithSuper 'super-345'
       expect(create).to.have.been.calledOnce
-      expect(create).to.have.been.calledWith superconcept_ids: ['super-345']
+      expect(create).to.have.been.calledWith superconcept_ids: ['super-345'], terms: [{ value: "" }]
 
   describe '#newWithTerm()', ->
 

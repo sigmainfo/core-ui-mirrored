@@ -11,6 +11,11 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
     @blueprint['clear'].delete
   end
 
+  step 'the repository defines an empty blueprint for terms' do
+    @blueprint = blueprint(:term)
+    @blueprint['clear'].delete
+  end
+
   step 'a concept with label "panopticum" exists' do
     @concept = create_concept_with_label "panopticum"
   end
@@ -32,6 +37,15 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
     expect(broader).to be_visible
   end
 
+  step 'I fill the term value with "test"' do
+    fill_in "Value", with: "test"
+  end
+
+  step 'I fill "Language" of term with "English"' do
+    fieldset = page.find ".term > .lang"
+    select_from_coreon_dropdown fieldset, 'English'
+  end
+
   step 'I click "Create concept"' do
     click_button "Create concept"
   end
@@ -42,8 +56,8 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
     @id = current_path.split("/").last
   end
 
-  step 'I should see the id of the newly created concept within the title' do
-    page.should have_css(".label", text: @id)
+  step 'I should see the newly created concept with the title "test"' do
+    page.should have_css(".label", text: 'test')
   end
 
   step 'I click on "panopticum"' do
@@ -54,7 +68,7 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
     current_path.should == "/#{current_repository.id}/concepts/#{@concept['id']}"
   end
 
-  step 'I should see the id of the newly created concept within the list of narrower concepts' do
-    page.should have_css(".broader-and-narrower .narrower li", text: @id)
+  step 'I should see "test" within the list of narrower concepts' do
+    page.should have_css(".broader-and-narrower .narrower li", text: 'test')
   end
 end

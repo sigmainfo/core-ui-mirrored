@@ -66,7 +66,7 @@ class Coreon.Routers.ConceptsRouter extends Backbone.Router
       @navigate repository.id, trigger: yes, replace: yes
 
   newWithSuper: (superId) ->
-    @new superconcept_ids: [superId]
+    @new superconcept_ids: [superId], terms: [value: ""]
 
   newWithTerm: (lang, value) ->
     value = if value? then decodeURIComponent(value) else ""
