@@ -42,6 +42,7 @@ class Coreon.Models.Repository extends Backbone.Model
   #   _(used).uniq()
 
   getStats: ->
+    d = $.Deferred()
     graphUri = Coreon.application.graphUri().replace /\/$/, ''
     url = "#{graphUri}/repository"
     options =
@@ -50,11 +51,10 @@ class Coreon.Models.Repository extends Backbone.Model
     xhr = Coreon.Modules.CoreAPI.ajax url, options
     xhr.success (data, textStatus, jqXHR) =>
       @set 'stats', data
-      console.log "got stats", data
-    xhr
+      d.resolve(data)
+    d.promise()
 
   usedLanguages: ->
-    console.log "used languages"
     @get('stats').used_languages || []
 
   path: ->
