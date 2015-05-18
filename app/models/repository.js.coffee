@@ -50,9 +50,11 @@ class Coreon.Models.Repository extends Backbone.Model
     xhr = Coreon.Modules.CoreAPI.ajax url, options
     xhr.success (data, textStatus, jqXHR) =>
       @set 'stats', data
+      console.log "got stats", data
     xhr
 
   usedLanguages: ->
+    console.log "used languages"
     @get('stats').used_languages || []
 
   path: ->
