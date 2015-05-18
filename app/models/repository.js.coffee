@@ -55,7 +55,10 @@ class Coreon.Models.Repository extends Backbone.Model
     d.promise()
 
   usedLanguages: ->
-    @get('stats').used_languages || []
+    if @get('stats')? && ('used_languages' of @get('stats'))
+      @get('stats').used_languages
+    else
+      []
 
   path: ->
     "/#{@id}"

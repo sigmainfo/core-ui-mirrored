@@ -27,21 +27,22 @@ class Coreon.Views.Widgets.LanguagesView extends Backbone.View
             , @render
 
   render: ->
-    langs = @app.langs(ignoreSelection: on).map (id) ->
-      labelComponents = [id.toUpperCase()]
-      if translation = I18n.t("languages.#{id}", defaultValue: '')
-        labelComponents.push translation
+    @app.get('repository').getStats().done =>
+      langs = @app.langs(ignoreSelection: on).map (id) ->
+        labelComponents = [id.toUpperCase()]
+        if translation = I18n.t("languages.#{id}", defaultValue: '')
+          labelComponents.push translation
 
-      id: id
-      label: labelComponents.join ' '
+        id: id
+        label: labelComponents.join ' '
 
-    @$el.html @template
-      select: Coreon.Templates['widgets/languages/select']
-      langs: langs
-      source: @app.sourceLang()
-      target: @app.targetLang()
+      @$el.html @template
+        select: Coreon.Templates['widgets/languages/select']
+        langs: langs
+        source: @app.sourceLang()
+        target: @app.targetLang()
 
-    @$('select').coreonSelect()
+      @$('select').coreonSelect()
     @
 
   updateSource: (event) ->
