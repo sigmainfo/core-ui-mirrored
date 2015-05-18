@@ -56,7 +56,7 @@ class Coreon.Models.Repository extends Backbone.Model
 
   usedLanguages: ->
     if @get('stats')? && ('used_languages' of @get('stats'))
-      @get('stats').used_languages
+      _(@get('stats').used_languages).map (l) -> l.toLowerCase()
     else
       []
 
