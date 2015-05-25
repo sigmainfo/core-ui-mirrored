@@ -57,25 +57,48 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @listenTo @model, 'change', @scheduleForUpdate
 
   render: ->
-    @rendering = on
-    concepts = ( model.get 'result' for model in @hits.models )
+    if !window.do_not_refresh || window.do_not_refresh == undefined
+      @rendering = on
+      concepts = ( model.get 'result' for model in @hits.models )
 
-    @model.build([]).done =>
-      repository = @model.at(0)
-      if placeholder = @model.at(1)
-        placeholder.set 'busy', on
-      @update().done @centerSelection
+      @model.build([]).done =>
+        repository = @model.at(0)
+        if placeholder = @model.at(1)
+          placeholder.set 'busy', on
+        @update().done @centerSelection
 
-      @model.build(concepts).done =>
-        @update().done (nodes) =>
-          @centerSelection nodes, animate: yes
-          @rendering = false
+        @model.build(concepts).done =>
+          @update().done (nodes) =>
+            @centerSelection nodes, animate: yes
+            @rendering = false
 
-          # Hide/Show edit icons
-          if $('#coreon-concept-map').parent().attr('id') != 'coreon-main'
-            $('.edit-map').hide();
+            # Hide/Show edit icons
+            if $('#coreon-concept-map').parent().attr('id') != 'coreon-main'
+              $('.edit-map').hide();
+      @
+    else
+      window.do_not_refresh = false
 
-    @
+#  render: ->
+#    @rendering = on
+#    concepts = ( model.get 'result' for model in @hits.models )
+#
+#    @model.build([]).done =>
+#      repository = @model.at(0)
+#      if placeholder = @model.at(1)
+#        placeholder.set 'busy', on
+#      @update().done @centerSelection
+#
+#      @model.build(concepts).done =>
+#        @update().done (nodes) =>
+#          @centerSelection nodes, animate: yes
+#          @rendering = false
+#
+#          # Hide/Show edit icons
+#          if $('#coreon-concept-map').parent().attr('id') != 'coreon-main'
+#            $('.edit-map').hide();
+#
+#    @
 
   update: ->
     deferred = $.Deferred()

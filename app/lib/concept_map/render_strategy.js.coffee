@@ -122,7 +122,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         that.edges    = that.renderEdges @graph.edges
         return
 
-      if that.selectedNode.type!= 'placeholder' && that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
+      if that.selectedNode.type!= 'placeholder' && that.draggingNode != null &&that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
         window.tmp_nodes_dragged=that.draggingNode.id
         window.tmp_nodes_selected=that.selectedNode.id
         @graph=(new Coreon.Lib.TreeGraph window.models).generate()
