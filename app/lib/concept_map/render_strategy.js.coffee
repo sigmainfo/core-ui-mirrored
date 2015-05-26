@@ -205,6 +205,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
     links.append('line').attr('x1',-4).attr('y1',40).attr('x2',4).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
 
+
     placeholders = all.filter(
       (datum) -> datum.type is 'placeholder'
     )
