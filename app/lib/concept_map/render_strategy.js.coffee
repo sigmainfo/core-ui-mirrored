@@ -187,6 +187,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     links = nodes.append('a')
       .attr('xlink:href', (datum) ->
         datum.path
+        console.log '....'+datum.label+' .... '+datum.children.length
       )
       .on('mouseover', (datum) ->
         d3.select(@).classed 'hover', true
@@ -203,8 +204,15 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     links.append('text').attr('class', 'label')
     c1=links.append('circle')
     c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
+    c1.style('display',(datum)->
+      console.log '&&& '+(datum.children.length)
+      console.log '!!! '+(datum.children.length>0)
+      if datum.children.length>0
+          return 'inline-block'
+      else
+          return 'none'
+      )
     links.append('line').attr('x1',-4).attr('y1',40).attr('x2',4).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
-
 
     placeholders = all.filter(
       (datum) -> datum.type is 'placeholder'
