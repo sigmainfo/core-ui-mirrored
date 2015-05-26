@@ -20,12 +20,12 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     svgGroup=d3.select('g.concept-map')
     that=@
     svgGroup.selectAll("g.concept-node").sort (a, b)->
-      if a.id != that.draggingNode.id 
+      if a.id != that.draggingNode.id
         1
-      else 
+      else
         -1
-    ###    
-    nodes1=@layout.nodes(d)    
+    ###
+    nodes1=@layout.nodes(d)
     that=@
     if nodes1.length > 1
       # remove link paths
@@ -33,7 +33,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       nodePaths = svgGroup.selectAll('path.concept-edge').data(links, (d) ->
         d.target.id
       ).remove()
-  
+
       # remove child nodes
       nodesExit = svgGroup.selectAll('g.concept-node').data(nodes1, (d) ->
         d.id
@@ -41,16 +41,16 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         if d.id == that.draggingNode.id
           return false
         true
-      ).remove()    
+      ).remove()
     ###
-    #window.treee.nodes(d)    
-    #console.log 'mmm'+@layout.nodes(@draggingNode)    
-    #console.log 'nnn'+d.label    
-    #console.log 'ooo'+@draggingNode.label    
-    
-    @dragStarted = null    
-  
-  
+    #window.treee.nodes(d)
+    #console.log 'mmm'+@layout.nodes(@draggingNode)
+    #console.log 'nnn'+d.label
+    #console.log 'ooo'+@draggingNode.label
+
+    @dragStarted = null
+
+
   render: (graph) ->
     deferred = $.Deferred()
     nodes    = @renderNodes graph.tree
@@ -64,16 +64,16 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragListener.on 'dragstart', (d) ->
       console.log 'drag start'
       that.dragStarted= true;
-      #console.log 'mmm'+that.layout.nodes(d)    
+      #console.log 'mmm'+that.layout.nodes(d)
       d3.event.sourceEvent.stopPropagation()
 
       if window.tmp_nodes_dragged && window.tmp_nodes_selected
         alert 'Save/Reset map before continuing'
         window.need_to_save_first = true
         return
-      
-      
-        
+
+
+
     @dragListener.on 'drag', (d) ->
       if d.type=='repository' || d.type=='placeholder' || window.need_to_save_first
         console.log 'repo not supported....'
@@ -83,30 +83,30 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         return
       if that.dragStarted
         domNode = that;
-        that.initiateDrag(d, domNode);  
+        that.initiateDrag(d, domNode);
       node=d3.select(@)
       d.x += d3.mouse(this)[0];
       d.y += d3.mouse(this)[1];
       #d.x += d3.event.dx;
       #d.y += d3.event.dy;
-      node.attr("transform", "translate(" + d.x + "," + d.y+ ")");      
+      node.attr("transform", "translate(" + d.x + "," + d.y+ ")");
       #console.log 'd label'+d.label
       #console.log 'd type'+d.type
       #console.log 'd path'+d.path
       #console.log 'd id'+d.id
       #console.log 'd parent'+d.parent.label
-      #console.log 'd children'+d.children.length      
+      #console.log 'd children'+d.children.length
       #console.log 'd children'+JSON.stringify(Coreon.Models.Concept.find(d.id))
       #@con=Coreon.Models.Concept.find(d.id)
       #data =
       #  superconcept_ids: []
       #  subconcept_ids: ['551e6f4973697363de050000','551e6f7f73697363de0c0000']
       #@con.save data
-      
-  
+
+
     @dragListener.on 'dragend', (d) ->
       #Backbone.history.loadUrl
-      console.log 'on end' 
+      console.log 'on end'
       if d.type=='repository'
         return
       if window.edit_mode_selected == undefined || window.edit_mode_selected == false
@@ -136,7 +136,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         #  superconcept_ids: [window.tmp_nodes_selected]
         #  subconcept_ids: []
         #@con.save data
-        
+
     deferred.promise()
 
   renderNodes: (root) ->
@@ -146,8 +146,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @deleteNodes nodes.exit()
     @updateNodes nodes
     nodes
-  
-  
+
+
   renderSiblings: (data) ->
     #console.log 'sibling...'+data
     siblings = @parent.selectAll('.sibling-node')
@@ -201,6 +201,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     links.append('rect').attr('class', 'background')
     links.append('circle').attr('class', 'bullet')
     links.append('text').attr('class', 'label')
+    c1=links.append('circle')
+    c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
+    links.append('line').attr('x1',-4).attr('y1',40).attr('x2',4).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
 
     placeholders = all.filter(
       (datum) -> datum.type is 'placeholder'
@@ -348,7 +351,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         "#{datum.source.id}|#{datum.target.id}"
       )
 
-    
+
     @createEdges edges.enter()
     @deleteEdges edges.exit()
     @updateEdges edges
@@ -358,7 +361,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     #console.log 'enterr1 '+enter
 #    edges = enter.insert('path', '.concept-node')
 #      .attr('class', 'concept-edge')
-    
+
     edges = enter.insert('path', '.concept-node').attr('class', (d) ->
        console.log 'dd '+d['source'].id
        'concept-edge '+' path_'+d['source'].id+'_'+d['target'].id
@@ -370,7 +373,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
         window.delete_node=d3.select('path.path_'+tmpp)
         d3.select('path.path_'+tmpp).attr('class','concept-edge1') #window.tmp_nodes_old_parent[0]
-    
+
     edges
 
   deleteEdges: (exit) ->
