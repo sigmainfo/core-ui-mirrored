@@ -98,6 +98,7 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
     (new Coreon.Lib.TreeGraph @models).generate()
 
   expand: (id) ->
+    console.log 'expand inter ***** :'+id
     deferred = $.Deferred()
     model = @get id
 
@@ -109,6 +110,10 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
       @addAndLoad model.get('child_node_ids'), deferred
 
     deferred.promise()
+
+  collapse: (id) ->
+    console.log 'collapse inter ***** :'+id
+    
 
   addAndLoad: (ids, deferred = $.Deferred()) ->
     nodes = []

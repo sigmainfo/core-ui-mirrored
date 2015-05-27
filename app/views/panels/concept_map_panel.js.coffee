@@ -30,6 +30,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     'click .cancel-map'             : 'cancelMap'
     'click .save-map'               : 'saveMap'
     'click .maximize'               : 'MaximizeConceptPanel'
+    'click circle.negative-sign'    : 'collapse'
+    #'click .concept-node circle.negative-sign'   : 'collapse'
 
   initialize: (options = {}) ->
     super
@@ -101,6 +103,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 #    @
 
   update: ->
+    console.log 'update called ***'
     deferred = $.Deferred()
     @renderStrategy.render( @model.graph() ).done =>
       deferred.resolveWith @, arguments
@@ -158,6 +161,22 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         placeholder.set 'busy', off
         @update()
         @rendering = off
+
+  collapse: (event) ->
+    console.log 'collapse called ***'
+    @rendering = on
+    node = $(event.target).closest '.negative-sign'
+    datum = d3.select(node[0]).datum()
+    console.log 'datatum id   :'+datum.id+'  ***:'+datum.label
+    placeholder = @model.get datum.id
+    placeholder.set 'busy', on
+    @update()
+    @model.collapse(datum.id)
+    .always =>
+      placeholder.set 'busy', off
+      @update()
+      @rendering = off
+
 
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
