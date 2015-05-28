@@ -154,6 +154,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     node = $(event.target).closest '.placeholder'
     datum = d3.select(node[0]).datum()
     placeholder = @model.get datum.id
+    console.log 'placeholder ,,, '+JSON.stringify(placeholder)
     placeholder.set 'busy', on
     @update()
     @model.expand(datum.parent.id)
@@ -164,18 +165,26 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   collapse: (event) ->
     console.log 'collapse called ***'
-    @rendering = on
+    # Backbone.history.navigate '/551bd2e37369737fd4040000', trigger: true
+    # @rendering = on
     node = $(event.target).closest '.negative-sign'
     datum = d3.select(node[0]).datum()
-    console.log 'datatum id   :'+datum.id+'  ***:'+datum.label
-    placeholder = @model.get datum.id
-    placeholder.set 'busy', on
-    @update()
-    @model.collapse(datum.id)
-    .always =>
-      placeholder.set 'busy', off
-      @update()
-      @rendering = off
+    window.collapseList=datum.id
+    @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+    @.renderStrategy.nodes    = @.renderStrategy.renderNodes @graph.tree
+    @.renderStrategy.siblings = @.renderStrategy.renderSiblings @graph.siblings
+    @.renderStrategy.edges    = @.renderStrategy.renderEdges @graph.edges
+    that=@
+    # console.log 'datatum id   :'+datum.id+'  ***:'+datum.label+' ... '+datum.children.length
+    # placeholder = @model.get datum.id
+    # console.log 'placeholder ,,, '+JSON.stringify(placeholder)
+    # placeholder.set 'busy', off
+    # @update()
+    # @model.collapse(datum.id)
+    # .always =>
+    #   placeholder.set 'busy', off
+    #   @update()
+    #   @rendering = off
 
 
   zoomIn: ->
@@ -190,7 +199,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   @hello = true
 
-  editMap: ->    
+  editMap: ->
     #console.log 'editmap clicked'
     if $('#coreon-concept-map').parent().attr('id') == 'coreon-main'
       if window.edit_mode_selected
@@ -232,7 +241,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       data =
           superconcept_ids: [window.tmp_nodes_selected]
       @con.save data
-      
+
       ###tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
       console.log 'tmpp :'+tmpp
       d3.selectAll('concept-edge1').remove()
@@ -240,7 +249,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
       if window.delete_node
-         window.delete_node.attr('class','concept-edge-hide') 
+         window.delete_node.attr('class','concept-edge-hide')
       window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
       window.tmp_reset_nodes_selected=window.tmp_nodes_selected
       window.tmp_nodes_dragged=undefined
@@ -248,13 +257,13 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       window.need_to_save_first = false
       window.tmp_reset_nodes_dragged=undefined
 
-      
+
 #      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
 #      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
 #      @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
 #      @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
 
-      
+
 
 #      $("body").css("background","url('/assets/layout/bg.jpg')");
 #      window.edit_mode_selected = false
@@ -289,8 +298,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
         @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
         @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
-    
-  cancelMap: ->    
+
+  cancelMap: ->
     #console.log 'cancel clicked'+@renderStrategy
     if window.edit_mode_selected
       window.tmp_nodes_old_parent=[]

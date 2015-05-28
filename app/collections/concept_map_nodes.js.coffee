@@ -111,9 +111,10 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
     deferred.promise()
 
+
   collapse: (id) ->
     console.log 'collapse inter ***** :'+id
-    
+
 
   addAndLoad: (ids, deferred = $.Deferred()) ->
     nodes = []
