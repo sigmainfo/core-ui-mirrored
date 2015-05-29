@@ -169,22 +169,20 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     # @rendering = on
     node = $(event.target).closest '.negative-sign'
     datum = d3.select(node[0]).datum()
-    window.collapseList=datum.id
+    console.log 'datum ...'+datum.label
+    inndex=window.collapseList.indexOf(datum.id)
+    console.log 'inndex ... '+inndex
+    if inndex!=-1
+       console.log 'in iff1 collapse'
+       window.collapseList.splice(inndex,1)
+    else
+      console.log 'in iff2 collapse'
+      window.collapseList.push datum.id
+
     @graph=(new Coreon.Lib.TreeGraph window.models).generate()
     @.renderStrategy.nodes    = @.renderStrategy.renderNodes @graph.tree
     @.renderStrategy.siblings = @.renderStrategy.renderSiblings @graph.siblings
     @.renderStrategy.edges    = @.renderStrategy.renderEdges @graph.edges
-    that=@
-    # console.log 'datatum id   :'+datum.id+'  ***:'+datum.label+' ... '+datum.children.length
-    # placeholder = @model.get datum.id
-    # console.log 'placeholder ,,, '+JSON.stringify(placeholder)
-    # placeholder.set 'busy', off
-    # @update()
-    # @model.collapse(datum.id)
-    # .always =>
-    #   placeholder.set 'busy', off
-    #   @update()
-    #   @rendering = off
 
 
   zoomIn: ->

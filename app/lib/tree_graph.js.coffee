@@ -42,8 +42,8 @@ class Coreon.Lib.TreeGraph
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
       console.log 'parent ids '+parentNodeIds+ ':::: '+window.collapseList
-      console.log 'parent ids2 '+(String(parentNodeIds)==String(window.collapseList))
-      if String(window.collapseList)==String(parentNodeIds)
+      console.log 'parent ids2 '+(window.collapseList.indexOf(String(parentNodeIds))!=-1)
+      if window.collapseList.indexOf(String(parentNodeIds))!=-1
          console.log 'in else pnode else'
       else
           console.log 'in ifff'

@@ -11,7 +11,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragStarted = null
     @selectedNode=null
     @draggingNode=null
-    window.collapseList='mmm'
+    window.collapseList=['mmm']
 
   resize: (@width, @height) ->
 
