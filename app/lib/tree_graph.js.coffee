@@ -59,6 +59,7 @@ class Coreon.Lib.TreeGraph
               @connect @nodes[parentNodeId], target
           else
               @connect @root, target
+    window.nodes=@nodes
 
   connect: (source, target) ->
     #console.log 'src :'+source

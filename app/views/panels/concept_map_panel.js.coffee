@@ -165,18 +165,23 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   collapse: (event) ->
     console.log 'collapse called ***'
-    # Backbone.history.navigate '/551bd2e37369737fd4040000', trigger: true
-    # @rendering = on
     node = $(event.target).closest '.negative-sign'
     datum = d3.select(node[0]).datum()
-    console.log 'datum ...'+datum.label
+
     inndex=window.collapseList.indexOf(datum.id)
-    console.log 'inndex ... '+inndex
     if inndex!=-1
-       console.log 'in iff1 collapse'
        window.collapseList.splice(inndex,1)
     else
-      console.log 'in iff2 collapse'
+      if window.nodes[datum.id]._children!=undefined
+          window.nodes[datum.id]._children.forEach (c)->
+            indo=window.collapseList.indexOf(c.id)
+            if indo!=-1
+              window.collapseList.splice(indo,1)
+      if window.nodes[datum.id].children!=null
+          window.nodes[datum.id].children.forEach (c)->
+            indo=window.collapseList.indexOf(c.id)
+            if indo!=-1
+              window.collapseList.splice(indo,1)
       window.collapseList.push datum.id
 
     @graph=(new Coreon.Lib.TreeGraph window.models).generate()
