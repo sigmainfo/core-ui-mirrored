@@ -219,7 +219,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
     c1.style('display',(datum)->
       if datum.children.length>0 && datum.type != 'repository'
-          nodes.append('line').attr('x1',-4).attr('y1',40).attr('x2',4).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
+          nodes.append('line').attr('x1',-3).attr('y1',40).attr('x2',3).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
           return 'inline-block'
       else
           return 'none'
