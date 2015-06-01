@@ -230,7 +230,10 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       (datum) -> datum.type is 'placeholder'
     )
 
-    placeholders.classed('placeholder', true)
+    placeholders.classed('placeholder', (datum)->
+      $('.negative-sign-'+datum.parent.id).hide()
+      return true
+      )
 
     placeholders.append('title')
 
