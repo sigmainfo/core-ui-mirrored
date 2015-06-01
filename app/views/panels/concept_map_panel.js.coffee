@@ -154,16 +154,14 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     node = $(event.target).closest '.placeholder'
     datum = d3.select(node[0]).datum()
     placeholder = @model.get datum.id
-    console.log 'placeholder ,,, '+JSON.stringify(placeholder)
     placeholder.set 'busy', on
     @update()
-    console.log 'datum.parent.id ... '+datum.parent.id
-    console.log 'datum.parent.id ... '+datum.parent.label
     @model.expand(datum.parent.id)
       .always =>
         placeholder.set 'busy', off
         @update()
         @rendering = off
+        $('.negative-sign-'+datum.parent.id).show()
 
   collapse: (event) ->
     console.log 'clicked collapse event'
@@ -178,7 +176,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         placeholder.set 'busy', off
         @update()
         @rendering = off
-
+        $(event.target).hide()
 
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep

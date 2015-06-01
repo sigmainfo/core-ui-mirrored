@@ -215,11 +215,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     links.append('rect').attr('class', 'background')
     links.append('circle').attr('class', 'bullet')
     links.append('text').attr('class', 'label')
-    c1=nodes.append('circle').attr('class', 'negative-sign')
+    c1=nodes.append('circle').attr('class', (datum)->'negative-sign negative-sign-'+datum.id)
     c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
     c1.style('display',(datum)->
-      console.log '&&& '+(datum.children.length)
-      console.log '!!! '+(datum.children.length>0)
       if datum.children.length>0 && datum.type != 'repository'
           nodes.append('line').attr('x1',-4).attr('y1',40).attr('x2',4).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
           return 'inline-block'

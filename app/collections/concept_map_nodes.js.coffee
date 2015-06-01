@@ -62,37 +62,6 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
         model: Coreon.Models.Concept.find parentNodeId
         parent_of_hit: yes
 
-  updateAllPlaceholderNodes1: ->
-    models = (model for model in @models when model.get('type') isnt 'placeholder')
-    for model in models
-      @updatePlaceholderNode1 model, model.get('child_node_ids'), silent: yes
-
-  updatePlaceholderNode1: (model, childNodeIds, options = {}) ->
-    id = "+[#{model.id}]"
-    siblingNodeIds = []
-    for childNodeId in childNodeIds
-      siblingNodeIds.push sibling.id if sibling = @get childNodeId
-
-    parentNodeIds = []
-    parentNodeIds.push model.id
-
-    enforce = model.get('type') is 'repository' and not @_rootIds?
-    count = childNodeIds.length - siblingNodeIds.length
-    label = if enforce then null else "#{count}"
-
-    if count > 0 or enforce
-      @add {
-        id: id
-        type: 'placeholder'
-        parent_node_ids: parentNodeIds
-        sibling_node_ids: siblingNodeIds
-        label: label
-      }, silent: yes, merge: yes
-    else
-      @remove id
-
-    @trigger 'placeholder:update' unless options.silent
-
   updateAllPlaceholderNodes: ->
     models = (model for model in @models when model.get('type') isnt 'placeholder')
     for model in models
@@ -152,22 +121,18 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
   delAndUnLoad: (ids, deferred = $.Deferred()) ->
     nodes = []
-    console.log 'before delloadd '+JSON.stringify(@models)
-    console.log 'before delloadd ids '+ids
     for id in ids
       nodes.push @get id
       @remove id
-    console.log 'after delloadd '+JSON.stringify(@models)
-    console.log 'after delloadd nodes'+JSON.stringify(nodes)
     resolve = =>
-      loaded = no
+      loaded = yes
       for node in nodes
         unless node.get 'loaded'
-          loaded = yes
+          loaded = no
           break
-      if !loaded
+      if loaded
         @stopListening @, 'change:loaded', resolve
-        @updateAllPlaceholderNodes1()
+        @updateAllPlaceholderNodes()
         deferred.resolve nodes
 
     @listenTo @, 'change:loaded', resolve
@@ -178,12 +143,9 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
   addAndLoad: (ids, deferred = $.Deferred()) ->
     nodes = []
-    console.log 'before loadd '+JSON.stringify(@models)
     for id in ids
       @add model: Coreon.Models.Concept.find id
       nodes.push @get id
-    console.log 'after loadd '+JSON.stringify(@models)
-    console.log 'after loadd nodes'+JSON.stringify(nodes)
 
     resolve = =>
       loaded = yes

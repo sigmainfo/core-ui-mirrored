@@ -34,16 +34,13 @@ class Coreon.Lib.TreeGraph
       null
 
   generateEdges: ->
+    placeholders=[]
     window.models=@models
-    # console.log 'JSON modekls '+JSON.stringify(@models)
     @edges = []
     for model in @models
       target = @nodes[model.id]
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
-      # console.log 'parent ids '+parentNodeIds+ ':::: '+window.collapseList
-      # console.log 'parent ids2 '+(window.collapseList.indexOf(String(parentNodeIds))!=-1
-                # console.log 'in ifff'
       if window.tmp_nodes_dragged
         if window.tmp_nodes_dragged==target.id
           @connect @nodes[window.tmp_nodes_selected], target
