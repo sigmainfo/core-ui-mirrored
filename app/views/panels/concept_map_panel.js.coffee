@@ -157,6 +157,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     console.log 'placeholder ,,, '+JSON.stringify(placeholder)
     placeholder.set 'busy', on
     @update()
+    console.log 'datum.parent.id ... '+datum.parent.id
+    console.log 'datum.parent.id ... '+datum.parent.label
     @model.expand(datum.parent.id)
       .always =>
         placeholder.set 'busy', off
@@ -164,30 +166,18 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @rendering = off
 
   collapse: (event) ->
-    console.log 'collapse called ***'
+    console.log 'clicked collapse event'
+    @rendering = off
     node = $(event.target).closest '.negative-sign'
     datum = d3.select(node[0]).datum()
-
-    inndex=window.collapseList.indexOf(datum.id)
-    if inndex!=-1
-       window.collapseList.splice(inndex,1)
-    else
-      if window.nodes[datum.id]._children!=undefined
-          window.nodes[datum.id]._children.forEach (c)->
-            indo=window.collapseList.indexOf(c.id)
-            if indo!=-1
-              window.collapseList.splice(indo,1)
-      if window.nodes[datum.id].children!=null
-          window.nodes[datum.id].children.forEach (c)->
-            indo=window.collapseList.indexOf(c.id)
-            if indo!=-1
-              window.collapseList.splice(indo,1)
-      window.collapseList.push datum.id
-
-    @graph=(new Coreon.Lib.TreeGraph window.models).generate()
-    @.renderStrategy.nodes    = @.renderStrategy.renderNodes @graph.tree
-    @.renderStrategy.siblings = @.renderStrategy.renderSiblings @graph.siblings
-    @.renderStrategy.edges    = @.renderStrategy.renderEdges @graph.edges
+    placeholder = @model.get datum.id
+    placeholder.set 'busy', off
+    @update()
+    @model.collapse(datum.id)
+      .always =>
+        placeholder.set 'busy', off
+        @update()
+        @rendering = off
 
 
   zoomIn: ->

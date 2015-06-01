@@ -41,25 +41,21 @@ class Coreon.Lib.TreeGraph
       target = @nodes[model.id]
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
-      console.log 'parent ids '+parentNodeIds+ ':::: '+window.collapseList
-      console.log 'parent ids2 '+(window.collapseList.indexOf(String(parentNodeIds))!=-1)
-      if window.collapseList.indexOf(String(parentNodeIds))!=-1
-         console.log 'in else pnode else'
+      # console.log 'parent ids '+parentNodeIds+ ':::: '+window.collapseList
+      # console.log 'parent ids2 '+(window.collapseList.indexOf(String(parentNodeIds))!=-1
+                # console.log 'in ifff'
+      if window.tmp_nodes_dragged
+        if window.tmp_nodes_dragged==target.id
+          @connect @nodes[window.tmp_nodes_selected], target
+          window.tmp_nodes_old_parent=[]
+      if parentNodeIds.length > 0
+        for parentNodeId in parentNodeIds
+          if window.tmp_nodes_dragged==target.id
+             if window.tmp_nodes_old_parent != undefined
+              window.tmp_nodes_old_parent.push parentNodeId
+          @connect @nodes[parentNodeId], target
       else
-          console.log 'in ifff'
-          if window.tmp_nodes_dragged
-            if window.tmp_nodes_dragged==target.id
-              @connect @nodes[window.tmp_nodes_selected], target
-              window.tmp_nodes_old_parent=[]
-          if parentNodeIds.length > 0
-            for parentNodeId in parentNodeIds
-              if window.tmp_nodes_dragged==target.id
-                 if window.tmp_nodes_old_parent != undefined
-                  window.tmp_nodes_old_parent.push parentNodeId
-              @connect @nodes[parentNodeId], target
-          else
-              @connect @root, target
-    window.nodes=@nodes
+        @connect @root, target
 
   connect: (source, target) ->
     #console.log 'src :'+source
