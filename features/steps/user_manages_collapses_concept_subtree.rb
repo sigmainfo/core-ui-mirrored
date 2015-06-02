@@ -1,4 +1,4 @@
-class Spinach::Features::UsersManagesCollapseConceptSubtree < Spinach::FeatureSteps
+class Spinach::Features::UserManagesCollapseConceptSubtree < Spinach::FeatureSteps
 
   include AuthSteps
   include Factory
@@ -62,6 +62,43 @@ class Spinach::Features::UsersManagesCollapseConceptSubtree < Spinach::FeatureSt
   end
 
 
+  step 'I expanded tree only first level' do
+    find(".concept-node.placeholder").click
+  end
+
+  step 'I can not see second level nodes like "intra-EU transport" and "pipeline transport"' do
+    page.should_not have_selector('.concept-node', text: 'pipeline transport')
+    page.should have_no_selector('.concept-node', text: 'intra-EU transport')
+  end
+
+  step 'I click a concept node "intra-EU transport" and "pipeline transport" to expand' do
+    sleep 1
+    all(".concept-node.placeholder").each(&:click)
+  end
+
+  step 'I can see the "intra-EU transport" expanded' do
+    page.should have_selector('.concept-node', text: 'intra-EU transport')
+  end
+
+  step 'I can see the "pipeline transport" expanded' do
+    page.should have_selector('.concept-node', text: 'pipeline transport')
+  end
+
+
+  step 'I collapse a concept node "intra-EU transport"' do
+    #p @concept1
+    find(".negative-sign-"+@superconcept1['id']).click
+  #  binding.pry
+  end
+
+  step 'I can not see the "intra-EU transport" now because its collapsed' do
+    #page.should_not have_selector('.concept-node', text: 'pipeline transport')
+    page.should_not have_selector('.concept-node', text: 'intra-EU transport')
+  end
+
+  step 'I can see the "pipeline transport" expanded' do
+    page.should have_selector('.concept-node', text: 'pipeline transport')
+  end
 
 
 end
