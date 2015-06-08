@@ -161,7 +161,12 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         placeholder.set 'busy', off
         @update()
         @rendering = off
-        $('.negative-sign-'+datum.parent.id).show()
+        @con=Coreon.Models.Concept.find('556dad4c73697368fd2c0000')
+        parentNode=window.nodes[datum.parent.id]
+        for childnode in parentNode._children
+            cor=Coreon.Models.Concept.find(childnode.id)
+            for parentid in cor.persistedAttributes().superconcept_ids
+                $('.negative-sign-'+parentid).show()
 
   collapse: (event) ->
     console.log 'clicked collapse event'
