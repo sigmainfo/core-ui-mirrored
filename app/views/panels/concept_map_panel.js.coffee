@@ -31,6 +31,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     'click .save-map'               : 'saveMap'
     'click .maximize'               : 'MaximizeConceptPanel'
     'click circle.negative-sign'    : 'collapse'
+    # 'wheel.zoom'                    : 'wheelZoom'
     #'click .concept-node circle.negative-sign'   : 'collapse'
 
   initialize: (options = {}) ->
@@ -38,6 +39,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @navigator = d3.behavior.zoom()
       .scaleExtent(@options.scaleExtent)
       .on('zoom', @_panAndZoom)
+
     @_renderMarkupSkeleton()
 
     @renderStrategies = [
@@ -52,6 +54,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @renderStrategy = new @renderStrategies[0] @map
 
     d3.select(@$('svg')[0]).call @navigator
+    d3.select(@$('svg')[0]).call(@navigator).on('wheel.zoom', @wheelZoom)
+    # d3.svg.call(@navigator).on('wheel.zoom', @wheelZoom)
 
     @hits = options.hits
     @listenTo @hits, 'update', @render
@@ -349,8 +353,22 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 #      'panels.concept_map.cancel_map'
 #      'panels.concept_map.save_map'
     ]
+  wheelZoom: ->
+    # d3.event.stopPropagation()
+    map = d3.select $('svg g.concept-map')[0]
+    current_translate = d3.transform(map.attr('transform')).translate
+    dx = d3.event.wheelDeltaX + current_translate[0]
+    dy = d3.event.wheelDeltaY + current_translate[1]
+    map.attr 'transform', 'translate(' + [
+      dx
+      dy
+    ] + ')'
+    d3.event.stopPropagation()
+    return
 
   _panAndZoom: (options = {}) =>
+    console.log '*************** pan1 '
+    console.log '*************** pan2 '+@map
     map = @map
     if options.animate
       map = @map.transition()
