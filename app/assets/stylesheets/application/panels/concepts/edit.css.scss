@@ -188,7 +188,6 @@
 
    &.term, .term {
      position: relative;
-     padding-top: 8px;
      border: none;
      margin-bottom: 20px;
 
@@ -198,14 +197,30 @@
        font-size: 0.8em;
      }
 
-     div.input {
-       padding-bottom: 18px;
-       padding-left: 88px;
-       &.required {
-         label:after {
-           content: "*";
+     .value-strip {
+
+       line-height: 1.5em;
+       padding: 10px 0 10px 0;
+
+       .input {
+         &.value {
+           padding-left: 88px;
+           display: inline-block;
+           width: 80%;
+
+          input[type=text] {
+            width: 100%;
+          }
+         }
+
+         &.lang {
+           display: inline-block;
+           margin-left: 20px;
+           top: -2px;
+           position: relative;
          }
        }
+
      }
 
      .submit {
@@ -223,16 +238,7 @@
        }
 
        h3 {
-         padding: 1px 7px 0 5px;
-         margin: 0;
-         background: rgba(white, 0.3);
-         &:before {
-           content: none;
-         }
-
-         position: relative;
-         left: 34px;
-         top: 1px;
+         display: none;
        }
      }
    }
