@@ -40,6 +40,7 @@ class Spinach::Features::UserManagesCollapseConceptSubtree < Spinach::FeatureSte
     find(".concept-node.placeholder").click
     sleep 1
     all(".concept-node.placeholder").each(&:click)
+   # binding.pry
   end
 
   step 'I click a concept node "mode of transport"' do
@@ -86,9 +87,7 @@ class Spinach::Features::UserManagesCollapseConceptSubtree < Spinach::FeatureSte
 
 
   step 'I collapse a concept node "intra-EU transport"' do
-    #p @concept1
     find(".negative-sign-"+@superconcept1['id']).click
-  #  binding.pry
   end
 
   step 'I can not see the "intra-EU transport" now because its collapsed' do
@@ -98,6 +97,45 @@ class Spinach::Features::UserManagesCollapseConceptSubtree < Spinach::FeatureSte
 
   step 'I can see the "pipeline transport" expanded' do
     page.should have_selector('.concept-node', text: 'pipeline transport')
+  end
+
+
+  step 'the concept "destination of transport" and "mode of transport" has "common of transport" as a subconcept' do
+    @concept3 = create_concept_with_label "common of transport",
+                                          superconcept_ids: [@superconcept1['id'], @superconcept2['id']]
+  end
+
+
+  step 'I collapse a concept node "common of transport"' do
+    find(".negative-sign-"+@superconcept1['id']).click
+  end
+
+  step 'I can not see the "common of transport" now because its collapsed' do
+    page.should_not have_selector('.concept-node', text: 'common of transport')
+  end
+
+  step '"destination of transport" should have placeholder for collapsed node' do
+    page.should have_selector('.concept-node.placeholder ', text: '2 more concepts for destination of transport')
+  end
+
+  step '"mode of transport" should have placeholder for collapsed node' do
+    page.should have_selector('.sibling-node.placeholder ', text: '1 more concept for mode of transport')
+  end
+
+  step 'I expand "mode of transport" concept' do
+    all(".sibling-node.placeholder").each(&:click)
+  end
+
+  step '"destination of transport" should not have any placeholder for collapsed node' do
+    page.should_not have_content(text: '2 more concepts for destination of transport')
+  end
+
+  step '"mode of transport" should not have placeholder for multi sub node collapsed node' do
+    page.should_not have_content('1 more concept for mode of transport')
+  end
+
+  step '"destination of transport" now have one concept only as a placeholder now' do
+    page.should have_selector('.sibling-node.placeholder ', text: '1 more concept for destination of transport')
   end
 
 

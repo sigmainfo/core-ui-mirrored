@@ -41,3 +41,19 @@ Feature: user manages collapse concept subtree
     When I collapse a concept node "intra-EU transport"
     And I can not see the "intra-EU transport" now because its collapsed
     And I can see the "pipeline transport" expanded
+
+
+  @firefox
+  Scenario: view the map/tree and collapse multiple parent concept node of expanded tree
+    And the concept "destination of transport" and "mode of transport" has "common of transport" as a subconcept
+    Then I expanded tree
+    And I can see the "intra-EU transport" expanded
+    And I can see the "pipeline transport" expanded
+    When I collapse a concept node "common of transport"
+    Then I can not see the "common of transport" now because its collapsed
+    And "destination of transport" should have placeholder for collapsed node
+    And "mode of transport" should have placeholder for collapsed node
+    When I expand "mode of transport" concept
+    Then "destination of transport" should not have any placeholder for collapsed node
+    And "mode of transport" should not have placeholder for multi sub node collapsed node
+    And "destination of transport" now have one concept only as a placeholder now
