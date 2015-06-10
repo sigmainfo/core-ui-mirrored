@@ -5,11 +5,11 @@ if RUBY_VERSION =~ /1.9/
   Encoding.default_internal = Encoding::UTF_8
 end
 
-gem 'rails', '= 3.2.12' # Needed for i18n-js with ruby 1.9
+gem 'rails', '~> 3.2.12' # Needed for i18n-js with ruby 1.9
 if false
   gem 'core_client', path: '../core-client'
 else
-  gem 'core_client', git: 'git@github.com:gmah/core-client.git'
+  gem 'core_client', git: 'git@github.com:gmah/core-client.git', branch: 'rails3'
 end
 
 # Gems used only for assets and not required
@@ -27,7 +27,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
-gem 'jquery-ui-rails'
+gem 'jquery-ui-rails', '~> 4.1'
 
 gem 'rack-cors', require: 'rack/cors'
 gem 'rest-client'
@@ -40,7 +40,7 @@ group :development do
 end
 
 group :test do
-  gem 'poltergeist', '~> 1.5.1'
+  gem 'poltergeist', '~> 1.6.0'
   gem 'rspec', '~> 2.13.0'
   gem 'spinach-rails'
   gem 'selenium-webdriver', '~> 2.45'
