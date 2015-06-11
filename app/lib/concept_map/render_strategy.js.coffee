@@ -11,13 +11,11 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragStarted = null
     @selectedNode=null
     @draggingNode=null
-    window.collapseList=['mmm']
 
   resize: (@width, @height) ->
 
   initiateDrag: (d, domNode) ->
     @draggingNode=d
-    console.log '@draggingNode:'+@draggingNode.id
     svgGroup=d3.select('g.concept-map')
     that=@
     svgGroup.selectAll("g.concept-node").sort (a, b)->
@@ -25,29 +23,6 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         1
       else
         -1
-    ###
-    nodes1=@layout.nodes(d)
-    that=@
-    if nodes1.length > 1
-      # remove link paths
-      links = @layout.links(nodes1)
-      nodePaths = svgGroup.selectAll('path.concept-edge').data(links, (d) ->
-        d.target.id
-      ).remove()
-
-      # remove child nodes
-      nodesExit = svgGroup.selectAll('g.concept-node').data(nodes1, (d) ->
-        d.id
-      ).filter((d, i) ->
-        if d.id == that.draggingNode.id
-          return false
-        true
-      ).remove()
-    ###
-    #window.treee.nodes(d)
-    #console.log 'mmm'+@layout.nodes(@draggingNode)
-    #console.log 'nnn'+d.label
-    #console.log 'ooo'+@draggingNode.label
 
     @dragStarted = null
 
@@ -63,11 +38,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     _.defer @updateLayout, all, edges, deferred
     that = this
     @dragListener.on 'dragstart', (d) ->
-      console.log 'drag start'
       that.dragStarted= true;
-      #console.log 'mmm'+that.layout.nodes(d)
       d3.event.sourceEvent.stopPropagation()
-
       if window.tmp_nodes_dragged && window.tmp_nodes_selected
         alert 'Save/Reset map before continuing'
         window.need_to_save_first = true
@@ -77,10 +49,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
     @dragListener.on 'drag', (d) ->
       if d.type=='repository' || d.type=='placeholder' || window.need_to_save_first
-        console.log 'repo not supported....'
         return
       if window.edit_mode_selected == undefined || window.edit_mode_selected == false
-        #console.log 'Edit mode not yet selected'
         return
       if that.dragStarted
         domNode = that;
@@ -91,32 +61,17 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       #d.x += d3.event.dx;
       #d.y += d3.event.dy;
       node.attr("transform", "translate(" + d.x + "," + d.y+ ")");
-      #console.log 'd label'+d.label
-      #console.log 'd type'+d.type
-      #console.log 'd path'+d.path
-      #console.log 'd id'+d.id
-      #console.log 'd parent'+d.parent.label
-      #console.log 'd children'+d.children.length
-      #console.log 'd children'+JSON.stringify(Coreon.Models.Concept.find(d.id))
-      #@con=Coreon.Models.Concept.find(d.id)
-      #data =
-      #  superconcept_ids: []
-      #  subconcept_ids: ['551e6f4973697363de050000','551e6f7f73697363de0c0000']
-      #@con.save data
 
 
     @dragListener.on 'dragend', (d) ->
       #Backbone.history.loadUrl
-      console.log 'on end'
       if d.type=='repository'
         return
       if window.edit_mode_selected == undefined || window.edit_mode_selected == false
-        #console.log 'Edit mode not yet selected'
         return
 
 
       if that.selectedNode == null
-        #console.log 'that.selectedNode.type ******* '+that.selectedNode
         @graph=(new Coreon.Lib.TreeGraph window.models).generate()
         that.nodes    = that.renderNodes @graph.tree
         that.siblings = that.renderSiblings @graph.siblings
@@ -162,7 +117,6 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
 
   renderSiblings: (data) ->
-    #console.log 'sibling...'+data
     siblings = @parent.selectAll('.sibling-node')
       .data( @layoutSiblings(data), (datum) -> datum.id )
     @createNodes siblings.enter()
@@ -175,12 +129,10 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     all = enter.append('g')
       .call(@dragListener)
       .on('mouseover', (d) ->
-        #console.log 'over '+datum.label
         if !window.need_to_save_first
          that.selectedNode=d
       )
       .on('mouseout', (d) ->
-        #console.log 'over '+datum.label
        if !window.need_to_save_first
         that.selectedNode=null
       )
@@ -382,18 +334,12 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     edges
 
   createEdges: (enter) ->
-    #console.log 'enterr1 '+enter
-#    edges = enter.insert('path', '.concept-node')
-#      .attr('class', 'concept-edge')
-
     edges = enter.insert('path', '.concept-node').attr('class', (d) ->
-       console.log 'dd '+d['source'].id
        'concept-edge '+' path_'+d['source'].id+'_'+d['target'].id
     )
 
     #if window.tmp_nodes_old_parent
     if window.tmp_nodes_dragged && window.tmp_reset_nodes_dragged==undefined
-        console.log 'called in if'
         tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
         window.delete_node=d3.select('path.path_'+tmpp)
         d3.select('path.path_'+tmpp).attr('class','concept-edge1') #window.tmp_nodes_old_parent[0]
@@ -404,7 +350,6 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     exit.remove()
 
   updateEdges: (edges) ->
-    #console.log 'update edges..'+edges
     edges
 
   updateLayout: (nodes, edges, deferred) =>

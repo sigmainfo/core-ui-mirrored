@@ -31,8 +31,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     'click .save-map'               : 'saveMap'
     'click .maximize'               : 'MaximizeConceptPanel'
     'click circle.negative-sign'    : 'collapse'
-    # 'wheel.zoom'                    : 'wheelZoom'
-    #'click .concept-node circle.negative-sign'   : 'collapse'
 
   initialize: (options = {}) ->
     super
@@ -85,29 +83,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     else
       window.do_not_refresh = false
 
-#  render: ->
-#    @rendering = on
-#    concepts = ( model.get 'result' for model in @hits.models )
-#
-#    @model.build([]).done =>
-#      repository = @model.at(0)
-#      if placeholder = @model.at(1)
-#        placeholder.set 'busy', on
-#      @update().done @centerSelection
-#
-#      @model.build(concepts).done =>
-#        @update().done (nodes) =>
-#          @centerSelection nodes, animate: yes
-#          @rendering = false
-#
-#          # Hide/Show edit icons
-#          if $('#coreon-concept-map').parent().attr('id') != 'coreon-main'
-#            $('.edit-map').hide();
-#
-#    @
-
   update: ->
-    console.log 'update called ***'
     deferred = $.Deferred()
     @renderStrategy.render( @model.graph() ).done =>
       deferred.resolveWith @, arguments
@@ -173,7 +149,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
                 $('.negative-sign-'+parentid).show()
 
   collapse: (event) ->
-    console.log 'clicked collapse event'
     @rendering = off
     node = $(event.target).closest '.negative-sign'
     datum = d3.select(node[0]).datum()
@@ -200,7 +175,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   @hello = true
 
   editMap: ->
-    #console.log 'editmap clicked'
     if $('#coreon-concept-map').parent().attr('id') == 'coreon-main'
       if window.edit_mode_selected
         window.edit_mode_selected = false
@@ -218,7 +192,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
         # Reloading Graph
         @graph=(new Coreon.Lib.TreeGraph window.models).generate()
-        console.log 'graph is *** :'+@graph
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
         @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
         @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
@@ -234,18 +207,12 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $('.submit_concept').show();
 
   saveMap: ->
-    #console.log 'save called ******'
-#    console.log 'save clicked'+window.tmp_nodes_dragged
     if window.edit_mode_selected && window.tmp_nodes_dragged
       @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
       data =
           superconcept_ids: [window.tmp_nodes_selected]
       @con.save data
 
-      ###tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
-      console.log 'tmpp :'+tmpp
-      d3.selectAll('concept-edge1').remove()
-      ###
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
       if window.delete_node
@@ -269,17 +236,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 #      window.edit_mode_selected = false
 
   resetMap: ->
-     # console.log 'reset called ******'
-    #console.log 'reset clicked '+window.tmp_reset_nodes_dragged
-#    if window.edit_mode_selected && window.tmp_reset_nodes_dragged
-#      @con=Coreon.Models.Concept.find(window.tmp_reset_nodes_dragged)
-#      data =
-#          superconcept_ids: window.tmp_nodes_old_parent
-#      @con.save data
-#      window.tmp_reset_nodes_dragged=undefined
-#      window.tmp_reset_nodes_selected=undefined
-#      window.tmp_nodes_old_parent=[]
-
       if window.edit_mode_selected
         window.tmp_nodes_old_parent=[]
         window.tmp_nodes_dragged=undefined
@@ -300,7 +256,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
 
   cancelMap: ->
-    #console.log 'cancel clicked'+@renderStrategy
     if window.edit_mode_selected
       window.tmp_nodes_old_parent=[]
       window.tmp_nodes_dragged=undefined
@@ -367,8 +322,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     return
 
   _panAndZoom: (options = {}) =>
-    console.log '*************** pan1 '
-    console.log '*************** pan2 '+@map
     map = @map
     if options.animate
       map = @map.transition()

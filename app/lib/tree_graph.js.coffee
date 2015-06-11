@@ -14,11 +14,6 @@ class Coreon.Lib.TreeGraph
     tree: @root
     edges: @edges
     siblings: @siblings
-    # @con=Coreon.Models.Concept.find('556dad4c73697368fd2c0000')
-    # data =
-    #   superconcept_ids: ['556daa1a73697368fd070000','556dab8b73697368fd200000']
-    # @con.save data
-
 
   generateNodes: ->
     @nodes = {}
@@ -61,8 +56,6 @@ class Coreon.Lib.TreeGraph
       window.nodes=@nodes
 
   connect: (source, target) ->
-    #console.log 'src :'+source
-    #console.log 'src1 :'+source.label
     if source==undefined
       return
     source.children.push target

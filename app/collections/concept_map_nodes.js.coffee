@@ -98,7 +98,6 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
     (new Coreon.Lib.TreeGraph @models).generate()
 
   expand: (id) ->
-    console.log 'expand inter ***** :'+id
     deferred = $.Deferred()
     model = @get id
 
