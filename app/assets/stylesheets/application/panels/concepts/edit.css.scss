@@ -43,214 +43,236 @@
 .concept form {
   position: relative;
 
-   .properties fieldset {
-     position: relative;
-     padding-top: 6px;
-     border: 0;
-     border-top: 1px solid white;
-     &.required {
-       h4:after {
-         content: "*";
-       }
-     }
+  .properties fieldset {
+    position: relative;
+    padding-top: 0;
+    border: 0;
+    border-top: 1px solid white;
 
-     h4 {
-       padding-left: 40px;
-       text-transform: uppercase;
-       font-size: 0.8em;
-     }
-     .group {
-       padding: 10px 4px 10px 60px;
-       overflow: hidden;
+    &.required {
+      h4:after {
+        content: "*";
+      }
+    }
 
-       div.input {
-         padding: 0;
-       }
-     }
+    h4 {
+      float: left;
+      padding: 12px 0 12px 48px;
+      width: 98px;
+      text-transform: uppercase;
+      font-size: 0.8em;
+      text-align: right;
+    }
 
-     &.asset {
-       div.asset-preview {
-         img {
-           height: 80px;
-           width: auto;
-         }
-       }
-       figcaption {
-         font-size: 0.8em;
-       }
-       label {
-         text-transform: uppercase;
-         font-size: 0.8em;
-         display:block;
-       }
-       input {
-         margin:0px 0 10px 0;
-       }
-     }
+    &.multivalue h4 {
+      float: none;
+    }
 
-     input[type="text"], textarea {
-       float: left;
-       margin-right: 16px;
-     }
+    .group {
+      padding: 10px 4px 10px 16px;
+      overflow: hidden;
 
-     input[type="radio"] {
-       margin: 0 30px 0 5px;
-     }
+      div.input {
+        padding: 0;
+      }
+    }
 
-     ul {
-       -webkit-column-count: 3;
-       -moz-column-count: 3;
-       column-count: 3;
-     }
+    &.multivalue .group {
+      padding-left: 162px;
+    }
 
-     ul li{
-       list-style-type: none;
-       padding-top: 2px;
-     }
-
-     label {
-       display: inline-block;
-       text-transform: capitalize;
-       text-align: left;
-       font-size: 0.9em;
-       width: auto;
-       padding:0;
-       float: none;
-     }
-
-     &.asset .group .input.value, &.asset .group .input.lang{
-       display: none;
-     }
-   }
-
-   &.concept section div.edit, &.term .properties .edit {
-     position: relative;
-     background: none;
-     margin: 0;
-     width: auto;
-     height: 16px;
-     padding: 7px 8px;
-     border-top: 1px solid white;
-   }
-
-   select, .coreon-select {
-     margin: 3px 0 0 0px;
-   }
-
-   textarea {
-     width: 65%;
-     height: 50px;
-   }
-
-   input[type="text"] {
-     height:24px;
-     width: 60%;
-   }
-
-   .submit {
-     text-align: right;
-     clear: both;
-     overflow: hidden;
-     padding: 3px 10px;
-
-     .cancel, .reset, button {
-       @extend .button;
-       margin: 6px;
-       padding: 5px 8px 3px 8px;
-       float: none;
-       font-size: 1em;
-     }
-
-     button {
-       @include box-sizing(content-box);
-       border: 0;
-       padding-bottom: 4px;
-       &:after {
-         @include before-icon;
-         float: right;
-         height: 12px;
-         margin-left: 4px;
-         background-position: -148px -56px;
-       }
-
-        &:disabled {
-          &:hover {
-            cursor: default;
-          }
+    &.asset {
+      div.asset-preview {
+        img {
+          height: 80px;
+          width: auto;
         }
       }
-   }
 
-   .disabled, button:disabled {
-     cursor: default;
-     @include opacity(0.5);
-   }
+      figcaption {
+        font-size: 0.8em;
+      }
 
-   &.term, .term {
-     position: relative;
-     border: none;
-     margin-bottom: 20px;
+      label {
+        text-transform: uppercase;
+        font-size: 0.8em;
+        display: block;
+      }
 
-     label {
-       display: block;
-       text-transform: uppercase;
-       font-size: 0.8em;
-     }
+      input {
+        margin: 0px 0 10px 0;
+      }
+    }
 
-     .value-strip {
+    input[type="text"], textarea {
+      float: left;
+      margin-right: 16px;
+    }
 
-       line-height: 1.5em;
-       padding: 10px 0 10px 0;
+    input[type="radio"] {
+      margin: 0 30px 0 5px;
+    }
 
-       .input {
-         &.value {
-           padding-left: 88px;
-           display: table-cell;
-           width: 100%;
+    ul {
+      -webkit-column-count: 3;
+      -moz-column-count: 3;
+      column-count: 3;
+    }
+
+    ul li {
+      list-style-type: none;
+      padding-top: 2px;
+    }
+
+    label {
+      display: inline-block;
+      text-transform: capitalize;
+      text-align: left;
+      font-size: 0.9em;
+      width: auto;
+      padding: 0;
+      float: none;
+    }
+
+    &.asset .group .input.value, &.asset .group .input.lang {
+      display: none;
+    }
+  }
+
+  &.concept section div.edit, &.term .properties .edit {
+    position: relative;
+    background: none;
+    margin: 0;
+    width: auto;
+    height: 16px;
+    padding: 7px 8px;
+    border-top: 1px solid white;
+  }
+
+  select, .coreon-select {
+    margin: 3px 0 0 0px;
+  }
+
+  textarea {
+    width: 65%;
+    height: 50px;
+  }
+
+  input[type="text"] {
+    height: 24px;
+    width: 65%;
+  }
+
+  .submit {
+    text-align: right;
+    clear: both;
+    overflow: hidden;
+    padding: 3px 10px;
+
+    .cancel, .reset, button {
+      @extend .button;
+      margin: 6px;
+      padding: 5px 8px 3px 8px;
+      float: none;
+      font-size: 1em;
+    }
+
+    button {
+      @include box-sizing(content-box);
+      border: 0;
+      padding-bottom: 4px;
+
+      &:after {
+        @include before-icon;
+        float: right;
+        height: 12px;
+        margin-left: 4px;
+        background-position: -148px -56px;
+      }
+
+      &:disabled {
+        &:hover {
+          cursor: default;
+        }
+      }
+    }
+  }
+
+  .disabled, button:disabled {
+    cursor: default;
+    @include opacity(0.5);
+  }
+
+  &.term, .term {
+    position: relative;
+    border: none;
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      text-transform: uppercase;
+      font-size: 0.8em;
+    }
+
+    .value-strip {
+      line-height: 1.5em;
+      padding: 10px 0 10px 0;
+
+      .input {
+        &.value {
+          padding-left: 88px;
+          display: table-cell;
+          width: 100%;
 
           input[type=text] {
             width: 100%;
+            font-size: 1.3em;
+            height: 1.7em;
           }
-         }
+        }
 
-         &.lang {
-           display: table-cell;
-           padding-left: 20px;
-           padding-right: 20px;
-           top: -2px;
-           position: relative;
-         }
-       }
+        &.lang {
+          display: table-cell;
+          padding-left: 20px;
+          padding-right: 20px;
+          top: -2px;
+          position: relative;
+        }
+      }
+    }
 
-     }
+    .submit {
+      margin-top: 1px;
+    }
 
-     .submit {
-       margin-top: 1px;
-     }
+    .properties {
+      padding: 0;
+      position: relative;
+      background: none;
 
-     .properties {
-       padding:0;
-       position: relative;
-       background: none;
+      fieldset {
+        border-top: 1px solid white;
+        background-color: rgba(white, 0.3);
+        h4 {
+          padding-left: 88px;
+        }
 
-       fieldset {
-         border-top: 1px solid white;
-         background-color: rgba(white, 0.3);
-       }
+        &.multivalue .group {
+          padding-left: 202px;
+        }
+      }
 
-       h3 {
-         display: none;
-       }
-     }
-   }
+      h3 {
+        display: none;
+      }
+    }
+  }
 }
-
 
 form.create.term {
   clear: both;
   margin-bottom: 16px;
 }
-
 
 .concept.edit .broader-and-narrower {
   min-height: 44px;
@@ -258,7 +280,7 @@ form.create.term {
   form {
     overflow: hidden;
 
-    >div {
+    > div {
       margin-left: 32px;
     }
 
@@ -288,45 +310,43 @@ form.create.term {
   form .associative-types {
     margin-left: 32px;
   }
+
   ul.ui-droppable {
     overflow: hidden;
     max-width: 90%;
   }
 }
 
-.concept  {
-
+.concept {
   .edit a, fieldset a {
-   font-size: 0.9em;
-   display: inline-block;
-   position: relative;
-   overflow: hidden;
-   text-indent: -2000px;
-   width: 16px;
-   line-height: 19px;
+    font-size: 0.9em;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    text-indent: -2000px;
+    width: 16px;
+    line-height: 19px;
 
-   &:before {
-     @include before-icon;
-     float: left;
-     margin-right: 5px;
-     background-position: -151px -302px;
-     @include edit-button;
-   }
-
+    &:before {
+      @include before-icon;
+      float: left;
+      margin-right: 5px;
+      background-position: -151px -302px;
+      @include edit-button;
+    }
   }
 
   // all the buttons:
-
   a.remove-term, a.remove-property, a.delete-concept, a.remove-fieldset, a.remove-value {
-   &:before {
-     background-position: -149px -751px;
-   };
+    &:before {
+      background-position: -149px -751px;
+    }
   }
 
   a.edit-properties, a.edit-term, a.edit-connections, a.edit-relations {
-   &:before {
-     background-position: -150px -701px;
-   }
+    &:before {
+      background-position: -150px -701px;
+    }
   }
 
   a.add-term, a.add-property {
@@ -335,14 +355,15 @@ form.create.term {
     text-indent: 10px;
   }
 
-  &.new a.remove-term, a.remove-fieldset,  a.remove-property, a.add-value {
+  &.new a.remove-term, a.remove-fieldset, a.remove-property, a.add-value {
     position: absolute;
     top: 8px;
     left: 8px;
   }
+
   a.remove-property, a.add-value {
     top: 5px;
-    }
+  }
 
   a.remove-value {
     position: absolute;
@@ -363,7 +384,6 @@ form.create.term {
     @include editmode;
   }
 
-
   // div.edit is for the left vertical block with all the edit buttons
   div.edit {
     width: 16px;
@@ -375,15 +395,14 @@ form.create.term {
     }
   }
 
-
-  .concept-head div.edit, &>section div.edit, section ul div.edit {
+  .concept-head div.edit, & > section div.edit, section ul div.edit {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
   }
 
-  .terms >.add, .language-actions .add {
+  .terms > .add, .language-actions .add {
     clear: both;
     margin-bottom: 18px;
     position: relative;
@@ -398,16 +417,19 @@ form.create.term {
     }
   }
 
-  &>section, form>section {
-    &>h3 {
+  & > section, form > section {
+    & > h3 {
       margin-left: 38px;
     }
-    table,  .list,  {
+
+    table, .list {
       margin-left: 48px;
     }
   }
+
   .concept-head {
     margin-left: 38px;
+
     div.edit {
       left: -38px;
     }
@@ -416,6 +438,7 @@ form.create.term {
   .button.edit-concept {
     color: $button-color;
     margin-left: -38px;
+
     &:before {
       background-position: -2px -703px;
     }
@@ -424,6 +447,7 @@ form.create.term {
   .language li.term {
     min-height: 44px;
     padding-left: 32px;
+
     h4 {
       padding-top: 14px;
     }
@@ -436,8 +460,9 @@ form.create.term {
   }
 
   .property.delete {
-     @include opacity(0.6);
-    >* {
+    @include opacity(0.6);
+
+    > * {
       @include opacity(0.7);
     }
 
@@ -448,42 +473,46 @@ form.create.term {
       left: 8px;
       top: 6px;
     }
+
     .remove-property {
       display: none;
     }
   }
+
   .group.delete {
-     @include opacity(0.6);
-    >* {
+    @include opacity(0.6);
+
+    > * {
       @include opacity(0.7);
     }
     border-top: 1px solid white;
+
     .remove-value {
       display: none;
     }
-    &:before {
-      @include before-icon;
-      background-position: 0px -552px;
-      position: absolute;
-      left: 8px;
-      margin-top: 3px;
-    }
+
+    // &:before {
+    //   @include before-icon;
+    //   background-position: 0px -552px;
+    //   position: absolute;
+    //   left: 8px;
+    //   margin-top: 3px;
+    // }
   }
 }
 
 .concept.delete {
-  &>* {
+  & > * {
     @include opacity(0.4);
   }
-  &>.edit {
-      @include opacity(1);
+
+  & > .edit {
+    @include opacity(1);
   }
 }
 
-
 .medi {
-  div.concept  {
-
+  div.concept {
     label {
       width: 90px;
       padding-right: 10px;
@@ -491,15 +520,16 @@ form.create.term {
 
     .properties fieldset {
       input[type="text"] {
-        width: 60%;
+        width: 65%;
       }
+
       div.input {
         padding: 0;
       }
 
       label {
         width: auto;
-        padding:0;
+        padding: 0;
       }
 
       ul {
@@ -520,9 +550,7 @@ form.create.term {
 }
 
 .mini {
-
   div.concept {
-
     label {
       padding: 0;
       text-align: left;
@@ -532,22 +560,23 @@ form.create.term {
 
     form .properties {
       .group {
-         padding-left: 40px;
-       }
-       select, .coreon-select {
-         margin-left: 0;
-       }
-       div.input {
-         padding: 0;
-       }
+        padding-left: 40px;
+      }
 
-       fieldset ul {
-         -webkit-column-count: 1;
-         -moz-column-count: 1;
-         column-count: 1;
-       }
+      select, .coreon-select {
+        margin-left: 0;
+      }
 
-     }
+      div.input {
+        padding: 0;
+      }
+
+      fieldset ul {
+        -webkit-column-count: 1;
+        -moz-column-count: 1;
+        column-count: 1;
+      }
+    }
 
     form {
       input[type="text"], textarea {
@@ -565,6 +594,7 @@ form.create.term {
     .submit {
       font-size: 0.94em;
       padding-right: 5px;
+
       .cancel, .reset {
         margin: 3px;
       }
@@ -572,9 +602,10 @@ form.create.term {
 
     .error-message {
       padding-left: 0px;
-      width:auto;
+      width: auto;
     }
   }
+
   .concept.edit .associative-relations {
     form .associative-types {
       margin-left: 40px;
