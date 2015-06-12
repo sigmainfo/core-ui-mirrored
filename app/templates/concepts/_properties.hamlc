@@ -1,4 +1,4 @@
-%section.properties{class: "collapsed" if @collapsed}
+%section.properties{class: "collapsed" if @collapsed, data: {name: @section_name}}
   %h3{ title: I18n.t 'terms.properties.toggle.hint' }= I18n.t "properties.title"
   -unless @noEditButton
     .edit

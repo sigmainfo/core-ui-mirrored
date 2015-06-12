@@ -13,6 +13,9 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
 
   className: "associative-relations"
 
+  attributes:
+    "data-name": "associative-relations"
+
   template: Coreon.Templates["concepts/shared/associative_relations"]
 
   events:
@@ -44,7 +47,14 @@ class Coreon.Views.Concepts.Shared.AssociativeRelationsView extends Backbone.Vie
       @droppableOn @$el, "ui-droppable-disconnect",
         accept: (item) => @checkRemoval(item)
         drop: (evt, ui)=> @removeRelation(evt, ui)
+
+    @collapse() if _(Coreon.application.repositorySettings('collapsedSections')).indexOf('associative-relations') > -1
+
     @
+
+  collapse: ->
+    @$el.addClass 'collapsed'
+    @$el.find('h3').siblings().not(".edit").css('display', 'none')
 
   toggleEditMode: ->
     @editing = !@editing

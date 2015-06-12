@@ -137,6 +137,9 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
     else
       @$(".concept-to-clipboard.remove").hide()
       @$(".concept-to-clipboard.add").show()
+
+    @collapseConceptProperties() if _(Coreon.application.repositorySettings('collapsedSections')).indexOf('concept-properties') > -1
+
     @
 
   refreshPropertiesValidation: (subView) ->
@@ -166,9 +169,20 @@ class Coreon.Views.Panels.Concepts.ConceptView extends Backbone.View
 
   toggleSection: (evt) ->
     target = @$el.find(evt.target)
-    target.closest("section").toggleClass "collapsed"
+    section = target.closest("section")
+    name = section.attr('data-name')
+    section.toggleClass "collapsed"
+    Coreon.application.repositorySettings('collapsedSections', []) unless _(Coreon.application.repositorySettings('collapsedSections')).isArray()
+    if section.hasClass 'collapsed'
+      Coreon.application.repositorySettings 'collapsedSections', _.compact(_(Coreon.application.repositorySettings('collapsedSections')).union(name))
+    else
+      Coreon.application.repositorySettings 'collapsedSections', _(Coreon.application.repositorySettings('collapsedSections')).without(name)
     target.siblings().not(".edit").slideToggle()
 
+  collapseConceptProperties: ->
+    section = @$el.find('section[data-name=concept-properties]')
+    section.addClass 'collapsed'
+    section.find('h3').siblings().not(".edit").css('display', 'none')
 
   saveConceptProperties: (attrs, assets) ->
     view = @

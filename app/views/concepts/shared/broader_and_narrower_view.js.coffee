@@ -19,6 +19,9 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
 
   className: "broader-and-narrower"
 
+  attributes:
+    "data-name": "broader-and-narrower"
+
   template: Coreon.Templates["concepts/shared/broader_and_narrower"]
   repositoryLabel: Coreon.Templates["repositories/repository_label"]
 
@@ -55,10 +58,16 @@ class Coreon.Views.Concepts.Shared.BroaderAndNarrowerView extends Backbone.View
       @deactivateDropzones()
       $(window).off ".coreonSubmit"
 
+    @collapse() if _(Coreon.application.repositorySettings('collapsedSections')).indexOf('broader-and-narrower') > -1
+
     @renderSelf()
     @renderBroader()
     @renderNarrower()
     @
+
+  collapse: ->
+    @$el.addClass 'collapsed'
+    @$el.find('h3').siblings().not(".edit").css('display', 'none')
 
   activateDropzones: ->
     @droppableOn @$(".broader ul"), "ui-droppable-connect",

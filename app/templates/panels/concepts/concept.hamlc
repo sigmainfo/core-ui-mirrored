@@ -18,4 +18,4 @@
 - if @editing and @editProperties
   != @render "concepts/edit_properties", concept: @concept, editToggle: yes
 - else if @editing or @concept.get("properties")?.length > 0
-  != @render "concepts/properties", properties: @concept.propertiesWithDefaults(includeUndefined: true), editToggle: yes
+  != @render "concepts/properties", properties: @concept.propertiesWithDefaults(includeUndefined: true), editToggle: yes, section_name: 'concept-properties'
