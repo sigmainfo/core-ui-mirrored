@@ -49,21 +49,22 @@ class Spinach::Features::MaintainerAddsTerm < Spinach::FeatureSteps
     click_link "Add term"
   end
 
-  step 'I should see a set of term inputs with labels "Value", "Language"' do
-    within ".term.create" do
-      expect(page).to have_field("Value")
-      expect(page).to have_select("Language", visible: false)
+  step 'I should see an input/language select combo' do
+    within ".term.create .value-strip" do
+      expect(page).to have_css("input[type=text]")
+      expect(page).to have_css("select", visible: false)
     end
   end
 
   step 'I fill in "Value" with "high hat" within term inputs' do
-    within ".term.create" do
-      fill_in "Value", with: "high hat"
+    within ".term.create .value-strip" do
+      value_field_id = page.find('input[type=text]')[:id]
+      fill_in value_field_id, with: "high hat"
     end
   end
 
   step 'I fill in "Language" with "en" within term inputs' do
-    fieldset = page.find ".term > .lang"
+    fieldset = page.find ".term > .value-strip > .lang"
     select_from_coreon_dropdown fieldset, 'English'
   end
 

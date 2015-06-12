@@ -16,7 +16,7 @@ Feature: maintainer edits term
     When I toggle "EDIT MODE"
     When I click "Edit term" within term "ten-gallon hat"
     Then I see a form "Save term"
-    Then I should see a set of term inputs with labels "Value", "Language"
+    Then I should see an input/language select combo
     And I should see "ten-gallon hat" for input "Value"
     And I should see "en" for input "Language"
     When I fill in "Value" with "Cowboyhut" within term inputs

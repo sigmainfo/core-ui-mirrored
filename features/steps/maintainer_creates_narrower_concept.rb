@@ -38,11 +38,14 @@ class MaintainerCreatesNarrowerConcept < Spinach::FeatureSteps
   end
 
   step 'I fill the term value with "test"' do
-    fill_in "Value", with: "test"
+    within ".term .value-strip" do
+      value_field_id = page.find('input[type=text]')[:id]
+      fill_in value_field_id, with: "test"
+    end
   end
 
   step 'I fill "Language" of term with "English"' do
-    fieldset = page.find ".term > .lang"
+    fieldset = page.find ".term > .value-strip > .lang"
     select_from_coreon_dropdown fieldset, 'English'
   end
 

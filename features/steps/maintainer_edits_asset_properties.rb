@@ -202,12 +202,15 @@ class Spinach::Features::MaintainerEditsAssetProperties < Spinach::FeatureSteps
 
   step 'I fill in "Crane" for "VALUE"' do
     within @form do
-      fill_in 'Value', with: 'Crane'
+      within ".term .value-strip" do
+        value_field_id = page.find('input[type=text]')[:id]
+        fill_in value_field_id, with: "Crane"
+      end
     end
   end
 
   step 'I fill in "en" for "LANGUAGE"' do
-    fieldset = page.find '.terms .term > .lang'
+    fieldset = page.find '.terms .term > .value-strip > .lang'
     select_from_coreon_dropdown fieldset, 'English'
   end
 

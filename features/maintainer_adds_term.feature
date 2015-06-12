@@ -18,7 +18,7 @@ Feature: maintainer adds term
     When I toggle "EDIT MODE"
     And I click "Add term"
     Then I see a form "Create term"
-    Then I should see a set of term inputs with labels "Value", "Language"
+    Then I should see an input/language select combo
     When I fill in "Value" with "high hat" within term inputs
     And I fill in "Language" with "en" within term inputs
     And I see a section "PROPERTIES" with this form
@@ -74,7 +74,7 @@ Feature: maintainer adds term
     And I should not see "high hat"
     When I click "Add term"
     Then I see a form "Create term"
-    Then I should see a set of term inputs with labels "Value", "Language"
+    Then I should see an input/language select combo
     And these term inputs should be empty
     And I see a section "PROPERTIES" with this form
     And I see a fieldset "STATUS" within this section

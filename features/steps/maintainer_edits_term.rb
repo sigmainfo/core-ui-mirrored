@@ -61,33 +61,34 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
     end
   end
 
-  step 'I should see a set of term inputs with labels "Value", "Language"' do
-    within(".terms") do
-      page.should have_field("Value")
-      expect(page).to have_select("Language", visible: false)
+  step 'I should see an input/language select combo' do
+    within ".terms .value-strip" do
+      expect(page).to have_css("input[type=text]")
+      expect(page).to have_css("select", visible: false)
     end
   end
 
   step 'I should see "ten-gallon hat" for input "Value"' do
-    within(".terms") do
-      page.find_field("term-value").value.should == "ten-gallon hat"
+    within(".terms .value-strip") do
+      page.find_field("term[value]").value.should == "ten-gallon hat"
     end
   end
 
   step 'I should see "en" for input "Language"' do
-    within(".terms") do
-      page.find_field("Language", visible: false).value.should == "en"
+    within(".terms .value-strip") do
+      page.find_field("term[lang]", visible: false).value.should == "en"
     end
   end
 
   step 'I fill in "Value" with "Cowboyhut" within term inputs' do
-    within(".terms") do
-      fill_in "Value", with: "Cowboyhut"
+    within ".term .value-strip" do
+      value_field_id = page.find('input[type=text]')[:id]
+      fill_in value_field_id, with: "Cowboyhut"
     end
   end
 
   step 'I fill in "Language" with "de" within term inputs' do
-    fieldset = page.find '.term.update > .lang'
+    fieldset = page.find '.term.update > .value-strip > .lang'
     select_from_coreon_dropdown fieldset, 'German'
   end
 
@@ -275,13 +276,14 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Value" with "Stetson" within term inputs' do
-    within(".terms") do
-      fill_in "Value", with: "Stetson"
+    within ".term .value-strip" do
+      value_field_id = page.find('input[type=text]')[:id]
+      fill_in value_field_id, with: "Stetson"
     end
   end
 
   step 'I fill in "Language" with "" within term inputs' do
-    fieldset = page.find '.term.update > .lang'
+    fieldset = page.find '.term.update > .value-strip > .lang'
     select_from_coreon_dropdown fieldset, 'None'
   end
 
@@ -312,7 +314,7 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Language" with "en" within term inputs' do
-    fieldset = page.find '.term.update > .lang'
+    fieldset = page.find '.term.update > .value-strip > .lang'
     select_from_coreon_dropdown fieldset, 'English'
   end
 
@@ -329,8 +331,9 @@ class Spinach::Features::MaintainerEditsTerm < Spinach::FeatureSteps
   end
 
   step 'I fill in "Value" with "high hat" within term inputs' do
-    within(".terms") do
-      fill_in "term-value", with: "high hat"
+    within ".term .value-strip" do
+      value_field_id = page.find('input[type=text]')[:id]
+      fill_in value_field_id, with: "high hat"
     end
   end
 

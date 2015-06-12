@@ -16,6 +16,12 @@ describe 'Coreon.Views.Widgets.LanguagesView', ->
     application.langs.returns []
     application.sourceLang = -> null
     application.targetLang = -> null
+    d = $.Deferred()
+    repo =
+      getStats: ->
+        d.promise()
+    d.resolve()
+    application.set 'repository', repo
     model = new Backbone.Model
     view = new Coreon.Views.Widgets.LanguagesView
       model: model
