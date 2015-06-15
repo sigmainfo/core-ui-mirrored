@@ -8,6 +8,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
     @session = new Backbone.Model
     @session.currentRepository = => @repo
     Coreon.application = new Backbone.Model session: @session
+    Coreon.application.repositorySettings = -> []
     sinon.stub I18n, "t"
     sinon.stub(Coreon.Helpers, "can").returns true
     model = new Backbone.Model
@@ -88,7 +89,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       it "renders container for broader concepts", ->
         @view.render()
         @view.$el.should.have ".broader ul"
-        
+
       it "renders container for narrower concepts", ->
         @view.render()
         @view.$el.should.have ".narrower ul"
@@ -102,12 +103,12 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
 
     context "itself", ->
-      
+
       it "renders label", ->
         @view.model.set "label", "Whahappan?", silent: true
         @view.render()
         @view.$(".self").should.have.text "Whahappan?"
-  
+
       it "escapes label", ->
         @view.model.set "label", "<script>evil()</script>", silent: true
         @view.render()
@@ -160,7 +161,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$("[data-drag-ident=c45]").length.should.equal 1
 
       context "with empty super concepts list", ->
-        
+
         beforeEach ->
           @repo.set
             id: "coffeebabe23"
@@ -190,7 +191,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
           @view.model.blank = false
           @view.model.trigger "nonblank"
           @view.$(".broader ul").should.have ".repository-label"
-          
+
 
     context "narrower", ->
 
@@ -233,7 +234,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
         @view.$el.find("[data-drag-ident=c45]").length.should.equal 1
 
   describe "remove()", ->
-    
+
     beforeEach ->
       sinon.stub Backbone.View::, "remove", -> @
 
@@ -256,7 +257,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.remove()
       Backbone.View::remove.should.have.been.calledOn @view
 
-      
+
   describe "toggleEditMode()", ->
 
     beforeEach ->
@@ -265,7 +266,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
 
     afterEach ->
       $(window).off ".coreonSubmit"
- 
+
     context "outside edit mode", ->
 
       beforeEach ->
@@ -522,7 +523,7 @@ describe "Coreon.Views.Concepts.Shared.BroaderAndNarrowerView", ->
       @view.cancelConceptConnections.should.not.have.been.called
 
   describe "resetConceptConnections()", ->
-  
+
     beforeEach ->
       @view.$el.html '''
         <div class="submit">

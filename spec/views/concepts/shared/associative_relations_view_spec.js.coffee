@@ -10,11 +10,15 @@ describe "Coreon.Views.Concepts.Shared.AssociativeRelationsView", ->
   markup = null
 
   createAndRender = (editing) ->
+    Coreon.application =
+      repositorySettings: ->
+        []
     view = new Coreon.Views.Concepts.Shared.AssociativeRelationsView options
     view.editing = on if editing
     el = view.render().$el
 
   beforeEach ->
+
     options =
       collection: collection
     view = new Coreon.Views.Concepts.Shared.AssociativeRelationsView options
