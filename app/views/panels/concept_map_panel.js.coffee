@@ -165,6 +165,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
     @navigator.scale zoom
+    console.log 'Coreon.Lib.ConceptMap.RenderStrategy static : '+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
     @_panAndZoom()
 
   zoomOut: ->
@@ -183,15 +184,15 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $('.submit_concept').hide();
 
         # Resetting all custom variables
-        window.tmp_nodes_old_parent=[]
-        window.tmp_nodes_dragged=undefined
-        window.tmp_nodes_selected=undefined
-        window.tmp_reset_nodes_dragged=undefined
-        window.tmp_reset_nodes_selected=undefined
-        window.need_to_save_first = false
+        window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_selected=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first = false
 
         # Reloading Graph
-        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
         @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
         @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
@@ -207,25 +208,25 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $('.submit_concept').show();
 
   saveMap: ->
-    if window.edit_mode_selected && window.tmp_nodes_dragged
-      @con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
+    if window.edit_mode_selected && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+      @con=Coreon.Models.Concept.find(Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
       data =
-          superconcept_ids: [window.tmp_nodes_selected]
+          superconcept_ids: [Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected]
       @con.save data
 
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
       if window.delete_node
          window.delete_node.attr('class','concept-edge-hide')
-      window.tmp_reset_nodes_dragged=window.tmp_nodes_dragged
-      window.tmp_reset_nodes_selected=window.tmp_nodes_selected
-      window.tmp_nodes_dragged=undefined
-      window.tmp_nodes_selected=undefined
-      window.need_to_save_first = false
-      window.tmp_reset_nodes_dragged=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_selected=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first = false
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
 
 
-#      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+#      @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
 #      @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
 #      @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
 #      @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
@@ -237,12 +238,12 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   resetMap: ->
       if window.edit_mode_selected
-        window.tmp_nodes_old_parent=[]
-        window.tmp_nodes_dragged=undefined
-        window.tmp_nodes_selected=undefined
-        window.tmp_reset_nodes_dragged=undefined
-        window.tmp_reset_nodes_selected=undefined
-        window.need_to_save_first = false
+        window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_selected=undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first = false
 
         $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
         $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
@@ -250,19 +251,19 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         if window.delete_node
          window.delete_node.attr('class','concept-edge-hide')
 
-        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
         @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
         @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
 
   cancelMap: ->
     if window.edit_mode_selected
-      window.tmp_nodes_old_parent=[]
-      window.tmp_nodes_dragged=undefined
-      window.tmp_nodes_selected=undefined
-      window.tmp_reset_nodes_dragged=undefined
-      window.tmp_reset_nodes_selected=undefined
-      window.need_to_save_first = false
+      window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_selected=undefined
+      Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first = false
 
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
@@ -275,7 +276,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       $("body").removeClass('edit_mode');
       $('.submit_concept').hide();
 
-      @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+      @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
       @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
       @renderStrategy.siblings = @renderStrategy.renderSiblings @graph.siblings
       @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
@@ -304,9 +305,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       'panels.concept_map.zoom_in'
       'panels.concept_map.zoom_out'
       'panels.concept_map.edit_map'
-#      'panels.concept_map.reset_map'
-#      'panels.concept_map.cancel_map'
-#      'panels.concept_map.save_map'
     ]
   wheelZoom: ->
     # d3.event.stopPropagation()

@@ -3,7 +3,14 @@
 #= require helpers/repository_path
 
 class Coreon.Lib.ConceptMap.RenderStrategy
-
+  @tmp_nodes_dragged=undefined
+  @tmp_nodes_selected=undefined
+  @tmp_reset_nodes_selected=undefined
+  @tmp_nodes_old_parent=[]
+  @tmp_reset_nodes_dragged=undefined
+  @need_to_save_first = false
+  @current_models=[]
+  
   constructor: (@parent) ->
     @layout = d3.layout.tree()
     @diagonal = d3.svg.diagonal()
@@ -11,7 +18,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragStarted = null
     @selectedNode=null
     @draggingNode=null
-
+    
   resize: (@width, @height) ->
 
   initiateDrag: (d, domNode) ->
@@ -40,15 +47,15 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragListener.on 'dragstart', (d) ->
       that.dragStarted= true;
       d3.event.sourceEvent.stopPropagation()
-      if window.tmp_nodes_dragged && window.tmp_nodes_selected
+      if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
         alert 'Save/Reset map before continuing'
-        window.need_to_save_first = true
+        Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first = true
         return
 
 
 
     @dragListener.on 'drag', (d) ->
-      if d.type=='repository' || d.type=='placeholder' || window.need_to_save_first
+      if d.type=='repository' || d.type=='placeholder' || Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first
         return
       if window.edit_mode_selected == undefined || window.edit_mode_selected == false
         return
@@ -72,24 +79,24 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
 
       if that.selectedNode == null
-        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+        @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         that.nodes    = that.renderNodes @graph.tree
         that.siblings = that.renderSiblings @graph.siblings
         that.edges    = that.renderEdges @graph.edges
         return
 
-      if that.selectedNode.type!= 'placeholder' && that.draggingNode != null &&that.draggingNode!=undefined && window.tmp_nodes_selected==undefined
-        window.tmp_nodes_dragged=that.draggingNode.id
-        window.tmp_nodes_selected=that.selectedNode.id
-        @graph=(new Coreon.Lib.TreeGraph window.models).generate()
+      if that.selectedNode.type!= 'placeholder' && that.draggingNode != null &&that.draggingNode!=undefined && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected==undefined
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=that.draggingNode.id
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=that.selectedNode.id
+        @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         that.nodes    = that.renderNodes @graph.tree
         that.siblings = that.renderSiblings @graph.siblings
         that.edges    = that.renderEdges @graph.edges
         $('.reset-map').removeClass('disable_buttons').removeAttr('disabled');
         $('.save-map').removeClass('disable_buttons').removeAttr('disabled');
-        #@con=Coreon.Models.Concept.find(window.tmp_nodes_dragged)
+        #@con=Coreon.Models.Concept.find(Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
         #data =
-        #  superconcept_ids: [window.tmp_nodes_selected]
+        #  superconcept_ids: [Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected]
         #  subconcept_ids: []
         #@con.save data
 
@@ -129,11 +136,11 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     all = enter.append('g')
       .call(@dragListener)
       .on('mouseover', (d) ->
-        if !window.need_to_save_first
+        if !Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first
          that.selectedNode=d
       )
       .on('mouseout', (d) ->
-       if !window.need_to_save_first
+       if !Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first
         that.selectedNode=null
       )
       .attr('class', (datum) ->
@@ -338,11 +345,11 @@ class Coreon.Lib.ConceptMap.RenderStrategy
        'concept-edge '+' path_'+d['source'].id+'_'+d['target'].id
     )
 
-    #if window.tmp_nodes_old_parent
-    if window.tmp_nodes_dragged && window.tmp_reset_nodes_dragged==undefined
-        tmpp=window.tmp_nodes_old_parent[0]+'_'+window.tmp_nodes_dragged
+    #if window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent
+    if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged && Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged==undefined
+        tmpp=window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
         window.delete_node=d3.select('path.path_'+tmpp)
-        d3.select('path.path_'+tmpp).attr('class','concept-edge1') #window.tmp_nodes_old_parent[0]
+        d3.select('path.path_'+tmpp).attr('class','concept-edge1') #window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
 
     edges
 

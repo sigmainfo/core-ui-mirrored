@@ -35,21 +35,21 @@ class Coreon.Lib.TreeGraph
 
   generateEdges: ->
     placeholders=[]
-    window.models=@models
+    Coreon.Lib.ConceptMap.RenderStrategy.current_models=@models
     @edges = []
     for model in @models
       target = @nodes[model.id]
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
-      if window.tmp_nodes_dragged
-        if window.tmp_nodes_dragged==target.id
-          @connect @nodes[window.tmp_nodes_selected], target
-          window.tmp_nodes_old_parent=[]
+      if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+        if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged==target.id
+          @connect @nodes[Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected], target
+          window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
       if parentNodeIds.length > 0
         for parentNodeId in parentNodeIds
-          if window.tmp_nodes_dragged==target.id
-             if window.tmp_nodes_old_parent != undefined
-              window.tmp_nodes_old_parent.push parentNodeId
+          if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged==target.id
+             if window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent != undefined
+              window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent.push parentNodeId
           @connect @nodes[parentNodeId], target
       else
         @connect @root, target
