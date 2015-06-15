@@ -61,7 +61,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @listenTo @model, 'change', @scheduleForUpdate
 
   render: ->
-    if !window.do_not_refresh || window.do_not_refresh == undefined
+    if !Coreon.Lib.ConceptMap.RenderStrategy.do_not_refresh || Coreon.Lib.ConceptMap.RenderStrategy.do_not_refresh == undefined
       @rendering = on
       concepts = ( model.get 'result' for model in @hits.models )
 
@@ -81,7 +81,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
               $('.edit-map').hide();
       @
     else
-      window.do_not_refresh = false
+      Coreon.Lib.ConceptMap.RenderStrategy.do_not_refresh = false
 
   update: ->
     deferred = $.Deferred()
@@ -142,7 +142,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @update()
         @rendering = off
         @con=Coreon.Models.Concept.find('556dad4c73697368fd2c0000')
-        parentNode=window.nodes[datum.parent.id]
+        parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
         for childnode in parentNode._children
             cor=Coreon.Models.Concept.find(childnode.id)
             for parentid in cor.persistedAttributes().superconcept_ids
@@ -177,14 +177,14 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   editMap: ->
     if $('#coreon-concept-map').parent().attr('id') == 'coreon-main'
-      if window.edit_mode_selected
-        window.edit_mode_selected = false
+      if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected
+        Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected = false
         $("body").removeClass('edit_mode');
         $('.edit-map').removeClass('edit_pressed');
         $('.submit_concept').hide();
 
         # Resetting all custom variables
-        window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
@@ -202,13 +202,13 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
       else
-        window.edit_mode_selected = true
+        Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected = true
         $('.edit-map').addClass('edit_pressed');
         $("body").addClass('edit_mode');
         $('.submit_concept').show();
 
   saveMap: ->
-    if window.edit_mode_selected && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+    if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
       @con=Coreon.Models.Concept.find(Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
       data =
           superconcept_ids: [Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected]
@@ -216,8 +216,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
-      if window.delete_node
-         window.delete_node.attr('class','concept-edge-hide')
+      if Coreon.Lib.ConceptMap.RenderStrategy.delete_node
+         Coreon.Lib.ConceptMap.RenderStrategy.delete_node.attr('class','concept-edge-hide')
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_selected=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
@@ -234,11 +234,11 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
 
 #      $("body").css("background","url('/assets/layout/bg.jpg')");
-#      window.edit_mode_selected = false
+#      Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected = false
 
   resetMap: ->
-      if window.edit_mode_selected
-        window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+      if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected
+        Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
@@ -248,8 +248,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
         $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
-        if window.delete_node
-         window.delete_node.attr('class','concept-edge-hide')
+        if Coreon.Lib.ConceptMap.RenderStrategy.delete_node
+         Coreon.Lib.ConceptMap.RenderStrategy.delete_node.attr('class','concept-edge-hide')
 
         @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         @renderStrategy.nodes    = @renderStrategy.renderNodes @graph.tree
@@ -257,8 +257,8 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @renderStrategy.edges    = @renderStrategy.renderEdges @graph.edges
 
   cancelMap: ->
-    if window.edit_mode_selected
-      window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+    if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected
+      Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged=undefined
@@ -268,10 +268,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled');
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled');
 
-      if window.delete_node
-        window.delete_node.attr('class','concept-edge-hide')
+      if Coreon.Lib.ConceptMap.RenderStrategy.delete_node
+        Coreon.Lib.ConceptMap.RenderStrategy.delete_node.attr('class','concept-edge-hide')
 
-      window.edit_mode_selected = false
+      Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected = false
       $('.edit-map').removeClass('edit_pressed');
       $("body").removeClass('edit_mode');
       $('.submit_concept').hide();

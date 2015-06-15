@@ -10,6 +10,10 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   @tmp_reset_nodes_dragged=undefined
   @need_to_save_first = false
   @current_models=[]
+  @edit_mode_selected=false
+  @delete_node
+  @do_not_refresh=false
+  @nodes
   
   constructor: (@parent) ->
     @layout = d3.layout.tree()
@@ -57,7 +61,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragListener.on 'drag', (d) ->
       if d.type=='repository' || d.type=='placeholder' || Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first
         return
-      if window.edit_mode_selected == undefined || window.edit_mode_selected == false
+      if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == undefined || Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == false
         return
       if that.dragStarted
         domNode = that;
@@ -74,7 +78,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       #Backbone.history.loadUrl
       if d.type=='repository'
         return
-      if window.edit_mode_selected == undefined || window.edit_mode_selected == false
+      if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == undefined || Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == false
         return
 
 
@@ -345,11 +349,11 @@ class Coreon.Lib.ConceptMap.RenderStrategy
        'concept-edge '+' path_'+d['source'].id+'_'+d['target'].id
     )
 
-    #if window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent
+    #if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent
     if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged && Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged==undefined
-        tmpp=window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
-        window.delete_node=d3.select('path.path_'+tmpp)
-        d3.select('path.path_'+tmpp).attr('class','concept-edge1') #window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
+        tmpp=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+        Coreon.Lib.ConceptMap.RenderStrategy.delete_node=d3.select('path.path_'+tmpp)
+        d3.select('path.path_'+tmpp).attr('class','concept-edge1') #Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
 
     edges
 

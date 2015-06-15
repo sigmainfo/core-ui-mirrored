@@ -18,7 +18,6 @@ class Coreon.Lib.TreeGraph
   generateNodes: ->
     @nodes = {}
     @meta = {}
-    window.mooddeell=JSON.stringify(@models)
     for model in @models
       node = model.toJSON()
       node.children = []
@@ -44,16 +43,16 @@ class Coreon.Lib.TreeGraph
       if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
         if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged==target.id
           @connect @nodes[Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected], target
-          window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
+          Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
       if parentNodeIds.length > 0
         for parentNodeId in parentNodeIds
           if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged==target.id
-             if window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent != undefined
-              window.Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent.push parentNodeId
+             if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent != undefined
+              Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent.push parentNodeId
           @connect @nodes[parentNodeId], target
       else
         @connect @root, target
-      window.nodes=@nodes
+      Coreon.Lib.ConceptMap.RenderStrategy.nodes=@nodes
 
   connect: (source, target) ->
     if source==undefined
