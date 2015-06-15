@@ -88,7 +88,7 @@ class Spinach::Features::UserBrowsesAllTermsOfSourceLanguage < Spinach::FeatureS
   step 'I should see "Ball", "Kugel" inside the Term List' do
     within '#coreon-term-list' do
       %w(Ball Kugel).each_with_index do |term, i|
-        page.should have_css( "tbody tr:nth-child( #{ i + 1 } ) td.source", text: term )
+        page.should have_css( "tbody tr:nth-child( #{ i + 1 } ) td.source", text: term , visible: false)
       end
     end
   end

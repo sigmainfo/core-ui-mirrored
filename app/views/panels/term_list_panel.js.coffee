@@ -40,7 +40,7 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
 
     @$el.html @template
       title: title
-      actions: [ 'panels.term_list.toggle_scope' ]
+      actions: []
 
     @listenTo @model
             , 'reset'
@@ -77,6 +77,7 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
         terms: @data @model.terms
     else
       @info()
+    @toggleScope() if @model.get('scope') is 'hits'
     @
 
   appendItems: ( terms ) ->
@@ -173,6 +174,7 @@ class Coreon.Views.Panels.TermListPanel extends Coreon.Views.Panels.PanelView
       anchor = @$ "tr.term.hit[data-id='#{anchorHit.id}']"
       offset = anchor.position().top
       @$( 'table' ).scrollTop( offset - 7 )
+    console.log "limit scope ended"
 
   expandScope: ->
     anchorId = @anchor()?.data( 'id' ) or null

@@ -22,10 +22,3 @@ Feature: user browses all terms of source language
     Then I should see "Asiatisches Essen", "Ball" inside the Term List
     And and these should be followed by "Billiard", "Kreide", "Kugel", "Pilz"
     And and these should be followed by "Queue"
-    When I click on "Ball"
-    Then I should see "Ball", "Kugel" inside the Term List
-    When I click on "Toggle scope"
-    Then I should see "Asiatisches Essen", "Ball" inside the Term List
-    And and these should be followed by "Billiard", "Kreide", "Kugel", "Pilz"
-    And and these should be followed by "Queue"
-    And "Ball", "Kugel" should be marked as being currently selected

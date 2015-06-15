@@ -46,17 +46,17 @@ class Spinach::Features::UserBrowsesTermHitsInSourceLanguage < Spinach::FeatureS
     create_concept_term @concept, value: 'Brücke über einen Ball', lang: 'de'
   end
 
-  step 'the "Term List" widget should contain 3 items' do
+  step 'the "Term List" widget should contain 6 items' do
     @terms = page.find('.widget .titlebar h3', text: 'Term List').find(:xpath, '../..')
-    @terms.should have_css('tbody tr', count: 3)
+    @terms.should have_css('tbody tr', count: 6)
   end
 
   step 'these should be "8-ball" "billiard ball", and "high bridge"' do
     @terms.all('td.source').map(&:text).should == [ '8-ball', 'billiard ball', 'high bridge' ]
   end
 
-  step 'the "Term List" widget should contain 4 items' do
-    @terms.should have_css('tbody tr', count: 4)
+  step 'the "Term List" widget should contain 7 items' do
+    @terms.should have_css('tbody tr', count: 7)
   end
 
   step 'these should be "8er-Ball", "Ball", "Billiardkugel", and "Brücke über einen Ball"' do
