@@ -1,4 +1,4 @@
-CoreUi::Application.routes.draw do
+Rails.application.routes.draw do
 
   namespace :api do
     namespace :auth do
@@ -36,5 +36,5 @@ CoreUi::Application.routes.draw do
 
   root to: "repository#show"
 
-  match "*path" => "repository#show"
+  get "*path" => "repository#show"
 end

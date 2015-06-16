@@ -5,21 +5,25 @@ if RUBY_VERSION =~ /1.9/
   Encoding.default_internal = Encoding::UTF_8
 end
 
-gem 'rails', '~> 3.2.12' # Needed for i18n-js with ruby 1.9
+gem 'rails', '4.2.1' # Needed for i18n-js with ruby 1.9
+
 if false
   gem 'core_client', path: '../core-client'
 else
-  gem 'core_client', git: 'git@github.com:gmah/core-client.git', branch: 'rails3'
+  gem 'core_client', git: 'git@github.com:gmah/core-client.git'
 end
+
+# gem 'turbolinks'
+# gem 'jbuilder', '~> 2.0'
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
   gem 'compass-rails'
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
+  gem 'sass-rails', '~> 5.0'
+  gem 'coffee-rails', '~> 4.1.0'
   gem 'therubyracer', platforms: :ruby
-  gem 'uglifier', '>= 1.0.3'
+  gem 'uglifier', '>= 1.3.0'
 
   gem 'haml_coffee_assets'
   gem 'execjs'
@@ -56,4 +60,6 @@ group :test, :development do
   gem 'pry'
   gem 'pry-theme'
   gem 'pry-rails'
+  # gem 'byebug'
+  gem 'web-console', '~> 2.0'
 end
