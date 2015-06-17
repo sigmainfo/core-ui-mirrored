@@ -5,7 +5,7 @@ if RUBY_VERSION =~ /1.9/
   Encoding.default_internal = Encoding::UTF_8
 end
 
-gem 'rails', '4.2.1' # Needed for i18n-js with ruby 1.9
+gem 'rails', '4.2.2'
 
 if false
   gem 'core_client', path: '../core-client'
