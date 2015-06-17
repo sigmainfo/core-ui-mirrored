@@ -16,18 +16,18 @@ end
 # gem 'turbolinks'
 # gem 'jbuilder', '~> 2.0'
 
+gem 'compass-rails'
+gem 'sass-rails', '~> 5.0'
+gem 'haml_coffee_assets'
+gem 'i18n-js'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'compass-rails'
-  gem 'sass-rails', '~> 5.0'
   gem 'coffee-rails', '~> 4.1.0'
   gem 'therubyracer', platforms: :ruby
   gem 'uglifier', '>= 1.3.0'
-
-  gem 'haml_coffee_assets'
   gem 'execjs'
-  gem 'i18n-js'
 end
 
 gem 'jquery-rails'
