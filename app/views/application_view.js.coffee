@@ -45,7 +45,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
     session = @updateSession()
     @$el.html @template session: session
     if session?
-      $.when(Coreon.Models.RepositorySettings.refresh(), session.get('repository').getStats())
+      $.when(Coreon.Models.RepositorySettings.refresh(true), session.get('repository').getStats())
         .done =>
           widgets = new Coreon.Views.Widgets.WidgetsView
             model: @model
