@@ -14,6 +14,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   @delete_node
   @do_not_refresh=false
   @nodes
+
   
   constructor: (@parent) ->
     @layout = d3.layout.tree()

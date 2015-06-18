@@ -112,7 +112,6 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
 
   collapse: (id) ->
-    console.log 'collapse inter ****12121* :'+id
     deferred = $.Deferred()
     model = @get id
     @delAndUnLoad model.get('child_node_ids'), deferred

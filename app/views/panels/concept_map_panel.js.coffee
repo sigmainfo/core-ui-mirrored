@@ -86,7 +86,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   update: ->
     deferred = $.Deferred()
     @renderStrategy.render( @model.graph() ).done =>
-      deferred.resolveWith @, arguments
+        deferred.resolveWith @, arguments
     model.set 'rendered', yes for model in @model.models
     deferred.promise()
 
@@ -165,7 +165,6 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   zoomIn: ->
     zoom = Math.min @options.scaleExtent[1], @navigator.scale() + @options.scaleStep
     @navigator.scale zoom
-    console.log 'Coreon.Lib.ConceptMap.RenderStrategy static : '+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
     @_panAndZoom()
 
   zoomOut: ->
@@ -337,7 +336,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
     @renderStrategy.views = views
     @map.selectAll('*').remove()
-    @render()
+    @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
+    @renderStrategy.render @graph
+    @centerSelection d3.selectAll('g.concept-node'), animate: yes
+
 
   remove: ->
     @map.stopLoop()

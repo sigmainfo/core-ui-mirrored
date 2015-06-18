@@ -5,15 +5,15 @@ class Coreon.Lib.TreeGraph
   constructor: (@models) ->
 
   generate: ->
-    @generateNodes()
-    @setRoot()
-    @generateEdges()
-    @sortChildren()
-    @enforceTree()
-    @collectSiblings()
-    tree: @root
-    edges: @edges
-    siblings: @siblings
+        @generateNodes()
+        @setRoot()
+        @generateEdges()
+        @sortChildren()
+        @enforceTree()
+        @collectSiblings()
+        tree: @root
+        edges: @edges
+        siblings: @siblings
 
   generateNodes: ->
     @nodes = {}
@@ -52,7 +52,7 @@ class Coreon.Lib.TreeGraph
           @connect @nodes[parentNodeId], target
       else
         @connect @root, target
-      Coreon.Lib.ConceptMap.RenderStrategy.nodes=@nodes
+    Coreon.Lib.ConceptMap.RenderStrategy.nodes=@nodes
 
   connect: (source, target) ->
     if source==undefined
