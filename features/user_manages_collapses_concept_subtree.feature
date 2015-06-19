@@ -57,3 +57,21 @@ Feature: user manages collapse concept subtree
     Then "destination of transport" should not have any placeholder for collapsed node
     And "mode of transport" should not have placeholder for multi sub node collapsed node
     And "destination of transport" now have one concept only as a placeholder now
+
+  @firefox
+  Scenario: tree portrait to landscape mode
+    Then I expanded tree
+    And I can see the "intra-EU transport" expanded
+    And I can see the "pipeline transport" expanded
+    When I change from portrait to landscape mode
+    And I can see the "intra-EU transport" expanded
+    And I can see the "pipeline transport" expanded
+    When I change from landscape to portrait mode
+    And I can see the "intra-EU transport" expanded
+    And I can see the "pipeline transport" expanded
+    When I collapse a concept node "common of transport"
+    Then I can not see the "common of transport" now because its collapsed
+    When I change from portrait to landscape mode
+    Then I can not see the "common of transport" now because its collapsed
+    When I change from landscape to portrait mode
+    Then I can not see the "common of transport" now because its collapsed

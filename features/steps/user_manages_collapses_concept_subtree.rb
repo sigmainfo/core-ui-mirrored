@@ -138,5 +138,11 @@ class Spinach::Features::UserManagesCollapseConceptSubtree < Spinach::FeatureSte
     page.should have_selector('.sibling-node.placeholder ', text: '1 more concept for destination of transport')
   end
 
+  step "I change from portrait to landscape mode" do
+    page.find('#coreon-concept-map .toggle-orientation').click
+  end
 
+  step "I change from landscape to portrait mode" do
+    page.find('#coreon-concept-map .toggle-orientation').click
+  end
 end
