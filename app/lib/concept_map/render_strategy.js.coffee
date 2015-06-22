@@ -14,8 +14,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   @delete_node
   @do_not_refresh=false
   @nodes
+  @orientation_attr=1
 
-  
+
   constructor: (@parent) ->
     @layout = d3.layout.tree()
     @diagonal = d3.svg.diagonal()
@@ -23,7 +24,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragStarted = null
     @selectedNode=null
     @draggingNode=null
-    
+
   resize: (@width, @height) ->
 
   initiateDrag: (d, domNode) ->
@@ -70,8 +71,6 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       node=d3.select(@)
       d.x += d3.mouse(this)[0];
       d.y += d3.mouse(this)[1];
-      #d.x += d3.event.dx;
-      #d.y += d3.event.dy;
       node.attr("transform", "translate(" + d.x + "," + d.y+ ")");
 
 
@@ -99,12 +98,6 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         that.edges    = that.renderEdges @graph.edges
         $('.reset-map').removeClass('disable_buttons').removeAttr('disabled');
         $('.save-map').removeClass('disable_buttons').removeAttr('disabled');
-        #@con=Coreon.Models.Concept.find(Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
-        #data =
-        #  superconcept_ids: [Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected]
-        #  subconcept_ids: []
-        #@con.save data
-
     #collapse code
     collapse(graph.tree)
     deferred.promise()
@@ -180,10 +173,16 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     links.append('circle').attr('class', 'bullet')
     links.append('text').attr('class', 'label')
     c1=nodes.append('circle').attr('class', (datum)->'negative-sign negative-sign-'+datum.id)
-    c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
+    if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
+       c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
+    else
+       c1.attr('r','7').attr('cx',(datum)-> 40+datum.label.length).style('fill','#d6d9d5').style('stroke','none')
+
     c1.style('display',(datum)->
       if datum.children.length>0 && datum.type != 'repository'
-          nodes.append('line').attr('x1',-3).attr('y1',40).attr('x2',3).attr('y2',40).attr("stroke-width", 2).attr("stroke", "white")
+          nodes.append('line').attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
+          if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
+              nodes.append('line').attr('x1',(datum)-> 38+datum.label.length).attr('y1',0).attr('x2',(datum)-> 43 +datum.label.length).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
           return 'inline-block'
       else
           return 'none'

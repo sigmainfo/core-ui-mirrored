@@ -331,6 +331,11 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       , "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})"
 
   toggleOrientation: ->
+    if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
+       Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr=2
+    else
+      Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr=1
+
     @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1
     views = @renderStrategy.views
     @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
