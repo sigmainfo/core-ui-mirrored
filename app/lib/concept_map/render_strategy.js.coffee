@@ -24,6 +24,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     @dragStarted = null
     @selectedNode=null
     @draggingNode=null
+    @dragState=null
 
   resize: (@width, @height) ->
 
@@ -51,6 +52,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     _.defer @updateLayout, all, edges, deferred
     that = this
     @dragListener.on 'dragstart', (d) ->
+      console.log 'drag start...'
+      that.dragState='dragStart'
       that.dragStarted= true;
       d3.event.sourceEvent.stopPropagation()
       if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
@@ -61,6 +64,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
 
     @dragListener.on 'drag', (d) ->
+      # console.log 'drag ......'
+      that.dragState='drag'
       if d.type=='repository' || d.type=='placeholder' || Coreon.Lib.ConceptMap.RenderStrategy.need_to_save_first
         return
       if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == undefined || Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == false
@@ -76,12 +81,14 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
     @dragListener.on 'dragend', (d) ->
       #Backbone.history.loadUrl
+      # console.log 'drag state '+that.dragState
       if d.type=='repository'
         return
       if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == undefined || Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected == false
         return
-
-
+      if that.dragState=='dragStart'
+        that.dragState='dragEnd'
+        return
       if that.selectedNode == null
         @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         that.nodes    = that.renderNodes @graph.tree
