@@ -141,7 +141,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         placeholder.set 'busy', off
         @update()
         @rendering = off
-        @con=Coreon.Models.Concept.find('556dad4c73697368fd2c0000')
+        # @con=Coreon.Models.Concept.find('556dad4c73697368fd2c0000')
         parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
         for childnode in parentNode._children
             cor=Coreon.Models.Concept.find(childnode.id)
