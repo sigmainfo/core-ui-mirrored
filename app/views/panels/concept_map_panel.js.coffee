@@ -208,13 +208,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   saveMap: ->
     if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
       @con=Coreon.Models.Concept.find(Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
-      console.log 'i am here..1'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
-      console.log 'i am here..2'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected
       data =
           superconcept_ids: [Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected]
       # @con.save data
       @con.save data, attrs: {concept: data}, wait: true
-      console.log 'i am here..3..'
 
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
