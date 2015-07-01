@@ -1,5 +1,7 @@
 #= require spec_helper
 #= require views/panels/concept_map_panel
+#= require lib/concept_map/render_strategy
+
 
 describe 'Coreon.Views.Panels.ConceptMapPanel', ->
 
