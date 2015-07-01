@@ -186,7 +186,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
        c1.attr('r','7').attr('cx',(datum)-> 40+datum.label.length).style('fill','#d6d9d5').style('stroke','none')
 
     c1.style('display',(datum)->
-      if datum.children.length>0 && datum.type != 'repository'
+      if datum.children!=undefined && datum.children.length>0 && datum.type != 'repository'
           nodes.append('line').attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
           if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
               nodes.append('line').attr('x1',(datum)-> 38+datum.label.length).attr('y1',0).attr('x2',(datum)-> 43 +datum.label.length).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
@@ -201,7 +201,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     )
 
     placeholders.classed('placeholder', (datum)->
-      $('.negative-sign-'+datum.parent.id).hide()
+      if datum.parent!=undefined
+         $('.negative-sign-'+datum.parent.id).hide()
       return true
       )
 
