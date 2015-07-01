@@ -1,5 +1,6 @@
 #= require spec_helper
 #= require lib/tree_graph
+#= require lib/concept_map/render_strategy
 
 describe 'Coreon.Lib.TreeGraph', ->
 
