@@ -5,15 +5,15 @@ class Coreon.Lib.TreeGraph
   constructor: (@models) ->
 
   generate: ->
-    @generateNodes()
-    @setRoot()
-    @generateEdges()
-    @sortChildren()
-    @enforceTree()
-    @collectSiblings()
-    tree: @root
-    edges: @edges
-    siblings: @siblings
+        @generateNodes()
+        @setRoot()
+        @generateEdges()
+        @sortChildren()
+        @enforceTree()
+        @collectSiblings()
+        tree: @root
+        edges: @edges
+        siblings: @siblings
 
   generateNodes: ->
     @nodes = {}
@@ -33,18 +33,30 @@ class Coreon.Lib.TreeGraph
       null
 
   generateEdges: ->
+    placeholders=[]
+    Coreon.Lib.ConceptMap.RenderStrategy.current_models=@models
     @edges = []
     for model in @models
       target = @nodes[model.id]
       continue if target is @root
       parentNodeIds = model.get 'parent_node_ids'
+      if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+        if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged==target.id
+          @connect @nodes[Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected], target
+          Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
       if parentNodeIds.length > 0
         for parentNodeId in parentNodeIds
+          if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged==target.id
+             if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent != undefined
+              Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent.push parentNodeId
           @connect @nodes[parentNodeId], target
       else
         @connect @root, target
+    Coreon.Lib.ConceptMap.RenderStrategy.nodes=@nodes
 
   connect: (source, target) ->
+    if source==undefined
+      return
     source.children.push target
     @meta[target.id].parents += 1
     @edges.push

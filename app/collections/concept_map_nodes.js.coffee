@@ -111,9 +111,37 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
 
     deferred.promise()
 
+
+  collapse: (id) ->
+    deferred = $.Deferred()
+    model = @get id
+    @delAndUnLoad model.get('child_node_ids'), deferred
+    deferred.promise()
+
+  delAndUnLoad: (ids, deferred = $.Deferred()) ->
+    nodes = []
+    for id in ids
+      nodes.push @get id
+      @remove id
+    resolve = =>
+      loaded = yes
+      for node in nodes
+        unless node.get 'loaded'
+          loaded = no
+          break
+      if loaded
+        @stopListening @, 'change:loaded', resolve
+        @updateAllPlaceholderNodes()
+        deferred.resolve nodes
+
+    @listenTo @, 'change:loaded', resolve
+    resolve()
+
+    deferred.promise()
+
+
   addAndLoad: (ids, deferred = $.Deferred()) ->
     nodes = []
-
     for id in ids
       @add model: Coreon.Models.Concept.find id
       nodes.push @get id

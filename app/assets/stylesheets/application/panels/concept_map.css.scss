@@ -3,228 +3,337 @@ $edge-color: #bfc5c0;
 #coreon-concept-map {
 
 
-  .zoom-in {
+    .zoom-in {
 
-    &:before {
-      @include before-icon;
-      background-position: 1px -350px;
-    }
-
-    &:hover {
-      &:before {
-        background-position: -49px -350px;
-      }
-    }
-  }
-
-  .zoom-out {
-
-    &:before {
-      @include before-icon;
-      background-position: 1px -400px;
-    }
-
-    &:hover {
-      &:before {
-        background-position: -49px -400px;
-      }
-    }
-  }
-
-  .toggle-orientation {
-
-    &:before {
-      @include before-icon;
-      background-position: 0 -800px;
-    }
-
-    &:hover {
-
-      &:before {
-        background-position: -50px -800px;
-      }
-    }
-  }
-
-  .map {
-    line-height: 0;
-    width: 100%;
-    position: absolute;
-    top: 20px;
-    bottom: 1px;
-    left: 0;
-
-    &:hover {
-      cursor: move;
-    }
-
-    svg {
-      overflow: hidden;
-
-      text {
-        font: 11px 'DroidSans', Trebuchet MS, Lucida;
-        fill: $text-color-light;
-      }
-
-      .concept-node, .sibling-node {
-        cursor: pointer;
-
-        circle {
-          fill: none;
-          stroke-width: 1.5px;
-          stroke: $text-color-light;
+        &:before {
+            @include before-icon;
+            background-position: 1px -350px;
         }
 
-        &.repository-root {
-
-          circle {
-            display: none;
-          }
-
-          text {
-            fill: $text-color;
-          }
-
-          .background {
-            fill: rgba($hit-color, 0.1);
-          }
-        }
-
-        &.hit {
-
-          circle {
-            stroke: $text-color;
-            stroke-width: 1.6px;
-          }
-
-          text {
-            fill: $hit-color !important;
-            font-size: 13px;
-          }
-
-          .background {
-            fill: white;
-            fill-opacity: 1;
-          }
-        }
-
-        &.parent-of-hit {
-
-          circle {
-            stroke: $text-color;
-            stroke-width: 1.6px;
-          }
-
-          text {
-            fill: $text-color;
-          }
-        }
-
-        &.new {
-
-          text {
-            fill: $button-hover-color;
-            font-size: 13px;
-          }
-
-          .background {
-            fill: white;
-            fill-opacity: 1;
-            stroke: $text-color;
-            stroke-width: 1px;
-            stroke-dasharray: 2,2;
-          }
-        }
-
-        a.hover {
-
-          text {
-            fill: $link-color;
-          }
-
-          .background {
-            fill-opacity: 1;
-          }
-        }
-
-        .background {
-
-          fill: white;
-          fill-opacity: 0.6;
-
-        }
-
-
-        &.placeholder {
-          cursor: pointer;
-
-          .background {
-            fill: $edge-color;
-            stroke: none;
-          }
-
-          .count-background {
-            fill: white;
-          }
-
-          &:hover {
-            .background {
-              fill:$link-color;
+        &:hover {
+            &:before {
+                background-position: -49px -350px;
             }
-          }
+        }
+    }
 
-          .icon {
-            stroke: white;
-            stroke-width: 1.5px;
-          }
+    .zoom-out {
 
-          .progress-indicator {
+        &:before {
+            @include before-icon;
+            background-position: 1px -400px;
+        }
 
-            .track {
-              fill: none;
-              stroke: white;
-              stroke-width: 3px;
-              stroke-opacity: 0.5;
+        &:hover {
+            &:before {
+                background-position: -49px -400px;
+            }
+        }
+    }
+
+    .edit-map {
+
+        &:before {
+            @include before-icon;
+            background-position: 1px -700px;
+        }
+
+        &:hover {
+            &:before {
+                background-position: -49px -700px;
+            }
+        }
+    }
+
+    .toggle-orientation {
+
+        &:before {
+            @include before-icon;
+            background-position: 0 -800px;
+        }
+
+        &:hover {
+
+            &:before {
+                background-position: -50px -800px;
+            }
+        }
+    }
+
+    .map {
+        line-height: 0;
+        width: 100%;
+        position: absolute;
+        top: 20px;
+        bottom: 1px;
+        left: 0;
+
+        &:hover {
+            cursor: move;
+        }
+
+        svg {
+            overflow: hidden;
+
+            text {
+                font: 11px 'DroidSans', Trebuchet MS, Lucida;
+                fill: $text-color-light;
             }
 
-            .cursor {
-              fill: none;
-              stroke: white;
-              stroke-width: 3px;
+            .concept-node, .sibling-node {
+                cursor: pointer;
+
+                circle {
+                    fill: none;
+                    stroke-width: 1.5px;
+                    stroke: $text-color-light;
+                }
+
+                &.repository-root {
+
+                    circle {
+                        display: none;
+                    }
+
+                    text {
+                        fill: $text-color;
+                    }
+
+                    .background {
+                        fill: rgba($hit-color, 0.1);
+                    }
+                }
+
+                &.hit {
+
+                    circle {
+                        stroke: $text-color;
+                        stroke-width: 1.6px;
+                    }
+
+                    text {
+                        fill: $hit-color !important;
+                        font-size: 13px;
+                    }
+
+                    .background {
+                        fill: white;
+                        fill-opacity: 1;
+                    }
+                }
+
+                &.parent-of-hit {
+
+                    circle {
+                        stroke: $text-color;
+                        stroke-width: 1.6px;
+                    }
+
+                    text {
+                        fill: $text-color;
+                    }
+                }
+
+                &.new {
+
+                    text {
+                        fill: $button-hover-color;
+                        font-size: 13px;
+                    }
+
+                    .background {
+                        fill: white;
+                        fill-opacity: 1;
+                        stroke: $text-color;
+                        stroke-width: 1px;
+                        stroke-dasharray: 2,2;
+                    }
+                }
+
+                a.hover {
+
+                    text {
+                        fill: $link-color;
+                    }
+
+                    .background {
+                        fill-opacity: 1;
+                    }
+                }
+
+                .background {
+
+                    fill: white;
+                    fill-opacity: 0.6;
+
+                }
+
+
+                &.placeholder {
+                    cursor: pointer;
+
+                    .background {
+                        fill: $edge-color;
+                        stroke: none;
+                    }
+
+                    .count-background {
+                        fill: white;
+                    }
+
+                    &:hover {
+                        .background {
+                            fill:$link-color;
+                        }
+                    }
+
+                    .icon {
+                        stroke: white;
+                        stroke-width: 1.5px;
+                    }
+
+                    .progress-indicator {
+
+                        .track {
+                            fill: none;
+                            stroke: white;
+                            stroke-width: 3px;
+                            stroke-opacity: 0.5;
+                        }
+
+                        .cursor {
+                            fill: none;
+                            stroke: white;
+                            stroke-width: 3px;
+                        }
+                    }
+                }
             }
-          }
+
+            .concept-edge, .edge {
+                fill: none;
+                stroke: $edge-color;
+                stroke-width: 1.5px;
+                stroke-opacity: 0.7;
+
+                &.hit {
+                    stroke: $text-color;
+                    stroke-opacity: 0.5;
+                }
+            }
+
+            .concept-edge-hide{
+                display:none !important
+            }
+            .concept-edge1, .edge1 {
+                stroke-dasharray: 3;  
+                fill: none;
+                stroke: $edge-color;
+                stroke-width: 1.5px;
+                stroke-opacity: 0.7;
+
+                &.hit {
+                    stroke: $text-color;
+                    stroke-opacity: 0.5;
+                }
+            }
+            .concept-edge-hide{
+                display:none;
+            }
+
         }
-      }
-
-      .concept-edge, .edge {
-        fill: none;
-        stroke: $edge-color;
-        stroke-width: 1.5px;
-        stroke-opacity: 0.7;
-
-        &.hit {
-          stroke: $text-color;
-          stroke-opacity: 0.5;
-        }
-      }
-
     }
-  }
 
 }
 
 #coreon-concept-map:not(.widget) {
 
-  .titlebar {
-    position: absolute;
-    z-index: 1;
-  }
+    .titlebar {
+        position: absolute;
+        z-index: 1;
+    }
 
-  .map {
-    top: 0;
-  }
+    .map {
+        top: 0;
+    }
+}
+
+
+.edit_mode{
+    background: image-url("layout/bg-edit.jpg");
+}
+
+
+#coreon-concept-map:not(.widget) {
+
+    .titlebar {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .map {
+        top: 0;
+    }
+}
+
+
+.reset-map, .cancel-map{
+    background-color: #717a53;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2) inset, -1px -1px 1px rgba(0, 0, 0, 0.2) inset;
+    color: white;
+    display: inline-block;
+    float: left;
+    font-size: 0.86em;
+    line-height: 1em;
+
+    font-size: 1em;
+    margin: 6px;
+    padding: 5px 8px 3px;
+}
+
+.disable_buttons {
+    opacity: 0.3;
+}
+
+.submit_concept{
+    float: right;
+    //margin-right: 900px;
+    display: none;
+    margin: -5px 0 -4px 2px;
+}
+
+.submit_concept button{
+    //background: image-url("/assets/layout/icons.svg") no-repeat scroll -148px -56px rgba(0, 0, 0, 0);
+    background: image-url("/assets/layout/stripes-white.svg") no-repeat scroll -148px -56px #73a254;
+    border: 0 none;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2) inset, -1px -1px 1px rgba(0, 0, 0, 0.2) inset;
+    box-sizing: inherit;
+    content: "";
+    display: block;
+    float: right;
+    height: 20px;
+    margin-left: 3px;
+    padding-bottom: 2px;
+    width: 60px;
+    margin-top: 4px;
+    color:#ffffff;
+}
+
+.edit_pressed {
+    background: #717a53;
 }
 
 
 
 
+.submit_concept button::after {
+    background: image-url("/assets/layout/icons.svg") no-repeat scroll -154px -55px rgba(0, 0, 0, 0);
+    content: "";
+    display: block;
+    float: right;
+    height: 12px;
+    margin-left: 2px;
+    width: 16px;
+}

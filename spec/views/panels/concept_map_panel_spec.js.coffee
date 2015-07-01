@@ -518,6 +518,56 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
         expect( @model.get 'busy' ).to.be.false
         expect( @model.set ).to.have.been.calledBefore view.update
 
+  describe '#editMap()', ->
+      beforeEach ->
+        view.renderStrategy.render = ->
+          done: ->
+
+      it 'editMap called', ->
+        view.editMap = sinon.spy()
+        view.delegateEvents()
+        view.$('.edit-map').click()
+        #assert.isTrue view.editMap.called
+        #console.log view.editMap.called
+        view.editMap.should.have.been.calledOnce
+
+
+  describe '#saveMap()', ->
+    beforeEach ->
+      view.renderStrategy.render = ->
+        done: ->
+
+    it 'save called of edit Map', ->
+      view.saveMap = sinon.spy()
+      view.delegateEvents()
+      view.$('.save-map').removeAttr('disabled')
+      view.$('.save-map').click()
+      view.saveMap.should.have.been.calledOnce
+
+  describe '#cancelMap()', ->
+    beforeEach ->
+      view.renderStrategy.render = ->
+        done: ->
+
+    it 'cancel called of edit map', ->
+      view.cancelMap = sinon.spy()
+      view.delegateEvents()
+      view.$('.cancel-map').click()
+      view.cancelMap.should.have.been.calledOnce
+
+  describe '#resetMap()', ->
+    beforeEach ->
+      view.renderStrategy.render = ->
+        done: ->
+
+    it 'reset called of edit Map', ->
+      view.resetMap = sinon.spy()
+      view.delegateEvents()
+      view.$('.reset-map').click()
+      view.resetMap.should.have.been.calledOnce
+
+
+
   describe '#zoomIn()', ->
 
     beforeEach ->

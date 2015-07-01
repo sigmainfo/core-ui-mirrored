@@ -123,7 +123,12 @@ en:
     drag_connections:
       broader: 'Drag/drop broader concepts'
       narrower: 'Drag/drop narrower concepts'
-
+    save_edit_concept_map:
+      hint: 'Save the modified relations'
+    cancel_edit_concept_map:
+          hint: 'Cancel editing concept relations'
+    reset_edit_concept_map:
+          hint: 'Reset the modified relations'
   term:
     value: "Value"
     lang: "Language"
@@ -254,6 +259,10 @@ en:
       title: "Concept Map"
       zoom_in: "Zoom in"
       zoom_out: "Zoom out"
+      edit_map: "Change concept relations"
+      reset_map: "Reset"
+      cancel_map: "Cancel"
+      save_map: "Save"
       toggle_orientation:
         label: "Toggle orientation"
         hint: "Click to toggle rendering in landscape or tree layout"

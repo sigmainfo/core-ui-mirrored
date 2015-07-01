@@ -15,6 +15,9 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
 
   current: null
 
+  events:
+    'click .maximize'               : 'disableEditConcept'
+
   initialize: ->
     super
     @$el.html @layout()
@@ -53,3 +56,10 @@ class Coreon.Views.Panels.ConceptsPanel extends Coreon.Views.Panels.PanelView
   render: ->
     @currentView?.render()
     @
+
+  disableEditConcept: ->
+    $("body").removeClass('edit_mode');
+    $('.edit-map').removeClass('edit_pressed');
+    $('.edit-map').hide();
+    $('.submit_concept').hide();
+    Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected = false

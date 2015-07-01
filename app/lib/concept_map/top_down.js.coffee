@@ -6,6 +6,12 @@ class Coreon.Lib.ConceptMap.TopDown extends Coreon.Lib.ConceptMap.RenderStrategy
 
   constructor: (parent) ->
     super
+    @diagonal = d3.svg.diagonal().projection((d) ->
+      [
+        d.x
+        d.y
+      ]
+    )
     @layout
       .nodeSize([160, 100])
       .separation( (a, b) ->

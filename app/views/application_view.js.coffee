@@ -105,6 +105,7 @@ class Coreon.Views.ApplicationView extends Backbone.View
 
   navigate: (event) ->
     event.preventDefault()
+    Coreon.Lib.ConceptMap.RenderStrategy.do_not_refresh = true
     Backbone.history.navigate $(event.target).closest("a").attr("href")[1..], trigger: true
 
   toggle: (event) ->
