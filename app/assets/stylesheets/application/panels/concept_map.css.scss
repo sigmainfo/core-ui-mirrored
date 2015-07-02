@@ -225,7 +225,7 @@ $edge-color: #bfc5c0;
             .concept-edge-hide{
                 display:none !important
             }
-            .concept-edge1, .edge1 {
+            .concept-edge-dotted, .edge1 {
                 stroke-dasharray: 3;  
                 fill: none;
                 stroke: $edge-color;

@@ -42,11 +42,11 @@ class Spinach::Features::MaintainerManagesConnectionsInConceptMap < Spinach::Fea
   end
 
   step 'I see concept "pipeline transport" connected with a thick line with concept "destination of transport"' do
-    page.find('.concept-map').should have_css('path.concept-edge1')
+    page.find('.concept-map').should have_css('path.concept-edge-dotted')
   end
 
   step 'I see concept "pipeline transport" connected with a dotted line with concept "mode of transport"' do
-    page.find('.concept-map').should have_css('path.concept-edge1')
+    page.find('.concept-map').should have_css('path.concept-edge-dotted')
   end
 
   step 'I click "Save relations"' do

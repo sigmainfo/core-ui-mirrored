@@ -361,7 +361,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged && Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged==undefined
         tmpp=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
         Coreon.Lib.ConceptMap.RenderStrategy.delete_node=d3.select('path.path_'+tmpp)
-        d3.select('path.path_'+tmpp).attr('class','concept-edge1') #Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
+        d3.select('path.path_'+tmpp).attr('class','concept-edge-dotted') #Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
 
     edges
 
