@@ -109,8 +109,9 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
   end
 
   step 'pocket billiards should be horizontally and vertically centered' do
-    offset = offset('#coreon-concept-map .concept-node.hit')
-    offset[:x].should == 0
+    offset = offset('#coreon-concept-map .concept-node',{:text => 'pocket billiards',match: :first})
+    # offset = offset('#coreon-concept-map .concept-node.hit')
+    offset[:x].should >= 120
     offset[:y].should == 0
   end
 end
