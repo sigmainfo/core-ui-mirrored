@@ -85,6 +85,7 @@ class Spinach::Features::UserFocusesSelection < Spinach::FeatureSteps
 
   step 'I click "Toggle orientation"' do
     click_link "Toggle orientation"
+    sleep 3
   end
 
   step 'I should see the repository node being horizontally centered' do
