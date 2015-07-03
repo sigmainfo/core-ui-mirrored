@@ -1,6 +1,7 @@
 #= require spec_helper
 #= require views/panels/concept_map_panel
 #= require lib/concept_map/render_strategy
+#= require lib/tree_graph
 
 
 describe 'Coreon.Views.Panels.ConceptMapPanel', ->
@@ -706,6 +707,8 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
       view.toggleOrientation.should.have.been.calledOnce
 
     it 'switches render strategy', ->
+      # window.alert('ddd: '+JSON.stringify(view));
+      # console.log 'window.alert'
       Coreon.Lib.ConceptMap.LeftToRight.reset()
       Coreon.Lib.ConceptMap.TopDown.reset()
       view.toggleOrientation()
@@ -729,7 +732,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
     it 'renders view', ->
       view.render = sinon.spy()
       view.toggleOrientation()
-      view.render.should.have.been.calledOnce
+      view.renderStrategy.render.should.have.been.calledOnce
 
   describe '#_panAndZoom()', ->
 
