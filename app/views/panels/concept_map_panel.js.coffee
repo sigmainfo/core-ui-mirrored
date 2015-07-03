@@ -132,20 +132,23 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   expand: (event) ->
     @rendering = on
     node = $(event.target).closest '.placeholder'
+    # window.alert(d3.select(node[0]).datum())
     datum = d3.select(node[0]).datum()
     placeholder = @model.get datum.id
     placeholder.set 'busy', on
     @update()
+    # window.alert(Coreon.Lib.ConceptMap.RenderStrategy.nodes)
     @model.expand(datum.parent.id)
       .always =>
         placeholder.set 'busy', off
         @update()
         @rendering = off
-        parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
-        for childnode in parentNode._children
-            cor=Coreon.Models.Concept.find(childnode.id)
-            for parentid in cor.persistedAttributes().superconcept_ids
-                $('.negative-sign-'+parentid).show()
+        if Coreon.Lib.ConceptMap.RenderStrategy.nodes!=undefined
+            parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
+            for childnode in parentNode._children
+                cor=Coreon.Models.Concept.find(childnode.id)
+                for parentid in cor.persistedAttributes().superconcept_ids
+                    $('.negative-sign-'+parentid).show()
 
   collapse: (event) ->
     @rendering = off
@@ -331,20 +334,19 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       , "translate(#{@navigator.translate()}) scale(#{@navigator.scale()})"
 
   toggleOrientation: ->
-    if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
-       Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr=2
-    else
-      Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr=1
-
-    @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1
-    views = @renderStrategy.views
-    @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
-    @renderStrategy.views = views
-    @map.selectAll('*').remove()
-    @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
-    @renderStrategy.render @graph
-    @centerSelection d3.selectAll('g.concept-node'), animate: yes
-
+      if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
+         Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr=2
+      else
+        Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr=1
+      @currentRenderStrategy = if @currentRenderStrategy is 1 then 0 else 1
+      views = @renderStrategy.views
+      @renderStrategy = new @renderStrategies[@currentRenderStrategy] @map
+      @renderStrategy.views = views
+      @map.selectAll('*').remove()
+      @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
+      @renderStrategy.render @graph
+      if @renderStrategy.center!=undefined
+        @centerSelection d3.selectAll('g.concept-node'), animate: yes
 
   remove: ->
     @map.stopLoop()
