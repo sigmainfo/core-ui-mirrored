@@ -250,6 +250,15 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   resetMap: ->
       if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected
+        if Coreon.Lib.ConceptMap.RenderStrategy.target_element
+          Coreon.Lib.ConceptMap.RenderStrategy.target_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
+
+        if Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element
+          Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected)
+
+        if Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element
+          Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
+
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
@@ -270,6 +279,15 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
   cancelMap: ->
     if Coreon.Lib.ConceptMap.RenderStrategy.edit_mode_selected
+      if Coreon.Lib.ConceptMap.RenderStrategy.target_element
+        Coreon.Lib.ConceptMap.RenderStrategy.target_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
+
+      if Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element
+        Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected)
+
+      if Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element
+        Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
+
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=undefined
