@@ -12,6 +12,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   @current_models=[]
   @edit_mode_selected=false
   @delete_node
+  @old_parent_element
+  @new_parent_element
+  @target_element
   @do_not_refresh=false
   @nodes
   @orientation_attr=1
@@ -149,7 +152,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         that.selectedNode=null
       )
       .attr('class', (datum) ->
-        if datum.sibling then 'sibling-node' else 'concept-node'
+        if datum.sibling then 'sibling-node' else 'concept-node concept-node_'+datum.id
       )
       .classed('repository-root', (datum) ->
         datum.type is 'repository'
@@ -362,6 +365,14 @@ class Coreon.Lib.ConceptMap.RenderStrategy
         tmpp=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
         Coreon.Lib.ConceptMap.RenderStrategy.delete_node=d3.select('path.path_'+tmpp)
         d3.select('path.path_'+tmpp).attr('class','concept-edge-dotted') #Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
+        d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]).attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+' old_parent')
+        Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element=d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
+
+        d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected).attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected+' new_parent')
+        Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element=d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected)
+
+        d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged).attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged+' dragged_node')
+        Coreon.Lib.ConceptMap.RenderStrategy.target_element=d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
 
     edges
 

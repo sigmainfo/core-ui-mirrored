@@ -732,7 +732,7 @@ describe 'Coreon.Views.Panels.ConceptMapPanel', ->
     it 'renders view', ->
       view.render = sinon.spy()
       view.toggleOrientation()
-      view.renderStrategy.render.should.have.been.calledOnce
+      view.render.should.have.been.calledOnce
 
   describe '#_panAndZoom()', ->
 
