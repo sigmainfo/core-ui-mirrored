@@ -219,7 +219,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
       $('.save-map').addClass('disable_buttons').attr('disabled','disabled')
       if Coreon.Lib.ConceptMap.RenderStrategy.target_element
-          Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
+          Coreon.Lib.ConceptMap.RenderStrategy.target_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
 
       if Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element
           Coreon.Lib.ConceptMap.RenderStrategy.new_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected)
