@@ -143,10 +143,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @rendering = off
         if Coreon.Lib.ConceptMap.RenderStrategy.nodes!=undefined
             parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
-            subconcept_ids=Coreon.Models.Concept.find(datum.parent.id).persistedAttributes().subconcept_ids
-            if subconcept_ids!=undefined
-              for childnode in subconcept_ids
-                  cor=Coreon.Models.Concept.find(childnode).persistedAttributes().superconcept_ids
+            subconcept_ids1=Coreon.Models.Concept.find(datum.parent.id).get 'subconcept_ids'
+            if subconcept_ids1!=undefined
+              for childnode in subconcept_ids1
+                  cor=Coreon.Models.Concept.find(childnode).get 'superconcept_ids'
                   if cor!=undefined
                     for parentid in cor
                         $('.negative-sign-'+parentid).show()

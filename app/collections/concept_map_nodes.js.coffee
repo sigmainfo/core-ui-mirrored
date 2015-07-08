@@ -101,7 +101,6 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
   expand: (id) ->
     deferred = $.Deferred()
     model = @get id
-
     if model.get('type') is 'repository'
       @rootIds(yes)
         .done (rootIds) =>
@@ -121,7 +120,7 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
   delAndUnLoad: (ids, deferred = $.Deferred()) ->
     nodes = []
     for id in ids
-      cor=Coreon.Models.Concept.find(id).persistedAttributes().superconcept_ids
+      cor=Coreon.Models.Concept.find(id).get 'superconcept_ids'
       n=@get id
       if n!=undefined
         if cor.length<=1
@@ -148,7 +147,11 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
     for id in ids
       @add model: Coreon.Models.Concept.find id
       nodes.push @get id
-
+      cor=Coreon.Models.Concept.find(id).get 'superconcept_ids'
+      if cor!=undefined
+        for c in cor
+          @add model: Coreon.Models.Concept.find c
+          nodes.push  @get  c
     resolve = =>
       loaded = yes
       for node in nodes
