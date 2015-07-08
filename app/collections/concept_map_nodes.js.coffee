@@ -121,8 +121,13 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
   delAndUnLoad: (ids, deferred = $.Deferred()) ->
     nodes = []
     for id in ids
-      nodes.push @get id
-      @remove id
+      cor=Coreon.Models.Concept.find(id).persistedAttributes().superconcept_ids
+      n=@get id
+      if n!=undefined
+        if cor.length<=1
+          nodes.push n
+      if cor.length<=1
+        @remove id
     resolve = =>
       loaded = yes
       for node in nodes
@@ -133,10 +138,8 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
         @stopListening @, 'change:loaded', resolve
         @updateAllPlaceholderNodes()
         deferred.resolve nodes
-
     @listenTo @, 'change:loaded', resolve
     resolve()
-
     deferred.promise()
 
 

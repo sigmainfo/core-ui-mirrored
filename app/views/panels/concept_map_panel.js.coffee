@@ -132,12 +132,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
   expand: (event) ->
     @rendering = on
     node = $(event.target).closest '.placeholder'
-    # window.alert(d3.select(node[0]).datum())
     datum = d3.select(node[0]).datum()
     placeholder = @model.get datum.id
     placeholder.set 'busy', on
     @update()
-    # window.alert(Coreon.Lib.ConceptMap.RenderStrategy.nodes)
     @model.expand(datum.parent.id)
       .always =>
         placeholder.set 'busy', off
@@ -145,10 +143,13 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @rendering = off
         if Coreon.Lib.ConceptMap.RenderStrategy.nodes!=undefined
             parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
-            for childnode in parentNode._children
-                cor=Coreon.Models.Concept.find(childnode.id)
-                for parentid in cor.persistedAttributes().superconcept_ids
-                    $('.negative-sign-'+parentid).show()
+            subconcept_ids=Coreon.Models.Concept.find(datum.parent.id).persistedAttributes().subconcept_ids
+            if subconcept_ids!=undefined
+              for childnode in subconcept_ids
+                  cor=Coreon.Models.Concept.find(childnode).persistedAttributes().superconcept_ids
+                  if cor!=undefined
+                    for parentid in cor
+                        $('.negative-sign-'+parentid).show()
 
   collapse: (event) ->
     @rendering = off

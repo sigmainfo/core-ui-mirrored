@@ -55,7 +55,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     _.defer @updateLayout, all, edges, deferred
     that = this
     @dragListener.on 'dragstart', (d) ->
-      console.log 'drag start...'
+      # console.log 'drag start...'
       that.dragState='dragStart'
       that.dragStarted= true;
       d3.event.sourceEvent.stopPropagation()
