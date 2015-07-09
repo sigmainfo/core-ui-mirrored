@@ -17,6 +17,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   @target_element
   @do_not_refresh=false
   @nodes
+  @root_node
   @orientation_attr=1
 
 
@@ -102,6 +103,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       if that.selectedNode.type!= 'placeholder' && that.draggingNode != null &&that.draggingNode!=undefined && Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected==undefined
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=that.draggingNode.id
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected=that.selectedNode.id
+        if that.selectedNode.type=='repository'
+          Coreon.Lib.ConceptMap.RenderStrategy.root_node=that.selectedNode.id
         @graph=(new Coreon.Lib.TreeGraph Coreon.Lib.ConceptMap.RenderStrategy.current_models).generate()
         that.nodes    = that.renderNodes @graph.tree
         that.siblings = that.renderSiblings @graph.siblings

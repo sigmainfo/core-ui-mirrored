@@ -142,14 +142,15 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
         @update()
         @rendering = off
         if Coreon.Lib.ConceptMap.RenderStrategy.nodes!=undefined
-            parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
-            subconcept_ids1=Coreon.Models.Concept.find(datum.parent.id).get 'subconcept_ids'
-            if subconcept_ids1!=undefined
-              for childnode in subconcept_ids1
-                  cor=Coreon.Models.Concept.find(childnode).get 'superconcept_ids'
-                  if cor!=undefined
-                    for parentid in cor
-                        $('.negative-sign-'+parentid).show()
+            if datum.parent.type!='repository'
+                parentNode=Coreon.Lib.ConceptMap.RenderStrategy.nodes[datum.parent.id]
+                subconcept_ids1=Coreon.Models.Concept.find(datum.parent.id).get 'subconcept_ids'
+                if subconcept_ids1!=undefined
+                  for childnode in subconcept_ids1
+                      cor=Coreon.Models.Concept.find(childnode).get 'superconcept_ids'
+                      if cor!=undefined
+                        for parentid in cor
+                            $('.negative-sign-'+parentid).show()
 
   collapse: (event) ->
     @rendering = off
@@ -214,7 +215,9 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       @con=Coreon.Models.Concept.find(Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged)
       data =
           superconcept_ids: [Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected]
-      # @con.save data
+      if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected==Coreon.Lib.ConceptMap.RenderStrategy.root_node
+          data =
+              superconcept_ids: []
       @con.save data, attrs: {concept: data}, wait: true
 
       $('.reset-map').addClass('disable_buttons').attr('disabled','disabled')
