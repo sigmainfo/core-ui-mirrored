@@ -209,6 +209,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     placeholders.classed('placeholder', (datum)->
       if datum.parent!=undefined
          $('.negative-sign-'+datum.parent.id).hide()
+         $('.negative-sign-'+datum.parent.id).parent().find('line').hide()
       return true
       )
 

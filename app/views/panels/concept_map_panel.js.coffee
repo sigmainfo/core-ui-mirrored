@@ -151,6 +151,7 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
                       if cor!=undefined
                         for parentid in cor
                             $('.negative-sign-'+parentid).show()
+                            $('.negative-sign-'+parentid).parent().find('line').show()
 
   collapse: (event) ->
     @rendering = off
