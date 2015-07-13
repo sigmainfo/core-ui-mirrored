@@ -12,6 +12,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
   @current_models=[]
   @edit_mode_selected=false
   @delete_node
+  @new_path
   @old_parent_element
   @new_parent_element
   @target_element
@@ -367,8 +368,13 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     #if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent
     if Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged && Coreon.Lib.ConceptMap.RenderStrategy.tmp_reset_nodes_dragged==undefined
         tmpp=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+        tmpp1=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
         Coreon.Lib.ConceptMap.RenderStrategy.delete_node=d3.select('path.path_'+tmpp)
+        Coreon.Lib.ConceptMap.RenderStrategy.new_path=d3.select('path.path_'+tmpp1)
+
         d3.select('path.path_'+tmpp).attr('class','concept-edge-dotted') #Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
+        d3.select('path.path_'+tmpp1).attr('class','concept-edge concept-edge-new') #Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]
+
         d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]).attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0]+' old_parent')
         Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element=d3.select('g.concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
 

@@ -232,6 +232,10 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       if Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element
           Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
 
+      if Coreon.Lib.ConceptMap.RenderStrategy.new_path
+         tmpp1=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+         Coreon.Lib.ConceptMap.RenderStrategy.new_path.attr('class','concept-edge  path_'+tmpp1)
+
       if Coreon.Lib.ConceptMap.RenderStrategy.delete_node
          Coreon.Lib.ConceptMap.RenderStrategy.delete_node.attr('class','concept-edge-hide')
 
@@ -263,6 +267,9 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
         if Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element
           Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
+        if Coreon.Lib.ConceptMap.RenderStrategy.new_path
+           tmpp1=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+           Coreon.Lib.ConceptMap.RenderStrategy.new_path.attr('class','concept-edge  path_'+tmpp1)
 
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
         Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
@@ -292,6 +299,9 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
 
       if Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element
         Coreon.Lib.ConceptMap.RenderStrategy.old_parent_element.attr('class','concept-node concept-node_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent[0])
+      if Coreon.Lib.ConceptMap.RenderStrategy.new_path
+         tmpp1=Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_selected+'_'+Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged
+         Coreon.Lib.ConceptMap.RenderStrategy.new_path.attr('class','concept-edge  path_'+tmpp1)
 
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_old_parent=[]
       Coreon.Lib.ConceptMap.RenderStrategy.tmp_nodes_dragged=undefined
