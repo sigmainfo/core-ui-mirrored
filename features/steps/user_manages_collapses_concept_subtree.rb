@@ -40,7 +40,6 @@ class Spinach::Features::UserManagesCollapseConceptSubtree < Spinach::FeatureSte
     find(".concept-node.placeholder").click
     sleep 1
     all(".concept-node.placeholder").each(&:click)
-   # binding.pry
   end
 
   step 'I click a concept node "mode of transport"' do

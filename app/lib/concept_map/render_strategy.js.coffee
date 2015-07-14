@@ -211,6 +211,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       if datum.parent!=undefined
          $('.negative-sign-'+datum.parent.id).hide()
          $('.negative-sign-'+datum.parent.id).parent().find('line').hide()
+      if datum.parent.children.length>0 && datum.parent.children[0].type!='placeholder'
+         $('.negative-sign-'+datum.parent.id).show()
+         $('.negative-sign-'+datum.parent.id).parent().find('line').show()
       return true
       )
 

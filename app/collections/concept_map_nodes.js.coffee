@@ -123,10 +123,13 @@ class Coreon.Collections.ConceptMapNodes extends Backbone.Collection
       cor=Coreon.Models.Concept.find(id).get 'superconcept_ids'
       n=@get id
       if n!=undefined
-        if cor.length<=1
-          nodes.push n
-      if cor.length<=1
+        nodes.push n
         @remove id
+#      if n!=undefined
+#        if cor.length<=1
+#          nodes.push n
+#      if cor.length<=1
+#        @remove id
     resolve = =>
       loaded = yes
       for node in nodes
