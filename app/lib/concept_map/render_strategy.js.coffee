@@ -201,12 +201,9 @@ class Coreon.Lib.ConceptMap.RenderStrategy
               ln.attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
           else if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
               ln.attr('x1',(datum)-> 50).attr('y1',0).attr('x2',(datum)-> 55 ).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
-          else
-              ln.style('display','none')
           console.log 'datum.children.length '+datum.children.length+' lael'+datum.label
           return 'inline-block'
       else
-          ln.style('display','none')
           return 'none'
       )
 
@@ -221,6 +218,7 @@ class Coreon.Lib.ConceptMap.RenderStrategy
          $('.negative-sign-'+datum.parent.id).parent().find('line').hide()
       if datum.parent.children.length>0 && datum.parent.children[0].type!='placeholder'
          $('.negative-sign-'+datum.parent.id).show()
+         $('.negative-sign-'+datum.parent.id).parent().find('line').css('display','inline-block')
          $('.negative-sign-'+datum.parent.id).parent().find('line').show()
       return true
       )
