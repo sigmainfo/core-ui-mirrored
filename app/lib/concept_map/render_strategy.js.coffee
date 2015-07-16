@@ -194,9 +194,11 @@ class Coreon.Lib.ConceptMap.RenderStrategy
 
     c1.style('display',(datum)->
       if datum.children!=undefined && datum.children.length>0 && datum.type != 'repository'
-          nodes.append('line').attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
+          p=nodes.selectAll('line').data([datum])
+          if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
+              p.enter().append('line').attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
           if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
-              nodes.append('line').attr('x1',(datum)-> 38+datum.label.length).attr('y1',0).attr('x2',(datum)-> 43 +datum.label.length).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
+              p.enter().append('line').attr('x1',(datum)-> 38+datum.label.length).attr('y1',0).attr('x2',(datum)-> 43 +datum.label.length).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
           return 'inline-block'
       else
           return 'none'
