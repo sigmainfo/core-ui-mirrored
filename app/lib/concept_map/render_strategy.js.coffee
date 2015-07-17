@@ -195,13 +195,10 @@ class Coreon.Lib.ConceptMap.RenderStrategy
       p=nodes.selectAll('line').data(nodes)
       ln=p.enter().append('line').style('display','none')
       if datum.children!=undefined && datum.children.length>0 && datum.type != 'repository'
-          window.p=p
-          window.d=datum
           if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
-              ln.attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
+              $('circle.negative-sign-'+datum.id).parent().find('line:first').attr('x1',-2).attr('y1',40).attr('x2',2).attr('y2',40).attr("stroke-width", 2).attr("stroke", "#F8F8F6").css('display','inline-block')
           else if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
-              ln.attr('x1',(datum)-> 50).attr('y1',0).attr('x2',(datum)-> 55 ).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6")
-          console.log 'datum.children.length '+datum.children.length+' lael'+datum.label
+              $('circle.negative-sign-'+datum.id).parent().find('line:first').attr('x1',(datum)-> 50).attr('y1',0).attr('x2',(datum)-> 55 ).attr('y2',0).attr("stroke-width", 2).attr("stroke", "#F8F8F6").css('display','inline-block')
           return 'inline-block'
       else
           return 'none'
