@@ -190,7 +190,8 @@ class Coreon.Lib.ConceptMap.RenderStrategy
     if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==1
        c1.attr('r','7').attr('cy','40').style('fill','#d6d9d5').style('stroke','none')
     else
-       c1.attr('r','7').attr('cx',(datum)-> 40+datum.label.length).style('fill','#d6d9d5').style('stroke','none')
+       c1.attr('r','7').attr('cx',(datum)->25+datum.label.length).style('fill','#d6d9d5').style('stroke','none')
+
     c1.style('display',(datum)->
       p=nodes.selectAll('line').data(nodes)
       ln=p.enter().append('line').style('display','none')

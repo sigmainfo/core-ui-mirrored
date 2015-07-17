@@ -150,6 +150,14 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
                       cor=Coreon.Models.Concept.find(childnode).get 'superconcept_ids'
                       if cor!=undefined
                         for parentid in cor
+                            if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
+                              w1=$('.negative-sign-'+parentid).parent().find('rect').attr('width')
+                              $('.negative-sign-'+parentid).attr('cx',w1)
+                              $('.negative-sign-'+parentid).parent().find('line').css('display','inline-block').attr('x1',parseInt(w1)-2).attr('x2',(parseInt(w1)+2))
+                            else
+                              $('.negative-sign-'+parentid).attr('cx','0')
+                              $('.negative-sign-'+parentid).parent().find('line').css('display','inline-block').attr('x1','-2').attr('x2','2')
+
                             $('.negative-sign-'+parentid).show()
                             $('.negative-sign-'+parentid).parent().find('line').css('display','inline-block')
                             $('.negative-sign-'+parentid).parent().find('line').show()
