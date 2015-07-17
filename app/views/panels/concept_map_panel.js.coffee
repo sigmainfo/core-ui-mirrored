@@ -399,6 +399,18 @@ class Coreon.Views.Panels.ConceptMapPanel extends Coreon.Views.Panels.PanelView
       @renderStrategy.render @graph
       if @renderStrategy.center!=undefined
         @centerSelection d3.selectAll('g.concept-node'), animate: yes
+      setTimeout (->
+            $('.negative-sign').each (index) ->
+                w=parseInt($(this).parent().find('rect').attr('width'))
+                # console.log $(this).attr('class')+' www.. '+w
+                if Coreon.Lib.ConceptMap.RenderStrategy.orientation_attr==2
+                    $(this).attr('cx',w)
+                    $(this).parent().find('line').css('display',$(this).css('display')).attr('x1',parseInt(w)-2).attr('x2',(parseInt(w)+2))
+                else
+                    $(this).attr('cx',0)
+                    $(this).parent().find('line').css('display',$(this).css('display')).attr('x1',-2).attr('x2',(2))
+                return),1000
+
 
   remove: ->
     @map.stopLoop()
